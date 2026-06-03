@@ -1382,6 +1382,300 @@ body{background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;overfl
 #sec-admin .sig-row:hover { background: #f7f8fb; }
 #sec-admin .sig-header { background: #f7f8fb; font-size: 10px; color: #6b7280; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; border-bottom: 1px solid #e8eaf0; }
 
+
+/* ════════════════════════════════════════════════
+   FULL MOBILE RESPONSIVE CSS - 390px (Phone)
+════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+
+  /* ── LANDING PAGE MOBILE ── */
+  .lp-nav { padding: 0 16px; }
+  .lp-links { display: none; }
+  .lp-nav-btns .lp-btn-ghost { display: none; }
+  .lp-btn-red { padding: 9px 16px; font-size: 12px; }
+
+  .hero-wrap {
+    grid-template-columns: 1fr !important;
+    padding: 32px 20px !important;
+    min-height: auto !important;
+    gap: 32px !important;
+    text-align: center;
+  }
+  .hero-h1 { font-size: 28px !important; letter-spacing: -1px !important; }
+  .hero-desc { font-size: 14px !important; margin: 0 auto 24px !important; }
+  .hero-ctas { justify-content: center; flex-wrap: wrap; gap: 10px; }
+  .hero-proof { justify-content: center; }
+  .phone-col { display: none !important; }
+
+  .lp-stats { grid-template-columns: repeat(2,1fr) !important; }
+  .lp-stat { padding: 18px 12px; }
+  .lp-stat-num { font-size: 22px !important; }
+
+  .lp-sec { padding: 48px 20px !important; }
+  .lp-sec-h2 { font-size: 24px !important; letter-spacing: -0.5px !important; }
+  .lp-feat-grid { grid-template-columns: 1fr !important; }
+  .lp-steps-grid { grid-template-columns: 1fr !important; }
+  .lp-step-arrow { display: none; }
+  .lp-price-grid { grid-template-columns: 1fr !important; }
+  .lp-footer-grid { grid-template-columns: 1fr !important; }
+  .lp-footer { padding: 40px 20px 20px !important; }
+  .lp-footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+  .lp-partners { padding: 20px; gap: 16px; flex-direction: column; }
+  .lp-partner-logos { gap: 20px; justify-content: center; }
+  .lp-cta { padding: 48px 20px !important; }
+  .lp-cta-h2 { font-size: 26px !important; }
+  .lp-cta-btns { flex-direction: column; align-items: center; }
+
+  /* ── AUTH PAGE MOBILE ── */
+  #auth-page { flex-direction: column !important; }
+  .auth-left { display: none !important; }
+  .auth-right { padding: 32px 20px !important; min-height: 100vh; }
+  .auth-form-wrap { max-width: 100% !important; }
+
+  /* ── APP PAGE MOBILE ── */
+  #app-page {
+    flex-direction: column !important;
+  }
+
+  /* Hide sidebar on mobile */
+  .sidebar {
+    display: none !important;
+  }
+
+  /* Main content full width */
+  .main {
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+
+  /* Hide top bar on mobile */
+  .topbar {
+    display: none !important;
+  }
+
+  /* Content padding */
+  .content {
+    padding: 16px !important;
+    padding-bottom: 80px !important;
+  }
+
+  /* ── BOTTOM NAVIGATION BAR ── */
+  .mobile-bottom-nav {
+    display: flex !important;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 64px;
+    background: #fff;
+    border-top: 1px solid #e8eaf0;
+    z-index: 900;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0 8px;
+    box-shadow: 0 -4px 20px rgba(5,8,23,0.08);
+  }
+  .mob-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: all 0.15s;
+    flex: 1;
+  }
+  .mob-nav-item.active { background: rgba(239,0,23,0.06); }
+  .mob-nav-item i { font-size: 20px; color: #aaa; }
+  .mob-nav-item.active i { color: #ef0017; }
+  .mob-nav-label { font-size: 9px; font-weight: 700; color: #aaa; letter-spacing: 0.3px; }
+  .mob-nav-item.active .mob-nav-label { color: #ef0017; }
+
+  /* ── DASHBOARD MOBILE ── */
+  .market-cards {
+    grid-template-columns: repeat(2,1fr) !important;
+    gap: 10px !important;
+  }
+  .mkt-card { padding: 12px !important; }
+  .mkt-price { font-size: 16px !important; }
+
+  .signals-table-head { display: none !important; }
+  .signal-row {
+    grid-template-columns: 1fr !important;
+    padding: 14px !important;
+    gap: 8px !important;
+  }
+  .signal-row { display: flex !important; flex-wrap: wrap; align-items: center; gap: 10px; }
+  .sig-pair-cell { flex: 1; }
+  .sig-dir-pill { font-size: 11px; padding: 4px 12px; }
+  .sig-entry { font-size: 12px; width: 100%; }
+  .sig-status-active { font-size: 12px; }
+  .sig-updated { font-size: 11px; }
+  .sig-view-btn { font-size: 11px; padding: 6px 12px; }
+  .strength-ring { width: 36px; height: 36px; }
+  .strength-ring svg { width: 36px; height: 36px; }
+  .strength-ring-text { font-size: 10px; }
+
+  /* Welcome header */
+  .dash-welcome h2 { font-size: 20px !important; }
+  .premium-badge span { font-size: 11px !important; }
+  .admin-stat-cards { grid-template-columns: repeat(2,1fr) !important; }
+
+  /* ── SECTIONS TITLE ── */
+  .section-h2 { font-size: 20px !important; }
+
+  /* ── SIGNAL FEED CARDS ── */
+  .sf-grid { grid-template-columns: 1fr !important; }
+
+  /* ── ANALYST PANEL MOBILE ── */
+  .analyst-sidebar { display: none !important; }
+  .analyst-main { margin-left: 0 !important; padding: 20px !important; }
+  .signal-form-row { grid-template-columns: 1fr !important; }
+
+  /* ── ADMIN MOBILE ── */
+  .ut-header { display: none !important; }
+  .ut-row {
+    grid-template-columns: 1fr !important;
+    display: flex !important;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 14px !important;
+    border-bottom: 1px solid #f0f1f5 !important;
+  }
+
+  /* ── TRADE POPUP MOBILE ── */
+  .trade-popup {
+    width: calc(100vw - 32px) !important;
+    max-height: 90vh;
+    overflow-y: auto;
+    margin: 0 16px;
+  }
+
+  /* ── SCREENS MOBILE ── */
+  .auth-screen-box { width: calc(100vw - 32px) !important; padding: 28px 20px !important; }
+
+  /* ── NEW SCREENS MOBILE ── */
+  #screen-mt5-login,
+  #screen-setup-account,
+  #screen-pending { padding: 20px; }
+
+}
+
+/* Extra small screens */
+@media (max-width: 400px) {
+  .hero-h1 { font-size: 24px !important; }
+  .lp-sec-h2 { font-size: 20px !important; }
+  .market-cards { grid-template-columns: 1fr !important; }
+  .admin-stat-cards { grid-template-columns: 1fr !important; }
+}
+
+
+/* ── MOBILE HAMBURGER NAV ── */
+.lp-hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 28px;
+  height: 20px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+.lp-hamburger span {
+  display: block;
+  height: 2.5px;
+  background: #0a0a0a;
+  border-radius: 2px;
+  transition: all 0.3s;
+}
+.lp-hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 6px); }
+.lp-hamburger.open span:nth-child(2) { opacity: 0; }
+.lp-hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -6px); }
+
+/* Mobile full-screen menu */
+.lp-mobile-menu {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: #fff;
+  z-index: 2000;
+  flex-direction: column;
+  padding: 0;
+  overflow-y: auto;
+}
+.lp-mobile-menu.open { display: flex; }
+.lp-mm-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  height: 70px;
+  border-bottom: 1px solid #eee;
+}
+.lp-mm-close {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: #f5f5f5;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: #333;
+}
+.lp-mm-links {
+  display: flex;
+  flex-direction: column;
+  padding: 24px 20px;
+  gap: 0;
+  flex: 1;
+}
+.lp-mm-links a {
+  display: block;
+  padding: 16px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #0a0a0a;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+  text-decoration: none;
+}
+.lp-mm-links a:last-child { border-bottom: none; }
+.lp-mm-btns {
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.lp-mm-signin {
+  width: 100%; padding: 14px;
+  font-size: 15px; font-weight: 700;
+  background: transparent;
+  border: 2px solid #E8192C;
+  color: #E8192C;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+.lp-mm-start {
+  width: 100%; padding: 14px;
+  font-size: 15px; font-weight: 700;
+  background: linear-gradient(135deg,#E8192C,#C4001F);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  box-shadow: 0 6px 20px rgba(232,25,44,0.3);
+}
+
+@media (max-width: 768px) {
+  .lp-hamburger { display: flex !important; }
+  .lp-links { display: none !important; }
+  .lp-nav-btns { display: none !important; }
+  .lp-nav { padding: 0 20px !important; }
+}
+
 </style>
 
 <style id="signal-feed-force-fix">
@@ -2317,22 +2611,49 @@ body{background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;overfl
 
 <div id="lp-page" class="lp-page active">
 <nav class="lp-nav">
+  <!-- Logo -->
   <div class="lp-logo" onclick="showPage('lp-page')">
     <div class="lp-slashes"><div class="lp-sl"></div><div class="lp-sl"></div><div class="lp-sl"></div></div>
     <div class="lp-brand">MOMENTUM AI</div>
   </div>
+  <!-- Desktop links -->
   <div class="lp-links">
     <a>Home</a>
-    <a onclick="document.getElementById('lp-features').scrollIntoView({behavior:'smooth'})">Features</a>
-    <a onclick="document.getElementById('lp-how').scrollIntoView({behavior:'smooth'})">How It Works</a>
-    <a onclick="document.getElementById('lp-pricing').scrollIntoView({behavior:'smooth'})">Access</a>
-    <a onclick="document.getElementById('lp-faq').scrollIntoView({behavior:'smooth'})">FAQ</a>
+    <a onclick="document.getElementById('lp-sec-features').scrollIntoView({behavior:'smooth'})">Features</a>
+    <a onclick="document.getElementById('lp-sec-how').scrollIntoView({behavior:'smooth'})">How It Works</a>
+    <a onclick="document.getElementById('lp-sec-pricing').scrollIntoView({behavior:'smooth'})">Pricing</a>
+    <a onclick="document.getElementById('lp-sec-faq').scrollIntoView({behavior:'smooth'})">FAQ</a>
   </div>
+  <!-- Desktop buttons -->
   <div class="lp-nav-btns">
-    <button class="lp-btn-ghost" onclick="showPage('auth-page')">Sign In</button>
-    <button class="lp-btn-red" onclick="showPage('auth-page')">Get Started Free</button>
+    <button class="lp-btn-ghost" onclick="showAuthPage('login')">Sign In</button>
+    <button class="lp-btn-red" onclick="showAuthPage('login')">Get Started</button>
   </div>
+  <!-- Mobile hamburger -->
+  <button class="lp-hamburger" onclick="toggleMobileMenu()" id="lp-hamburger-btn" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+<!-- Mobile menu overlay -->
+<div class="lp-mobile-menu" id="lp-mobile-menu">
+  <div class="lp-mm-header">
+    <div class="lp-logo">
+      <div class="lp-slashes"><div class="lp-sl"></div><div class="lp-sl"></div><div class="lp-sl"></div></div>
+      <div class="lp-brand">MOMENTUM AI</div>
+    </div>
+    <button class="lp-mm-close" onclick="toggleMobileMenu()">&#x2715;</button>
+  </div>
+  <div class="lp-mm-links">
+    <a onclick="closeMobileMenuAndScroll('lp-sec-features')">Features</a>
+    <a onclick="closeMobileMenuAndScroll('lp-sec-how')">How It Works</a>
+    <a onclick="closeMobileMenuAndScroll('lp-sec-pricing')">Pricing</a>
+    <a onclick="closeMobileMenuAndScroll('lp-sec-faq')">FAQ</a>
+  </div>
+  <div class="lp-mm-btns">
+    <button onclick="showAuthPage('login');toggleMobileMenu();" class="lp-mm-signin">Sign In</button>
+    <button onclick="showAuthPage('login');toggleMobileMenu();" class="lp-mm-start">Get Started Free</button>
+  </div>
+</div>
 <section class="hero-section">
   <div>
     <div class="hero-badge"><div class="hero-bdot"></div>AI-Powered Trading Intelligence</div>
@@ -2340,7 +2661,7 @@ body{background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;overfl
     <h1 class="hero-h1">Start Managing<br>Your Finance<br><span class="hero-red">With Our Tool</span></h1>
     <p class="hero-p">Momentum AI delivers institutional-grade trading signals powered by Claude AI, with one-tap MT5 execution and full EA automation. Never miss a trade. Never let emotion guide your entry.</p>
     <div class="hero-ctas">
-      <button class="hero-btn-primary" onclick="showPage('auth-page')">🚀 Get Started Free →</button>
+      <button class="hero-btn-primary" onclick="showAuthPage('login')">🚀 Get Started Free →</button>
       <button class="hero-btn-secondary" onclick="enterApp()">▶ View Live App Demo</button>
     </div>
     <div class="hero-proof">
@@ -2382,9 +2703,9 @@ body{background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;overfl
 <section class="lp-section" id="lp-features"><div class="lp-sec-center"><div class="lp-sec-eye">⚡ Key Features</div><h2 class="lp-sec-h2">Our App Is An <span class="red">All-In-One</span><br>Solution For Traders</h2><p class="lp-sec-sub">Everything you need to trade with confidence -- AI signals, MT5 execution, journal, news calendar, and advanced EA automation.</p></div><div class="lp-feat-grid"><div class="lp-feat-card"><div class="lp-feat-num">01 // SIGNAL</div><div class="lp-feat-ico">📡</div><div class="lp-feat-name">Live AI Signals</div><div class="lp-feat-desc">Real-time entry zones, stop-loss, and take-profit from our expert analysts. AI validates every signal before it reaches you.</div></div><div class="lp-feat-card"><div class="lp-feat-num">02 // NEURAL</div><div class="lp-feat-ico">🧠</div><div class="lp-feat-name">Claude AI Analysis</div><div class="lp-feat-desc">Deep market analysis powered by Claude AI -- confidence scoring, indicator breakdown, and multi-timeframe sentiment analysis.</div></div><div class="lp-feat-card"><div class="lp-feat-num">03 // EXECUTE</div><div class="lp-feat-ico">⚡</div><div class="lp-feat-name">One-Tap MT5 Trading</div><div class="lp-feat-desc">Execute on your AFTT MT5 account with one tap. EA handles DCA, partial close, trailing stop, breakeven automatically.</div></div><div class="lp-feat-card"><div class="lp-feat-num">04 // JOURNAL</div><div class="lp-feat-ico">📓</div><div class="lp-feat-name">Trading Journal</div><div class="lp-feat-desc">Auto-synced trade history with P&L analytics, win rate heatmaps, and performance metrics to improve over time.</div></div><div class="lp-feat-card"><div class="lp-feat-num">05 // NEWS</div><div class="lp-feat-ico">📰</div><div class="lp-feat-name">News Calendar</div><div class="lp-feat-desc">ForexFactory-powered events with alerts at 60, 30, 5, and 1 minute before high-impact releases. Never get surprised by news.</div></div><div class="lp-feat-card"><div class="lp-feat-num">06 // EA</div><div class="lp-feat-ico">⚙️</div><div class="lp-feat-name">EA Automation Engine</div><div class="lp-feat-desc">Fully configurable DCA positions, lot sizing, trailing stops, breakeven buffers, and partial close rules. Your rules, automated.</div></div></div></section>
 <section class="lp-section lp-sec-bg" id="lp-how"><div class="lp-sec-center"><div class="lp-sec-eye">🔍 Process</div><h2 class="lp-sec-h2">How Momentum AI<br><span class="red">Can Help You</span></h2><p class="lp-sec-sub">Three simple steps from signal to profit.</p></div><div class="lp-steps-grid"><div class="lp-step-card"><div class="lp-step-num">1</div><div class="lp-step-title">Connect Your MT5 Account</div><div class="lp-step-desc">Link your MT5 account via our secure EA. Enter broker details and API key. Setup takes under 2 minutes.</div><div class="lp-step-arrow"></div></div><div class="lp-step-card"><div class="lp-step-num">2</div><div class="lp-step-title">Receive AI Signals</div><div class="lp-step-desc">Get live signals with entry zone, stop loss, take profit, confidence score, and analyst commentary.</div><div class="lp-step-arrow"></div></div><div class="lp-step-card"><div class="lp-step-num">3</div><div class="lp-step-title">Auto-Execute & Grow</div><div class="lp-step-desc">One tap sends your trade to MT5. EA manages DCA, trailing stop, partial close, and breakeven automatically.</div></div></div></section>
 <section class="lp-section"><div class="lp-sec-center"><div class="lp-sec-eye">💬 Testimonials</div><h2 class="lp-sec-h2">Our Users<br><span class="red">Talk About Us</span></h2></div><div class="lp-test-wrap"><div class="lp-test-track"><div class="lp-test-card"><div class="lp-test-stars">★★★★★</div><p class="lp-test-text">"The AI signals are incredibly accurate. I went from struggling to 80%+ win rate in 3 weeks."</p><div class="lp-test-author"><div class="lp-test-av">AH</div><div><div class="lp-test-name">Ahmad Hassan</div><div class="lp-test-loc">Trader . Malaysia</div></div></div></div><div class="lp-test-card"><div class="lp-test-stars">★★★★★</div><p class="lp-test-text">"Finally one app with signals, charts, journal and news calendar. The Claude AI explains every trade."</p><div class="lp-test-author"><div class="lp-test-av" style="background:linear-gradient(135deg,#4D9EFF,#1A5FBF)">LC</div><div><div class="lp-test-name">Li Cheng</div><div class="lp-test-loc">Prop Trader . Singapore</div></div></div></div><div class="lp-test-card"><div class="lp-test-stars">★★★★★</div><p class="lp-test-text">"News calendar alerts saved me from NFP surprises multiple times. Set it once and forget it."</p><div class="lp-test-author"><div class="lp-test-av" style="background:linear-gradient(135deg,#00D68F,#007A4D)">RK</div><div><div class="lp-test-name">Rajan Kumar</div><div class="lp-test-loc">Day Trader . India</div></div></div></div><div class="lp-test-card"><div class="lp-test-stars">★★★★★</div><p class="lp-test-text">"DCA and trailing stop EA settings are exactly what I needed. My account grows when I sleep."</p><div class="lp-test-author"><div class="lp-test-av" style="background:linear-gradient(135deg,#FFB547,#C47A00)">MW</div><div><div class="lp-test-name">Maria Wong</div><div class="lp-test-loc">Portfolio Manager . HK</div></div></div></div><div class="lp-test-card"><div class="lp-test-stars">★★★★★</div><p class="lp-test-text">"Best investment I made this year. Paid for itself 10x over. XAUUSD signals are fire."</p><div class="lp-test-author"><div class="lp-test-av" style="background:linear-gradient(135deg,#9B59B6,#5B2C87)">JT</div><div><div class="lp-test-name">James Tan</div><div class="lp-test-loc">Gold Trader . Thailand</div></div></div></div><div class="lp-test-card"><div class="lp-test-stars">★★★★★</div><p class="lp-test-text">"As a beginner Momentum AI made it easy. Now I'm profitable consistently every month."</p><div class="lp-test-author"><div class="lp-test-av" style="background:var(--grad)">NR</div><div><div class="lp-test-name">Nurul Rahim</div><div class="lp-test-loc">Part-time Trader . KL</div></div></div></div><div class="lp-test-card"><div class="lp-test-stars">★★★★★</div><p class="lp-test-text">"The AI signals are incredibly accurate. I went from struggling to 80%+ win rate in 3 weeks."</p><div class="lp-test-author"><div class="lp-test-av">AH</div><div><div class="lp-test-name">Ahmad Hassan</div><div class="lp-test-loc">Trader . Malaysia</div></div></div></div><div class="lp-test-card"><div class="lp-test-stars">★★★★★</div><p class="lp-test-text">"Finally one app with signals, charts, journal and news calendar. The Claude AI explains every trade."</p><div class="lp-test-author"><div class="lp-test-av" style="background:linear-gradient(135deg,#4D9EFF,#1A5FBF)">LC</div><div><div class="lp-test-name">Li Cheng</div><div class="lp-test-loc">Prop Trader . Singapore</div></div></div></div><div class="lp-test-card"><div class="lp-test-stars">★★★★★</div><p class="lp-test-text">"News calendar alerts saved me from NFP surprises multiple times."</p><div class="lp-test-author"><div class="lp-test-av" style="background:linear-gradient(135deg,#00D68F,#007A4D)">RK</div><div><div class="lp-test-name">Rajan Kumar</div><div class="lp-test-loc">Day Trader . India</div></div></div></div><div class="lp-test-card"><div class="lp-test-stars">★★★★★</div><p class="lp-test-text">"My account grows even when I sleep. DCA automation is a game changer."</p><div class="lp-test-author"><div class="lp-test-av" style="background:linear-gradient(135deg,#FFB547,#C47A00)">MW</div><div><div class="lp-test-name">Maria Wong</div><div class="lp-test-loc">Portfolio Manager . HK</div></div></div></div></div></div></section>
-<section class="lp-section lp-sec-bg" id="lp-pricing"><div class="lp-sec-center"><div class="lp-sec-eye">🔓 Access</div><h2 class="lp-sec-h2">No Monthly Fee.<br><span class="red">Unlock Through AFT.</span></h2><p class="lp-sec-sub">Momentum AI is built to support AFT traders and partners. Start free with demo access, unlock everything with a funded AFT account, or partner with AFT for white-label solutions.</p></div><div class="lp-price-grid"><div class="lp-price-card"><div class="lp-price-tier">Step 01</div><div class="lp-price-name">Free Demo Access</div><div class="lp-price-amount"><span class="lp-price-rm">$</span><span class="lp-price-num">0</span><span class="lp-price-per">/lifetime</span></div><div class="lp-price-div"></div><ul class="lp-price-feats"><li>Register under AFT</li><li>Try using demo account</li><li>Limited Momentum AI features</li><li>Basic scanner preview</li><li>Beginner-friendly onboarding</li></ul><button class="lp-price-btn outline" onclick="showPage('auth-page')">Register With AFT</button></div><div class="lp-price-card pop"><div class="lp-pop-tag">⚡ Full Unlock</div><div class="lp-price-tier">Step 02</div><div class="lp-price-name">Funded Trader Access</div><div class="lp-price-amount"><span class="lp-price-rm">Min</span><span class="lp-price-num">$100</span><span class="lp-price-per">deposit</span></div><div class="lp-price-div" style="background:rgba(255,255,255,.2)!important"></div><ul class="lp-price-feats"><li>Unlock all Momentum AI features</li><li>Full scanner and analysis access</li><li>Signals, journal, news and dashboard</li><li>Automation tools and premium modules</li><li>Lifetime access while active with AFT</li></ul><button class="lp-price-btn white-btn" onclick="showPage('auth-page')">Unlock Full Access</button></div><div class="lp-price-card"><div class="lp-price-tier">For IB Partners</div><div class="lp-price-name">White Label Solution</div><div class="lp-price-amount"><span class="lp-price-rm">AFT</span><span class="lp-price-num">IB</span><span class="lp-price-per">partner</span></div><div class="lp-price-div"></div><ul class="lp-price-feats"><li>Use Momentum AI under your brand</li><li>Support your own trader community</li><li>Recruit and retain clients with tools</li><li>Must partner with AFT</li><li>Custom conditions for qualified IBs</li></ul><button class="lp-price-btn redbtn" onclick="showPage('auth-page')">Become AFT Partner</button></div></div></section>
+<section class="lp-section lp-sec-bg" id="lp-pricing"><div class="lp-sec-center"><div class="lp-sec-eye">🔓 Access</div><h2 class="lp-sec-h2">No Monthly Fee.<br><span class="red">Unlock Through AFT.</span></h2><p class="lp-sec-sub">Momentum AI is built to support AFT traders and partners. Start free with demo access, unlock everything with a funded AFT account, or partner with AFT for white-label solutions.</p></div><div class="lp-price-grid"><div class="lp-price-card"><div class="lp-price-tier">Step 01</div><div class="lp-price-name">Free Demo Access</div><div class="lp-price-amount"><span class="lp-price-rm">$</span><span class="lp-price-num">0</span><span class="lp-price-per">/lifetime</span></div><div class="lp-price-div"></div><ul class="lp-price-feats"><li>Register under AFT</li><li>Try using demo account</li><li>Limited Momentum AI features</li><li>Basic scanner preview</li><li>Beginner-friendly onboarding</li></ul><button class="lp-price-btn outline" onclick="showAuthPage('login')">Register With AFT</button></div><div class="lp-price-card pop"><div class="lp-pop-tag">⚡ Full Unlock</div><div class="lp-price-tier">Step 02</div><div class="lp-price-name">Funded Trader Access</div><div class="lp-price-amount"><span class="lp-price-rm">Min</span><span class="lp-price-num">$100</span><span class="lp-price-per">deposit</span></div><div class="lp-price-div" style="background:rgba(255,255,255,.2)!important"></div><ul class="lp-price-feats"><li>Unlock all Momentum AI features</li><li>Full scanner and analysis access</li><li>Signals, journal, news and dashboard</li><li>Automation tools and premium modules</li><li>Lifetime access while active with AFT</li></ul><button class="lp-price-btn white-btn" onclick="showAuthPage('login')">Unlock Full Access</button></div><div class="lp-price-card"><div class="lp-price-tier">For IB Partners</div><div class="lp-price-name">White Label Solution</div><div class="lp-price-amount"><span class="lp-price-rm">AFT</span><span class="lp-price-num">IB</span><span class="lp-price-per">partner</span></div><div class="lp-price-div"></div><ul class="lp-price-feats"><li>Use Momentum AI under your brand</li><li>Support your own trader community</li><li>Recruit and retain clients with tools</li><li>Must partner with AFT</li><li>Custom conditions for qualified IBs</li></ul><button class="lp-price-btn redbtn" onclick="showAuthPage('login')">Become AFT Partner</button></div></div></section>
 <section class="lp-section" id="lp-faq"><div class="lp-sec-center"><div class="lp-sec-eye">❓ FAQ</div><h2 class="lp-sec-h2">Frequently Ask<br><span class="red">Questions</span></h2></div><div class="lp-faq-list"><div class="lp-faq-item open"><div class="lp-faq-q" onclick="this.parentElement.classList.toggle('open')">How do I connect my MT5 account? <span class="fi">+</span></div><div class="lp-faq-a">Download our Expert Advisor file and install it in MetaTrader 5. Enter your account number, server, and API key from the app. Connection takes under 2 minutes. Works with AFTT Markets and most MT5 brokers.</div></div><div class="lp-faq-item"><div class="lp-faq-q" onclick="this.parentElement.classList.toggle('open')">What is the average signal accuracy? <span class="fi">+</span></div><div class="lp-faq-a">Our AI signals have maintained a 94.2% accuracy rate over the past 12 months across NAS100, XAUUSD, EURUSD, and GBPUSD. Past performance is not a guarantee of future results.</div></div><div class="lp-faq-item"><div class="lp-faq-q" onclick="this.parentElement.classList.toggle('open')">Can I use this with any MT5 broker? <span class="fi">+</span></div><div class="lp-faq-a">Yes! Momentum AI works with any MT5-compatible broker. We partner with AFTT Markets for the best integration but our EA supports all MT5 brokers worldwide.</div></div><div class="lp-faq-item"><div class="lp-faq-q" onclick="this.parentElement.classList.toggle('open')">What is the EA automation? <span class="fi">+</span></div><div class="lp-faq-a">The EA (Expert Advisor) installed in MT5 handles DCA, partial close at TP levels, moving stop loss to breakeven, and trailing stop -- all automatically based on your configured settings.</div></div><div class="lp-faq-item"><div class="lp-faq-q" onclick="this.parentElement.classList.toggle('open')">Is there a free trial? <span class="fi">+</span></div><div class="lp-faq-a">Yes! All plans start with a 7-day free trial. The Basic plan is permanently free with limited signals. Pro and Elite plans include a 7-day full-feature trial with no credit card required.</div></div></div></section>
-<div class="lp-cta"><h2>Your First Step To<br>Financial Freedom Begins Here</h2><p>Join 12,000+ traders who are already using Momentum AI to trade smarter, not harder.</p><div class="lp-cta-btns"><button class="lp-cta-white" onclick="showPage('auth-page')">🚀 Get Started Free</button><button class="lp-cta-outline" onclick="enterApp()">View Live App Demo →</button></div></div>
+<div class="lp-cta"><h2>Your First Step To<br>Financial Freedom Begins Here</h2><p>Join 12,000+ traders who are already using Momentum AI to trade smarter, not harder.</p><div class="lp-cta-btns"><button class="lp-cta-white" onclick="showAuthPage('login')">🚀 Get Started Free</button><button class="lp-cta-outline" onclick="enterApp()">View Live App Demo →</button></div></div>
 <footer class="lp-footer"><div class="lp-footer-grid"><div class="lp-footer-brand"><div style="display:flex;align-items:center;gap:8px;"><div class="lp-slashes"><div class="lp-sl"></div><div class="lp-sl"></div><div class="lp-sl"></div></div><div class="lp-brand">MOMENTUM AI</div></div><p>Trade Beyond Emotion. AI-powered signals, MT5 execution and intelligent trade management for serious traders worldwide.</p></div><div class="lp-footer-col"><h4>Platform</h4><a>Signals</a><a>AI Analysis</a><a>MT5 Trading</a><a>Journal</a><a>News Calendar</a></div><div class="lp-footer-col"><h4>Company</h4><a>About Us</a><a>Blog</a><a>Careers</a><a>Press</a><a>Contact</a></div><div class="lp-footer-col"><h4>Legal</h4><a>Terms of Service</a><a>Privacy Policy</a><a>Risk Disclaimer</a><a>Refund Policy</a></div></div><div class="lp-footer-bottom"><p>© 2026 Momentum AI . All rights reserved . Trading involves risk.</p><span class="lp-tagline">TRADE BEYOND EMOTION</span><p>Powered by Claude AI × AFTT Markets</p></div></footer>
 </div>
 
@@ -3165,6 +3486,31 @@ body{background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;overfl
 
       </div><!-- end content -->
   </main>
+
+  <!-- MOBILE BOTTOM NAVIGATION -->
+  <nav class="mobile-bottom-nav" id="mobile-bottom-nav" style="display:none;">
+    <div class="mob-nav-item active" id="mob-nav-dashboard" onclick="mobNavClick('dashboard',this)">
+      <i class="ti ti-layout-dashboard"></i>
+      <span class="mob-nav-label">Home</span>
+    </div>
+    <div class="mob-nav-item" id="mob-nav-signals" onclick="mobNavClick('signals',this)">
+      <i class="ti ti-broadcast"></i>
+      <span class="mob-nav-label">Signals</span>
+    </div>
+    <div class="mob-nav-item" id="mob-nav-chart" onclick="mobNavClick('chart',this)">
+      <i class="ti ti-chart-candle"></i>
+      <span class="mob-nav-label">Charts</span>
+    </div>
+    <div class="mob-nav-item" id="mob-nav-journal" onclick="mobNavClick('journal',this)">
+      <i class="ti ti-notebook"></i>
+      <span class="mob-nav-label">Journal</span>
+    </div>
+    <div class="mob-nav-item" id="mob-nav-more" onclick="mobNavClick('ea',this)">
+      <i class="ti ti-dots"></i>
+      <span class="mob-nav-label">More</span>
+    </div>
+  </nav>
+
 </div><!-- end app-page -->
 
 <script>
@@ -3707,14 +4053,73 @@ async function handleBroadcast() {
   }
 }
 
+
+// ── MOBILE NAVIGATION ──
+function mobNavClick(section, el) {
+  document.querySelectorAll('.mob-nav-item').forEach(function(i) { i.classList.remove('active'); });
+  el.classList.add('active');
+  showSection(section, el);
+}
+
+// Show/hide mobile nav based on screen size
+function checkMobileNav() {
+  var isMobile = window.innerWidth <= 768;
+  var mobileNav = document.getElementById('mobile-bottom-nav');
+  if (mobileNav) {
+    mobileNav.style.display = isMobile ? 'flex' : 'none';
+  }
+}
+
+window.addEventListener('resize', checkMobileNav);
+document.addEventListener('DOMContentLoaded', function() {
+  checkMobileNav();
+  // Also check when app page becomes active
+  var origShowAppPage = window.showAppPage;
+  window.showAppPage = function() {
+    if (typeof origShowAppPage === 'function') origShowAppPage();
+    setTimeout(checkMobileNav, 100);
+  };
+});
+
+
+function toggleMobileMenu() {
+  var menu = document.getElementById('lp-mobile-menu');
+  var btn = document.getElementById('lp-hamburger-btn');
+  if (menu && btn) {
+    menu.classList.toggle('open');
+    btn.classList.toggle('open');
+    document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : '';
+  }
+}
+function closeMobileMenuAndScroll(sectionId) {
+  toggleMobileMenu();
+  setTimeout(function() {
+    var el = document.getElementById(sectionId);
+    if (el) el.scrollIntoView({behavior:'smooth'});
+  }, 300);
+}
+
 </script>
 
 <script>
 
 function showPage(pageId) {
-  document.querySelectorAll('.lp-page, .page').forEach(p => p.classList.remove('active'));
-  const target = document.getElementById(pageId);
-  if (target) { target.classList.add('active'); window.scrollTo(0, 0); }
+  document.querySelectorAll('.lp-page, .page').forEach(function(p) {
+    p.classList.remove('active');
+    p.style.display = 'none';
+  });
+  var target = document.getElementById(pageId);
+  if (target) {
+    if (pageId === 'auth-page') {
+      target.style.display = 'flex';
+    } else if (pageId === 'app-page') {
+      target.style.display = 'flex';
+    } else {
+      target.style.display = 'block';
+    }
+    target.classList.add('active');
+    window.scrollTo(0, 0);
+  }
 }
 // Override enterApp
 var _enterAppOrig = window.enterApp;
@@ -3921,14 +4326,20 @@ function showScreen(screenId) {
 }
 
 function showAuthPage(tab) {
-  // Hide all screens
-  ['screen-mt5-login','screen-setup-account','screen-pending','screen-analyst'].forEach(id => {
-    const el = document.getElementById(id);
+  // Hide ALL pages including landing
+  ['screen-mt5-login','screen-setup-account','screen-pending','screen-analyst'].forEach(function(id) {
+    var el = document.getElementById(id);
     if (el) { el.style.display = 'none'; el.classList.remove('active'); }
   });
-  document.querySelectorAll('.page').forEach(p => { p.classList.remove('active'); p.style.display = 'none'; });
-  const authPage = document.getElementById('auth-page');
-  if (authPage) { authPage.style.display = 'flex'; authPage.classList.add('active'); }
+  document.querySelectorAll('.page, .lp-page').forEach(function(p) {
+    p.classList.remove('active');
+    p.style.display = 'none';
+  });
+  var authPage = document.getElementById('auth-page');
+  if (authPage) {
+    authPage.style.display = 'flex';
+    authPage.classList.add('active');
+  }
   if (tab) switchTab(tab);
   window.scrollTo(0, 0);
 }
