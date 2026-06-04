@@ -50,6 +50,7 @@ input, select, textarea { font-family: 'Sora', sans-serif; outline: none; }
   flex-direction: column;
   overflow: hidden;
   position: relative;
+  background: var(--bg);
 }
 
 /* ═══════════════════════════════════
@@ -64,8 +65,12 @@ input, select, textarea { font-family: 'Sora', sans-serif; outline: none; }
   position: absolute;
   top: 0; left: 0;
   background: var(--bg);
+  z-index: 1;
 }
-.screen.active { display: flex; }
+.screen.active { 
+  display: flex; 
+  z-index: 10;
+}
 
 /* ═══════════════════════════════════
    PAGE SYSTEM (auth pages)
@@ -958,11 +963,11 @@ input, select, textarea { font-family: 'Sora', sans-serif; outline: none; }
   position: absolute;
   inset: 0;
   background: var(--bg);
-  z-index: 50;
+  z-index: 100;
   flex-direction: column;
   overflow: hidden;
 }
-.sub-screen.active { display: flex; }
+.sub-screen.active { display: flex !important; z-index: 100; }
 .sub-header {
   height: var(--header-h);
   display: flex;
@@ -1186,7 +1191,7 @@ input, select, textarea { font-family: 'Sora', sans-serif; outline: none; }
 <!-- ═══════════════════════════════════
      SCREEN: AUTH
 ═══════════════════════════════════ -->
-<div id="screen-auth" class="screen active">
+<div id="screen-auth" class="screen active" style="display:flex;">
   <div class="auth-card">
     <div class="auth-logo">
       <div class="auth-slashes">
@@ -1270,7 +1275,7 @@ input, select, textarea { font-family: 'Sora', sans-serif; outline: none; }
 <!-- ═══════════════════════════════════
      SCREEN: PENDING APPROVAL
 ═══════════════════════════════════ -->
-<div id="screen-pending" class="screen">
+<div id="screen-pending" class="screen" style="display:none;">
   <div class="pending-card">
     <div class="pending-icon">⏳</div>
     <div class="pending-title">Pending Approval</div>
@@ -1288,7 +1293,7 @@ input, select, textarea { font-family: 'Sora', sans-serif; outline: none; }
 <!-- ═══════════════════════════════════
      SCREEN: MAIN APP
 ═══════════════════════════════════ -->
-<div id="screen-app" class="screen">
+<div id="screen-app" class="screen" style="display:none;">
 
   <!-- HEADER -->
   <div class="app-header" id="app-header">
@@ -2105,7 +2110,7 @@ input, select, textarea { font-family: 'Sora', sans-serif; outline: none; }
 <!-- ═══════════════════════════════════
      ANALYST SCREEN
 ═══════════════════════════════════ -->
-<div id="screen-analyst" class="screen">
+<div id="screen-analyst" class="screen" style="display:none;">
   <div class="app-header">
     <div class="app-header-logo">
       <div class="app-header-slashes">
@@ -2429,9 +2434,16 @@ window._signalStore = {};
 
 // ── SCREEN NAVIGATION ──
 function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+  // Hide ALL screens completely
+  document.querySelectorAll('.screen').forEach(function(s) { 
+    s.classList.remove('active'); 
+    s.style.display = 'none';
+  });
   var t = document.getElementById(id);
-  if(t) { t.classList.add('active'); }
+  if(t) { 
+    t.style.display = 'flex';
+    t.classList.add('active'); 
+  }
 }
 
 // ── AUTH TABS ──
