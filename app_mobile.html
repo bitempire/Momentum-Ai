@@ -960,6 +960,7 @@ input, select, textarea { font-family: 'Sora', sans-serif; outline: none; }
   background: var(--bg);
   z-index: 50;
   flex-direction: column;
+  overflow: hidden;
 }
 .sub-screen.active { display: flex; }
 .sub-header {
@@ -1502,6 +1503,22 @@ input, select, textarea { font-family: 'Sora', sans-serif; outline: none; }
         </div>
         <i class="ti ti-chevron-right more-menu-arrow"></i>
       </div>
+      <div class="more-menu-item" onclick="window.open('mailto:support@momentumai.com','_blank')">
+        <div class="more-menu-icon"><i class="ti ti-headset"></i></div>
+        <div class="more-menu-text">
+          <div class="more-menu-label">Customer Support</div>
+          <div class="more-menu-sub">Get help from our team</div>
+        </div>
+        <i class="ti ti-chevron-right more-menu-arrow"></i>
+      </div>
+      <div class="more-menu-item" onclick="showSubScreen('sub-newsfeed')">
+        <div class="more-menu-icon"><i class="ti ti-news"></i></div>
+        <div class="more-menu-text">
+          <div class="more-menu-label">News Feed</div>
+          <div class="more-menu-sub">Latest market news</div>
+        </div>
+        <i class="ti ti-chevron-right more-menu-arrow"></i>
+      </div>
       <div class="divider-line"></div>
       <div class="more-menu-item danger" onclick="handleLogout()">
         <div class="more-menu-icon"><i class="ti ti-logout"></i></div>
@@ -1591,6 +1608,39 @@ input, select, textarea { font-family: 'Sora', sans-serif; outline: none; }
           <input class="ea-input" type="number" value="10">
         </div>
       </div>
+      <div class="section-card">
+        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Partial Close <span>Config</span></div>
+        <div class="ea-input-row">
+          <label class="ea-input-label">Close % at TP1</label>
+          <input class="ea-input" type="number" value="50" min="10" max="100">
+        </div>
+        <div class="ea-input-row">
+          <label class="ea-input-label">Close % at TP2</label>
+          <input class="ea-input" type="number" value="75" min="10" max="100">
+        </div>
+      </div>
+      <div class="section-card">
+        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Breakeven <span>Config</span></div>
+        <div class="ea-input-row">
+          <label class="ea-input-label">Breakeven Trigger (pips)</label>
+          <input class="ea-input" type="number" value="20">
+        </div>
+        <div class="ea-input-row">
+          <label class="ea-input-label">Breakeven Buffer (pips)</label>
+          <input class="ea-input" type="number" value="2">
+        </div>
+      </div>
+      <div class="section-card">
+        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Default <span>Lot Size</span></div>
+        <div class="ea-input-row">
+          <label class="ea-input-label">Default Volume (Lots)</label>
+          <input class="ea-input" type="number" value="0.01" step="0.01" min="0.01">
+        </div>
+        <div class="ea-input-row">
+          <label class="ea-input-label">Max Volume (Lots)</label>
+          <input class="ea-input" type="number" value="1.0" step="0.01">
+        </div>
+      </div>
       <button class="red-btn">SAVE SETTINGS</button>
     </div>
   </div>
@@ -1648,6 +1698,40 @@ input, select, textarea { font-family: 'Sora', sans-serif; outline: none; }
     </div>
     <div class="sub-content">
       <div class="empty-state"><i class="ti ti-radar"></i>Scanner coming soon — live indicator integration in Phase 9</div>
+    </div>
+  </div>
+
+  <!-- News Feed -->
+  <div id="sub-newsfeed" class="sub-screen">
+    <div class="sub-header">
+      <button class="sub-back" onclick="hideSubScreen('sub-newsfeed')"><i class="ti ti-arrow-left"></i></button>
+      <div class="sub-title">NEWS FEED</div>
+    </div>
+    <div class="sub-content">
+      <div class="section-card">
+        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Market <span>News</span></div>
+        <div class="news-item">
+          <div class="news-impact high"></div>
+          <div class="news-info">
+            <div class="news-event">Gold surges amid Fed uncertainty</div>
+            <div class="news-meta">Reuters · 2h ago</div>
+          </div>
+        </div>
+        <div class="news-item">
+          <div class="news-impact medium"></div>
+          <div class="news-info">
+            <div class="news-event">Nasdaq hits new all-time high</div>
+            <div class="news-meta">Bloomberg · 4h ago</div>
+          </div>
+        </div>
+        <div class="news-item">
+          <div class="news-impact high"></div>
+          <div class="news-info">
+            <div class="news-event">USD weakens on inflation data</div>
+            <div class="news-meta">CNBC · 6h ago</div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
