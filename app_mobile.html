@@ -1392,139 +1392,366 @@ input, select, textarea { font-family: 'Sora', sans-serif; outline: none; }
         <button class="chart-tf" onclick="switchTF('D',this)">1D</button>
       </div>
       <div class="chart-container" id="mob-tv-container"></div>
-      <div class="section-card">
-        <div class="section-title" style="font-size:12px;margin-bottom:10px;">Order Book</div>
-        <div id="mob-orderbook" style="font-size:12px;color:var(--text2);text-align:center;padding:16px;">Loading order book...</div>
+
+      <!-- LIVE RUNNING POSITIONS -->
+      <div class="section-card" style="margin-top:12px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <div class="section-title" style="font-size:12px;margin-bottom:0;">Live <span>Positions</span></div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--green);font-weight:700;">
+            <div style="width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite;"></div>
+            MT5 LIVE
+          </div>
+        </div>
+        <div id="mob-live-positions">
+          <div class="trade-item">
+            <div class="trade-icon win">📈</div>
+            <div class="trade-info">
+              <div class="trade-pair">XAUUSD <span style="font-size:10px;color:var(--green);font-weight:700;">BUY</span></div>
+              <div class="trade-meta">Entry: 2,318.40 · 0.1 lot · 2h 14m</div>
+            </div>
+            <div>
+              <div class="trade-pnl win">+$284</div>
+              <div style="font-size:10px;color:var(--text3);text-align:right;">+142 pts</div>
+            </div>
+          </div>
+          <div class="trade-item">
+            <div class="trade-icon win">📈</div>
+            <div class="trade-info">
+              <div class="trade-pair">NAS100 <span style="font-size:10px;color:var(--green);font-weight:700;">BUY</span></div>
+              <div class="trade-meta">Entry: 19,842.0 · 0.5 lot · 45m</div>
+            </div>
+            <div>
+              <div class="trade-pnl win">+$156</div>
+              <div style="font-size:10px;color:var(--text3);text-align:right;">+62 pts</div>
+            </div>
+          </div>
+          <div style="text-align:center;font-size:11px;color:var(--text3);padding:8px 0;">
+            Connect MT5 VPS to see live positions
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:10px 0 0;border-top:1px solid var(--border);margin-top:10px;">
+          <div style="font-size:11px;color:var(--text2);">Total P&L Today</div>
+          <div style="font-size:13px;font-weight:800;color:var(--green);">+$440</div>
+        </div>
+      </div>
+
+      <!-- PAST SIGNAL HISTORY -->
+      <div class="section-card" style="margin-top:12px;">
+        <div class="section-title" style="font-size:12px;margin-bottom:12px;">Past <span>Signals</span></div>
+        <div id="mob-past-signals">
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg3);border-radius:10px;">
+              <div style="width:36px;height:36px;border-radius:9px;background:rgba(0,200,122,0.1);display:flex;align-items:center;justify-content:center;font-size:14px;">📈</div>
+              <div style="flex:1;"><div style="font-size:13px;font-weight:700;color:var(--text);">XAUUSD BUY</div><div style="font-size:11px;color:var(--text3);">Entry: 2,295 · TP Hit ✓</div></div>
+              <div style="text-align:right;"><div style="font-size:12px;font-weight:800;color:var(--green);">+245 pts</div><div style="font-size:10px;color:var(--text3);">2d ago</div></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg3);border-radius:10px;">
+              <div style="width:36px;height:36px;border-radius:9px;background:rgba(0,200,122,0.1);display:flex;align-items:center;justify-content:center;font-size:14px;">📈</div>
+              <div style="flex:1;"><div style="font-size:13px;font-weight:700;color:var(--text);">NAS100 BUY</div><div style="font-size:11px;color:var(--text3);">Entry: 19,620 · TP Hit ✓</div></div>
+              <div style="text-align:right;"><div style="font-size:12px;font-weight:800;color:var(--green);">+182 pts</div><div style="font-size:10px;color:var(--text3);">3d ago</div></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg3);border-radius:10px;">
+              <div style="width:36px;height:36px;border-radius:9px;background:rgba(255,30,60,0.08);display:flex;align-items:center;justify-content:center;font-size:14px;">📉</div>
+              <div style="flex:1;"><div style="font-size:13px;font-weight:700;color:var(--text);">EURUSD SELL</div><div style="font-size:11px;color:var(--text3);">Entry: 1.0892 · SL Hit ✗</div></div>
+              <div style="text-align:right;"><div style="font-size:12px;font-weight:800;color:var(--red);">-38 pts</div><div style="font-size:10px;color:var(--text3);">4d ago</div></div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
     <!-- ── TAB: JOURNAL ── -->
     <div id="tab-journal" class="app-tab" style="display:none;">
-      <div class="section-title" style="margin-bottom:12px;">Trading <span>Journal</span></div>
-      <div class="journal-stats">
-        <div class="jstat">
-          <div class="jstat-val green">94%</div>
-          <div class="jstat-lbl">WIN RATE</div>
+
+      <!-- Header stats -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;">
+        <div class="section-card" style="padding:10px;text-align:center;">
+          <div style="font-size:9px;color:var(--text3);letter-spacing:.8px;text-transform:uppercase;margin-bottom:4px;">Balance</div>
+          <div style="font-family:'Orbitron',sans-serif;font-size:14px;font-weight:800;color:var(--text);">$24,530</div>
         </div>
-        <div class="jstat">
-          <div class="jstat-val green">+$2,847</div>
-          <div class="jstat-lbl">THIS MONTH</div>
+        <div class="section-card" style="padding:10px;text-align:center;">
+          <div style="font-size:9px;color:var(--text3);letter-spacing:.8px;text-transform:uppercase;margin-bottom:4px;">Growth</div>
+          <div style="font-family:'Orbitron',sans-serif;font-size:14px;font-weight:800;color:var(--green);">+24.5%</div>
         </div>
-        <div class="jstat">
-          <div class="jstat-val">47</div>
-          <div class="jstat-lbl">TOTAL TRADES</div>
-        </div>
-      </div>
-      <div class="section-card">
-        <div class="section-title" style="font-size:12px;margin-bottom:10px;">Recent Trades</div>
-        <div class="trade-item">
-          <div class="trade-icon win">📈</div>
-          <div class="trade-info">
-            <div class="trade-pair">XAUUSD</div>
-            <div class="trade-meta">BUY · 0.1 lot · 2h ago</div>
-          </div>
-          <div class="trade-pnl win">+$284</div>
-        </div>
-        <div class="trade-item">
-          <div class="trade-icon win">📈</div>
-          <div class="trade-info">
-            <div class="trade-pair">NAS100</div>
-            <div class="trade-meta">BUY · 0.5 lot · 5h ago</div>
-          </div>
-          <div class="trade-pnl win">+$612</div>
-        </div>
-        <div class="trade-item">
-          <div class="trade-icon loss">📉</div>
-          <div class="trade-info">
-            <div class="trade-pair">EURUSD</div>
-            <div class="trade-meta">SELL · 0.2 lot · 1d ago</div>
-          </div>
-          <div class="trade-pnl loss">-$48</div>
-        </div>
-        <div class="trade-item">
-          <div class="trade-icon win">📈</div>
-          <div class="trade-info">
-            <div class="trade-pair">BTCUSD</div>
-            <div class="trade-meta">BUY · 0.01 lot · 2d ago</div>
-          </div>
-          <div class="trade-pnl win">+$190</div>
+        <div class="section-card" style="padding:10px;text-align:center;">
+          <div style="font-size:9px;color:var(--text3);letter-spacing:.8px;text-transform:uppercase;margin-bottom:4px;">Month</div>
+          <div style="font-family:'Orbitron',sans-serif;font-size:14px;font-weight:800;color:var(--green);">+8.4%</div>
         </div>
       </div>
+
+      <!-- Trader Performance Score -->
+      <div class="section-card" style="margin-bottom:12px;">
+        <div class="section-title" style="font-size:13px;margin-bottom:14px;">Trader <span>Performance Score</span></div>
+        <div style="display:flex;align-items:center;gap:16px;margin-bottom:14px;">
+          <!-- Score ring -->
+          <div style="position:relative;width:80px;height:80px;flex-shrink:0;">
+            <svg width="80" height="80" viewBox="0 0 80 80" style="transform:rotate(-90deg);">
+              <circle cx="40" cy="40" r="34" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="8"/>
+              <circle cx="40" cy="40" r="34" fill="none" stroke="url(#scoreGrad)" stroke-width="8" stroke-linecap="round" stroke-dasharray="190 213"/>
+            </svg>
+            <defs><linearGradient id="scoreGrad" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#FF1E3C"/><stop offset="100%" stop-color="#C40024"/></linearGradient></defs>
+            <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+              <div style="font-family:'Orbitron',sans-serif;font-size:20px;font-weight:900;color:var(--text);">89</div>
+              <div style="font-size:9px;color:var(--text3);">/100</div>
+            </div>
+          </div>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+              <div style="width:8px;height:8px;border-radius:50%;background:var(--green);"></div>
+              <div style="font-size:13px;font-weight:700;color:var(--green);">Consistent Trader</div>
+            </div>
+            <div style="font-size:12px;color:var(--text2);line-height:1.6;">Excellent trading consistency. Keep it up!</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
+          <div style="text-align:center;"><div style="font-size:15px;font-weight:800;color:var(--red);">67%</div><div style="font-size:9px;color:var(--text3);margin-top:2px;">Win Rate</div></div>
+          <div style="text-align:center;"><div style="font-size:15px;font-weight:800;color:var(--text);">88%</div><div style="font-size:9px;color:var(--text3);margin-top:2px;">Discipline</div></div>
+          <div style="text-align:center;"><div style="font-size:15px;font-weight:800;color:var(--text);">84%</div><div style="font-size:9px;color:var(--text3);margin-top:2px;">Psychology</div></div>
+          <div style="text-align:center;"><div style="font-size:15px;font-weight:800;color:var(--text);">82%</div><div style="font-size:9px;color:var(--text3);margin-top:2px;">Risk Mgmt</div></div>
+        </div>
+      </div>
+
+      <!-- Stats cards -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;">
+        <div class="section-card" style="padding:10px;">
+          <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Total Trades</div>
+          <div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:800;color:var(--text);">128</div>
+        </div>
+        <div class="section-card" style="padding:10px;">
+          <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Win Rate</div>
+          <div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:800;color:var(--green);">67%</div>
+        </div>
+        <div class="section-card" style="padding:10px;">
+          <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Net Profit</div>
+          <div style="font-family:'Orbitron',sans-serif;font-size:16px;font-weight:800;color:var(--green);">+$2,430</div>
+        </div>
+        <div class="section-card" style="padding:10px;">
+          <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Profit Factor</div>
+          <div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:800;color:var(--text);">2.4</div>
+        </div>
+        <div class="section-card" style="padding:10px;">
+          <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Discipline</div>
+          <div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:800;color:var(--text);">88%</div>
+        </div>
+        <div class="section-card" style="padding:10px;">
+          <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Max Drawdown</div>
+          <div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:800;color:var(--red);">8.4%</div>
+        </div>
+      </div>
+
+      <!-- Account Growth Chart -->
+      <div class="section-card" style="margin-bottom:12px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <div class="section-title" style="font-size:13px;margin-bottom:0;">Account <span>Growth</span></div>
+          <div style="display:flex;gap:4px;">
+            <button onclick="this.parentElement.querySelectorAll('button').forEach(b=>b.style.background='transparent');this.style.background='var(--red)';this.style.color='#fff';" style="padding:4px 8px;border-radius:5px;font-size:9px;font-weight:700;border:1px solid var(--border);color:var(--text3);background:transparent;cursor:pointer;">7D</button>
+            <button onclick="this.parentElement.querySelectorAll('button').forEach(b=>{b.style.background='transparent';b.style.color='var(--text3)'});this.style.background='var(--red)';this.style.color='#fff';" style="padding:4px 8px;border-radius:5px;font-size:9px;font-weight:700;border:1px solid var(--red);color:#fff;background:var(--red);cursor:pointer;">30D</button>
+            <button onclick="this.parentElement.querySelectorAll('button').forEach(b=>{b.style.background='transparent';b.style.color='var(--text3)'});this.style.background='var(--red)';this.style.color='#fff';" style="padding:4px 8px;border-radius:5px;font-size:9px;font-weight:700;border:1px solid var(--border);color:var(--text3);background:transparent;cursor:pointer;">ALL</button>
+          </div>
+        </div>
+        <canvas id="growth-chart" style="width:100%;height:140px;"></canvas>
+        <div style="display:flex;justify-content:space-between;margin-top:8px;">
+          <div style="font-size:10px;color:var(--text3);">May 8</div>
+          <div style="font-size:10px;color:var(--text3);">May 22</div>
+          <div style="font-size:11px;font-weight:700;color:var(--red);">$24,530</div>
+        </div>
+      </div>
+
+      <!-- Journal Analytics -->
+      <div class="section-card" style="margin-bottom:12px;">
+        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Journal <span>Analytics</span></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <!-- Trading Statistics -->
+          <div>
+            <div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:8px;">Trading Statistics</div>
+            <div style="display:flex;flex-direction:column;gap:5px;">
+              <div style="display:flex;justify-content:space-between;"><span style="font-size:11px;color:var(--text3);">Avg Win</span><span style="font-size:11px;font-weight:700;color:var(--green);">+$68.40</span></div>
+              <div style="display:flex;justify-content:space-between;"><span style="font-size:11px;color:var(--text3);">Avg Loss</span><span style="font-size:11px;font-weight:700;color:var(--red);">-$42.10</span></div>
+              <div style="display:flex;justify-content:space-between;"><span style="font-size:11px;color:var(--text3);">Risk:Reward</span><span style="font-size:11px;font-weight:700;color:var(--text);">1:2.1</span></div>
+              <div style="display:flex;justify-content:space-between;"><span style="font-size:11px;color:var(--text3);">Best Trade</span><span style="font-size:11px;font-weight:700;color:var(--green);">+$340</span></div>
+              <div style="display:flex;justify-content:space-between;"><span style="font-size:11px;color:var(--text3);">Worst Trade</span><span style="font-size:11px;font-weight:700;color:var(--red);">-$120</span></div>
+              <div style="display:flex;justify-content:space-between;"><span style="font-size:11px;color:var(--text3);">Hold Time</span><span style="font-size:11px;font-weight:700;color:var(--text);">6h 22m</span></div>
+            </div>
+          </div>
+          <!-- Asset Performance -->
+          <div>
+            <div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:8px;">Asset Performance</div>
+            <div style="display:flex;flex-direction:column;gap:7px;">
+              <div><div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="font-size:11px;color:var(--text3);">Forex</span><span style="font-size:11px;font-weight:700;color:var(--text);">68%</span></div><div style="height:4px;background:var(--surface2);border-radius:2px;"><div style="width:68%;height:100%;background:var(--grad);border-radius:2px;"></div></div></div>
+              <div><div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="font-size:11px;color:var(--text3);">Gold</span><span style="font-size:11px;font-weight:700;color:var(--text);">61%</span></div><div style="height:4px;background:var(--surface2);border-radius:2px;"><div style="width:61%;height:100%;background:var(--grad);border-radius:2px;"></div></div></div>
+              <div><div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="font-size:11px;color:var(--text3);">Crypto</span><span style="font-size:11px;font-weight:700;color:var(--text);">54%</span></div><div style="height:4px;background:var(--surface2);border-radius:2px;"><div style="width:54%;height:100%;background:var(--grad);border-radius:2px;"></div></div></div>
+              <div><div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="font-size:11px;color:var(--text3);">Indices</span><span style="font-size:11px;font-weight:700;color:var(--text);">45%</span></div><div style="height:4px;background:var(--surface2);border-radius:2px;"><div style="width:45%;height:100%;background:var(--grad);border-radius:2px;"></div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Trading Discipline -->
+      <div class="section-card" style="margin-bottom:12px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <div class="section-title" style="font-size:13px;margin-bottom:0;">Trading <span>Discipline</span></div>
+          <div style="text-align:right;"><div style="font-family:'Orbitron',sans-serif;font-size:20px;font-weight:800;color:var(--red);">88%</div><div style="font-size:9px;color:var(--text3);">Overall Score</div></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="display:flex;align-items:center;gap:8px;"><div style="width:20px;height:20px;border-radius:50%;background:rgba(0,200,122,0.15);display:flex;align-items:center;justify-content:center;font-size:11px;">✓</div><span style="font-size:13px;color:var(--text);">Used Stop Loss</span></div>
+          <div style="display:flex;align-items:center;gap:8px;"><div style="width:20px;height:20px;border-radius:50%;background:rgba(0,200,122,0.15);display:flex;align-items:center;justify-content:center;font-size:11px;">✓</div><span style="font-size:13px;color:var(--text);">Followed Setup</span></div>
+          <div style="display:flex;align-items:center;gap:8px;"><div style="width:20px;height:20px;border-radius:50%;background:rgba(255,30,60,0.1);display:flex;align-items:center;justify-content:center;font-size:11px;">✗</div><span style="font-size:13px;color:var(--text);">Overleveraged</span></div>
+          <div style="display:flex;align-items:center;gap:8px;"><div style="width:20px;height:20px;border-radius:50%;background:rgba(0,200,122,0.15);display:flex;align-items:center;justify-content:center;font-size:11px;">✓</div><span style="font-size:13px;color:var(--text);">Risk Under 2%</span></div>
+          <div style="display:flex;align-items:center;gap:8px;"><div style="width:20px;height:20px;border-radius:50%;background:rgba(0,200,122,0.15);display:flex;align-items:center;justify-content:center;font-size:11px;">✓</div><span style="font-size:13px;color:var(--text);">No Revenge Trading</span></div>
+        </div>
+      </div>
+
+      <!-- Emotion Tracker -->
+      <div class="section-card" style="margin-bottom:12px;">
+        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Emotion <span>Tracker</span></div>
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div style="flex:1;display:flex;flex-direction:column;gap:7px;">
+            <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:14px;">😎</span><span style="font-size:12px;color:var(--text2);flex:1;">Calm</span><span style="font-size:12px;font-weight:700;color:var(--text);">36%</span></div>
+            <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:14px;">😊</span><span style="font-size:12px;color:var(--text2);flex:1;">Confident</span><span style="font-size:12px;font-weight:700;color:var(--text);">28%</span></div>
+            <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:14px;">😐</span><span style="font-size:12px;color:var(--text2);flex:1;">Neutral</span><span style="font-size:12px;font-weight:700;color:var(--text);">18%</span></div>
+            <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:14px;">😰</span><span style="font-size:12px;color:var(--text2);flex:1;">Fear</span><span style="font-size:12px;font-weight:700;color:var(--text);">10%</span></div>
+            <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:14px;">😤</span><span style="font-size:12px;color:var(--text2);flex:1;">Revenge</span><span style="font-size:12px;font-weight:700;color:var(--text);">8%</span></div>
+          </div>
+          <canvas id="emotion-chart" width="90" height="90"></canvas>
+        </div>
+        <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:12px;color:var(--text2);">Overall Emotion Score</span>
+          <span style="font-family:'Orbitron',sans-serif;font-size:16px;font-weight:800;color:var(--red);">84%</span>
+        </div>
+      </div>
+
+      <!-- MAI Insight -->
+      <div style="background:rgba(255,30,60,0.04);border:1px solid rgba(255,30,60,0.15);border-left:3px solid var(--red);border-radius:12px;padding:14px;margin-bottom:12px;">
+        <div style="display:flex;align-items:center;gap:7px;margin-bottom:10px;">
+          <i class="ti ti-sparkles" style="color:var(--red);font-size:16px;"></i>
+          <div style="font-size:13px;font-weight:800;color:var(--red);">Momentum AI Insight</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:7px;">
+          <div style="display:flex;align-items:flex-start;gap:7px;"><i class="ti ti-circle-dot" style="color:var(--red);font-size:13px;margin-top:2px;flex-shrink:0;"></i><span style="font-size:12px;color:var(--text2);line-height:1.6;">Win rate improves by 18% when trading Gold during London Session.</span></div>
+          <div style="display:flex;align-items:flex-start;gap:7px;"><i class="ti ti-circle-dot" style="color:var(--red);font-size:13px;margin-top:2px;flex-shrink:0;"></i><span style="font-size:12px;color:var(--text2);line-height:1.6;">Most losses occur when risk exceeds 3%.</span></div>
+          <div style="display:flex;align-items:flex-start;gap:7px;"><i class="ti ti-circle-dot" style="color:var(--red);font-size:13px;margin-top:2px;flex-shrink:0;"></i><span style="font-size:12px;color:var(--text2);line-height:1.6;">Trend Continuation setups generate the highest return.</span></div>
+        </div>
+      </div>
+
+      <!-- Recent Trades Table -->
+      <div class="section-card" style="margin-bottom:12px;">
+        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Recent <span>Trades</span></div>
+        <!-- Table header -->
+        <div style="display:grid;grid-template-columns:50px 1fr 50px 50px;gap:6px;padding:6px 0;border-bottom:1px solid var(--border);margin-bottom:6px;">
+          <div style="font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;">Date</div>
+          <div style="font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;">Asset</div>
+          <div style="font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;">P&L</div>
+          <div style="font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;">Result</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div style="display:grid;grid-template-columns:50px 1fr 50px 50px;gap:6px;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);">
+            <div style="font-size:11px;color:var(--text3);">Jun 05</div>
+            <div><div style="font-size:12px;font-weight:700;color:var(--text);">XAUUSD</div><div style="font-size:10px;color:var(--green);">BUY · 1:2.1</div></div>
+            <div style="font-size:12px;font-weight:800;color:var(--green);">+$273</div>
+            <div style="font-size:10px;font-weight:700;padding:2px 6px;background:rgba(0,200,122,0.1);color:var(--green);border-radius:4px;text-align:center;">Win</div>
+          </div>
+          <div style="display:grid;grid-template-columns:50px 1fr 50px 50px;gap:6px;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);">
+            <div style="font-size:11px;color:var(--text3);">Jun 05</div>
+            <div><div style="font-size:12px;font-weight:700;color:var(--text);">EURUSD</div><div style="font-size:10px;color:var(--red);">SELL · 1:1.8</div></div>
+            <div style="font-size:12px;font-weight:800;color:var(--green);">+$162</div>
+            <div style="font-size:10px;font-weight:700;padding:2px 6px;background:rgba(0,200,122,0.1);color:var(--green);border-radius:4px;text-align:center;">Win</div>
+          </div>
+          <div style="display:grid;grid-template-columns:50px 1fr 50px 50px;gap:6px;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);">
+            <div style="font-size:11px;color:var(--text3);">Jun 04</div>
+            <div><div style="font-size:12px;font-weight:700;color:var(--text);">GBPUSD</div><div style="font-size:10px;color:var(--green);">BUY · 1:1.5</div></div>
+            <div style="font-size:12px;font-weight:800;color:var(--red);">-$125</div>
+            <div style="font-size:10px;font-weight:700;padding:2px 6px;background:rgba(255,30,60,0.08);color:var(--red);border-radius:4px;text-align:center;">Loss</div>
+          </div>
+          <div style="display:grid;grid-template-columns:50px 1fr 50px 50px;gap:6px;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);">
+            <div style="font-size:11px;color:var(--text3);">Jun 04</div>
+            <div><div style="font-size:12px;font-weight:700;color:var(--text);">BTCUSD</div><div style="font-size:10px;color:var(--red);">SELL · 1:2.3</div></div>
+            <div style="font-size:12px;font-weight:800;color:var(--green);">+$253</div>
+            <div style="font-size:10px;font-weight:700;padding:2px 6px;background:rgba(0,200,122,0.1);color:var(--green);border-radius:4px;text-align:center;">Win</div>
+          </div>
+          <div style="display:grid;grid-template-columns:50px 1fr 50px 50px;gap:6px;align-items:center;padding:8px 0;">
+            <div style="font-size:11px;color:var(--text3);">Jun 03</div>
+            <div><div style="font-size:12px;font-weight:700;color:var(--text);">XAUUSD</div><div style="font-size:10px;color:var(--green);">BUY · 1:1.2</div></div>
+            <div style="font-size:12px;font-weight:800;color:var(--red);">-$78</div>
+            <div style="font-size:10px;font-weight:700;padding:2px 6px;background:rgba(255,30,60,0.08);color:var(--red);border-radius:4px;text-align:center;">Loss</div>
+          </div>
+        </div>
+        <div style="text-align:center;font-size:11px;color:var(--text3);margin-top:10px;padding-top:10px;border-top:1px solid var(--border);">Showing latest 5 of 128 trades</div>
+      </div>
+
+      <!-- Bottom stats row -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
+        <div class="section-card" style="padding:12px;">
+          <div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:4px;">Best Pair</div>
+          <div style="font-family:'Orbitron',sans-serif;font-size:14px;font-weight:800;color:var(--text);">XAUUSD</div>
+        </div>
+        <div class="section-card" style="padding:12px;">
+          <div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:4px;">Best Session</div>
+          <div style="font-family:'Orbitron',sans-serif;font-size:14px;font-weight:800;color:var(--text);">London</div>
+        </div>
+        <div class="section-card" style="padding:12px;">
+          <div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:4px;">Win Streak</div>
+          <div style="font-family:'Orbitron',sans-serif;font-size:14px;font-weight:800;color:var(--green);">5 Wins</div>
+        </div>
+        <div class="section-card" style="padding:12px;">
+          <div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:4px;">Monthly Return</div>
+          <div style="font-family:'Orbitron',sans-serif;font-size:14px;font-weight:800;color:var(--green);">+18.4%</div>
+        </div>
+      </div>
+
     </div>
 
     <!-- ── TAB: MORE ── -->
     <div id="tab-more" class="app-tab" style="display:none;">
       <div class="section-title" style="margin-bottom:14px;">More <span>Options</span></div>
+      <div class="more-menu-item" onclick="showSubScreen('sub-profile')">
+        <div class="more-menu-icon"><i class="ti ti-user-circle"></i></div>
+        <div class="more-menu-text"><div class="more-menu-label">My Profile</div><div class="more-menu-sub">Account details & MT5 info</div></div>
+        <i class="ti ti-chevron-right more-menu-arrow"></i>
+      </div>
       <div class="more-menu-item" onclick="showSubScreen('sub-ea')">
         <div class="more-menu-icon"><i class="ti ti-robot"></i></div>
-        <div class="more-menu-text">
-          <div class="more-menu-label">Smart Trading Tools</div>
-          <div class="more-menu-sub">EA settings, DCA, trailing stop</div>
-        </div>
+        <div class="more-menu-text"><div class="more-menu-label">Smart Trading Tools</div><div class="more-menu-sub">EA settings, DCA, trailing stop</div></div>
         <i class="ti ti-chevron-right more-menu-arrow"></i>
       </div>
       <div class="more-menu-item" onclick="showSubScreen('sub-news')">
         <div class="more-menu-icon"><i class="ti ti-calendar-event"></i></div>
-        <div class="more-menu-text">
-          <div class="more-menu-label">News Calendar</div>
-          <div class="more-menu-sub">Economic events & alerts</div>
-        </div>
+        <div class="more-menu-text"><div class="more-menu-label">News Calendar</div><div class="more-menu-sub">Economic events & alerts</div></div>
         <i class="ti ti-chevron-right more-menu-arrow"></i>
       </div>
       <div class="more-menu-item" onclick="showSubScreen('sub-scanner')">
         <div class="more-menu-icon"><i class="ti ti-radar"></i></div>
-        <div class="more-menu-text">
-          <div class="more-menu-label">Market Scanner</div>
-          <div class="more-menu-sub">AI-powered market analysis</div>
-        </div>
+        <div class="more-menu-text"><div class="more-menu-label">MAI Scanner</div><div class="more-menu-sub">AI-powered market scanner</div></div>
         <i class="ti ti-chevron-right more-menu-arrow"></i>
       </div>
       <div class="more-menu-item" onclick="showSubScreen('sub-leaderboard')">
         <div class="more-menu-icon"><i class="ti ti-trophy"></i></div>
-        <div class="more-menu-text">
-          <div class="more-menu-label">Leaderboard</div>
-          <div class="more-menu-sub">Top performing traders</div>
-        </div>
+        <div class="more-menu-text"><div class="more-menu-label">Leaderboard</div><div class="more-menu-sub">Top performing traders</div></div>
         <i class="ti ti-chevron-right more-menu-arrow"></i>
       </div>
       <div class="more-menu-item" onclick="showSubScreen('sub-analysis')">
         <div class="more-menu-icon"><i class="ti ti-brain"></i></div>
-        <div class="more-menu-text">
-          <div class="more-menu-label">AI Analysis</div>
-          <div class="more-menu-sub">Claude AI market intelligence</div>
-        </div>
-        <i class="ti ti-chevron-right more-menu-arrow"></i>
-      </div>
-      <div class="more-menu-item" id="admin-menu-item" style="display:none;" onclick="showSubScreen('sub-admin')">
-        <div class="more-menu-icon"><i class="ti ti-shield-lock"></i></div>
-        <div class="more-menu-text">
-          <div class="more-menu-label">Admin Panel</div>
-          <div class="more-menu-sub">Manage users & signals</div>
-        </div>
-        <i class="ti ti-chevron-right more-menu-arrow"></i>
-      </div>
-      <div class="more-menu-item" onclick="window.open('mailto:support@momentumai.com','_blank')">
-        <div class="more-menu-icon"><i class="ti ti-headset"></i></div>
-        <div class="more-menu-text">
-          <div class="more-menu-label">Customer Support</div>
-          <div class="more-menu-sub">Get help from our team</div>
-        </div>
+        <div class="more-menu-text"><div class="more-menu-label">MAI Analysis</div><div class="more-menu-sub">Claude AI market intelligence</div></div>
         <i class="ti ti-chevron-right more-menu-arrow"></i>
       </div>
       <div class="more-menu-item" onclick="showSubScreen('sub-newsfeed')">
         <div class="more-menu-icon"><i class="ti ti-news"></i></div>
-        <div class="more-menu-text">
-          <div class="more-menu-label">News Feed</div>
-          <div class="more-menu-sub">Latest market news</div>
-        </div>
+        <div class="more-menu-text"><div class="more-menu-label">News Feed</div><div class="more-menu-sub">Latest market news</div></div>
+        <i class="ti ti-chevron-right more-menu-arrow"></i>
+      </div>
+      <div class="more-menu-item" onclick="showSubScreen('sub-support')">
+        <div class="more-menu-icon"><i class="ti ti-headset"></i></div>
+        <div class="more-menu-text"><div class="more-menu-label">Customer Support</div><div class="more-menu-sub">Get help from our team</div></div>
+        <i class="ti ti-chevron-right more-menu-arrow"></i>
+      </div>
+      <div class="more-menu-item" id="admin-menu-item" style="display:none;" onclick="showSubScreen('sub-admin')">
+        <div class="more-menu-icon"><i class="ti ti-shield-lock"></i></div>
+        <div class="more-menu-text"><div class="more-menu-label">Admin Panel</div><div class="more-menu-sub">Manage users & signals</div></div>
         <i class="ti ti-chevron-right more-menu-arrow"></i>
       </div>
       <div class="divider-line"></div>
       <div class="more-menu-item danger" onclick="handleLogout()">
         <div class="more-menu-icon"><i class="ti ti-logout"></i></div>
-        <div class="more-menu-text">
-          <div class="more-menu-label">Sign Out</div>
-        </div>
+        <div class="more-menu-text"><div class="more-menu-label">Sign Out</div></div>
       </div>
     </div>
 
@@ -1560,85 +1787,112 @@ input, select, textarea { font-family: 'Sora', sans-serif; outline: none; }
   <div id="sub-ea" class="sub-screen">
     <div class="sub-header">
       <button class="sub-back" onclick="hideSubScreen('sub-ea')"><i class="ti ti-arrow-left"></i></button>
-      <div class="sub-title">SMART TRADING TOOLS</div>
+      <div class="sub-title">EA SETTINGS</div>
     </div>
     <div class="sub-content">
+      <!-- Lot Size & Risk -->
       <div class="section-card">
-        <div class="section-title" style="font-size:13px;margin-bottom:12px;">EA <span>Settings</span></div>
+        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Lot Size <span>& Risk</span></div>
         <div class="ea-toggle-row">
-          <div><div class="ea-toggle-label">DCA (Dollar Cost Average)</div><div class="ea-toggle-sub">Auto add positions on drawdown</div></div>
-          <div class="toggle" onclick="this.classList.toggle('on')"></div>
-        </div>
-        <div class="ea-toggle-row">
-          <div><div class="ea-toggle-label">Trailing Stop</div><div class="ea-toggle-sub">Lock in profits as price moves</div></div>
+          <div><div class="ea-toggle-label">Auto Risk Mode</div><div class="ea-toggle-sub">Calculate lot size from % of balance</div></div>
           <div class="toggle on" onclick="this.classList.toggle('on')"></div>
         </div>
-        <div class="ea-toggle-row">
-          <div><div class="ea-toggle-label">Partial Close</div><div class="ea-toggle-sub">Close 50% at TP1 automatically</div></div>
-          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        <div class="ea-input-row" style="margin-top:12px;">
+          <label class="ea-input-label">Risk Per Trade (%)</label>
+          <input class="ea-input" type="number" value="1.0" step="0.1" min="0.1" max="10">
         </div>
+        <div class="ea-input-row">
+          <label class="ea-input-label">Max Total Lots</label>
+          <input class="ea-input" type="number" value="0.50" step="0.01">
+        </div>
+      </div>
+      <!-- Entry & DCA -->
+      <div class="section-card">
+        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Entry <span>& DCA</span></div>
         <div class="ea-toggle-row">
-          <div><div class="ea-toggle-label">Breakeven</div><div class="ea-toggle-sub">Move SL to entry after X pips</div></div>
+          <div><div class="ea-toggle-label">Enable DCA</div><div class="ea-toggle-sub">Auto add positions on drawdown</div></div>
           <div class="toggle" onclick="this.classList.toggle('on')"></div>
         </div>
-      </div>
-      <div class="section-card">
-        <div class="section-title" style="font-size:13px;margin-bottom:12px;">DCA <span>Configuration</span></div>
-        <div class="ea-input-row">
-          <label class="ea-input-label">Max DCA Positions</label>
-          <input class="ea-input" type="number" value="3" min="1" max="10">
-        </div>
-        <div class="ea-input-row">
-          <label class="ea-input-label">Lot Multiplier</label>
-          <input class="ea-input" type="number" value="1.5" step="0.1">
-        </div>
-        <div class="ea-input-row">
-          <label class="ea-input-label">DCA Trigger (pips)</label>
-          <input class="ea-input" type="number" value="50">
-        </div>
-      </div>
-      <div class="section-card">
-        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Trailing <span>Stop Config</span></div>
-        <div class="ea-input-row">
-          <label class="ea-input-label">Activation (pips)</label>
-          <input class="ea-input" type="number" value="20">
-        </div>
-        <div class="ea-input-row">
-          <label class="ea-input-label">Step (pips)</label>
+        <div class="ea-input-row" style="margin-top:12px;">
+          <label class="ea-input-label">Points Between Each Position</label>
           <input class="ea-input" type="number" value="10">
         </div>
-      </div>
-      <div class="section-card">
-        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Partial Close <span>Config</span></div>
         <div class="ea-input-row">
-          <label class="ea-input-label">Close % at TP1</label>
-          <input class="ea-input" type="number" value="50" min="10" max="100">
-        </div>
-        <div class="ea-input-row">
-          <label class="ea-input-label">Close % at TP2</label>
-          <input class="ea-input" type="number" value="75" min="10" max="100">
+          <label class="ea-input-label">Max Positions Per Signal</label>
+          <input class="ea-input" type="number" value="4" min="1" max="10">
         </div>
       </div>
+      <!-- Stop Loss Behaviour -->
       <div class="section-card">
-        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Breakeven <span>Config</span></div>
+        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Stop Loss <span>Behaviour</span></div>
         <div class="ea-input-row">
-          <label class="ea-input-label">Breakeven Trigger (pips)</label>
-          <input class="ea-input" type="number" value="20">
+          <label class="ea-input-label">When Price Hits SL</label>
+          <select class="ea-input">
+            <option>Close Immediately</option>
+            <option>Wait for Candle Close</option>
+            <option>Scale Out 50%</option>
+          </select>
         </div>
-        <div class="ea-input-row">
-          <label class="ea-input-label">Breakeven Buffer (pips)</label>
-          <input class="ea-input" type="number" value="2">
+        <div class="ea-toggle-row">
+          <div><div class="ea-toggle-label">SL from Signal</div><div class="ea-toggle-sub">Auto-filled from each signal</div></div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
         </div>
       </div>
+      <!-- Take Profit -->
       <div class="section-card">
-        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Default <span>Lot Size</span></div>
-        <div class="ea-input-row">
-          <label class="ea-input-label">Default Volume (Lots)</label>
-          <input class="ea-input" type="number" value="0.01" step="0.01" min="0.01">
+        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Take <span>Profit</span></div>
+        <div class="ea-toggle-row">
+          <div><div class="ea-toggle-label">Partial Close at TP</div><div class="ea-toggle-sub">Close part of position when TP hit</div></div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="ea-input-row" style="margin-top:12px;">
+          <label class="ea-input-label">Close % at TP</label>
+          <select class="ea-input">
+            <option>25%</option>
+            <option>50%</option>
+            <option selected>75%</option>
+            <option>100%</option>
+          </select>
+        </div>
+      </div>
+      <!-- Breakeven SL -->
+      <div class="section-card">
+        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Breakeven <span>SL</span></div>
+        <div class="ea-toggle-row">
+          <div><div class="ea-toggle-label">Move SL to Breakeven</div><div class="ea-toggle-sub">After partial close at TP</div></div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="ea-input-row" style="margin-top:12px;">
+          <label class="ea-input-label">Breakeven Buffer (pts)</label>
+          <input class="ea-input" type="number" value="3">
         </div>
         <div class="ea-input-row">
-          <label class="ea-input-label">Max Volume (Lots)</label>
-          <input class="ea-input" type="number" value="1.0" step="0.01">
+          <label class="ea-input-label">Activate When</label>
+          <select class="ea-input">
+            <option>After TP partial close</option>
+            <option>After X pips profit</option>
+            <option>Immediately at entry</option>
+          </select>
+        </div>
+      </div>
+      <!-- Trailing Stop -->
+      <div class="section-card">
+        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Trailing <span>Stop</span></div>
+        <div class="ea-toggle-row">
+          <div><div class="ea-toggle-label">Enable Trailing Stop</div><div class="ea-toggle-sub">SL follows price to lock profit</div></div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="ea-input-row" style="margin-top:12px;">
+          <label class="ea-input-label">Trail Step Size (pts)</label>
+          <input class="ea-input" type="number" value="5">
+        </div>
+        <div class="ea-input-row">
+          <label class="ea-input-label">Start Trailing When</label>
+          <select class="ea-input">
+            <option>After breakeven set</option>
+            <option>After X pips profit</option>
+            <option>Immediately</option>
+          </select>
         </div>
       </div>
       <button class="red-btn">SAVE SETTINGS</button>
@@ -1690,16 +1944,7 @@ input, select, textarea { font-family: 'Sora', sans-serif; outline: none; }
     </div>
   </div>
 
-  <!-- Market Scanner -->
-  <div id="sub-scanner" class="sub-screen">
-    <div class="sub-header">
-      <button class="sub-back" onclick="hideSubScreen('sub-scanner')"><i class="ti ti-arrow-left"></i></button>
-      <div class="sub-title">MARKET SCANNER</div>
-    </div>
-    <div class="sub-content">
-      <div class="empty-state"><i class="ti ti-radar"></i>Scanner coming soon — live indicator integration in Phase 9</div>
-    </div>
-  </div>
+
 
   <!-- News Feed -->
   <div id="sub-newsfeed" class="sub-screen">
@@ -1742,7 +1987,66 @@ input, select, textarea { font-family: 'Sora', sans-serif; outline: none; }
       <div class="sub-title">LEADERBOARD</div>
     </div>
     <div class="sub-content">
-      <div class="empty-state"><i class="ti ti-trophy"></i>Leaderboard data loading...</div>
+      <div class="section-card" style="margin-bottom:12px;">
+        <div style="display:flex;gap:6px;margin-bottom:14px;">
+          <button class="sig-filter active" style="flex:1;" onclick="this.parentElement.querySelectorAll('.sig-filter').forEach(b=>b.classList.remove('active'));this.classList.add('active')">This Month</button>
+          <button class="sig-filter" style="flex:1;" onclick="this.parentElement.querySelectorAll('.sig-filter').forEach(b=>b.classList.remove('active'));this.classList.add('active')">All Time</button>
+        </div>
+        <!-- Top 3 -->
+        <div style="display:flex;justify-content:space-around;align-items:flex-end;margin-bottom:20px;padding:0 8px;">
+          <div style="text-align:center;flex:1;">
+            <div style="font-size:22px;margin-bottom:4px;">🥈</div>
+            <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#C0C0C0,#909090);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#fff;margin:0 auto 6px;">RK</div>
+            <div style="font-size:12px;font-weight:700;color:var(--text);">Rajan</div>
+            <div style="font-size:11px;color:var(--green);">+18.2%</div>
+          </div>
+          <div style="text-align:center;flex:1;">
+            <div style="font-size:28px;margin-bottom:4px;">🥇</div>
+            <div style="width:48px;height:48px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:#fff;margin:0 auto 6px;box-shadow:0 4px 14px rgba(255,30,60,0.4);">AH</div>
+            <div style="font-size:13px;font-weight:800;color:var(--text);">Ahmad</div>
+            <div style="font-size:12px;color:var(--green);font-weight:700;">+24.5%</div>
+          </div>
+          <div style="text-align:center;flex:1;">
+            <div style="font-size:22px;margin-bottom:4px;">🥉</div>
+            <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#CD7F32,#8B5A1A);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#fff;margin:0 auto 6px;">MW</div>
+            <div style="font-size:12px;font-weight:700;color:var(--text);">Maria</div>
+            <div style="font-size:11px;color:var(--green);">+14.8%</div>
+          </div>
+        </div>
+        <!-- Full List -->
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg3);border-radius:10px;">
+            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--red);width:20px;">1</div>
+            <div style="width:34px;height:34px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;">AH</div>
+            <div style="flex:1;"><div style="font-size:13px;font-weight:700;color:var(--text);">Ahmad Hassan</div><div style="font-size:11px;color:var(--text3);">94% win rate · 47 trades</div></div>
+            <div style="font-size:13px;font-weight:800;color:var(--green);">+24.5%</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg3);border-radius:10px;">
+            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--text2);width:20px;">2</div>
+            <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#4D9EFF,#1A5FBF);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;">RK</div>
+            <div style="flex:1;"><div style="font-size:13px;font-weight:700;color:var(--text);">Rajan Kumar</div><div style="font-size:11px;color:var(--text3);">87% win rate · 38 trades</div></div>
+            <div style="font-size:13px;font-weight:800;color:var(--green);">+18.2%</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg3);border-radius:10px;">
+            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--text2);width:20px;">3</div>
+            <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#FFB547,#C47A00);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;">MW</div>
+            <div style="flex:1;"><div style="font-size:13px;font-weight:700;color:var(--text);">Maria Wong</div><div style="font-size:11px;color:var(--text3);">82% win rate · 55 trades</div></div>
+            <div style="font-size:13px;font-weight:800;color:var(--green);">+14.8%</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg3);border-radius:10px;">
+            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--text2);width:20px;">4</div>
+            <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#9B59B6,#5B2C87);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;">JT</div>
+            <div style="flex:1;"><div style="font-size:13px;font-weight:700;color:var(--text);">James Tan</div><div style="font-size:11px;color:var(--text3);">79% win rate · 29 trades</div></div>
+            <div style="font-size:13px;font-weight:800;color:var(--green);">+11.3%</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg3);border-radius:10px;">
+            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--text2);width:20px;">5</div>
+            <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#00D68F,#007A4D);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;">NR</div>
+            <div style="flex:1;"><div style="font-size:13px;font-weight:700;color:var(--text);">Nurul Rahim</div><div style="font-size:11px;color:var(--text3);">76% win rate · 41 trades</div></div>
+            <div style="font-size:13px;font-weight:800;color:var(--green);">+9.7%</div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -1809,7 +2113,139 @@ input, select, textarea { font-family: 'Sora', sans-serif; outline: none; }
       </div>
       <div class="app-header-name">ANALYST</div>
     </div>
-    <div class="app-header-right">
+    <div class="app-h
+  <!-- Profile -->
+  <div id="sub-profile" class="sub-screen">
+    <div class="sub-header">
+      <button class="sub-back" onclick="hideSubScreen('sub-profile')"><i class="ti ti-arrow-left"></i></button>
+      <div class="sub-title">MY PROFILE</div>
+    </div>
+    <div class="sub-content">
+      <!-- Avatar -->
+      <div style="text-align:center;margin-bottom:20px;">
+        <div style="width:72px;height:72px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;color:#fff;margin:0 auto 10px;" id="profile-avatar-big">AD</div>
+        <div style="font-size:16px;font-weight:800;color:var(--text);" id="profile-name-display">Trader</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:2px;" id="profile-role-display">Premium User</div>
+      </div>
+      <!-- Info -->
+      <div class="section-card" style="margin-bottom:12px;">
+        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Account <span>Details</span></div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">
+            <span style="font-size:12px;color:var(--text3);">Username</span>
+            <span style="font-size:12px;font-weight:700;color:var(--text);" id="profile-username">--</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">
+            <span style="font-size:12px;color:var(--text3);">Email</span>
+            <span style="font-size:12px;font-weight:700;color:var(--text);" id="profile-email">--</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">
+            <span style="font-size:12px;color:var(--text3);">MT5 Account ID</span>
+            <span style="font-size:12px;font-weight:700;color:var(--text);" id="profile-mt5">--</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">
+            <span style="font-size:12px;color:var(--text3);">Broker</span>
+            <span style="font-size:12px;font-weight:700;color:var(--text);" id="profile-broker">AFTT Markets</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:10px 0;">
+            <span style="font-size:12px;color:var(--text3);">Status</span>
+            <span style="font-size:12px;font-weight:700;padding:3px 10px;background:rgba(0,200,122,0.1);color:var(--green);border-radius:5px;" id="profile-status">Active</span>
+          </div>
+        </div>
+      </div>
+      <div class="section-card">
+        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Membership <span>Plan</span></div>
+        <div style="background:var(--grad);border-radius:10px;padding:14px;">
+          <div style="font-family:'Orbitron',sans-serif;font-size:13px;font-weight:800;color:#fff;margin-bottom:4px;">PREMIUM PLAN</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.7);">Live signals · EA tools · Full analytics</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Customer Support -->
+  <div id="sub-support" class="sub-screen">
+    <div class="sub-header">
+      <button class="sub-back" onclick="hideSubScreen('sub-support')"><i class="ti ti-arrow-left"></i></button>
+      <div class="sub-title">CUSTOMER SUPPORT</div>
+    </div>
+    <div class="sub-content">
+      <div style="text-align:center;margin-bottom:20px;">
+        <i class="ti ti-headset" style="font-size:48px;color:var(--red);display:block;margin-bottom:10px;"></i>
+        <div style="font-size:15px;font-weight:700;color:var(--text);">How can we help you?</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:4px;">Our team is here to assist you</div>
+      </div>
+      <div class="more-menu-item" onclick="window.open('mailto:support@momentumai.com','_blank')">
+        <div class="more-menu-icon"><i class="ti ti-mail"></i></div>
+        <div class="more-menu-text"><div class="more-menu-label">Email Support</div><div class="more-menu-sub">support@momentumai.com</div></div>
+        <i class="ti ti-chevron-right more-menu-arrow"></i>
+      </div>
+      <div class="more-menu-item" onclick="window.open('https://t.me/momentumai','_blank')">
+        <div class="more-menu-icon"><i class="ti ti-brand-telegram"></i></div>
+        <div class="more-menu-text"><div class="more-menu-label">Telegram Support</div><div class="more-menu-sub">@momentumai — usually replies in 1h</div></div>
+        <i class="ti ti-chevron-right more-menu-arrow"></i>
+      </div>
+      <div class="more-menu-item" onclick="window.open('https://wa.me/601234567890','_blank')">
+        <div class="more-menu-icon"><i class="ti ti-brand-whatsapp"></i></div>
+        <div class="more-menu-text"><div class="more-menu-label">WhatsApp Support</div><div class="more-menu-sub">Mon - Fri, 9AM - 6PM MYT</div></div>
+        <i class="ti ti-chevron-right more-menu-arrow"></i>
+      </div>
+      <div class="section-card" style="margin-top:12px;">
+        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Send a <span>Message</span></div>
+        <div class="auth-field">
+          <label class="auth-label">Subject</label>
+          <input class="auth-input" type="text" placeholder="What is your issue about?">
+        </div>
+        <div class="auth-field">
+          <label class="auth-label">Message</label>
+          <textarea class="auth-input" rows="4" placeholder="Describe your issue in detail..." style="resize:vertical;"></textarea>
+        </div>
+        <button class="red-btn">SEND MESSAGE</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAI Scanner (proper placeholder) -->
+  <div id="sub-scanner" class="sub-screen">
+    <div class="sub-header">
+      <button class="sub-back" onclick="hideSubScreen('sub-scanner')"><i class="ti ti-arrow-left"></i></button>
+      <div class="sub-title">MAI SCANNER</div>
+    </div>
+    <div class="sub-content">
+      <!-- Coming soon with preview of what it will look like -->
+      <div style="text-align:center;padding:24px 0 16px;">
+        <div style="width:60px;height:60px;border-radius:16px;background:rgba(255,30,60,0.1);border:1px solid rgba(255,30,60,0.2);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">
+          <i class="ti ti-radar" style="font-size:28px;color:var(--red);"></i>
+        </div>
+        <div style="font-family:'Orbitron',sans-serif;font-size:14px;font-weight:800;color:var(--text);margin-bottom:6px;">MAI SCANNER</div>
+        <div style="font-size:12px;color:var(--text3);margin-bottom:4px;">Coming in Phase 9</div>
+        <div style="font-size:11px;color:var(--text3);line-height:1.7;max-width:280px;margin:0 auto;">Live indicator integration — RSI, MACD, trend detection, currency strength index and news-based scanner alerts.</div>
+      </div>
+      <!-- Preview cards (greyed out) -->
+      <div style="opacity:0.4;pointer-events:none;">
+        <div class="section-card" style="margin-bottom:8px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+            <div style="font-size:12px;font-weight:700;color:var(--text);">Currency Strength</div>
+            <div style="font-size:10px;color:var(--text3);">Live · updating</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:11px;font-weight:700;color:var(--text);width:28px;">USD</span><div style="flex:1;height:6px;background:var(--surface2);border-radius:3px;"><div style="width:78%;height:100%;background:var(--grad);border-radius:3px;"></div></div><span style="font-size:11px;color:var(--text2);width:30px;text-align:right;">78%</span></div>
+            <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:11px;font-weight:700;color:var(--text);width:28px;">XAU</span><div style="flex:1;height:6px;background:var(--surface2);border-radius:3px;"><div style="width:65%;height:100%;background:rgba(255,176,32,0.6);border-radius:3px;"></div></div><span style="font-size:11px;color:var(--text2);width:30px;text-align:right;">65%</span></div>
+            <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:11px;font-weight:700;color:var(--text);width:28px;">GBP</span><div style="flex:1;height:6px;background:var(--surface2);border-radius:3px;"><div style="width:54%;height:100%;background:rgba(0,200,122,0.5);border-radius:3px;"></div></div><span style="font-size:11px;color:var(--text2);width:30px;text-align:right;">54%</span></div>
+          </div>
+        </div>
+        <div class="section-card">
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:10px;">Signal Alerts</div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="display:flex;align-items:center;gap:10px;padding:8px;background:var(--bg3);border-radius:8px;"><div style="width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0;"></div><div style="flex:1;font-size:12px;color:var(--text);">XAUUSD — RSI Oversold on H4</div><div style="font-size:10px;color:var(--green);font-weight:700;">BUY</div></div>
+            <div style="display:flex;align-items:center;gap:10px;padding:8px;background:var(--bg3);border-radius:8px;"><div style="width:6px;height:6px;border-radius:50%;background:var(--red);flex-shrink:0;"></div><div style="flex:1;font-size:12px;color:var(--text);">NAS100 — MACD Bearish Cross</div><div style="font-size:10px;color:var(--red);font-weight:700;">SELL</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+eader-right">
       <button style="background:transparent;border:1px solid var(--border);border-radius:8px;padding:6px 12px;font-size:12px;color:var(--text2);cursor:pointer;" onclick="handleLogout()">Sign Out</button>
     </div>
   </div>
@@ -2080,11 +2516,81 @@ function enterApp(user) {
     document.getElementById('mob-username').textContent = name;
     document.getElementById('header-avatar').textContent = name.substring(0,2).toUpperCase();
     if(user.role==='admin') document.getElementById('admin-menu-item').style.display='flex';
+    // Update profile page
+    var profAv = document.getElementById('profile-avatar-big');
+    var profName = document.getElementById('profile-name-display');
+    var profRole = document.getElementById('profile-role-display');
+    var profUser = document.getElementById('profile-username');
+    var profEmail = document.getElementById('profile-email');
+    var profMt5 = document.getElementById('profile-mt5');
+    var profBroker = document.getElementById('profile-broker');
+    var profStatus = document.getElementById('profile-status');
+    if(profAv) profAv.textContent = name.substring(0,2).toUpperCase();
+    if(profName) profName.textContent = user.name || user.username || 'Trader';
+    if(profRole) profRole.textContent = user.role === 'admin' ? 'Super Admin' : user.role === 'analyst' ? 'Analyst' : 'Premium User';
+    if(profUser) profUser.textContent = '@' + (user.username || '--');
+    if(profEmail) profEmail.textContent = user.email || '--';
+    if(profMt5) profMt5.textContent = user.mt5_id || '--';
+    if(profBroker) profBroker.textContent = user.broker || 'AFTT Markets';
+    if(profStatus) profStatus.textContent = user.status || 'Active';
   }
   showScreen('screen-app');
   loadDashboardSignals();
   drawSparklines();
   initTVChart();
+  setTimeout(function() { drawGrowthChart(); drawEmotionChart(); }, 300);
+}
+
+// ── GROWTH CHART ──
+function drawGrowthChart() {
+  var canvas = document.getElementById('growth-chart');
+  if(!canvas) return;
+  var W = canvas.parentElement.clientWidth - 28;
+  var H = 140;
+  canvas.width = W > 0 ? W : 300;
+  canvas.height = H;
+  var ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, H);
+  var points = [5000,8200,11000,9800,14000,13500,17200,19000,18000,21500,20000,22800,24530];
+  var min = Math.min.apply(null,points), max = Math.max.apply(null,points), range = max-min||1;
+  var step = canvas.width / (points.length-1);
+  var grad = ctx.createLinearGradient(0,0,0,H);
+  grad.addColorStop(0,'rgba(255,30,60,0.25)');
+  grad.addColorStop(1,'rgba(255,30,60,0.0)');
+  ctx.beginPath();
+  points.forEach(function(p,i) {
+    var x=i*step, y=H-8-((p-min)/range)*(H-20);
+    i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+  });
+  ctx.strokeStyle='#FF1E3C'; ctx.lineWidth=2; ctx.stroke();
+  ctx.lineTo(canvas.width,H); ctx.lineTo(0,H); ctx.closePath();
+  ctx.fillStyle=grad; ctx.fill();
+}
+
+// ── EMOTION DONUT CHART ──
+function drawEmotionChart() {
+  var canvas = document.getElementById('emotion-chart');
+  if(!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var data = [36,28,18,10,8];
+  var colors = ['#FF1E3C','#ff6b5e','#ff9a8b','rgba(255,30,60,0.35)','rgba(255,30,60,0.2)'];
+  var total = data.reduce(function(a,b){return a+b;},0);
+  var start = -Math.PI/2;
+  var cx=45, cy=45, r=38, inner=24;
+  data.forEach(function(val,i) {
+    var slice = (val/total) * 2 * Math.PI;
+    ctx.beginPath();
+    ctx.moveTo(cx,cy);
+    ctx.arc(cx,cy,r,start,start+slice);
+    ctx.closePath();
+    ctx.fillStyle = colors[i];
+    ctx.fill();
+    start += slice;
+  });
+  ctx.beginPath();
+  ctx.arc(cx,cy,inner,0,2*Math.PI);
+  ctx.fillStyle = '#0d0b14';
+  ctx.fill();
 }
 
 // ── LOGOUT ──
