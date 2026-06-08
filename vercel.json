@@ -1,15 +1,8 @@
 {
-  "redirects": [
+  "rewrites": [
     {
       "source": "/",
-      "destination": "/app_mobile.html",
-      "permanent": false,
-      "has": [
-        {
-          "type": "host",
-          "value": "app.maimomentum.com"
-        }
-      ]
+      "destination": "/app_mobile.html"
     }
   ]
 }
