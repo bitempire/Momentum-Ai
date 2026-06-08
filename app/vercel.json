@@ -1,1 +1,14 @@
-<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0;url=/app_mobile.html"></head></html>
+{
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/app_mobile.html",
+      "has": [
+        {
+          "type": "host",
+          "value": "app.maimomentum.com"
+        }
+      ]
+    }
+  ]
+}
