@@ -3768,6 +3768,22 @@ function markLessonComplete() {
   openAcademyCategory(currentAcademyLesson.category);
 }
 
+
+// ── HANDLE TRADE NOW ──
+function handleTradeNow(btn) {
+  var sigId = btn.getAttribute('data-id');
+  if(sigId && window._signalStore && window._signalStore[sigId]) {
+    openTradePopup(sigId);
+  } else {
+    // Try finding the signal from the card
+    var card = btn.closest('.sig-card');
+    if(card) {
+      var sigIdFromCard = card.getAttribute('data-sigid');
+      if(sigIdFromCard) openTradePopup(sigIdFromCard);
+    }
+  }
+}
+
 </script>
 <script>
 // ── CONFIG ──
@@ -4061,7 +4077,7 @@ async function loadSignalsFeed() {
       var circ = 2*Math.PI*15;
       var dash = r*circ;
       var fillClass = dir==='buy' ? 'sig-ring-fill-buy' : 'sig-ring-fill-sell';
-      return '<div class="sig-card" data-pair="'+sig.pair.toLowerCase()+'" data-dir="'+sig.direction+'" data-tf="'+(sig.timeframe||'')+'">' +
+      return '<div class="sig-card" data-sigid="'+sig.id+'" data-pair="'+sig.pair.toLowerCase()+'" data-dir="'+sig.direction+'" data-tf="'+(sig.timeframe||'')+'">' +
         '<div class="sig-card-top">' +
           '<div class="sig-card-icon">'+( dir==='buy' ? '📈' : '📉' )+'</div>' +
           '<div><div class="sig-card-pair">'+sig.pair+'</div><div class="sig-card-time">'+timeAgo(sig.created_at)+' · '+(sig.timeframe||'H4')+'</div></div>' +
@@ -4077,7 +4093,7 @@ async function loadSignalsFeed() {
             '<div class="sig-strength-ring"><svg viewBox="0 0 36 36"><circle class="sig-ring-track" cx="18" cy="18" r="15"/><circle class="'+fillClass+'" cx="18" cy="18" r="15" stroke-dasharray="'+dash.toFixed(1)+' '+circ.toFixed(1)+'"/></svg><div class="sig-ring-text">'+sig.strength+'%</div></div>' +
             '<div class="sig-analyst">'+(sig.analyst_name||'Analyst')+'</div>' +
           '</div>' +
-          '<button class="sig-trade-btn" onclick="openTradePopup(\''+sig.id+'\')">Trade Now</button>' +
+                    '<button class="sig-trade-btn" data-id="' + sig.id + '" onclick="handleTradeNow(this)">Trade Now</button>' +
         '</div>' +
       '</div>';
     }).join('');
