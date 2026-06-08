@@ -4345,6 +4345,21 @@ document.getElementById('trade-popup').addEventListener('click', function(e) {
 </script>
 
 <!-- TradingView -->
-<script src="https://s3.tradingview.com/tv.js"></script>
-</body>
-</html>
+<script src="https://s3.tradingview.com/tv.js">
+// ── ENSURE GLOBAL ACCESS ──
+window.openTradePopup = openTradePopup;
+window.closeTradePopup = closeTradePopup;
+window.switchTradeTab = switchTradeTab;
+window.tradeNow = tradeNow;
+
+// ── DEBUG: Test popup on load ──
+document.addEventListener('DOMContentLoaded', function() {
+  var popup = document.getElementById('trade-popup');
+  if(popup) {
+    console.log('Trade popup found ✅');
+  } else {
+    console.log('Trade popup NOT found ❌');
+  }
+});
+
+</script>
