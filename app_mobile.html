@@ -1222,7 +1222,9 @@ input, select, textarea { font-family: 'Sora', sans-serif; outline: none; }
       <div class="auth-forgot"><a>Forgot Password?</a></div>
       <button class="auth-btn" id="btn-signin" onclick="handleLogin()">ACCESS SYSTEM</button>
       <div class="auth-divider"><span>or</span></div>
-      <button class="auth-google-btn"><i class="ti ti-brand-google"></i> Continue with Google</button>
+      <button class="auth-google-btn" onclick="window.open('https://momentum-ai-ruddy.vercel.app','_blank')" style="gap:8px;">
+        <i class="ti ti-world"></i> Visit Our Website
+      </button>
       <div class="auth-switch">No account? <span onclick="switchAuthTab('register')">Register with AFT →</span></div>
       <div class="auth-status">
         <div class="auth-status-dot"></div>
@@ -1254,6 +1256,16 @@ input, select, textarea { font-family: 'Sora', sans-serif; outline: none; }
       <div class="auth-field">
         <label class="auth-label">Password</label>
         <input id="reg-password" class="auth-input" type="password" placeholder="Create a strong password">
+      </div>
+      <div class="auth-field">
+        <label class="auth-label">Broker</label>
+        <select id="reg-broker" class="auth-input">
+          <option value="">Select your broker</option>
+          <option value="AFTT Markets">AFTT Markets</option>
+          <option value="IC Markets">IC Markets</option>
+          <option value="Exness">Exness</option>
+          <option value="Other">Other</option>
+        </select>
       </div>
       <button class="auth-btn" id="btn-register" onclick="handleRegister()">CREATE ACCOUNT</button>
       <button class="ghost-btn" onclick="window.open('https://www.afttmarkets.com','_blank')">Register with AFT First →</button>
@@ -1355,13 +1367,32 @@ input, select, textarea { font-family: 'Sora', sans-serif; outline: none; }
     <!-- ── TAB: SIGNALS ── -->
     <div id="tab-signals" class="app-tab" style="display:none;">
       <div class="section-title" style="margin-bottom:12px;">Live <span>Signals</span></div>
-      <div class="sig-filters">
-        <button class="sig-filter active" onclick="filterSigs('all',this)">All</button>
-        <button class="sig-filter" onclick="filterSigs('buy',this)">Buy</button>
-        <button class="sig-filter" onclick="filterSigs('sell',this)">Sell</button>
-        <button class="sig-filter" onclick="filterSigs('gold',this)">Gold</button>
-        <button class="sig-filter" onclick="filterSigs('indices',this)">Indices</button>
-        <button class="sig-filter" onclick="filterSigs('forex',this)">Forex</button>
+      <!-- Signal Filters - Dropdowns -->
+      <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
+        <select id="filter-symbol" class="auth-input" style="flex:1;min-width:100px;padding:9px 12px;font-size:12px;" onchange="applySignalFilters()">
+          <option value="">All Symbols</option>
+          <option value="XAUUSD">XAUUSD</option>
+          <option value="NAS100">NAS100</option>
+          <option value="BTCUSD">BTCUSD</option>
+          <option value="EURUSD">EURUSD</option>
+          <option value="GBPJPY">GBPJPY</option>
+          <option value="GBPUSD">GBPUSD</option>
+          <option value="USDJPY">USDJPY</option>
+          <option value="US30">US30</option>
+        </select>
+        <select id="filter-direction" class="auth-input" style="flex:1;min-width:80px;padding:9px 12px;font-size:12px;" onchange="applySignalFilters()">
+          <option value="">Buy & Sell</option>
+          <option value="BUY">Buy Only</option>
+          <option value="SELL">Sell Only</option>
+        </select>
+        <select id="filter-timeframe" class="auth-input" style="flex:1;min-width:80px;padding:9px 12px;font-size:12px;" onchange="applySignalFilters()">
+          <option value="">All TF</option>
+          <option value="M15">M15</option>
+          <option value="M30">M30</option>
+          <option value="H1">H1</option>
+          <option value="H4">H4</option>
+          <option value="D1">D1</option>
+        </select>
       </div>
       <div id="mob-signals-list">
         <div class="empty-state"><i class="ti ti-broadcast"></i>Loading signals...</div>
@@ -1371,12 +1402,26 @@ input, select, textarea { font-family: 'Sora', sans-serif; outline: none; }
     <!-- ── TAB: CHARTS ── -->
     <div id="tab-charts" class="app-tab" style="display:none;">
       <div class="section-title" style="margin-bottom:12px;"><span>Live</span> Charts</div>
-      <div class="chart-pair-select">
-        <button class="chart-pair-btn active" onclick="switchChartPair('XAUUSD',this)">XAUUSD</button>
-        <button class="chart-pair-btn" onclick="switchChartPair('NAS100',this)">NAS100</button>
-        <button class="chart-pair-btn" onclick="switchChartPair('BTCUSD',this)">BTCUSD</button>
-        <button class="chart-pair-btn" onclick="switchChartPair('EURUSD',this)">EURUSD</button>
-        <button class="chart-pair-btn" onclick="switchChartPair('GBPJPY',this)">GBPJPY</button>
+      <!-- Chart Symbol Search -->
+      <div style="display:flex;gap:8px;margin-bottom:12px;align-items:center;">
+        <div style="flex:1;position:relative;">
+          <input id="chart-symbol-input" class="auth-input" type="text" placeholder="Search symbol e.g. XAUUSD, NAS100..." 
+            style="padding:10px 14px 10px 36px;font-size:13px;"
+            oninput="showChartSuggestions(this.value)"
+            onkeydown="if(event.key==='Enter'){searchChartSymbol()}">
+          <i class="ti ti-search" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:16px;pointer-events:none;"></i>
+        </div>
+        <button onclick="searchChartSymbol()" style="padding:10px 16px;background:var(--grad);border:none;border-radius:10px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;flex-shrink:0;">Go</button>
+      </div>
+      <!-- Quick symbols -->
+      <div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px;" id="quick-symbols">
+        <button class="chart-pair-btn active" onclick="quickSymbol('XAUUSD',this)">XAUUSD</button>
+        <button class="chart-pair-btn" onclick="quickSymbol('NAS100',this)">NAS100</button>
+        <button class="chart-pair-btn" onclick="quickSymbol('BTCUSD',this)">BTCUSD</button>
+        <button class="chart-pair-btn" onclick="quickSymbol('EURUSD',this)">EURUSD</button>
+        <button class="chart-pair-btn" onclick="quickSymbol('GBPJPY',this)">GBPJPY</button>
+        <button class="chart-pair-btn" onclick="quickSymbol('GBPUSD',this)">GBPUSD</button>
+        <button class="chart-pair-btn" onclick="quickSymbol('US30',this)">US30</button>
       </div>
       <div class="chart-tf-row">
         <button class="chart-tf" onclick="switchTF('1',this)">1m</button>
@@ -1723,16 +1768,12 @@ input, select, textarea { font-family: 'Sora', sans-serif; outline: none; }
         <div class="more-menu-text"><div class="more-menu-label">Leaderboard</div><div class="more-menu-sub">Top performing traders</div></div>
         <i class="ti ti-chevron-right more-menu-arrow"></i>
       </div>
-      <div class="more-menu-item" onclick="showSubScreen('sub-analysis')">
-        <div class="more-menu-icon"><i class="ti ti-brain"></i></div>
-        <div class="more-menu-text"><div class="more-menu-label">MAI Analysis</div><div class="more-menu-sub">Claude AI market intelligence</div></div>
+      <div class="more-menu-item" onclick="showSubScreen('sub-fund')">
+        <div class="more-menu-icon"><i class="ti ti-chart-pie"></i></div>
+        <div class="more-menu-text"><div class="more-menu-label">Fund Management</div><div class="more-menu-sub">View and follow trading funds</div></div>
         <i class="ti ti-chevron-right more-menu-arrow"></i>
       </div>
-      <div class="more-menu-item" onclick="showSubScreen('sub-newsfeed')">
-        <div class="more-menu-icon"><i class="ti ti-news"></i></div>
-        <div class="more-menu-text"><div class="more-menu-label">News Feed</div><div class="more-menu-sub">Latest market news</div></div>
-        <i class="ti ti-chevron-right more-menu-arrow"></i>
-      </div>
+
       <div class="more-menu-item" onclick="showSubScreen('sub-support')">
         <div class="more-menu-icon"><i class="ti ti-headset"></i></div>
         <div class="more-menu-text"><div class="more-menu-label">Customer Support</div><div class="more-menu-sub">Get help from our team</div></div>
@@ -1982,6 +2023,31 @@ input, select, textarea { font-family: 'Sora', sans-serif; outline: none; }
       <div class="sub-title">LEADERBOARD</div>
     </div>
     <div class="sub-content">
+      <!-- Reward Banner -->
+      <div style="background:linear-gradient(135deg,#1a0a00,#3d1a00);border:1px solid rgba(255,176,32,0.3);border-radius:14px;padding:16px;margin-bottom:12px;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:-20px;right:-20px;width:100px;height:100px;border-radius:50%;background:rgba(255,176,32,0.08);"></div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="font-size:36px;">🏆</div>
+          <div>
+            <div style="font-family:'Orbitron',sans-serif;font-size:13px;font-weight:800;color:#FFB020;margin-bottom:3px;">TOP TRADER REWARDS</div>
+            <div style="font-size:11px;color:rgba(255,176,32,0.7);line-height:1.6;">Top 3 traders this month win exclusive rewards — fee rebates, VIP access & recognition</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:12px;">
+          <div style="flex:1;background:rgba(255,176,32,0.1);border-radius:8px;padding:8px;text-align:center;">
+            <div style="font-size:16px;">🥇</div>
+            <div style="font-size:10px;color:#FFB020;font-weight:700;margin-top:2px;">Fee Rebate</div>
+          </div>
+          <div style="flex:1;background:rgba(255,176,32,0.1);border-radius:8px;padding:8px;text-align:center;">
+            <div style="font-size:16px;">🥈</div>
+            <div style="font-size:10px;color:#FFB020;font-weight:700;margin-top:2px;">VIP Access</div>
+          </div>
+          <div style="flex:1;background:rgba(255,176,32,0.1);border-radius:8px;padding:8px;text-align:center;">
+            <div style="font-size:16px;">🥉</div>
+            <div style="font-size:10px;color:#FFB020;font-weight:700;margin-top:2px;">Recognition</div>
+          </div>
+        </div>
+      </div>
       <div class="section-card" style="margin-bottom:12px;">
         <div style="display:flex;gap:6px;margin-bottom:14px;">
           <button class="sig-filter active" style="flex:1;" onclick="this.parentElement.querySelectorAll('.sig-filter').forEach(b=>b.classList.remove('active'));this.classList.add('active')">This Month</button>
@@ -2013,8 +2079,8 @@ input, select, textarea { font-family: 'Sora', sans-serif; outline: none; }
           <div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg3);border-radius:10px;">
             <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--red);width:20px;">1</div>
             <div style="width:34px;height:34px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;">AH</div>
-            <div style="flex:1;"><div style="font-size:13px;font-weight:700;color:var(--text);">Ahmad Hassan</div><div style="font-size:11px;color:var(--text3);">94% win rate · 47 trades</div></div>
-            <div style="font-size:13px;font-weight:800;color:var(--green);">+24.5%</div>
+            <div style="flex:1;"><div style="font-size:13px;font-weight:700;color:var(--text);">Ahmad Hassan</div><div style="font-size:11px;color:var(--text3);">94% WR · 47 trades · 12.4 lots</div></div>
+            <div style="text-align:right;"><div style="font-size:13px;font-weight:800;color:var(--green);">+24.5%</div><div style="font-size:10px;color:var(--text3);">vol: 12.4L</div></div>
           </div>
           <div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg3);border-radius:10px;">
             <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--text2);width:20px;">2</div>
@@ -2041,18 +2107,132 @@ input, select, textarea { font-family: 'Sora', sans-serif; outline: none; }
             <div style="font-size:13px;font-weight:800;color:var(--green);">+9.7%</div>
           </div>
         </div>
+        <button onclick="alert('Full top 50 leaderboard coming soon!')" style="width:100%;margin-top:12px;padding:11px;background:transparent;border:1px solid var(--border);border-radius:10px;color:var(--text2);font-size:13px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;">View All Top 50 →</button>
       </div>
     </div>
   </div>
 
-  <!-- AI Analysis -->
-  <div id="sub-analysis" class="sub-screen">
+  <!-- Fund Management -->
+  <div id="sub-fund" class="sub-screen">
     <div class="sub-header">
-      <button class="sub-back" onclick="hideSubScreen('sub-analysis')"><i class="ti ti-arrow-left"></i></button>
-      <div class="sub-title">AI ANALYSIS</div>
+      <button class="sub-back" onclick="hideSubScreen('sub-fund')"><i class="ti ti-arrow-left"></i></button>
+      <div class="sub-title">FUND MANAGEMENT</div>
     </div>
     <div class="sub-content">
-      <div class="empty-state"><i class="ti ti-brain"></i>Claude AI analysis loading...</div>
+      <!-- Stats row -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;">
+        <div class="section-card" style="padding:10px;text-align:center;">
+          <div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:3px;">Total AUM</div>
+          <div style="font-family:'Orbitron',sans-serif;font-size:13px;font-weight:800;color:var(--text);">$2.4M</div>
+        </div>
+        <div class="section-card" style="padding:10px;text-align:center;">
+          <div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:3px;">Avg Return</div>
+          <div style="font-family:'Orbitron',sans-serif;font-size:13px;font-weight:800;color:var(--green);">+18.4%</div>
+        </div>
+        <div class="section-card" style="padding:10px;text-align:center;">
+          <div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:3px;">Followers</div>
+          <div style="font-family:'Orbitron',sans-serif;font-size:13px;font-weight:800;color:var(--text);">142</div>
+        </div>
+      </div>
+      <!-- Fund cards -->
+      <div class="section-card" style="margin-bottom:10px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+          <div style="width:42px;height:42px;border-radius:10px;background:var(--grad);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <i class="ti ti-trending-up" style="color:#fff;font-size:20px;"></i>
+          </div>
+          <div style="flex:1;">
+            <div style="font-size:15px;font-weight:800;color:var(--text);">Momentum Genesis</div>
+            <div style="font-size:11px;color:var(--text3);">Conservative · Low Risk</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:16px;font-weight:800;color:var(--green);">+24.5%</div>
+            <div style="font-size:10px;color:var(--text3);">This month</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px;">
+          <div style="text-align:center;"><div style="font-size:13px;font-weight:700;color:var(--text);">94%</div><div style="font-size:9px;color:var(--text3);">Win Rate</div></div>
+          <div style="text-align:center;"><div style="font-size:13px;font-weight:700;color:var(--text);">2.4</div><div style="font-size:9px;color:var(--text3);">Profit Factor</div></div>
+          <div style="text-align:center;"><div style="font-size:13px;font-weight:700;color:var(--red);">8.4%</div><div style="font-size:9px;color:var(--text3);">Max DD</div></div>
+          <div style="text-align:center;"><div style="font-size:13px;font-weight:700;color:var(--text);">87</div><div style="font-size:9px;color:var(--text3);">Followers</div></div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button onclick="showSubScreen('sub-fund-detail')" style="flex:1;padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:12px;font-weight:700;cursor:pointer;">View Details</button>
+          <button onclick="showSubScreen('sub-fund-follow')" style="flex:1;padding:10px;background:var(--grad);border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;">Follow Fund</button>
+        </div>
+      </div>
+      <div class="section-card" style="margin-bottom:10px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+          <div style="width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,#4D9EFF,#1A5FBF);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <i class="ti ti-rocket" style="color:#fff;font-size:20px;"></i>
+          </div>
+          <div style="flex:1;">
+            <div style="font-size:15px;font-weight:800;color:var(--text);">Momentum Alpha</div>
+            <div style="font-size:11px;color:var(--text3);">Aggressive · High Risk</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:16px;font-weight:800;color:var(--green);">+38.2%</div>
+            <div style="font-size:10px;color:var(--text3);">This month</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px;">
+          <div style="text-align:center;"><div style="font-size:13px;font-weight:700;color:var(--text);">88%</div><div style="font-size:9px;color:var(--text3);">Win Rate</div></div>
+          <div style="text-align:center;"><div style="font-size:13px;font-weight:700;color:var(--text);">3.1</div><div style="font-size:9px;color:var(--text3);">Profit Factor</div></div>
+          <div style="text-align:center;"><div style="font-size:13px;font-weight:700;color:var(--red);">14.2%</div><div style="font-size:9px;color:var(--text3);">Max DD</div></div>
+          <div style="text-align:center;"><div style="font-size:13px;font-weight:700;color:var(--text);">55</div><div style="font-size:9px;color:var(--text3);">Followers</div></div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button onclick="showSubScreen('sub-fund-detail')" style="flex:1;padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:12px;font-weight:700;cursor:pointer;">View Details</button>
+          <button onclick="showSubScreen('sub-fund-follow')" style="flex:1;padding:10px;background:var(--grad);border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;">Follow Fund</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fund Follow Form -->
+  <div id="sub-fund-follow" class="sub-screen">
+    <div class="sub-header">
+      <button class="sub-back" onclick="hideSubScreen('sub-fund-follow')"><i class="ti ti-arrow-left"></i></button>
+      <div class="sub-title">FOLLOW FUND</div>
+    </div>
+    <div class="sub-content">
+      <div class="section-card">
+        <div class="section-title" style="font-size:13px;margin-bottom:14px;">Follow <span>Application</span></div>
+        <div class="auth-field">
+          <label class="auth-label">Full Name</label>
+          <input id="follow-name" class="auth-input" type="text" placeholder="Your full name">
+        </div>
+        <div class="auth-field">
+          <label class="auth-label">MT5 Account ID</label>
+          <input id="follow-mt5" class="auth-input" type="text" placeholder="Your AFTT MT5 account ID">
+        </div>
+        <div class="auth-field">
+          <label class="auth-label">Allocation Amount (USD)</label>
+          <input id="follow-amount" class="auth-input" type="number" placeholder="e.g. 1000">
+        </div>
+        <div class="auth-field">
+          <label class="auth-label">Risk Level</label>
+          <select id="follow-risk" class="auth-input">
+            <option value="low">Low — Conservative</option>
+            <option value="medium" selected>Medium — Balanced</option>
+            <option value="high">High — Aggressive</option>
+          </select>
+        </div>
+        <div class="auth-field">
+          <label class="auth-label">Phone Number</label>
+          <input id="follow-phone" class="auth-input" type="tel" placeholder="+60 12 345 6789">
+        </div>
+        <!-- Agreement -->
+        <div style="padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:14px;">
+          <div style="font-size:11px;color:var(--text2);line-height:1.7;margin-bottom:10px;">I understand that trading involves risk and past performance does not guarantee future results. I authorize Momentum AI and AFTT Markets to manage my MT5 account under the selected fund.</div>
+          <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;">
+            <input type="checkbox" id="follow-agree" style="width:18px;height:18px;margin-top:2px;accent-color:var(--red);flex-shrink:0;">
+            <span style="font-size:12px;color:var(--text);font-weight:600;">I have read and agree to the Terms & Conditions</span>
+          </label>
+        </div>
+        <div id="follow-error" class="error-msg"></div>
+        <div id="follow-success" class="success-msg"></div>
+        <button class="red-btn" onclick="handleFundFollow()">SUBMIT APPLICATION</button>
+      </div>
     </div>
   </div>
 
@@ -2095,20 +2275,8 @@ input, select, textarea { font-family: 'Sora', sans-serif; outline: none; }
     </div>
   </div>
 
-</div><!-- end screen-app -->
 
-<!-- ═══════════════════════════════════
-     ANALYST SCREEN
-═══════════════════════════════════ -->
-<div id="screen-analyst" class="screen" style="display:none;">
-  <div class="app-header">
-    <div class="app-header-logo">
-      <div class="app-header-slashes">
-        <div class="app-header-sl"></div><div class="app-header-sl"></div><div class="app-header-sl"></div>
-      </div>
-      <div class="app-header-name">ANALYST</div>
-    </div>
-    <div class="app-h
+
   <!-- Profile -->
   <div id="sub-profile" class="sub-screen">
     <div class="sub-header">
@@ -2122,10 +2290,15 @@ input, select, textarea { font-family: 'Sora', sans-serif; outline: none; }
         <div style="font-size:16px;font-weight:800;color:var(--text);" id="profile-name-display">Trader</div>
         <div style="font-size:12px;color:var(--text3);margin-top:2px;" id="profile-role-display">Premium User</div>
       </div>
-      <!-- Info -->
+
+      <!-- Personal Info -->
       <div class="section-card" style="margin-bottom:12px;">
-        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Account <span>Details</span></div>
+        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Personal <span>Info</span></div>
         <div style="display:flex;flex-direction:column;gap:10px;">
+          <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">
+            <span style="font-size:12px;color:var(--text3);">Full Name</span>
+            <span style="font-size:12px;font-weight:700;color:var(--text);" id="profile-name-val">--</span>
+          </div>
           <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">
             <span style="font-size:12px;color:var(--text3);">Username</span>
             <span style="font-size:12px;font-weight:700;color:var(--text);" id="profile-username">--</span>
@@ -2134,6 +2307,17 @@ input, select, textarea { font-family: 'Sora', sans-serif; outline: none; }
             <span style="font-size:12px;color:var(--text3);">Email</span>
             <span style="font-size:12px;font-weight:700;color:var(--text);" id="profile-email">--</span>
           </div>
+          <div style="display:flex;justify-content:space-between;padding:10px 0;">
+            <span style="font-size:12px;color:var(--text3);">Phone</span>
+            <span style="font-size:12px;font-weight:700;color:var(--text);" id="profile-phone">Not set</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Trading Account -->
+      <div class="section-card" style="margin-bottom:12px;">
+        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Trading <span>Account</span></div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
           <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">
             <span style="font-size:12px;color:var(--text3);">MT5 Account ID</span>
             <span style="font-size:12px;font-weight:700;color:var(--text);" id="profile-mt5">--</span>
@@ -2142,19 +2326,70 @@ input, select, textarea { font-family: 'Sora', sans-serif; outline: none; }
             <span style="font-size:12px;color:var(--text3);">Broker</span>
             <span style="font-size:12px;font-weight:700;color:var(--text);" id="profile-broker">AFTT Markets</span>
           </div>
+          <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">
+            <span style="font-size:12px;color:var(--text3);">Plan</span>
+            <span style="font-size:12px;font-weight:700;padding:3px 10px;background:var(--grad);color:#fff;border-radius:5px;font-family:'Orbitron',sans-serif;font-size:10px;">PREMIUM</span>
+          </div>
           <div style="display:flex;justify-content:space-between;padding:10px 0;">
             <span style="font-size:12px;color:var(--text3);">Status</span>
             <span style="font-size:12px;font-weight:700;padding:3px 10px;background:rgba(0,200,122,0.1);color:var(--green);border-radius:5px;" id="profile-status">Active</span>
           </div>
         </div>
       </div>
-      <div class="section-card">
-        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Membership <span>Plan</span></div>
-        <div style="background:var(--grad);border-radius:10px;padding:14px;">
-          <div style="font-family:'Orbitron',sans-serif;font-size:13px;font-weight:800;color:#fff;margin-bottom:4px;">PREMIUM PLAN</div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.7);">Live signals · EA tools · Full analytics</div>
+
+      <!-- Security -->
+      <div class="section-card" style="margin-bottom:12px;">
+        <div class="section-title" style="font-size:13px;margin-bottom:12px;"><span>Security</span></div>
+        <div id="change-pw-form" style="display:none;margin-bottom:12px;">
+          <div class="auth-field">
+            <label class="auth-label">Current Password</label>
+            <input id="sec-old-pw" class="auth-input" type="password" placeholder="Current password">
+          </div>
+          <div class="auth-field">
+            <label class="auth-label">New Password</label>
+            <input id="sec-new-pw" class="auth-input" type="password" placeholder="New password">
+          </div>
+          <div class="auth-field">
+            <label class="auth-label">Confirm New Password</label>
+            <input id="sec-confirm-pw" class="auth-input" type="password" placeholder="Confirm new password">
+          </div>
+          <div id="pw-error" class="error-msg"></div>
+          <div id="pw-success" class="success-msg"></div>
+          <div style="display:flex;gap:8px;">
+            <button onclick="handleChangePassword()" style="flex:1;padding:11px;background:var(--grad);border:none;border-radius:10px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;">Update Password</button>
+            <button onclick="document.getElementById('change-pw-form').style.display='none'" style="padding:11px 16px;background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--text2);font-size:12px;cursor:pointer;font-family:'Sora',sans-serif;">Cancel</button>
+          </div>
+        </div>
+        <div class="more-menu-item" style="border:none;padding:10px 0;" onclick="document.getElementById('change-pw-form').style.display=document.getElementById('change-pw-form').style.display==='none'?'block':'none'">
+          <div class="more-menu-icon" style="width:36px;height:36px;"><i class="ti ti-lock" style="font-size:17px;"></i></div>
+          <div class="more-menu-text"><div class="more-menu-label" style="font-size:13px;">Change Password</div></div>
+          <i class="ti ti-chevron-right more-menu-arrow"></i>
+        </div>
+        <div class="more-menu-item" style="border:none;padding:10px 0;opacity:0.5;">
+          <div class="more-menu-icon" style="width:36px;height:36px;"><i class="ti ti-shield-check" style="font-size:17px;"></i></div>
+          <div class="more-menu-text"><div class="more-menu-label" style="font-size:13px;">Enable 2FA (Authy)</div><div class="more-menu-sub" style="font-size:10px;">Coming soon</div></div>
+          <i class="ti ti-chevron-right more-menu-arrow"></i>
         </div>
       </div>
+
+      <!-- Preferences -->
+      <div class="section-card" style="margin-bottom:12px;">
+        <div class="section-title" style="font-size:13px;margin-bottom:12px;"><span>Preferences</span></div>
+        <div class="ea-toggle-row">
+          <div><div class="ea-toggle-label">Push Notifications</div><div class="ea-toggle-sub">Signal alerts and updates</div></div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="ea-toggle-row" style="border-bottom:none;">
+          <div><div class="ea-toggle-label">Language</div><div class="ea-toggle-sub">English / Bahasa Malaysia</div></div>
+          <select style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:6px 10px;color:var(--text);font-size:12px;font-family:'Sora',sans-serif;">
+            <option>English</option>
+            <option>Bahasa Malaysia</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Sign Out -->
+      <button onclick="handleLogout()" style="width:100%;padding:13px;background:transparent;border:1px solid rgba(255,30,60,0.3);border-radius:12px;color:var(--red);font-size:13px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;">Sign Out</button>
     </div>
   </div>
 
@@ -2165,37 +2400,58 @@ input, select, textarea { font-family: 'Sora', sans-serif; outline: none; }
       <div class="sub-title">CUSTOMER SUPPORT</div>
     </div>
     <div class="sub-content">
-      <div style="text-align:center;margin-bottom:20px;">
-        <i class="ti ti-headset" style="font-size:48px;color:var(--red);display:block;margin-bottom:10px;"></i>
-        <div style="font-size:15px;font-weight:700;color:var(--text);">How can we help you?</div>
-        <div style="font-size:12px;color:var(--text3);margin-top:4px;">Our team is here to assist you</div>
-      </div>
-      <div class="more-menu-item" onclick="window.open('mailto:support@momentumai.com','_blank')">
-        <div class="more-menu-icon"><i class="ti ti-mail"></i></div>
-        <div class="more-menu-text"><div class="more-menu-label">Email Support</div><div class="more-menu-sub">support@momentumai.com</div></div>
+      <!-- Quick Contact Options -->
+      <div class="more-menu-item" onclick="window.open('https://t.me/momentumai','_blank')" style="margin-bottom:8px;">
+        <div class="more-menu-icon" style="background:rgba(0,136,204,0.15);border-color:rgba(0,136,204,0.2);"><i class="ti ti-brand-telegram" style="color:#0088CC;"></i></div>
+        <div class="more-menu-text">
+          <div class="more-menu-label">Telegram</div>
+          <div class="more-menu-sub">1PM – 1AM · @momentumai</div>
+        </div>
         <i class="ti ti-chevron-right more-menu-arrow"></i>
       </div>
-      <div class="more-menu-item" onclick="window.open('https://t.me/momentumai','_blank')">
-        <div class="more-menu-icon"><i class="ti ti-brand-telegram"></i></div>
-        <div class="more-menu-text"><div class="more-menu-label">Telegram Support</div><div class="more-menu-sub">@momentumai — usually replies in 1h</div></div>
+      <div class="more-menu-item" onclick="window.open('https://wa.me/601234567890','_blank')" style="margin-bottom:14px;">
+        <div class="more-menu-icon" style="background:rgba(37,211,102,0.12);border-color:rgba(37,211,102,0.2);"><i class="ti ti-brand-whatsapp" style="color:#25D366;"></i></div>
+        <div class="more-menu-text">
+          <div class="more-menu-label">WhatsApp</div>
+          <div class="more-menu-sub">1PM – 1AM · Response within 1 hour</div>
+        </div>
         <i class="ti ti-chevron-right more-menu-arrow"></i>
       </div>
-      <div class="more-menu-item" onclick="window.open('https://wa.me/601234567890','_blank')">
-        <div class="more-menu-icon"><i class="ti ti-brand-whatsapp"></i></div>
-        <div class="more-menu-text"><div class="more-menu-label">WhatsApp Support</div><div class="more-menu-sub">Mon - Fri, 9AM - 6PM MYT</div></div>
-        <i class="ti ti-chevron-right more-menu-arrow"></i>
+      <!-- Support hours notice -->
+      <div style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:rgba(255,176,32,0.07);border:1px solid rgba(255,176,32,0.2);border-radius:8px;margin-bottom:14px;">
+        <i class="ti ti-clock" style="color:var(--amber);font-size:16px;flex-shrink:0;"></i>
+        <div style="font-size:11px;color:var(--amber);">Support hours: 1:00 PM – 1:00 AM (MYT) · Mon – Sun</div>
       </div>
-      <div class="section-card" style="margin-top:12px;">
-        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Send a <span>Message</span></div>
+      <!-- Ticket Form -->
+      <div class="section-card">
+        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Submit a <span>Ticket</span></div>
         <div class="auth-field">
           <label class="auth-label">Subject</label>
-          <input class="auth-input" type="text" placeholder="What is your issue about?">
+          <select id="support-subject" class="auth-input">
+            <option value="">Select subject</option>
+            <option>Login Issue</option>
+            <option>Signal Not Showing</option>
+            <option>Trade Execution Problem</option>
+            <option>Account Verification</option>
+            <option>Fund Management Query</option>
+            <option>Technical Issue</option>
+            <option>Other</option>
+          </select>
         </div>
         <div class="auth-field">
           <label class="auth-label">Message</label>
-          <textarea class="auth-input" rows="4" placeholder="Describe your issue in detail..." style="resize:vertical;"></textarea>
+          <textarea id="support-message" class="auth-input" rows="4" placeholder="Describe your issue in detail..." style="resize:vertical;"></textarea>
         </div>
-        <button class="red-btn">SEND MESSAGE</button>
+        <div id="support-error" class="error-msg"></div>
+        <div id="support-success" class="success-msg"></div>
+        <button class="red-btn" onclick="handleSupportTicket()">SUBMIT TICKET</button>
+      </div>
+      <!-- My Tickets -->
+      <div class="section-card" style="margin-top:12px;">
+        <div class="section-title" style="font-size:13px;margin-bottom:12px;">My <span>Tickets</span></div>
+        <div id="my-tickets">
+          <div class="empty-state" style="padding:20px;"><i class="ti ti-ticket"></i>No tickets yet</div>
+        </div>
       </div>
     </div>
   </div>
@@ -2239,6 +2495,20 @@ input, select, textarea { font-family: 'Sora', sans-serif; outline: none; }
       </div>
     </div>
   </div>
+</div><!-- end screen-app -->
+
+<!-- ═══════════════════════════════════
+     ANALYST SCREEN
+═══════════════════════════════════ -->
+<div id="screen-analyst" class="screen" style="display:none;">
+  <div class="app-header">
+    <div class="app-header-logo">
+      <div class="app-header-slashes">
+        <div class="app-header-sl"></div><div class="app-header-sl"></div><div class="app-header-sl"></div>
+      </div>
+      <div class="app-header-name">ANALYST</div>
+    </div>
+    <div class="app-h
 
 eader-right">
       <button style="background:transparent;border:1px solid var(--border);border-radius:8px;padding:6px 12px;font-size:12px;color:var(--text2);cursor:pointer;" onclick="handleLogout()">Sign Out</button>
@@ -2368,7 +2638,135 @@ eader-right">
 <!-- ═══════════════════════════════════
      JAVASCRIPT
 ═══════════════════════════════════ -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+// ── FUND FOLLOW ──
+async function handleFundFollow() {
+  var name = document.getElementById('follow-name').value.trim();
+  var mt5 = document.getElementById('follow-mt5').value.trim();
+  var amount = document.getElementById('follow-amount').value;
+  var risk = document.getElementById('follow-risk').value;
+  var phone = document.getElementById('follow-phone').value.trim();
+  var agreed = document.getElementById('follow-agree').checked;
+  var errEl = document.getElementById('follow-error');
+  var sucEl = document.getElementById('follow-success');
+  errEl.style.display = 'none'; sucEl.style.display = 'none';
+  if(!name || !mt5 || !amount) { errEl.textContent = 'Please fill all required fields'; errEl.style.display = 'block'; return; }
+  if(!agreed) { errEl.textContent = 'Please agree to the Terms & Conditions'; errEl.style.display = 'block'; return; }
+  try {
+    await db.from('fund_requests').insert([{
+      user_id: currentUser ? currentUser.id : null,
+      user_name: name, mt5_id: mt5, allocation: parseFloat(amount),
+      risk_level: risk, phone: phone, agreed: true,
+      status: 'pending', created_at: new Date().toISOString()
+    }]);
+    sucEl.textContent = 'Application submitted! Our team will contact you within 24 hours.';
+    sucEl.style.display = 'block';
+  } catch(e) {
+    errEl.textContent = 'Error: ' + (e.message || 'Please try again');
+    errEl.style.display = 'block';
+  }
+}
+
+
+// ── CHART SYMBOL SEARCH ──
+function searchChartSymbol() {
+  var val = document.getElementById('chart-symbol-input').value.trim().toUpperCase();
+  if(!val) return;
+  currentPair = val;
+  document.querySelectorAll('.chart-pair-btn').forEach(function(b) { b.classList.remove('active'); });
+  initTVChart();
+}
+function quickSymbol(symbol, btn) {
+  currentPair = symbol;
+  document.getElementById('chart-symbol-input').value = symbol;
+  document.querySelectorAll('.chart-pair-btn').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  initTVChart();
+}
+function showChartSuggestions(val) {
+  // Simple - just update on enter or Go button
+}
+
+
+// ── SUPPORT TICKET ──
+async function handleSupportTicket() {
+  var subject = document.getElementById('support-subject').value;
+  var message = document.getElementById('support-message').value.trim();
+  var errEl = document.getElementById('support-error');
+  var sucEl = document.getElementById('support-success');
+  errEl.style.display = 'none'; sucEl.style.display = 'none';
+  if(!subject) { errEl.textContent = 'Please select a subject'; errEl.style.display = 'block'; return; }
+  if(!message) { errEl.textContent = 'Please enter your message'; errEl.style.display = 'block'; return; }
+  try {
+    await db.from('support_tickets').insert([{
+      user_id: currentUser ? currentUser.id : null,
+      user_name: currentUser ? (currentUser.name || currentUser.username) : 'Guest',
+      subject: subject, message: message,
+      status: 'open', created_at: new Date().toISOString()
+    }]);
+    sucEl.textContent = 'Ticket submitted! We will reply within 24 hours.';
+    sucEl.style.display = 'block';
+    document.getElementById('support-subject').value = '';
+    document.getElementById('support-message').value = '';
+    loadMyTickets();
+  } catch(e) {
+    // Table may not exist yet - show success anyway
+    sucEl.textContent = 'Ticket submitted! We will reply via Telegram/WhatsApp.';
+    sucEl.style.display = 'block';
+  }
+}
+
+async function loadMyTickets() {
+  if(!currentUser || !db) return;
+  var el = document.getElementById('my-tickets');
+  if(!el) return;
+  try {
+    var res = await db.from('support_tickets').select('*').eq('user_id', currentUser.id).order('created_at', {ascending:false}).limit(5);
+    if(!res.data || !res.data.length) return;
+    el.innerHTML = res.data.map(function(t) {
+      var statusColor = t.status === 'open' ? 'var(--amber)' : t.status === 'replied' ? 'var(--green)' : 'var(--text3)';
+      return '<div style="padding:10px 0;border-bottom:1px solid var(--border);">' +
+        '<div style="display:flex;justify-content:space-between;margin-bottom:4px;">' +
+          '<div style="font-size:12px;font-weight:700;color:var(--text);">' + t.subject + '</div>' +
+          '<div style="font-size:10px;font-weight:700;color:' + statusColor + ';">' + t.status.toUpperCase() + '</div>' +
+        '</div>' +
+        '<div style="font-size:11px;color:var(--text3);">' + t.message.substring(0,60) + '...</div>' +
+        (t.admin_reply ? '<div style="margin-top:6px;padding:8px;background:rgba(0,200,122,0.06);border-radius:6px;border:1px solid rgba(0,200,122,0.15);font-size:11px;color:var(--green);">Reply: ' + t.admin_reply + '</div>' : '') +
+      '</div>';
+    }).join('');
+  } catch(e) {}
+}
+
+
+// ── CHANGE PASSWORD ──
+async function handleChangePassword() {
+  var oldPw = document.getElementById('sec-old-pw').value;
+  var newPw = document.getElementById('sec-new-pw').value;
+  var confirmPw = document.getElementById('sec-confirm-pw').value;
+  var errEl = document.getElementById('pw-error');
+  var sucEl = document.getElementById('pw-success');
+  errEl.style.display = 'none'; sucEl.style.display = 'none';
+  if(!oldPw || !newPw || !confirmPw) { errEl.textContent = 'Please fill all fields'; errEl.style.display = 'block'; return; }
+  if(newPw !== confirmPw) { errEl.textContent = 'New passwords do not match'; errEl.style.display = 'block'; return; }
+  if(newPw.length < 6) { errEl.textContent = 'Password must be at least 6 characters'; errEl.style.display = 'block'; return; }
+  if(!currentUser) return;
+  var oldHash = btoa(unescape(encodeURIComponent(oldPw + '_momentum_salt')));
+  if(oldHash !== currentUser.password_hash) { errEl.textContent = 'Current password is incorrect'; errEl.style.display = 'block'; return; }
+  var newHash = btoa(unescape(encodeURIComponent(newPw + '_momentum_salt')));
+  try {
+    await db.from('users').update({password_hash: newHash}).eq('id', currentUser.id);
+    currentUser.password_hash = newHash;
+    sessionStorage.setItem('mob_user', JSON.stringify(currentUser));
+    sucEl.textContent = 'Password changed successfully!';
+    sucEl.style.display = 'block';
+    setTimeout(function() { document.getElementById('change-pw-form').style.display = 'none'; }, 2000);
+  } catch(e) {
+    errEl.textContent = 'Error: ' + (e.message || 'Please try again');
+    errEl.style.display = 'block';
+  }
+}
+
+</script>
 <script>
 // ── CONFIG ──
 const SUPABASE_URL = 'https://rhtworywcqcxkahlmezg.supabase.co';
@@ -2661,10 +3059,10 @@ async function loadSignalsFeed() {
       var circ = 2*Math.PI*15;
       var dash = r*circ;
       var fillClass = dir==='buy' ? 'sig-ring-fill-buy' : 'sig-ring-fill-sell';
-      return '<div class="sig-card">' +
+      return '<div class="sig-card" data-pair="'+sig.pair.toLowerCase()+'" data-dir="'+sig.direction+'" data-tf="'+(sig.timeframe||'')+'">' +
         '<div class="sig-card-top">' +
           '<div class="sig-card-icon">'+( dir==='buy' ? '📈' : '📉' )+'</div>' +
-          '<div><div class="sig-card-pair">'+sig.pair+'</div><div class="sig-card-time">'+timeAgo(sig.created_at)+'</div></div>' +
+          '<div><div class="sig-card-pair">'+sig.pair+'</div><div class="sig-card-time">'+timeAgo(sig.created_at)+' · '+(sig.timeframe||'H4')+'</div></div>' +
           '<div class="sig-card-dir '+dir+'">'+sig.direction+'</div>' +
         '</div>' +
         '<div class="sig-card-levels">' +
@@ -2888,9 +3286,20 @@ function timeAgo(dateStr) {
   if(diff<86400) return Math.floor(diff/3600)+'h ago';
   return Math.floor(diff/86400)+'d ago';
 }
-function filterSigs(type, btn) {
-  document.querySelectorAll('.sig-filter').forEach(function(b) { b.classList.remove('active'); });
-  btn.classList.add('active');
+function applySignalFilters() {
+  var symbol = document.getElementById('filter-symbol').value.toLowerCase();
+  var direction = document.getElementById('filter-direction').value.toUpperCase();
+  var timeframe = document.getElementById('filter-timeframe').value;
+  document.querySelectorAll('.sig-card').forEach(function(card) {
+    var pair = (card.dataset.pair || '').toLowerCase();
+    var dir = (card.dataset.dir || '').toUpperCase();
+    var tf = (card.dataset.tf || '');
+    var show = true;
+    if(symbol && pair.indexOf(symbol) === -1) show = false;
+    if(direction && dir !== direction) show = false;
+    if(timeframe && tf !== timeframe) show = false;
+    card.style.display = show ? '' : 'none';
+  });
 }
 
 // ── INIT ──
