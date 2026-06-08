@@ -2650,6 +2650,113 @@ input, select, textarea { font-family: 'Sora', sans-serif; outline: none; }
       </div>
     </div>
   </div>
+
+<!-- ═══════════════════════════════════
+     TRADE NOW POPUP
+═══════════════════════════════════ -->
+<div class="popup-overlay" id="trade-popup">
+  <div class="popup-sheet">
+    <div class="popup-handle"></div>
+    <div class="popup-title" id="popup-title">XAUUSD — SELL</div>
+    <div class="popup-sub" id="popup-sub">Entry: 2,310 – 2,318 · SL: 2,295 · TP: 2,340</div>
+    <!-- Trade tabs -->
+    <div style="display:flex;gap:6px;margin-bottom:14px;">
+      <button class="trade-tab-btn active" id="trade-tab-smart" onclick="switchTradeTab('smart')" style="flex:1;padding:9px;background:rgba(255,30,60,0.12);border:1px solid rgba(255,30,60,0.3);border-radius:8px;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;">Smart Tool</button>
+      <button class="trade-tab-btn" id="trade-tab-manual" onclick="switchTradeTab('manual')" style="flex:1;padding:9px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:11px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;">Manual</button>
+      <button class="trade-tab-btn" id="trade-tab-auto" onclick="switchTradeTab('auto')" style="flex:1;padding:9px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:11px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;">Auto</button>
+    </div>
+    <!-- SMART TOOL TAB -->
+    <div id="trade-content-smart">
+      <div style="padding:12px;background:rgba(0,200,122,0.06);border:1px solid rgba(0,200,122,0.15);border-radius:10px;font-size:12px;color:var(--green);margin-bottom:12px;">
+        Will use your Smart Tool settings — DCA, trailing stop, partial close, breakeven
+      </div>
+      <div class="trade-levels-row">
+        <div class="trade-level-box"><div class="trade-level-lbl">Entry</div><div class="trade-level-val" id="popup-entry">--</div></div>
+        <div class="trade-level-box"><div class="trade-level-lbl">Stop Loss</div><div class="trade-level-val sl" id="popup-sl">--</div></div>
+        <div class="trade-level-box"><div class="trade-level-lbl">Take Profit</div><div class="trade-level-val tp" id="popup-tp">--</div></div>
+      </div>
+      <button class="trade-execute-btn" onclick="executeTrade('smart')">EXECUTE WITH SMART TOOL</button>
+    </div>
+
+    <!-- MANUAL TAB -->
+    <div id="trade-content-manual" style="display:none;">
+      <div class="trade-levels-row">
+        <div class="trade-level-box"><div class="trade-level-lbl">Entry</div><div class="trade-level-val" id="popup-entry-m">--</div></div>
+        <div class="trade-level-box"><div class="trade-level-lbl">Stop Loss</div><div class="trade-level-val sl" id="popup-sl-m">--</div></div>
+        <div class="trade-level-box"><div class="trade-level-lbl">Take Profit</div><div class="trade-level-val tp" id="popup-tp-m">--</div></div>
+      </div>
+      <label class="trade-vol-label">Volume (Lot Size)</label>
+      <input class="trade-vol-input" id="trade-volume" type="number" value="0.01" step="0.01" min="0.01">
+      <button class="trade-execute-btn" onclick="executeTrade('manual')">EXECUTE TRADE</button>
+    </div>
+
+    <!-- AUTOMATED TRADING TAB -->
+    <div id="trade-content-auto" style="display:none;">
+      <!-- Choose Analyser -->
+      <div class="section-card" style="margin-bottom:10px;">
+        <div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px;">Choose Analyser</div>
+        <select id="auto-analyser" class="auth-input" style="font-size:13px;padding:10px 14px;">
+          <option value="mai_scanner">MAI Scanner (AI-Powered)</option>
+          <option value="analyst_a">Follow Analyst Signals</option>
+          <option value="fund_genesis">Momentum Genesis Fund</option>
+          <option value="fund_alpha">Momentum Alpha Fund</option>
+        </select>
+      </div>
+      <!-- Risk Controls -->
+      <div class="section-card" style="margin-bottom:10px;">
+        <div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.8px;text-transform:uppercase;margin-bottom:10px;">Risk Controls</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div>
+            <label style="font-size:10px;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;display:block;margin-bottom:5px;">Max Daily Drawdown %</label>
+            <input type="number" value="3" min="1" max="20" style="width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:14px;color:var(--text);font-family:'Sora',sans-serif;">
+          </div>
+          <div>
+            <label style="font-size:10px;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;display:block;margin-bottom:5px;">Overall Drawdown %</label>
+            <input type="number" value="10" min="1" max="50" style="width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:14px;color:var(--text);font-family:'Sora',sans-serif;">
+          </div>
+        </div>
+      </div>
+      <!-- Smart Tool Connection -->
+      <div class="section-card" style="margin-bottom:10px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div>
+            <div style="font-size:13px;font-weight:700;color:var(--text);">Use Smart Tool Settings</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px;">Apply EA settings to automated trades</div>
+          </div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+      </div>
+      <!-- Entry Confirmation -->
+      <div class="section-card" style="margin-bottom:12px;">
+        <div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.8px;text-transform:uppercase;margin-bottom:10px;">Entry Confirmation</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <label style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg3);border-radius:8px;cursor:pointer;border:1px solid var(--border);" id="conf-instant-label">
+            <input type="radio" name="entry-confirm" value="instant" checked style="accent-color:var(--red);width:16px;height:16px;">
+            <div>
+              <div style="font-size:13px;font-weight:700;color:var(--text);">Instant Execution</div>
+              <div style="font-size:11px;color:var(--text3);">Signal appears → trade executes immediately</div>
+            </div>
+          </label>
+          <label style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg3);border-radius:8px;cursor:pointer;border:1px solid var(--border);" id="conf-scanner-label">
+            <input type="radio" name="entry-confirm" value="scanner" style="accent-color:var(--red);width:16px;height:16px;">
+            <div>
+              <div style="font-size:13px;font-weight:700;color:var(--text);">Check MAI Scanner First</div>
+              <div style="font-size:11px;color:var(--text3);">Signal → MAI checks direction → execute if confirmed</div>
+            </div>
+          </label>
+        </div>
+      </div>
+      <button class="trade-execute-btn" onclick="activateAutoTrading()" style="background:linear-gradient(135deg,#1a6aff,#0047cc);box-shadow:0 6px 20px rgba(26,106,255,0.3);">ACTIVATE AUTOMATED TRADING</button>
+      <div style="text-align:center;font-size:10px;color:var(--text3);margin-top:8px;">Requires MT5 VPS connection — Phase 6</div>
+    </div>
+
+    <div class="trade-note" id="trade-success-note" style="display:none;">
+      <i class="ti ti-info-circle"></i>Trade sent to MT5. Monitor and manage in your MetaTrader 5 terminal.
+    </div>
+    <button class="ghost-btn" onclick="closeTradePopup()">Cancel</button>
+  </div>
+</div>
+
 </div><!-- end screen-app -->
 
   <!-- Top 50 Leaderboard -->
@@ -3327,111 +3434,6 @@ eader-right">
   </div>
 </div>
 
-<!-- ═══════════════════════════════════
-     TRADE NOW POPUP
-═══════════════════════════════════ -->
-<div class="popup-overlay" id="trade-popup">
-  <div class="popup-sheet">
-    <div class="popup-handle"></div>
-    <div class="popup-title" id="popup-title">XAUUSD — SELL</div>
-    <div class="popup-sub" id="popup-sub">Entry: 2,310 – 2,318 · SL: 2,295 · TP: 2,340</div>
-    <!-- Trade tabs -->
-    <div style="display:flex;gap:6px;margin-bottom:14px;">
-      <button class="trade-tab-btn active" id="trade-tab-smart" onclick="switchTradeTab('smart')" style="flex:1;padding:9px;background:rgba(255,30,60,0.12);border:1px solid rgba(255,30,60,0.3);border-radius:8px;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;">Smart Tool</button>
-      <button class="trade-tab-btn" id="trade-tab-manual" onclick="switchTradeTab('manual')" style="flex:1;padding:9px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:11px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;">Manual</button>
-      <button class="trade-tab-btn" id="trade-tab-auto" onclick="switchTradeTab('auto')" style="flex:1;padding:9px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:11px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;">Auto</button>
-    </div>
-    <!-- SMART TOOL TAB -->
-    <div id="trade-content-smart">
-      <div style="padding:12px;background:rgba(0,200,122,0.06);border:1px solid rgba(0,200,122,0.15);border-radius:10px;font-size:12px;color:var(--green);margin-bottom:12px;">
-        Will use your Smart Tool settings — DCA, trailing stop, partial close, breakeven
-      </div>
-      <div class="trade-levels-row">
-        <div class="trade-level-box"><div class="trade-level-lbl">Entry</div><div class="trade-level-val" id="popup-entry">--</div></div>
-        <div class="trade-level-box"><div class="trade-level-lbl">Stop Loss</div><div class="trade-level-val sl" id="popup-sl">--</div></div>
-        <div class="trade-level-box"><div class="trade-level-lbl">Take Profit</div><div class="trade-level-val tp" id="popup-tp">--</div></div>
-      </div>
-      <button class="trade-execute-btn" onclick="executeTrade('smart')">EXECUTE WITH SMART TOOL</button>
-    </div>
-
-    <!-- MANUAL TAB -->
-    <div id="trade-content-manual" style="display:none;">
-      <div class="trade-levels-row">
-        <div class="trade-level-box"><div class="trade-level-lbl">Entry</div><div class="trade-level-val" id="popup-entry-m">--</div></div>
-        <div class="trade-level-box"><div class="trade-level-lbl">Stop Loss</div><div class="trade-level-val sl" id="popup-sl-m">--</div></div>
-        <div class="trade-level-box"><div class="trade-level-lbl">Take Profit</div><div class="trade-level-val tp" id="popup-tp-m">--</div></div>
-      </div>
-      <label class="trade-vol-label">Volume (Lot Size)</label>
-      <input class="trade-vol-input" id="trade-volume" type="number" value="0.01" step="0.01" min="0.01">
-      <button class="trade-execute-btn" onclick="executeTrade('manual')">EXECUTE TRADE</button>
-    </div>
-
-    <!-- AUTOMATED TRADING TAB -->
-    <div id="trade-content-auto" style="display:none;">
-      <!-- Choose Analyser -->
-      <div class="section-card" style="margin-bottom:10px;">
-        <div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px;">Choose Analyser</div>
-        <select id="auto-analyser" class="auth-input" style="font-size:13px;padding:10px 14px;">
-          <option value="mai_scanner">MAI Scanner (AI-Powered)</option>
-          <option value="analyst_a">Follow Analyst Signals</option>
-          <option value="fund_genesis">Momentum Genesis Fund</option>
-          <option value="fund_alpha">Momentum Alpha Fund</option>
-        </select>
-      </div>
-      <!-- Risk Controls -->
-      <div class="section-card" style="margin-bottom:10px;">
-        <div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.8px;text-transform:uppercase;margin-bottom:10px;">Risk Controls</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-          <div>
-            <label style="font-size:10px;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;display:block;margin-bottom:5px;">Max Daily Drawdown %</label>
-            <input type="number" value="3" min="1" max="20" style="width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:14px;color:var(--text);font-family:'Sora',sans-serif;">
-          </div>
-          <div>
-            <label style="font-size:10px;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;display:block;margin-bottom:5px;">Overall Drawdown %</label>
-            <input type="number" value="10" min="1" max="50" style="width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:14px;color:var(--text);font-family:'Sora',sans-serif;">
-          </div>
-        </div>
-      </div>
-      <!-- Smart Tool Connection -->
-      <div class="section-card" style="margin-bottom:10px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;">
-          <div>
-            <div style="font-size:13px;font-weight:700;color:var(--text);">Use Smart Tool Settings</div>
-            <div style="font-size:11px;color:var(--text3);margin-top:2px;">Apply EA settings to automated trades</div>
-          </div>
-          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
-        </div>
-      </div>
-      <!-- Entry Confirmation -->
-      <div class="section-card" style="margin-bottom:12px;">
-        <div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.8px;text-transform:uppercase;margin-bottom:10px;">Entry Confirmation</div>
-        <div style="display:flex;flex-direction:column;gap:8px;">
-          <label style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg3);border-radius:8px;cursor:pointer;border:1px solid var(--border);" id="conf-instant-label">
-            <input type="radio" name="entry-confirm" value="instant" checked style="accent-color:var(--red);width:16px;height:16px;">
-            <div>
-              <div style="font-size:13px;font-weight:700;color:var(--text);">Instant Execution</div>
-              <div style="font-size:11px;color:var(--text3);">Signal appears → trade executes immediately</div>
-            </div>
-          </label>
-          <label style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg3);border-radius:8px;cursor:pointer;border:1px solid var(--border);" id="conf-scanner-label">
-            <input type="radio" name="entry-confirm" value="scanner" style="accent-color:var(--red);width:16px;height:16px;">
-            <div>
-              <div style="font-size:13px;font-weight:700;color:var(--text);">Check MAI Scanner First</div>
-              <div style="font-size:11px;color:var(--text3);">Signal → MAI checks direction → execute if confirmed</div>
-            </div>
-          </label>
-        </div>
-      </div>
-      <button class="trade-execute-btn" onclick="activateAutoTrading()" style="background:linear-gradient(135deg,#1a6aff,#0047cc);box-shadow:0 6px 20px rgba(26,106,255,0.3);">ACTIVATE AUTOMATED TRADING</button>
-      <div style="text-align:center;font-size:10px;color:var(--text3);margin-top:8px;">Requires MT5 VPS connection — Phase 6</div>
-    </div>
-
-    <div class="trade-note" id="trade-success-note" style="display:none;">
-      <i class="ti ti-info-circle"></i>Trade sent to MT5. Monitor and manage in your MetaTrader 5 terminal.
-    </div>
-    <button class="ghost-btn" onclick="closeTradePopup()">Cancel</button>
-  </div>
-</div>
 
 <!-- ═══════════════════════════════════
      JAVASCRIPT
