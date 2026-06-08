@@ -3771,21 +3771,6 @@ function markLessonComplete() {
 }
 
 
-// ── HANDLE TRADE NOW ──
-function handleTradeNow(btn) {
-  var sigId = btn.getAttribute('data-id');
-  if(sigId && window._signalStore && window._signalStore[sigId]) {
-    openTradePopup(sigId);
-  } else {
-    // Try finding the signal from the card
-    var card = btn.closest('.sig-card');
-    if(card) {
-      var sigIdFromCard = card.getAttribute('data-sigid');
-      if(sigIdFromCard) openTradePopup(sigIdFromCard);
-    }
-  }
-}
-
 </script>
 <script>
 // ── CONFIG ──
@@ -4073,15 +4058,23 @@ async function loadSignalsFeed() {
     if(res.error||!res.data) { container.innerHTML='<div class="empty-state"><i class="ti ti-broadcast"></i>No signals yet</div>'; return; }
     window._signalStore = {};
     res.data.forEach(function(s) { window._signalStore[s.id]=s; });
-    container.innerHTML = res.data.map(function(sig) {
+    container.innerHTML = '';
+    res.data.forEach(function(sig) {
       var dir = sig.direction.toLowerCase();
       var r = sig.strength/100;
       var circ = 2*Math.PI*15;
       var dash = r*circ;
       var fillClass = dir==='buy' ? 'sig-ring-fill-buy' : 'sig-ring-fill-sell';
-      return '<div class="sig-card" data-sigid="'+sig.id+'" data-pair="'+sig.pair.toLowerCase()+'" data-dir="'+sig.direction+'" data-tf="'+(sig.timeframe||'')+'">' +
+      // Build card using createElement to avoid string escaping issues
+      var card = document.createElement('div');
+      card.className = 'sig-card';
+      card.setAttribute('data-sigid', sig.id);
+      card.setAttribute('data-pair', sig.pair.toLowerCase());
+      card.setAttribute('data-dir', sig.direction);
+      card.setAttribute('data-tf', sig.timeframe||'');
+      card.innerHTML = 
         '<div class="sig-card-top">' +
-          '<div class="sig-card-icon">'+( dir==='buy' ? '📈' : '📉' )+'</div>' +
+          '<div class="sig-card-icon">'+(dir==='buy'?'📈':'📉')+'</div>' +
           '<div><div class="sig-card-pair">'+sig.pair+'</div><div class="sig-card-time">'+timeAgo(sig.created_at)+' · '+(sig.timeframe||'H4')+'</div></div>' +
           '<div class="sig-card-dir '+dir+'">'+sig.direction+'</div>' +
         '</div>' +
@@ -4095,14 +4088,27 @@ async function loadSignalsFeed() {
             '<div class="sig-strength-ring"><svg viewBox="0 0 36 36"><circle class="sig-ring-track" cx="18" cy="18" r="15"/><circle class="'+fillClass+'" cx="18" cy="18" r="15" stroke-dasharray="'+dash.toFixed(1)+' '+circ.toFixed(1)+'"/></svg><div class="sig-ring-text">'+sig.strength+'%</div></div>' +
             '<div class="sig-analyst">'+(sig.analyst_name||'Analyst')+'</div>' +
           '</div>' +
-                    '<button class="sig-trade-btn" data-id="' + sig.id + '" onclick="handleTradeNow(this)">Trade Now</button>' +
-        '</div>' +
-      '</div>';
-    }).join('');
+          '<button class="sig-trade-btn">Trade Now</button>' +
+        '</div>';
+      // Wire up Trade Now button directly with correct signal ID
+      var btn = card.querySelector('.sig-trade-btn');
+      (function(sigId) {
+        btn.addEventListener('click', function() { openTradePopup(sigId); });
+      })(sig.id);
+      container.appendChild(card);
+    });
   } catch(e) { container.innerHTML = '<div class="empty-state">Error loading signals</div>'; }
 }
 
 // ── TRADE POPUP ──
+
+// ── TRADE NOW BUTTON HANDLER ──
+function tradeNow(btn) {
+  var sigId = btn.getAttribute('data-sigid');
+  if(!sigId) return;
+  openTradePopup(sigId);
+}
+
 function openTradePopup(sigId) {
   currentSignal = window._signalStore[sigId];
   if(!currentSignal) return;
