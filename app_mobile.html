@@ -4164,7 +4164,7 @@ async function loadSignalsFeed() {
   var container = document.getElementById('mob-signals-list');
   container.innerHTML = '<div class="empty-state"><i class="ti ti-broadcast"></i>Loading...</div>';
   try {
-    var res = await db.from('signals').select('*').eq('status','active').order('created_at',{ascending:false});
+    var res = await db.from('signals').select('*').order('created_at',{ascending:false});
     if(res.error||!res.data) { container.innerHTML='<div class="empty-state"><i class="ti ti-broadcast"></i>No signals yet</div>'; return; }
     window._signalStore = {};
     res.data.forEach(function(s) { window._signalStore[s.id]=s; });
@@ -4191,12 +4191,25 @@ async function loadSignalsFeed() {
       icon.className = 'sig-card-icon';
       icon.textContent = dir==='buy' ? 'BUY' : 'SELL';
       var info = document.createElement('div');
+      // Status dot before pair name
+      var statusDot = document.createElement('div');
+      statusDot.style.cssText = 'display:inline-flex;align-items:center;gap:5px;margin-bottom:4px;';
+      var dot = document.createElement('span');
+      var isActive = sig.status === 'active';
+      dot.style.cssText = 'width:7px;height:7px;border-radius:50%;background:' + (isActive ? 'var(--green)' : 'var(--text3)') + ';display:inline-block;flex-shrink:0;';
+      var statusLbl = document.createElement('span');
+      statusLbl.style.cssText = 'font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:' + (isActive ? 'var(--green)' : 'var(--text3)') + ';';
+      statusLbl.textContent = isActive ? 'ACTIVE' : 'INACTIVE';
+      statusDot.appendChild(dot);
+      statusDot.appendChild(statusLbl);
+
       var pairEl = document.createElement('div');
       pairEl.className = 'sig-card-pair';
       pairEl.textContent = sig.pair;
       var timeEl = document.createElement('div');
       timeEl.className = 'sig-card-time';
       timeEl.textContent = timeAgo(sig.created_at) + ' · ' + (sig.timeframe||'H4');
+      info.appendChild(statusDot);
       info.appendChild(pairEl);
       info.appendChild(timeEl);
       var dirEl = document.createElement('div');
