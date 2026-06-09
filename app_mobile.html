@@ -2432,8 +2432,8 @@ select.auth-input {
       <!-- Avatar with picker -->
       <div style="text-align:center;margin-bottom:20px;">
         <div style="position:relative;display:inline-block;margin-bottom:10px;">
-          <div style="width:80px;height:80px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:32px;overflow:hidden;" id="profile-avatar-big">
-            <span id="profile-avatar-emoji">👤</span>
+          <div style="width:80px;height:80px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;" id="profile-avatar-big">
+            <span id="profile-avatar-emoji" style="font-size:36px;line-height:1;display:flex;align-items:center;justify-content:center;">👤</span>
             <span id="profile-avatar-initials" style="display:none;font-size:28px;font-weight:800;color:#fff;">AD</span>
           </div>
           <!-- Edit button -->
@@ -3341,8 +3341,18 @@ function showAvatarPicker() {
 }
 
 function selectAvatar(emoji) {
+  // Update the profile avatar immediately
   var emojiEl = document.getElementById('profile-avatar-emoji');
-  if(emojiEl) emojiEl.textContent = emoji;
+  var initialsEl = document.getElementById('profile-avatar-initials');
+  if(emojiEl) {
+    emojiEl.textContent = emoji;
+    emojiEl.style.display = 'flex';
+    emojiEl.style.alignItems = 'center';
+    emojiEl.style.justifyContent = 'center';
+    emojiEl.style.fontSize = '36px';
+    emojiEl.style.lineHeight = '1';
+  }
+  if(initialsEl) initialsEl.style.display = 'none';
   try { localStorage.setItem('profile_avatar_emoji', emoji); } catch(e) {}
 }
 
@@ -3356,8 +3366,19 @@ function loadSavedProfilePhoto() {
   var savedEmoji = localStorage.getItem('profile_avatar_emoji');
   var savedColor = localStorage.getItem('profile_avatar_color');
   var emojiEl = document.getElementById('profile-avatar-emoji');
+  var initialsEl = document.getElementById('profile-avatar-initials');
   var avatarBig = document.getElementById('profile-avatar-big');
-  if(savedEmoji && emojiEl) emojiEl.textContent = savedEmoji;
+  if(savedEmoji) {
+    if(emojiEl) {
+      emojiEl.textContent = savedEmoji;
+      emojiEl.style.display = 'flex';
+      emojiEl.style.alignItems = 'center';
+      emojiEl.style.justifyContent = 'center';
+      emojiEl.style.fontSize = '36px';
+      emojiEl.style.lineHeight = '1';
+    }
+    if(initialsEl) initialsEl.style.display = 'none';
+  }
   if(savedColor && avatarBig) avatarBig.style.background = savedColor;
 }
 
