@@ -3822,16 +3822,13 @@ function enterApp(user) {
   }
   showScreen('screen-app');
   setTimeout(function() { 
-    console.log('switchTab running');
     switchTab('dashboard');
     var dashEl = document.getElementById('tab-dashboard');
-    console.log('tab-dashboard display:', dashEl ? dashEl.style.display : 'NOT FOUND');
   }, 50);
   loadDashboardSignals();
   drawSparklines();
   initTVChart();
   setTimeout(function() { drawGrowthChart(); drawEmotionChart(); loadSavedProfilePhoto(); }, 800);
-  setTimeout(function() { checkAndShowAnnouncement(); }, 3000);
 }
 
 // ── GROWTH CHART ──
@@ -4725,7 +4722,6 @@ async function postAnnouncement() {
       admin_id: currentUser ? currentUser.id : null,
       created_at: new Date().toISOString()
     }]);
-    console.log('Announcement insert result:', JSON.stringify(result));
     if(result.error) {
       errEl.textContent = 'DB Error: ' + result.error.message;
       errEl.style.display = 'block';
@@ -4748,7 +4744,6 @@ async function checkAndShowAnnouncement() {
   if(!db) return;
   try {
     var res = await db.from('announcements').select('*').order('created_at',{ascending:false}).limit(1);
-    console.log('Announcement check:', JSON.stringify(res));
     if(res.error) { console.error('Ann error:', res.error); return; }
     if(!res.data || !res.data.length) return;
     var ann = res.data[0];
