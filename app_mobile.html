@@ -2429,22 +2429,57 @@ select.auth-input {
       <div class="sub-title">MY PROFILE</div>
     </div>
     <div class="sub-content">
-      <!-- Avatar with upload -->
+      <!-- Avatar with picker -->
       <div style="text-align:center;margin-bottom:20px;">
         <div style="position:relative;display:inline-block;margin-bottom:10px;">
-          <div style="width:80px;height:80px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;color:#fff;overflow:hidden;" id="profile-avatar-big">
-            <img id="profile-avatar-img" src="" style="width:100%;height:100%;object-fit:cover;display:none;">
-            <span id="profile-avatar-initials">AD</span>
+          <div style="width:80px;height:80px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:32px;overflow:hidden;" id="profile-avatar-big">
+            <span id="profile-avatar-emoji">👤</span>
+            <span id="profile-avatar-initials" style="display:none;font-size:28px;font-weight:800;color:#fff;">AD</span>
           </div>
-          <!-- Camera button -->
-          <label for="profile-photo-input" style="position:absolute;bottom:0;right:0;width:26px;height:26px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;cursor:pointer;border:2px solid var(--bg);">
-            <i class="ti ti-camera" style="font-size:13px;color:#fff;"></i>
-          </label>
-          <input type="file" id="profile-photo-input" accept="image/*" style="display:none;" onchange="handleProfilePhoto(this)">
+          <!-- Edit button -->
+          <button onclick="showAvatarPicker()" style="position:absolute;bottom:0;right:0;width:26px;height:26px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;cursor:pointer;border:2px solid var(--bg);padding:0;">
+            <i class="ti ti-pencil" style="font-size:12px;color:#fff;"></i>
+          </button>
         </div>
         <div style="font-size:16px;font-weight:800;color:var(--text);" id="profile-name-display">Trader</div>
         <div style="font-size:12px;color:var(--text3);margin-top:2px;" id="profile-role-display">Premium User</div>
-        <div style="font-size:10px;color:var(--text3);margin-top:4px;">Tap camera to change photo</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:4px;">Tap pencil to change avatar</div>
+      </div>
+
+      <!-- Avatar Picker Popup -->
+      <div id="avatar-picker" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;align-items:flex-end;">
+        <div style="background:var(--bg2);border-radius:20px 20px 0 0;padding:20px;width:100%;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+            <div style="font-size:13px;font-weight:800;color:var(--text);">Choose Avatar</div>
+            <button onclick="closeAvatarPicker()" style="background:transparent;border:none;color:var(--text2);font-size:22px;cursor:pointer;line-height:1;">×</button>
+          </div>
+          <!-- Avatar grid -->
+          <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:16px;">
+            <div onclick="selectAvatar('👤')" style="width:48px;height:48px;border-radius:50%;background:var(--surface);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;">👤</div>
+            <div onclick="selectAvatar('🧑‍💼')" style="width:48px;height:48px;border-radius:50%;background:var(--surface);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;">🧑‍💼</div>
+            <div onclick="selectAvatar('👨‍💻')" style="width:48px;height:48px;border-radius:50%;background:var(--surface);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;">👨‍💻</div>
+            <div onclick="selectAvatar('👩‍💻')" style="width:48px;height:48px;border-radius:50%;background:var(--surface);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;">👩‍💻</div>
+            <div onclick="selectAvatar('🧑‍🚀')" style="width:48px;height:48px;border-radius:50%;background:var(--surface);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;">🧑‍🚀</div>
+            <div onclick="selectAvatar('🦸')" style="width:48px;height:48px;border-radius:50%;background:var(--surface);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;">🦸</div>
+            <div onclick="selectAvatar('🐯')" style="width:48px;height:48px;border-radius:50%;background:var(--surface);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;">🐯</div>
+            <div onclick="selectAvatar('🦁')" style="width:48px;height:48px;border-radius:50%;background:var(--surface);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;">🦁</div>
+            <div onclick="selectAvatar('🐺')" style="width:48px;height:48px;border-radius:50%;background:var(--surface);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;">🐺</div>
+            <div onclick="selectAvatar('🦊')" style="width:48px;height:48px;border-radius:50%;background:var(--surface);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;">🦊</div>
+            <div onclick="selectAvatar('🐻')" style="width:48px;height:48px;border-radius:50%;background:var(--surface);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;">🐻</div>
+            <div onclick="selectAvatar('🐼')" style="width:48px;height:48px;border-radius:50%;background:var(--surface);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;">🐼</div>
+          </div>
+          <!-- Color options -->
+          <div style="font-size:10px;color:var(--text3);letter-spacing:.5px;margin-bottom:8px;">AVATAR COLOUR</div>
+          <div style="display:flex;gap:8px;margin-bottom:16px;">
+            <div onclick="setAvatarColor('linear-gradient(135deg,#FF1E3C,#C40024)')" style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#FF1E3C,#C40024);cursor:pointer;border:2px solid transparent;"></div>
+            <div onclick="setAvatarColor('linear-gradient(135deg,#4D9EFF,#1A5FBF)')" style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#4D9EFF,#1A5FBF);cursor:pointer;"></div>
+            <div onclick="setAvatarColor('linear-gradient(135deg,#9B59B6,#6C3483)')" style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#9B59B6,#6C3483);cursor:pointer;"></div>
+            <div onclick="setAvatarColor('linear-gradient(135deg,#00c87a,#0E8A4F)')" style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#00c87a,#0E8A4F);cursor:pointer;"></div>
+            <div onclick="setAvatarColor('linear-gradient(135deg,#FFB020,#E67E22)')" style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#FFB020,#E67E22);cursor:pointer;"></div>
+            <div onclick="setAvatarColor('linear-gradient(135deg,#FF6B5E,#C0392B)')" style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#FF6B5E,#C0392B);cursor:pointer;"></div>
+          </div>
+          <button onclick="closeAvatarPicker()" style="width:100%;padding:12px;background:var(--grad);border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;">Done</button>
+        </div>
       </div>
 
       <!-- Personal Info -->
@@ -3257,45 +3292,32 @@ function activateAutoTrading() {
 }
 
 
-// ── PROFILE PHOTO ──
-function handleProfilePhoto(input) {
-  if(!input.files || !input.files[0]) return;
-  var file = input.files[0];
-  if(file.size > 2 * 1024 * 1024) {
-    alert('Photo too large. Please use an image under 2MB.');
-    return;
-  }
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    var dataUrl = e.target.result;
-    // Save to localStorage first
-    try {
-      localStorage.setItem('profile_photo', dataUrl);
-    } catch(err) {
-      alert('Could not save photo. Storage may be full.');
-      return;
-    }
-    // Update all avatar elements immediately
-    var img = document.getElementById('profile-avatar-img');
-    var initials = document.getElementById('profile-avatar-initials');
-    if(img) { img.src = dataUrl; img.style.display = 'block'; }
-    if(initials) initials.style.display = 'none';
-    // Show success feedback
-    var tip = document.querySelector('[style*="Tap camera"]');
-    if(tip) { tip.textContent = 'Photo saved!'; tip.style.color = 'var(--green)'; setTimeout(function() { tip.textContent = 'Tap camera to change photo'; tip.style.color = ''; }, 2000); }
-  };
-  reader.readAsDataURL(file);
+// ── AVATAR PICKER ──
+function showAvatarPicker() {
+  var picker = document.getElementById('avatar-picker');
+  if(picker) picker.style.display = 'flex';
 }
-
-// Load saved profile photo on app start
+function closeAvatarPicker() {
+  var picker = document.getElementById('avatar-picker');
+  if(picker) picker.style.display = 'none';
+}
+function selectAvatar(emoji) {
+  var emojiEl = document.getElementById('profile-avatar-emoji');
+  if(emojiEl) emojiEl.textContent = emoji;
+  try { localStorage.setItem('profile_avatar_emoji', emoji); } catch(e) {}
+}
+function setAvatarColor(gradient) {
+  var avatarBig = document.getElementById('profile-avatar-big');
+  if(avatarBig) avatarBig.style.background = gradient;
+  try { localStorage.setItem('profile_avatar_color', gradient); } catch(e) {}
+}
 function loadSavedProfilePhoto() {
-  var saved = localStorage.getItem('profile_photo');
-  if(saved) {
-    var img = document.getElementById('profile-avatar-img');
-    var initials = document.getElementById('profile-avatar-initials');
-    if(img) { img.src = saved; img.style.display = 'block'; }
-    if(initials) initials.style.display = 'none';
-  }
+  var savedEmoji = localStorage.getItem('profile_avatar_emoji');
+  var savedColor = localStorage.getItem('profile_avatar_color');
+  var emojiEl = document.getElementById('profile-avatar-emoji');
+  var avatarBig = document.getElementById('profile-avatar-big');
+  if(savedEmoji && emojiEl) emojiEl.textContent = savedEmoji;
+  if(savedColor && avatarBig) avatarBig.style.background = savedColor;
 }
 
 
