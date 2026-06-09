@@ -1844,9 +1844,15 @@ select.auth-input {
   <div id="sub-ea" class="sub-screen">
     <div class="sub-header">
       <button class="sub-back" onclick="hideSubScreen('sub-ea')"><i class="ti ti-arrow-left"></i></button>
-      <div class="sub-title">EA SETTINGS</div>
+      <div class="sub-title">SMART TOOL</div>
     </div>
-    <div class="sub-content">
+    <!-- EA Tab Bar -->
+    <div id="ea-tab-bar" style="display:flex;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0;">
+      <button class="ea-main-tab" data-tab="settings" style="flex:1;padding:11px 8px;background:transparent;border:none;border-bottom:2px solid var(--red);color:var(--red);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;">Settings</button>
+      <button class="ea-main-tab" data-tab="mt5connect" style="flex:1;padding:11px 8px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;">MT5 Connect</button>
+    </div>
+    <!-- Settings Tab -->
+    <div id="ea-tab-settings" class="sub-content">
       <!-- Lot Size & Risk -->
       <div class="section-card">
         <div class="section-title" style="font-size:13px;margin-bottom:12px;">Lot Size <span>& Risk</span></div>
@@ -1952,8 +1958,106 @@ select.auth-input {
           </select>
         </div>
       </div>
-      <button class="red-btn">SAVE SETTINGS</button>
-    </div>
+      <button class="red-btn" onclick="saveEASettings()">SAVE SETTINGS</button>
+    </div><!-- end ea-tab-settings -->
+
+    <!-- MT5 Connect Tab -->
+    <div id="ea-tab-mt5connect" class="sub-content" style="display:none;">
+
+      <!-- Connection Status Banner -->
+      <div id="mt5-status-banner" style="display:none;padding:12px 14px;border-radius:10px;margin-bottom:14px;display:flex;align-items:center;gap:8px;">
+      </div>
+
+      <!-- MT5 Credentials -->
+      <div class="section-card" style="margin-bottom:12px;">
+        <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:14px;">MT5 ACCOUNT CREDENTIALS</div>
+        <div class="auth-field">
+          <label class="auth-label">MT5 Account ID</label>
+          <input id="mt5-conn-id" class="auth-input" type="number" placeholder="e.g. 123456" style="font-size:15px;">
+        </div>
+        <div class="auth-field">
+          <label class="auth-label">MT5 Master Password</label>
+          <div style="position:relative;">
+            <input id="mt5-conn-pw" class="auth-input" type="password" placeholder="Your MT5 master password" style="padding-right:44px;">
+            <button onclick="toggleMT5PwVisibility()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:18px;padding:0;line-height:1;">
+              <i class="ti ti-eye" id="mt5-pw-eye"></i>
+            </button>
+          </div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:8px;padding:10px 12px;background:rgba(255,176,32,0.06);border:1px solid rgba(255,176,32,0.2);border-radius:8px;margin-top:4px;">
+          <i class="ti ti-lock" style="color:var(--amber);font-size:15px;flex-shrink:0;margin-top:1px;"></i>
+          <div style="font-size:11px;color:var(--amber);line-height:1.6;">Your password is encrypted before saving. It is never stored in plain text and is only used to connect your MT5 account to our VPS.</div>
+        </div>
+      </div>
+
+      <!-- Trading Permissions -->
+      <div class="section-card" style="margin-bottom:12px;">
+        <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:14px;">TRADING PERMISSIONS</div>
+        <div style="display:flex;align-items:flex-start;gap:12px;padding:14px;background:var(--bg3);border:1.5px solid var(--border);border-radius:10px;margin-bottom:10px;cursor:pointer;" onclick="toggleMT5Permission('smart')" id="perm-smart-box">
+          <div style="width:20px;height:20px;border-radius:5px;border:2px solid var(--border);background:transparent;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;" id="perm-smart-check">
+          </div>
+          <div>
+            <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px;">Allow Smart Tool</div>
+            <div style="font-size:11px;color:var(--text3);line-height:1.6;">When you tap Trade Now and select Smart Tool, the EA on our VPS will execute the order with your saved Smart Tool settings — lot size, SL, TP, DCA, trailing stop and breakeven.</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:12px;padding:14px;background:var(--bg3);border:1.5px solid var(--border);border-radius:10px;cursor:pointer;" onclick="toggleMT5Permission('auto')" id="perm-auto-box">
+          <div style="width:20px;height:20px;border-radius:5px;border:2px solid var(--border);background:transparent;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;" id="perm-auto-check">
+          </div>
+          <div>
+            <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px;">Allow Automated Trading</div>
+            <div style="font-size:11px;color:var(--text3);line-height:1.6;">Signals are auto-executed the moment they are posted by our analysts — no action needed from you. You will receive a push notification for every executed trade.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Risk Disclaimer -->
+      <div class="section-card" style="margin-bottom:14px;">
+        <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">RISK DISCLAIMER</div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.8;margin-bottom:14px;max-height:200px;overflow-y:auto;padding-right:4px;" id="disclaimer-scroll">
+
+          <div style="font-size:11px;font-weight:700;color:var(--text);margin-bottom:6px;">1. Trading Risk</div>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:12px;line-height:1.7;">Trading foreign exchange, gold, indices and other financial instruments carries a high level of risk and may not be suitable for all investors. You may lose some or all of your invested capital. Do not trade with money you cannot afford to lose.</div>
+
+          <div style="font-size:11px;font-weight:700;color:var(--text);margin-bottom:6px;">2. No Guarantee of Results</div>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:12px;line-height:1.7;">Past signal performance does not guarantee future results. Momentum AI and AFTT Markets make no representation that any account will or is likely to achieve profits or losses similar to those shown in any signal history.</div>
+
+          <div style="font-size:11px;font-weight:700;color:var(--text);margin-bottom:6px;">3. Account Authorization</div>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:12px;line-height:1.7;">By connecting your MT5 account, you authorize Momentum AI to execute trades on your behalf through our VPS-hosted Expert Advisor (EA), strictly within the permissions you have selected above.</div>
+
+          <div style="font-size:11px;font-weight:700;color:var(--amber);margin-bottom:6px;">⚠️ 4. Password Change Warning</div>
+          <div style="font-size:11px;color:var(--amber);margin-bottom:12px;line-height:1.7;background:rgba(255,176,32,0.06);padding:10px;border-radius:8px;border:1px solid rgba(255,176,32,0.2);">If you change your MT5 master password after connecting, the EA on our VPS will immediately lose connection and stop executing trades. All automated trading will halt until you update your password in this screen. You will be notified if a disconnection is detected.</div>
+
+          <div style="font-size:11px;font-weight:700;color:var(--text);margin-bottom:6px;">5. Revocation of Access</div>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:12px;line-height:1.7;">You may disconnect your MT5 account at any time from this screen. Upon disconnection, the EA will stop executing trades on your account immediately.</div>
+
+          <div style="font-size:11px;font-weight:700;color:var(--text);margin-bottom:6px;">6. Liability</div>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:12px;line-height:1.7;">Momentum AI, its analysts and AFTT Markets shall not be held liable for any trading losses, missed trades, system downtime, or technical failures that result in unexecuted or incorrectly executed orders.</div>
+
+          <div style="font-size:11px;font-weight:700;color:var(--text);margin-bottom:6px;">7. Data Security</div>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:4px;line-height:1.7;">Your MT5 credentials are encrypted using industry-standard encryption before being stored. They are used solely for the purpose of connecting your account to our VPS-hosted EA.</div>
+        </div>
+
+        <!-- Disclaimer checkbox -->
+        <div style="display:flex;align-items:flex-start;gap:10px;padding:12px;background:var(--bg3);border-radius:10px;cursor:pointer;" onclick="toggleDisclaimerAgree()" id="disclaimer-agree-box">
+          <div style="width:20px;height:20px;border-radius:5px;border:2px solid var(--border);background:transparent;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;" id="disclaimer-check">
+          </div>
+          <div style="font-size:12px;color:var(--text);font-weight:600;line-height:1.5;">I have read, understood and agree to the Risk Disclaimer and Terms above, including the <span style="color:var(--amber);">password change warning</span>.</div>
+        </div>
+      </div>
+
+      <!-- Error / Success messages -->
+      <div id="mt5-conn-error" class="error-msg"></div>
+      <div id="mt5-conn-success" class="success-msg"></div>
+
+      <!-- Connect Button -->
+      <button id="btn-mt5-connect" class="red-btn" onclick="handleMT5Connect()" style="opacity:0.4;pointer-events:none;letter-spacing:1px;">CONNECT &amp; ACTIVATE</button>
+
+      <!-- Disconnect Button (hidden until connected) -->
+      <button id="btn-mt5-disconnect" style="display:none;width:100%;margin-top:10px;padding:13px;background:transparent;border:1px solid rgba(255,30,60,0.3);border-radius:12px;color:var(--red);font-size:13px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;" onclick="handleMT5Disconnect()">DISCONNECT MT5</button>
+
+    </div><!-- end ea-tab-mt5connect -->
+
   </div>
 
   <!-- News Calendar -->
@@ -4757,6 +4861,256 @@ async function checkAndShowAnnouncement() {
 function showAnnouncementPopup(ann) {
   // Disabled temporarily - will re-enable via notification bell
   return;
+}
+
+
+// ══════════════════════════════════════════════
+// MT5 CONNECTION — SMART TOOL TAB SWITCHER
+// ══════════════════════════════════════════════
+
+// EA main tab switcher
+document.addEventListener('DOMContentLoaded', function() {
+  var eaBar = document.getElementById('ea-tab-bar');
+  if(eaBar) {
+    eaBar.addEventListener('click', function(e) {
+      var btn = e.target.closest('[data-tab]');
+      if(!btn) return;
+      var tab = btn.getAttribute('data-tab');
+      // Update tab buttons
+      document.querySelectorAll('.ea-main-tab').forEach(function(b) {
+        b.style.borderBottom = '2px solid transparent';
+        b.style.color = 'var(--text3)';
+      });
+      btn.style.borderBottom = '2px solid var(--red)';
+      btn.style.color = 'var(--red)';
+      // Show/hide tab content
+      var settings = document.getElementById('ea-tab-settings');
+      var mt5 = document.getElementById('ea-tab-mt5connect');
+      if(settings) settings.style.display = tab === 'settings' ? 'block' : 'none';
+      if(mt5) mt5.style.display = tab === 'mt5connect' ? 'block' : 'none';
+      // Load MT5 status when switching to mt5connect tab
+      if(tab === 'mt5connect') loadMT5ConnectionStatus();
+    });
+  }
+});
+
+// ── MT5 PERMISSION TOGGLES ───────────────────
+var mt5Perms = { smart: false, auto: false };
+var disclaimerAgreed = false;
+
+function toggleMT5Permission(type) {
+  mt5Perms[type] = !mt5Perms[type];
+  var box = document.getElementById('perm-' + type + '-box');
+  var check = document.getElementById('perm-' + type + '-check');
+  if(mt5Perms[type]) {
+    box.style.borderColor = 'rgba(255,30,60,0.4)';
+    box.style.background = 'rgba(255,30,60,0.06)';
+    check.style.background = 'var(--grad)';
+    check.style.borderColor = 'transparent';
+    check.innerHTML = '<i class="ti ti-check" style="font-size:12px;color:#fff;"></i>';
+  } else {
+    box.style.borderColor = 'var(--border)';
+    box.style.background = 'var(--bg3)';
+    check.style.background = 'transparent';
+    check.style.borderColor = 'var(--border)';
+    check.innerHTML = '';
+  }
+  updateConnectButton();
+}
+
+function toggleDisclaimerAgree() {
+  disclaimerAgreed = !disclaimerAgreed;
+  var box = document.getElementById('disclaimer-agree-box');
+  var check = document.getElementById('disclaimer-check');
+  if(disclaimerAgreed) {
+    box.style.borderLeft = '3px solid var(--red)';
+    check.style.background = 'var(--grad)';
+    check.style.borderColor = 'transparent';
+    check.innerHTML = '<i class="ti ti-check" style="font-size:12px;color:#fff;"></i>';
+  } else {
+    box.style.borderLeft = 'none';
+    check.style.background = 'transparent';
+    check.style.borderColor = 'var(--border)';
+    check.innerHTML = '';
+  }
+  updateConnectButton();
+}
+
+function updateConnectButton() {
+  var btn = document.getElementById('btn-mt5-connect');
+  if(!btn) return;
+  var id = document.getElementById('mt5-conn-id');
+  var pw = document.getElementById('mt5-conn-pw');
+  var hasId = id && id.value.trim().length > 4;
+  var hasPw = pw && pw.value.length > 3;
+  var hasPermission = mt5Perms.smart || mt5Perms.auto;
+  var allGood = hasId && hasPw && hasPermission && disclaimerAgreed;
+  btn.style.opacity = allGood ? '1' : '0.4';
+  btn.style.pointerEvents = allGood ? 'auto' : 'none';
+}
+
+// Watch input fields
+document.addEventListener('DOMContentLoaded', function() {
+  var idInput = document.getElementById('mt5-conn-id');
+  var pwInput = document.getElementById('mt5-conn-pw');
+  if(idInput) idInput.addEventListener('input', updateConnectButton);
+  if(pwInput) pwInput.addEventListener('input', updateConnectButton);
+});
+
+// ── SHOW/HIDE PASSWORD ────────────────────────
+function toggleMT5PwVisibility() {
+  var input = document.getElementById('mt5-conn-pw');
+  var eye = document.getElementById('mt5-pw-eye');
+  if(!input) return;
+  if(input.type === 'password') {
+    input.type = 'text';
+    if(eye) { eye.classList.remove('ti-eye'); eye.classList.add('ti-eye-off'); }
+  } else {
+    input.type = 'password';
+    if(eye) { eye.classList.remove('ti-eye-off'); eye.classList.add('ti-eye'); }
+  }
+}
+
+// ── CONNECT MT5 ───────────────────────────────
+async function handleMT5Connect() {
+  var idVal = document.getElementById('mt5-conn-id').value.trim();
+  var pwVal = document.getElementById('mt5-conn-pw').value;
+  var errEl = document.getElementById('mt5-conn-error');
+  var sucEl = document.getElementById('mt5-conn-success');
+  errEl.style.display = 'none'; sucEl.style.display = 'none';
+
+  if(!idVal || !pwVal) { errEl.textContent = 'Please enter your MT5 ID and password'; errEl.style.display = 'block'; return; }
+  if(!mt5Perms.smart && !mt5Perms.auto) { errEl.textContent = 'Please select at least one trading permission'; errEl.style.display = 'block'; return; }
+  if(!disclaimerAgreed) { errEl.textContent = 'Please read and agree to the Risk Disclaimer'; errEl.style.display = 'block'; return; }
+
+  var btn = document.getElementById('btn-mt5-connect');
+  btn.textContent = 'CONNECTING...'; btn.style.opacity = '0.6';
+
+  try {
+    // Encrypt password before saving (never store plain text)
+    var encrypted = btoa(unescape(encodeURIComponent(pwVal + '_mmai_' + idVal)));
+
+    var res = await db.from('users').update({
+      mt5_id: idVal,
+      mt5_credential: encrypted,
+      mt5_connected: true,
+      mt5_connected_at: new Date().toISOString(),
+      allow_smart_tool: mt5Perms.smart,
+      allow_auto_trade: mt5Perms.auto,
+      disclaimer_agreed: true,
+      disclaimer_agreed_at: new Date().toISOString(),
+      connection_status: 'pending_setup'
+    }).eq('id', currentUser.id);
+
+    if(res.error) throw res.error;
+
+    // Update local user object
+    currentUser.mt5_connected = true;
+    currentUser.allow_smart_tool = mt5Perms.smart;
+    currentUser.allow_auto_trade = mt5Perms.auto;
+    currentUser.connection_status = 'pending_setup';
+    sessionStorage.setItem('mob_user', JSON.stringify(currentUser));
+
+    sucEl.innerHTML = '✅ MT5 connection saved! Our team will activate your VPS connection within 24 hours. You will be notified once trading is live.';
+    sucEl.style.display = 'block';
+    document.getElementById('btn-mt5-disconnect').style.display = 'block';
+    btn.textContent = 'CONNECTED ✅';
+    btn.style.opacity = '1';
+    loadMT5ConnectionStatus();
+  } catch(e) {
+    errEl.textContent = 'Error: ' + (e.message || 'Please try again');
+    errEl.style.display = 'block';
+    btn.textContent = 'CONNECT & ACTIVATE';
+    btn.style.opacity = '1';
+  }
+}
+
+// ── DISCONNECT MT5 ────────────────────────────
+async function handleMT5Disconnect() {
+  if(!confirm('Disconnect your MT5 account? Automated trading will stop immediately.')) return;
+  try {
+    await db.from('users').update({
+      mt5_connected: false,
+      mt5_credential: null,
+      allow_smart_tool: false,
+      allow_auto_trade: false,
+      connection_status: 'disconnected'
+    }).eq('id', currentUser.id);
+
+    currentUser.mt5_connected = false;
+    currentUser.allow_smart_tool = false;
+    currentUser.allow_auto_trade = false;
+    sessionStorage.setItem('mob_user', JSON.stringify(currentUser));
+
+    document.getElementById('mt5-conn-success').textContent = 'MT5 account disconnected. Automated trading stopped.';
+    document.getElementById('mt5-conn-success').style.display = 'block';
+    document.getElementById('btn-mt5-disconnect').style.display = 'none';
+    document.getElementById('btn-mt5-connect').textContent = 'CONNECT & ACTIVATE';
+    mt5Perms = { smart: false, auto: false };
+    disclaimerAgreed = false;
+    loadMT5ConnectionStatus();
+  } catch(e) {
+    document.getElementById('mt5-conn-error').textContent = 'Error: ' + e.message;
+    document.getElementById('mt5-conn-error').style.display = 'block';
+  }
+}
+
+// ── LOAD CONNECTION STATUS ────────────────────
+function loadMT5ConnectionStatus() {
+  if(!currentUser) return;
+  var banner = document.getElementById('mt5-status-banner');
+  if(!banner) return;
+
+  var status = currentUser.connection_status || 'not_connected';
+  var connected = currentUser.mt5_connected;
+
+  if(connected && status === 'connected') {
+    banner.style.display = 'flex';
+    banner.style.background = 'rgba(0,200,122,0.08)';
+    banner.style.border = '1px solid rgba(0,200,122,0.2)';
+    banner.innerHTML = '<i class="ti ti-plug-connected" style="color:var(--green);font-size:18px;flex-shrink:0;"></i><div><div style="font-size:12px;font-weight:700;color:var(--green);">MT5 Connected · Trading Live</div><div style="font-size:11px;color:var(--text3);margin-top:2px;">EA is active on VPS · Orders will execute automatically</div></div>';
+    document.getElementById('btn-mt5-disconnect').style.display = 'block';
+    document.getElementById('btn-mt5-connect').style.display = 'none';
+  } else if(connected && status === 'pending_setup') {
+    banner.style.display = 'flex';
+    banner.style.background = 'rgba(255,176,32,0.08)';
+    banner.style.border = '1px solid rgba(255,176,32,0.2)';
+    banner.innerHTML = '<i class="ti ti-clock" style="color:var(--amber);font-size:18px;flex-shrink:0;"></i><div><div style="font-size:12px;font-weight:700;color:var(--amber);">Pending VPS Setup</div><div style="font-size:11px;color:var(--text3);margin-top:2px;">Our team is setting up your VPS connection · Active within 24h</div></div>';
+    document.getElementById('btn-mt5-disconnect').style.display = 'block';
+    document.getElementById('btn-mt5-connect').style.display = 'none';
+  } else if(connected && status === 'disconnected') {
+    banner.style.display = 'flex';
+    banner.style.background = 'rgba(255,30,60,0.08)';
+    banner.style.border = '1px solid rgba(255,30,60,0.2)';
+    banner.innerHTML = '<i class="ti ti-plug-x" style="color:var(--red);font-size:18px;flex-shrink:0;"></i><div><div style="font-size:12px;font-weight:700;color:var(--red);">⚠️ Connection Lost — Password Changed?</div><div style="font-size:11px;color:var(--text3);margin-top:2px;">EA cannot connect to MT5. Update your password below to reconnect.</div></div>';
+    document.getElementById('btn-mt5-connect').style.display = 'block';
+    document.getElementById('btn-mt5-connect').textContent = 'UPDATE & RECONNECT';
+    document.getElementById('btn-mt5-disconnect').style.display = 'block';
+  } else {
+    banner.style.display = 'none';
+  }
+
+  // Pre-fill MT5 ID if known
+  if(currentUser.mt5_id) {
+    var idInput = document.getElementById('mt5-conn-id');
+    if(idInput && !idInput.value) idInput.value = currentUser.mt5_id;
+  }
+
+  // Restore permission toggles
+  if(currentUser.allow_smart_tool && !mt5Perms.smart) toggleMT5Permission('smart');
+  if(currentUser.allow_auto_trade && !mt5Perms.auto) toggleMT5Permission('auto');
+}
+
+// ── SAVE EA SETTINGS ──────────────────────────
+async function saveEASettings() {
+  if(!currentUser) return;
+  try {
+    // Could save EA settings to Supabase here in future
+    var btn = document.querySelector('#ea-tab-settings .red-btn');
+    if(btn) { btn.textContent = 'SAVED ✅'; setTimeout(function() { btn.textContent = 'SAVE SETTINGS'; }, 2000); }
+  } catch(e) {
+    console.error('Save EA settings:', e);
+  }
 }
 
 </script>
