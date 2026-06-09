@@ -3249,7 +3249,7 @@ eader-right">
 <!-- ═══════════════════════════════════
      JAVASCRIPT
 ═══════════════════════════════════ -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- Supabase JS removed - using custom REST client -->
 <script>
 // ── FUND FOLLOW ──
 async function handleFundFollow() {
@@ -3708,7 +3708,6 @@ window._signalStore = {};
 
 // ── SCREEN NAVIGATION ──
 function showScreen(id) {
-  // Hide ALL screens completely
   document.querySelectorAll('.screen').forEach(function(s) { 
     s.classList.remove('active'); 
     s.style.display = 'none';
@@ -3716,7 +3715,19 @@ function showScreen(id) {
   var t = document.getElementById(id);
   if(t) { 
     t.style.display = 'flex';
-    t.classList.add('active'); 
+    t.classList.add('active');
+  }
+  // Always show dashboard tab when entering app
+  if(id === 'screen-app') {
+    document.querySelectorAll('.app-tab').forEach(function(tab) {
+      tab.style.display = 'none';
+    });
+    var dash = document.getElementById('tab-dashboard');
+    if(dash) dash.style.display = 'block';
+    // Set nav active state
+    document.querySelectorAll('.nav-btn').forEach(function(b) { b.classList.remove('active'); });
+    var dashNav = document.getElementById('nav-dashboard');
+    if(dashNav) dashNav.classList.add('active');
   }
 }
 
