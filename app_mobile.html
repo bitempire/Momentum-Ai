@@ -2394,6 +2394,7 @@ select.auth-input {
       <button class="admin-tab-btn" id="atab-tickets" onclick="switchAdminTab('tickets')" style="padding:8px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Support</button>
       <button class="admin-tab-btn" id="atab-funds" onclick="switchAdminTab('funds')" style="padding:8px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Fund Req</button>
       <button class="admin-tab-btn" id="atab-announce" onclick="switchAdminTab('announce')" style="padding:8px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Announce</button>
+      <button class="admin-tab-btn" id="atab-signals" onclick="switchAdminTab('signals')" style="padding:8px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Signals</button>
       <button class="admin-tab-btn" id="atab-analyst" onclick="switchAdminTab('analyst')" style="padding:8px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Analysts</button>
     </div>
     <div class="sub-content">
@@ -2497,6 +2498,21 @@ select.auth-input {
           <div id="admin-ann-list">
             <div class="empty-state" style="padding:16px;"><i class="ti ti-speakerphone"></i>No announcements yet</div>
           </div>
+        </div>
+      </div>
+
+      <!-- ── SIGNALS TAB ── -->
+      <div id="atab-content-signals" style="display:none;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.5px;">ALL SIGNALS</div>
+          <select id="signal-status-filter" class="auth-input" style="font-size:11px;padding:6px 10px;width:auto;" onchange="loadAdminSignals()">
+            <option value="all">All</option>
+            <option value="active">Active</option>
+            <option value="closed">Closed</option>
+          </select>
+        </div>
+        <div id="admin-signals-list">
+          <div class="empty-state" style="padding:16px;"><i class="ti ti-broadcast"></i>Loading signals...</div>
         </div>
       </div>
 
@@ -4499,6 +4515,7 @@ function switchAdminTab(tab) {
   if(tab === 'tickets') loadAdminTickets();
   if(tab === 'funds') loadAdminFunds();
   if(tab === 'announce') loadAdminAnnouncements();
+  if(tab === 'signals') loadAdminSignals();
 }
 
 // ── ADMIN DASHBOARD ──
@@ -4757,6 +4774,133 @@ function showAnnouncementPopup(ann) {
   card.appendChild(okBtn);
   overlay.appendChild(card);
   document.body.appendChild(overlay);
+}
+
+
+// ── ADMIN SIGNALS ──
+async function loadAdminSignals() {
+  var el = document.getElementById('admin-signals-list');
+  if(!el || !db) return;
+  el.innerHTML = '<div class="empty-state" style="padding:16px;"><i class="ti ti-broadcast"></i>Loading...</div>';
+  try {
+    var filter = document.getElementById('signal-status-filter');
+    var status = filter ? filter.value : 'all';
+    var q = db.from('signals').select('*').order('created_at', {ascending:false}).limit(50);
+    if(status !== 'all') q = q.eq('status', status);
+    var res = await q;
+    if(!res.data || !res.data.length) {
+      el.innerHTML = '<div class="empty-state" style="padding:16px;"><i class="ti ti-broadcast"></i>No signals found</div>';
+      return;
+    }
+    el.innerHTML = '';
+    res.data.forEach(function(sig) {
+      var dir = (sig.direction||'').toLowerCase();
+      var dirColor = dir === 'buy' ? 'var(--green)' : 'var(--red)';
+      var isActive = sig.status === 'active';
+
+      var div = document.createElement('div');
+      div.style.cssText = 'padding:12px;background:var(--surface);border:1px solid ' + (isActive ? 'rgba(0,200,122,0.2)' : 'var(--border)') + ';border-radius:10px;margin-bottom:8px;';
+
+      // Header row
+      var hdr = document.createElement('div');
+      hdr.style.cssText = 'display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;';
+      hdr.innerHTML =
+        '<div style="display:flex;align-items:center;gap:8px;">' +
+          '<div style="font-size:14px;font-weight:800;color:var(--text);">' + (sig.pair||'--') + '</div>' +
+          '<div style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;background:' + (dir==='buy'?'rgba(0,200,122,0.1)':'rgba(255,30,60,0.08)') + ';color:' + dirColor + ';">' + (sig.direction||'--') + '</div>' +
+          '<div style="font-size:10px;color:var(--text3);">' + (sig.timeframe||'H4') + '</div>' +
+        '</div>' +
+        '<div style="font-size:10px;color:var(--text3);">' + new Date(sig.created_at).toLocaleDateString() + '</div>';
+
+      // Levels
+      var levels = document.createElement('div');
+      levels.style.cssText = 'display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px;';
+      levels.innerHTML =
+        '<div style="font-size:10px;color:var(--text3);">Entry<br><span style="font-size:12px;font-weight:700;color:var(--text);">' + (sig.entry_from||'--') + '</span></div>' +
+        '<div style="font-size:10px;color:var(--text3);">Stop Loss<br><span style="font-size:12px;font-weight:700;color:var(--red);">' + (sig.sl||'--') + '</span></div>' +
+        '<div style="font-size:10px;color:var(--text3);">Take Profit<br><span style="font-size:12px;font-weight:700;color:var(--green);">' + (sig.tp1||'--') + '</span></div>';
+
+      // Status row with toggle
+      var statusRow = document.createElement('div');
+      statusRow.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--bg3);border-radius:8px;margin-bottom:8px;';
+
+      var statusLabel = document.createElement('div');
+      statusLabel.style.cssText = 'display:flex;align-items:center;gap:6px;';
+      statusLabel.innerHTML =
+        '<div style="width:8px;height:8px;border-radius:50%;background:' + (isActive ? 'var(--green)' : 'var(--text3)') + ';' + (isActive ? 'box-shadow:0 0 6px var(--green);' : '') + '"></div>' +
+        '<span style="font-size:12px;font-weight:700;color:' + (isActive ? 'var(--green)' : 'var(--text3)') + ';" id="sig-status-lbl-' + sig.id + '">' + (isActive ? 'ACTIVE' : 'NOT ACTIVE') + '</span>';
+
+      // Status dropdown
+      var statusSelect = document.createElement('select');
+      statusSelect.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-size:11px;font-weight:700;color:var(--text);font-family:Sora,sans-serif;cursor:pointer;';
+      statusSelect.innerHTML =
+        '<option value="active"' + (isActive ? ' selected' : '') + '>Active</option>' +
+        '<option value="closed"' + (!isActive && sig.status==='closed' ? ' selected' : '') + '>Not Active</option>' +
+        '<option value="pending"' + (sig.status==='pending' ? ' selected' : '') + '>Pending</option>' +
+        '<option value="expired"' + (sig.status==='expired' ? ' selected' : '') + '>Expired</option>';
+
+      statusSelect.addEventListener('change', function() {
+        adminUpdateSignal(sig.id, this.value, div, statusLabel);
+      });
+
+      statusRow.appendChild(statusLabel);
+      statusRow.appendChild(statusSelect);
+
+      // Action buttons
+      var btnRow = document.createElement('div');
+      btnRow.style.cssText = 'display:flex;gap:6px;';
+
+      var deleteBtn = document.createElement('button');
+      deleteBtn.textContent = 'Delete Signal';
+      deleteBtn.style.cssText = 'flex:1;padding:8px;background:rgba(255,30,60,0.08);border:1px solid rgba(255,30,60,0.2);border-radius:7px;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;';
+      deleteBtn.addEventListener('click', function() {
+        if(confirm('Delete ' + (sig.pair||'this signal') + '? This cannot be undone.')) {
+          adminDeleteSignal(sig.id, div);
+        }
+      });
+      btnRow.appendChild(deleteBtn);
+
+      div.appendChild(hdr);
+      div.appendChild(levels);
+      div.appendChild(statusRow);
+      div.appendChild(btnRow);
+      el.appendChild(div);
+    });
+  } catch(e) {
+    el.innerHTML = '<div class="empty-state" style="padding:16px;"><i class="ti ti-alert-circle"></i>Error loading signals</div>';
+    console.error('loadAdminSignals error:', e);
+  }
+}
+
+async function adminUpdateSignal(sigId, status, cardEl, labelEl) {
+  try {
+    var res = await db.from('signals').update({status: status}).eq('id', sigId);
+    if(res.error) { alert('Error: ' + res.error.message); return; }
+    // Update card border color instantly
+    if(cardEl) cardEl.style.borderColor = status === 'active' ? 'rgba(0,200,122,0.2)' : 'var(--border)';
+    // Update status label instantly
+    if(labelEl) {
+      var dot = labelEl.querySelector('div');
+      var lbl = labelEl.querySelector('span');
+      var isNowActive = status === 'active';
+      if(dot) { dot.style.background = isNowActive ? 'var(--green)' : 'var(--text3)'; dot.style.boxShadow = isNowActive ? '0 0 6px var(--green)' : 'none'; }
+      if(lbl) { lbl.textContent = isNowActive ? 'ACTIVE' : status.toUpperCase(); lbl.style.color = isNowActive ? 'var(--green)' : 'var(--text3)'; }
+    }
+  } catch(e) { alert('Error updating signal: ' + (e.message||e)); }
+}
+
+async function adminDeleteSignal(sigId, cardEl) {
+  try {
+    var res = await db.from('signals').delete().eq('id', sigId);
+    if(res.error) { alert('Error: ' + res.error.message); return; }
+    // Remove card from DOM instantly
+    if(cardEl) {
+      cardEl.style.opacity = '0';
+      cardEl.style.transition = 'opacity 0.3s';
+      setTimeout(function() { if(cardEl.parentNode) cardEl.parentNode.removeChild(cardEl); }, 300);
+    }
+    loadAdminDashboard();
+  } catch(e) { alert('Error deleting signal: ' + (e.message||e)); }
 }
 
 </script>
