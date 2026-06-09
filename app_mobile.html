@@ -1500,17 +1500,17 @@ select.auth-input {
         <div id="mob-past-signals">
           <div style="display:flex;flex-direction:column;gap:8px;">
             <div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg3);border-radius:10px;">
-              <div style="width:36px;height:36px;border-radius:9px;background:rgba(0,200,122,0.1);display:flex;align-items:center;justify-content:center;font-size:14px;">▲</div>
+              <div style="width:36px;height:36px;border-radius:9px;background:rgba(0,200,122,0.12);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#00c87a;">▲</div>
               <div style="flex:1;"><div style="font-size:13px;font-weight:700;color:var(--text);">XAUUSD BUY</div><div style="font-size:11px;color:var(--text3);">Entry: 2,295 · TP Hit ✓</div></div>
               <div style="text-align:right;"><div style="font-size:12px;font-weight:800;color:var(--green);">+245 pts</div><div style="font-size:10px;color:var(--text3);">2d ago</div></div>
             </div>
             <div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg3);border-radius:10px;">
-              <div style="width:36px;height:36px;border-radius:9px;background:rgba(0,200,122,0.1);display:flex;align-items:center;justify-content:center;font-size:14px;">▲</div>
+              <div style="width:36px;height:36px;border-radius:9px;background:rgba(0,200,122,0.12);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#00c87a;">▲</div>
               <div style="flex:1;"><div style="font-size:13px;font-weight:700;color:var(--text);">NAS100 BUY</div><div style="font-size:11px;color:var(--text3);">Entry: 19,620 · TP Hit ✓</div></div>
               <div style="text-align:right;"><div style="font-size:12px;font-weight:800;color:var(--green);">+182 pts</div><div style="font-size:10px;color:var(--text3);">3d ago</div></div>
             </div>
             <div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg3);border-radius:10px;">
-              <div style="width:36px;height:36px;border-radius:9px;background:rgba(255,30,60,0.08);display:flex;align-items:center;justify-content:center;font-size:14px;">▼</div>
+              <div style="width:36px;height:36px;border-radius:9px;background:rgba(255,30,60,0.1);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#FF1E3C;">▼</div>
               <div style="flex:1;"><div style="font-size:13px;font-weight:700;color:var(--text);">EURUSD SELL</div><div style="font-size:11px;color:var(--text3);">Entry: 1.0892 · SL Hit ✗</div></div>
               <div style="text-align:right;"><div style="font-size:12px;font-weight:800;color:var(--red);">-38 pts</div><div style="font-size:10px;color:var(--text3);">4d ago</div></div>
             </div>
@@ -4148,7 +4148,7 @@ function hideSubScreen(id) {
 async function loadDashboardSignals() {
   var container = document.getElementById('mob-dash-signals');
   try {
-    var res = await db.from('signals').select('*').eq('status','active').order('created_at',{ascending:false}).limit(4);
+    var res = await db.from('signals').select('*').order('created_at',{ascending:false}).limit(4);
     if(res.error||!res.data) { container.innerHTML='<div class="empty-state">No signals yet</div>'; return; }
     window._signalStore = {};
     res.data.forEach(function(s) { window._signalStore[s.id]=s; });
@@ -4168,7 +4168,7 @@ async function loadSignalsFeed() {
   var container = document.getElementById('mob-signals-list');
   container.innerHTML = '<div class="empty-state"><i class="ti ti-broadcast"></i>Loading...</div>';
   try {
-    var res = await db.from('signals').select('*').eq('status','active').order('created_at',{ascending:false});
+    var res = await db.from('signals').select('*').order('created_at',{ascending:false});
     if(res.error||!res.data) { container.innerHTML='<div class="empty-state"><i class="ti ti-broadcast"></i>No signals yet</div>'; return; }
     window._signalStore = {};
     res.data.forEach(function(s) { window._signalStore[s.id]=s; });
