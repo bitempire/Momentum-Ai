@@ -2387,39 +2387,143 @@ select.auth-input {
       <button class="sub-back" onclick="hideSubScreen('sub-admin')"><i class="ti ti-arrow-left"></i></button>
       <div class="sub-title">ADMIN PANEL</div>
     </div>
+    <!-- Admin Tab Bar -->
+    <div style="display:flex;gap:4px;padding:10px 14px 0;background:var(--bg2);border-bottom:1px solid var(--border);overflow-x:auto;flex-shrink:0;">
+      <button class="admin-tab-btn active" id="atab-dashboard" onclick="switchAdminTab('dashboard')" style="padding:8px 12px;background:rgba(255,30,60,0.12);border:none;border-bottom:2px solid var(--red);color:var(--red);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Dashboard</button>
+      <button class="admin-tab-btn" id="atab-users" onclick="switchAdminTab('users')" style="padding:8px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Users</button>
+      <button class="admin-tab-btn" id="atab-tickets" onclick="switchAdminTab('tickets')" style="padding:8px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Support</button>
+      <button class="admin-tab-btn" id="atab-funds" onclick="switchAdminTab('funds')" style="padding:8px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Fund Req</button>
+      <button class="admin-tab-btn" id="atab-announce" onclick="switchAdminTab('announce')" style="padding:8px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Announce</button>
+      <button class="admin-tab-btn" id="atab-analyst" onclick="switchAdminTab('analyst')" style="padding:8px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Analysts</button>
+    </div>
     <div class="sub-content">
-      <div class="journal-stats" style="margin-bottom:14px;">
-        <div class="jstat"><div class="jstat-val red" id="mob-stat-total">--</div><div class="jstat-lbl">TOTAL</div></div>
-        <div class="jstat"><div class="jstat-val green" id="mob-stat-active">--</div><div class="jstat-lbl">ACTIVE</div></div>
-        <div class="jstat"><div class="jstat-val" style="color:var(--amber);" id="mob-stat-pending">--</div><div class="jstat-lbl">PENDING</div></div>
+
+      <!-- ── DASHBOARD TAB ── -->
+      <div id="atab-content-dashboard">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;">
+          <div class="section-card" style="padding:10px;text-align:center;">
+            <div style="font-size:22px;font-weight:800;color:var(--text);" id="astat-total">--</div>
+            <div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-top:2px;">Users</div>
+          </div>
+          <div class="section-card" style="padding:10px;text-align:center;">
+            <div style="font-size:22px;font-weight:800;color:var(--amber);" id="astat-pending">--</div>
+            <div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-top:2px;">Pending</div>
+          </div>
+          <div class="section-card" style="padding:10px;text-align:center;">
+            <div style="font-size:22px;font-weight:800;color:var(--red);" id="astat-tickets">--</div>
+            <div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-top:2px;">Tickets</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px;">
+          <div class="section-card" style="padding:10px;text-align:center;">
+            <div style="font-size:22px;font-weight:800;color:var(--green);" id="astat-signals">--</div>
+            <div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-top:2px;">Active Signals</div>
+          </div>
+          <div class="section-card" style="padding:10px;text-align:center;">
+            <div style="font-size:22px;font-weight:800;color:#4D9EFF;" id="astat-funds">--</div>
+            <div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-top:2px;">Fund Requests</div>
+          </div>
+        </div>
+        <div class="section-card">
+          <div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.5px;margin-bottom:10px;">RECENT ACTIVITY</div>
+          <div id="admin-activity">
+            <div class="empty-state" style="padding:16px;"><i class="ti ti-activity"></i>Loading...</div>
+          </div>
+        </div>
       </div>
-      <div class="section-card">
-        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Users</div>
+
+      <!-- ── USERS TAB ── -->
+      <div id="atab-content-users" style="display:none;">
+        <div style="display:flex;gap:6px;margin-bottom:12px;">
+          <select id="user-filter" class="auth-input" style="font-size:12px;padding:8px 10px;" onchange="loadAdminUsers()">
+            <option value="all">All Users</option>
+            <option value="pending">Pending</option>
+            <option value="active">Active</option>
+            <option value="premium">Premium</option>
+          </select>
+        </div>
         <div id="mob-admin-users">
           <div class="empty-state"><i class="ti ti-users"></i>Loading users...</div>
         </div>
       </div>
-      <div class="section-card">
-        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Add <span>Analyst</span></div>
-        <div class="auth-field">
-          <label class="auth-label">Full Name</label>
-          <input id="mob-analyst-name" class="auth-input" type="text" placeholder="Analyst name">
+
+      <!-- ── SUPPORT TICKETS TAB ── -->
+      <div id="atab-content-tickets" style="display:none;">
+        <div style="display:flex;gap:6px;margin-bottom:12px;">
+          <select id="ticket-filter" class="auth-input" style="font-size:12px;padding:8px 10px;" onchange="loadAdminTickets()">
+            <option value="all">All Tickets</option>
+            <option value="open">Open</option>
+            <option value="pending">Pending</option>
+            <option value="done">Done</option>
+          </select>
         </div>
-        <div class="auth-field">
-          <label class="auth-label">Username</label>
-          <input id="mob-analyst-username" class="auth-input" type="text" placeholder="analyst_username">
+        <div id="admin-tickets-list">
+          <div class="empty-state"><i class="ti ti-ticket"></i>Loading tickets...</div>
         </div>
-        <div class="auth-field">
-          <label class="auth-label">Password</label>
-          <input id="mob-analyst-password" class="auth-input" type="password" placeholder="Set password">
-        </div>
-        <div id="mob-analyst-error" class="error-msg"></div>
-        <div id="mob-analyst-success" class="success-msg"></div>
-        <button class="red-btn" id="btn-add-analyst" onclick="handleAddAnalyst()">CREATE ANALYST</button>
       </div>
+
+      <!-- ── FUND REQUESTS TAB ── -->
+      <div id="atab-content-funds" style="display:none;">
+        <div id="admin-funds-list">
+          <div class="empty-state"><i class="ti ti-chart-pie"></i>Loading requests...</div>
+        </div>
+      </div>
+
+      <!-- ── ANNOUNCEMENTS TAB ── -->
+      <div id="atab-content-announce" style="display:none;">
+        <div class="section-card" style="margin-bottom:12px;">
+          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">POST ANNOUNCEMENT</div>
+          <div class="auth-field">
+            <label class="auth-label">Title</label>
+            <input id="ann-title" class="auth-input" type="text" placeholder="Announcement title">
+          </div>
+          <div class="auth-field">
+            <label class="auth-label">Message</label>
+            <textarea id="ann-message" class="auth-input" rows="4" placeholder="Write your announcement..." style="resize:vertical;"></textarea>
+          </div>
+          <div class="auth-field">
+            <label class="auth-label">Target</label>
+            <select id="ann-target" class="auth-input" style="padding:10px 14px;font-size:13px;">
+              <option value="all">All Users</option>
+              <option value="premium">Premium Users Only</option>
+            </select>
+          </div>
+          <div id="ann-error" class="error-msg"></div>
+          <div id="ann-success" class="success-msg"></div>
+          <button class="red-btn" onclick="postAnnouncement()">POST ANNOUNCEMENT</button>
+        </div>
+        <div class="section-card">
+          <div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.5px;margin-bottom:10px;">PAST ANNOUNCEMENTS</div>
+          <div id="admin-ann-list">
+            <div class="empty-state" style="padding:16px;"><i class="ti ti-speakerphone"></i>No announcements yet</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── ANALYSTS TAB ── -->
+      <div id="atab-content-analyst" style="display:none;">
+        <div class="section-card">
+          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">ADD ANALYST</div>
+          <div class="auth-field">
+            <label class="auth-label">Full Name</label>
+            <input id="mob-analyst-name" class="auth-input" type="text" placeholder="Analyst name">
+          </div>
+          <div class="auth-field">
+            <label class="auth-label">Username</label>
+            <input id="mob-analyst-username" class="auth-input" type="text" placeholder="analyst_username">
+          </div>
+          <div class="auth-field">
+            <label class="auth-label">Password</label>
+            <input id="mob-analyst-password" class="auth-input" type="password" placeholder="Set password">
+          </div>
+          <div id="mob-analyst-error" class="error-msg"></div>
+          <div id="mob-analyst-success" class="success-msg"></div>
+          <button class="red-btn" id="btn-add-analyst" onclick="handleAddAnalyst()">CREATE ANALYST</button>
+        </div>
+      </div>
+
     </div>
   </div>
-
 
 
   <!-- Profile -->
@@ -3699,7 +3803,7 @@ function enterApp(user) {
   loadDashboardSignals();
   drawSparklines();
   initTVChart();
-  setTimeout(function() { drawGrowthChart(); drawEmotionChart(); loadSavedProfilePhoto(); }, 300);
+  setTimeout(function() { drawGrowthChart(); drawEmotionChart(); loadSavedProfilePhoto(); checkAndShowAnnouncement(); }, 800);
 }
 
 // ── GROWTH CHART ──
@@ -3779,7 +3883,7 @@ function switchTab(tab) {
 function showSubScreen(id) {
   var el = document.getElementById(id);
   if(el) { el.classList.add('active'); }
-  if(id==='sub-admin') { loadAdminUsers(); }
+  if(id==='sub-admin') { switchAdminTab('dashboard'); }
   if(id==='sub-profile') { loadSavedProfilePhoto(); loadProfileData(); }
   if(id==='sub-support') { loadMyTickets(); }
 }
@@ -4369,6 +4473,281 @@ function loadProfileData() {
     statusEl.style.color = currentUser.status === 'active' ? 'var(--green)' : 'var(--amber)';
     statusEl.style.background = currentUser.status === 'active' ? 'rgba(0,200,122,0.1)' : 'rgba(255,176,32,0.1)';
   }
+}
+
+
+// ══════════════════════════════════
+// ADMIN PANEL JS
+// ══════════════════════════════════
+
+// ── ADMIN TAB SWITCHER ──
+function switchAdminTab(tab) {
+  var tabs = ['dashboard','users','tickets','funds','announce','analyst'];
+  tabs.forEach(function(t) {
+    var btn = document.getElementById('atab-' + t);
+    var content = document.getElementById('atab-content-' + t);
+    var isActive = t === tab;
+    if(btn) {
+      btn.style.background = isActive ? 'rgba(255,30,60,0.12)' : 'transparent';
+      btn.style.borderBottom = isActive ? '2px solid var(--red)' : '2px solid transparent';
+      btn.style.color = isActive ? 'var(--red)' : 'var(--text3)';
+    }
+    if(content) content.style.display = isActive ? 'block' : 'none';
+  });
+  if(tab === 'dashboard') loadAdminDashboard();
+  if(tab === 'users') loadAdminUsers();
+  if(tab === 'tickets') loadAdminTickets();
+  if(tab === 'funds') loadAdminFunds();
+  if(tab === 'announce') loadAdminAnnouncements();
+}
+
+// ── ADMIN DASHBOARD ──
+async function loadAdminDashboard() {
+  if(!db) return;
+  try {
+    var [users, signals, tickets, funds] = await Promise.all([
+      db.from('users').select('id,status,role'),
+      db.from('signals').select('id,status').eq('status','active'),
+      db.from('support_tickets').select('id,status').eq('status','open'),
+      db.from('fund_requests').select('id,status').eq('status','pending')
+    ]);
+    var allUsers = users.data || [];
+    var pending = allUsers.filter(function(u) { return u.status === 'pending'; });
+    document.getElementById('astat-total').textContent = allUsers.length;
+    document.getElementById('astat-pending').textContent = pending.length;
+    document.getElementById('astat-tickets').textContent = (tickets.data||[]).length;
+    document.getElementById('astat-signals').textContent = (signals.data||[]).length;
+    document.getElementById('astat-funds').textContent = (funds.data||[]).length;
+    // Also update old stat elements if they exist
+    var tot = document.getElementById('mob-stat-total');
+    var act = document.getElementById('mob-stat-active');
+    var pend = document.getElementById('mob-stat-pending');
+    if(tot) tot.textContent = allUsers.length;
+    if(act) act.textContent = allUsers.filter(function(u){return u.status==='active';}).length;
+    if(pend) pend.textContent = pending.length;
+    // Recent activity
+    var actEl = document.getElementById('admin-activity');
+    if(actEl) {
+      var items = [];
+      if(pending.length > 0) items.push({icon:'ti-user-plus',color:'var(--amber)',text: pending.length + ' user(s) awaiting approval'});
+      if((tickets.data||[]).length > 0) items.push({icon:'ti-ticket',color:'var(--red)',text: (tickets.data||[]).length + ' open support ticket(s)'});
+      if((funds.data||[]).length > 0) items.push({icon:'ti-chart-pie',color:'#4D9EFF',text: (funds.data||[]).length + ' fund request(s) pending'});
+      if(items.length === 0) items.push({icon:'ti-check',color:'var(--green)',text:'All clear — no pending actions'});
+      actEl.innerHTML = items.map(function(item) {
+        return '<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">' +
+          '<i class="ti ' + item.icon + '" style="font-size:18px;color:' + item.color + ';flex-shrink:0;"></i>' +
+          '<div style="font-size:12px;color:var(--text);">' + item.text + '</div></div>';
+      }).join('');
+    }
+  } catch(e) { console.error('Admin dashboard error:', e); }
+}
+
+// ── ADMIN TICKETS ──
+async function loadAdminTickets() {
+  var el = document.getElementById('admin-tickets-list');
+  if(!el || !db) return;
+  el.innerHTML = '<div class="empty-state" style="padding:16px;"><i class="ti ti-ticket"></i>Loading...</div>';
+  try {
+    var filter = document.getElementById('ticket-filter');
+    var status = filter ? filter.value : 'all';
+    var q = db.from('support_tickets').select('*').order('created_at', {ascending:false}).limit(20);
+    if(status !== 'all') q = q.eq('status', status);
+    var res = await q;
+    if(!res.data || !res.data.length) { el.innerHTML = '<div class="empty-state" style="padding:16px;"><i class="ti ti-ticket"></i>No tickets found</div>'; return; }
+    el.innerHTML = '';
+    res.data.forEach(function(t) {
+      var sc = {open:'var(--amber)',pending:'var(--red)',done:'var(--green)'}[t.status] || 'var(--text3)';
+      var div = document.createElement('div');
+      div.style.cssText = 'padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;';
+      div.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">' +
+        '<div style="font-size:12px;font-weight:700;color:var(--text);">' + t.subject + '</div>' +
+        '<div style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;background:rgba(255,255,255,0.06);color:'+sc+';">' + (t.status||'open').toUpperCase() + '</div>' +
+        '</div>' +
+        '<div style="font-size:11px;color:var(--text3);margin-bottom:8px;">' + (t.user_name||'User') + ' · ' + new Date(t.created_at).toLocaleDateString() + '</div>' +
+        '<div style="font-size:11px;color:var(--text2);margin-bottom:10px;">' + (t.message||'').substring(0,100) + '...</div>';
+      // Reply form
+      var replyDiv = document.createElement('div');
+      replyDiv.innerHTML = '<div style="display:flex;gap:6px;">' +
+        '<input id="reply-' + t.id + '" class="auth-input" type="text" placeholder="Type reply..." style="flex:1;padding:8px 10px;font-size:12px;">' +
+        '<button style="padding:8px 12px;background:var(--grad);border:none;border-radius:8px;color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;flex-shrink:0;">Reply</button>' +
+        '</div>';
+      replyDiv.querySelector('button').addEventListener('click', function() { adminReplyTicket(t.id); });
+      div.appendChild(replyDiv);
+      el.appendChild(div);
+    });
+  } catch(e) { el.innerHTML = '<div class="empty-state" style="padding:16px;"><i class="ti ti-alert-circle"></i>Error loading tickets</div>'; }
+}
+
+async function adminReplyTicket(ticketId) {
+  var input = document.getElementById('reply-' + ticketId);
+  if(!input || !input.value.trim()) return;
+  var reply = input.value.trim();
+  try {
+    await db.from('support_tickets').update({
+      admin_reply: reply,
+      status: 'pending',
+      replied_at: new Date().toISOString()
+    }).eq('id', ticketId);
+    input.value = '';
+    input.placeholder = 'Reply sent ✓';
+    input.style.color = 'var(--green)';
+    setTimeout(function() { loadAdminTickets(); }, 1000);
+  } catch(e) { alert('Error sending reply'); }
+}
+
+// ── ADMIN FUND REQUESTS ──
+async function loadAdminFunds() {
+  var el = document.getElementById('admin-funds-list');
+  if(!el || !db) return;
+  el.innerHTML = '<div class="empty-state" style="padding:16px;"><i class="ti ti-chart-pie"></i>Loading...</div>';
+  try {
+    var res = await db.from('fund_requests').select('*').order('created_at',{ascending:false}).limit(20);
+    if(!res.data || !res.data.length) { el.innerHTML = '<div class="empty-state" style="padding:16px;"><i class="ti ti-chart-pie"></i>No fund requests yet</div>'; return; }
+    el.innerHTML = '';
+    res.data.forEach(function(r) {
+      var sc = {pending:'var(--amber)',approved:'var(--green)',rejected:'var(--red)'}[r.status] || 'var(--text3)';
+      var div = document.createElement('div');
+      div.style.cssText = 'padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;';
+      div.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">' +
+        '<div style="font-size:13px;font-weight:800;color:var(--text);">' + (r.user_name||'User') + '</div>' +
+        '<div style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;background:rgba(255,255,255,0.06);color:'+sc+';">' + (r.status||'pending').toUpperCase() + '</div>' +
+        '</div>' +
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;">' +
+        '<div style="font-size:11px;color:var(--text3);">MT5: <span style="color:var(--text);">' + (r.mt5_id||'--') + '</span></div>' +
+        '<div style="font-size:11px;color:var(--text3);">Amount: <span style="color:var(--green);">$' + (r.allocation||'--') + '</span></div>' +
+        '<div style="font-size:11px;color:var(--text3);">Risk: <span style="color:var(--text);">' + (r.risk_level||'--') + '</span></div>' +
+        '<div style="font-size:11px;color:var(--text3);">Phone: <span style="color:var(--text);">' + (r.phone||'--') + '</span></div>' +
+        '</div>';
+      if(r.status === 'pending') {
+        var btnRow = document.createElement('div');
+        btnRow.style.cssText = 'display:flex;gap:8px;';
+        var approveBtn = document.createElement('button');
+        approveBtn.textContent = 'Connect';
+        approveBtn.style.cssText = 'flex:1;padding:9px;background:var(--grad);border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;';
+        approveBtn.addEventListener('click', function() { adminUpdateFund(r.id, 'approved'); });
+        var rejectBtn = document.createElement('button');
+        rejectBtn.textContent = 'Reject';
+        rejectBtn.style.cssText = 'flex:1;padding:9px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:12px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;';
+        rejectBtn.addEventListener('click', function() { adminUpdateFund(r.id, 'rejected'); });
+        btnRow.appendChild(approveBtn);
+        btnRow.appendChild(rejectBtn);
+        div.appendChild(btnRow);
+      }
+      el.appendChild(div);
+    });
+  } catch(e) { el.innerHTML = '<div class="empty-state" style="padding:16px;"><i class="ti ti-alert-circle"></i>Error loading requests</div>'; }
+}
+
+async function adminUpdateFund(fundId, status) {
+  try {
+    await db.from('fund_requests').update({status: status}).eq('id', fundId);
+    loadAdminFunds();
+  } catch(e) { alert('Error updating fund request'); }
+}
+
+// ── ANNOUNCEMENTS ──
+async function loadAdminAnnouncements() {
+  var el = document.getElementById('admin-ann-list');
+  if(!el || !db) return;
+  try {
+    var res = await db.from('announcements').select('*').order('created_at',{ascending:false}).limit(10);
+    if(!res.data || !res.data.length) { el.innerHTML = '<div class="empty-state" style="padding:16px;"><i class="ti ti-speakerphone"></i>No announcements yet</div>'; return; }
+    el.innerHTML = res.data.map(function(a) {
+      return '<div style="padding:10px 0;border-bottom:1px solid var(--border);">' +
+        '<div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:2px;">' + (a.title||'Announcement') + '</div>' +
+        '<div style="font-size:11px;color:var(--text2);margin-bottom:4px;">' + (a.message||'').substring(0,100) + '...</div>' +
+        '<div style="font-size:10px;color:var(--text3);">' + new Date(a.created_at).toLocaleDateString() + ' · ' + (a.target||'all') + '</div>' +
+      '</div>';
+    }).join('');
+  } catch(e) {}
+}
+
+async function postAnnouncement() {
+  var title = document.getElementById('ann-title').value.trim();
+  var message = document.getElementById('ann-message').value.trim();
+  var target = document.getElementById('ann-target').value;
+  var errEl = document.getElementById('ann-error');
+  var sucEl = document.getElementById('ann-success');
+  errEl.style.display = 'none'; sucEl.style.display = 'none';
+  if(!title) { errEl.textContent = 'Please enter a title'; errEl.style.display = 'block'; return; }
+  if(!message) { errEl.textContent = 'Please enter a message'; errEl.style.display = 'block'; return; }
+  try {
+    await db.from('announcements').insert([{
+      title: title,
+      message: message,
+      target: target,
+      admin_id: currentUser ? currentUser.id : null,
+      created_at: new Date().toISOString()
+    }]);
+    sucEl.textContent = 'Announcement posted successfully!';
+    sucEl.style.display = 'block';
+    document.getElementById('ann-title').value = '';
+    document.getElementById('ann-message').value = '';
+    loadAdminAnnouncements();
+  } catch(e) {
+    errEl.textContent = 'Error: ' + (e.message || 'Please try again');
+    errEl.style.display = 'block';
+  }
+}
+
+// ── ANNOUNCEMENT POPUP ON DASHBOARD ──
+async function checkAndShowAnnouncement() {
+  if(!db) return;
+  try {
+    var res = await db.from('announcements').select('*').order('created_at',{ascending:false}).limit(1);
+    if(!res.data || !res.data.length) return;
+    var ann = res.data[0];
+    var lastSeen = localStorage.getItem('last_ann_seen');
+    if(lastSeen === ann.id) return; // Already seen this one
+    showAnnouncementPopup(ann);
+  } catch(e) {}
+}
+
+function showAnnouncementPopup(ann) {
+  var existing = document.getElementById('ann-popup');
+  if(existing) existing.remove();
+  var overlay = document.createElement('div');
+  overlay.id = 'ann-popup';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;';
+  var card = document.createElement('div');
+  card.style.cssText = 'background:#0d0b14;border-radius:16px;padding:20px;width:100%;max-width:360px;border:1px solid rgba(255,30,60,0.2);position:relative;';
+  // Close button
+  var closeBtn = document.createElement('button');
+  closeBtn.innerHTML = '&times;';
+  closeBtn.style.cssText = 'position:absolute;top:12px;right:14px;background:transparent;border:none;color:rgba(244,247,250,0.4);font-size:24px;cursor:pointer;line-height:1;';
+  closeBtn.addEventListener('click', function() {
+    localStorage.setItem('last_ann_seen', ann.id);
+    overlay.remove();
+  });
+  // Header
+  var header = document.createElement('div');
+  header.style.cssText = 'display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-right:24px;';
+  header.innerHTML = '<div style="width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,#FF1E3C,#C40024);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ti ti-speakerphone" style="font-size:18px;color:#fff;"></i></div>' +
+    '<div><div style="font-size:9px;color:var(--red);font-weight:700;letter-spacing:1px;text-transform:uppercase;">Announcement</div>' +
+    '<div style="font-size:15px;font-weight:800;color:#f4f7fa;">' + (ann.title || 'Important Update') + '</div></div>';
+  // Message
+  var msg = document.createElement('div');
+  msg.style.cssText = 'font-size:13px;color:rgba(244,247,250,0.75);line-height:1.7;margin-bottom:16px;';
+  msg.textContent = ann.message;
+  // Date
+  var date = document.createElement('div');
+  date.style.cssText = 'font-size:10px;color:rgba(244,247,250,0.3);margin-bottom:14px;';
+  date.textContent = new Date(ann.created_at).toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric'});
+  // OK button
+  var okBtn = document.createElement('button');
+  okBtn.textContent = 'Got it';
+  okBtn.style.cssText = 'width:100%;padding:12px;background:linear-gradient(135deg,#FF1E3C,#C40024);border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;';
+  okBtn.addEventListener('click', function() {
+    localStorage.setItem('last_ann_seen', ann.id);
+    overlay.remove();
+  });
+  card.appendChild(closeBtn);
+  card.appendChild(header);
+  card.appendChild(msg);
+  card.appendChild(date);
+  card.appendChild(okBtn);
+  overlay.appendChild(card);
+  document.body.appendChild(overlay);
 }
 
 </script>
