@@ -1194,6 +1194,16 @@ select.auth-input {
   font-size: 13px;
 }
 .empty-state i { font-size: 40px; display: block; margin-bottom: 12px; opacity: 0.3; }
+
+/* Admin signal status select fix */
+#admin-signals-list select option {
+  background: #ffffff !important;
+  color: #111111 !important;
+}
+#admin-signals-list select {
+  background: #ffffff !important;
+  color: #111111 !important;
+}
 </style>
 </head>
 <body>
@@ -4845,7 +4855,7 @@ async function loadAdminSignals() {
 
       // Status dropdown
       var statusSelect = document.createElement('select');
-      statusSelect.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-size:11px;font-weight:700;color:var(--text);font-family:Sora,sans-serif;cursor:pointer;';
+      statusSelect.style.cssText = 'background:#ffffff;border:1px solid #ccc;border-radius:6px;padding:5px 10px;font-size:11px;font-weight:700;color:#111111;font-family:Sora,sans-serif;cursor:pointer;';
       statusSelect.innerHTML =
         '<option value="active"' + (isActive ? ' selected' : '') + '>Active</option>' +
         '<option value="closed"' + (!isActive && sig.status==='closed' ? ' selected' : '') + '>Not Active</option>' +
