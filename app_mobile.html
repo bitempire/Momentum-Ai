@@ -3777,7 +3777,6 @@ async function handleRegister() {
 
 // ── ROUTE USER ──
 function routeUser(user) {
-  console.log('routeUser called, role:', user.role, 'status:', user.status);
   if(user.role === 'admin') {
     loadAdminUsers();
     document.getElementById('admin-menu-item').style.display = 'flex';
@@ -3798,7 +3797,6 @@ function routeUser(user) {
 
 // ── ENTER APP ──
 function enterApp(user) {
-  console.log('enterApp called', user ? user.username : 'no user');
   if(user) {
     var name = user.username || user.name || 'Trader';
     document.getElementById('mob-username').textContent = name;
@@ -3822,9 +3820,7 @@ function enterApp(user) {
     if(profBroker) profBroker.textContent = user.broker || 'AFTT Markets';
     if(profStatus) profStatus.textContent = user.status || 'Active';
   }
-  console.log('showing screen-app');
   showScreen('screen-app');
-  console.log('calling switchTab dashboard');
   setTimeout(function() { 
     console.log('switchTab running');
     switchTab('dashboard');
@@ -3834,7 +3830,8 @@ function enterApp(user) {
   loadDashboardSignals();
   drawSparklines();
   initTVChart();
-  setTimeout(function() { drawGrowthChart(); drawEmotionChart(); loadSavedProfilePhoto(); checkAndShowAnnouncement(); }, 800);
+  setTimeout(function() { drawGrowthChart(); drawEmotionChart(); loadSavedProfilePhoto(); }, 800);
+  setTimeout(function() { checkAndShowAnnouncement(); }, 3000);
 }
 
 // ── GROWTH CHART ──
@@ -4766,7 +4763,7 @@ function showAnnouncementPopup(ann) {
   if(existing) existing.remove();
   var overlay = document.createElement('div');
   overlay.id = 'ann-popup';
-  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(2px);';
   var card = document.createElement('div');
   card.style.cssText = 'background:#0d0b14;border-radius:16px;padding:20px;width:100%;max-width:360px;border:1px solid rgba(255,30,60,0.2);position:relative;';
   // Close button
