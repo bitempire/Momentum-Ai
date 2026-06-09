@@ -3361,7 +3361,7 @@ select.auth-input {
       <div style="display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;">
         <button class="analyst-sig-filter active" data-filter="all" onclick="filterAnalystSignals('all',this)" style="flex-shrink:0;padding:7px 14px;background:rgba(255,30,60,0.12);border:1px solid rgba(255,30,60,0.3);border-radius:20px;color:var(--red);font-size:12px;font-weight:600;cursor:pointer;">All</button>
         <button class="analyst-sig-filter" data-filter="active" onclick="filterAnalystSignals('active',this)" style="flex-shrink:0;padding:7px 14px;background:var(--surface);border:1px solid var(--border);border-radius:20px;color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;">Active</button>
-        <button class="analyst-sig-filter" data-filter="inactive" onclick="filterAnalystSignals('inactive',this)" style="flex-shrink:0;padding:7px 14px;background:var(--surface);border:1px solid var(--border);border-radius:20px;color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;">Inactive</button>
+        <button class="analyst-sig-filter" data-filter="not_active" onclick="filterAnalystSignals('not_active',this)" style="flex-shrink:0;padding:7px 14px;background:var(--surface);border:1px solid var(--border);border-radius:20px;color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;">Not Active</button>
       </div>
       <div id="analyst-signals-list">
         <div class="empty-state" style="padding:24px;"><i class="ti ti-broadcast"></i>Loading signals...</div>
@@ -5318,8 +5318,8 @@ function renderAnalystSignals(signals) {
   container.innerHTML = '';
   signals.forEach(function(sig) {
     var dir = (sig.direction||'BUY').toLowerCase();
-    var statusColor = sig.status==='active' ? 'var(--green)' : sig.status==='inactive' ? 'var(--amber)' : 'var(--text3)';
-    var statusBg   = sig.status==='active' ? 'rgba(0,200,122,0.1)' : sig.status==='inactive' ? 'rgba(255,176,32,0.1)' : 'rgba(255,255,255,0.05)';
+    var statusColor = sig.status==='active' ? 'var(--green)' : sig.status==='not_active' ? 'var(--amber)' : sig.status==='pending' ? '#4D9EFF' : 'var(--text3)';
+    var statusBg   = sig.status==='active' ? 'rgba(0,200,122,0.1)' : sig.status==='not_active' ? 'rgba(255,176,32,0.1)' : sig.status==='pending' ? 'rgba(77,158,255,0.1)' : 'rgba(255,255,255,0.05)';
 
     var card = document.createElement('div');
     card.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:13px;margin-bottom:10px;';
@@ -5353,7 +5353,7 @@ function renderAnalystSignals(signals) {
       b.style.cssText = (extraStyle||'flex:1;') + 'padding:8px;background:' + bgColor + ';border:1px solid ' + borderColor + ';border-radius:8px;color:' + textColor + ';font-size:11px;font-weight:700;cursor:pointer;';
       b.addEventListener('click', function() {
         if(action === 'active')   setSignalStatus(sig.id, 'active');
-        if(action === 'inactive') setSignalStatus(sig.id, 'inactive');
+        if(action === 'inactive') setSignalStatus(sig.id, 'not_active');
         if(action === 'edit')     openEditSignal(sig.id);
         if(action === 'delete')   deleteAnalystSignal(sig.id);
       });
