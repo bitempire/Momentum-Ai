@@ -1384,7 +1384,10 @@ select.auth-input {
 
     <!-- ── TAB: SIGNALS ── -->
     <div id="tab-signals" class="app-tab" style="display:none;">
-      <div class="section-title" style="margin-bottom:12px;">Live <span>Signals</span></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div class="section-title" style="margin-bottom:0;">Live <span>Signals</span></div>
+        <button onclick="loadSignalsFeed()" style="background:transparent;border:none;color:var(--red);font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:4px;"><i class="ti ti-refresh" style="font-size:14px;"></i>Refresh</button>
+      </div>
       <!-- Signal Filters - Dropdowns -->
       <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
         <select id="filter-symbol" class="auth-input" style="flex:1;min-width:100px;padding:9px 12px;font-size:12px;" onchange="applySignalFilters()">
@@ -1462,7 +1465,7 @@ select.auth-input {
         </div>
         <div id="mob-live-positions">
           <div class="trade-item">
-            <div class="trade-icon win"><i class="ti ti-trending-up"></i></div>
+            <div class="trade-icon win">📈</div>
             <div class="trade-info">
               <div class="trade-pair">XAUUSD <span style="font-size:10px;color:var(--green);font-weight:700;">BUY</span></div>
               <div class="trade-meta">Entry: 2,318.40 · 0.1 lot · 2h 14m</div>
@@ -1473,7 +1476,7 @@ select.auth-input {
             </div>
           </div>
           <div class="trade-item">
-            <div class="trade-icon win"><i class="ti ti-trending-up"></i></div>
+            <div class="trade-icon win">📈</div>
             <div class="trade-info">
               <div class="trade-pair">NAS100 <span style="font-size:10px;color:var(--green);font-weight:700;">BUY</span></div>
               <div class="trade-meta">Entry: 19,842.0 · 0.5 lot · 45m</div>
@@ -4117,7 +4120,8 @@ function switchTab(tab) {
   var content = document.getElementById('app-content');
   if(content) content.scrollTop = 0;
   if(tab==='charts') initTVChart();
-  if(tab==='signals') loadSignalsFeed();
+  if(tab==='signals') { loadSignalsFeed(); startSignalsAutoRefresh(); }
+  else { stopSignalsAutoRefresh(); }
   if(tab==='more'&&currentUser&&currentUser.role==='admin') loadAdminUsers();
 }
 
@@ -4151,7 +4155,7 @@ async function loadDashboardSignals() {
     container.innerHTML = res.data.map(function(sig) {
       var dir = sig.direction.toLowerCase();
       return '<div class="dash-sig-item">' +
-        '<div class="dash-sig-icon '+dir+'">'+( dir==='buy' ? '▲' : '▼' )+'</div>' +
+        '<div class="dash-sig-icon '+dir+'">'+( dir==='buy' ? '📈' : '📉' )+'</div>' +
         '<div class="dash-sig-info"><div class="dash-sig-pair">'+sig.pair+'</div><div class="dash-sig-entry">'+sig.entry_from+' - '+sig.entry_to+'</div></div>' +
         '<div class="dash-sig-right"><div class="dash-sig-dir '+dir+'">'+sig.direction+'</div><div class="dash-sig-strength">'+sig.strength+'%</div></div>' +
         '</div>';
@@ -5627,6 +5631,27 @@ async function adminDeleteSignal(sigId) {
     loadAdminSignals();
   } catch(e) {
     alert('Error: ' + (e.message || 'Could not delete'));
+  }
+}
+
+
+// ── SIGNALS AUTO REFRESH ──────────────────────────────────────────────
+var _signalsRefreshTimer = null;
+
+function startSignalsAutoRefresh() {
+  stopSignalsAutoRefresh();
+  _signalsRefreshTimer = setInterval(function() {
+    var activeTab = document.querySelector('.nav-btn.active');
+    if(activeTab && activeTab.id === 'nav-signals') {
+      loadSignalsFeed();
+    }
+  }, 30000); // refresh every 30 seconds
+}
+
+function stopSignalsAutoRefresh() {
+  if(_signalsRefreshTimer) {
+    clearInterval(_signalsRefreshTimer);
+    _signalsRefreshTimer = null;
   }
 }
 
