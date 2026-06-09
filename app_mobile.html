@@ -3261,19 +3261,28 @@ function activateAutoTrading() {
 function handleProfilePhoto(input) {
   if(!input.files || !input.files[0]) return;
   var file = input.files[0];
+  if(file.size > 2 * 1024 * 1024) {
+    alert('Photo too large. Please use an image under 2MB.');
+    return;
+  }
   var reader = new FileReader();
   reader.onload = function(e) {
+    var dataUrl = e.target.result;
+    // Save to localStorage first
+    try {
+      localStorage.setItem('profile_photo', dataUrl);
+    } catch(err) {
+      alert('Could not save photo. Storage may be full.');
+      return;
+    }
+    // Update all avatar elements immediately
     var img = document.getElementById('profile-avatar-img');
     var initials = document.getElementById('profile-avatar-initials');
-    var headerAv = document.getElementById('header-avatar');
-    var bigAv = document.getElementById('profile-avatar-big');
-    if(img) {
-      img.src = e.target.result;
-      img.style.display = 'block';
-    }
+    if(img) { img.src = dataUrl; img.style.display = 'block'; }
     if(initials) initials.style.display = 'none';
-    // Save to localStorage
-    localStorage.setItem('profile_photo', e.target.result);
+    // Show success feedback
+    var tip = document.querySelector('[style*="Tap camera"]');
+    if(tip) { tip.textContent = 'Photo saved!'; tip.style.color = 'var(--green)'; setTimeout(function() { tip.textContent = 'Tap camera to change photo'; tip.style.color = ''; }, 2000); }
   };
   reader.readAsDataURL(file);
 }
@@ -3687,6 +3696,8 @@ function showSubScreen(id) {
   var el = document.getElementById(id);
   if(el) { el.classList.add('active'); }
   if(id==='sub-admin') { loadAdminUsers(); }
+  if(id==='sub-profile') { loadSavedProfilePhoto(); loadProfileData(); }
+  if(id==='sub-support') { loadMyTickets(); }
 }
 function hideSubScreen(id) {
   var el = document.getElementById(id);
@@ -4234,6 +4245,46 @@ function openTicketDetail(ticket) {
   }
   popup.appendChild(sheet);
   document.body.appendChild(popup);
+}
+
+
+// ── LOAD PROFILE DATA ──
+function loadProfileData() {
+  if(!currentUser) return;
+  var name = currentUser.name || currentUser.username || 'Trader';
+  var initials = name.split(' ').map(function(n) { return n[0]; }).join('').toUpperCase().substring(0,2);
+  
+  // Update avatar initials
+  var avatarInitials = document.getElementById('profile-avatar-initials');
+  if(avatarInitials) avatarInitials.textContent = initials;
+  
+  // Update header avatar
+  var headerAv = document.getElementById('header-avatar');
+  if(headerAv) headerAv.textContent = initials;
+  
+  // Update display name and role
+  var nameDisplay = document.getElementById('profile-name-display');
+  if(nameDisplay) nameDisplay.textContent = name;
+  var roleDisplay = document.getElementById('profile-role-display');
+  if(roleDisplay) roleDisplay.textContent = (currentUser.role || 'Premium User').charAt(0).toUpperCase() + (currentUser.role || 'premium user').slice(1);
+  
+  // Update info fields
+  var nameVal = document.getElementById('profile-name-val');
+  if(nameVal) nameVal.textContent = name;
+  var usernameEl = document.getElementById('profile-username');
+  if(usernameEl) usernameEl.textContent = currentUser.username || '--';
+  var emailEl = document.getElementById('profile-email');
+  if(emailEl) emailEl.textContent = currentUser.email || '--';
+  var mt5El = document.getElementById('profile-mt5');
+  if(mt5El) mt5El.textContent = currentUser.mt5_id || '--';
+  var brokerEl = document.getElementById('profile-broker');
+  if(brokerEl) brokerEl.textContent = currentUser.broker || 'AFTT Markets';
+  var statusEl = document.getElementById('profile-status');
+  if(statusEl) {
+    statusEl.textContent = (currentUser.status || 'Active').charAt(0).toUpperCase() + (currentUser.status || 'active').slice(1);
+    statusEl.style.color = currentUser.status === 'active' ? 'var(--green)' : 'var(--amber)';
+    statusEl.style.background = currentUser.status === 'active' ? 'rgba(0,200,122,0.1)' : 'rgba(255,176,32,0.1)';
+  }
 }
 
 </script>
