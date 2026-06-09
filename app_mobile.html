@@ -2388,14 +2388,14 @@ select.auth-input {
       <div class="sub-title">ADMIN PANEL</div>
     </div>
     <!-- Admin Tab Bar -->
-    <div style="display:flex;gap:4px;padding:10px 14px 0;background:var(--bg2);border-bottom:1px solid var(--border);overflow-x:auto;flex-shrink:0;">
-      <button class="admin-tab-btn active" id="atab-dashboard" onclick="switchAdminTab('dashboard')" style="padding:8px 12px;background:rgba(255,30,60,0.12);border:none;border-bottom:2px solid var(--red);color:var(--red);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Dashboard</button>
-      <button class="admin-tab-btn" id="atab-users" onclick="switchAdminTab('users')" style="padding:8px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Users</button>
-      <button class="admin-tab-btn" id="atab-tickets" onclick="switchAdminTab('tickets')" style="padding:8px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Support</button>
-      <button class="admin-tab-btn" id="atab-funds" onclick="switchAdminTab('funds')" style="padding:8px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Fund Req</button>
-      <button class="admin-tab-btn" id="atab-announce" onclick="switchAdminTab('announce')" style="padding:8px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Announce</button>
-      <button class="admin-tab-btn" id="atab-signals" onclick="switchAdminTab('signals')" style="padding:8px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Signals</button>
-      <button class="admin-tab-btn" id="atab-analyst" onclick="switchAdminTab('analyst')" style="padding:8px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Analysts</button>
+    <div id="admin-tab-bar" style="display:flex;gap:0;padding:0 14px;background:var(--bg2);border-bottom:1px solid var(--border);overflow-x:auto;flex-shrink:0;-webkit-overflow-scrolling:touch;">
+      <button class="admin-tab-btn" data-tab="dashboard" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid var(--red);color:var(--red);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Dashboard</button>
+      <button class="admin-tab-btn" data-tab="users" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Users</button>
+      <button class="admin-tab-btn" data-tab="tickets" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Support</button>
+      <button class="admin-tab-btn" data-tab="funds" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Fund Req</button>
+      <button class="admin-tab-btn" data-tab="announce" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Announce</button>
+      <button class="admin-tab-btn" data-tab="signals" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Signals</button>
+      <button class="admin-tab-btn" data-tab="analyst" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Analysts</button>
     </div>
     <div class="sub-content">
 
@@ -4500,13 +4500,15 @@ function loadProfileData() {
 function switchAdminTab(tab) {
   var tabs = ['dashboard','users','tickets','funds','announce','signals','analyst'];
   tabs.forEach(function(t) {
-    var btn = document.getElementById('atab-' + t);
+    // Support both old id-based and new data-tab-based buttons
+    var btn = document.getElementById('atab-' + t) ||
+              document.querySelector('[data-tab="' + t + '"]');
     var content = document.getElementById('atab-content-' + t);
     var isActive = t === tab;
     if(btn) {
-      btn.style.background = isActive ? 'rgba(255,30,60,0.12)' : 'transparent';
       btn.style.borderBottom = isActive ? '2px solid var(--red)' : '2px solid transparent';
       btn.style.color = isActive ? 'var(--red)' : 'var(--text3)';
+      btn.style.fontWeight = isActive ? '800' : '700';
     }
     if(content) content.style.display = isActive ? 'block' : 'none';
   });
@@ -4517,6 +4519,17 @@ function switchAdminTab(tab) {
   if(tab === 'announce') loadAdminAnnouncements();
   if(tab === 'signals') loadAdminSignals();
 }
+
+// Wire up admin tab buttons via event delegation
+document.addEventListener('DOMContentLoaded', function() {
+  var bar = document.getElementById('admin-tab-bar');
+  if(bar) {
+    bar.addEventListener('click', function(e) {
+      var btn = e.target.closest('[data-tab]');
+      if(btn) switchAdminTab(btn.getAttribute('data-tab'));
+    });
+  }
+});
 
 // ── ADMIN DASHBOARD ──
 async function loadAdminDashboard() {
