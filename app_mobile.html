@@ -4164,7 +4164,7 @@ async function loadSignalsFeed() {
   var container = document.getElementById('mob-signals-list');
   container.innerHTML = '<div class="empty-state"><i class="ti ti-broadcast"></i>Loading...</div>';
   try {
-    var res = await db.from('signals').select('*').order('created_at',{ascending:false});
+    var res = await db.from('signals').select('*').eq('status','active').order('created_at',{ascending:false});
     if(res.error||!res.data) { container.innerHTML='<div class="empty-state"><i class="ti ti-broadcast"></i>No signals yet</div>'; return; }
     window._signalStore = {};
     res.data.forEach(function(s) { window._signalStore[s.id]=s; });
@@ -4189,34 +4189,31 @@ async function loadSignalsFeed() {
       top.className = 'sig-card-top';
       var icon = document.createElement('div');
       icon.className = 'sig-card-icon';
-      icon.textContent = dir==='buy' ? 'BUY' : 'SELL';
+      icon.textContent = dir==='buy' ? '📈' : '📉';
       var info = document.createElement('div');
-      // Status dot before pair name
-      var statusDot = document.createElement('div');
-      statusDot.style.cssText = 'display:inline-flex;align-items:center;gap:5px;margin-bottom:4px;';
-      var dot = document.createElement('span');
-      var isActive = sig.status === 'active';
-      dot.style.cssText = 'width:7px;height:7px;border-radius:50%;background:' + (isActive ? 'var(--green)' : 'var(--text3)') + ';display:inline-block;flex-shrink:0;';
-      var statusLbl = document.createElement('span');
-      statusLbl.style.cssText = 'font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:' + (isActive ? 'var(--green)' : 'var(--text3)') + ';';
-      statusLbl.textContent = isActive ? 'ACTIVE' : 'INACTIVE';
-      statusDot.appendChild(dot);
-      statusDot.appendChild(statusLbl);
-
       var pairEl = document.createElement('div');
       pairEl.className = 'sig-card-pair';
       pairEl.textContent = sig.pair;
       var timeEl = document.createElement('div');
       timeEl.className = 'sig-card-time';
       timeEl.textContent = timeAgo(sig.created_at) + ' · ' + (sig.timeframe||'H4');
-      info.appendChild(statusDot);
       info.appendChild(pairEl);
       info.appendChild(timeEl);
       var dirEl = document.createElement('div');
       dirEl.className = 'sig-card-dir ' + dir;
       dirEl.textContent = sig.direction;
+      // Status badge — green for active, amber for inactive
+      var statusBadge = document.createElement('div');
+      var isActive = sig.status === 'active';
+      statusBadge.textContent = isActive ? 'ACTIVE' : 'INACTIVE';
+      statusBadge.style.cssText = 'padding:4px 9px;border-radius:6px;font-family:Orbitron,sans-serif;font-size:9px;font-weight:800;letter-spacing:.8px;margin-right:5px;flex-shrink:0;' +
+        (isActive
+          ? 'background:rgba(0,200,122,0.12);color:#00c87a;border:1px solid rgba(0,200,122,0.25);'
+          : 'background:rgba(255,176,32,0.12);color:#ffb020;border:1px solid rgba(255,176,32,0.25);');
+
       top.appendChild(icon);
       top.appendChild(info);
+      top.appendChild(statusBadge);
       top.appendChild(dirEl);
 
       // Levels row
@@ -5341,7 +5338,7 @@ function renderAnalystSignals(signals) {
     var topRow = document.createElement('div');
     topRow.style.cssText = 'display:flex;align-items:center;gap:10px;margin-bottom:10px;';
     topRow.innerHTML =
-      '<div style="width:38px;height:38px;border-radius:10px;background:' + (dir==='buy'?'rgba(0,200,122,0.12)':'rgba(255,30,60,0.1)') + ';display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex-shrink:0;">' + (dir==='buy'?'▲':'▼') + '</div>' +
+      '<div style="width:38px;height:38px;border-radius:10px;background:' + (dir==='buy'?'rgba(0,200,122,0.12)':'rgba(255,30,60,0.1)') + ';display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex-shrink:0;">' + (dir==='buy'?'📈':'📉') + '</div>' +
       '<div style="flex:1;min-width:0;"><div style="font-size:14px;font-weight:800;color:var(--text);">' + (sig.pair||'--') + '</div><div style="font-size:11px;color:var(--text3);margin-top:1px;">' + timeAgo(sig.created_at) + ' · ' + (sig.timeframe||'H4') + '</div></div>' +
       '<div style="padding:4px 10px;border-radius:6px;font-size:10px;font-weight:800;font-family:Orbitron,sans-serif;background:' + (dir==='buy'?'rgba(0,200,122,0.12)':'rgba(255,30,60,0.1)') + ';color:' + (dir==='buy'?'var(--green)':'var(--red)') + ';">' + (sig.direction||'BUY') + '</div>' +
       '<div style="margin-left:6px;padding:4px 10px;border-radius:6px;font-size:10px;font-weight:700;background:' + statusBg + ';color:' + statusColor + ';">' + (sig.status==='closed'?'INACTIVE':(sig.status||'active').toUpperCase()) + '</div>';
