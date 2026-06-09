@@ -5526,6 +5526,110 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Signal action buttons use direct addEventListener (see renderAnalystSignals)
 
+
+// ── ADMIN SIGNALS ────────────────────
+async function loadAdminSignals() {
+  var el = document.getElementById('admin-signals-list');
+  if(!el || !db) return;
+  el.innerHTML = '<div class="empty-state" style="padding:16px;"><i class="ti ti-broadcast"></i>Loading...</div>';
+  try {
+    var filter = document.getElementById('signal-status-filter');
+    var status = filter ? filter.value : 'all';
+    var q = db.from('signals').select('*').order('created_at',{ascending:false}).limit(30);
+    if(status !== 'all') q = q.eq('status', status);
+    var res = await q;
+    if(!res.data || !res.data.length) {
+      el.innerHTML = '<div class="empty-state" style="padding:16px;"><i class="ti ti-broadcast"></i>No signals found</div>';
+      return;
+    }
+    el.innerHTML = '';
+    res.data.forEach(function(sig) {
+      var dir = (sig.direction||'BUY').toLowerCase();
+      var isActive = sig.status === 'active';
+      var statusColor = isActive ? 'var(--green)' : 'var(--amber)';
+      var statusBg = isActive ? 'rgba(0,200,122,0.1)' : 'rgba(255,176,32,0.1)';
+      var statusBorder = isActive ? 'rgba(0,200,122,0.2)' : 'rgba(255,176,32,0.2)';
+
+      var card = document.createElement('div');
+      card.style.cssText = 'padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;';
+
+      // Header row
+      var hdr = document.createElement('div');
+      hdr.style.cssText = 'display:flex;align-items:center;gap:8px;margin-bottom:8px;';
+      hdr.innerHTML =
+        '<div style="font-size:14px;font-weight:800;color:var(--text);flex:1;">' + (sig.pair||'--') + '</div>' +
+        '<div style="padding:3px 9px;border-radius:5px;font-size:9px;font-weight:800;background:' + (dir==='buy'?'rgba(0,200,122,0.12)':'rgba(255,30,60,0.1)') + ';color:' + (dir==='buy'?'var(--green)':'var(--red)') + ';">' + (sig.direction||'BUY') + '</div>' +
+        '<div style="padding:3px 9px;border-radius:5px;font-size:9px;font-weight:800;background:' + statusBg + ';color:' + statusColor + ';border:1px solid ' + statusBorder + ';">' + (isActive ? 'ACTIVE' : 'INACTIVE') + '</div>';
+      card.appendChild(hdr);
+
+      // Meta row
+      var meta = document.createElement('div');
+      meta.style.cssText = 'display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px;';
+      meta.innerHTML =
+        '<div style="background:var(--bg3);border-radius:6px;padding:6px;"><div style="font-size:9px;color:var(--text3);margin-bottom:2px;">ENTRY</div><div style="font-size:11px;font-weight:700;color:var(--text);">' + (sig.entry_from||'--') + '-' + (sig.entry_to||'--') + '</div></div>' +
+        '<div style="background:var(--bg3);border-radius:6px;padding:6px;"><div style="font-size:9px;color:var(--text3);margin-bottom:2px;">SL</div><div style="font-size:11px;font-weight:700;color:var(--red);">' + (sig.sl||'--') + '</div></div>' +
+        '<div style="background:var(--bg3);border-radius:6px;padding:6px;"><div style="font-size:9px;color:var(--text3);margin-bottom:2px;">TP</div><div style="font-size:11px;font-weight:700;color:var(--green);">' + (sig.tp1||'--') + '</div></div>';
+      card.appendChild(meta);
+
+      // Sub info
+      var info = document.createElement('div');
+      info.style.cssText = 'font-size:10px;color:var(--text3);margin-bottom:8px;';
+      info.textContent = (sig.analyst_name||'Analyst') + ' · ' + (sig.timeframe||'H4') + ' · ' + timeAgo(sig.created_at);
+      card.appendChild(info);
+
+      // Action buttons
+      var btnRow = document.createElement('div');
+      btnRow.style.cssText = 'display:flex;gap:6px;';
+
+      // Active button
+      var btnActive = document.createElement('button');
+      btnActive.textContent = 'Active';
+      btnActive.style.cssText = 'flex:1;padding:7px;background:rgba(0,200,122,0.1);border:1px solid rgba(0,200,122,0.2);border-radius:7px;color:var(--green);font-size:11px;font-weight:700;cursor:pointer;';
+      btnActive.addEventListener('click', function() { adminUpdateSignalStatus(sig.id, 'active'); });
+
+      // Inactive button
+      var btnInactive = document.createElement('button');
+      btnInactive.textContent = 'Inactive';
+      btnInactive.style.cssText = 'flex:1;padding:7px;background:rgba(255,176,32,0.1);border:1px solid rgba(255,176,32,0.2);border-radius:7px;color:var(--amber);font-size:11px;font-weight:700;cursor:pointer;';
+      btnInactive.addEventListener('click', function() { adminUpdateSignalStatus(sig.id, 'closed'); });
+
+      // Delete button
+      var btnDel = document.createElement('button');
+      btnDel.textContent = 'Delete';
+      btnDel.style.cssText = 'flex:1;padding:7px;background:rgba(255,30,60,0.08);border:1px solid rgba(255,30,60,0.15);border-radius:7px;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;';
+      btnDel.addEventListener('click', function() { adminDeleteSignal(sig.id); });
+
+      btnRow.appendChild(btnActive);
+      btnRow.appendChild(btnInactive);
+      btnRow.appendChild(btnDel);
+      card.appendChild(btnRow);
+      el.appendChild(card);
+    });
+  } catch(e) {
+    el.innerHTML = '<div class="empty-state" style="padding:16px;"><i class="ti ti-alert-circle"></i>Error: ' + (e.message||'Failed') + '</div>';
+  }
+}
+
+async function adminUpdateSignalStatus(sigId, newStatus) {
+  try {
+    var res = await db.from('signals').update({status: newStatus}).eq('id', sigId);
+    if(res.error) throw res.error;
+    loadAdminSignals();
+  } catch(e) {
+    alert('Error: ' + (e.message || 'Could not update signal'));
+  }
+}
+
+async function adminDeleteSignal(sigId) {
+  if(!confirm('Delete this signal permanently?')) return;
+  try {
+    await db.from('signals').delete().eq('id', sigId);
+    loadAdminSignals();
+  } catch(e) {
+    alert('Error: ' + (e.message || 'Could not delete'));
+  }
+}
+
 </script>
 </body>
 </html>
