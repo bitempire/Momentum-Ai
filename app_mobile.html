@@ -3777,6 +3777,7 @@ async function handleRegister() {
 
 // ── ROUTE USER ──
 function routeUser(user) {
+  console.log('routeUser called, role:', user.role, 'status:', user.status);
   if(user.role === 'admin') {
     loadAdminUsers();
     document.getElementById('admin-menu-item').style.display = 'flex';
@@ -3797,6 +3798,7 @@ function routeUser(user) {
 
 // ── ENTER APP ──
 function enterApp(user) {
+  console.log('enterApp called', user ? user.username : 'no user');
   if(user) {
     var name = user.username || user.name || 'Trader';
     document.getElementById('mob-username').textContent = name;
@@ -3820,8 +3822,15 @@ function enterApp(user) {
     if(profBroker) profBroker.textContent = user.broker || 'AFTT Markets';
     if(profStatus) profStatus.textContent = user.status || 'Active';
   }
+  console.log('showing screen-app');
   showScreen('screen-app');
-  setTimeout(function() { switchTab('dashboard'); }, 50);
+  console.log('calling switchTab dashboard');
+  setTimeout(function() { 
+    console.log('switchTab running');
+    switchTab('dashboard');
+    var dashEl = document.getElementById('tab-dashboard');
+    console.log('tab-dashboard display:', dashEl ? dashEl.style.display : 'NOT FOUND');
+  }, 50);
   loadDashboardSignals();
   drawSparklines();
   initTVChart();
