@@ -4129,6 +4129,12 @@ function showSubScreen(id) {
   if(id==='sub-profile') { loadSavedProfilePhoto(); loadProfileData(); }
   if(id==='sub-support') { loadMyTickets(); }
 }
+
+// ── Scroll analyst signals into view on page load
+function scrollToAnalystSignals() {
+  var el = document.getElementById('analyst-signals-list');
+  if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
+}
 function hideSubScreen(id) {
   var el = document.getElementById(id);
   if(el) el.classList.remove('active');
@@ -4399,7 +4405,7 @@ async function handlePostSignal() {
   try {
     var res = await db.from('signals').insert([{pair,direction:dir,entry_from:parseFloat(ef),entry_to:parseFloat(et),sl:parseFloat(sl),tp1:parseFloat(tp1),tp2:tp2?parseFloat(tp2):null,timeframe:tf,strength:parseInt(str),commentary:com,analyst_id:currentUser?currentUser.id:null,analyst_name:currentUser?(currentUser.name||currentUser.username):'Analyst',status:'active',created_at:new Date().toISOString()}]);
     if(res.error) throw res.error;
-    sucEl.textContent='Signal posted live!'; sucEl.style.display='block';
+    sucEl.textContent='✅ Signal posted live!'; sucEl.style.display='block';
     document.getElementById('sig-pair').value='';
     document.getElementById('sig-entry-from').value='';
     document.getElementById('sig-entry-to').value='';
@@ -4407,7 +4413,11 @@ async function handlePostSignal() {
     document.getElementById('sig-tp1').value='';
     document.getElementById('sig-tp2').value='';
     document.getElementById('sig-commentary').value='';
-    setTimeout(function() { sucEl.style.display='none'; },3000);
+    // Refresh the signals list below
+    setTimeout(function() {
+      sucEl.style.display='none';
+      loadAnalystSignals();
+    }, 1000);
   } catch(e) { errEl.textContent='Error: '+e.message; errEl.style.display='block'; }
 }
 
@@ -4493,8 +4503,20 @@ function applySignalFilters() {
 // ── INIT ──
 document.addEventListener('DOMContentLoaded', function() {
   var saved = sessionStorage.getItem('mob_user');
-  if(saved) { try { currentUser=JSON.parse(saved); routeUser(currentUser); } catch(e) { showScreen('screen-auth'); } }
-  else { showScreen('screen-auth'); }
+  if(saved) {
+    try {
+      currentUser = JSON.parse(saved);
+      routeUser(currentUser);
+      // If analyst, load signals after DOM settles
+      if(currentUser && currentUser.role === 'analyst') {
+        setTimeout(loadAnalystSignals, 500);
+      }
+    } catch(e) {
+      showScreen('screen-auth');
+    }
+  } else {
+    showScreen('screen-auth');
+  }
 });
 
 // Close trade popup on overlay click
@@ -5351,11 +5373,13 @@ function renderAnalystSignals(signals) {
 function filterAnalystSignals(filter, btn) {
   // Update filter buttons
   document.querySelectorAll('.analyst-sig-filter').forEach(function(b) {
+    b.classList.remove('active');
     b.style.background = 'var(--surface)';
     b.style.borderColor = 'var(--border)';
     b.style.color = 'var(--text2)';
   });
   if(btn) {
+    btn.classList.add('active');
     btn.style.background = 'rgba(255,30,60,0.12)';
     btn.style.borderColor = 'rgba(255,30,60,0.3)';
     btn.style.color = 'var(--red)';
