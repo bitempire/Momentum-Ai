@@ -2446,41 +2446,7 @@ select.auth-input {
         <div style="font-size:10px;color:var(--text3);margin-top:4px;">Tap pencil to change avatar</div>
       </div>
 
-      <!-- Avatar Picker Popup -->
-      <div id="avatar-picker" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;align-items:flex-end;">
-        <div style="background:var(--bg2);border-radius:20px 20px 0 0;padding:20px;width:100%;">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-            <div style="font-size:13px;font-weight:800;color:var(--text);">Choose Avatar</div>
-            <button onclick="closeAvatarPicker()" style="background:transparent;border:none;color:var(--text2);font-size:22px;cursor:pointer;line-height:1;">×</button>
-          </div>
-          <!-- Avatar grid -->
-          <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:16px;">
-            <div onclick="selectAvatar('👤')" style="width:48px;height:48px;border-radius:50%;background:var(--surface);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;">👤</div>
-            <div onclick="selectAvatar('🧑‍💼')" style="width:48px;height:48px;border-radius:50%;background:var(--surface);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;">🧑‍💼</div>
-            <div onclick="selectAvatar('👨‍💻')" style="width:48px;height:48px;border-radius:50%;background:var(--surface);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;">👨‍💻</div>
-            <div onclick="selectAvatar('👩‍💻')" style="width:48px;height:48px;border-radius:50%;background:var(--surface);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;">👩‍💻</div>
-            <div onclick="selectAvatar('🧑‍🚀')" style="width:48px;height:48px;border-radius:50%;background:var(--surface);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;">🧑‍🚀</div>
-            <div onclick="selectAvatar('🦸')" style="width:48px;height:48px;border-radius:50%;background:var(--surface);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;">🦸</div>
-            <div onclick="selectAvatar('🐯')" style="width:48px;height:48px;border-radius:50%;background:var(--surface);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;">🐯</div>
-            <div onclick="selectAvatar('🦁')" style="width:48px;height:48px;border-radius:50%;background:var(--surface);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;">🦁</div>
-            <div onclick="selectAvatar('🐺')" style="width:48px;height:48px;border-radius:50%;background:var(--surface);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;">🐺</div>
-            <div onclick="selectAvatar('🦊')" style="width:48px;height:48px;border-radius:50%;background:var(--surface);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;">🦊</div>
-            <div onclick="selectAvatar('🐻')" style="width:48px;height:48px;border-radius:50%;background:var(--surface);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;">🐻</div>
-            <div onclick="selectAvatar('🐼')" style="width:48px;height:48px;border-radius:50%;background:var(--surface);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;">🐼</div>
-          </div>
-          <!-- Color options -->
-          <div style="font-size:10px;color:var(--text3);letter-spacing:.5px;margin-bottom:8px;">AVATAR COLOUR</div>
-          <div style="display:flex;gap:8px;margin-bottom:16px;">
-            <div onclick="setAvatarColor('linear-gradient(135deg,#FF1E3C,#C40024)')" style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#FF1E3C,#C40024);cursor:pointer;border:2px solid transparent;"></div>
-            <div onclick="setAvatarColor('linear-gradient(135deg,#4D9EFF,#1A5FBF)')" style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#4D9EFF,#1A5FBF);cursor:pointer;"></div>
-            <div onclick="setAvatarColor('linear-gradient(135deg,#9B59B6,#6C3483)')" style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#9B59B6,#6C3483);cursor:pointer;"></div>
-            <div onclick="setAvatarColor('linear-gradient(135deg,#00c87a,#0E8A4F)')" style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#00c87a,#0E8A4F);cursor:pointer;"></div>
-            <div onclick="setAvatarColor('linear-gradient(135deg,#FFB020,#E67E22)')" style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#FFB020,#E67E22);cursor:pointer;"></div>
-            <div onclick="setAvatarColor('linear-gradient(135deg,#FF6B5E,#C0392B)')" style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#FF6B5E,#C0392B);cursor:pointer;"></div>
-          </div>
-          <button onclick="closeAvatarPicker()" style="width:100%;padding:12px;background:var(--grad);border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;">Done</button>
-        </div>
-      </div>
+
 
       <!-- Personal Info -->
       <div class="section-card" style="margin-bottom:12px;">
@@ -3293,24 +3259,99 @@ function activateAutoTrading() {
 
 
 // ── AVATAR PICKER ──
+var AVATARS = ['👤','🧑‍💼','👨‍💻','👩‍💻','🧑‍🚀','🦸','🐯','🦁','🐺','🦊','🐻','🐼','😎','🤩','💪','🔥'];
+var COLORS = [
+  'linear-gradient(135deg,#FF1E3C,#C40024)',
+  'linear-gradient(135deg,#4D9EFF,#1A5FBF)',
+  'linear-gradient(135deg,#9B59B6,#6C3483)',
+  'linear-gradient(135deg,#00c87a,#0E8A4F)',
+  'linear-gradient(135deg,#FFB020,#E67E22)',
+  'linear-gradient(135deg,#FF6B5E,#C0392B)'
+];
+
 function showAvatarPicker() {
-  var picker = document.getElementById('avatar-picker');
-  if(picker) picker.style.display = 'flex';
+  var existing = document.getElementById('avatar-picker-overlay');
+  if(existing) existing.remove();
+  
+  var overlay = document.createElement('div');
+  overlay.id = 'avatar-picker-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:99999;display:flex;align-items:flex-end;';
+  
+  var sheet = document.createElement('div');
+  sheet.style.cssText = 'background:#0d0b14;border-radius:20px 20px 0 0;padding:20px;width:100%;max-height:70vh;overflow-y:auto;';
+  
+  // Header
+  var hdr = document.createElement('div');
+  hdr.style.cssText = 'display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;';
+  hdr.innerHTML = '<div style="font-size:13px;font-weight:800;color:#f4f7fa;">Choose Avatar</div>';
+  var closeBtn = document.createElement('button');
+  closeBtn.innerHTML = '&times;';
+  closeBtn.style.cssText = 'background:transparent;border:none;color:rgba(244,247,250,0.5);font-size:24px;cursor:pointer;line-height:1;';
+  closeBtn.addEventListener('click', function() { overlay.remove(); });
+  hdr.appendChild(closeBtn);
+  sheet.appendChild(hdr);
+  
+  // Emoji grid
+  var grid = document.createElement('div');
+  grid.style.cssText = 'display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:16px;';
+  AVATARS.forEach(function(emoji) {
+    var cell = document.createElement('div');
+    cell.style.cssText = 'width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.06);border:2px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;';
+    cell.textContent = emoji;
+    cell.addEventListener('click', function() {
+      selectAvatar(emoji);
+      // Highlight selected
+      grid.querySelectorAll('div').forEach(function(d) { d.style.borderColor = 'rgba(255,255,255,0.08)'; });
+      cell.style.borderColor = '#FF1E3C';
+    });
+    grid.appendChild(cell);
+  });
+  sheet.appendChild(grid);
+  
+  // Color label
+  var colorLbl = document.createElement('div');
+  colorLbl.style.cssText = 'font-size:10px;color:rgba(244,247,250,0.3);letter-spacing:.5px;margin-bottom:8px;';
+  colorLbl.textContent = 'AVATAR COLOUR';
+  sheet.appendChild(colorLbl);
+  
+  // Color row
+  var colorRow = document.createElement('div');
+  colorRow.style.cssText = 'display:flex;gap:10px;margin-bottom:20px;';
+  COLORS.forEach(function(grad) {
+    var dot = document.createElement('div');
+    dot.style.cssText = 'width:32px;height:32px;border-radius:50%;background:'+grad+';cursor:pointer;border:2px solid transparent;flex-shrink:0;';
+    dot.addEventListener('click', function() {
+      setAvatarColor(grad);
+      colorRow.querySelectorAll('div').forEach(function(d) { d.style.borderColor = 'transparent'; });
+      dot.style.borderColor = '#fff';
+    });
+    colorRow.appendChild(dot);
+  });
+  sheet.appendChild(colorRow);
+  
+  // Done button
+  var doneBtn = document.createElement('button');
+  doneBtn.textContent = 'Done';
+  doneBtn.style.cssText = 'width:100%;padding:13px;background:linear-gradient(135deg,#FF1E3C,#C40024);border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;';
+  doneBtn.addEventListener('click', function() { overlay.remove(); });
+  sheet.appendChild(doneBtn);
+  
+  overlay.appendChild(sheet);
+  document.body.appendChild(overlay);
 }
-function closeAvatarPicker() {
-  var picker = document.getElementById('avatar-picker');
-  if(picker) picker.style.display = 'none';
-}
+
 function selectAvatar(emoji) {
   var emojiEl = document.getElementById('profile-avatar-emoji');
   if(emojiEl) emojiEl.textContent = emoji;
   try { localStorage.setItem('profile_avatar_emoji', emoji); } catch(e) {}
 }
+
 function setAvatarColor(gradient) {
   var avatarBig = document.getElementById('profile-avatar-big');
   if(avatarBig) avatarBig.style.background = gradient;
   try { localStorage.setItem('profile_avatar_color', gradient); } catch(e) {}
 }
+
 function loadSavedProfilePhoto() {
   var savedEmoji = localStorage.getItem('profile_avatar_emoji');
   var savedColor = localStorage.getItem('profile_avatar_color');
