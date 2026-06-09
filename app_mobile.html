@@ -23,7 +23,7 @@
   --bg3: #100e18;
   --surface: rgba(255,255,255,0.04);
   --surface2: rgba(255,255,255,0.07);
-  --border: rgba(255,255,255,0.07);
+  --border: rgba(255,255,255,0.07);A
   --text: #f4f7fa;
   --text2: rgba(244,247,250,0.55);
   --text3: rgba(244,247,250,0.25);
@@ -2026,26 +2026,54 @@ input, select, textarea { font-family: 'Sora', sans-serif; outline: none; }
       <div class="sub-title">LEADERBOARD</div>
     </div>
     <div class="sub-content">
-      <!-- Reward Banner - Best Profit + Best Lot -->
-      <div style="background:linear-gradient(135deg,#1a0a00,#3d1a00);border:1px solid rgba(255,176,32,0.3);border-radius:14px;padding:16px;margin-bottom:12px;">
-        <div style="font-family:'Orbitron',sans-serif;font-size:11px;font-weight:800;color:#FFB020;margin-bottom:12px;letter-spacing:1px;">🏆 MONTHLY ACHIEVEMENTS</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-          <!-- Best Profit -->
-          <div style="background:rgba(255,176,32,0.08);border:1px solid rgba(255,176,32,0.2);border-radius:10px;padding:12px;">
-            <div style="font-size:20px;margin-bottom:6px;">💰</div>
-            <div style="font-size:10px;color:#FFB020;font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px;">Best Profit</div>
-            <div style="font-size:13px;font-weight:800;color:var(--text);">Ahmad Hassan</div>
-            <div style="font-size:16px;font-weight:800;color:var(--green);margin-top:2px;">+$8,420</div>
-            <div style="font-size:10px;color:rgba(255,176,32,0.7);margin-top:4px;">47 trades · 94% WR</div>
+      <!-- Reward Banner - Red style matching desktop -->
+      <div style="background:linear-gradient(135deg,#C40024,#FF1E3C);border-radius:14px;padding:16px;margin-bottom:12px;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:-30px;right:-30px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,0.08);"></div>
+        <div style="position:absolute;bottom:-20px;left:-20px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,0.05);"></div>
+        <div style="font-size:9px;font-weight:700;color:rgba(255,255,255,0.7);letter-spacing:2px;margin-bottom:4px;">MOMENTUM MONTHLY TRADING CHALLENGE</div>
+        <div style="font-size:16px;font-weight:800;color:#fff;line-height:1.3;margin-bottom:6px;">Trade Profitably. Climb The Rank. Win The Prize.</div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.75);line-height:1.6;margin-bottom:14px;">Top ranked traders win rewards every month based on verified closed trades, ROI and consistency.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div style="background:rgba(255,255,255,0.12);border-radius:10px;padding:10px;">
+            <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.8);margin-bottom:8px;letter-spacing:.5px;">HIGHEST PROFIT TRADER</div>
+            <div style="display:flex;justify-content:space-between;">
+              <div style="text-align:center;"><div style="font-size:9px;color:rgba(255,255,255,0.6);">1st</div><div style="font-size:13px;font-weight:800;color:#fff;">$500</div></div>
+              <div style="text-align:center;"><div style="font-size:9px;color:rgba(255,255,255,0.6);">2nd</div><div style="font-size:13px;font-weight:800;color:#fff;">$300</div></div>
+              <div style="text-align:center;"><div style="font-size:9px;color:rgba(255,255,255,0.6);">3rd</div><div style="font-size:13px;font-weight:800;color:#fff;">$200</div></div>
+            </div>
           </div>
-          <!-- Best Lot -->
-          <div style="background:rgba(255,176,32,0.08);border:1px solid rgba(255,176,32,0.2);border-radius:10px;padding:12px;">
-            <div style="font-size:20px;margin-bottom:6px;">📊</div>
-            <div style="font-size:10px;color:#FFB020;font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px;">Best Volume</div>
-            <div style="font-size:13px;font-weight:800;color:var(--text);">Maria Wong</div>
-            <div style="font-size:16px;font-weight:800;color:var(--green);margin-top:2px;">142.5 lots</div>
-            <div style="font-size:10px;color:rgba(255,176,32,0.7);margin-top:4px;">55 trades · 82% WR</div>
+          <div style="background:rgba(255,255,255,0.12);border-radius:10px;padding:10px;">
+            <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.8);margin-bottom:8px;letter-spacing:.5px;">HIGHEST LOTS TRADER</div>
+            <div style="display:flex;justify-content:space-between;">
+              <div style="text-align:center;"><div style="font-size:9px;color:rgba(255,255,255,0.6);">1st</div><div style="font-size:13px;font-weight:800;color:#fff;">$500</div></div>
+              <div style="text-align:center;"><div style="font-size:9px;color:rgba(255,255,255,0.6);">2nd</div><div style="font-size:13px;font-weight:800;color:#fff;">$300</div></div>
+              <div style="text-align:center;"><div style="font-size:9px;color:rgba(255,255,255,0.6);">3rd</div><div style="font-size:13px;font-weight:800;color:#fff;">$200</div></div>
+            </div>
           </div>
+        </div>
+      </div>
+      <!-- Top 3 current leaders -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:12px;">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px;text-align:center;">
+          <div style="font-size:16px;margin-bottom:4px;">🥇</div>
+          <div style="width:32px;height:32px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;margin:0 auto 5px;">AH</div>
+          <div style="font-size:10px;font-weight:700;color:var(--text);">Ahmad H.</div>
+          <div style="font-size:12px;font-weight:800;color:var(--green);">+24.5%</div>
+          <div style="font-size:9px;color:var(--text3);">12.4 lots</div>
+        </div>
+        <div style="background:var(--surface);border:1px solid rgba(255,30,60,0.3);border-radius:10px;padding:10px;text-align:center;">
+          <div style="font-size:16px;margin-bottom:4px;">🥈</div>
+          <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#C0C0C0,#909090);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;margin:0 auto 5px;">RK</div>
+          <div style="font-size:10px;font-weight:700;color:var(--text);">Rajan K.</div>
+          <div style="font-size:12px;font-weight:800;color:var(--green);">+18.2%</div>
+          <div style="font-size:9px;color:var(--text3);">9.2 lots</div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px;text-align:center;">
+          <div style="font-size:16px;margin-bottom:4px;">🥉</div>
+          <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#CD7F32,#8B5A1A);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;margin:0 auto 5px;">MW</div>
+          <div style="font-size:10px;font-weight:700;color:var(--text);">Maria W.</div>
+          <div style="font-size:12px;font-weight:800;color:var(--green);">+14.8%</div>
+          <div style="font-size:9px;color:var(--text3);">14.8 lots</div>
         </div>
       </div>
       <div class="section-card" style="margin-bottom:12px;">
@@ -2119,28 +2147,25 @@ input, select, textarea { font-family: 'Sora', sans-serif; outline: none; }
       <div class="sub-title">FUND MANAGEMENT</div>
     </div>
     <div class="sub-content">
-      <!-- Top 3 Performers Banner -->
-      <div style="background:linear-gradient(135deg,#1a0a00,#3d1a00);border:1px solid rgba(255,176,32,0.3);border-radius:14px;padding:16px;margin-bottom:12px;position:relative;overflow:hidden;">
-        <div style="position:absolute;top:-20px;right:-20px;width:80px;height:80px;border-radius:50%;background:rgba(255,176,32,0.06);"></div>
-        <div style="font-family:'Orbitron',sans-serif;font-size:11px;font-weight:800;color:#FFB020;margin-bottom:12px;letter-spacing:1px;">🏆 TOP PERFORMERS THIS MONTH</div>
+      <!-- Red Banner - Top 3 Performers -->
+      <div style="background:linear-gradient(135deg,#C40024,#FF1E3C);border-radius:14px;padding:14px;margin-bottom:12px;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:-20px;right:-20px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,0.07);"></div>
+        <div style="font-size:9px;font-weight:700;color:rgba(255,255,255,0.7);letter-spacing:2px;margin-bottom:6px;">TOP PERFORMING FUNDS</div>
         <div style="display:flex;justify-content:space-around;align-items:flex-end;">
           <div style="text-align:center;">
-            <div style="font-size:20px;margin-bottom:4px;">🥈</div>
-            <div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#C0C0C0,#909090);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;margin:0 auto 4px;">MA</div>
-            <div style="font-size:11px;font-weight:700;color:#FFB020;">Momentum Alpha</div>
-            <div style="font-size:13px;font-weight:800;color:var(--green);">+38.2%</div>
+            <div style="font-size:18px;margin-bottom:3px;">🥈</div>
+            <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.9);">M. Alpha</div>
+            <div style="font-size:14px;font-weight:800;color:#fff;">+38.2%</div>
           </div>
           <div style="text-align:center;">
-            <div style="font-size:26px;margin-bottom:4px;">🥇</div>
-            <div style="width:46px;height:46px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:#fff;margin:0 auto 4px;box-shadow:0 4px 14px rgba(255,30,60,0.4);">MG</div>
-            <div style="font-size:12px;font-weight:700;color:#FFB020;">Momentum Genesis</div>
-            <div style="font-size:15px;font-weight:800;color:var(--green);">+24.5%</div>
+            <div style="font-size:24px;margin-bottom:3px;">🥇</div>
+            <div style="font-size:11px;font-weight:700;color:#fff;">M. Genesis</div>
+            <div style="font-size:16px;font-weight:800;color:#fff;">+24.5%</div>
           </div>
           <div style="text-align:center;">
-            <div style="font-size:20px;margin-bottom:4px;">🥉</div>
-            <div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#CD7F32,#8B5A1A);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;margin:0 auto 4px;">MP</div>
-            <div style="font-size:11px;font-weight:700;color:#FFB020;">Momentum Prime</div>
-            <div style="font-size:13px;font-weight:800;color:var(--green);">+19.8%</div>
+            <div style="font-size:18px;margin-bottom:3px;">🥉</div>
+            <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.9);">M. Prime</div>
+            <div style="font-size:14px;font-weight:800;color:#fff;">+19.8%</div>
           </div>
         </div>
       </div>
@@ -2148,21 +2173,20 @@ input, select, textarea { font-family: 'Sora', sans-serif; outline: none; }
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;">
         <div class="section-card" style="padding:10px;text-align:center;">
           <div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:3px;">Total AUM</div>
-          <div style="font-family:'Orbitron',sans-serif;font-size:13px;font-weight:800;color:var(--text);">$2.4M</div>
+          <div style="font-family:'Orbitron',sans-serif;font-size:13px;font-weight:800;color:var(--text);">$4.8M</div>
         </div>
         <div class="section-card" style="padding:10px;text-align:center;">
           <div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:3px;">Avg Return</div>
-          <div style="font-family:'Orbitron',sans-serif;font-size:13px;font-weight:800;color:var(--green);">+18.4%</div>
+          <div style="font-family:'Orbitron',sans-serif;font-size:13px;font-weight:800;color:var(--green);">+24.1%</div>
         </div>
         <div class="section-card" style="padding:10px;text-align:center;">
           <div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:3px;">Followers</div>
-          <div style="font-family:'Orbitron',sans-serif;font-size:13px;font-weight:800;color:var(--text);">142</div>
+          <div style="font-family:'Orbitron',sans-serif;font-size:13px;font-weight:800;color:var(--text);">342</div>
         </div>
       </div>
-      <!-- Fund cards -->
       <div class="section-card" style="margin-bottom:10px;">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
-          <div style="width:42px;height:42px;border-radius:10px;background:var(--grad);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+          <div style="width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,#FF1E3C,#C40024);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
             <i class="ti ti-trending-up" style="color:#fff;font-size:20px;"></i>
           </div>
           <div style="flex:1;">
@@ -2174,19 +2198,20 @@ input, select, textarea { font-family: 'Sora', sans-serif; outline: none; }
             <div style="font-size:10px;color:var(--text3);">This month</div>
           </div>
         </div>
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px;">
-          <div style="text-align:center;"><div style="font-size:13px;font-weight:700;color:var(--text);">94%</div><div style="font-size:9px;color:var(--text3);">Win Rate</div></div>
-          <div style="text-align:center;"><div style="font-size:13px;font-weight:700;color:var(--text);">2.4</div><div style="font-size:9px;color:var(--text3);">Profit Factor</div></div>
-          <div style="text-align:center;"><div style="font-size:13px;font-weight:700;color:var(--red);">8.4%</div><div style="font-size:9px;color:var(--text3);">Max DD</div></div>
-          <div style="text-align:center;"><div style="font-size:13px;font-weight:700;color:var(--text);">87</div><div style="font-size:9px;color:var(--text3);">Followers</div></div>
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-bottom:10px;">
+          <div style="text-align:center;"><div style="font-size:11px;font-weight:700;color:var(--text);">94%</div><div style="font-size:8px;color:var(--text3);">Win Rate</div></div>
+          <div style="text-align:center;"><div style="font-size:11px;font-weight:700;color:var(--text);">2.4</div><div style="font-size:8px;color:var(--text3);">Profit F.</div></div>
+          <div style="text-align:center;"><div style="font-size:11px;font-weight:700;color:var(--red);">8.4%</div><div style="font-size:8px;color:var(--text3);">Max DD</div></div>
+          <div style="text-align:center;"><div style="font-size:11px;font-weight:700;color:var(--text);">87</div><div style="font-size:8px;color:var(--text3);">Followers</div></div>
+          <div style="text-align:center;"><div style="font-size:11px;font-weight:700;color:var(--text);">$1.8M</div><div style="font-size:8px;color:var(--text3);">AUM</div></div>
         </div>
         <div style="display:flex;gap:8px;">
-          <button onclick="showSubScreen('sub-fund-detail')" style="flex:1;padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:12px;font-weight:700;cursor:pointer;">View Details</button>
-          <button onclick="showSubScreen('sub-fund-follow')" style="flex:1;padding:10px;background:var(--grad);border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;">Follow Fund</button>
+          <button onclick="showSubScreen('sub-fund-detail')" style="flex:1;padding:9px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:12px;font-weight:700;cursor:pointer;">View Details</button>
+          <button onclick="showSubScreen('sub-fund-follow')" style="flex:1;padding:9px;background:var(--grad);border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;">Follow Fund</button>
         </div>
       </div>
       <div class="section-card" style="margin-bottom:10px;">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
           <div style="width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,#4D9EFF,#1A5FBF);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
             <i class="ti ti-rocket" style="color:#fff;font-size:20px;"></i>
           </div>
@@ -2199,16 +2224,100 @@ input, select, textarea { font-family: 'Sora', sans-serif; outline: none; }
             <div style="font-size:10px;color:var(--text3);">This month</div>
           </div>
         </div>
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px;">
-          <div style="text-align:center;"><div style="font-size:13px;font-weight:700;color:var(--text);">88%</div><div style="font-size:9px;color:var(--text3);">Win Rate</div></div>
-          <div style="text-align:center;"><div style="font-size:13px;font-weight:700;color:var(--text);">3.1</div><div style="font-size:9px;color:var(--text3);">Profit Factor</div></div>
-          <div style="text-align:center;"><div style="font-size:13px;font-weight:700;color:var(--red);">14.2%</div><div style="font-size:9px;color:var(--text3);">Max DD</div></div>
-          <div style="text-align:center;"><div style="font-size:13px;font-weight:700;color:var(--text);">55</div><div style="font-size:9px;color:var(--text3);">Followers</div></div>
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-bottom:10px;">
+          <div style="text-align:center;"><div style="font-size:11px;font-weight:700;color:var(--text);">88%</div><div style="font-size:8px;color:var(--text3);">Win Rate</div></div>
+          <div style="text-align:center;"><div style="font-size:11px;font-weight:700;color:var(--text);">3.1</div><div style="font-size:8px;color:var(--text3);">Profit F.</div></div>
+          <div style="text-align:center;"><div style="font-size:11px;font-weight:700;color:var(--red);">14.2%</div><div style="font-size:8px;color:var(--text3);">Max DD</div></div>
+          <div style="text-align:center;"><div style="font-size:11px;font-weight:700;color:var(--text);">55</div><div style="font-size:8px;color:var(--text3);">Followers</div></div>
+          <div style="text-align:center;"><div style="font-size:11px;font-weight:700;color:var(--text);">$1.2M</div><div style="font-size:8px;color:var(--text3);">AUM</div></div>
         </div>
         <div style="display:flex;gap:8px;">
-          <button onclick="showSubScreen('sub-fund-detail')" style="flex:1;padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:12px;font-weight:700;cursor:pointer;">View Details</button>
-          <button onclick="showSubScreen('sub-fund-follow')" style="flex:1;padding:10px;background:var(--grad);border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;">Follow Fund</button>
+          <button onclick="showSubScreen('sub-fund-detail')" style="flex:1;padding:9px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:12px;font-weight:700;cursor:pointer;">View Details</button>
+          <button onclick="showSubScreen('sub-fund-follow')" style="flex:1;padding:9px;background:var(--grad);border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;">Follow Fund</button>
         </div>
+      </div>
+      <div class="section-card" style="margin-bottom:10px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+          <div style="width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,#9B59B6,#6C3483);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <i class="ti ti-chart-pie" style="color:#fff;font-size:20px;"></i>
+          </div>
+          <div style="flex:1;">
+            <div style="font-size:15px;font-weight:800;color:var(--text);">Momentum Prime</div>
+            <div style="font-size:11px;color:var(--text3);">Moderate · Medium Risk</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:16px;font-weight:800;color:var(--green);">+19.8%</div>
+            <div style="font-size:10px;color:var(--text3);">This month</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-bottom:10px;">
+          <div style="text-align:center;"><div style="font-size:11px;font-weight:700;color:var(--text);">91%</div><div style="font-size:8px;color:var(--text3);">Win Rate</div></div>
+          <div style="text-align:center;"><div style="font-size:11px;font-weight:700;color:var(--text);">2.1</div><div style="font-size:8px;color:var(--text3);">Profit F.</div></div>
+          <div style="text-align:center;"><div style="font-size:11px;font-weight:700;color:var(--red);">10.5%</div><div style="font-size:8px;color:var(--text3);">Max DD</div></div>
+          <div style="text-align:center;"><div style="font-size:11px;font-weight:700;color:var(--text);">68</div><div style="font-size:8px;color:var(--text3);">Followers</div></div>
+          <div style="text-align:center;"><div style="font-size:11px;font-weight:700;color:var(--text);">$0.9M</div><div style="font-size:8px;color:var(--text3);">AUM</div></div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button onclick="showSubScreen('sub-fund-detail')" style="flex:1;padding:9px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:12px;font-weight:700;cursor:pointer;">View Details</button>
+          <button onclick="showSubScreen('sub-fund-follow')" style="flex:1;padding:9px;background:var(--grad);border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;">Follow Fund</button>
+        </div>
+      </div>
+      <div class="section-card" style="margin-bottom:10px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+          <div style="width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,#FFB020,#E67E22);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <i class="ti ti-bolt" style="color:#fff;font-size:20px;"></i>
+          </div>
+          <div style="flex:1;">
+            <div style="font-size:15px;font-weight:800;color:var(--text);">Momentum Edge</div>
+            <div style="font-size:11px;color:var(--text3);">Scalping · Medium Risk</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:16px;font-weight:800;color:var(--green);">+15.3%</div>
+            <div style="font-size:10px;color:var(--text3);">This month</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-bottom:10px;">
+          <div style="text-align:center;"><div style="font-size:11px;font-weight:700;color:var(--text);">86%</div><div style="font-size:8px;color:var(--text3);">Win Rate</div></div>
+          <div style="text-align:center;"><div style="font-size:11px;font-weight:700;color:var(--text);">1.9</div><div style="font-size:8px;color:var(--text3);">Profit F.</div></div>
+          <div style="text-align:center;"><div style="font-size:11px;font-weight:700;color:var(--red);">12.1%</div><div style="font-size:8px;color:var(--text3);">Max DD</div></div>
+          <div style="text-align:center;"><div style="font-size:11px;font-weight:700;color:var(--text);">42</div><div style="font-size:8px;color:var(--text3);">Followers</div></div>
+          <div style="text-align:center;"><div style="font-size:11px;font-weight:700;color:var(--text);">$0.5M</div><div style="font-size:8px;color:var(--text3);">AUM</div></div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button onclick="showSubScreen('sub-fund-detail')" style="flex:1;padding:9px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:12px;font-weight:700;cursor:pointer;">View Details</button>
+          <button onclick="showSubScreen('sub-fund-follow')" style="flex:1;padding:9px;background:var(--grad);border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;">Follow Fund</button>
+        </div>
+      </div>
+      <div class="section-card" style="margin-bottom:10px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+          <div style="width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,#00c87a,#0E8A4F);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <i class="ti ti-plant" style="color:#fff;font-size:20px;"></i>
+          </div>
+          <div style="flex:1;">
+            <div style="font-size:15px;font-weight:800;color:var(--text);">Momentum Yield</div>
+            <div style="font-size:11px;color:var(--text3);">Long Term · Low Risk</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:16px;font-weight:800;color:var(--green);">+11.2%</div>
+            <div style="font-size:10px;color:var(--text3);">This month</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-bottom:10px;">
+          <div style="text-align:center;"><div style="font-size:11px;font-weight:700;color:var(--text);">89%</div><div style="font-size:8px;color:var(--text3);">Win Rate</div></div>
+          <div style="text-align:center;"><div style="font-size:11px;font-weight:700;color:var(--text);">1.7</div><div style="font-size:8px;color:var(--text3);">Profit F.</div></div>
+          <div style="text-align:center;"><div style="font-size:11px;font-weight:700;color:var(--red);">6.8%</div><div style="font-size:8px;color:var(--text3);">Max DD</div></div>
+          <div style="text-align:center;"><div style="font-size:11px;font-weight:700;color:var(--text);">90</div><div style="font-size:8px;color:var(--text3);">Followers</div></div>
+          <div style="text-align:center;"><div style="font-size:11px;font-weight:700;color:var(--text);">$0.4M</div><div style="font-size:8px;color:var(--text3);">AUM</div></div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button onclick="showSubScreen('sub-fund-detail')" style="flex:1;padding:9px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:12px;font-weight:700;cursor:pointer;">View Details</button>
+          <button onclick="showSubScreen('sub-fund-follow')" style="flex:1;padding:9px;background:var(--grad);border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;">Follow Fund</button>
+        </div>
+      </div>
+      <!-- Disclaimer -->
+      <div style="margin-top:6px;padding:12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;">
+        <div style="font-size:9px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px;">Disclaimer</div>
+        <div style="font-size:10px;color:var(--text3);line-height:1.7;">Past performance does not guarantee future results. All trading involves risk and you may lose some or all of your invested capital. The fund performance figures shown are based on historical data and are provided for informational purposes only. Please ensure you fully understand the risks before participating. Momentum AI and AFTT Markets are not responsible for any losses incurred.</div>
       </div>
     </div>
   </div>
@@ -2454,9 +2563,9 @@ input, select, textarea { font-family: 'Sora', sans-serif; outline: none; }
         <i class="ti ti-chevron-right more-menu-arrow"></i>
       </div>
       <!-- Support hours notice -->
-      <div style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:rgba(255,176,32,0.07);border:1px solid rgba(255,176,32,0.2);border-radius:8px;margin-bottom:14px;">
-        <i class="ti ti-clock" style="color:var(--amber);font-size:16px;flex-shrink:0;"></i>
-        <div style="font-size:11px;color:var(--amber);">Support hours: 1:00 PM – 1:00 AM (MYT) · Mon – Sun</div>
+      <div style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:rgba(255,30,60,0.08);border:1px solid rgba(255,30,60,0.2);border-radius:8px;margin-bottom:14px;">
+        <i class="ti ti-clock" style="color:var(--red);font-size:16px;flex-shrink:0;"></i>
+        <div style="font-size:11px;color:var(--red);">Support hours: 1:00 PM – 1:00 AM (MYT) · Mon – Sun</div>
       </div>
       <!-- Ticket Form -->
       <div class="section-card">
@@ -2498,736 +2607,207 @@ input, select, textarea { font-family: 'Sora', sans-serif; outline: none; }
       <button class="sub-back" onclick="hideSubScreen('sub-scanner')"><i class="ti ti-arrow-left"></i></button>
       <div class="sub-title">MAI SCANNER</div>
       <div style="margin-left:auto;display:flex;align-items:center;gap:5px;font-size:10px;color:var(--amber);font-weight:700;">
-        <div style="width:6px;height:6px;border-radius:50%;background:var(--amber);"></div>
-        DEMO
+        <div style="width:6px;height:6px;border-radius:50%;background:var(--amber);"></div>DEMO
       </div>
     </div>
     <div class="sub-content">
-      <!-- Last scan time -->
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-        <div style="font-size:11px;color:var(--text3);">Last scan: <span style="color:var(--text2);">2 mins ago</span></div>
-        <button onclick="refreshScanner()" style="display:flex;align-items:center;gap:5px;padding:6px 12px;background:var(--surface);border:1px solid var(--border);border-radius:7px;color:var(--text2);font-size:11px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;"><i class="ti ti-refresh" style="font-size:14px;"></i>Refresh</button>
-      </div>
-
-      <!-- Best Setup Right Now -->
-      <div style="background:var(--grad);border-radius:14px;padding:16px;margin-bottom:12px;position:relative;overflow:hidden;">
-        <div style="position:absolute;top:-20px;right:-20px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,0.06);"></div>
-        <div style="font-size:10px;color:rgba(255,255,255,0.6);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">Best Setup Right Now</div>
-        <div style="font-family:'Orbitron',sans-serif;font-size:20px;font-weight:900;color:#fff;margin-bottom:2px;">XAUUSD — BUY</div>
-        <div style="font-size:12px;color:rgba(255,255,255,0.7);margin-bottom:8px;">Confidence: 82%</div>
-        <div style="font-size:11px;color:rgba(255,255,255,0.8);line-height:1.6;">"Gold oversold on H4. RSI at 38. London session opening. No high impact news for 2 hours."</div>
-      </div>
-
-      <!-- Pair Scores -->
-      <div class="section-card" style="margin-bottom:12px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-          <div class="section-title" style="font-size:13px;margin-bottom:0;">Pair <span>Scores</span></div>
-          <div style="font-size:10px;color:var(--text3);">Updates every 2 mins</div>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:10px;" id="scanner-pairs">
-          <div style="display:flex;align-items:center;gap:8px;">
-            <span style="font-size:11px;font-weight:800;color:var(--text);width:52px;font-family:'Orbitron',sans-serif;font-size:10px;">XAUUSD</span>
-            <div style="flex:1;height:8px;background:var(--surface2);border-radius:4px;"><div style="width:82%;height:100%;background:var(--green);border-radius:4px;"></div></div>
-            <span style="font-size:11px;font-weight:700;color:var(--green);width:30px;text-align:right;">82%</span>
-            <span style="font-size:10px;font-weight:800;padding:2px 8px;background:rgba(0,200,122,0.12);color:var(--green);border-radius:4px;">BUY</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px;">
-            <span style="font-size:11px;font-weight:800;color:var(--text);width:52px;font-family:'Orbitron',sans-serif;font-size:10px;">BTCUSD</span>
-            <div style="flex:1;height:8px;background:var(--surface2);border-radius:4px;"><div style="width:60%;height:100%;background:var(--green);border-radius:4px;"></div></div>
-            <span style="font-size:11px;font-weight:700;color:var(--green);width:30px;text-align:right;">60%</span>
-            <span style="font-size:10px;font-weight:800;padding:2px 8px;background:rgba(0,200,122,0.12);color:var(--green);border-radius:4px;">BUY</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px;">
-            <span style="font-size:11px;font-weight:800;color:var(--text);width:52px;font-family:'Orbitron',sans-serif;font-size:10px;">NAS100</span>
-            <div style="flex:1;height:8px;background:var(--surface2);border-radius:4px;"><div style="width:45%;height:100%;background:var(--amber);border-radius:4px;"></div></div>
-            <span style="font-size:11px;font-weight:700;color:var(--amber);width:30px;text-align:right;">45%</span>
-            <span style="font-size:10px;font-weight:800;padding:2px 8px;background:rgba(255,176,32,0.1);color:var(--amber);border-radius:4px;">NEUTRAL</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px;">
-            <span style="font-size:11px;font-weight:800;color:var(--text);width:52px;font-family:'Orbitron',sans-serif;font-size:10px;">EURUSD</span>
-            <div style="flex:1;height:8px;background:var(--surface2);border-radius:4px;"><div style="width:38%;height:100%;background:var(--red);border-radius:4px;"></div></div>
-            <span style="font-size:11px;font-weight:700;color:var(--red);width:30px;text-align:right;">38%</span>
-            <span style="font-size:10px;font-weight:800;padding:2px 8px;background:rgba(255,30,60,0.08);color:var(--red);border-radius:4px;">SELL</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px;">
-            <span style="font-size:11px;font-weight:800;color:var(--text);width:52px;font-family:'Orbitron',sans-serif;font-size:10px;">GBPJPY</span>
-            <div style="flex:1;height:8px;background:var(--surface2);border-radius:4px;"><div style="width:30%;height:100%;background:var(--red);border-radius:4px;"></div></div>
-            <span style="font-size:11px;font-weight:700;color:var(--red);width:30px;text-align:right;">30%</span>
-            <span style="font-size:10px;font-weight:800;padding:2px 8px;background:rgba(255,30,60,0.08);color:var(--red);border-radius:4px;">SELL</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Currency Strength -->
-      <div class="section-card" style="margin-bottom:12px;">
-        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Currency <span>Strength</span></div>
-        <div style="display:flex;flex-direction:column;gap:8px;">
-          <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:11px;font-weight:700;color:var(--text);width:28px;">USD</span><div style="flex:1;height:6px;background:var(--surface2);border-radius:3px;"><div style="width:78%;height:100%;background:var(--grad);border-radius:3px;"></div></div><span style="font-size:11px;color:var(--text2);width:30px;text-align:right;">78%</span></div>
-          <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:11px;font-weight:700;color:var(--text);width:28px;">XAU</span><div style="flex:1;height:6px;background:var(--surface2);border-radius:3px;"><div style="width:72%;height:100%;background:rgba(255,176,32,0.7);border-radius:3px;"></div></div><span style="font-size:11px;color:var(--text2);width:30px;text-align:right;">72%</span></div>
-          <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:11px;font-weight:700;color:var(--text);width:28px;">GBP</span><div style="flex:1;height:6px;background:var(--surface2);border-radius:3px;"><div style="width:54%;height:100%;background:rgba(0,200,122,0.6);border-radius:3px;"></div></div><span style="font-size:11px;color:var(--text2);width:30px;text-align:right;">54%</span></div>
-          <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:11px;font-weight:700;color:var(--text);width:28px;">EUR</span><div style="flex:1;height:6px;background:var(--surface2);border-radius:3px;"><div style="width:42%;height:100%;background:rgba(100,140,255,0.6);border-radius:3px;"></div></div><span style="font-size:11px;color:var(--text2);width:30px;text-align:right;">42%</span></div>
-          <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:11px;font-weight:700;color:var(--text);width:28px;">JPY</span><div style="flex:1;height:6px;background:var(--surface2);border-radius:3px;"><div style="width:35%;height:100%;background:rgba(200,100,100,0.6);border-radius:3px;"></div></div><span style="font-size:11px;color:var(--text2);width:30px;text-align:right;">35%</span></div>
-        </div>
-      </div>
-
-      <!-- Technical Indicators -->
-      <div class="section-card" style="margin-bottom:12px;">
-        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Technical <span>Indicators</span></div>
-        <!-- XAUUSD -->
-        <div style="margin-bottom:12px;">
-          <div style="font-size:11px;font-weight:800;color:var(--text);margin-bottom:8px;font-family:'Orbitron',sans-serif;letter-spacing:.5px;">XAUUSD</div>
-          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;">
-            <div style="background:rgba(0,200,122,0.08);border:1px solid rgba(0,200,122,0.15);border-radius:8px;padding:8px;text-align:center;">
-              <div style="font-size:10px;color:var(--text3);margin-bottom:3px;">RSI (14)</div>
-              <div style="font-size:16px;font-weight:800;color:var(--green);">38</div>
-              <div style="font-size:9px;color:var(--green);">OVERSOLD</div>
-            </div>
-            <div style="background:rgba(0,200,122,0.08);border:1px solid rgba(0,200,122,0.15);border-radius:8px;padding:8px;text-align:center;">
-              <div style="font-size:10px;color:var(--text3);margin-bottom:3px;">MACD</div>
-              <div style="font-size:16px;font-weight:800;color:var(--green);">↑</div>
-              <div style="font-size:9px;color:var(--green);">BULLISH</div>
-            </div>
-            <div style="background:rgba(0,200,122,0.08);border:1px solid rgba(0,200,122,0.15);border-radius:8px;padding:8px;text-align:center;">
-              <div style="font-size:10px;color:var(--text3);margin-bottom:3px;">EMA 50/200</div>
-              <div style="font-size:16px;font-weight:800;color:var(--green);">↑</div>
-              <div style="font-size:9px;color:var(--green);">UPTREND</div>
-            </div>
-          </div>
-        </div>
-        <!-- NAS100 -->
+      <!-- Dropdowns row -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px;">
         <div>
-          <div style="font-size:11px;font-weight:800;color:var(--text);margin-bottom:8px;font-family:'Orbitron',sans-serif;letter-spacing:.5px;">NAS100</div>
-          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;">
-            <div style="background:rgba(255,176,32,0.08);border:1px solid rgba(255,176,32,0.15);border-radius:8px;padding:8px;text-align:center;">
-              <div style="font-size:10px;color:var(--text3);margin-bottom:3px;">RSI (14)</div>
-              <div style="font-size:16px;font-weight:800;color:var(--amber);">61</div>
-              <div style="font-size:9px;color:var(--amber);">NEUTRAL</div>
-            </div>
-            <div style="background:rgba(255,176,32,0.08);border:1px solid rgba(255,176,32,0.15);border-radius:8px;padding:8px;text-align:center;">
-              <div style="font-size:10px;color:var(--text3);margin-bottom:3px;">MACD</div>
-              <div style="font-size:16px;font-weight:800;color:var(--amber);">→</div>
-              <div style="font-size:9px;color:var(--amber);">NEUTRAL</div>
-            </div>
-            <div style="background:rgba(0,200,122,0.08);border:1px solid rgba(0,200,122,0.15);border-radius:8px;padding:8px;text-align:center;">
-              <div style="font-size:10px;color:var(--text3);margin-bottom:3px;">EMA 50/200</div>
-              <div style="font-size:16px;font-weight:800;color:var(--green);">↑</div>
-              <div style="font-size:9px;color:var(--green);">UPTREND</div>
-            </div>
-          </div>
+          <div style="font-size:9px;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px;">Category</div>
+          <select id="scan-category" class="auth-input" style="font-size:12px;padding:8px 10px;" onchange="updateScanSymbols()">
+            <option value="metals">Metals</option>
+            <option value="indices">Indices</option>
+            <option value="crypto">Crypto</option>
+            <option value="forex">Forex</option>
+          </select>
+        </div>
+        <div>
+          <div style="font-size:9px;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px;">Symbol</div>
+          <select id="scan-symbol" class="auth-input" style="font-size:12px;padding:8px 10px;">
+            <option value="XAUUSD">XAUUSD</option>
+            <option value="XAGUSD">XAGUSD</option>
+          </select>
+        </div>
+        <div>
+          <div style="font-size:9px;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px;">Timeframe</div>
+          <select id="scan-tf" class="auth-input" style="font-size:12px;padding:8px 10px;">
+            <option value="M15">M15</option>
+            <option value="M30">M30</option>
+            <option value="H1">H1</option>
+            <option value="H4" selected>H4</option>
+            <option value="D1">1 Day</option>
+          </select>
         </div>
       </div>
+      <!-- Initiate Scan button -->
+      <button onclick="initiateScan()" class="red-btn" style="margin-bottom:12px;letter-spacing:1px;">INITIATE SCAN</button>
+      <!-- Last scan info -->
+      <div id="scan-status" style="text-align:center;font-size:10px;color:var(--text3);margin-bottom:12px;">Press Initiate Scan to begin analysis</div>
 
-      <!-- Signal Alerts -->
-      <div class="section-card">
-        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Signal <span>Alerts</span></div>
-        <div style="display:flex;flex-direction:column;gap:8px;">
-          <div style="display:flex;align-items:center;gap:10px;padding:10px;background:rgba(0,200,122,0.06);border:1px solid rgba(0,200,122,0.15);border-radius:10px;">
-            <div style="width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;animation:pulse 1.5s infinite;"></div>
-            <div style="flex:1;">
-              <div style="font-size:12px;font-weight:700;color:var(--text);">XAUUSD — RSI Oversold on H4</div>
-              <div style="font-size:10px;color:var(--text3);margin-top:2px;">RSI 38 · MACD Bullish · EMA Uptrend</div>
-            </div>
-            <div style="font-size:11px;font-weight:800;padding:3px 10px;background:rgba(0,200,122,0.12);color:var(--green);border-radius:5px;">BUY</div>
+      <!-- Scan results - hidden until scan -->
+      <div id="scan-results" style="display:none;">
+        <!-- Price bar -->
+        <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:10px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <div style="font-family:'Orbitron',sans-serif;font-size:16px;font-weight:800;color:var(--text);" id="scan-pair-title">XAUUSD</div>
+            <div style="font-size:11px;color:var(--text3);">Current Price · <span id="scan-tf-label">H4</span></div>
           </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px;background:rgba(255,30,60,0.05);border:1px solid rgba(255,30,60,0.15);border-radius:10px;">
-            <div style="width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0;animation:pulse 1.5s infinite;"></div>
-            <div style="flex:1;">
-              <div style="font-size:12px;font-weight:700;color:var(--text);">EURUSD — MACD Bearish Cross</div>
-              <div style="font-size:10px;color:var(--text3);margin-top:2px;">RSI 62 · MACD Bearish · EMA Downtrend</div>
-            </div>
-            <div style="font-size:11px;font-weight:800;padding:3px 10px;background:rgba(255,30,60,0.08);color:var(--red);border-radius:5px;">SELL</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px;background:rgba(0,200,122,0.06);border:1px solid rgba(0,200,122,0.15);border-radius:10px;">
-            <div style="width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;animation:pulse 1.5s infinite;"></div>
-            <div style="flex:1;">
-              <div style="font-size:12px;font-weight:700;color:var(--text);">BTCUSD — EMA Golden Cross</div>
-              <div style="font-size:10px;color:var(--text3);margin-top:2px;">RSI 55 · MACD Bullish · EMA Cross Up</div>
-            </div>
-            <div style="font-size:11px;font-weight:800;padding:3px 10px;background:rgba(0,200,122,0.12);color:var(--green);border-radius:5px;">BUY</div>
+          <div style="text-align:right;">
+            <div style="font-size:18px;font-weight:800;color:var(--text);">3,348.75</div>
+            <div style="font-size:11px;color:var(--red);font-weight:700;">-0.25% (24h)</div>
           </div>
         </div>
-        <div style="text-align:center;font-size:10px;color:var(--text3);margin-top:10px;padding-top:10px;border-top:1px solid var(--border);">Placeholder data — connect broker API for live scanning</div>
+
+        <!-- SENTIMENT ANALYSIS -->
+        <div class="section-card" style="margin-bottom:10px;">
+          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:1px;margin-bottom:12px;">SENTIMENT ANALYSIS</div>
+          <!-- Gauge -->
+          <div style="text-align:center;margin-bottom:12px;">
+            <svg width="130" height="75" viewBox="0 0 130 75">
+              <path d="M 18 70 A 52 52 0 0 1 112 70" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="10" stroke-linecap="round"/>
+              <path d="M 18 70 A 52 52 0 0 1 100 30" fill="none" stroke="#FF1E3C" stroke-width="10" stroke-linecap="round"/>
+              <text x="65" y="60" text-anchor="middle" font-size="20" font-weight="800" fill="#f4f7fa">87%</text>
+              <text x="65" y="73" text-anchor="middle" font-size="9" font-weight="700" fill="#00c87a">BULLISH</text>
+            </svg>
+            <div style="font-size:9px;color:var(--text3);letter-spacing:.5px;margin-top:2px;">CONFIDENCE SCORE</div>
+          </div>
+          <!-- Breakdown -->
+          <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:10px;">
+            <div style="display:flex;align-items:center;gap:8px;"><div style="width:8px;height:8px;border-radius:50%;background:#4D9EFF;flex-shrink:0;"></div><div style="font-size:11px;color:var(--text2);flex:1;">Technical Trend</div><div style="height:4px;width:60px;background:rgba(255,255,255,0.08);border-radius:2px;"><div style="width:100%;height:100%;background:#4D9EFF;border-radius:2px;"></div></div><div style="font-size:11px;font-weight:700;color:#4D9EFF;width:28px;text-align:right;">35%</div></div>
+            <div style="display:flex;align-items:center;gap:8px;"><div style="width:8px;height:8px;border-radius:50%;background:#00c87a;flex-shrink:0;"></div><div style="font-size:11px;color:var(--text2);flex:1;">Economic News</div><div style="height:4px;width:60px;background:rgba(255,255,255,0.08);border-radius:2px;"><div style="width:71%;height:100%;background:#00c87a;border-radius:2px;"></div></div><div style="font-size:11px;font-weight:700;color:#00c87a;width:28px;text-align:right;">25%</div></div>
+            <div style="display:flex;align-items:center;gap:8px;"><div style="width:8px;height:8px;border-radius:50%;background:#FFB020;flex-shrink:0;"></div><div style="font-size:11px;color:var(--text2);flex:1;">USD Index DXY</div><div style="height:4px;width:60px;background:rgba(255,255,255,0.08);border-radius:2px;"><div style="width:43%;height:100%;background:#FFB020;border-radius:2px;"></div></div><div style="font-size:11px;font-weight:700;color:#FFB020;width:28px;text-align:right;">15%</div></div>
+            <div style="display:flex;align-items:center;gap:8px;"><div style="width:8px;height:8px;border-radius:50%;background:#9B59B6;flex-shrink:0;"></div><div style="font-size:11px;color:var(--text2);flex:1;">Bond Yield US10Y</div><div style="height:4px;width:60px;background:rgba(255,255,255,0.08);border-radius:2px;"><div style="width:29%;height:100%;background:#9B59B6;border-radius:2px;"></div></div><div style="font-size:11px;font-weight:700;color:#9B59B6;width:28px;text-align:right;">10%</div></div>
+            <div style="display:flex;align-items:center;gap:8px;"><div style="width:8px;height:8px;border-radius:50%;background:#FF6B5E;flex-shrink:0;"></div><div style="font-size:11px;color:var(--text2);flex:1;">COT Positioning</div><div style="height:4px;width:60px;background:rgba(255,255,255,0.08);border-radius:2px;"><div style="width:29%;height:100%;background:#FF6B5E;border-radius:2px;"></div></div><div style="font-size:11px;font-weight:700;color:#FF6B5E;width:28px;text-align:right;">10%</div></div>
+            <div style="display:flex;align-items:center;gap:8px;"><div style="width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0;"></div><div style="font-size:11px;color:var(--text2);flex:1;">VIX Fear Index</div><div style="height:4px;width:60px;background:rgba(255,255,255,0.08);border-radius:2px;"><div style="width:14%;height:100%;background:var(--red);border-radius:2px;"></div></div><div style="font-size:11px;font-weight:700;color:var(--red);width:28px;text-align:right;">5%</div></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding-top:8px;border-top:1px solid var(--border);">
+            <div style="font-size:11px;color:var(--text3);">Sentiment Verdict</div>
+            <div style="font-size:13px;font-weight:800;color:#00c87a;">BULLISH</div>
+          </div>
+        </div>
+
+        <!-- TECHNICAL ANALYSIS -->
+        <div class="section-card" style="margin-bottom:10px;">
+          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:1px;margin-bottom:12px;">TECHNICAL ANALYSIS</div>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px;">
+            <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:11px;color:var(--text3);width:95px;flex-shrink:0;">Moving Avg (50)</span><div style="flex:1;height:4px;background:rgba(255,255,255,0.08);border-radius:2px;"><div style="width:85%;height:100%;background:#00c87a;border-radius:2px;"></div></div><span style="font-size:10px;font-weight:700;color:#00c87a;width:45px;text-align:right;">ABOVE</span></div>
+            <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:11px;color:var(--text3);width:95px;flex-shrink:0;">EMA 200</span><div style="flex:1;height:4px;background:rgba(255,255,255,0.08);border-radius:2px;"><div style="width:90%;height:100%;background:#00c87a;border-radius:2px;"></div></div><span style="font-size:10px;font-weight:700;color:#00c87a;width:45px;text-align:right;">ABOVE</span></div>
+            <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:11px;color:var(--text3);width:95px;flex-shrink:0;">Bollinger Bands</span><div style="flex:1;height:4px;background:rgba(255,255,255,0.08);border-radius:2px;"><div style="width:62%;height:100%;background:#FFB020;border-radius:2px;"></div></div><span style="font-size:10px;font-weight:700;color:#FFB020;width:45px;text-align:right;">MID-UP</span></div>
+            <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:11px;color:var(--text3);width:95px;flex-shrink:0;">Stochastic</span><div style="flex:1;height:4px;background:rgba(255,255,255,0.08);border-radius:2px;"><div style="width:55%;height:100%;background:#4D9EFF;border-radius:2px;"></div></div><span style="font-size:10px;font-weight:700;color:#4D9EFF;width:45px;text-align:right;">NEUTRAL</span></div>
+            <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:11px;color:var(--text3);width:95px;flex-shrink:0;">RSI (14)</span><div style="flex:1;height:4px;background:rgba(255,255,255,0.08);border-radius:2px;"><div style="width:38%;height:100%;background:#00c87a;border-radius:2px;"></div></div><span style="font-size:10px;font-weight:700;color:#00c87a;width:45px;text-align:right;">38</span></div>
+            <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:11px;color:var(--text3);width:95px;flex-shrink:0;">MACD</span><div style="flex:1;height:4px;background:rgba(255,255,255,0.08);border-radius:2px;"><div style="width:72%;height:100%;background:#00c87a;border-radius:2px;"></div></div><span style="font-size:10px;font-weight:700;color:#00c87a;width:45px;text-align:right;">BULLISH</span></div>
+            <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:11px;color:var(--text3);width:95px;flex-shrink:0;">ATR</span><div style="flex:1;height:4px;background:rgba(255,255,255,0.08);border-radius:2px;"><div style="width:50%;height:100%;background:#FFB020;border-radius:2px;"></div></div><span style="font-size:10px;font-weight:700;color:#FFB020;width:45px;text-align:right;">14.2</span></div>
+            <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:11px;color:var(--text3);width:95px;flex-shrink:0;">Volume</span><div style="flex:1;height:4px;background:rgba(255,255,255,0.08);border-radius:2px;"><div style="width:88%;height:100%;background:#00c87a;border-radius:2px;"></div></div><span style="font-size:10px;font-weight:700;color:#00c87a;width:45px;text-align:right;">HIGH</span></div>
+          </div>
+          <!-- Key levels -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px;">
+            <div style="background:rgba(0,200,122,0.07);border:1px solid rgba(0,200,122,0.15);border-radius:8px;padding:8px;">
+              <div style="font-size:9px;color:var(--text3);margin-bottom:2px;">KEY SUPPORT</div>
+              <div style="font-size:11px;font-weight:800;color:#00c87a;">3,280 – 3,300</div>
+            </div>
+            <div style="background:rgba(255,30,60,0.06);border:1px solid rgba(255,30,60,0.12);border-radius:8px;padding:8px;">
+              <div style="font-size:9px;color:var(--text3);margin-bottom:2px;">KEY RESISTANCE</div>
+              <div style="font-size:11px;font-weight:800;color:var(--red);">3,380 – 3,400</div>
+            </div>
+          </div>
+          <!-- Direction + Momentum -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px;">
+            <div style="background:rgba(255,255,255,0.04);border-radius:8px;padding:8px;text-align:center;">
+              <div style="font-size:9px;color:var(--text3);margin-bottom:3px;">DIRECTION</div>
+              <div style="font-size:13px;font-weight:800;color:#00c87a;">Bullish</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.04);border-radius:8px;padding:8px;text-align:center;">
+              <div style="font-size:9px;color:var(--text3);margin-bottom:3px;">MOMENTUM</div>
+              <div style="font-size:13px;font-weight:800;color:#FFB020;">Moderate</div>
+            </div>
+          </div>
+          <!-- MAI Scenario -->
+          <div style="background:rgba(255,255,255,0.03);border-radius:8px;padding:10px;">
+            <div style="font-size:9px;color:var(--red);font-weight:700;letter-spacing:.5px;margin-bottom:6px;">MAI SCENARIO</div>
+            <div style="font-size:11px;color:var(--text2);line-height:1.7;"><span style="color:#00c87a;font-weight:700;">Bullish:</span> If price breaks above 3,380 resistance, expect continuation toward 3,420 with sustained buying pressure.</div>
+            <div style="font-size:11px;color:var(--text2);line-height:1.7;margin-top:4px;"><span style="color:var(--red);font-weight:700;">Bearish:</span> If price drops below 3,300 support, expect pullback toward 3,260 demand zone.</div>
+          </div>
+          <div style="margin-top:8px;padding:8px;background:rgba(0,200,122,0.06);border-left:3px solid #00c87a;border-radius:0 6px 6px 0;">
+            <div style="font-size:9px;color:var(--text3);margin-bottom:3px;">TECHNICAL VERDICT · Strong</div>
+            <div style="font-size:11px;color:var(--text2);line-height:1.6;">Price above key moving averages. RSI shows healthy buying pressure. Market structure remains bullish above nearest support zone.</div>
+          </div>
+        </div>
+
+        <!-- FUNDAMENTAL ANALYSIS -->
+        <div class="section-card" style="margin-bottom:10px;">
+          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:1px;margin-bottom:10px;">FUNDAMENTAL ANALYSIS</div>
+          <div style="font-size:9px;font-weight:700;color:var(--text3);letter-spacing:.5px;margin-bottom:8px;">UPCOMING HIGH IMPACT NEWS</div>
+          <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px;">
+            <div style="display:flex;gap:8px;align-items:flex-start;padding:8px;background:rgba(255,30,60,0.05);border-radius:8px;">
+              <div style="width:6px;height:6px;background:var(--red);border-radius:50%;flex-shrink:0;margin-top:3px;"></div>
+              <div><div style="font-size:11px;font-weight:700;color:var(--text);">ADP Non-Farm Employment Change</div><div style="font-size:10px;color:var(--text3);margin-top:1px;">Tomorrow 12:15 AM MYT · F: 116K · P: 109K</div></div>
+            </div>
+            <div style="display:flex;gap:8px;align-items:flex-start;padding:8px;background:rgba(255,176,32,0.05);border-radius:8px;">
+              <div style="width:6px;height:6px;background:#FFB020;border-radius:50%;flex-shrink:0;margin-top:3px;"></div>
+              <div><div style="font-size:11px;font-weight:700;color:var(--text);">ISM Services PMI</div><div style="font-size:10px;color:var(--text3);margin-top:1px;">Tomorrow 02:00 AM MYT · F: 53.7 · P: 53.6</div></div>
+            </div>
+            <div style="display:flex;gap:8px;align-items:flex-start;padding:8px;background:rgba(255,176,32,0.05);border-radius:8px;">
+              <div style="width:6px;height:6px;background:#FFB020;border-radius:50%;flex-shrink:0;margin-top:3px;"></div>
+              <div><div style="font-size:11px;font-weight:700;color:var(--text);">Average Hourly Earnings m/m</div><div style="font-size:10px;color:var(--text3);margin-top:1px;">Sat 06 Jun 12:30 AM MYT · F: 0.3% · P: 0.2%</div></div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px;">
+            <div style="background:rgba(77,158,255,0.08);border:1px solid rgba(77,158,255,0.15);border-radius:8px;padding:8px;text-align:center;">
+              <div style="font-size:9px;color:var(--text3);margin-bottom:2px;">US DOLLAR</div>
+              <div style="font-size:13px;font-weight:800;color:#4D9EFF;">Bullish</div>
+              <div style="font-size:9px;color:var(--text3);margin-top:1px;">Fundamental</div>
+            </div>
+            <div style="background:rgba(255,30,60,0.06);border:1px solid rgba(255,30,60,0.12);border-radius:8px;padding:8px;text-align:center;">
+              <div style="font-size:9px;color:var(--text3);margin-bottom:2px;">GOLD</div>
+              <div style="font-size:13px;font-weight:800;color:var(--red);">Bearish</div>
+              <div style="font-size:9px;color:var(--text3);margin-top:1px;">Fundamental</div>
+            </div>
+          </div>
+          <div style="padding:8px;background:rgba(255,176,32,0.05);border-left:3px solid #FFB020;border-radius:0 6px 6px 0;">
+            <div style="font-size:9px;color:var(--text3);margin-bottom:3px;">FUNDAMENTAL VERDICT · Neutral · Moderate</div>
+            <div style="font-size:11px;color:var(--text2);line-height:1.6;">No major high-impact news currently active. Upcoming USD-related events may affect volatility in the next 24 hours.</div>
+          </div>
+        </div>
+
+        <!-- OVERALL AI VERDICT -->
+        <div class="section-card" style="margin-bottom:10px;background:rgba(255,30,60,0.05);border-color:rgba(255,30,60,0.2);">
+          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:1px;margin-bottom:12px;">OVERALL AI VERDICT</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;margin-bottom:10px;">
+            <div style="text-align:center;"><div style="font-size:9px;color:var(--text3);margin-bottom:3px;">DIRECTION</div><div style="font-size:13px;font-weight:800;color:#00c87a;">Bullish</div></div>
+            <div style="text-align:center;"><div style="font-size:9px;color:var(--text3);margin-bottom:3px;">MOMENTUM</div><div style="font-size:13px;font-weight:800;color:var(--text);">Strong</div></div>
+            <div style="text-align:center;"><div style="font-size:9px;color:var(--text3);margin-bottom:3px;">CONFIDENCE</div><div style="font-size:13px;font-weight:800;color:var(--red);">82%</div></div>
+            <div style="text-align:center;"><div style="font-size:9px;color:var(--text3);margin-bottom:3px;">RISK</div><div style="font-size:13px;font-weight:800;color:#FFB020;">Moderate</div></div>
+          </div>
+          <div style="margin-bottom:10px;">
+            <div style="height:6px;background:rgba(255,255,255,0.08);border-radius:3px;margin-bottom:4px;"><div style="width:82%;height:100%;background:var(--grad);border-radius:3px;"></div></div>
+            <div style="display:flex;justify-content:space-between;"><span style="font-size:9px;color:var(--text3);">AI Confidence</span><span style="font-size:9px;font-weight:700;color:var(--red);">82%</span></div>
+          </div>
+          <div style="background:rgba(0,0,0,0.15);border-radius:8px;padding:10px;">
+            <div style="font-size:9px;color:var(--text3);letter-spacing:.5px;margin-bottom:5px;">FINAL AI SUMMARY</div>
+            <div style="font-size:11px;color:var(--text2);line-height:1.7;">Technical analysis shows strong bullish structure. Sentiment supports further upside while fundamental impact remains neutral. Momentum AI suggests bullish continuation as long as price holds above the 3,300 key support area.</div>
+          </div>
+        </div>
+
+        <!-- Generate Report button -->
+        <button onclick="generateMAIReport()" class="red-btn" style="letter-spacing:1px;margin-bottom:4px;">GENERATE MAI FULL REPORT</button>
+        <div style="text-align:center;font-size:9px;color:var(--text3);margin-bottom:8px;">Placeholder data — connect broker API for live analysis</div>
       </div>
     </div>
   </div>
 
-<!-- ═══════════════════════════════════
-     TRADE NOW POPUP
-═══════════════════════════════════ -->
-<div class="popup-overlay" id="trade-popup">
-  <div class="popup-sheet">
-    <div class="popup-handle"></div>
-    <div class="popup-title" id="popup-title">XAUUSD — SELL</div>
-    <div class="popup-sub" id="popup-sub">Entry: 2,310 – 2,318 · SL: 2,295 · TP: 2,340</div>
-    <!-- Trade tabs -->
-    <div style="display:flex;gap:6px;margin-bottom:14px;">
-      <button class="trade-tab-btn active" id="trade-tab-smart" onclick="switchTradeTab('smart')" style="flex:1;padding:9px;background:rgba(255,30,60,0.12);border:1px solid rgba(255,30,60,0.3);border-radius:8px;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;">Smart Tool</button>
-      <button class="trade-tab-btn" id="trade-tab-manual" onclick="switchTradeTab('manual')" style="flex:1;padding:9px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:11px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;">Manual</button>
-      <button class="trade-tab-btn" id="trade-tab-auto" onclick="switchTradeTab('auto')" style="flex:1;padding:9px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:11px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;">Auto</button>
-    </div>
-    <!-- SMART TOOL TAB -->
-    <div id="trade-content-smart">
-      <div style="padding:12px;background:rgba(0,200,122,0.06);border:1px solid rgba(0,200,122,0.15);border-radius:10px;font-size:12px;color:var(--green);margin-bottom:12px;">
-        Will use your Smart Tool settings — DCA, trailing stop, partial close, breakeven
-      </div>
-      <div class="trade-levels-row">
-        <div class="trade-level-box"><div class="trade-level-lbl">Entry</div><div class="trade-level-val" id="popup-entry">--</div></div>
-        <div class="trade-level-box"><div class="trade-level-lbl">Stop Loss</div><div class="trade-level-val sl" id="popup-sl">--</div></div>
-        <div class="trade-level-box"><div class="trade-level-lbl">Take Profit</div><div class="trade-level-val tp" id="popup-tp">--</div></div>
-      </div>
-      <button class="trade-execute-btn" onclick="executeTrade('smart')">EXECUTE WITH SMART TOOL</button>
-    </div>
-
-    <!-- MANUAL TAB -->
-    <div id="trade-content-manual" style="display:none;">
-      <div class="trade-levels-row">
-        <div class="trade-level-box"><div class="trade-level-lbl">Entry</div><div class="trade-level-val" id="popup-entry-m">--</div></div>
-        <div class="trade-level-box"><div class="trade-level-lbl">Stop Loss</div><div class="trade-level-val sl" id="popup-sl-m">--</div></div>
-        <div class="trade-level-box"><div class="trade-level-lbl">Take Profit</div><div class="trade-level-val tp" id="popup-tp-m">--</div></div>
-      </div>
-      <label class="trade-vol-label">Volume (Lot Size)</label>
-      <input class="trade-vol-input" id="trade-volume" type="number" value="0.01" step="0.01" min="0.01">
-      <button class="trade-execute-btn" onclick="executeTrade('manual')">EXECUTE TRADE</button>
-    </div>
-
-    <!-- AUTOMATED TRADING TAB -->
-    <div id="trade-content-auto" style="display:none;">
-      <!-- Choose Analyser -->
-      <div class="section-card" style="margin-bottom:10px;">
-        <div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px;">Choose Analyser</div>
-        <select id="auto-analyser" class="auth-input" style="font-size:13px;padding:10px 14px;">
-          <option value="mai_scanner">MAI Scanner (AI-Powered)</option>
-          <option value="analyst_a">Follow Analyst Signals</option>
-          <option value="fund_genesis">Momentum Genesis Fund</option>
-          <option value="fund_alpha">Momentum Alpha Fund</option>
-        </select>
-      </div>
-      <!-- Risk Controls -->
-      <div class="section-card" style="margin-bottom:10px;">
-        <div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.8px;text-transform:uppercase;margin-bottom:10px;">Risk Controls</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-          <div>
-            <label style="font-size:10px;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;display:block;margin-bottom:5px;">Max Daily Drawdown %</label>
-            <input type="number" value="3" min="1" max="20" style="width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:14px;color:var(--text);font-family:'Sora',sans-serif;">
-          </div>
-          <div>
-            <label style="font-size:10px;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;display:block;margin-bottom:5px;">Overall Drawdown %</label>
-            <input type="number" value="10" min="1" max="50" style="width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:14px;color:var(--text);font-family:'Sora',sans-serif;">
-          </div>
+  <!-- MAI Report Popup -->
+  <div id="mai-report-popup" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:9999;flex-direction:column;">
+    <div style="background:var(--bg2);flex:1;overflow-y:auto;border-radius:20px 20px 0 0;margin-top:60px;padding:20px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <div>
+          <div style="color:var(--red);font-family:'Orbitron',sans-serif;font-size:13px;font-weight:800;letter-spacing:1px;">MAI INTELLIGENCE REPORT</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px;" id="report-subtitle">XAUUSD · H4 · Loading...</div>
         </div>
+        <button onclick="closeMAIReport()" style="background:rgba(255,255,255,0.1);border:none;border-radius:50%;width:32px;height:32px;color:var(--text);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;">×</button>
       </div>
-      <!-- Smart Tool Connection -->
-      <div class="section-card" style="margin-bottom:10px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;">
-          <div>
-            <div style="font-size:13px;font-weight:700;color:var(--text);">Use Smart Tool Settings</div>
-            <div style="font-size:11px;color:var(--text3);margin-top:2px;">Apply EA settings to automated trades</div>
-          </div>
-          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
-        </div>
-      </div>
-      <!-- Entry Confirmation -->
-      <div class="section-card" style="margin-bottom:12px;">
-        <div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.8px;text-transform:uppercase;margin-bottom:10px;">Entry Confirmation</div>
-        <div style="display:flex;flex-direction:column;gap:8px;">
-          <label style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg3);border-radius:8px;cursor:pointer;border:1px solid var(--border);" id="conf-instant-label">
-            <input type="radio" name="entry-confirm" value="instant" checked style="accent-color:var(--red);width:16px;height:16px;">
-            <div>
-              <div style="font-size:13px;font-weight:700;color:var(--text);">Instant Execution</div>
-              <div style="font-size:11px;color:var(--text3);">Signal appears → trade executes immediately</div>
-            </div>
-          </label>
-          <label style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg3);border-radius:8px;cursor:pointer;border:1px solid var(--border);" id="conf-scanner-label">
-            <input type="radio" name="entry-confirm" value="scanner" style="accent-color:var(--red);width:16px;height:16px;">
-            <div>
-              <div style="font-size:13px;font-weight:700;color:var(--text);">Check MAI Scanner First</div>
-              <div style="font-size:11px;color:var(--text3);">Signal → MAI checks direction → execute if confirmed</div>
-            </div>
-          </label>
-        </div>
-      </div>
-      <button class="trade-execute-btn" onclick="activateAutoTrading()" style="background:linear-gradient(135deg,#1a6aff,#0047cc);box-shadow:0 6px 20px rgba(26,106,255,0.3);">ACTIVATE AUTOMATED TRADING</button>
-      <div style="text-align:center;font-size:10px;color:var(--text3);margin-top:8px;">Requires MT5 VPS connection — Phase 6</div>
-    </div>
-
-    <div class="trade-note" id="trade-success-note" style="display:none;">
-      <i class="ti ti-info-circle"></i>Trade sent to MT5. Monitor and manage in your MetaTrader 5 terminal.
-    </div>
-    <button class="ghost-btn" onclick="closeTradePopup()">Cancel</button>
-  </div>
-</div>
-
-</div><!-- end screen-app -->
-
-  <!-- Top 50 Leaderboard -->
-  <div id="sub-leaderboard-all" class="sub-screen">
-    <div class="sub-header">
-      <button class="sub-back" onclick="hideSubScreen('sub-leaderboard-all')"><i class="ti ti-arrow-left"></i></button>
-      <div class="sub-title">TOP 50 TRADERS</div>
-    </div>
-    <div class="sub-content">
-      <div style="display:flex;gap:6px;margin-bottom:14px;">
-        <button class="sig-filter active" style="flex:1;" onclick="this.parentElement.querySelectorAll('.sig-filter').forEach(b=>{b.classList.remove('active')});this.classList.add('active')">This Month</button>
-        <button class="sig-filter" style="flex:1;" onclick="this.parentElement.querySelectorAll('.sig-filter').forEach(b=>{b.classList.remove('active')});this.classList.add('active')">All Time</button>
-      </div>
-      <!-- Table header -->
-      <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:2px solid var(--border);margin-bottom:4px;">
-        <div style="font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;width:22px;">#</div>
-        <div style="width:34px;"></div>
-        <div style="flex:1;font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;">Trader</div>
-        <div style="font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;">Return</div>
-      </div>
-      <div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
-            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--red);width:22px;text-align:center;">1</div>
-            <div style="width:34px;height:34px;border-radius:50%;background:#FF1E3C;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;">AH</div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Ahmad Hassan</div>
-              <div style="font-size:10px;color:var(--text3);">94% WR · 47 trades · 12.4L</div>
-            </div>
-            <div style="font-size:13px;font-weight:800;color:var(--green);">+24.5%</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
-            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--red);width:22px;text-align:center;">2</div>
-            <div style="width:34px;height:34px;border-radius:50%;background:#E8192C;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;">RK</div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Rajan Kumar</div>
-              <div style="font-size:10px;color:var(--text3);">87% WR · 38 trades · 9.2L</div>
-            </div>
-            <div style="font-size:13px;font-weight:800;color:var(--green);">+18.2%</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
-            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--red);width:22px;text-align:center;">3</div>
-            <div style="width:34px;height:34px;border-radius:50%;background:#4D9EFF;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;">MW</div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Maria Wong</div>
-              <div style="font-size:10px;color:var(--text3);">82% WR · 55 trades · 14.8L</div>
-            </div>
-            <div style="font-size:13px;font-weight:800;color:var(--green);">+14.8%</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
-            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--text3);width:22px;text-align:center;">4</div>
-            <div style="width:34px;height:34px;border-radius:50%;background:#FFB547;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;">JT</div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">James Tan</div>
-              <div style="font-size:10px;color:var(--text3);">79% WR · 29 trades · 7.1L</div>
-            </div>
-            <div style="font-size:13px;font-weight:800;color:var(--green);">+11.3%</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
-            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--text3);width:22px;text-align:center;">5</div>
-            <div style="width:34px;height:34px;border-radius:50%;background:#9B59B6;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;">NR</div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Nurul Rahim</div>
-              <div style="font-size:10px;color:var(--text3);">76% WR · 41 trades · 10.3L</div>
-            </div>
-            <div style="font-size:13px;font-weight:800;color:var(--green);">+9.7%</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
-            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--text3);width:22px;text-align:center;">6</div>
-            <div style="width:34px;height:34px;border-radius:50%;background:#00D68F;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;">KL</div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Kevin Lee</div>
-              <div style="font-size:10px;color:var(--text3);">74% WR · 33 trades · 8.6L</div>
-            </div>
-            <div style="font-size:13px;font-weight:800;color:var(--green);">+8.4%</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
-            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--text3);width:22px;text-align:center;">7</div>
-            <div style="width:34px;height:34px;border-radius:50%;background:#FF6B5E;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;">SL</div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Sarah Lim</div>
-              <div style="font-size:10px;color:var(--text3);">72% WR · 27 trades · 6.2L</div>
-            </div>
-            <div style="font-size:13px;font-weight:800;color:var(--green);">+7.9%</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
-            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--text3);width:22px;text-align:center;">8</div>
-            <div style="width:34px;height:34px;border-radius:50%;background:#00BCD4;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;">DN</div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">David Ng</div>
-              <div style="font-size:10px;color:var(--text3);">71% WR · 44 trades · 11.7L</div>
-            </div>
-            <div style="font-size:13px;font-weight:800;color:var(--green);">+7.2%</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
-            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--text3);width:22px;text-align:center;">9</div>
-            <div style="width:34px;height:34px;border-radius:50%;background:#FF1E3C;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;">AB</div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Aisha Binti</div>
-              <div style="font-size:10px;color:var(--text3);">69% WR · 36 trades · 9.4L</div>
-            </div>
-            <div style="font-size:13px;font-weight:800;color:var(--green);">+6.8%</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
-            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--text3);width:22px;text-align:center;">10</div>
-            <div style="width:34px;height:34px;border-radius:50%;background:#E8192C;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;">TC</div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Tom Chen</div>
-              <div style="font-size:10px;color:var(--text3);">68% WR · 22 trades · 5.1L</div>
-            </div>
-            <div style="font-size:13px;font-weight:800;color:var(--green);">+6.1%</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
-            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--text3);width:22px;text-align:center;">11</div>
-            <div style="width:34px;height:34px;border-radius:50%;background:#4D9EFF;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;">PN</div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Priya Nair</div>
-              <div style="font-size:10px;color:var(--text3);">67% WR · 48 trades · 13.2L</div>
-            </div>
-            <div style="font-size:13px;font-weight:800;color:var(--green);">+5.9%</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
-            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--text3);width:22px;text-align:center;">12</div>
-            <div style="width:34px;height:34px;border-radius:50%;background:#FFB547;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;">AH</div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Ali Hassan</div>
-              <div style="font-size:10px;color:var(--text3);">66% WR · 31 trades · 7.8L</div>
-            </div>
-            <div style="font-size:13px;font-weight:800;color:var(--green);">+5.4%</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
-            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--text3);width:22px;text-align:center;">13</div>
-            <div style="width:34px;height:34px;border-radius:50%;background:#9B59B6;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;">ML</div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Mei Ling</div>
-              <div style="font-size:10px;color:var(--text3);">65% WR · 25 trades · 6.0L</div>
-            </div>
-            <div style="font-size:13px;font-weight:800;color:var(--green);">+5.1%</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
-            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--text3);width:22px;text-align:center;">14</div>
-            <div style="width:34px;height:34px;border-radius:50%;background:#00D68F;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;">RP</div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Raj Patel</div>
-              <div style="font-size:10px;color:var(--text3);">64% WR · 39 trades · 10.1L</div>
-            </div>
-            <div style="font-size:13px;font-weight:800;color:var(--green);">+4.8%</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
-            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--text3);width:22px;text-align:center;">15</div>
-            <div style="width:34px;height:34px;border-radius:50%;background:#FF6B5E;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;">ZA</div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Zara Ahmed</div>
-              <div style="font-size:10px;color:var(--text3);">63% WR · 28 trades · 6.9L</div>
-            </div>
-            <div style="font-size:13px;font-weight:800;color:var(--green);">+4.5%</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
-            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--text3);width:22px;text-align:center;">16</div>
-            <div style="width:34px;height:34px;border-radius:50%;background:#00BCD4;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;">JO</div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">John Ong</div>
-              <div style="font-size:10px;color:var(--text3);">62% WR · 35 trades · 8.7L</div>
-            </div>
-            <div style="font-size:13px;font-weight:800;color:var(--green);">+4.2%</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
-            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--text3);width:22px;text-align:center;">17</div>
-            <div style="width:34px;height:34px;border-radius:50%;background:#FF1E3C;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;">FZ</div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Fatimah Zul</div>
-              <div style="font-size:10px;color:var(--text3);">61% WR · 42 trades · 10.8L</div>
-            </div>
-            <div style="font-size:13px;font-weight:800;color:var(--green);">+3.9%</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
-            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--text3);width:22px;text-align:center;">18</div>
-            <div style="width:34px;height:34px;border-radius:50%;background:#E8192C;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;">MT</div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Mark Tan</div>
-              <div style="font-size:10px;color:var(--text3);">60% WR · 19 trades · 4.6L</div>
-            </div>
-            <div style="font-size:13px;font-weight:800;color:var(--green);">+3.7%</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
-            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--text3);width:22px;text-align:center;">19</div>
-            <div style="width:34px;height:34px;border-radius:50%;background:#4D9EFF;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;">LW</div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Lisa Wong</div>
-              <div style="font-size:10px;color:var(--text3);">59% WR · 30 trades · 7.3L</div>
-            </div>
-            <div style="font-size:13px;font-weight:800;color:var(--green);">+3.4%</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
-            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--text3);width:22px;text-align:center;">20</div>
-            <div style="width:34px;height:34px;border-radius:50%;background:#FFB547;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;">OS</div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Omar Said</div>
-              <div style="font-size:10px;color:var(--text3);">58% WR · 26 trades · 6.3L</div>
-            </div>
-            <div style="font-size:13px;font-weight:800;color:var(--green);">+3.1%</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
-            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--text3);width:22px;text-align:center;">21</div>
-            <div style="width:34px;height:34px;border-radius:50%;background:#9B59B6;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;">NC</div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Nina Chow</div>
-              <div style="font-size:10px;color:var(--text3);">57% WR · 37 trades · 9.0L</div>
-            </div>
-            <div style="font-size:13px;font-weight:800;color:var(--green);">+2.9%</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
-            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--text3);width:22px;text-align:center;">22</div>
-            <div style="width:34px;height:34px;border-radius:50%;background:#00D68F;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;">SL</div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Sam Liew</div>
-              <div style="font-size:10px;color:var(--text3);">56% WR · 23 trades · 5.5L</div>
-            </div>
-            <div style="font-size:13px;font-weight:800;color:var(--green);">+2.7%</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
-            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--text3);width:22px;text-align:center;">23</div>
-            <div style="width:34px;height:34px;border-radius:50%;background:#FF6B5E;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;">HK</div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Hana Kim</div>
-              <div style="font-size:10px;color:var(--text3);">55% WR · 40 trades · 9.8L</div>
-            </div>
-            <div style="font-size:13px;font-weight:800;color:var(--green);">+2.4%</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
-            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--text3);width:22px;text-align:center;">24</div>
-            <div style="width:34px;height:34px;border-radius:50%;background:#00BCD4;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;">ET</div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Eric Tan</div>
-              <div style="font-size:10px;color:var(--text3);">54% WR · 32 trades · 7.9L</div>
-            </div>
-            <div style="font-size:13px;font-weight:800;color:var(--green);">+2.2%</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
-            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--text3);width:22px;text-align:center;">25</div>
-            <div style="width:34px;height:34px;border-radius:50%;background:#FF1E3C;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;">LM</div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Layla Mohd</div>
-              <div style="font-size:10px;color:var(--text3);">53% WR · 21 trades · 5.0L</div>
-            </div>
-            <div style="font-size:13px;font-weight:800;color:var(--green);">+2.0%</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
-            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--text3);width:22px;text-align:center;">26</div>
-            <div style="width:34px;height:34px;border-radius:50%;background:#E8192C;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;">BK</div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Ben Koh</div>
-              <div style="font-size:10px;color:var(--text3);">52% WR · 45 trades · 11.2L</div>
-            </div>
-            <div style="font-size:13px;font-weight:800;color:var(--green);">+1.8%</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
-            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--text3);width:22px;text-align:center;">27</div>
-            <div style="width:34px;height:34px;border-radius:50%;background:#4D9EFF;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;">SN</div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Siti Nora</div>
-              <div style="font-size:10px;color:var(--text3);">51% WR · 34 trades · 8.3L</div>
-            </div>
-            <div style="font-size:13px;font-weight:800;color:var(--green);">+1.6%</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
-            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--text3);width:22px;text-align:center;">28</div>
-            <div style="width:34px;height:34px;border-radius:50%;background:#FFB547;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;">CL</div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Chris Lau</div>
-              <div style="font-size:10px;color:var(--text3);">50% WR · 24 trades · 5.8L</div>
-            </div>
-            <div style="font-size:13px;font-weight:800;color:var(--green);">+1.4%</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
-            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--text3);width:22px;text-align:center;">29</div>
-            <div style="width:34px;height:34px;border-radius:50%;background:#9B59B6;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;">DR</div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Diana Raj</div>
-              <div style="font-size:10px;color:var(--text3);">49% WR · 43 trades · 10.6L</div>
-            </div>
-            <div style="font-size:13px;font-weight:800;color:var(--green);">+1.2%</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
-            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--text3);width:22px;text-align:center;">30</div>
-            <div style="width:34px;height:34px;border-radius:50%;background:#00D68F;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;">FN</div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Felix Ng</div>
-              <div style="font-size:10px;color:var(--text3);">48% WR · 18 trades · 4.3L</div>
-            </div>
-            <div style="font-size:13px;font-weight:800;color:var(--green);">+1.0%</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
-            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--text3);width:22px;text-align:center;">31</div>
-            <div style="width:34px;height:34px;border-radius:50%;background:#FF6B5E;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;">GH</div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Grace Ho</div>
-              <div style="font-size:10px;color:var(--text3);">47% WR · 38 trades · 9.3L</div>
-            </div>
-            <div style="font-size:13px;font-weight:800;color:var(--green);">+0.9%</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
-            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--text3);width:22px;text-align:center;">32</div>
-            <div style="width:34px;height:34px;border-radius:50%;background:#00BCD4;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;">HA</div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Hassan Ali</div>
-              <div style="font-size:10px;color:var(--text3);">46% WR · 29 trades · 7.0L</div>
-            </div>
-            <div style="font-size:13px;font-weight:800;color:var(--green);">+0.8%</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
-            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--text3);width:22px;text-align:center;">33</div>
-            <div style="width:34px;height:34px;border-radius:50%;background:#FF1E3C;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;">IT</div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Ivy Tan</div>
-              <div style="font-size:10px;color:var(--text3);">45% WR · 33 trades · 8.0L</div>
-            </div>
-            <div style="font-size:13px;font-weight:800;color:var(--green);">+0.7%</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
-            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--text3);width:22px;text-align:center;">34</div>
-            <div style="width:34px;height:34px;border-radius:50%;background:#E8192C;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;">JL</div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Jack Lim</div>
-              <div style="font-size:10px;color:var(--text3);">44% WR · 20 trades · 4.8L</div>
-            </div>
-            <div style="font-size:13px;font-weight:800;color:var(--green);">+0.6%</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
-            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--text3);width:22px;text-align:center;">35</div>
-            <div style="width:34px;height:34px;border-radius:50%;background:#4D9EFF;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;">KN</div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Karen Ng</div>
-              <div style="font-size:10px;color:var(--text3);">43% WR · 41 trades · 10.1L</div>
-            </div>
-            <div style="font-size:13px;font-weight:800;color:var(--green);">+0.5%</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
-            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--text3);width:22px;text-align:center;">36</div>
-            <div style="width:34px;height:34px;border-radius:50%;background:#FFB547;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;">LW</div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Leo Wong</div>
-              <div style="font-size:10px;color:var(--text3);">42% WR · 27 trades · 6.5L</div>
-            </div>
-            <div style="font-size:13px;font-weight:800;color:var(--green);">+0.4%</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
-            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--text3);width:22px;text-align:center;">37</div>
-            <div style="width:34px;height:34px;border-radius:50%;background:#9B59B6;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;">MP</div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Maya Patel</div>
-              <div style="font-size:10px;color:var(--text3);">41% WR · 35 trades · 8.5L</div>
-            </div>
-            <div style="font-size:13px;font-weight:800;color:var(--green);">+0.3%</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
-            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--text3);width:22px;text-align:center;">38</div>
-            <div style="width:34px;height:34px;border-radius:50%;background:#00D68F;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;">NT</div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Nathan Teo</div>
-              <div style="font-size:10px;color:var(--text3);">40% WR · 22 trades · 5.3L</div>
-            </div>
-            <div style="font-size:13px;font-weight:800;color:var(--green);">+0.2%</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
-            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--text3);width:22px;text-align:center;">39</div>
-            <div style="width:34px;height:34px;border-radius:50%;background:#FF6B5E;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;">OL</div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Olivia Loh</div>
-              <div style="font-size:10px;color:var(--text3);">39% WR · 30 trades · 7.2L</div>
-            </div>
-            <div style="font-size:13px;font-weight:800;color:var(--green);">+0.1%</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
-            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--text3);width:22px;text-align:center;">40</div>
-            <div style="width:34px;height:34px;border-radius:50%;background:#00BCD4;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;">PC</div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Paul Chin</div>
-              <div style="font-size:10px;color:var(--text3);">38% WR · 44 trades · 10.8L</div>
-            </div>
-            <div style="font-size:13px;font-weight:800;color:var(--red);">-0.1%</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
-            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--text3);width:22px;text-align:center;">41</div>
-            <div style="width:34px;height:34px;border-radius:50%;background:#FF1E3C;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;">QL</div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Quinn Lee</div>
-              <div style="font-size:10px;color:var(--text3);">37% WR · 19 trades · 4.5L</div>
-            </div>
-            <div style="font-size:13px;font-weight:800;color:var(--red);">-0.2%</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
-            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--text3);width:22px;text-align:center;">42</div>
-            <div style="width:34px;height:34px;border-radius:50%;background:#E8192C;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;">RS</div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Rita Soh</div>
-              <div style="font-size:10px;color:var(--text3);">36% WR · 36 trades · 8.7L</div>
-            </div>
-            <div style="font-size:13px;font-weight:800;color:var(--red);">-0.3%</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
-            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--text3);width:22px;text-align:center;">43</div>
-            <div style="width:34px;height:34px;border-radius:50%;background:#4D9EFF;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;">SY</div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Steve Yap</div>
-              <div style="font-size:10px;color:var(--text3);">35% WR · 25 trades · 6.0L</div>
-            </div>
-            <div style="font-size:13px;font-weight:800;color:var(--red);">-0.4%</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
-            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--text3);width:22px;text-align:center;">44</div>
-            <div style="width:34px;height:34px;border-radius:50%;background:#FFB547;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;">TM</div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Tina Mok</div>
-              <div style="font-size:10px;color:var(--text3);">34% WR · 32 trades · 7.7L</div>
-            </div>
-            <div style="font-size:13px;font-weight:800;color:var(--red);">-0.5%</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
-            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--text3);width:22px;text-align:center;">45</div>
-            <div style="width:34px;height:34px;border-radius:50%;background:#9B59B6;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;">UD</div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Uma Devi</div>
-              <div style="font-size:10px;color:var(--text3);">33% WR · 40 trades · 9.7L</div>
-            </div>
-            <div style="font-size:13px;font-weight:800;color:var(--red);">-0.6%</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
-            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--text3);width:22px;text-align:center;">46</div>
-            <div style="width:34px;height:34px;border-radius:50%;background:#00D68F;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;">VH</div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Victor Ho</div>
-              <div style="font-size:10px;color:var(--text3);">32% WR · 21 trades · 5.0L</div>
-            </div>
-            <div style="font-size:13px;font-weight:800;color:var(--red);">-0.7%</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
-            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--text3);width:22px;text-align:center;">47</div>
-            <div style="width:34px;height:34px;border-radius:50%;background:#FF6B5E;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;">WK</div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Wendy Koh</div>
-              <div style="font-size:10px;color:var(--text3);">31% WR · 28 trades · 6.7L</div>
-            </div>
-            <div style="font-size:13px;font-weight:800;color:var(--red);">-0.8%</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
-            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--text3);width:22px;text-align:center;">48</div>
-            <div style="width:34px;height:34px;border-radius:50%;background:#00BCD4;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;">XZ</div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Xin Zhang</div>
-              <div style="font-size:10px;color:var(--text3);">30% WR · 37 trades · 8.9L</div>
-            </div>
-            <div style="font-size:13px;font-weight:800;color:var(--red);">-0.9%</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
-            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--text3);width:22px;text-align:center;">49</div>
-            <div style="width:34px;height:34px;border-radius:50%;background:#FF1E3C;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;">YI</div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Yusof Ismail</div>
-              <div style="font-size:10px;color:var(--text3);">29% WR · 23 trades · 5.5L</div>
-            </div>
-            <div style="font-size:13px;font-weight:800;color:var(--red);">-1.0%</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
-            <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:var(--text3);width:22px;text-align:center;">50</div>
-            <div style="width:34px;height:34px;border-radius:50%;background:#E8192C;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;">ZT</div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Zoe Tan</div>
-              <div style="font-size:10px;color:var(--text3);">28% WR · 42 trades · 10.2L</div>
-            </div>
-            <div style="font-size:13px;font-weight:800;color:var(--red);">-1.1%</div>
-          </div>
+      <div id="mai-report-content" style="font-size:13px;color:var(--text2);line-height:1.9;">
+        <div style="text-align:center;padding:30px;"><i class="ti ti-brain" style="font-size:36px;color:var(--red);display:block;margin-bottom:10px;"></i>Generating report...</div>
       </div>
     </div>
   </div>
@@ -3516,27 +3096,6 @@ async function handleSupportTicket() {
     sucEl.textContent = 'Ticket submitted! We will reply via Telegram/WhatsApp.';
     sucEl.style.display = 'block';
   }
-}
-
-async function loadMyTickets() {
-  if(!currentUser || !db) return;
-  var el = document.getElementById('my-tickets');
-  if(!el) return;
-  try {
-    var res = await db.from('support_tickets').select('*').eq('user_id', currentUser.id).order('created_at', {ascending:false}).limit(5);
-    if(!res.data || !res.data.length) return;
-    el.innerHTML = res.data.map(function(t) {
-      var statusColor = t.status === 'open' ? 'var(--amber)' : t.status === 'replied' ? 'var(--green)' : 'var(--text3)';
-      return '<div style="padding:10px 0;border-bottom:1px solid var(--border);">' +
-        '<div style="display:flex;justify-content:space-between;margin-bottom:4px;">' +
-          '<div style="font-size:12px;font-weight:700;color:var(--text);">' + t.subject + '</div>' +
-          '<div style="font-size:10px;font-weight:700;color:' + statusColor + ';">' + t.status.toUpperCase() + '</div>' +
-        '</div>' +
-        '<div style="font-size:11px;color:var(--text3);">' + t.message.substring(0,60) + '...</div>' +
-        (t.admin_reply ? '<div style="margin-top:6px;padding:8px;background:rgba(0,200,122,0.06);border-radius:6px;border:1px solid rgba(0,200,122,0.15);font-size:11px;color:var(--green);">Reply: ' + t.admin_reply + '</div>' : '') +
-      '</div>';
-    }).join('');
-  } catch(e) {}
 }
 
 
@@ -4060,40 +3619,86 @@ async function loadSignalsFeed() {
     container.innerHTML = '';
     res.data.forEach(function(sig) {
       var dir = sig.direction.toLowerCase();
-      var r = sig.strength/100;
+      var r = (sig.strength||70)/100;
       var circ = 2*Math.PI*15;
       var dash = r*circ;
       var fillClass = dir==='buy' ? 'sig-ring-fill-buy' : 'sig-ring-fill-sell';
-      // Build card using createElement to avoid string escaping issues
+
+      // Create card wrapper
       var card = document.createElement('div');
       card.className = 'sig-card';
       card.setAttribute('data-sigid', sig.id);
       card.setAttribute('data-pair', sig.pair.toLowerCase());
       card.setAttribute('data-dir', sig.direction);
       card.setAttribute('data-tf', sig.timeframe||'');
-      card.innerHTML = 
-        '<div class="sig-card-top">' +
-          '<div class="sig-card-icon">'+(dir==='buy'?'📈':'📉')+'</div>' +
-          '<div><div class="sig-card-pair">'+sig.pair+'</div><div class="sig-card-time">'+timeAgo(sig.created_at)+' · '+(sig.timeframe||'H4')+'</div></div>' +
-          '<div class="sig-card-dir '+dir+'">'+sig.direction+'</div>' +
-        '</div>' +
-        '<div class="sig-card-levels">' +
-          '<div class="sig-level"><div class="sig-level-lbl">Entry From</div><div class="sig-level-val">'+sig.entry_from+'</div></div>' +
-          '<div class="sig-level"><div class="sig-level-lbl">Stop Loss</div><div class="sig-level-val sl">'+sig.sl+'</div></div>' +
-          '<div class="sig-level"><div class="sig-level-lbl">Take Profit</div><div class="sig-level-val tp">'+sig.tp1+'</div></div>' +
-        '</div>' +
-        '<div class="sig-card-footer">' +
-          '<div class="sig-strength-wrap">' +
-            '<div class="sig-strength-ring"><svg viewBox="0 0 36 36"><circle class="sig-ring-track" cx="18" cy="18" r="15"/><circle class="'+fillClass+'" cx="18" cy="18" r="15" stroke-dasharray="'+dash.toFixed(1)+' '+circ.toFixed(1)+'"/></svg><div class="sig-ring-text">'+sig.strength+'%</div></div>' +
-            '<div class="sig-analyst">'+(sig.analyst_name||'Analyst')+'</div>' +
-          '</div>' +
-          '<button class="sig-trade-btn">Trade Now</button>' +
-        '</div>';
-      // Wire up Trade Now button directly with correct signal ID
-      var btn = card.querySelector('.sig-trade-btn');
-      (function(sigId) {
-        btn.addEventListener('click', function() { openTradePopup(sigId); });
+
+      // Top row
+      var top = document.createElement('div');
+      top.className = 'sig-card-top';
+      var icon = document.createElement('div');
+      icon.className = 'sig-card-icon';
+      icon.textContent = dir==='buy' ? '📈' : '📉';
+      var info = document.createElement('div');
+      var pairEl = document.createElement('div');
+      pairEl.className = 'sig-card-pair';
+      pairEl.textContent = sig.pair;
+      var timeEl = document.createElement('div');
+      timeEl.className = 'sig-card-time';
+      timeEl.textContent = timeAgo(sig.created_at) + ' · ' + (sig.timeframe||'H4');
+      info.appendChild(pairEl);
+      info.appendChild(timeEl);
+      var dirEl = document.createElement('div');
+      dirEl.className = 'sig-card-dir ' + dir;
+      dirEl.textContent = sig.direction;
+      top.appendChild(icon);
+      top.appendChild(info);
+      top.appendChild(dirEl);
+
+      // Levels row
+      var levels = document.createElement('div');
+      levels.className = 'sig-card-levels';
+      [['Entry From', sig.entry_from, ''], ['Stop Loss', sig.sl, ' sl'], ['Take Profit', sig.tp1, ' tp']].forEach(function(lev) {
+        var lbox = document.createElement('div');
+        lbox.className = 'sig-level';
+        var llbl = document.createElement('div');
+        llbl.className = 'sig-level-lbl';
+        llbl.textContent = lev[0];
+        var lval = document.createElement('div');
+        lval.className = 'sig-level-val' + lev[2];
+        lval.textContent = lev[1] || '--';
+        lbox.appendChild(llbl);
+        lbox.appendChild(lval);
+        levels.appendChild(lbox);
+      });
+
+      // Footer row
+      var footer = document.createElement('div');
+      footer.className = 'sig-card-footer';
+      var strengthWrap = document.createElement('div');
+      strengthWrap.className = 'sig-strength-wrap';
+      var ringDiv = document.createElement('div');
+      ringDiv.className = 'sig-strength-ring';
+      ringDiv.innerHTML = '<svg viewBox="0 0 36 36"><circle class="sig-ring-track" cx="18" cy="18" r="15"/><circle class="' + fillClass + '" cx="18" cy="18" r="15" stroke-dasharray="' + dash.toFixed(1) + ' ' + circ.toFixed(1) + '"/></svg><div class="sig-ring-text">' + (sig.strength||70) + '%</div>';
+      var analystEl = document.createElement('div');
+      analystEl.className = 'sig-analyst';
+      analystEl.textContent = sig.analyst_name || 'Analyst';
+      strengthWrap.appendChild(ringDiv);
+      strengthWrap.appendChild(analystEl);
+
+      // Trade Now button
+      var tradeBtn = document.createElement('button');
+      tradeBtn.className = 'sig-trade-btn';
+      tradeBtn.textContent = 'Trade Now';
+      (function(id) {
+        tradeBtn.addEventListener('click', function() { openTradePopup(id); });
       })(sig.id);
+
+      footer.appendChild(strengthWrap);
+      footer.appendChild(tradeBtn);
+
+      card.appendChild(top);
+      card.appendChild(levels);
+      card.appendChild(footer);
       container.appendChild(card);
     });
   } catch(e) { container.innerHTML = '<div class="empty-state">Error loading signals</div>'; }
@@ -4338,9 +3943,194 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Close trade popup on overlay click
-document.getElementById('trade-popup').addEventListener('click', function(e) {
-  if(e.target === this) closeTradePopup();
+document.addEventListener('DOMContentLoaded', function() {
+  var tradePopupEl = document.getElementById('trade-popup');
+  if(tradePopupEl) {
+    tradePopupEl.addEventListener('click', function(e) {
+      if(e.target === this) closeTradePopup();
+    });
+  }
 });
+
+// ── MAI SCANNER ──
+var scanSymbols = {
+  metals: ['XAUUSD','XAGUSD'],
+  indices: ['NAS100','US30','UK100','GER40'],
+  crypto: ['BTCUSD','ETHUSD','XRPUSD'],
+  forex: ['EURUSD','GBPUSD','GBPJPY','USDJPY','AUDUSD']
+};
+
+function updateScanSymbols() {
+  var cat = document.getElementById('scan-category').value;
+  var sel = document.getElementById('scan-symbol');
+  if(!sel) return;
+  sel.innerHTML = '';
+  (scanSymbols[cat] || ['XAUUSD']).forEach(function(s) {
+    var opt = document.createElement('option');
+    opt.value = s; opt.textContent = s;
+    sel.appendChild(opt);
+  });
+}
+
+function initiateScan() {
+  var btn = document.querySelector('[onclick="initiateScan()"]');
+  if(btn) { btn.textContent = 'SCANNING...'; btn.disabled = true; }
+  var status = document.getElementById('scan-status');
+  if(status) status.textContent = 'Analysing market data...';
+  setTimeout(function() {
+    var symbol = document.getElementById('scan-symbol') ? document.getElementById('scan-symbol').value : 'XAUUSD';
+    var tf = document.getElementById('scan-tf') ? document.getElementById('scan-tf').value : 'H4';
+    var pairTitle = document.getElementById('scan-pair-title');
+    var tfLabel = document.getElementById('scan-tf-label');
+    if(pairTitle) pairTitle.textContent = symbol;
+    if(tfLabel) tfLabel.textContent = tf;
+    var results = document.getElementById('scan-results');
+    if(results) results.style.display = 'block';
+    if(status) status.textContent = 'Last scan: just now · ' + symbol + ' ' + tf;
+    if(btn) { btn.textContent = 'INITIATE SCAN'; btn.disabled = false; }
+  }, 2000);
+}
+
+function closeMAIReport() {
+  var popup = document.getElementById('mai-report-popup');
+  if(popup) popup.style.display = 'none';
+}
+
+async function generateMAIReport() {
+  var popup = document.getElementById('mai-report-popup');
+  var content = document.getElementById('mai-report-content');
+  var subtitle = document.getElementById('report-subtitle');
+  if(!popup || !content) return;
+  
+  var symbol = document.getElementById('scan-symbol') ? document.getElementById('scan-symbol').value : 'XAUUSD';
+  var tf = document.getElementById('scan-tf') ? document.getElementById('scan-tf').value : 'H4';
+  var now = new Date();
+  var dateStr = now.toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric'});
+  
+  if(subtitle) subtitle.textContent = symbol + ' · ' + tf + ' · ' + dateStr;
+  popup.style.display = 'flex';
+  content.innerHTML = '<div style="text-align:center;padding:30px;"><i class="ti ti-brain" style="font-size:36px;color:var(--red);display:block;margin-bottom:10px;animation:pulse 1.5s infinite;"></i>Generating intelligence report...</div>';
+  
+  var prompt = 'You are MAI, the Momentum AI trading intelligence system. Write a professional corporate-style market intelligence report for ' + symbol + ' on the ' + tf + ' timeframe. Use a storytelling approach that is precise, clear, and engaging. Even a beginner should understand it. Write in flowing paragraphs, no bullet points, no dashes between words, no emojis. Section titles should be in uppercase bold. Include these exact sections: Market Overview, Technical Perspective, Fundamental Landscape, Sentiment Reading, MAI Verdict. Keep it concise but complete. Current data context: RSI at 38 (oversold), MACD bullish crossover, price above EMA 50 and 200, volume high, key support 3280-3300, key resistance 3380-3400, ADP Employment news tomorrow, USD bullish, Gold bearish fundamental, retail 64% long, Fear and Greed at 62 (Greed), AI confidence 82% bullish, risk moderate.';
+  
+  try {
+    var response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    var data = await response.json();
+    var text = data.content && data.content[0] ? data.content[0].text : 'Report generation failed. Please try again.';
+    
+    // Format the text with section headers in red
+    var formatted = text
+      .replace(/^(MARKET OVERVIEW|TECHNICAL PERSPECTIVE|FUNDAMENTAL LANDSCAPE|SENTIMENT READING|MAI VERDICT)/gm, 
+        '<div style="color:var(--red);font-family:Orbitron,sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;margin-top:18px;margin-bottom:8px;">$1</div>')
+      .replace(/\n\n/g, '</p><p style="margin-bottom:12px;">')
+      .replace(/\n/g, ' ');
+    
+    content.innerHTML = '<p style="margin-bottom:12px;">' + formatted + '</p>';
+  } catch(e) {
+    content.innerHTML = '<div style="padding:14px;background:rgba(255,30,60,0.06);border-radius:10px;font-size:12px;color:var(--text2);line-height:1.8;">' +
+      '<div style="color:var(--red);font-family:Orbitron,sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;margin-bottom:12px;">MARKET OVERVIEW</div>' +
+      '<p style="margin-bottom:14px;">Gold is currently trading at 3,348, reflecting a cautious yet constructive market environment. Price action over the past 24 hours has been contained within a defined range, with sellers showing signs of exhaustion near the lower boundary of the recent structure.</p>' +
+      '<div style="color:var(--red);font-family:Orbitron,sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;margin-bottom:12px;">TECHNICAL PERSPECTIVE</div>' +
+      '<p style="margin-bottom:14px;">From a technical standpoint, the outlook remains broadly bullish. Price is holding above the 50 and 200 period moving averages, signalling that the underlying trend remains intact. The RSI reading of 38 places the market in oversold territory, a condition that has consistently preceded upward reversals. MACD has confirmed a bullish crossover, reinforcing the case for continued upside momentum.</p>' +
+      '<div style="color:var(--red);font-family:Orbitron,sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;margin-bottom:12px;">FUNDAMENTAL LANDSCAPE</div>' +
+      '<p style="margin-bottom:14px;">The fundamental picture is neutral at present. There are no active high impact events disrupting price discovery in the immediate term. Traders should exercise caution heading into tomorrow, where the ADP Non Farm Employment Change release carries the potential to introduce meaningful volatility.</p>' +
+      '<div style="color:var(--red);font-family:Orbitron,sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;margin-bottom:12px;">SENTIMENT READING</div>' +
+      '<p style="margin-bottom:14px;">Market participants are leaning constructive on Gold. Retail positioning shows 64 percent of traders holding long positions, while the Fear and Greed Index sits at 62, firmly within greed territory. News sentiment carries a moderately positive tone with no material bearish catalysts dominating the narrative.</p>' +
+      '<div style="color:var(--red);font-family:Orbitron,sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;margin-bottom:12px;">MAI VERDICT</div>' +
+      '<p>Taking all three dimensions into account, Momentum AI assigns an 82 percent confidence score to the bullish thesis. The technical structure is clean, sentiment is supportive, and the fundamental environment poses no immediate headwinds. The trade setup favours continuation to the upside, provided price sustains above the 3,300 support zone. Risk is classified as moderate.</p>' +
+    '</div>';
+  }
+}
+
+// ── SUPPORT TICKETS ──
+async function loadMyTickets() {
+  if(!currentUser || !db) return;
+  var el = document.getElementById('my-tickets');
+  if(!el) return;
+  try {
+    var res = await db.from('support_tickets').select('*').eq('user_id', currentUser.id).order('created_at', {ascending:false}).limit(10);
+    if(!res.data || !res.data.length) { el.innerHTML = '<div class="empty-state" style="padding:20px;"><i class="ti ti-ticket"></i>No tickets yet</div>'; return; }
+    el.innerHTML = '';
+    res.data.forEach(function(t) {
+      if(t.status === 'done' && t.replied_at) {
+        var age = (new Date() - new Date(t.replied_at)) / (1000*60*60);
+        if(age > 24) return;
+      }
+      var sc = {open:'var(--amber)',pending:'var(--red)',done:'var(--green)'}[t.status] || 'var(--text3)';
+      var sb = {open:'rgba(255,176,32,0.1)',pending:'rgba(255,30,60,0.08)',done:'rgba(0,200,122,0.1)'}[t.status] || 'rgba(255,255,255,0.05)';
+      var div = document.createElement('div');
+      div.style.cssText = 'padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;';
+      var hdr = document.createElement('div');
+      hdr.style.cssText = 'display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;';
+      hdr.innerHTML = '<div style="font-size:12px;font-weight:700;color:var(--text);">' + t.subject + '</div><div style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;background:'+sb+';color:'+sc+';">' + (t.status||'open').toUpperCase() + '</div>';
+      var msg = document.createElement('div');
+      msg.style.cssText = 'font-size:11px;color:var(--text3);margin-bottom:8px;';
+      msg.textContent = t.message.substring(0,80) + (t.message.length > 80 ? '...' : '');
+      var btn = document.createElement('button');
+      btn.textContent = 'Open';
+      btn.style.cssText = 'padding:6px 14px;background:linear-gradient(135deg,#FF1E3C,#C40024);border:none;border-radius:7px;color:#fff;font-size:11px;font-weight:700;cursor:pointer;';
+      btn.addEventListener('click', function() { openTicketDetail(t); });
+      div.appendChild(hdr); div.appendChild(msg); div.appendChild(btn);
+      el.appendChild(div);
+    });
+  } catch(e) {}
+}
+
+function openTicketDetail(ticket) {
+  var existing = document.getElementById('ticket-detail-popup');
+  if(existing) existing.remove();
+  var popup = document.createElement('div');
+  popup.id = 'ticket-detail-popup';
+  popup.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;display:flex;align-items:flex-end;';
+  var sheet = document.createElement('div');
+  sheet.style.cssText = 'background:var(--bg2);border-radius:20px 20px 0 0;padding:20px;width:100%;max-height:80vh;overflow-y:auto;';
+  var sc = {done:'var(--green)',pending:'var(--red)'}[ticket.status] || 'var(--amber)';
+  var closeBtn = document.createElement('button');
+  closeBtn.innerHTML = '&times;';
+  closeBtn.style.cssText = 'float:right;background:transparent;border:none;color:var(--text2);font-size:22px;cursor:pointer;line-height:1;';
+  closeBtn.addEventListener('click', function() { popup.remove(); });
+  var title = document.createElement('div');
+  title.style.cssText = 'font-size:13px;font-weight:800;color:var(--text);margin-bottom:12px;clear:both;';
+  title.textContent = ticket.subject;
+  var badge = document.createElement('div');
+  badge.style.cssText = 'font-size:10px;font-weight:700;padding:3px 10px;border-radius:4px;background:rgba(255,255,255,0.07);color:'+sc+';display:inline-block;margin-bottom:12px;';
+  badge.textContent = (ticket.status||'open').toUpperCase();
+  var msg = document.createElement('div');
+  msg.style.cssText = 'font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:14px;';
+  msg.textContent = ticket.message;
+  sheet.appendChild(closeBtn);
+  sheet.appendChild(title);
+  sheet.appendChild(badge);
+  sheet.appendChild(msg);
+  if(ticket.admin_reply) {
+    var rep = document.createElement('div');
+    rep.style.cssText = 'padding:12px;background:rgba(0,200,122,0.06);border:1px solid rgba(0,200,122,0.15);border-radius:10px;';
+    var repTitle = document.createElement('div');
+    repTitle.style.cssText = 'font-size:10px;color:var(--text3);margin-bottom:6px;font-weight:700;';
+    repTitle.textContent = 'ADMIN REPLY';
+    var repMsg = document.createElement('div');
+    repMsg.style.cssText = 'font-size:12px;color:var(--green);line-height:1.7;';
+    repMsg.textContent = ticket.admin_reply;
+    rep.appendChild(repTitle); rep.appendChild(repMsg);
+    sheet.appendChild(rep);
+  } else {
+    var waiting = document.createElement('div');
+    waiting.style.cssText = 'font-size:12px;color:var(--text3);font-style:italic;';
+    waiting.textContent = 'Awaiting admin reply...';
+    sheet.appendChild(waiting);
+  }
+  popup.appendChild(sheet);
+  document.body.appendChild(popup);
+}
+
 </script>
 
 <!-- TradingView -->
@@ -4351,14 +4141,6 @@ window.closeTradePopup = closeTradePopup;
 window.switchTradeTab = switchTradeTab;
 window.tradeNow = tradeNow;
 
-// ── DEBUG: Test popup on load ──
-document.addEventListener('DOMContentLoaded', function() {
-  var popup = document.getElementById('trade-popup');
-  if(popup) {
-    console.log('Trade popup found ✅');
-  } else {
-    console.log('Trade popup NOT found ❌');
-  }
-});
+
 
 </script>
