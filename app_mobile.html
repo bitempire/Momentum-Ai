@@ -3915,8 +3915,7 @@ function switchTab(tab) {
   var content = document.getElementById('app-content');
   if(content) content.scrollTop = 0;
   if(tab==='dashboard') { loadLivePrices(); }
-  if(tab==='charts') { initTVChart(); startChartPriceRefresh(); }
-  else { stopChartPriceRefresh(); }
+  if(tab==='charts') initTVChart();
   if(tab==='signals') loadSignalsFeed();
   if(tab==='more'&&currentUser&&currentUser.role==='admin') loadAdminUsers();
 }
@@ -4205,8 +4204,7 @@ async function loadChartData() {
               encodeURIComponent(sym) + '&interval=' + interval +
               '&outputsize=60&apikey=' + TWELVE_DATA_KEY;
 
-    var res  = await fetch(url);
-    var data = await res.json();
+    var data = await tdFetch(url);
 
     if(!data.values || data.status === 'error') {
       console.warn('Chart data error:', data.message || 'no data');
@@ -5422,8 +5420,7 @@ async function loadLivePrices() {
   try {
     var symbols = Object.values(TWELVE_SYMBOLS).join(',');
     var url = 'https://api.twelvedata.com/quote?symbol=' + encodeURIComponent(symbols) + '&apikey=' + TWELVE_DATA_KEY;
-    var res = await fetch(url);
-    var data = await res.json();
+    var data = await tdFetch(url);
     // Update each card
     Object.keys(TWELVE_SYMBOLS).forEach(function(appSym) {
       var tdSym = TWELVE_SYMBOLS[appSym];
@@ -5456,9 +5453,7 @@ async function loadLivePrices() {
 }
 
 function startPriceAutoRefresh() {
-  loadLivePrices();
-  if(_priceRefreshTimer) clearInterval(_priceRefreshTimer);
-  _priceRefreshTimer = setInterval(loadLivePrices, 120000); // every 2 minutes
+  loadLivePrices(); // load once on app open — no auto-timer (Basic plan limit)
 }
 
 // ══════════════════════════════════════════════════════
@@ -5533,9 +5528,7 @@ function loadJournalTradesTable(trades) {
 var _chartPriceTimer = null;
 
 function startChartPriceRefresh() {
-  stopChartPriceRefresh();
-  fetchChartLivePrice(); // immediate
-  _chartPriceTimer = setInterval(fetchChartLivePrice, 120000); // every 2 minutes
+  fetchChartLivePrice(); // load once on chart open — no auto-timer (Basic plan limit)
 }
 
 function stopChartPriceRefresh() {
@@ -5548,8 +5541,7 @@ async function fetchChartLivePrice() {
   try {
     var url = 'https://api.twelvedata.com/price?symbol=' +
               encodeURIComponent(sym) + '&apikey=' + TWELVE_DATA_KEY;
-    var res  = await fetch(url);
-    var data = await res.json();
+    var data = await tdFetch(url);
     if(data.price) {
       var price = parseFloat(data.price);
       updateChartPrice(price);
