@@ -1251,9 +1251,8 @@ select.auth-input {
         <i class="ti ti-world"></i> Visit Our Website
       </button>
       <div class="auth-switch">No account? <span onclick="switchAuthTab('register')">Register with AFT →</span></div>
-      <div class="auth-status" style="justify-content:center;">
-        <div class="auth-status-dot"></div>
-        <span>Powered by Bitempire Sdn Bhd</span>
+      <div class="auth-status" style="justify-content:center;gap:8px;">
+        <div class="auth-status-dot"></div><span>Powered by Bitempire Sdn Bhd</span>
       </div>
     </div>
     <!-- Register Form -->
@@ -4619,14 +4618,16 @@ async function loadAdminAnalysts() {
   if(!el) return;
   el.innerHTML = '<div class="empty-state" style="padding:12px;"><i class="ti ti-loader"></i> Loading...</div>';
   try {
-    var res = await db.from('users').select('*').eq('role','analyst').order('created_at',{ascending:false});
+    // Fetch all users and filter client-side — avoids RLS/column filter issues
+    var res = await db.from('users').select('*').order('created_at',{ascending:false});
     if(res.error) throw res.error;
-    if(!res.data||!res.data.length) {
+    var analysts = (res.data||[]).filter(function(u){ return u.role === 'analyst'; });
+    if(!analysts.length) {
       el.innerHTML='<div class="empty-state" style="padding:12px;"><i class="ti ti-users"></i> No analysts yet</div>';
       return;
     }
     el.innerHTML='';
-    res.data.forEach(function(analyst) {
+    analysts.forEach(function(analyst) {
       var card = document.createElement('div');
       card.style.cssText='padding:10px 12px;background:var(--bg3);border-radius:9px;margin-bottom:8px;border:1px solid var(--border);';
       card.innerHTML=
