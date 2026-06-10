@@ -1248,9 +1248,9 @@ select.auth-input {
         <i class="ti ti-world"></i> Visit Our Website
       </button>
       <div class="auth-switch">No account? <span onclick="switchAuthTab('register')">Register with AFT →</span></div>
-      <div class="auth-status">
+      <div class="auth-status" style="justify-content:center;">
         <div class="auth-status-dot"></div>
-        All systems operational · Signal feed live
+        <span>Powered by Bitempire Sdn Bhd</span>
       </div>
     </div>
     <!-- Register Form -->
@@ -2544,7 +2544,6 @@ select.auth-input {
           <div id="mob-analyst-success" class="success-msg"></div>
           <button class="red-btn" id="btn-add-analyst" onclick="handleAddAnalyst()">CREATE ANALYST</button>
         </div>
-      </div>
 
         <!-- SUB-ADMIN SECTION -->
         <div class="section-card" style="margin-top:20px;">
@@ -4068,8 +4067,13 @@ async function loadSignalsFeed() {
       var dirEl = document.createElement('div');
       dirEl.className = 'sig-card-dir ' + dir;
       dirEl.textContent = sig.direction;
+      var sBadge=document.createElement('div');
+      var isAct=sig.status==='active';
+      sBadge.textContent=isAct?'ACTIVE':'INACTIVE';
+      sBadge.style.cssText='padding:4px 9px;border-radius:6px;font-family:Orbitron,sans-serif;font-size:9px;font-weight:800;letter-spacing:.8px;margin-right:5px;flex-shrink:0;'+(isAct?'background:rgba(0,200,122,0.12);color:#00c87a;border:1px solid rgba(0,200,122,0.25);':'background:rgba(255,176,32,0.12);color:#ffb020;border:1px solid rgba(255,176,32,0.25);');
       top.appendChild(icon);
       top.appendChild(info);
+      top.appendChild(sBadge);
       top.appendChild(dirEl);
 
       // Levels row
