@@ -1347,27 +1347,27 @@ select.auth-input {
       <div class="section-title" style="margin-bottom:10px;">Market <span>Overview</span></div>
       <div class="market-grid">
         <div class="mkt-card dn">
-          <div class="mkt-sym">XAUUSD</div>
-          <div class="mkt-price">3348.75</div>
-          <div class="mkt-change dn">▼ -0.25%</div>
+          <div class="mkt-sym" id="sym-XAUUSD">XAUUSD</div>
+          <div class="mkt-price" id="price-XAUUSD">3348.75</div>
+          <div class="mkt-change" id="change-XAUUSD" dn">▼ -0.25%</div>
           <canvas class="mkt-spark" data-trend="dn" data-color="#FF1E3C"></canvas>
         </div>
         <div class="mkt-card up">
-          <div class="mkt-sym">NAS100</div>
-          <div class="mkt-price">19,842</div>
-          <div class="mkt-change up">▲ +0.52%</div>
+          <div class="mkt-sym" id="sym-NAS100">NAS100</div>
+          <div class="mkt-price" id="price-NAS100">19,842</div>
+          <div class="mkt-change" id="change-NAS100" up">▲ +0.52%</div>
           <canvas class="mkt-spark" data-trend="up" data-color="#00c87a"></canvas>
         </div>
         <div class="mkt-card dn">
-          <div class="mkt-sym">BTCUSD</div>
-          <div class="mkt-price">67,432</div>
-          <div class="mkt-change dn">▼ -0.18%</div>
+          <div class="mkt-sym" id="sym-BTCUSD">BTCUSD</div>
+          <div class="mkt-price" id="price-BTCUSD">67,432</div>
+          <div class="mkt-change" id="change-BTCUSD" dn">▼ -0.18%</div>
           <canvas class="mkt-spark" data-trend="dn" data-color="#FF1E3C"></canvas>
         </div>
         <div class="mkt-card up">
-          <div class="mkt-sym">GBPJPY</div>
-          <div class="mkt-price">192.45</div>
-          <div class="mkt-change up">▲ +0.34%</div>
+          <div class="mkt-sym" id="sym-GBPJPY">GBPJPY</div>
+          <div class="mkt-price" id="price-GBPJPY">192.45</div>
+          <div class="mkt-change" id="change-GBPJPY" up">▲ +0.34%</div>
           <canvas class="mkt-spark" data-trend="up" data-color="#00c87a"></canvas>
         </div>
       </div>
@@ -1522,15 +1522,15 @@ select.auth-input {
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;">
         <div class="section-card" style="padding:10px;text-align:center;">
           <div style="font-size:9px;color:var(--text3);letter-spacing:.8px;text-transform:uppercase;margin-bottom:4px;">Balance</div>
-          <div style="font-family:'Orbitron',sans-serif;font-size:14px;font-weight:800;color:var(--text);">$24,530</div>
+          <div style="font-family:'Orbitron',sans-serif;font-size:14px;font-weight:800;color:var(--text);" id="journal-balance">$24,530</div>
         </div>
         <div class="section-card" style="padding:10px;text-align:center;">
           <div style="font-size:9px;color:var(--text3);letter-spacing:.8px;text-transform:uppercase;margin-bottom:4px;">Growth</div>
-          <div style="font-family:'Orbitron',sans-serif;font-size:14px;font-weight:800;color:var(--green);">+24.5%</div>
+          <div style="font-family:'Orbitron',sans-serif;font-size:14px;font-weight:800;color:var(--green);" id="journal-growth">+24.5%</div>
         </div>
         <div class="section-card" style="padding:10px;text-align:center;">
           <div style="font-size:9px;color:var(--text3);letter-spacing:.8px;text-transform:uppercase;margin-bottom:4px;">Month</div>
-          <div style="font-family:'Orbitron',sans-serif;font-size:14px;font-weight:800;color:var(--green);">+8.4%</div>
+          <div style="font-family:'Orbitron',sans-serif;font-size:14px;font-weight:800;color:var(--green);" id="journal-month">+8.4%</div>
         </div>
       </div>
 
@@ -3803,6 +3803,7 @@ function routeUser(user) {
 
 // ── ENTER APP ──
 function enterApp(user) {
+  setTimeout(startPriceAutoRefresh, 1000);
   if(user) {
     var name = user.username || user.name || 'Trader';
     document.getElementById('mob-username').textContent = name;
@@ -3909,6 +3910,7 @@ function switchTab(tab) {
   if(nav) nav.classList.add('active');
   var content = document.getElementById('app-content');
   if(content) content.scrollTop = 0;
+  if(tab==='dashboard') { loadLivePrices(); }
   if(tab==='charts') initTVChart();
   if(tab==='signals') loadSignalsFeed();
   if(tab==='more'&&currentUser&&currentUser.role==='admin') loadAdminUsers();
@@ -4316,23 +4318,121 @@ function updateScanSymbols() {
   });
 }
 
-function initiateScan() {
+// Twelve Data symbol + interval maps
+var TD_SYMBOL_MAP = {
+  'XAUUSD':'XAU/USD','NAS100':'NDX','BTCUSD':'BTC/USD',
+  'GBPJPY':'GBP/JPY','EURUSD':'EUR/USD','GBPUSD':'GBP/USD',
+  'USDJPY':'USD/JPY','US30':'DJI'
+};
+var TD_INTERVAL_MAP = {
+  'M15':'15min','M30':'30min','H1':'1h','H4':'4h','D1':'1day'
+};
+
+async function initiateScan() {
+  if(!TWELVE_DATA_KEY || TWELVE_DATA_KEY === 'YOUR_TWELVE_DATA_KEY') {
+    alert('Please add your Twelve Data API key to the app config.');
+    return;
+  }
   var btn = document.querySelector('[onclick="initiateScan()"]');
   if(btn) { btn.textContent = 'SCANNING...'; btn.disabled = true; }
   var status = document.getElementById('scan-status');
-  if(status) status.textContent = 'Analysing market data...';
-  setTimeout(function() {
-    var symbol = document.getElementById('scan-symbol') ? document.getElementById('scan-symbol').value : 'XAUUSD';
-    var tf = document.getElementById('scan-tf') ? document.getElementById('scan-tf').value : 'H4';
+  if(status) status.textContent = 'Fetching live market data...';
+
+  var appSymbol = document.getElementById('scan-symbol') ? document.getElementById('scan-symbol').value : 'XAUUSD';
+  var appTf = document.getElementById('scan-tf') ? document.getElementById('scan-tf').value : 'H4';
+  var tdSymbol = TD_SYMBOL_MAP[appSymbol] || appSymbol;
+  var tdInterval = TD_INTERVAL_MAP[appTf] || '1h';
+
+  try {
+    // Fetch RSI, MACD, and latest quote in parallel
+    var baseUrl = 'https://api.twelvedata.com/';
+    var key = '&apikey=' + TWELVE_DATA_KEY;
+    var symParam = '?symbol=' + encodeURIComponent(tdSymbol) + '&interval=' + tdInterval;
+
+    var [rsiRes, macdRes, quoteRes, ema20Res] = await Promise.all([
+      fetch(baseUrl + 'rsi' + symParam + '&time_period=14&outputsize=1' + key).then(function(r){return r.json();}),
+      fetch(baseUrl + 'macd' + symParam + '&outputsize=1' + key).then(function(r){return r.json();}),
+      fetch(baseUrl + 'quote?symbol=' + encodeURIComponent(tdSymbol) + key).then(function(r){return r.json();}),
+      fetch(baseUrl + 'ema' + symParam + '&time_period=20&outputsize=1' + key).then(function(r){return r.json();})
+    ]);
+
+    // Parse values
+    var rsi    = rsiRes.values && rsiRes.values[0] ? parseFloat(rsiRes.values[0].rsi).toFixed(1) : null;
+    var macd   = macdRes.values && macdRes.values[0] ? parseFloat(macdRes.values[0].macd).toFixed(4) : null;
+    var signal = macdRes.values && macdRes.values[0] ? parseFloat(macdRes.values[0].macd_signal).toFixed(4) : null;
+    var price  = quoteRes.close ? parseFloat(quoteRes.close) : null;
+    var open   = quoteRes.open  ? parseFloat(quoteRes.open)  : null;
+    var ema20  = ema20Res.values && ema20Res.values[0] ? parseFloat(ema20Res.values[0].ema) : null;
+
+    // Determine direction + strength
+    var direction = 'NEUTRAL';
+    var strength  = 50;
+    var reasons   = [];
+
+    if(rsi !== null) {
+      if(parseFloat(rsi) < 40)      { direction = 'BUY';  strength += 15; reasons.push('RSI oversold (' + rsi + ')'); }
+      else if(parseFloat(rsi) > 60) { direction = 'SELL'; strength += 15; reasons.push('RSI overbought (' + rsi + ')'); }
+      else                          { reasons.push('RSI neutral (' + rsi + ')'); }
+    }
+    if(macd !== null && signal !== null) {
+      if(parseFloat(macd) > parseFloat(signal)) {
+        if(direction !== 'SELL') direction = 'BUY';
+        strength += 10; reasons.push('MACD bullish crossover');
+      } else {
+        if(direction !== 'BUY') direction = 'SELL';
+        strength += 10; reasons.push('MACD bearish crossover');
+      }
+    }
+    if(price !== null && ema20 !== null) {
+      if(price > ema20)      { if(direction !== 'SELL') direction = 'BUY';  strength += 10; reasons.push('Price above EMA20'); }
+      else if(price < ema20) { if(direction !== 'BUY')  direction = 'SELL'; strength += 10; reasons.push('Price below EMA20'); }
+    }
+    if(price !== null && open !== null) {
+      if(price > open)      { if(direction !== 'SELL') direction = 'BUY';  strength += 5; reasons.push('Bullish candle'); }
+      else if(price < open) { if(direction !== 'BUY')  direction = 'SELL'; strength += 5; reasons.push('Bearish candle'); }
+    }
+    strength = Math.min(strength, 95);
+
+    // Update UI
     var pairTitle = document.getElementById('scan-pair-title');
-    var tfLabel = document.getElementById('scan-tf-label');
-    if(pairTitle) pairTitle.textContent = symbol;
-    if(tfLabel) tfLabel.textContent = tf;
-    var results = document.getElementById('scan-results');
-    if(results) results.style.display = 'block';
-    if(status) status.textContent = 'Last scan: just now · ' + symbol + ' ' + tf;
+    var tfLabel   = document.getElementById('scan-tf-label');
+    var results   = document.getElementById('scan-results');
+    if(pairTitle) pairTitle.textContent = appSymbol;
+    if(tfLabel)   tfLabel.textContent   = appTf;
+    if(results)   results.style.display = 'block';
+
+    // Update signal direction display
+    var dirEl = document.getElementById('scan-direction');
+    if(dirEl) {
+      dirEl.textContent = direction;
+      dirEl.style.color = direction==='BUY' ? 'var(--green)' : direction==='SELL' ? 'var(--red)' : 'var(--amber)';
+    }
+    // Update strength bar
+    var strEl = document.getElementById('scan-strength-bar');
+    var strLbl = document.getElementById('scan-strength-label');
+    if(strEl)  strEl.style.width = strength + '%';
+    if(strLbl) strLbl.textContent = strength + '%';
+
+    // Update indicator values
+    var rsiEl   = document.getElementById('scan-rsi');
+    var macdEl  = document.getElementById('scan-macd');
+    var priceEl = document.getElementById('scan-price');
+    if(rsiEl)   rsiEl.textContent   = rsi   ? rsi   : '--';
+    if(macdEl)  macdEl.textContent  = macd  ? macd  : '--';
+    if(priceEl) priceEl.textContent = price ? (price > 1000 ? price.toLocaleString('en',{maximumFractionDigits:2}) : price.toFixed(4)) : '--';
+
+    // Reasons summary
+    var reasonsEl = document.getElementById('scan-reasons');
+    if(reasonsEl) reasonsEl.textContent = reasons.join(' · ');
+
+    if(status) status.textContent = 'Last scan: just now · ' + appSymbol + ' ' + appTf;
+
+  } catch(e) {
+    if(status) status.textContent = 'Scan failed: ' + (e.message || 'API error');
+    console.error('Scan error:', e);
+  } finally {
     if(btn) { btn.textContent = 'INITIATE SCAN'; btn.disabled = false; }
-  }, 2000);
+  }
 }
 
 function closeMAIReport() {
@@ -5148,6 +5248,136 @@ async function handleUpdateSignal(){
 }
 function loadAnalystScreen(user){var nameEl=document.querySelector('#screen-analyst .app-header-name');if(nameEl&&user)nameEl.textContent=user.name||user.username||'ANALYST';setTimeout(loadAnalystSignals,500);}
 document.addEventListener('DOMContentLoaded',function(){var saved=sessionStorage.getItem('mob_user');if(saved){try{currentUser=JSON.parse(saved);routeUser(currentUser);if(currentUser&&currentUser.role==='analyst')setTimeout(loadAnalystSignals,500);}catch(e){showScreen('screen-auth');}}else{showScreen('screen-auth');}});
+
+
+// ══════════════════════════════════════════════════════
+// API CONFIGURATION — Add your keys here
+// ══════════════════════════════════════════════════════
+var TWELVE_DATA_KEY = '9ea2aa62ec4f4a0c82550e9db6509653'; // ← replace with your key
+
+// ══════════════════════════════════════════════════════
+// LIVE MARKET PRICES — Twelve Data API
+// ══════════════════════════════════════════════════════
+var _priceRefreshTimer = null;
+
+// Symbol map: app symbol → Twelve Data symbol
+var TWELVE_SYMBOLS = {
+  'XAUUSD': 'XAU/USD',
+  'NAS100': 'NDX',
+  'BTCUSD': 'BTC/USD',
+  'GBPJPY': 'GBP/JPY'
+};
+
+async function loadLivePrices() {
+  if(!TWELVE_DATA_KEY || TWELVE_DATA_KEY === 'YOUR_TWELVE_DATA_KEY') return;
+  try {
+    var symbols = Object.values(TWELVE_SYMBOLS).join(',');
+    var url = 'https://api.twelvedata.com/quote?symbol=' + encodeURIComponent(symbols) + '&apikey=' + TWELVE_DATA_KEY;
+    var res = await fetch(url);
+    var data = await res.json();
+    // Update each card
+    Object.keys(TWELVE_SYMBOLS).forEach(function(appSym) {
+      var tdSym = TWELVE_SYMBOLS[appSym];
+      var quote = data[tdSym];
+      if(!quote || quote.status === 'error') return;
+      var price = parseFloat(quote.close);
+      var open  = parseFloat(quote.open);
+      var change = price - open;
+      var changePct = ((change / open) * 100).toFixed(2);
+      var isUp = change >= 0;
+      // Update price
+      var priceEl = document.getElementById('price-' + appSym);
+      if(priceEl) priceEl.textContent = price > 1000 ? price.toLocaleString('en',{maximumFractionDigits:2}) : price.toFixed(4);
+      // Update change
+      var changeEl = document.getElementById('change-' + appSym);
+      if(changeEl) {
+        changeEl.textContent = (isUp ? '▲ +' : '▼ ') + changePct + '%';
+        changeEl.className = 'mkt-change ' + (isUp ? 'up' : 'dn');
+      }
+      // Update card class
+      var symEl = document.getElementById('sym-' + appSym);
+      if(symEl && symEl.parentElement) {
+        symEl.parentElement.className = 'mkt-card ' + (isUp ? 'up' : 'dn');
+      }
+    });
+    console.log('Live prices updated ✅');
+  } catch(e) {
+    console.warn('Live price fetch failed:', e.message);
+  }
+}
+
+function startPriceAutoRefresh() {
+  loadLivePrices();
+  if(_priceRefreshTimer) clearInterval(_priceRefreshTimer);
+  _priceRefreshTimer = setInterval(loadLivePrices, 60000); // every 60 seconds
+}
+
+// ══════════════════════════════════════════════════════
+// JOURNAL — Connected to Supabase trades table
+// ══════════════════════════════════════════════════════
+async function loadJournalData() {
+  if(!currentUser||!db) return;
+  try {
+    // Fetch user's trades
+    var res = await db.from('trades').select('*').eq('user_id', currentUser.id).order('created_at',{ascending:false}).limit(50);
+    if(res.error || !res.data) return;
+    var trades = res.data;
+    if(!trades.length) return;
+
+    // Calculate stats from trades
+    var wins   = trades.filter(function(t){ return parseFloat(t.pnl||0) > 0; }).length;
+    var losses = trades.filter(function(t){ return parseFloat(t.pnl||0) < 0; }).length;
+    var total  = wins + losses;
+    var winRate = total > 0 ? ((wins/total)*100).toFixed(0) : 0;
+    var totalPnl = trades.reduce(function(s,t){ return s + parseFloat(t.pnl||0); }, 0);
+
+    // This month's trades
+    var now = new Date();
+    var monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    var monthTrades = trades.filter(function(t){ return new Date(t.created_at) >= monthStart; });
+    var monthPnl = monthTrades.reduce(function(s,t){ return s + parseFloat(t.pnl||0); }, 0);
+
+    // Update journal stats
+    var balEl  = document.getElementById('journal-balance');
+    var growEl = document.getElementById('journal-growth');
+    var monEl  = document.getElementById('journal-month');
+    if(balEl) balEl.textContent = '$' + Math.abs(totalPnl).toLocaleString('en',{maximumFractionDigits:0});
+    if(growEl) {
+      growEl.textContent = (totalPnl >= 0 ? '+' : '') + totalPnl.toFixed(0) + ' pts';
+      growEl.style.color = totalPnl >= 0 ? 'var(--green)' : 'var(--red)';
+    }
+    if(monEl) {
+      monEl.textContent = (monthPnl >= 0 ? '+' : '') + monthPnl.toFixed(0) + ' pts';
+      monEl.style.color = monthPnl >= 0 ? 'var(--green)' : 'var(--red)';
+    }
+
+    // Update recent trades table
+    loadJournalTradesTable(trades);
+  } catch(e) {
+    console.warn('Journal load failed:', e.message);
+  }
+}
+
+function loadJournalTradesTable(trades) {
+  // Find the trade table or empty state in journal tab
+  var el = document.getElementById('journal-trades-list');
+  if(!el) return;
+  if(!trades.length) {
+    el.innerHTML = '<div class="empty-state" style="padding:16px;"><i class="ti ti-notebook"></i> No trades yet</div>';
+    return;
+  }
+  el.innerHTML = '';
+  trades.slice(0, 10).forEach(function(trade) {
+    var pnl = parseFloat(trade.pnl || 0);
+    var row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);';
+    row.innerHTML =
+      '<div style="width:34px;height:34px;border-radius:8px;background:' + (pnl>=0?'rgba(0,200,122,0.1)':'rgba(255,30,60,0.08)') + ';display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:' + (pnl>=0?'var(--green)':'var(--red)') + ';flex-shrink:0;">' + (trade.direction==='BUY'?'B':'S') + '</div>' +
+      '<div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:700;color:var(--text);">' + (trade.pair||'--') + '</div><div style="font-size:10px;color:var(--text3);">' + timeAgo(trade.created_at) + ' · ' + (trade.volume||'--') + ' lot</div></div>' +
+      '<div style="text-align:right;"><div style="font-size:13px;font-weight:800;color:' + (pnl>=0?'var(--green)':'var(--red)') + ';">' + (pnl>=0?'+':'') + pnl.toFixed(0) + '</div><div style="font-size:10px;color:var(--text3);">' + (trade.status||'closed') + '</div></div>';
+    el.appendChild(row);
+  });
+}
 
 </script>
 </body>
