@@ -3862,6 +3862,7 @@ function routeUser(user) {
     enterSubAdmin(user);
   } else if(user.role === 'analyst') {
     showScreen('screen-analyst');
+    loadAnalystScreen(user);
   } else if(user.status === 'pending') {
     document.getElementById('pending-mt5-val').textContent = user.mt5_id||'';
     showScreen('screen-pending');
