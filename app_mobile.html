@@ -2398,10 +2398,11 @@ select.auth-input {
       <button class="admin-tab-btn" data-tab="dashboard" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid var(--red);color:var(--red);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Dashboard</button>
       <button class="admin-tab-btn" data-tab="users" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Users</button>
       <button class="admin-tab-btn" data-tab="tickets" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Support</button>
-      <button class="admin-tab-btn" data-tab="funds" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Fund Req</button>
+      <button class="admin-tab-btn" data-tab="funds" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Fund Man</button>
       <button class="admin-tab-btn" data-tab="announce" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Announce</button>
       <button class="admin-tab-btn" data-tab="signals" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Signals</button>
-      <button class="admin-tab-btn" data-tab="analyst" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Analysts</button>
+      <button class="admin-tab-btn" data-tab="analyst" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Administrator</button>
+      <button class="admin-tab-btn" data-tab="academy" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Academy</button>
     </div>
     <div class="sub-content">
 
@@ -2428,7 +2429,7 @@ select.auth-input {
           </div>
           <div class="section-card" style="padding:10px;text-align:center;">
             <div style="font-size:22px;font-weight:800;color:#4D9EFF;" id="astat-funds">--</div>
-            <div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-top:2px;">Fund Requests</div>
+            <div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-top:2px;">Fund Management</div>
           </div>
         </div>
         <div class="section-card">
@@ -2574,6 +2575,7 @@ select.auth-input {
                 <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="announce" class="subadmin-tab-check" style="accent-color:var(--red);width:15px;height:15px;"> Announcements</label>
                 <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="signals" class="subadmin-tab-check" style="accent-color:var(--red);width:15px;height:15px;"> Signals</label>
                 <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="analyst" class="subadmin-tab-check" style="accent-color:var(--red);width:15px;height:15px;"> Analysts</label>
+                <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="academy" class="subadmin-tab-check" style="accent-color:var(--red);width:15px;height:15px;"> Academy</label>
               </div>
             </div>
           </div>
@@ -2589,6 +2591,58 @@ select.auth-input {
           <div id="admin-subadmin-list"><div class="empty-state" style="padding:12px;">Loading...</div></div>
         </div>
       </div>
+
+    <!-- ACADEMY TAB CONTENT -->
+    <div id="atab-content-academy" style="display:none;">
+      <!-- Post Academy Content -->
+      <div class="section-card">
+        <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:14px;">PUBLISH ACADEMY CONTENT</div>
+        <div class="auth-field">
+          <label class="auth-label">Category</label>
+          <select id="academy-category" class="auth-input">
+            <option value="basics">Trading Basics</option>
+            <option value="technical">Technical Analysis</option>
+            <option value="fundamental">Fundamental Analysis</option>
+            <option value="risk">Risk Management</option>
+            <option value="psychology">Trading Psychology</option>
+            <option value="strategy">Strategies</option>
+            <option value="mt5">MT5 Platform Guide</option>
+          </select>
+        </div>
+        <div class="auth-field">
+          <label class="auth-label">Title</label>
+          <input id="academy-title" class="auth-input" type="text" placeholder="Lesson title">
+        </div>
+        <div class="auth-field">
+          <label class="auth-label">Content</label>
+          <textarea id="academy-content" class="auth-input" rows="6" style="resize:vertical;" placeholder="Write lesson content here..."></textarea>
+        </div>
+        <div class="auth-field">
+          <label class="auth-label">Video URL <span style="color:var(--text3);font-size:10px;">(optional — YouTube or direct link)</span></label>
+          <input id="academy-video" class="auth-input" type="text" placeholder="https://youtube.com/...">
+        </div>
+        <div class="auth-field">
+          <label class="auth-label">Level</label>
+          <select id="academy-level" class="auth-input">
+            <option value="beginner">Beginner</option>
+            <option value="intermediate">Intermediate</option>
+            <option value="advanced">Advanced</option>
+          </select>
+        </div>
+        <div id="academy-error" class="error-msg"></div>
+        <div id="academy-success" class="success-msg"></div>
+        <button class="red-btn" onclick="handlePublishAcademy()">PUBLISH LESSON</button>
+      </div>
+
+      <!-- Published Lessons List -->
+      <div class="section-card" style="margin-top:14px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.5px;">PUBLISHED LESSONS</div>
+          <button onclick="loadAdminAcademy()" style="background:transparent;border:none;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;">↻ Refresh</button>
+        </div>
+        <div id="admin-academy-list"><div class="empty-state" style="padding:16px;"><i class="ti ti-book"></i> Loading...</div></div>
+      </div>
+    </div>
 
     </div>
   </div>
@@ -4569,7 +4623,7 @@ function loadProfileData() {
 
 // ── ADMIN TAB SWITCHER ──
 function switchAdminTab(tab) {
-  var tabs = ['dashboard','users','tickets','funds','announce','signals','analyst'];
+  var tabs = ['dashboard','users','tickets','funds','announce','signals','analyst','academy'];
   tabs.forEach(function(t) {
     // Support both old id-based and new data-tab-based buttons
     var btn = document.getElementById('atab-' + t) ||
@@ -4588,6 +4642,7 @@ function switchAdminTab(tab) {
   if(tab === 'tickets') loadAdminTickets();
   if(tab === 'funds') loadAdminFunds();
   if(tab === 'analyst') { loadAdminAnalysts(); loadAdminSubAdmins(); }
+  if(tab === 'academy') loadAdminAcademy();
   if(tab === 'announce') loadAdminAnnouncements();
   if(tab === 'signals') loadAdminSignals();
 }
@@ -5104,8 +5159,8 @@ function openEditSubAdminPopup(sub) {
   popup.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(4px);z-index:9100;display:flex;align-items:flex-end;';
   var sheet=document.createElement('div');
   sheet.style.cssText='width:100%;background:var(--bg2);border-radius:20px 20px 0 0;border-top:1px solid var(--border);padding:20px 18px 36px;max-height:90vh;overflow-y:auto;';
-  var allTabs=['dashboard','users','tickets','funds','announce','signals','analyst'];
-  var tabLabels={dashboard:'Dashboard',users:'Users',tickets:'Support',funds:'Fund Requests',announce:'Announcements',signals:'Signals',analyst:'Analysts'};
+  var allTabs=['dashboard','users','tickets','funds','announce','signals','analyst','academy'];
+  var tabLabels={dashboard:'Dashboard',users:'Users',tickets:'Support',funds:'Fund Requests',announce:'Announcements',signals:'Signals',analyst:'Analysts',academy:'Academy'};
   var savedTabs=(sub.allowed_tabs||'').split(',');
   var tabsHTML=allTabs.map(function(t){
     var chk=savedTabs.indexOf(t)>-1?'checked':'';
@@ -5165,7 +5220,7 @@ async function deleteSubAdmin(id) {
 function enterSubAdmin(user) {
   showSubScreen('sub-admin');
   // Hide all admin tabs first
-  var allTabs=['dashboard','users','tickets','funds','announce','signals','analyst'];
+  var allTabs=['dashboard','users','tickets','funds','announce','signals','analyst','academy'];
   var allowedTabs=(user.allowed_tabs||'').split(',');
   allTabs.forEach(function(tab) {
     var btn=document.getElementById('atab-'+tab)||document.querySelector('[data-tab="'+tab+'"]');
@@ -5173,6 +5228,68 @@ function enterSubAdmin(user) {
   });
   // Switch to first allowed tab
   if(allowedTabs.length) switchAdminTab(allowedTabs[0]);
+}
+
+
+// ══════════════════════════════════════
+// ADMIN ACADEMY MANAGEMENT
+// ══════════════════════════════════════
+
+async function handlePublishAcademy() {
+  var category = document.getElementById('academy-category').value;
+  var title    = document.getElementById('academy-title').value.trim();
+  var content  = document.getElementById('academy-content').value.trim();
+  var video    = document.getElementById('academy-video').value.trim();
+  var level    = document.getElementById('academy-level').value;
+  var errEl    = document.getElementById('academy-error');
+  var sucEl    = document.getElementById('academy-success');
+  errEl.style.display='none'; sucEl.style.display='none';
+  if(!title||!content){errEl.textContent='Title and content are required';errEl.style.display='block';return;}
+  try{
+    var res=await db.from('academy').insert([{category,title,content,video_url:video||null,level,published:true,created_at:new Date().toISOString()}]);
+    if(res.error)throw res.error;
+    sucEl.textContent='Lesson published!';sucEl.style.display='block';
+    document.getElementById('academy-title').value='';
+    document.getElementById('academy-content').value='';
+    document.getElementById('academy-video').value='';
+    setTimeout(function(){sucEl.style.display='none';loadAdminAcademy();},1500);
+  }catch(e){errEl.textContent='Error: '+(e.message||'Failed');errEl.style.display='block';}
+}
+
+async function loadAdminAcademy() {
+  var el=document.getElementById('admin-academy-list');if(!el)return;
+  el.innerHTML='<div style="padding:12px;color:var(--text2);font-size:12px;">Loading...</div>';
+  try{
+    var res=await db.from('academy').select('*').order('created_at',{ascending:false});
+    if(res.error)throw res.error;
+    if(!res.data||!res.data.length){el.innerHTML='<div class="empty-state" style="padding:16px;"><i class="ti ti-book"></i> No lessons published yet</div>';return;}
+    var levelColors={beginner:'var(--green)',intermediate:'var(--amber)',advanced:'var(--red)'};
+    el.innerHTML='';
+    res.data.forEach(function(lesson){
+      var card=document.createElement('div');
+      card.style.cssText='padding:11px 13px;background:var(--bg3);border-radius:9px;margin-bottom:8px;border:1px solid var(--border);';
+      card.innerHTML=
+        '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">'+
+        '<div style="flex:1;font-size:13px;font-weight:700;color:var(--text);">'+lesson.title+'</div>'+
+        '<div style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;background:rgba(255,30,60,0.1);color:var(--red);">'+lesson.category+'</div>'+
+        '<div style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;color:'+(levelColors[lesson.level]||'var(--text3)')+';background:rgba(255,255,255,0.05);">'+lesson.level+'</div>'+
+        '</div>'+
+        '<div style="font-size:11px;color:var(--text3);margin-bottom:8px;line-height:1.5;">'+lesson.content.substring(0,100)+(lesson.content.length>100?'...':'')+'</div>';
+      var btnRow=document.createElement('div');btnRow.style.cssText='display:flex;gap:6px;';
+      var bDel=document.createElement('button');
+      bDel.style.cssText='flex:1;padding:7px;background:rgba(255,30,60,0.08);border:1px solid rgba(255,30,60,0.15);border-radius:7px;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;';
+      bDel.textContent='Delete';
+      bDel.addEventListener('click',function(){deleteAcademyLesson(lesson.id);});
+      btnRow.appendChild(bDel);card.appendChild(btnRow);el.appendChild(card);
+    });
+  }catch(e){el.innerHTML='<div style="padding:12px;color:var(--red);">Error: '+(e.message||'failed')+'</div>';}
+}
+
+async function deleteAcademyLesson(id){
+  if(!confirm('Delete this lesson?'))return;
+  var res=await db.from('academy').delete().eq('id',id);
+  if(res.error){alert(res.error.message);return;}
+  loadAdminAcademy();
 }
 
 </script>
