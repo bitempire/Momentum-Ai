@@ -1955,7 +1955,7 @@ select.auth-input {
           </select>
         </div>
       </div>
-      <button class="red-btn">SAVE SETTINGS</button>
+      <button class="red-btn" onclick="saveEASettings()">SAVE SETTINGS</button>
     </div>
   </div>
 
@@ -2405,6 +2405,7 @@ select.auth-input {
       <button class="admin-tab-btn" data-tab="funds" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Fund Man</button>
       <button class="admin-tab-btn" data-tab="announce" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Announce</button>
       <button class="admin-tab-btn" data-tab="signals" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Signals</button>
+      <button class="admin-tab-btn" data-tab="mt5" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">MT5</button>
       <button class="admin-tab-btn" data-tab="analyst" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Administrator</button>
       <button class="admin-tab-btn" data-tab="academy" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Academy</button>
     </div>
@@ -2576,6 +2577,7 @@ select.auth-input {
                 <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="signals" class="subadmin-tab-check" style="accent-color:var(--red);width:15px;height:15px;"> Signals</label>
                 <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="analyst" class="subadmin-tab-check" style="accent-color:var(--red);width:15px;height:15px;"> Administrator</label>
                 <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="academy" class="subadmin-tab-check" style="accent-color:var(--red);width:15px;height:15px;"> Academy</label>
+                <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="mt5" class="subadmin-tab-check" style="accent-color:var(--red);width:15px;height:15px;"> MT5</label>
               </div>
             </div>
           </div>
@@ -2591,6 +2593,18 @@ select.auth-input {
           <div id="admin-subadmin-list"><div class="empty-state" style="padding:12px;">Loading...</div></div>
         </div>
       </div>
+
+
+    <!-- MT5 TAB CONTENT -->
+    <div id="atab-content-mt5" style="display:none;">
+      <div class="section-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.5px;">USER MT5 CREDENTIALS</div>
+          <button onclick="loadAdminMT5()" style="background:transparent;border:none;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;">↻ Refresh</button>
+        </div>
+        <div id="admin-mt5-list"><div class="empty-state" style="padding:16px;"><i class="ti ti-loader"></i> Loading...</div></div>
+      </div>
+    </div>
 
     <!-- ACADEMY TAB -->
     <div id="atab-content-academy" style="display:none;">
@@ -2758,6 +2772,59 @@ select.auth-input {
       </div>
 
       <!-- Sign Out -->
+
+      <!-- MT5 Connection -->
+      <div class="section-card" style="margin-bottom:14px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <div style="font-family:Orbitron,sans-serif;font-size:12px;font-weight:800;color:var(--text);">MT5 CONNECTION</div>
+          <div id="mt5-status-badge" style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:5px;background:rgba(255,176,32,0.12);color:var(--amber);">NOT CONNECTED</div>
+        </div>
+        <div class="auth-field">
+          <label class="auth-label">MT5 Account ID</label>
+          <input id="profile-mt5-id" class="auth-input" type="text" placeholder="e.g. 12345678">
+        </div>
+        <div class="auth-field">
+          <label class="auth-label">MT5 Master Password</label>
+          <div style="position:relative;">
+            <input id="profile-mt5-pw" class="auth-input" type="password" placeholder="Master password" style="padding-right:44px;">
+            <button type="button" onclick="toggleMT5Pw()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:18px;padding:0;"><i class="ti ti-eye" id="mt5-pw-eye"></i></button>
+          </div>
+        </div>
+        <div class="auth-field">
+          <label class="auth-label">Broker Server</label>
+          <input id="profile-mt5-server" class="auth-input" type="text" placeholder="e.g. AFTTMarkets-Live" value="AFTTMarkets-Live">
+        </div>
+        <!-- Permission Toggle -->
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:var(--bg3);border-radius:10px;margin-bottom:14px;border:1px solid var(--border);">
+          <div>
+            <div style="font-size:13px;font-weight:700;color:var(--text);">Allow Automated Trading</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px;">EA will execute signals automatically</div>
+          </div>
+          <div class="toggle" id="mt5-auto-toggle" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <!-- Disclaimer -->
+        <div style="background:rgba(255,176,32,0.06);border:1px solid rgba(255,176,32,0.2);border-radius:10px;padding:12px;margin-bottom:12px;">
+          <div style="font-size:11px;font-weight:700;color:var(--amber);margin-bottom:8px;">⚠️ RISK DISCLAIMER</div>
+          <div style="font-size:11px;color:var(--text3);line-height:1.7;">
+            1. Trading involves significant risk of loss.<br>
+            2. Past performance does not guarantee future results.<br>
+            3. The EA executes trades based on analyst signals automatically.<br>
+            4. You are responsible for monitoring your account at all times.<br>
+            5. Momentum AI is not liable for any trading losses incurred.<br>
+            6. Ensure sufficient margin before enabling automated trading.<br>
+            7. EA will stop functioning if your MT5 password is changed.
+          </div>
+        </div>
+        <!-- Agreement Checkbox -->
+        <label style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg3);border-radius:8px;cursor:pointer;border:1px solid var(--border);margin-bottom:14px;">
+          <input type="checkbox" id="mt5-agree-check" style="accent-color:var(--red);width:16px;height:16px;flex-shrink:0;">
+          <div style="font-size:12px;color:var(--text2);line-height:1.5;">I have read and agree to the risk disclaimer above</div>
+        </label>
+        <div id="mt5-connect-error" class="error-msg"></div>
+        <div id="mt5-connect-success" class="success-msg"></div>
+        <button class="red-btn" onclick="handleMT5Connect()">CONNECT MT5</button>
+      </div>
+
       <button onclick="handleLogout()" style="width:100%;padding:13px;background:transparent;border:1px solid rgba(255,30,60,0.3);border-radius:12px;color:var(--red);font-size:13px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;">Sign Out</button>
     </div>
   </div>
@@ -4054,6 +4121,7 @@ function showSubScreen(id) {
   if(id==='sub-profile') { loadSavedProfilePhoto(); loadProfileData(); }
   if(id==='sub-support') { loadMyTickets(); }
   if(id==='sub-academy') { loadAcademy(); }
+  if(id==='sub-profile') { loadProfileMT5(); }
 }
 function hideSubScreen(id) {
   var el = document.getElementById(id);
@@ -4656,6 +4724,7 @@ function openTicketDetail(ticket) {
   if(goBtn) goBtn.addEventListener('click', function(){
     closeTradePopup();
     switchTab('more');
+    setTimeout(function(){ showSubScreen('sub-ea'); }, 100);
     popup.remove();
   });
 }
@@ -4707,7 +4776,7 @@ function loadProfileData() {
 
 // ── ADMIN TAB SWITCHER ──
 function switchAdminTab(tab) {
-  var tabs = ['dashboard','users','tickets','funds','announce','signals','analyst','academy'];
+  var tabs = ['dashboard','users','tickets','funds','announce','signals','mt5','analyst','academy'];
   tabs.forEach(function(t) {
     // Support both old id-based and new data-tab-based buttons
     var btn = document.getElementById('atab-' + t) ||
@@ -4726,10 +4795,12 @@ function switchAdminTab(tab) {
   if(tab === 'tickets') loadAdminTickets();
   if(tab === 'funds') loadAdminFunds();
   if(tab === 'signals') loadAdminSignals();
+  if(tab === 'mt5') loadAdminMT5();
   if(tab === 'analyst') { loadAdminAnalysts(); loadAdminSubAdmins(); }
   if(tab === 'academy') loadAdminAcademy();
   if(tab === 'announce') loadAdminAnnouncements();
   if(tab === 'signals') loadAdminSignals();
+  if(tab === 'mt5') loadAdminMT5();
 }
 
 // Wire up admin tab buttons via event delegation
@@ -5145,8 +5216,8 @@ function openEditSubAdminPopup(sub){
   var ex=document.getElementById('edit-subadmin-popup');if(ex)ex.remove();
   var popup=document.createElement('div');popup.id='edit-subadmin-popup';popup.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(4px);z-index:9100;display:flex;align-items:flex-end;';
   var sheet=document.createElement('div');sheet.style.cssText='width:100%;background:var(--bg2);border-radius:20px 20px 0 0;border-top:1px solid var(--border);padding:20px 18px 36px;max-height:90vh;overflow-y:auto;';
-  var allTabs=['dashboard','users','tickets','funds','announce','signals','analyst','academy'];
-  var tabLabels={dashboard:'Dashboard',users:'Users',tickets:'Support',funds:'Fund Management',announce:'Announcements',signals:'Signals',analyst:'Administrator',academy:'Academy'};
+  var allTabs=['dashboard','users','tickets','funds','announce','signals','mt5','analyst','academy'];
+  var tabLabels={dashboard:'Dashboard',users:'Users',tickets:'Support',funds:'Fund Management',announce:'Announcements',signals:'Signals',mt5:'MT5',analyst:'Administrator',academy:'Academy'};
   var saved=(sub.allowed_tabs||'').split(',');
   var th=allTabs.map(function(t){var c=saved.indexOf(t)>-1?'checked':'';return '<label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="'+t+'" class="esa-tab-check" '+c+' style="accent-color:var(--red);width:15px;height:15px;"> '+tabLabels[t]+'</label>';}).join('');
   sheet.innerHTML='<div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 18px;"></div><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;"><div style="font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);">EDIT SUB-ADMIN</div><button id="esa-x" style="width:32px;height:32px;border-radius:50%;background:var(--surface);border:1px solid var(--border);color:var(--text2);font-size:18px;cursor:pointer;">×</button></div><div class="auth-field"><label class="auth-label">Full Name</label><input id="esa-name" class="auth-input" type="text" value="'+(sub.name||'')+'"></div><div class="auth-field"><label class="auth-label">New Password</label><input id="esa-pw" class="auth-input" type="password" placeholder="Leave blank to keep"></div><div class="auth-field"><label class="auth-label">Status</label><select id="esa-status" class="auth-input"><option value="active"'+(sub.status==='active'?' selected':'')+'>Active</option><option value="suspended"'+(sub.status==='suspended'?' selected':'')+'>Suspended</option></select></div><div class="auth-field"><label class="auth-label">Panel Access</label><div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px 12px;"><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">'+th+'</div></div></div><div id="esa-error" class="error-msg"></div><div id="esa-success" class="success-msg"></div>';
@@ -5171,7 +5242,7 @@ function enterSubAdmin(user){
   showScreen('screen-app');
   setTimeout(function(){
     showSubScreen('sub-admin');
-    var allTabs=['dashboard','users','tickets','funds','announce','signals','analyst','academy'];
+    var allTabs=['dashboard','users','tickets','funds','announce','signals','mt5','analyst','academy'];
     var allowed=(user.allowed_tabs||'').split(',');
     allTabs.forEach(function(t){var b=document.querySelector('[data-tab="'+t+'"]');if(b)b.style.display=allowed.indexOf(t)>-1?'':'none';});
     if(allowed.length) switchAdminTab(allowed[0]);
@@ -5561,6 +5632,7 @@ function confirmExecution() {
     // Navigate to Smart Tool settings
     closeTradePopup();
     switchTab('more');
+    setTimeout(function(){ showSubScreen('sub-ea'); }, 100);
   }
 }
 
@@ -5586,6 +5658,195 @@ async function loadAnalystOptions() {
     });
   } catch(e) {
     select.innerHTML = '<option value="">Error loading analysts</option>';
+  }
+}
+
+
+// ══════════════════════════════════════════════════
+// MT5 CONNECTION — Profile Screen
+// ══════════════════════════════════════════════════
+
+function toggleMT5Pw() {
+  var i = document.getElementById('profile-mt5-pw');
+  var e = document.getElementById('mt5-pw-eye');
+  if(!i) return;
+  if(i.type === 'password') { i.type = 'text'; if(e) e.className = 'ti ti-eye-off'; }
+  else { i.type = 'password'; if(e) e.className = 'ti ti-eye'; }
+}
+
+async function handleMT5Connect() {
+  var mt5Id   = document.getElementById('profile-mt5-id').value.trim();
+  var mt5Pw   = document.getElementById('profile-mt5-pw').value;
+  var server  = document.getElementById('profile-mt5-server').value.trim();
+  var agreed  = document.getElementById('mt5-agree-check').checked;
+  var autoOn  = document.getElementById('mt5-auto-toggle').classList.contains('on');
+  var errEl   = document.getElementById('mt5-connect-error');
+  var sucEl   = document.getElementById('mt5-connect-success');
+  errEl.style.display = 'none'; sucEl.style.display = 'none';
+
+  if(!mt5Id)   { errEl.textContent = 'Please enter your MT5 Account ID'; errEl.style.display = 'block'; return; }
+  if(!mt5Pw)   { errEl.textContent = 'Please enter your MT5 Master Password'; errEl.style.display = 'block'; return; }
+  if(!agreed)  { errEl.textContent = 'Please agree to the risk disclaimer'; errEl.style.display = 'block'; return; }
+
+  // Encrypt password: btoa(password + '_mmai_' + mt5Id)
+  var encrypted = btoa(unescape(encodeURIComponent(mt5Pw + '_mmai_' + mt5Id)));
+
+  try {
+    var r = await db.from('users').update({
+      mt5_id:         mt5Id,
+      mt5_credential: encrypted,
+      mt5_server:     server || 'AFTTMarkets-Live',
+      allow_auto_trade: autoOn,
+      mt5_connected:  true,
+      connection_status: 'connected'
+    }).eq('id', currentUser.id);
+
+    if(r.error) throw r.error;
+
+    // Update local user
+    currentUser.mt5_id = mt5Id;
+    currentUser.mt5_connected = true;
+    sessionStorage.setItem('mob_user', JSON.stringify(currentUser));
+
+    // Update badge
+    var badge = document.getElementById('mt5-status-badge');
+    if(badge) {
+      badge.textContent = 'CONNECTED';
+      badge.style.background = 'rgba(0,200,122,0.12)';
+      badge.style.color = 'var(--green)';
+    }
+
+    sucEl.textContent = 'MT5 connected successfully!';
+    sucEl.style.display = 'block';
+  } catch(e) {
+    errEl.textContent = 'Error: ' + (e.message || 'Failed to connect');
+    errEl.style.display = 'block';
+  }
+}
+
+// Load existing MT5 data when profile opens
+function loadProfileMT5() {
+  if(!currentUser) return;
+  var idEl     = document.getElementById('profile-mt5-id');
+  var serverEl = document.getElementById('profile-mt5-server');
+  var badge    = document.getElementById('mt5-status-badge');
+  var toggle   = document.getElementById('mt5-auto-toggle');
+
+  if(idEl && currentUser.mt5_id && !currentUser.mt5_id.startsWith('ANALYST_') && !currentUser.mt5_id.startsWith('SUBADMIN_'))
+    idEl.value = currentUser.mt5_id;
+  if(serverEl && currentUser.mt5_server)
+    serverEl.value = currentUser.mt5_server;
+  if(currentUser.allow_auto_trade && toggle)
+    toggle.classList.add('on');
+  if(badge && currentUser.mt5_connected) {
+    badge.textContent = 'CONNECTED';
+    badge.style.background = 'rgba(0,200,122,0.12)';
+    badge.style.color = 'var(--green)';
+  }
+}
+
+// ══════════════════════════════════════════════════
+// SAVE EA SETTINGS — Smart Tool Screen
+// ══════════════════════════════════════════════════
+
+async function saveEASettings() {
+  if(!currentUser || !db) return;
+  var inputs  = document.querySelectorAll('#sub-ea .ea-input');
+  var toggles = document.querySelectorAll('#sub-ea .toggle');
+  var settings = {
+    inputs:   Array.from(inputs).map(function(i){ return i.value; }),
+    toggles:  Array.from(toggles).map(function(t){ return t.classList.contains('on'); }),
+    saved_at: new Date().toISOString()
+  };
+  try {
+    var r = await db.from('users').update({ ea_settings: JSON.stringify(settings) }).eq('id', currentUser.id);
+    if(r.error) throw r.error;
+    // Show success toast
+    var btn = document.querySelector('#sub-ea .red-btn');
+    if(btn) {
+      var orig = btn.textContent;
+      btn.textContent = '✓ SAVED';
+      btn.style.background = 'var(--green)';
+      setTimeout(function(){ btn.textContent = orig; btn.style.background = ''; }, 2000);
+    }
+  } catch(e) { alert('Save failed: ' + (e.message || 'Unknown error')); }
+}
+
+// ══════════════════════════════════════════════════
+// ADMIN MT5 TAB
+// ══════════════════════════════════════════════════
+
+async function loadAdminMT5() {
+  var el = document.getElementById('admin-mt5-list');
+  if(!el || !db) return;
+  el.innerHTML = '<div style="padding:12px;color:var(--text2);font-size:12px;">Loading...</div>';
+  try {
+    var res = await db.from('users').select('*').order('created_at',{ascending:false});
+    if(res.error) throw res.error;
+    var users = (res.data||[]).filter(function(u){
+      return u.role === 'user' || (!u.role && u.mt5_id && !u.mt5_id.startsWith('ANALYST_') && !u.mt5_id.startsWith('SUBADMIN_'));
+    });
+    if(!users.length) {
+      el.innerHTML = '<div class="empty-state" style="padding:16px;"><i class="ti ti-users"></i> No users found</div>';
+      return;
+    }
+    el.innerHTML = '';
+    users.forEach(function(user) {
+      var isConnected = user.mt5_connected === true;
+      var card = document.createElement('div');
+      card.style.cssText = 'padding:12px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;';
+      card.innerHTML =
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">' +
+          '<div>' +
+            '<div style="font-size:13px;font-weight:700;color:var(--text);">' + (user.name||user.username||'--') + '</div>' +
+            '<div style="font-size:11px;color:var(--text3);">@' + (user.username||'--') + '</div>' +
+          '</div>' +
+          '<div style="font-size:10px;font-weight:700;padding:3px 9px;border-radius:5px;background:' + (isConnected?'rgba(0,200,122,0.12)':'rgba(255,176,32,0.1)') + ';color:' + (isConnected?'var(--green)':'var(--amber)') + ';">' + (isConnected?'CONNECTED':'NOT CONNECTED') + '</div>' +
+        '</div>' +
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;">' +
+          '<div style="background:var(--surface);border-radius:7px;padding:8px;">' +
+            '<div style="font-size:9px;color:var(--text3);margin-bottom:3px;">MT5 ID</div>' +
+            '<div style="font-size:12px;font-weight:700;color:var(--text);">' + (user.mt5_id||'--') + '</div>' +
+          '</div>' +
+          '<div style="background:var(--surface);border-radius:7px;padding:8px;">' +
+            '<div style="font-size:9px;color:var(--text3);margin-bottom:3px;">SERVER</div>' +
+            '<div style="font-size:12px;font-weight:700;color:var(--text);">' + (user.mt5_server||'--') + '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div style="background:var(--surface);border-radius:7px;padding:8px;margin-bottom:10px;">' +
+          '<div style="font-size:9px;color:var(--text3);margin-bottom:3px;">MT5 PASSWORD</div>' +
+          '<div style="display:flex;align-items:center;justify-content:space-between;">' +
+            '<div id="mt5pw-' + user.id + '" style="font-size:12px;font-weight:700;color:var(--text);font-family:monospace;">●●●●●●●●</div>' +
+            (user.mt5_credential ? '<button id="revbtn-' + user.id + '" style="font-size:10px;font-weight:700;padding:4px 10px;background:rgba(77,158,255,0.1);border:1px solid rgba(77,158,255,0.2);border-radius:6px;color:#4D9EFF;cursor:pointer;">Reveal</button>' : '<div style="font-size:11px;color:var(--text3);">Not set</div>') +
+          '</div>' +
+        '</div>';
+
+      // Wire reveal button
+      if(user.mt5_credential) {
+        var revBtn = card.querySelector('#revbtn-' + user.id);
+        var pwEl   = card.querySelector('#mt5pw-' + user.id);
+        var revealed = false;
+        revBtn.addEventListener('click', function() {
+          if(!revealed) {
+            try {
+              var dec = decodeURIComponent(escape(atob(user.mt5_credential)));
+              var suf = '_mmai_' + user.mt5_id;
+              var pw  = dec.endsWith(suf) ? dec.slice(0, -suf.length) : dec;
+              pwEl.textContent = pw;
+              revBtn.textContent = 'Hide';
+              revealed = true;
+            } catch(e) { pwEl.textContent = user.mt5_credential; }
+          } else {
+            pwEl.textContent = '●●●●●●●●';
+            revBtn.textContent = 'Reveal';
+            revealed = false;
+          }
+        });
+      }
+      el.appendChild(card);
+    });
+  } catch(e) {
+    el.innerHTML = '<div style="padding:12px;color:var(--red);">Error: ' + (e.message||'failed') + '</div>';
   }
 }
 
