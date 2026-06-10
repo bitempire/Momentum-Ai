@@ -3166,7 +3166,7 @@ select.auth-input {
         <div class="trade-level-box"><div class="trade-level-lbl">Stop Loss</div><div class="trade-level-val sl" id="popup-sl">--</div></div>
         <div class="trade-level-box"><div class="trade-level-lbl">Take Profit</div><div class="trade-level-val tp" id="popup-tp">--</div></div>
       </div>
-      <button class="trade-execute-btn" onclick="executeTrade('smart')">EXECUTE WITH SMART TOOL</button>
+      <button class="trade-execute-btn" onclick="checkMT5ThenExecute()">EXECUTE WITH SMART TOOL</button>
     </div>
 
     <!-- MANUAL TAB -->
@@ -3186,11 +3186,7 @@ select.auth-input {
       <div class="section-card" style="margin-bottom:10px;">
         <div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px;">Choose Analyst</div>
         <select id="auto-analyser" class="auth-input" style="font-size:13px;padding:10px 14px;">
-          <option value="">Select Analyst</option>
-          <option value="analyst_1">Ahmad Hassan</option>
-          <option value="analyst_2">Rajan Kumar</option>
-          <option value="analyst_3">Maria Wong</option>
-          <option value="analyst_4">James Tan</option>
+          <option value="">Loading analysts...</option>
         </select>
       </div>
       <div class="section-card" style="margin-bottom:10px;">
@@ -3496,6 +3492,7 @@ async function handleChangePassword() {
 
 // ── TRADE TABS ──
 function switchTradeTab(tab) {
+  if(tab === 'auto') loadAnalystOptions();
   var tabs = ['smart','manual','auto'];
   tabs.forEach(function(t) {
     var btn = document.getElementById('trade-tab-' + t);
@@ -4655,6 +4652,12 @@ function openTicketDetail(ticket) {
   }
   popup.appendChild(sheet);
   document.body.appendChild(popup);
+  var goBtn = popup.querySelector('#go-smart-tool-btn');
+  if(goBtn) goBtn.addEventListener('click', function(){
+    closeTradePopup();
+    switchTab('more');
+    popup.remove();
+  });
 }
 
 
@@ -5436,6 +5439,194 @@ async function adminToggleTicketDone(id, currentStatus) {
   } catch(e) { alert('Error: ' + (e.message||'Unknown error')); }
 }
 
+
+// ── EXECUTE TRADE — MT5 CHECK + CHOICE POPUP ─────────────────────────
+var _execSelectedOption = '';
+
+async function checkMT5ThenExecute() {
+  if(!currentUser || !db) return;
+  try {
+    // Check if user has MT5 credentials saved
+    var res = await db.from('users').select('mt5_credential,mt5_connected').eq('id',currentUser.id).single();
+    var hasMT5 = res.data && res.data.mt5_credential && res.data.mt5_credential.length > 5;
+
+    if(!hasMT5) {
+      // No MT5 — show warning
+      showNoMT5Warning();
+    } else {
+      // MT5 connected — show execution choice
+      openExecuteChoicePopup();
+    }
+  } catch(e) {
+    // Fallback — show choice popup anyway
+    openExecuteChoicePopup();
+  }
+}
+
+function showNoMT5Warning() {
+  var ex = document.getElementById('no-mt5-warning');
+  if(ex) { ex.style.display = 'flex'; return; }
+  var popup = document.createElement('div');
+  popup.id = 'no-mt5-warning';
+  popup.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);z-index:9200;display:flex;align-items:flex-end;';
+  var sheet = document.createElement('div');
+  sheet.style.cssText = 'width:100%;background:var(--bg2);border-radius:20px 20px 0 0;border-top:1px solid var(--border);padding:20px 18px 36px;';
+  sheet.innerHTML =
+    '<div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px;"></div>' +
+    '<div style="text-align:center;margin-bottom:16px;"><i class="ti ti-plug-x" style="font-size:40px;color:var(--amber);"></i></div>' +
+    '<div style="font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);text-align:center;margin-bottom:8px;">MT5 NOT CONNECTED</div>' +
+    '<div style="font-size:12px;color:var(--text3);text-align:center;margin-bottom:24px;line-height:1.6;">Connect your MT5 account in Smart Tool settings before executing trades.</div>';
+  var goBtn = document.createElement('button');
+  goBtn.textContent = 'GO TO SMART TOOL';
+  goBtn.style.cssText = 'width:100%;padding:14px;background:var(--grad);border:none;border-radius:12px;color:#fff;font-family:Orbitron,sans-serif;font-size:13px;font-weight:800;letter-spacing:1px;cursor:pointer;margin-bottom:10px;';
+  goBtn.addEventListener('click', function(){ closeTradePopup(); popup.remove(); switchTab('more'); });
+  var cancelBtn = document.createElement('button');
+  cancelBtn.textContent = 'Cancel';
+  cancelBtn.style.cssText = 'width:100%;padding:12px;background:transparent;border:1px solid var(--border);border-radius:12px;color:var(--text2);font-size:13px;cursor:pointer;';
+  cancelBtn.addEventListener('click', function(){ popup.remove(); });
+  sheet.appendChild(goBtn);
+  sheet.appendChild(cancelBtn);
+  popup.appendChild(sheet);
+  document.body.appendChild(popup);
+}
+
+function openExecuteChoicePopup() {
+  _execSelectedOption = '';
+  // Reset radio buttons
+  resetExecOptions();
+  // Disable confirm button
+  var btn = document.getElementById('exec-confirm-btn');
+  if(btn) { btn.style.opacity='0.4'; btn.style.pointerEvents='none'; }
+  // Set pair info
+  if(currentSignal) {
+    var lbl = document.getElementById('execute-popup-pair');
+    if(lbl) lbl.textContent = (currentSignal.pair||'--') + ' · ' + (currentSignal.direction||'BUY') + ' · ' + (currentSignal.timeframe||'H4');
+  }
+  var popup = document.getElementById('execute-choice-popup');
+  if(popup) popup.style.display = 'flex';
+}
+
+function closeExecutePopup() {
+  var popup = document.getElementById('execute-choice-popup');
+  if(popup) popup.style.display = 'none';
+}
+
+function resetExecOptions() {
+  // Reset instant
+  var oi = document.getElementById('exec-opt-instant');
+  var ri = document.getElementById('radio-instant');
+  var di = document.getElementById('radio-instant-dot');
+  if(oi) oi.style.borderColor = 'var(--border)';
+  if(ri) ri.style.borderColor = 'var(--border)';
+  if(di) di.style.background = 'transparent';
+  // Reset custom
+  var oc = document.getElementById('exec-opt-custom');
+  var rc = document.getElementById('radio-custom');
+  var dc = document.getElementById('radio-custom-dot');
+  if(oc) oc.style.borderColor = 'var(--border)';
+  if(rc) rc.style.borderColor = 'var(--border)';
+  if(dc) dc.style.background = 'transparent';
+}
+
+function selectExecOption(option) {
+  resetExecOptions();
+  _execSelectedOption = option;
+  if(option === 'instant') {
+    var oi = document.getElementById('exec-opt-instant');
+    var ri = document.getElementById('radio-instant');
+    var di = document.getElementById('radio-instant-dot');
+    if(oi) oi.style.borderColor = 'var(--green)';
+    if(ri) ri.style.borderColor = 'var(--green)';
+    if(di) di.style.background = 'var(--green)';
+  } else {
+    var oc = document.getElementById('exec-opt-custom');
+    var rc = document.getElementById('radio-custom');
+    var dc = document.getElementById('radio-custom-dot');
+    if(oc) oc.style.borderColor = '#4D9EFF';
+    if(rc) rc.style.borderColor = '#4D9EFF';
+    if(dc) dc.style.background = '#4D9EFF';
+  }
+  // Enable confirm button
+  var btn = document.getElementById('exec-confirm-btn');
+  if(btn) { btn.style.opacity='1'; btn.style.pointerEvents='auto'; }
+}
+
+function confirmExecution() {
+  if(!_execSelectedOption) return;
+  closeExecutePopup();
+  if(_execSelectedOption === 'instant') {
+    // Execute with default settings
+    executeTrade('smart');
+  } else {
+    // Navigate to Smart Tool settings
+    closeTradePopup();
+    switchTab('more');
+  }
+}
+
+// ── LOAD REAL ANALYSTS INTO DROPDOWN ─────────────────────────────────
+async function loadAnalystOptions() {
+  var select = document.getElementById('auto-analyser');
+  if(!select || !db) return;
+  try {
+    var res = await db.from('users').select('id,name,username,trading_pairs').eq('role','analyst').eq('status','active');
+    if(res.error || !res.data || !res.data.length) {
+      select.innerHTML = '<option value="">No analysts available</option>';
+      return;
+    }
+    select.innerHTML = '<option value="">Select Analyst</option>';
+    res.data.forEach(function(analyst) {
+      var opt = document.createElement('option');
+      opt.value = analyst.id;
+      var pairs = analyst.trading_pairs && analyst.trading_pairs !== 'all'
+        ? ' · ' + analyst.trading_pairs.split(',').slice(0,2).join(', ')
+        : '';
+      opt.textContent = (analyst.name || analyst.username) + pairs;
+      select.appendChild(opt);
+    });
+  } catch(e) {
+    select.innerHTML = '<option value="">Error loading analysts</option>';
+  }
+}
+
 </script>
+
+  <!-- Execute Choice Popup -->
+  <div id="execute-choice-popup" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);z-index:9200;align-items:flex-end;">
+    <div style="width:100%;background:var(--bg2);border-radius:20px 20px 0 0;border-top:1px solid var(--border);padding:20px 18px 36px;">
+      <div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px;"></div>
+      <div style="font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);margin-bottom:4px;">EXECUTE TRADE</div>
+      <div id="execute-popup-pair" style="font-size:12px;color:var(--text3);margin-bottom:20px;">XAUUSD · BUY · H4</div>
+
+      <!-- Option 1: Instant Execute -->
+      <div id="exec-opt-instant" onclick="selectExecOption('instant')" style="padding:14px;background:var(--bg3);border:2px solid var(--border);border-radius:12px;cursor:pointer;margin-bottom:10px;transition:all .2s;">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="width:20px;height:20px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;" id="radio-instant">
+            <div style="width:10px;height:10px;border-radius:50%;background:transparent;" id="radio-instant-dot"></div>
+          </div>
+          <div>
+            <div style="font-size:13px;font-weight:800;color:var(--text);letter-spacing:.3px;">INSTANT EXECUTE</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px;">Default parameters apply · Lot 0.01 · SL/TP auto from signal</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Option 2: Custom Execute -->
+      <div id="exec-opt-custom" onclick="selectExecOption('custom')" style="padding:14px;background:var(--bg3);border:2px solid var(--border);border-radius:12px;cursor:pointer;margin-bottom:20px;transition:all .2s;">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="width:20px;height:20px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;" id="radio-custom">
+            <div style="width:10px;height:10px;border-radius:50%;background:transparent;" id="radio-custom-dot"></div>
+          </div>
+          <div>
+            <div style="font-size:13px;font-weight:800;color:var(--text);letter-spacing:.3px;">CUSTOM EXECUTE</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px;">Configure before sending · Use your saved settings</div>
+          </div>
+        </div>
+      </div>
+
+      <button id="exec-confirm-btn" onclick="confirmExecution()" style="width:100%;padding:14px;background:var(--grad);border:none;border-radius:12px;color:#fff;font-family:Orbitron,sans-serif;font-size:13px;font-weight:800;letter-spacing:1px;cursor:pointer;opacity:0.4;pointer-events:none;margin-bottom:10px;">CONFIRM</button>
+      <button onclick="closeExecutePopup()" style="width:100%;padding:12px;background:transparent;border:1px solid var(--border);border-radius:12px;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;">Cancel</button>
+    </div>
+  </div>
 </body>
 </html>
