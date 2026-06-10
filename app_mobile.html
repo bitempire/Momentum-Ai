@@ -1239,7 +1239,10 @@ select.auth-input {
       </div>
       <div class="auth-field">
         <label class="auth-label">Password</label>
-        <div style="position:relative;"><input id="input-password" class="auth-input" type="password" placeholder="••••••••" autocomplete="current-password" style="padding-right:44px;"><button type="button" onclick="toggleLoginPw()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:18px;padding:0;"><i class="ti ti-eye" id="login-pw-eye"></i></button></div>
+        <div style="position:relative;">
+        <input id="input-password" class="auth-input" type="password" placeholder="••••••••" autocomplete="current-password" style="padding-right:44px;">
+        <button type="button" onclick="toggleLoginPw()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:18px;padding:0;line-height:1;"><i class="ti ti-eye" id="login-pw-eye"></i></button>
+      </div>
       </div>
       <div class="auth-forgot"><a>Forgot Password?</a></div>
       <button class="auth-btn" id="btn-signin" onclick="handleLogin()">ACCESS SYSTEM</button>
@@ -1348,27 +1351,27 @@ select.auth-input {
       <div class="section-title" style="margin-bottom:10px;">Market <span>Overview</span></div>
       <div class="market-grid">
         <div class="mkt-card dn">
-          <div class="mkt-sym">XAUUSD</div>
-          <div class="mkt-price">3348.75</div>
-          <div class="mkt-change dn">▼ -0.25%</div>
+          <div class="mkt-sym" id="sym-XAUUSD">XAUUSD</div>
+          <div class="mkt-price" id="price-XAUUSD">3348.75</div>
+          <div class="mkt-change" id="change-XAUUSD" dn">▼ -0.25%</div>
           <canvas class="mkt-spark" data-trend="dn" data-color="#FF1E3C"></canvas>
         </div>
         <div class="mkt-card up">
-          <div class="mkt-sym">NAS100</div>
-          <div class="mkt-price">19,842</div>
-          <div class="mkt-change up">▲ +0.52%</div>
+          <div class="mkt-sym" id="sym-NAS100">NAS100</div>
+          <div class="mkt-price" id="price-NAS100">19,842</div>
+          <div class="mkt-change" id="change-NAS100" up">▲ +0.52%</div>
           <canvas class="mkt-spark" data-trend="up" data-color="#00c87a"></canvas>
         </div>
         <div class="mkt-card dn">
-          <div class="mkt-sym">BTCUSD</div>
-          <div class="mkt-price">67,432</div>
-          <div class="mkt-change dn">▼ -0.18%</div>
+          <div class="mkt-sym" id="sym-BTCUSD">BTCUSD</div>
+          <div class="mkt-price" id="price-BTCUSD">67,432</div>
+          <div class="mkt-change" id="change-BTCUSD" dn">▼ -0.18%</div>
           <canvas class="mkt-spark" data-trend="dn" data-color="#FF1E3C"></canvas>
         </div>
         <div class="mkt-card up">
-          <div class="mkt-sym">GBPJPY</div>
-          <div class="mkt-price">192.45</div>
-          <div class="mkt-change up">▲ +0.34%</div>
+          <div class="mkt-sym" id="sym-GBPJPY">GBPJPY</div>
+          <div class="mkt-price" id="price-GBPJPY">192.45</div>
+          <div class="mkt-change" id="change-GBPJPY" up">▲ +0.34%</div>
           <canvas class="mkt-spark" data-trend="up" data-color="#00c87a"></canvas>
         </div>
       </div>
@@ -1449,7 +1452,7 @@ select.auth-input {
         <button class="chart-tf" onclick="switchTF('240',this)">4H</button>
         <button class="chart-tf" onclick="switchTF('D',this)">1D</button>
       </div>
-      <div class="chart-container" id="mob-tv-container"></div>
+      <div id="mob-tv-container" style="width:100%;min-height:320px;border-radius:10px;overflow:hidden;"></div>
 
       <!-- LIVE RUNNING POSITIONS -->
       <div class="section-card" style="margin-top:12px;">
@@ -1523,11 +1526,11 @@ select.auth-input {
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;">
         <div class="section-card" style="padding:10px;text-align:center;">
           <div style="font-size:9px;color:var(--text3);letter-spacing:.8px;text-transform:uppercase;margin-bottom:4px;">Balance</div>
-          <div style="font-family:'Orbitron',sans-serif;font-size:14px;font-weight:800;color:var(--text);">$24,530</div>
+          <div style="font-family:'Orbitron',sans-serif;font-size:14px;font-weight:800;color:var(--text);" id="journal-balance">$24,530</div>
         </div>
         <div class="section-card" style="padding:10px;text-align:center;">
           <div style="font-size:9px;color:var(--text3);letter-spacing:.8px;text-transform:uppercase;margin-bottom:4px;">Growth</div>
-          <div style="font-family:'Orbitron',sans-serif;font-size:14px;font-weight:800;color:var(--green);">+24.5%</div>
+          <div style="font-family:'Orbitron',sans-serif;font-size:14px;font-weight:800;color:var(--green);" id="journal-growth">+24.5%</div>
         </div>
         <div class="section-card" style="padding:10px;text-align:center;">
           <div style="font-size:9px;color:var(--text3);letter-spacing:.8px;text-transform:uppercase;margin-bottom:4px;">Month</div>
@@ -2402,8 +2405,8 @@ select.auth-input {
       <button class="admin-tab-btn" data-tab="funds" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Fund Man</button>
       <button class="admin-tab-btn" data-tab="announce" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Announce</button>
       <button class="admin-tab-btn" data-tab="signals" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Signals</button>
-      <button class="admin-tab-btn" data-tab="analyst" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Administrator</button>
       <button class="admin-tab-btn" data-tab="mt5" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">MT5</button>
+      <button class="admin-tab-btn" data-tab="analyst" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Administrator</button>
       <button class="admin-tab-btn" data-tab="academy" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Academy</button>
     </div>
     <div class="sub-content">
@@ -2545,7 +2548,15 @@ select.auth-input {
           <div id="mob-analyst-success" class="success-msg"></div>
           <button class="red-btn" id="btn-add-analyst" onclick="handleAddAnalyst()">CREATE ANALYST</button>
         </div>
-      </div>
+
+        <!-- EXISTING ANALYSTS LIST -->
+        <div class="section-card" style="margin-top:14px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+            <div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.5px;">EXISTING ANALYSTS</div>
+            <button onclick="loadAdminAnalysts()" style="background:transparent;border:none;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;">↻ Refresh</button>
+          </div>
+          <div id="admin-analyst-list"><div class="empty-state" style="padding:12px;">Loading...</div></div>
+        </div>
 
         <!-- SUB-ADMIN SECTION -->
         <div class="section-card" style="margin-top:20px;">
@@ -2553,7 +2564,8 @@ select.auth-input {
           <div class="auth-field"><label class="auth-label">Full Name</label><input id="mob-subadmin-name" class="auth-input" type="text" placeholder="Sub-admin full name"></div>
           <div class="auth-field"><label class="auth-label">Username</label><input id="mob-subadmin-username" class="auth-input" type="text" placeholder="username"></div>
           <div class="auth-field"><label class="auth-label">Password</label><input id="mob-subadmin-password" class="auth-input" type="password" placeholder="Set password"></div>
-          <div class="auth-field"><label class="auth-label">Panel Access</label>
+          <div class="auth-field">
+            <label class="auth-label">Panel Access</label>
             <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px 12px;">
               <div style="font-size:10px;color:var(--text3);margin-bottom:8px;">Select tabs this sub-admin can access:</div>
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
@@ -2563,9 +2575,9 @@ select.auth-input {
                 <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="funds" class="subadmin-tab-check" style="accent-color:var(--red);width:15px;height:15px;"> Fund Management</label>
                 <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="announce" class="subadmin-tab-check" style="accent-color:var(--red);width:15px;height:15px;"> Announcements</label>
                 <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="signals" class="subadmin-tab-check" style="accent-color:var(--red);width:15px;height:15px;"> Signals</label>
-                <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="mt5" class="subadmin-tab-check" style="accent-color:var(--red);width:15px;height:15px;"> MT5</label>
                 <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="analyst" class="subadmin-tab-check" style="accent-color:var(--red);width:15px;height:15px;"> Administrator</label>
                 <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="academy" class="subadmin-tab-check" style="accent-color:var(--red);width:15px;height:15px;"> Academy</label>
+                <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="mt5" class="subadmin-tab-check" style="accent-color:var(--red);width:15px;height:15px;"> MT5</label>
               </div>
             </div>
           </div>
@@ -2580,15 +2592,19 @@ select.auth-input {
           </div>
           <div id="admin-subadmin-list"><div class="empty-state" style="padding:12px;">Loading...</div></div>
         </div>
+      </div>
 
-        <!-- EXISTING ANALYSTS LIST -->
-        <div class="section-card" style="margin-top:14px;">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-            <div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.5px;">EXISTING ANALYSTS</div>
-            <button onclick="loadAdminAnalysts()" style="background:transparent;border:none;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;">↻ Refresh</button>
-          </div>
-          <div id="admin-analyst-list"><div class="empty-state" style="padding:12px;">Loading...</div></div>
+
+    <!-- MT5 TAB CONTENT -->
+    <div id="atab-content-mt5" style="display:none;">
+      <div class="section-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.5px;">USER MT5 CREDENTIALS</div>
+          <button onclick="loadAdminMT5()" style="background:transparent;border:none;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;">↻ Refresh</button>
         </div>
+        <div id="admin-mt5-list"><div class="empty-state" style="padding:16px;"><i class="ti ti-loader"></i> Loading...</div></div>
+      </div>
+    </div>
 
     <!-- ACADEMY TAB -->
     <div id="atab-content-academy" style="display:none;">
@@ -2596,9 +2612,12 @@ select.auth-input {
         <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:14px;">PUBLISH ACADEMY CONTENT</div>
         <div class="auth-field"><label class="auth-label">Category</label>
           <select id="academy-category" class="auth-input">
-            <option value="basics">Trading Basics</option><option value="technical">Technical Analysis</option>
-            <option value="fundamental">Fundamental Analysis</option><option value="risk">Risk Management</option>
-            <option value="psychology">Trading Psychology</option><option value="strategy">Strategies</option>
+            <option value="basics">Trading Basics</option>
+            <option value="technical">Technical Analysis</option>
+            <option value="fundamental">Fundamental Analysis</option>
+            <option value="risk">Risk Management</option>
+            <option value="psychology">Trading Psychology</option>
+            <option value="strategy">Strategies</option>
             <option value="mt5">MT5 Platform Guide</option>
           </select>
         </div>
@@ -2607,10 +2626,13 @@ select.auth-input {
         <div class="auth-field"><label class="auth-label">Video URL <span style="color:var(--text3);font-size:10px;">(optional)</span></label><input id="academy-video" class="auth-input" type="text" placeholder="https://youtube.com/..."></div>
         <div class="auth-field"><label class="auth-label">Level</label>
           <select id="academy-level" class="auth-input">
-            <option value="beginner">Beginner</option><option value="intermediate">Intermediate</option><option value="advanced">Advanced</option>
+            <option value="beginner">Beginner</option>
+            <option value="intermediate">Intermediate</option>
+            <option value="advanced">Advanced</option>
           </select>
         </div>
-        <div id="academy-error" class="error-msg"></div><div id="academy-success" class="success-msg"></div>
+        <div id="academy-error" class="error-msg"></div>
+        <div id="academy-success" class="success-msg"></div>
         <button class="red-btn" onclick="handlePublishAcademy()">PUBLISH LESSON</button>
       </div>
       <div class="section-card" style="margin-top:14px;">
@@ -2619,17 +2641,6 @@ select.auth-input {
           <button onclick="loadAdminAcademy()" style="background:transparent;border:none;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;">↻ Refresh</button>
         </div>
         <div id="admin-academy-list"><div class="empty-state" style="padding:16px;"><i class="ti ti-book"></i> Loading...</div></div>
-      </div>
-    </div>
-
-    <!-- MT5 TAB -->
-    <div id="atab-content-mt5" style="display:none;">
-      <div class="section-card">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-          <div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.5px;">USER MT5 CREDENTIALS</div>
-          <button onclick="loadAdminMT5()" style="background:transparent;border:none;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;">↻ Refresh</button>
-        </div>
-        <div id="admin-mt5-list"><div class="empty-state" style="padding:16px;"><i class="ti ti-loader"></i> Loading...</div></div>
       </div>
     </div>
 
@@ -2762,47 +2773,56 @@ select.auth-input {
 
       <!-- Sign Out -->
 
-      <!-- Pending State -->
-      <div id="mt5-pending-msg" style="display:none;padding:14px;background:rgba(255,176,32,0.08);border:1px solid rgba(255,176,32,0.2);border-radius:12px;margin-bottom:14px;">
-        <div style="font-size:13px;font-weight:700;color:var(--amber);margin-bottom:6px;">⏳ Request Pending</div>
-        <div style="font-size:12px;color:var(--text2);line-height:1.6;">Your MT5 request has been submitted. Our team will activate within 24 hours.</div>
-        <div style="font-size:11px;color:var(--text3);margin-top:8px;">To change your details, please submit a support ticket.</div>
-      </div>
-      <!-- Connected State -->
-      <div id="mt5-connected-msg" style="display:none;padding:14px;background:rgba(0,200,122,0.08);border:1px solid rgba(0,200,122,0.2);border-radius:12px;margin-bottom:14px;">
-        <div style="font-size:13px;font-weight:700;color:var(--green);margin-bottom:6px;">✅ MT5 Connected</div>
-        <div style="font-size:12px;color:var(--text2);line-height:1.6;">Your MT5 account is active and ready to trade.</div>
-        <div style="font-size:11px;color:var(--text3);margin-top:6px;">MT5 ID: <span id="mt5-connected-id" style="color:var(--text);font-weight:700;"></span></div>
-      </div>
-
-      <!-- MT5 Connection Section -->
+      <!-- MT5 Connection -->
       <div class="section-card" style="margin-bottom:14px;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
           <div style="font-family:Orbitron,sans-serif;font-size:12px;font-weight:800;color:var(--text);">MT5 CONNECTION</div>
           <div id="mt5-status-badge" style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:5px;background:rgba(255,176,32,0.12);color:var(--amber);">NOT CONNECTED</div>
         </div>
-        <div id="mt5-connect-form">
-          <div class="auth-field"><label class="auth-label">MT5 Account ID</label><input id="profile-mt5-id" class="auth-input" type="text" placeholder="e.g. 12345678"></div>
-          <div class="auth-field"><label class="auth-label">MT5 Master Password</label>
-            <div style="position:relative;"><input id="profile-mt5-pw" class="auth-input" type="password" placeholder="Master password" style="padding-right:44px;"><button type="button" onclick="toggleMT5Pw()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:18px;padding:0;"><i class="ti ti-eye" id="mt5-pw-eye"></i></button></div>
-          </div>
-          <div class="auth-field"><label class="auth-label">Broker Server</label><div style="padding:12px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;font-size:13px;color:var(--text2);font-weight:600;">AsiaFutureTrading-Server</div></div>
-          <div style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:var(--bg3);border-radius:10px;margin-bottom:14px;border:1px solid var(--border);">
-            <div><div style="font-size:13px;font-weight:700;color:var(--text);">Allow Automated Trading</div><div style="font-size:11px;color:var(--text3);margin-top:2px;">EA will execute signals automatically</div></div>
-            <div class="toggle" id="mt5-auto-toggle" onclick="this.classList.toggle('on')"></div>
-          </div>
-          <div style="background:rgba(255,176,32,0.06);border:1px solid rgba(255,176,32,0.2);border-radius:10px;padding:12px;margin-bottom:12px;">
-            <div style="font-size:11px;font-weight:700;color:var(--amber);margin-bottom:8px;">⚠️ RISK DISCLAIMER</div>
-            <div style="font-size:11px;color:var(--text3);line-height:1.7;">1. Trading involves significant risk of loss.<br>2. Past performance does not guarantee future results.<br>3. The EA executes trades automatically based on analyst signals.<br>4. You are responsible for monitoring your account at all times.<br>5. Momentum AI is not liable for any trading losses incurred.<br>6. Ensure sufficient margin before enabling automated trading.<br>7. EA will stop functioning if your MT5 password is changed.</div>
-          </div>
-          <label style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg3);border-radius:8px;cursor:pointer;border:1px solid var(--border);margin-bottom:14px;">
-            <input type="checkbox" id="mt5-agree-check" style="accent-color:var(--red);width:16px;height:16px;flex-shrink:0;">
-            <div style="font-size:12px;color:var(--text2);line-height:1.5;">I have read and agree to the risk disclaimer above</div>
-          </label>
-          <div id="mt5-connect-error" class="error-msg"></div>
-          <div id="mt5-connect-success" class="success-msg"></div>
-          <button class="red-btn" onclick="handleMT5Connect()">CONNECT MT5</button>
+        <div class="auth-field">
+          <label class="auth-label">MT5 Account ID</label>
+          <input id="profile-mt5-id" class="auth-input" type="text" placeholder="e.g. 12345678">
         </div>
+        <div class="auth-field">
+          <label class="auth-label">MT5 Master Password</label>
+          <div style="position:relative;">
+            <input id="profile-mt5-pw" class="auth-input" type="password" placeholder="Master password" style="padding-right:44px;">
+            <button type="button" onclick="toggleMT5Pw()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:18px;padding:0;"><i class="ti ti-eye" id="mt5-pw-eye"></i></button>
+          </div>
+        </div>
+        <div class="auth-field">
+          <label class="auth-label">Broker Server</label>
+          <div style="padding:12px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;font-size:13px;color:var(--text2);font-weight:600;">AsiaFutureTrading-Server</div>
+        </div>
+        <!-- Permission Toggle -->
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:var(--bg3);border-radius:10px;margin-bottom:14px;border:1px solid var(--border);">
+          <div>
+            <div style="font-size:13px;font-weight:700;color:var(--text);">Allow Automated Trading</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px;">EA will execute signals automatically</div>
+          </div>
+          <div class="toggle" id="mt5-auto-toggle" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <!-- Disclaimer -->
+        <div style="background:rgba(255,176,32,0.06);border:1px solid rgba(255,176,32,0.2);border-radius:10px;padding:12px;margin-bottom:12px;">
+          <div style="font-size:11px;font-weight:700;color:var(--amber);margin-bottom:8px;">⚠️ RISK DISCLAIMER</div>
+          <div style="font-size:11px;color:var(--text3);line-height:1.7;">
+            1. Trading involves significant risk of loss.<br>
+            2. Past performance does not guarantee future results.<br>
+            3. The EA executes trades based on analyst signals automatically.<br>
+            4. You are responsible for monitoring your account at all times.<br>
+            5. Momentum AI is not liable for any trading losses incurred.<br>
+            6. Ensure sufficient margin before enabling automated trading.<br>
+            7. EA will stop functioning if your MT5 password is changed.
+          </div>
+        </div>
+        <!-- Agreement Checkbox -->
+        <label style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg3);border-radius:8px;cursor:pointer;border:1px solid var(--border);margin-bottom:14px;">
+          <input type="checkbox" id="mt5-agree-check" style="accent-color:var(--red);width:16px;height:16px;flex-shrink:0;">
+          <div style="font-size:12px;color:var(--text2);line-height:1.5;">I have read and agree to the risk disclaimer above</div>
+        </label>
+        <div id="mt5-connect-error" class="error-msg"></div>
+        <div id="mt5-connect-success" class="success-msg"></div>
+        <button class="red-btn" onclick="handleMT5Connect()">CONNECT MT5</button>
       </div>
 
       <button onclick="handleLogout()" style="width:100%;padding:13px;background:transparent;border:1px solid rgba(255,30,60,0.3);border-radius:12px;color:var(--red);font-size:13px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;">Sign Out</button>
@@ -3233,11 +3253,7 @@ select.auth-input {
       <div class="section-card" style="margin-bottom:10px;">
         <div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px;">Choose Analyst</div>
         <select id="auto-analyser" class="auth-input" style="font-size:13px;padding:10px 14px;">
-          <option value="">Select Analyst</option>
-          <option value="analyst_1">Ahmad Hassan</option>
-          <option value="analyst_2">Rajan Kumar</option>
-          <option value="analyst_3">Maria Wong</option>
-          <option value="analyst_4">James Tan</option>
+          <option value="">Loading analysts...</option>
         </select>
       </div>
       <div class="section-card" style="margin-bottom:10px;">
@@ -3296,9 +3312,7 @@ select.auth-input {
       </div>
       <div class="app-header-name">ANALYST</div>
     </div>
-    <div class="app-h
-
-eader-right">
+    <div class="app-header-right">
       <button style="background:transparent;border:1px solid var(--border);border-radius:8px;padding:6px 12px;font-size:12px;color:var(--text2);cursor:pointer;" onclick="handleLogout()">Sign Out</button>
     </div>
   </div>
@@ -3376,14 +3390,17 @@ eader-right">
       </div>
     </div>
     <button class="red-btn" onclick="handlePostSignal()">POST SIGNAL LIVE</button>
+    <!-- My Signals Section -->
     <div class="section-title" style="margin-top:20px;margin-bottom:14px;">My <span>Signals</span></div>
+    <!-- Filter buttons -->
     <div style="display:flex;gap:8px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px;">
-      <button onclick="filterAnalystSignals('all',this)" style="padding:7px 14px;border-radius:8px;background:rgba(255,30,60,0.12);border:1px solid rgba(255,30,60,0.3);color:var(--red);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;">All</button>
-      <button onclick="filterAnalystSignals('active',this)" style="padding:7px 14px;border-radius:8px;background:var(--surface);border:1px solid var(--border);color:var(--text2);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;">Active</button>
-      <button onclick="filterAnalystSignals('closed',this)" style="padding:7px 14px;border-radius:8px;background:var(--surface);border:1px solid var(--border);color:var(--text2);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;">Inactive</button>
+      <button class="analyst-sig-filter active" onclick="filterAnalystSignals('all',this)" style="padding:7px 14px;border-radius:8px;background:rgba(255,30,60,0.12);border:1px solid rgba(255,30,60,0.3);color:var(--red);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;">All</button>
+      <button class="analyst-sig-filter" onclick="filterAnalystSignals('active',this)" style="padding:7px 14px;border-radius:8px;background:var(--surface);border:1px solid var(--border);color:var(--text2);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;">Active</button>
+      <button class="analyst-sig-filter" onclick="filterAnalystSignals('closed',this)" style="padding:7px 14px;border-radius:8px;background:var(--surface);border:1px solid var(--border);color:var(--text2);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;">Inactive</button>
     </div>
     <div id="analyst-signals-list"><div class="empty-state" style="padding:24px;"><i class="ti ti-loader"></i> Loading...</div></div>
   </div>
+
   <!-- Edit Signal Popup -->
   <div id="analyst-edit-popup" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(4px);z-index:9000;align-items:flex-end;">
     <div style="width:100%;background:var(--bg2);border-radius:20px 20px 0 0;border-top:1px solid var(--border);padding:20px 18px 36px;max-height:90vh;overflow-y:auto;">
@@ -3409,11 +3426,14 @@ eader-right">
         <div class="auth-field"><label class="auth-label">Stop Loss</label><input id="edit-sig-sl" class="auth-input" type="number" step="any"></div>
         <div class="auth-field"><label class="auth-label">Take Profit 1</label><input id="edit-sig-tp1" class="auth-input" type="number" step="any"></div>
       </div>
-      <div class="auth-field"><label class="auth-label">Take Profit 2</label><input id="edit-sig-tp2" class="auth-input" type="number" step="any"></div>
-      <div class="auth-field"><label class="auth-label">Timeframe</label><select id="edit-sig-timeframe" class="auth-input"><option value="M15">M15</option><option value="M30">M30</option><option value="H1">H1</option><option value="H4" selected>H4</option><option value="D1">D1</option></select></div>
+      <div class="form-row">
+        <div class="auth-field"><label class="auth-label">Take Profit 2</label><input id="edit-sig-tp2" class="auth-input" type="number" step="any"></div>
+        <div class="auth-field"><label class="auth-label">Timeframe</label><select id="edit-sig-timeframe" class="auth-input"><option value="M15">M15</option><option value="M30">M30</option><option value="H1">H1</option><option value="H4" selected>H4</option><option value="D1">D1</option></select></div>
+      </div>
       <div class="auth-field"><label class="auth-label">Strength: <span id="edit-sig-strength-val">75%</span></label><input id="edit-sig-strength" type="range" min="1" max="100" value="75" style="width:100%;accent-color:var(--red);" oninput="document.getElementById('edit-sig-strength-val').textContent=this.value+'%'"></div>
       <div class="auth-field"><label class="auth-label">Commentary</label><textarea id="edit-sig-commentary" class="auth-input" rows="3" style="resize:vertical;"></textarea></div>
-      <div id="edit-sig-error" class="error-msg"></div><div id="edit-sig-success" class="success-msg"></div>
+      <div id="edit-sig-error" class="error-msg"></div>
+      <div id="edit-sig-success" class="success-msg"></div>
       <button class="red-btn" onclick="handleUpdateSignal()">UPDATE SIGNAL</button>
       <button class="ghost-btn" style="margin-top:10px;" onclick="closeAnalystEditPopup()">Cancel</button>
     </div>
@@ -3539,7 +3559,7 @@ async function handleChangePassword() {
 
 // ── TRADE TABS ──
 function switchTradeTab(tab) {
-  if(tab==='auto') loadAnalystOptions();
+  if(tab === 'auto') loadAnalystOptions();
   var tabs = ['smart','manual','auto'];
   tabs.forEach(function(t) {
     var btn = document.getElementById('trade-tab-' + t);
@@ -3918,7 +3938,7 @@ async function handleLogin() {
   try {
     var hash = btoa(unescape(encodeURIComponent(password+'_momentum_salt')));
     var res = await db.from('users').select('*').eq('username',username).limit(1);
-    if(res.error) { errEl.textContent='Connection error: '+res.error.message; errEl.style.display='block'; return; }
+    if(res.error) { errEl.textContent='Connection error: '+res.error.message; errEl.style.display='block'; btn.textContent='ACCESS SYSTEM'; btn.disabled=false; return; }
     if(!res.data||!res.data.length) { errEl.textContent='Username not found. Please check your username.'; errEl.style.display='block'; btn.textContent='ACCESS SYSTEM'; btn.disabled=false; return; }
     var user = res.data[0];
     if(user.password_hash !== hash) { errEl.textContent='Incorrect password. Please try again.'; errEl.style.display='block'; btn.textContent='ACCESS SYSTEM'; btn.disabled=false; return; }
@@ -3978,7 +3998,7 @@ function routeUser(user) {
 
 // ── ENTER APP ──
 function enterApp(user) {
-  setTimeout(checkMT5Notification, 2000);
+  _priceLoaded = false;
   if(user) {
     var name = user.username || user.name || 'Trader';
     document.getElementById('mob-username').textContent = name;
@@ -4085,7 +4105,7 @@ function switchTab(tab) {
   if(nav) nav.classList.add('active');
   var content = document.getElementById('app-content');
   if(content) content.scrollTop = 0;
-  if(tab==='dashboard') { if(!_priceLoaded){ loadLivePrices(); _priceLoaded=true; } }
+  if(tab==='dashboard') { if(!_priceLoaded) { loadLivePrices(); _priceLoaded=true; } }
   if(tab==='charts') initTVChart();
   if(tab==='journal') loadJournalData();
   if(tab==='signals') loadSignalsFeed();
@@ -4169,7 +4189,10 @@ async function loadSignalsFeed() {
       var dirEl = document.createElement('div');
       dirEl.className = 'sig-card-dir ' + dir;
       dirEl.textContent = sig.direction;
-      var sBadge=document.createElement('div');var isAct=sig.status==='active';sBadge.textContent=isAct?'ACTIVE':'INACTIVE';sBadge.style.cssText='padding:4px 9px;border-radius:6px;font-family:Orbitron,sans-serif;font-size:9px;font-weight:800;letter-spacing:.8px;margin-right:5px;flex-shrink:0;'+(isAct?'background:rgba(0,200,122,0.12);color:#00c87a;border:1px solid rgba(0,200,122,0.25);':'background:rgba(255,176,32,0.12);color:#ffb020;border:1px solid rgba(255,176,32,0.25);');
+      var sBadge=document.createElement('div');
+      var isAct=sig.status==='active';
+      sBadge.textContent=isAct?'ACTIVE':'INACTIVE';
+      sBadge.style.cssText='padding:4px 9px;border-radius:6px;font-family:Orbitron,sans-serif;font-size:9px;font-weight:800;letter-spacing:.8px;margin-right:5px;flex-shrink:0;'+(isAct?'background:rgba(0,200,122,0.12);color:#00c87a;border:1px solid rgba(0,200,122,0.25);':'background:rgba(255,176,32,0.12);color:#ffb020;border:1px solid rgba(255,176,32,0.25);');
       top.appendChild(icon);
       top.appendChild(info);
       top.appendChild(sBadge);
@@ -4276,16 +4299,52 @@ async function executeTrade(method) {
 var tvWidget = null;
 var currentPair = 'XAUUSD';
 var currentTF = '60';
-var TV_SYMBOL_MAP={'XAUUSD':'OANDA:XAUUSD','NAS100':'NASDAQ:NDX','BTCUSD':'BINANCE:BTCUSDT','GBPJPY':'FX:GBPJPY','EURUSD':'FX:EURUSD','GBPUSD':'FX:GBPUSD','USDJPY':'FX:USDJPY','US30':'DJ:DJI'};
-var TV_TF_MAP={'1':'1','5':'5','15':'15','30':'30','60':'60','H1':'60','H4':'240','D':'1D','1D':'1D'};
-function initTVChart(){
-  var container=document.getElementById('mob-tv-container');
-  if(!container)return;
-  var sym=encodeURIComponent(TV_SYMBOL_MAP[currentPair]||('FX:'+currentPair));
-  var tf=TV_TF_MAP[currentTF]||'60';
-  var src='https://s.tradingview.com/widgetembed/?symbol='+sym+'&interval='+tf+'&theme=dark&style=1&locale=en&hide_top_toolbar=1&hide_legend=1&hide_side_toolbar=1&allow_symbol_change=0&save_image=0&withdateranges=0&timezone=Asia%2FKuala_Lumpur';
-  container.innerHTML='<iframe src="'+src+'" frameborder="0" scrolling="no" allowtransparency="true" allowfullscreen="true" style="width:100%;height:320px;border-radius:10px;"></iframe>';
+function initTVChart() {
+  var container = document.getElementById('mob-tv-container');
+  if(!container) return;
+
+  // TradingView iframe symbol map
+  var TV_SYMBOL_MAP = {
+    'XAUUSD':'OANDA:XAUUSD','NAS100':'NASDAQ:NDX','BTCUSD':'BINANCE:BTCUSDT',
+    'GBPJPY':'FX:GBPJPY','EURUSD':'FX:EURUSD','GBPUSD':'FX:GBPUSD',
+    'USDJPY':'FX:USDJPY','US30':'DJ:DJI','XAGUSD':'OANDA:XAGUSD'
+  };
+  var TV_TF_MAP = {
+    '1':'1','5':'5','15':'15','30':'30',
+    '60':'60','H1':'60','H4':'240','D':'1D','1D':'1D'
+  };
+
+  var sym = encodeURIComponent(TV_SYMBOL_MAP[currentPair] || ('FX:' + currentPair));
+  var tf  = TV_TF_MAP[currentTF] || '60';
+
+  var src = 'https://s.tradingview.com/widgetembed/?' +
+    'symbol=' + sym +
+    '&interval=' + tf +
+    '&theme=dark' +
+    '&style=1' +
+    '&locale=en' +
+    '&hide_top_toolbar=1' +
+    '&hide_legend=1' +
+    '&hide_side_toolbar=1' +
+    '&allow_symbol_change=0' +
+    '&save_image=0' +
+    '&calendar=0' +
+    '&hotlist=0' +
+    '&details=0' +
+    '&withdateranges=0' +
+    '&timezone=Asia%2FKuala_Lumpur';
+
+  container.innerHTML =
+    '<iframe' +
+    ' src="' + src + '"' +
+    ' frameborder="0"' +
+    ' scrolling="no"' +
+    ' allowtransparency="true"' +
+    ' allowfullscreen="true"' +
+    ' style="width:100%;height:320px;border-radius:10px;">' +
+    '</iframe>';
 }
+
 function switchChartPair(pair, btn) {
   currentPair = pair;
   document.querySelectorAll('.chart-pair-btn').forEach(function(b) { b.classList.remove('active'); });
@@ -4371,7 +4430,7 @@ async function loadAdminUsers() {
   try {
     var res = await db.from('users').select('*').order('created_at',{ascending:false});
     if(res.error||!res.data) return;
-    res.data=res.data.filter(function(u){return u.role==='user'||(!u.role&&u.mt5_id&&!u.mt5_id.startsWith('ANALYST_')&&!u.mt5_id.startsWith('SUBADMIN_'));});
+    res.data = res.data.filter(function(u){ return u.role === 'user' || (!u.role && u.mt5_id && !u.mt5_id.startsWith('ANALYST_') && !u.mt5_id.startsWith('SUBADMIN_')); });
     var total=res.data.length, active=res.data.filter(function(u){return u.status==='active';}).length, pending=res.data.filter(function(u){return u.status==='pending';}).length;
     var t=document.getElementById('mob-stat-total'), a=document.getElementById('mob-stat-active'), p=document.getElementById('mob-stat-pending');
     if(t) t.textContent=total; if(a) a.textContent=active; if(p) p.textContent=pending;
@@ -4393,10 +4452,31 @@ async function loadAdminUsers() {
     }).join('');
   } catch(e) { console.error(e); }
 }
-async function approveUser(id){var r=await db.from('users').update({status:'active'}).eq('id',id);if(r.error){alert(r.error.message);return;}loadAdminUsers();}
-async function unsuspendUser(id){var r=await db.from('users').update({status:'active'}).eq('id',id);if(r.error){alert(r.error.message);return;}loadAdminUsers();}
-async function suspendUser(id) { await db.from('users').update({status:'suspended'}).eq('id',id); loadAdminUsers(); }
-async function deleteUser(id){if(!confirm('Delete user permanently?'))return;try{await db.from('trades').update({user_id:null}).eq('user_id',id);var r=await db.from('users').delete().eq('id',id);if(r.error)throw r.error;loadAdminUsers();}catch(e){alert('Delete failed: '+(e.message||'error'));}}
+async function approveUser(id) {
+  var r=await db.from('users').update({status:'active'}).eq('id',id);
+  if(r.error){alert('Error: '+r.error.message);return;}
+  loadAdminUsers();
+}
+async function unsuspendUser(id) {
+  var r=await db.from('users').update({status:'active'}).eq('id',id);
+  if(r.error){alert('Error: '+r.error.message);return;}
+  loadAdminUsers();
+}
+async function suspendUser(id) {
+  var r=await db.from('users').update({status:'suspended'}).eq('id',id);
+  if(r.error){alert('Error: '+r.error.message);return;}
+  loadAdminUsers();
+}
+async function deleteUser(id) {
+  if(!confirm('Delete this user permanently?')) return;
+  try {
+    // First remove any foreign key references in trades
+    await db.from('trades').update({user_id:null}).eq('user_id',id);
+    var r=await db.from('users').delete().eq('id',id);
+    if(r.error) throw r.error;
+    loadAdminUsers();
+  } catch(e) { alert('Delete failed: '+(e.message||'Unknown error')); }
+}
 
 // ── ADD ANALYST ──
 async function handleAddAnalyst() {
@@ -4639,6 +4719,15 @@ function openTicketDetail(ticket) {
   }
   popup.appendChild(sheet);
   document.body.appendChild(popup);
+  var goBtn = popup.querySelector('#go-smart-tool-btn');
+  if(goBtn) goBtn.addEventListener('click', function(){
+    closeTradePopup();
+    switchTab('more');
+    setTimeout(function(){
+      showSubScreen('sub-ea');
+    }, 400);
+    popup.remove();
+  });
 }
 
 
@@ -4712,6 +4801,7 @@ function switchAdminTab(tab) {
   if(tab === 'academy') loadAdminAcademy();
   if(tab === 'announce') loadAdminAnnouncements();
   if(tab === 'signals') loadAdminSignals();
+  if(tab === 'mt5') loadAdminMT5();
 }
 
 // Wire up admin tab buttons via event delegation
@@ -4791,11 +4881,17 @@ async function loadAdminTickets() {
         '<div style="font-size:11px;color:var(--text2);margin-bottom:10px;">' + (t.message||'').substring(0,100) + '...</div>';
       // Reply form
       var replyDiv = document.createElement('div');
-      replyDiv.innerHTML = '<div style="display:flex;gap:6px;">' +
+      replyDiv.innerHTML = '<div style="display:flex;gap:6px;margin-bottom:6px;">' +
         '<input id="reply-' + t.id + '" class="auth-input" type="text" placeholder="Type reply..." style="flex:1;padding:8px 10px;font-size:12px;">' +
-        '<button style="padding:8px 12px;background:var(--grad);border:none;border-radius:8px;color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;flex-shrink:0;">Reply</button>' +
+        '<button class="reply-btn-' + t.id + '" style="padding:8px 12px;background:var(--grad);border:none;border-radius:8px;color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;flex-shrink:0;">Reply</button>' +
+        '</div>' +
+        '<div style="display:flex;gap:6px;">' +
+        '<button class="done-btn-' + t.id + '" style="flex:1;padding:7px;background:rgba(0,200,122,0.1);border:1px solid rgba(0,200,122,0.2);border-radius:7px;color:var(--green);font-size:11px;font-weight:700;cursor:pointer;">' + (t.status==='done'?'Reopen':'Mark Done') + '</button>' +
+        '<button class="del-btn-' + t.id + '" style="flex:1;padding:7px;background:rgba(255,30,60,0.08);border:1px solid rgba(255,30,60,0.15);border-radius:7px;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;">Delete</button>' +
         '</div>';
-      replyDiv.querySelector('button').addEventListener('click', function() { adminReplyTicket(t.id); });
+      replyDiv.querySelector('.reply-btn-' + t.id).addEventListener('click', function() { adminReplyTicket(t.id); });
+      replyDiv.querySelector('.done-btn-' + t.id).addEventListener('click', function() { adminToggleTicketDone(t.id, t.status); });
+      replyDiv.querySelector('.del-btn-' + t.id).addEventListener('click', function() { adminDeleteTicket(t.id); });
       div.appendChild(replyDiv);
       el.appendChild(div);
     });
@@ -4940,89 +5036,157 @@ function showAnnouncementPopup(ann) {
 }
 
 
-// ── GLOBALS ──────────────────────────────────────────────
-var _priceLoaded = false;
-var _tdLastCallMs = 0;
+// ═══════════════════════════════════════════════════
+// TWELVE DATA CONFIG
+// ═══════════════════════════════════════════════════
 var TWELVE_DATA_KEY = '9ea2aa62ec4f4a0c82550e9db6509653';
-var TWELVE_SYMBOLS = {'XAUUSD':'XAU/USD','NAS100':'NDX','BTCUSD':'BTC/USD','GBPJPY':'GBP/JPY'};
+var _tdLastCallMs = 0;
+var _tdMinGapMs   = 8000;
+var _tdCallQueue  = [];
 
-// ── LIVE PRICES ───────────────────────────────────────────
-async function loadLivePrices() {
-  if(!TWELVE_DATA_KEY) return;
-  var now = Date.now();
-  if(now - _tdLastCallMs < 8000) return;
-  _tdLastCallMs = now; _priceLoaded = true;
-  try {
-    var syms = Object.values(TWELVE_SYMBOLS).join(',');
-    var url = 'https://api.twelvedata.com/quote?symbol='+encodeURIComponent(syms)+'&apikey='+TWELVE_DATA_KEY;
-    var r = await fetch(url); var data = await r.json();
-    Object.keys(TWELVE_SYMBOLS).forEach(function(app) {
-      var td=TWELVE_SYMBOLS[app],q=data[td];
-      if(!q||q.status==='error') return;
-      var price=parseFloat(q.close),open=parseFloat(q.open),chg=((price-open)/open*100).toFixed(2),isUp=price>=open;
-      var pEl=document.getElementById('price-'+app);
-      var cEl=document.getElementById('change-'+app);
-      if(pEl) pEl.textContent=price>1000?price.toLocaleString('en',{maximumFractionDigits:2}):price.toFixed(4);
-      if(cEl) { cEl.textContent=(isUp?'▲ +':'▼ ')+chg+'%'; cEl.className='mkt-change '+(isUp?'up':'dn'); }
-    });
-  } catch(e) { console.warn('loadLivePrices:',e.message); }
+async function tdFetch(url) {
+  return new Promise(function(resolve, reject) {
+    _tdCallQueue.push({url:url, resolve:resolve, reject:reject});
+    _processTdQueue();
+  });
+}
+function _processTdQueue() {
+  if(!_tdCallQueue.length) return;
+  var wait = Math.max(0, _tdMinGapMs - (Date.now() - _tdLastCallMs));
+  setTimeout(async function() {
+    if(!_tdCallQueue.length) return;
+    var item = _tdCallQueue.shift();
+    _tdLastCallMs = Date.now();
+    try { var r=await fetch(item.url); item.resolve(await r.json()); }
+    catch(e) { item.reject(e); }
+    if(_tdCallQueue.length) _processTdQueue();
+  }, wait);
 }
 
-// ── JOURNAL ───────────────────────────────────────────────
+var TWELVE_SYMBOLS = {'XAUUSD':'XAU/USD','NAS100':'NDX','BTCUSD':'BTC/USD','GBPJPY':'GBP/JPY'};
+
+async function loadLivePrices() {
+  if(!TWELVE_DATA_KEY) return;
+  try {
+    var syms = Object.values(TWELVE_SYMBOLS).join(',');
+    var url  = 'https://api.twelvedata.com/quote?symbol='+encodeURIComponent(syms)+'&apikey='+TWELVE_DATA_KEY;
+    var data = await tdFetch(url);
+    _priceLoaded = true;
+    Object.keys(TWELVE_SYMBOLS).forEach(function(app) {
+      var td = TWELVE_SYMBOLS[app], q = data[td];
+      if(!q||q.status==='error') return;
+      var price = parseFloat(q.close), open = parseFloat(q.open);
+      var chg = ((price-open)/open*100).toFixed(2), isUp = price>=open;
+      var pEl=document.getElementById('price-'+app);
+      var cEl=document.getElementById('change-'+app);
+      var sEl=document.getElementById('sym-'+app);
+      if(pEl) pEl.textContent = price>1000 ? price.toLocaleString('en',{maximumFractionDigits:2}) : price.toFixed(4);
+      if(cEl) { cEl.textContent=(isUp?'▲ +':'▼ ')+chg+'%'; cEl.className='mkt-change '+(isUp?'up':'dn'); }
+      if(sEl&&sEl.parentElement) sEl.parentElement.className='mkt-card '+(isUp?'up':'dn');
+    });
+  } catch(e) { console.warn('loadLivePrices:', e.message); }
+}
+
+// ═══════════════════════════════════════════════════
+// JOURNAL — Reads from Supabase trades table
+// ═══════════════════════════════════════════════════
 async function loadJournalData() {
   if(!currentUser||!db) return;
   try {
-    var res=await db.from('trades').select('*').eq('user_id',currentUser.id).order('created_at',{ascending:false}).limit(50);
+    var res = await db.from('trades').select('*').eq('user_id',currentUser.id).order('created_at',{ascending:false}).limit(50);
     if(res.error||!res.data) return;
-    var trades=res.data;
+    var trades = res.data;
     if(!trades.length) return;
-    var totalPnl=trades.reduce(function(s,t){return s+parseFloat(t.pnl||0);},0);
-    var bEl=document.getElementById('journal-balance'),gEl=document.getElementById('journal-growth');
+    var wins = trades.filter(function(t){return parseFloat(t.pnl||0)>0;}).length;
+    var losses = trades.filter(function(t){return parseFloat(t.pnl||0)<0;}).length;
+    var total = wins+losses;
+    var totalPnl = trades.reduce(function(s,t){return s+parseFloat(t.pnl||0);},0);
+    var now = new Date(), ms = new Date(now.getFullYear(),now.getMonth(),1);
+    var monthPnl = trades.filter(function(t){return new Date(t.created_at)>=ms;}).reduce(function(s,t){return s+parseFloat(t.pnl||0);},0);
+    var bEl=document.getElementById('journal-balance'), gEl=document.getElementById('journal-growth');
     if(bEl) bEl.textContent='$'+Math.abs(totalPnl).toLocaleString('en',{maximumFractionDigits:0});
     if(gEl) { gEl.textContent=(totalPnl>=0?'+':'')+totalPnl.toFixed(0)+' pts'; gEl.style.color=totalPnl>=0?'var(--green)':'var(--red)'; }
-  } catch(e) {}
+  } catch(e) { console.warn('loadJournalData:', e.message); }
 }
 
-// ── LOGIN PW TOGGLE ───────────────────────────────────────
-function toggleLoginPw(){
-  var i=document.getElementById('input-password'),e=document.getElementById('login-pw-eye');
-  if(!i) return;
-  i.type=i.type==='password'?'text':'password';
-  if(e) e.className=i.type==='password'?'ti ti-eye':'ti ti-eye-off';
-}
-
-// ── ADMIN: ANALYSTS ───────────────────────────────────────
-async function loadAdminAnalysts(){
-  var el=document.getElementById('admin-analyst-list');if(!el)return;
+// ═══════════════════════════════════════════════════
+// ADMIN: ANALYSTS
+// ═══════════════════════════════════════════════════
+async function loadAdminAnalysts() {
+  var el=document.getElementById('admin-analyst-list'); if(!el) return;
   el.innerHTML='<div style="padding:12px;color:var(--text2);font-size:12px;">Loading...</div>';
-  try{
+  try {
     var res=await db.from('users').select('*').order('created_at',{ascending:false});
-    if(res.error)throw res.error;
+    if(res.error) throw res.error;
     var analysts=(res.data||[]).filter(function(u){return u.role==='analyst';});
-    if(!analysts.length){el.innerHTML='<div class="empty-state" style="padding:12px;">No analysts yet</div>';return;}
+    if(!analysts.length){el.innerHTML='<div class="empty-state" style="padding:12px;"><i class="ti ti-users"></i> No analysts yet</div>';return;}
     el.innerHTML='';
     analysts.forEach(function(a){
       var card=document.createElement('div');card.style.cssText='padding:10px 12px;background:var(--bg3);border-radius:9px;margin-bottom:8px;border:1px solid var(--border);';
-      card.innerHTML='<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;"><div style="width:34px;height:34px;border-radius:8px;background:rgba(255,30,60,0.1);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--red);">'+(a.name||a.username||'?').substring(0,2).toUpperCase()+'</div><div style="flex:1;"><div style="font-size:13px;font-weight:700;color:var(--text);">'+(a.name||'-')+'</div><div style="font-size:11px;color:var(--text3);">@'+(a.username||'-')+'</div></div><div style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;background:rgba(0,200,122,0.1);color:var(--green);">'+(a.status||'active').toUpperCase()+'</div></div>';
+      card.innerHTML='<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;"><div style="width:34px;height:34px;border-radius:8px;background:rgba(255,30,60,0.1);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--red);">'+(a.name||a.username||'?').substring(0,2).toUpperCase()+'</div><div style="flex:1;"><div style="font-size:13px;font-weight:700;color:var(--text);">'+(a.name||'-')+'</div><div style="font-size:11px;color:var(--text3);">@'+(a.username||'-')+'</div></div><div style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;background:rgba(0,200,122,0.1);color:var(--green);">'+(a.status||'active').toUpperCase()+'</div></div><div style="font-size:10px;color:var(--text3);margin-bottom:8px;">Pairs: <span style="color:var(--red);font-weight:600;">'+(a.trading_pairs||'All')+'</span></div>';
       var br=document.createElement('div');br.style.cssText='display:flex;gap:6px;';
+      var bE=document.createElement('button');bE.style.cssText='flex:1;padding:7px;background:rgba(77,158,255,0.1);border:1px solid rgba(77,158,255,0.2);border-radius:7px;color:#4D9EFF;font-size:11px;font-weight:700;cursor:pointer;';bE.textContent='Edit';bE.addEventListener('click',function(){openEditAnalystPopup(a);});
       var bD=document.createElement('button');bD.style.cssText='flex:1;padding:7px;background:rgba(255,30,60,0.08);border:1px solid rgba(255,30,60,0.15);border-radius:7px;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;';bD.textContent='Delete';bD.addEventListener('click',function(){deleteAnalystAdmin(a.id);});
-      br.appendChild(bD);card.appendChild(br);el.appendChild(card);
+      br.appendChild(bE);br.appendChild(bD);card.appendChild(br);el.appendChild(card);
     });
   } catch(e){el.innerHTML='<div style="padding:12px;color:var(--red);">Error: '+(e.message||'failed')+'</div>';}
 }
-async function deleteAnalystAdmin(id){if(!confirm('Delete analyst?'))return;try{await db.from('signals').update({analyst_id:null,analyst_name:'Deleted Analyst'}).eq('analyst_id',id);var r=await db.from('users').delete().eq('id',id);if(r.error)throw r.error;loadAdminAnalysts();}catch(e){alert('Error: '+(e.message||'failed'));}}
+function openEditAnalystPopup(analyst){
+  var ex=document.getElementById('edit-analyst-popup');if(ex)ex.remove();
+  var popup=document.createElement('div');popup.id='edit-analyst-popup';popup.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(4px);z-index:9100;display:flex;align-items:flex-end;';
+  var sheet=document.createElement('div');sheet.style.cssText='width:100%;background:var(--bg2);border-radius:20px 20px 0 0;border-top:1px solid var(--border);padding:20px 18px 36px;max-height:85vh;overflow-y:auto;';
+  var pairs=['XAUUSD','NAS100','BTCUSD','EURUSD','GBPUSD','GBPJPY','USDJPY','US30'];
+  var saved=(analyst.trading_pairs&&analyst.trading_pairs!=='all')?analyst.trading_pairs.split(','):[];
+  var ph=pairs.map(function(p){var c=(!analyst.trading_pairs||analyst.trading_pairs==='all'||saved.indexOf(p)>-1)?'checked':'';return '<label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="'+p+'" class="ea-pair-check" '+c+' style="accent-color:var(--red);width:15px;height:15px;"> '+p+'</label>';}).join('');
+  sheet.innerHTML='<div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 18px;"></div><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;"><div style="font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);">EDIT ANALYST</div><button id="ea-x" style="width:32px;height:32px;border-radius:50%;background:var(--surface);border:1px solid var(--border);color:var(--text2);font-size:18px;cursor:pointer;">×</button></div><div class="auth-field"><label class="auth-label">Full Name</label><input id="ea-name" class="auth-input" type="text" value="'+(analyst.name||'')+'"></div><div class="auth-field"><label class="auth-label">New Password</label><input id="ea-pw" class="auth-input" type="password" placeholder="Leave blank to keep"></div><div class="auth-field"><label class="auth-label">Trading Pairs</label><div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px 12px;"><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">'+ph+'</div></div></div><div class="auth-field"><label class="auth-label">Status</label><select id="ea-status" class="auth-input"><option value="active"'+(analyst.status==='active'?' selected':'')+'>Active</option><option value="suspended"'+(analyst.status==='suspended'?' selected':'')+'>Suspended</option></select></div><div id="ea-error" class="error-msg"></div><div id="ea-success" class="success-msg"></div>';
+  var sb=document.createElement('button');sb.className='red-btn';sb.textContent='SAVE CHANGES';sb.addEventListener('click',function(){saveAnalystEdit(analyst.id);});sheet.appendChild(sb);
+  var cb=document.createElement('button');cb.className='ghost-btn';cb.style.marginTop='10px';cb.textContent='Cancel';cb.addEventListener('click',function(){popup.remove();});sheet.appendChild(cb);
+  popup.appendChild(sheet);popup.addEventListener('click',function(e){if(e.target===popup)popup.remove();});document.body.appendChild(popup);
+  sheet.querySelector('#ea-x').addEventListener('click',function(){popup.remove();});
+}
+async function saveAnalystEdit(id){
+  var name=document.getElementById('ea-name').value.trim(),pw=document.getElementById('ea-pw').value,status=document.getElementById('ea-status').value;
+  var checks=document.querySelectorAll('.ea-pair-check:checked');
+  var pairs=checks.length>0?Array.from(checks).map(function(c){return c.value;}).join(','):'all';
+  var errEl=document.getElementById('ea-error'),sucEl=document.getElementById('ea-success');errEl.style.display='none';sucEl.style.display='none';
+  try{
+    var upd={name:name,status:status};if(pw)upd.password_hash=btoa(unescape(encodeURIComponent(pw+'_momentum_salt')));
+    var res=await db.from('users').update(Object.assign({},upd,{trading_pairs:pairs})).eq('id',id);
+    if(res.error&&res.error.message&&res.error.message.indexOf('trading_pairs')>-1) res=await db.from('users').update(upd).eq('id',id);
+    if(res.error) throw res.error;
+    sucEl.textContent='Updated!';sucEl.style.display='block';
+    setTimeout(function(){document.getElementById('edit-analyst-popup').remove();loadAdminAnalysts();},1200);
+  }catch(e){errEl.textContent='Error: '+(e.message||'failed');errEl.style.display='block';}
+}
+async function deleteAnalystAdmin(id){
+  if(!confirm('Delete this analyst? Their signals will be kept but unlinked from this account.'))return;
+  try{
+    // Step 1: Unlink analyst from their signals (set analyst_id to null)
+    var r1=await db.from('signals').update({analyst_id:null,analyst_name:'Deleted Analyst'}).eq('analyst_id',id);
+    if(r1.error&&r1.error.message&&r1.error.message.indexOf('analyst_id')===-1){
+      // analyst_id column may not exist — skip
+    }
+    // Step 2: Now safe to delete the analyst
+    var r2=await db.from('users').delete().eq('id',id);
+    if(r2.error)throw r2.error;
+    loadAdminAnalysts();
+  }catch(e){alert('Error: '+(e.message||'Could not delete analyst'));}
+}
 
-// ── ADMIN: SUB-ADMINS ──────────────────────────────────────
+// ═══════════════════════════════════════════════════
+// ADMIN: SUB-ADMINS
+// ═══════════════════════════════════════════════════
 async function handleAddSubAdmin(){
   var name=document.getElementById('mob-subadmin-name').value.trim(),username=document.getElementById('mob-subadmin-username').value.trim().toLowerCase(),password=document.getElementById('mob-subadmin-password').value;
   var checks=document.querySelectorAll('.subadmin-tab-check:checked'),tabs=Array.from(checks).map(function(c){return c.value;}).join(',');
   var errEl=document.getElementById('mob-subadmin-error'),sucEl=document.getElementById('mob-subadmin-success');errEl.style.display='none';sucEl.style.display='none';
   if(!name||!username||!password){errEl.textContent='Please fill all fields';errEl.style.display='block';return;}
   if(!tabs){errEl.textContent='Select at least one tab';errEl.style.display='block';return;}
+  if(password.length<6){errEl.textContent='Password min 6 characters';errEl.style.display='block';return;}
   var hash=btoa(unescape(encodeURIComponent(password+'_momentum_salt')));
   try{
     var res=await db.from('users').insert([{name:name,username:username,password_hash:hash,mt5_id:'SUBADMIN_'+Date.now(),status:'active',role:'sub_admin',allowed_tabs:tabs,created_at:new Date().toISOString()}]);
-    if(res.error)throw res.error;
+    if(res.error) throw res.error;
     sucEl.textContent='Sub-admin created!';sucEl.style.display='block';
     document.getElementById('mob-subadmin-name').value='';document.getElementById('mob-subadmin-username').value='';document.getElementById('mob-subadmin-password').value='';
     document.querySelectorAll('.subadmin-tab-check').forEach(function(c){c.checked=false;});
@@ -5035,19 +5199,46 @@ async function loadAdminSubAdmins(){
   try{
     var res=await db.from('users').select('*').order('created_at',{ascending:false});if(res.error)throw res.error;
     var subs=(res.data||[]).filter(function(u){return u.role==='sub_admin';});
-    if(!subs.length){el.innerHTML='<div class="empty-state" style="padding:12px;">No sub-admins yet</div>';return;}
+    if(!subs.length){el.innerHTML='<div class="empty-state" style="padding:12px;"><i class="ti ti-users"></i> No sub-admins yet</div>';return;}
     el.innerHTML='';
-    var map={dashboard:'Dashboard',users:'Users',tickets:'Support',funds:'Fund Management',announce:'Announcements',signals:'Signals',mt5:'MT5',analyst:'Administrator',academy:'Academy'};
+    var map={dashboard:'Dashboard',users:'Users',tickets:'Support',funds:'Fund Management',announce:'Announcements',signals:'Signals',analyst:'Administrator',academy:'Academy'};
     subs.forEach(function(sub){
       var card=document.createElement('div');card.style.cssText='padding:10px 12px;background:var(--bg3);border-radius:9px;margin-bottom:8px;border:1px solid var(--border);';
       var tabs=(sub.allowed_tabs||'').split(',').map(function(t){return map[t]||t;}).join(' · ');
-      card.innerHTML='<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;"><div style="width:34px;height:34px;border-radius:8px;background:rgba(77,158,255,0.1);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#4D9EFF;">'+(sub.name||sub.username||'?').substring(0,2).toUpperCase()+'</div><div style="flex:1;"><div style="font-size:13px;font-weight:700;color:var(--text);">'+(sub.name||'-')+'</div><div style="font-size:11px;color:var(--text3);">@'+(sub.username||'-')+'</div></div></div><div style="font-size:10px;color:var(--text3);margin-bottom:8px;">Access: <span style="color:#4D9EFF;font-weight:600;">'+tabs+'</span></div>';
-      var bD=document.createElement('button');bD.style.cssText='width:100%;padding:7px;background:rgba(255,30,60,0.08);border:1px solid rgba(255,30,60,0.15);border-radius:7px;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;';bD.textContent='Delete';bD.addEventListener('click',function(){deleteSubAdmin(sub.id);});
-      card.appendChild(bD);el.appendChild(card);
+      card.innerHTML='<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;"><div style="width:34px;height:34px;border-radius:8px;background:rgba(77,158,255,0.1);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#4D9EFF;">'+(sub.name||sub.username||'?').substring(0,2).toUpperCase()+'</div><div style="flex:1;"><div style="font-size:13px;font-weight:700;color:var(--text);">'+(sub.name||'-')+'</div><div style="font-size:11px;color:var(--text3);">@'+(sub.username||'-')+'</div></div><div style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;background:rgba(77,158,255,0.1);color:#4D9EFF;">SUB-ADMIN</div></div><div style="font-size:10px;color:var(--text3);margin-bottom:8px;">Access: <span style="color:#4D9EFF;font-weight:600;">'+tabs+'</span></div>';
+      var br=document.createElement('div');br.style.cssText='display:flex;gap:6px;';
+      var bE=document.createElement('button');bE.style.cssText='flex:1;padding:7px;background:rgba(77,158,255,0.1);border:1px solid rgba(77,158,255,0.2);border-radius:7px;color:#4D9EFF;font-size:11px;font-weight:700;cursor:pointer;';bE.textContent='Edit';bE.addEventListener('click',function(){openEditSubAdminPopup(sub);});
+      var bD=document.createElement('button');bD.style.cssText='flex:1;padding:7px;background:rgba(255,30,60,0.08);border:1px solid rgba(255,30,60,0.15);border-radius:7px;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;';bD.textContent='Delete';bD.addEventListener('click',function(){deleteSubAdmin(sub.id);});
+      br.appendChild(bE);br.appendChild(bD);card.appendChild(br);el.appendChild(card);
     });
   }catch(e){el.innerHTML='<div style="padding:12px;color:var(--red);">Error: '+(e.message||'failed')+'</div>';}
 }
-async function deleteSubAdmin(id){if(!confirm('Delete sub-admin?'))return;var r=await db.from('users').delete().eq('id',id);if(r.error){alert(r.error.message);return;}loadAdminSubAdmins();}
+function openEditSubAdminPopup(sub){
+  var ex=document.getElementById('edit-subadmin-popup');if(ex)ex.remove();
+  var popup=document.createElement('div');popup.id='edit-subadmin-popup';popup.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(4px);z-index:9100;display:flex;align-items:flex-end;';
+  var sheet=document.createElement('div');sheet.style.cssText='width:100%;background:var(--bg2);border-radius:20px 20px 0 0;border-top:1px solid var(--border);padding:20px 18px 36px;max-height:90vh;overflow-y:auto;';
+  var allTabs=['dashboard','users','tickets','funds','announce','signals','mt5','analyst','academy'];
+  var tabLabels={dashboard:'Dashboard',users:'Users',tickets:'Support',funds:'Fund Management',announce:'Announcements',signals:'Signals',mt5:'MT5',analyst:'Administrator',academy:'Academy'};
+  var saved=(sub.allowed_tabs||'').split(',');
+  var th=allTabs.map(function(t){var c=saved.indexOf(t)>-1?'checked':'';return '<label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="'+t+'" class="esa-tab-check" '+c+' style="accent-color:var(--red);width:15px;height:15px;"> '+tabLabels[t]+'</label>';}).join('');
+  sheet.innerHTML='<div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 18px;"></div><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;"><div style="font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);">EDIT SUB-ADMIN</div><button id="esa-x" style="width:32px;height:32px;border-radius:50%;background:var(--surface);border:1px solid var(--border);color:var(--text2);font-size:18px;cursor:pointer;">×</button></div><div class="auth-field"><label class="auth-label">Full Name</label><input id="esa-name" class="auth-input" type="text" value="'+(sub.name||'')+'"></div><div class="auth-field"><label class="auth-label">New Password</label><input id="esa-pw" class="auth-input" type="password" placeholder="Leave blank to keep"></div><div class="auth-field"><label class="auth-label">Status</label><select id="esa-status" class="auth-input"><option value="active"'+(sub.status==='active'?' selected':'')+'>Active</option><option value="suspended"'+(sub.status==='suspended'?' selected':'')+'>Suspended</option></select></div><div class="auth-field"><label class="auth-label">Panel Access</label><div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px 12px;"><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">'+th+'</div></div></div><div id="esa-error" class="error-msg"></div><div id="esa-success" class="success-msg"></div>';
+  var sb=document.createElement('button');sb.className='red-btn';sb.textContent='SAVE CHANGES';sb.addEventListener('click',function(){saveSubAdminEdit(sub.id);});sheet.appendChild(sb);
+  var cb=document.createElement('button');cb.className='ghost-btn';cb.style.marginTop='10px';cb.textContent='Cancel';cb.addEventListener('click',function(){popup.remove();});sheet.appendChild(cb);
+  popup.appendChild(sheet);popup.addEventListener('click',function(e){if(e.target===popup)popup.remove();});document.body.appendChild(popup);
+  sheet.querySelector('#esa-x').addEventListener('click',function(){popup.remove();});
+}
+async function saveSubAdminEdit(id){
+  var name=document.getElementById('esa-name').value.trim(),pw=document.getElementById('esa-pw').value,status=document.getElementById('esa-status').value;
+  var checks=document.querySelectorAll('.esa-tab-check:checked'),tabs=Array.from(checks).map(function(c){return c.value;}).join(',');
+  var errEl=document.getElementById('esa-error'),sucEl=document.getElementById('esa-success');errEl.style.display='none';sucEl.style.display='none';
+  if(!tabs){errEl.textContent='Select at least one tab';errEl.style.display='block';return;}
+  try{
+    var upd={name:name,status:status,allowed_tabs:tabs};if(pw)upd.password_hash=btoa(unescape(encodeURIComponent(pw+'_momentum_salt')));
+    var res=await db.from('users').update(upd).eq('id',id);if(res.error)throw res.error;
+    sucEl.textContent='Updated!';sucEl.style.display='block';setTimeout(function(){document.getElementById('edit-subadmin-popup').remove();loadAdminSubAdmins();},1200);
+  }catch(e){errEl.textContent='Error: '+(e.message||'failed');errEl.style.display='block';}
+}
+async function deleteSubAdmin(id){if(!confirm('Delete this sub-admin?'))return;var r=await db.from('users').delete().eq('id',id);if(r.error){alert(r.error.message);return;}loadAdminSubAdmins();}
 function enterSubAdmin(user){
   showScreen('screen-app');
   setTimeout(function(){
@@ -5058,32 +5249,21 @@ function enterSubAdmin(user){
     if(allowed.length) switchAdminTab(allowed[0]);
   },150);
 }
-
-// ── ADMIN: SIGNALS ────────────────────────────────────────
-async function loadAdminSignals(){
-  var el=document.getElementById('admin-signals-list');if(!el)return;
-  el.innerHTML='<div class="empty-state" style="padding:16px;">Loading...</div>';
-  try{
-    var res=await db.from('signals').select('*').order('created_at',{ascending:false}).limit(30);
-    if(res.error)throw res.error;
-    if(!res.data||!res.data.length){el.innerHTML='<div class="empty-state" style="padding:16px;"><i class="ti ti-broadcast"></i> No signals</div>';return;}
-    el.innerHTML='';
-    res.data.forEach(function(sig){
-      var dir=(sig.direction||'BUY').toLowerCase(),isAct=sig.status==='active';
-      var card=document.createElement('div');card.style.cssText='padding:11px 13px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;';
-      card.innerHTML='<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><div style="font-size:14px;font-weight:800;color:var(--text);flex:1;">'+(sig.pair||'--')+'</div><div style="padding:3px 9px;border-radius:5px;font-size:9px;font-weight:800;background:'+(dir==='buy'?'rgba(0,200,122,0.12)':'rgba(255,30,60,0.1)')+';color:'+(dir==='buy'?'var(--green)':'var(--red)')+';">'+(sig.direction||'BUY')+'</div><div style="padding:3px 9px;border-radius:5px;font-size:9px;font-weight:800;color:'+(isAct?'var(--green)':'var(--amber)')+';">'+(isAct?'ACTIVE':'INACTIVE')+'</div></div><div style="font-size:10px;color:var(--text3);margin-bottom:8px;">'+(sig.analyst_name||'Analyst')+' · '+timeAgo(sig.created_at)+'</div>';
-      var br=document.createElement('div');br.style.cssText='display:flex;gap:6px;';
-      var bA=document.createElement('button');bA.style.cssText='flex:1;padding:7px;background:rgba(0,200,122,0.1);border:1px solid rgba(0,200,122,0.2);border-radius:7px;color:var(--green);font-size:11px;font-weight:700;cursor:pointer;';bA.textContent='Active';bA.addEventListener('click',function(){adminUpdateSig(sig.id,'active');});
-      var bI=document.createElement('button');bI.style.cssText='flex:1;padding:7px;background:rgba(255,176,32,0.1);border:1px solid rgba(255,176,32,0.2);border-radius:7px;color:var(--amber);font-size:11px;font-weight:700;cursor:pointer;';bI.textContent='Inactive';bI.addEventListener('click',function(){adminUpdateSig(sig.id,'closed');});
-      var bD=document.createElement('button');bD.style.cssText='flex:1;padding:7px;background:rgba(255,30,60,0.08);border:1px solid rgba(255,30,60,0.15);border-radius:7px;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;';bD.textContent='Delete';bD.addEventListener('click',function(){adminDeleteSig(sig.id);});
-      br.appendChild(bA);br.appendChild(bI);br.appendChild(bD);card.appendChild(br);el.appendChild(card);
-    });
-  }catch(e){el.innerHTML='<div style="padding:12px;color:var(--red);">Error: '+(e.message||'Failed')+'</div>';}
-}
 async function adminUpdateSig(id,st){try{var r=await db.from('signals').update({status:st}).eq('id',id);if(r.error)throw r.error;loadAdminSignals();}catch(e){alert('Error: '+e.message);}}
-async function adminDeleteSig(id){if(!confirm('Delete signal?'))return;try{await db.from('trades').update({signal_id:null}).eq('signal_id',id);var r=await db.from('signals').delete().eq('id',id);if(r.error)throw r.error;loadAdminSignals();}catch(e){alert('Error: '+(e.message||'failed'));}}
+async function adminDeleteSig(id){
+  if(!confirm('Delete this signal permanently?'))return;
+  try{
+    // Remove foreign key refs in trades first
+    await db.from('trades').update({signal_id:null}).eq('signal_id',id);
+    var r=await db.from('signals').delete().eq('id',id);
+    if(r.error)throw r.error;
+    loadAdminSignals();
+  }catch(e){alert('Delete failed: '+(e.message||'Unknown error'));}
+}
 
-// ── ADMIN: ACADEMY ────────────────────────────────────────
+// ═══════════════════════════════════════════════════
+// ADMIN: ACADEMY
+// ═══════════════════════════════════════════════════
 async function handlePublishAcademy(){
   var cat=document.getElementById('academy-category').value,title=document.getElementById('academy-title').value.trim(),content=document.getElementById('academy-content').value.trim(),video=document.getElementById('academy-video').value.trim(),level=document.getElementById('academy-level').value;
   var errEl=document.getElementById('academy-error'),sucEl=document.getElementById('academy-success');errEl.style.display='none';sucEl.style.display='none';
@@ -5102,19 +5282,23 @@ async function loadAdminAcademy(){
   try{
     var res=await db.from('academy').select('*').order('created_at',{ascending:false});if(res.error)throw res.error;
     if(!res.data||!res.data.length){el.innerHTML='<div class="empty-state" style="padding:16px;"><i class="ti ti-book"></i> No lessons yet</div>';return;}
+    var lc={beginner:'var(--green)',intermediate:'var(--amber)',advanced:'var(--red)'};
     el.innerHTML='';
     res.data.forEach(function(ls){
       var card=document.createElement('div');card.style.cssText='padding:11px 13px;background:var(--bg3);border-radius:9px;margin-bottom:8px;border:1px solid var(--border);';
-      card.innerHTML='<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><div style="flex:1;font-size:13px;font-weight:700;color:var(--text);">'+ls.title+'</div><div style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;background:rgba(255,30,60,0.1);color:var(--red);">'+ls.category+'</div></div><div style="font-size:11px;color:var(--text3);margin-bottom:8px;">'+ls.content.substring(0,80)+'...</div>';
+      card.innerHTML='<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><div style="flex:1;font-size:13px;font-weight:700;color:var(--text);">'+ls.title+'</div><div style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;background:rgba(255,30,60,0.1);color:var(--red);">'+ls.category+'</div><div style="font-size:9px;padding:2px 7px;border-radius:4px;color:'+(lc[ls.level]||'var(--text3)')+';background:rgba(255,255,255,0.05);">'+ls.level+'</div></div><div style="font-size:11px;color:var(--text3);margin-bottom:8px;">'+ls.content.substring(0,80)+(ls.content.length>80?'...':'')+'</div>';
       var b=document.createElement('button');b.style.cssText='width:100%;padding:7px;background:rgba(255,30,60,0.08);border:1px solid rgba(255,30,60,0.15);border-radius:7px;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;';b.textContent='Delete';b.addEventListener('click',function(){deleteLesson(ls.id);});card.appendChild(b);el.appendChild(card);
     });
   }catch(e){el.innerHTML='<div style="padding:12px;color:var(--red);">Error: '+(e.message||'failed')+'</div>';}
 }
 async function deleteLesson(id){if(!confirm('Delete lesson?'))return;var r=await db.from('academy').delete().eq('id',id);if(r.error){alert(r.error.message);return;}loadAdminAcademy();}
 
-// ── USER: ACADEMY ─────────────────────────────────────────
+// ═══════════════════════════════════════════════════
+// USER: ACADEMY
+// ═══════════════════════════════════════════════════
 var _acData=[];
 var _acMeta={basics:{label:'Trading Basics',icon:'ti-book',color:'rgba(255,176,32,0.12)',ic:'var(--amber)'},technical:{label:'Technical Analysis',icon:'ti-chart-line',color:'rgba(77,158,255,0.12)',ic:'#4D9EFF'},fundamental:{label:'Fundamental Analysis',icon:'ti-world',color:'rgba(0,200,122,0.12)',ic:'var(--green)'},risk:{label:'Risk Management',icon:'ti-shield',color:'rgba(255,30,60,0.12)',ic:'var(--red)'},psychology:{label:'Trading Psychology',icon:'ti-brain',color:'rgba(168,85,247,0.12)',ic:'#a855f7'},strategy:{label:'Strategies',icon:'ti-target',color:'rgba(255,176,32,0.12)',ic:'var(--amber)'},mt5:{label:'MT5 Platform Guide',icon:'ti-device-desktop',color:'rgba(77,158,255,0.12)',ic:'#4D9EFF'}};
+
 async function loadAcademy(){
   var cv=document.getElementById('academy-categories');if(!cv)return;
   cv.innerHTML='<div class="empty-state" style="padding:20px;"><i class="ti ti-loader"></i> Loading...</div>';
@@ -5133,14 +5317,16 @@ function renderAcademy(cv){
   if(!cats.length){cv.innerHTML='<div class="empty-state" style="padding:20px;"><i class="ti ti-book"></i> No lessons yet</div>';return;}
   cv.innerHTML='<div style="font-size:12px;color:var(--text3);margin-bottom:14px;">Select a category to start learning</div>';
   cats.forEach(function(cat){
-    var m=_acMeta[cat]||{label:cat,icon:'ti-book',color:'rgba(255,255,255,0.08)',ic:'var(--text)'};var cnt=groups[cat].length;
+    var m=_acMeta[cat]||{label:cat,icon:'ti-book',color:'rgba(255,255,255,0.08)',ic:'var(--text)'};
+    var cnt=groups[cat].length;
     var d=document.createElement('div');d.className='more-menu-item';d.style.marginBottom='8px';d.style.cursor='pointer';
     d.innerHTML='<div class="more-menu-icon" style="background:'+m.color+';border-color:transparent;"><i class="ti '+m.icon+'" style="color:'+m.ic+';"></i></div><div class="more-menu-text"><div class="more-menu-label">'+m.label+'</div><div class="more-menu-sub">'+cnt+' lesson'+(cnt!==1?'s':'')+'</div></div><i class="ti ti-chevron-right more-menu-arrow"></i>';
     d.addEventListener('click',function(){openAcademyCategory(cat);});cv.appendChild(d);
   });
 }
 function openAcademyCategory(cat){
-  var lessons=_acData.filter(function(l){return l.category===cat;});var m=_acMeta[cat]||{label:cat};
+  var lessons=_acData.filter(function(l){return l.category===cat;});
+  var m=_acMeta[cat]||{label:cat};
   var cv=document.getElementById('academy-categories');if(cv)cv.style.display='none';
   var content=document.getElementById('academy-content');
   var lv=document.getElementById('academy-lessons');
@@ -5149,9 +5335,10 @@ function openAcademyCategory(cat){
   var bb=document.createElement('button');bb.style.cssText='background:transparent;border:none;color:var(--red);font-size:13px;font-weight:700;cursor:pointer;padding:0;margin-bottom:16px;display:flex;align-items:center;gap:6px;';bb.innerHTML='<i class="ti ti-arrow-left"></i> Back';bb.addEventListener('click',function(){lv.style.display='none';if(cv)cv.style.display='block';});lv.appendChild(bb);
   var td=document.createElement('div');td.style.cssText='font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);margin-bottom:14px;';td.textContent=m.label;lv.appendChild(td);
   if(!lessons.length){lv.innerHTML+='<div class="empty-state" style="padding:20px;">No lessons here yet</div>';return;}
+  var lc={beginner:'var(--green)',intermediate:'var(--amber)',advanced:'var(--red)'};
   lessons.forEach(function(ls){
     var card=document.createElement('div');card.style.cssText='padding:13px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:10px;cursor:pointer;';
-    card.innerHTML='<div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px;">'+ls.title+'</div><div style="font-size:11px;color:var(--text3);line-height:1.5;">'+ls.content.substring(0,80)+'...</div>'+(ls.video_url?'<div style="margin-top:6px;font-size:11px;color:#4D9EFF;display:flex;align-items:center;gap:4px;"><i class="ti ti-player-play"></i> Video</div>':'');
+    card.innerHTML='<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><div style="flex:1;font-size:13px;font-weight:700;color:var(--text);">'+ls.title+'</div><div style="font-size:9px;font-weight:700;padding:2px 8px;border-radius:4px;color:'+(lc[ls.level]||'var(--text3)')+';background:rgba(255,255,255,0.05);">'+(ls.level||'beginner').toUpperCase()+'</div></div><div style="font-size:11px;color:var(--text3);line-height:1.5;">'+(ls.content||'').substring(0,80)+(ls.content&&ls.content.length>80?'...':'')+'</div>'+(ls.video_url?'<div style="margin-top:6px;font-size:11px;color:#4D9EFF;display:flex;align-items:center;gap:4px;"><i class="ti ti-player-play"></i> Video</div>':'');
     card.addEventListener('click',function(){openAcademyLesson(ls,lv);});lv.appendChild(card);
   });
 }
@@ -5162,41 +5349,45 @@ function openAcademyLesson(ls,lv){
   if(!dv){dv=document.createElement('div');dv.id='academy-detail';if(content)content.appendChild(dv);}
   dv.style.display='block';dv.innerHTML='';
   var bb=document.createElement('button');bb.style.cssText='background:transparent;border:none;color:var(--red);font-size:13px;font-weight:700;cursor:pointer;padding:0;margin-bottom:16px;display:flex;align-items:center;gap:6px;';bb.innerHTML='<i class="ti ti-arrow-left"></i> Back';bb.addEventListener('click',function(){dv.style.display='none';if(lv)lv.style.display='block';});dv.appendChild(bb);
-  var dc=document.createElement('div');dc.innerHTML='<div style="font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);margin-bottom:14px;">'+ls.title+'</div>'+(ls.video_url?'<div style="margin-bottom:14px;background:var(--bg3);border-radius:10px;overflow:hidden;"><a href="'+ls.video_url+'" target="_blank" style="display:flex;align-items:center;gap:10px;padding:13px;text-decoration:none;"><div style="width:40px;height:40px;border-radius:8px;background:rgba(255,30,60,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ti ti-player-play" style="color:var(--red);font-size:18px;"></i></div><div><div style="font-size:13px;font-weight:700;color:var(--text);">Watch Video</div><div style="font-size:11px;color:var(--text3);">Tap to open</div></div></a></div>':'')+'<div style="font-size:13px;color:var(--text2);line-height:1.9;white-space:pre-wrap;">'+ls.content+'</div>';
+  var lc={beginner:'var(--green)',intermediate:'var(--amber)',advanced:'var(--red)'};
+  var dc=document.createElement('div');
+  dc.innerHTML='<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;"><div style="flex:1;font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);">'+ls.title+'</div><div style="font-size:9px;padding:3px 8px;border-radius:5px;color:'+(lc[ls.level]||'var(--text3)')+';background:rgba(255,255,255,0.06);">'+(ls.level||'beginner').toUpperCase()+'</div></div>'+(ls.video_url?'<div style="margin-bottom:14px;background:var(--bg3);border-radius:10px;overflow:hidden;"><a href="'+ls.video_url+'" target="_blank" style="display:flex;align-items:center;gap:10px;padding:13px;text-decoration:none;"><div style="width:40px;height:40px;border-radius:8px;background:rgba(255,30,60,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ti ti-player-play" style="color:var(--red);font-size:18px;"></i></div><div><div style="font-size:13px;font-weight:700;color:var(--text);">Watch Video</div><div style="font-size:11px;color:var(--text3);">Tap to open</div></div></a></div>':'')+
+  '<div style="font-size:13px;color:var(--text2);line-height:1.9;white-space:pre-wrap;">'+(ls.content||'')+'</div>';
   dv.appendChild(dc);
 }
 
-// ── ANALYST SCREEN ────────────────────────────────────────
+// ═══════════════════════════════════════════════════
+// ANALYST SIGNALS MANAGEMENT
+// ═══════════════════════════════════════════════════
 var _analystAllSignals=[];
-function loadAnalystScreen(user){var n=document.querySelector('#screen-analyst .app-header-name');if(n&&user)n.textContent=user.name||user.username||'ANALYST';setTimeout(loadAnalystSignals,500);}
 async function loadAnalystSignals(){
   var container=document.getElementById('analyst-signals-list');if(!container)return;
-  container.innerHTML='<div class="empty-state" style="padding:24px;"><i class="ti ti-loader"></i> Loading...</div>';
+  container.innerHTML='<div class="empty-state" style="padding:24px;"><i class="ti ti-loader"></i>Loading...</div>';
   try{
-    var q=db.from('signals').select('*').order('created_at',{ascending:false}).limit(50);
-    if(currentUser&&currentUser.id)q=q.eq('analyst_id',currentUser.id);
+    var q=db.from('signals').select('*').order('created_at',{ascending:false}).limit(50);if(currentUser&&currentUser.id)q=q.eq('analyst_id',currentUser.id);
     var res=await q;if(res.error)throw res.error;
     _analystAllSignals=res.data||[];renderAnalystSignals(_analystAllSignals);
-  }catch(e){container.innerHTML='<div class="empty-state" style="padding:24px;color:var(--red);">Error loading</div>';}
-}
-function filterAnalystSignals(filter,btn){
-  var filtered=filter==='all'?_analystAllSignals:_analystAllSignals.filter(function(s){return s.status===(filter==='active'?'active':'closed');});
-  renderAnalystSignals(filtered);
+  }catch(e){container.innerHTML='<div class="empty-state" style="padding:24px;color:var(--red);">Error: '+(e.message||'Failed')+'</div>';}
 }
 function renderAnalystSignals(sigs){
   var container=document.getElementById('analyst-signals-list');if(!container)return;
-  if(!sigs||!sigs.length){container.innerHTML='<div class="empty-state" style="padding:24px;"><i class="ti ti-broadcast"></i> No signals yet</div>';return;}
+  if(!sigs||!sigs.length){container.innerHTML='<div class="empty-state" style="padding:24px;"><i class="ti ti-broadcast"></i>No signals yet</div>';return;}
   container.innerHTML='';
   sigs.forEach(function(sig){
     var dir=(sig.direction||'BUY').toLowerCase(),isAct=sig.status==='active';
     var card=document.createElement('div');card.style.cssText='background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:13px;margin-bottom:10px;';
-    card.innerHTML='<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;"><div style="flex:1;font-size:14px;font-weight:800;color:var(--text);">'+(sig.pair||'--')+'</div><div style="padding:4px 10px;border-radius:6px;font-size:10px;font-weight:800;background:'+(dir==='buy'?'rgba(0,200,122,0.12)':'rgba(255,30,60,0.1)')+';color:'+(dir==='buy'?'var(--green)':'var(--red)')+';">'+(sig.direction||'BUY')+'</div><div style="padding:4px 10px;border-radius:6px;font-size:10px;font-weight:700;color:'+(isAct?'var(--green)':'var(--amber)')+';">'+(isAct?'ACTIVE':'INACTIVE')+'</div></div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px;"><div style="background:var(--bg3);border-radius:7px;padding:7px;"><div style="font-size:9px;color:var(--text3);margin-bottom:2px;">ENTRY</div><div style="font-size:11px;font-weight:700;">'+(sig.entry_from||'--')+'-'+(sig.entry_to||'--')+'</div></div><div style="background:var(--bg3);border-radius:7px;padding:7px;"><div style="font-size:9px;color:var(--text3);margin-bottom:2px;">SL</div><div style="font-size:11px;font-weight:700;color:var(--red);">'+(sig.sl||'--')+'</div></div><div style="background:var(--bg3);border-radius:7px;padding:7px;"><div style="font-size:9px;color:var(--text3);margin-bottom:2px;">TP</div><div style="font-size:11px;font-weight:700;color:var(--green);">'+(sig.tp1||'--')+'</div></div></div>';
+    var top=document.createElement('div');top.style.cssText='display:flex;align-items:center;gap:10px;margin-bottom:10px;';
+    top.innerHTML='<div style="width:38px;height:38px;border-radius:10px;background:'+(dir==='buy'?'rgba(0,200,122,0.12)':'rgba(255,30,60,0.1)')+';display:flex;align-items:center;justify-content:center;font-size:17px;">'+(dir==='buy'?'📈':'📉')+'</div><div style="flex:1;"><div style="font-size:14px;font-weight:800;color:var(--text);">'+(sig.pair||'--')+'</div><div style="font-size:11px;color:var(--text3);">'+timeAgo(sig.created_at)+' · '+(sig.timeframe||'H4')+'</div></div><div style="padding:4px 10px;border-radius:6px;font-family:Orbitron,sans-serif;font-size:10px;font-weight:800;background:'+(dir==='buy'?'rgba(0,200,122,0.12)':'rgba(255,30,60,0.1)')+';color:'+(dir==='buy'?'var(--green)':'var(--red)')+';">'+(sig.direction||'BUY')+'</div><div style="margin-left:4px;padding:4px 10px;border-radius:6px;font-size:10px;font-weight:700;color:'+(isAct?'var(--green)':'var(--amber)')+';">'+(isAct?'ACTIVE':'INACTIVE')+'</div>';
+    card.appendChild(top);
+    var lv=document.createElement('div');lv.style.cssText='display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px;';
+    lv.innerHTML='<div style="background:var(--bg3);border-radius:7px;padding:7px;"><div style="font-size:9px;color:var(--text3);margin-bottom:2px;">ENTRY</div><div style="font-size:11px;font-weight:700;">'+(sig.entry_from||'--')+'-'+(sig.entry_to||'--')+'</div></div><div style="background:var(--bg3);border-radius:7px;padding:7px;"><div style="font-size:9px;color:var(--text3);margin-bottom:2px;">SL</div><div style="font-size:12px;font-weight:700;color:var(--red);">'+(sig.sl||'--')+'</div></div><div style="background:var(--bg3);border-radius:7px;padding:7px;"><div style="font-size:9px;color:var(--text3);margin-bottom:2px;">TP</div><div style="font-size:12px;font-weight:700;color:var(--green);">'+(sig.tp1||'--')+'</div></div>';
+    card.appendChild(lv);
     var br=document.createElement('div');br.style.cssText='display:flex;gap:6px;';
-    function mkBtn(txt,st,fn){var b=document.createElement('button');b.textContent=txt;b.style.cssText=st+'font-size:11px;font-weight:700;cursor:pointer;';b.addEventListener('click',fn);return b;}
+    function mkBtn(txt,style,fn){var b=document.createElement('button');b.textContent=txt;b.style.cssText=style+'font-size:11px;font-weight:700;cursor:pointer;';b.addEventListener('click',fn);return b;}
     br.appendChild(mkBtn('Active','flex:1;padding:8px;background:rgba(0,200,122,0.1);border:1px solid rgba(0,200,122,0.2);border-radius:8px;color:var(--green);',function(){setSignalStatus(sig.id,'active');}));
     br.appendChild(mkBtn('Inactive','flex:1;padding:8px;background:rgba(255,176,32,0.1);border:1px solid rgba(255,176,32,0.2);border-radius:8px;color:var(--amber);',function(){setSignalStatus(sig.id,'closed');}));
     br.appendChild(mkBtn('Edit','flex:1;padding:8px;background:rgba(77,158,255,0.1);border:1px solid rgba(77,158,255,0.2);border-radius:8px;color:#4D9EFF;',function(){openEditSignal(sig.id);}));
-    br.appendChild(mkBtn('Del','padding:8px 12px;background:rgba(255,30,60,0.08);border:1px solid rgba(255,30,60,0.2);border-radius:8px;color:var(--red);',function(){deleteAnalystSignal(sig.id);}));
+    br.appendChild(mkBtn('Delete','padding:8px 14px;background:rgba(255,30,60,0.08);border:1px solid rgba(255,30,60,0.2);border-radius:8px;color:var(--red);',function(){deleteAnalystSignal(sig.id);}));
     card.appendChild(br);container.appendChild(card);
   });
 }
@@ -5204,8 +5395,9 @@ async function setSignalStatus(id,st){try{var r=await db.from('signals').update(
 async function deleteAnalystSignal(id){if(!confirm('Delete signal?'))return;try{var r=await db.from('signals').delete().eq('id',id);if(r.error)throw r.error;_analystAllSignals=_analystAllSignals.filter(function(s){return s.id!==id;});renderAnalystSignals(_analystAllSignals);}catch(e){alert('Error: '+e.message);}}
 function openEditSignal(sigId){
   var sig=_analystAllSignals.find(function(s){return s.id===sigId;});if(!sig)return;
-  var flds={pair:sig.pair,direction:sig.direction,'entry-from':sig.entry_from,'entry-to':sig.entry_to,sl:sig.sl,tp1:sig.tp1,tp2:sig.tp2||'',timeframe:sig.timeframe||'H4',strength:sig.strength||75,commentary:sig.commentary||''};
-  Object.keys(flds).forEach(function(f){var el=document.getElementById('edit-sig-'+f);if(el)el.value=flds[f];});
+  var fields=['pair','direction','entry-from','entry-to','sl','tp1','tp2','timeframe','strength','commentary'];
+  var vals={pair:sig.pair,direction:sig.direction,'entry-from':sig.entry_from,'entry-to':sig.entry_to,sl:sig.sl,tp1:sig.tp1,tp2:sig.tp2||'',timeframe:sig.timeframe||'H4',strength:sig.strength||75,commentary:sig.commentary||''};
+  fields.forEach(function(f){var el=document.getElementById('edit-sig-'+f);if(el)el.value=vals[f]||'';});
   document.getElementById('edit-sig-id').value=sigId;
   var sv=document.getElementById('edit-sig-strength-val');if(sv)sv.textContent=(sig.strength||75)+'%';
   setEditDirection((sig.direction||'BUY').toLowerCase());
@@ -5213,235 +5405,24 @@ function openEditSignal(sigId){
 }
 function closeAnalystEditPopup(){document.getElementById('analyst-edit-popup').style.display='none';}
 function setEditDirection(dir){
-  var b=document.getElementById('edit-dir-buy'),s=document.getElementById('edit-dir-sell');
   document.getElementById('edit-sig-direction').value=dir.toUpperCase();
-  if(dir==='buy'){b.style.cssText='padding:10px;border-radius:8px;background:rgba(0,200,122,0.12);color:var(--green);border:1px solid rgba(0,200,122,0.25);cursor:pointer;font-weight:700;';s.style.cssText='padding:10px;border-radius:8px;background:var(--surface);color:var(--text2);border:1px solid var(--border);cursor:pointer;font-weight:700;';}
-  else{s.style.cssText='padding:10px;border-radius:8px;background:rgba(255,30,60,0.1);color:var(--red);border:1px solid rgba(255,30,60,0.25);cursor:pointer;font-weight:700;';b.style.cssText='padding:10px;border-radius:8px;background:var(--surface);color:var(--text2);border:1px solid var(--border);cursor:pointer;font-weight:700;';}
+  var b=document.getElementById('edit-dir-buy'),s=document.getElementById('edit-dir-sell');
+  if(dir==='buy'){b.style.background='rgba(0,200,122,0.12)';b.style.color='var(--green)';b.style.border='1px solid rgba(0,200,122,0.25)';s.style.background='var(--surface)';s.style.color='var(--text2)';s.style.border='1px solid var(--border)';}
+  else{s.style.background='rgba(255,30,60,0.1)';s.style.color='var(--red)';s.style.border='1px solid rgba(255,30,60,0.25)';b.style.background='var(--surface)';b.style.color='var(--text2)';b.style.border='1px solid var(--border)';}
 }
 async function handleUpdateSignal(){
-  var id=document.getElementById('edit-sig-id').value,pair=document.getElementById('edit-sig-pair').value,dir=document.getElementById('edit-sig-direction').value,ef=document.getElementById('edit-sig-entry-from').value,et=document.getElementById('edit-sig-entry-to').value,sl=document.getElementById('edit-sig-sl').value,tp1=document.getElementById('edit-sig-tp1').value,tf=document.getElementById('edit-sig-timeframe').value,str=document.getElementById('edit-sig-strength').value,com=document.getElementById('edit-sig-commentary').value;
+  var id=document.getElementById('edit-sig-id').value,pair=document.getElementById('edit-sig-pair').value,dir=document.getElementById('edit-sig-direction').value,ef=document.getElementById('edit-sig-entry-from').value,et=document.getElementById('edit-sig-entry-to').value,sl=document.getElementById('edit-sig-sl').value,tp1=document.getElementById('edit-sig-tp1').value,tp2=document.getElementById('edit-sig-tp2').value,tf=document.getElementById('edit-sig-timeframe').value,str=document.getElementById('edit-sig-strength').value,com=document.getElementById('edit-sig-commentary').value;
   var errEl=document.getElementById('edit-sig-error'),sucEl=document.getElementById('edit-sig-success');errEl.style.display='none';sucEl.style.display='none';
   if(!pair||!ef||!et||!sl||!tp1){errEl.textContent='Fill all required fields';errEl.style.display='block';return;}
   try{
-    var r=await db.from('signals').update({pair:pair,direction:dir,entry_from:parseFloat(ef),entry_to:parseFloat(et),sl:parseFloat(sl),tp1:parseFloat(tp1),timeframe:tf,strength:parseInt(str),commentary:com}).eq('id',id);
+    var r=await db.from('signals').update({pair:pair,direction:dir,entry_from:parseFloat(ef),entry_to:parseFloat(et),sl:parseFloat(sl),tp1:parseFloat(tp1),tp2:tp2?parseFloat(tp2):null,timeframe:tf,strength:parseInt(str),commentary:com,updated_at:new Date().toISOString()}).eq('id',id);
     if(r.error)throw r.error;
-    _analystAllSignals=_analystAllSignals.map(function(s){return s.id===id?Object.assign({},s,{pair:pair,direction:dir}):s;});
+    _analystAllSignals=_analystAllSignals.map(function(s){return s.id===id?Object.assign({},s,{pair:pair,direction:dir,entry_from:parseFloat(ef),entry_to:parseFloat(et),sl:parseFloat(sl),tp1:parseFloat(tp1),timeframe:tf,strength:parseInt(str),commentary:com}):s;});
     sucEl.textContent='Updated!';sucEl.style.display='block';setTimeout(function(){closeAnalystEditPopup();renderAnalystSignals(_analystAllSignals);},1500);
   }catch(e){errEl.textContent='Error: '+(e.message||'Failed');errEl.style.display='block';}
 }
+function loadAnalystScreen(user){var n=document.querySelector('#screen-analyst .app-header-name');if(n&&user)n.textContent=user.name||user.username||'ANALYST';setTimeout(loadAnalystSignals,500);}
 
-// ── SUPPORT TICKET ADMIN ──────────────────────────────────
-async function adminDeleteTicket(id){
-  if(!confirm('Delete ticket permanently?'))return;
-  try{var r=await db.from('support_tickets').delete().eq('id',id);if(r.error)throw r.error;loadAdminTickets();}catch(e){alert('Delete failed: '+(e.message||'error'));}
-}
-async function adminToggleTicketDone(id,currentStatus){
-  var newStatus=currentStatus==='done'?'open':'done';
-  try{var r=await db.from('support_tickets').update({status:newStatus}).eq('id',id);if(r.error)throw r.error;loadAdminTickets();}catch(e){alert('Error: '+e.message);}
-}
-
-// ── SAVE EA SETTINGS ──────────────────────────────────────
-async function saveEASettings(){
-  if(!currentUser||!db)return;
-  var inputs=document.querySelectorAll('#sub-ea .ea-input');
-  var toggles=document.querySelectorAll('#sub-ea .toggle');
-  var settings={inputs:Array.from(inputs).map(function(i){return i.value;}),toggles:Array.from(toggles).map(function(t){return t.classList.contains('on');}),saved_at:new Date().toISOString()};
-  try{
-    var r=await db.from('users').update({ea_settings:JSON.stringify(settings)}).eq('id',currentUser.id);
-    if(r.error)throw r.error;
-    var btn=document.querySelector('#sub-ea .red-btn');
-    if(btn){var orig=btn.textContent;btn.textContent='✓ SAVED';btn.style.background='var(--green)';setTimeout(function(){btn.textContent=orig;btn.style.background='';},2000);}
-  }catch(e){alert('Save failed: '+(e.message||'error'));}
-}
-
-// ── ADMIN: MT5 TAB ────────────────────────────────────────
-async function loadAdminMT5(){
-  var el=document.getElementById('admin-mt5-list');if(!el||!db)return;
-  el.innerHTML='<div style="padding:12px;color:var(--text2);font-size:12px;">Loading...</div>';
-  try{
-    var res=await db.from('users').select('*').order('created_at',{ascending:false});
-    if(res.error)throw res.error;
-    var users=(res.data||[]).filter(function(u){return u.role==='user'||(!u.role&&u.mt5_id&&!u.mt5_id.startsWith('ANALYST_')&&!u.mt5_id.startsWith('SUBADMIN_'));});
-    if(!users.length){el.innerHTML='<div class="empty-state" style="padding:16px;"><i class="ti ti-users"></i> No users found</div>';return;}
-    el.innerHTML='';
-    users.forEach(function(user){
-      var connStatus=user.connection_status||(user.mt5_connected?'connected':'disconnected');
-      var isConn=connStatus==='connected',isPend=connStatus==='pending';
-      var sLabel=isConn?'CONNECTED':isPend?'PENDING':'NOT SET';
-      var sBg=isConn?'rgba(0,200,122,0.12)':isPend?'rgba(255,176,32,0.12)':'rgba(255,255,255,0.06)';
-      var sColor=isConn?'var(--green)':isPend?'var(--amber)':'var(--text3)';
-      var card=document.createElement('div');card.style.cssText='padding:12px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;';
-      card.innerHTML='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;"><div><div style="font-size:13px;font-weight:700;color:var(--text);">'+(user.name||user.username||'--')+'</div><div style="font-size:11px;color:var(--text3);">@'+(user.username||'--')+'</div></div><div style="font-size:10px;font-weight:700;padding:3px 9px;border-radius:5px;background:'+sBg+';color:'+sColor+';">'+sLabel+'</div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;"><div style="background:var(--surface);border-radius:7px;padding:8px;"><div style="font-size:9px;color:var(--text3);margin-bottom:3px;">MT5 ID</div><div style="font-size:12px;font-weight:700;color:var(--text);">'+(user.mt5_id||'--')+'</div></div><div style="background:var(--surface);border-radius:7px;padding:8px;"><div style="font-size:9px;color:var(--text3);margin-bottom:3px;">SERVER</div><div style="font-size:12px;font-weight:700;color:var(--text);">'+(user.mt5_server||'--')+'</div></div></div><div style="background:var(--surface);border-radius:7px;padding:8px;margin-bottom:10px;"><div style="font-size:9px;color:var(--text3);margin-bottom:3px;">PASSWORD</div><div style="display:flex;align-items:center;justify-content:space-between;"><div id="mt5pw-'+user.id+'" style="font-size:12px;font-weight:700;color:var(--text);font-family:monospace;">●●●●●●●●</div>'+(user.mt5_credential?'<button id="revbtn-'+user.id+'" style="font-size:10px;font-weight:700;padding:4px 10px;background:rgba(77,158,255,0.1);border:1px solid rgba(77,158,255,0.2);border-radius:6px;color:#4D9EFF;cursor:pointer;">Reveal</button>':'<div style="font-size:11px;color:var(--text3);">Not set</div>')+'</div></div>';
-      if(user.mt5_credential){
-        var revBtn=card.querySelector('#revbtn-'+user.id);var pwEl=card.querySelector('#mt5pw-'+user.id);var revealed=false;
-        revBtn.addEventListener('click',function(){if(!revealed){try{var dec=decodeURIComponent(escape(atob(user.mt5_credential)));var suf='_mmai_'+user.mt5_id;pwEl.textContent=dec.endsWith(suf)?dec.slice(0,-suf.length):dec;revBtn.textContent='Hide';revealed=true;}catch(e){pwEl.textContent=user.mt5_credential;}}else{pwEl.textContent='●●●●●●●●';revBtn.textContent='Reveal';revealed=false;}});
-      }
-      var actRow=document.createElement('div');actRow.style.cssText='display:flex;gap:6px;';
-      if(!isConn){
-        var actBtn=document.createElement('button');actBtn.textContent=isPend?'ACTIVATE':'Mark Pending';actBtn.style.cssText=isPend?'flex:1;padding:8px;background:rgba(0,200,122,0.1);border:1px solid rgba(0,200,122,0.2);border-radius:8px;color:var(--green);font-size:11px;font-weight:800;cursor:pointer;':'flex:1;padding:8px;background:rgba(255,176,32,0.1);border:1px solid rgba(255,176,32,0.2);border-radius:8px;color:var(--amber);font-size:11px;font-weight:700;cursor:pointer;';
-        actBtn.addEventListener('click',function(){if(isPend)adminActivateMT5(user.id,user.username||user.name);else adminSetPendingMT5(user.id);});actRow.appendChild(actBtn);
-      }else{
-        var deactBtn=document.createElement('button');deactBtn.textContent='DEACTIVATE';deactBtn.style.cssText='flex:1;padding:8px;background:rgba(255,30,60,0.08);border:1px solid rgba(255,30,60,0.15);border-radius:8px;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;';
-        deactBtn.addEventListener('click',function(){adminDeactivateMT5(user.id);});actRow.appendChild(deactBtn);
-      }
-      var editBtn=document.createElement('button');editBtn.textContent='Edit';editBtn.style.cssText='padding:8px 14px;background:rgba(77,158,255,0.1);border:1px solid rgba(77,158,255,0.2);border-radius:8px;color:#4D9EFF;font-size:11px;font-weight:700;cursor:pointer;';
-      editBtn.addEventListener('click',function(){openEditMT5Popup(user);});actRow.appendChild(editBtn);
-      card.appendChild(actRow);el.appendChild(card);
-    });
-  }catch(e){el.innerHTML='<div style="padding:12px;color:var(--red);">Error: '+(e.message||'failed')+'</div>';}
-}
-async function adminActivateMT5(userId,userName){
-  if(!confirm('Activate MT5 for '+(userName||'this user')+'?'))return;
-  try{
-    var r=await db.from('users').update({mt5_connected:true,connection_status:'connected',mt5_notification_shown:false}).eq('id',userId);
-    if(r.error) r=await db.from('users').update({mt5_connected:true,connection_status:'connected'}).eq('id',userId);
-    if(r.error)throw r.error;
-    loadAdminMT5();
-  }catch(e){alert('Error: '+(e.message||'Failed'));}
-}
-async function adminDeactivateMT5(userId){
-  if(!confirm('Deactivate MT5?'))return;
-  try{var r=await db.from('users').update({mt5_connected:false,connection_status:'disconnected'}).eq('id',userId);if(r.error)throw r.error;loadAdminMT5();}catch(e){alert('Error: '+e.message);}
-}
-async function adminSetPendingMT5(userId){
-  try{var r=await db.from('users').update({connection_status:'pending'}).eq('id',userId);if(r.error)throw r.error;loadAdminMT5();}catch(e){alert('Error: '+e.message);}
-}
-function openEditMT5Popup(user){
-  var ex=document.getElementById('edit-mt5-popup');if(ex)ex.remove();
-  var popup=document.createElement('div');popup.id='edit-mt5-popup';popup.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);z-index:9300;display:flex;align-items:flex-end;';
-  var sheet=document.createElement('div');sheet.style.cssText='width:100%;background:var(--bg2);border-radius:20px 20px 0 0;border-top:1px solid var(--border);padding:20px 18px 36px;';
-  sheet.innerHTML='<div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 18px;"></div><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;"><div style="font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);">EDIT MT5</div><button id="emt5-x" style="width:32px;height:32px;border-radius:50%;background:var(--surface);border:1px solid var(--border);color:var(--text2);font-size:18px;cursor:pointer;">×</button></div><div style="font-size:12px;color:var(--text3);margin-bottom:14px;">Editing: <span style="color:var(--text);font-weight:700;">'+(user.name||user.username||'User')+'</span></div><div class="auth-field"><label class="auth-label">MT5 Account ID</label><input id="emt5-id" class="auth-input" type="text" value="'+(user.mt5_id||'')+'"></div><div class="auth-field"><label class="auth-label">New Password <span style="color:var(--text3);font-size:10px;">(leave blank to keep)</span></label><input id="emt5-pw" class="auth-input" type="password" placeholder="New MT5 master password"></div><div id="emt5-error" class="error-msg"></div><div id="emt5-success" class="success-msg"></div>';
-  var sb=document.createElement('button');sb.className='red-btn';sb.textContent='SAVE';sb.addEventListener('click',function(){saveMT5Edit(user.id,user.mt5_id);});
-  var cb=document.createElement('button');cb.className='ghost-btn';cb.style.marginTop='10px';cb.textContent='Cancel';cb.addEventListener('click',function(){popup.remove();});
-  sheet.appendChild(sb);sheet.appendChild(cb);popup.appendChild(sheet);
-  popup.addEventListener('click',function(e){if(e.target===popup)popup.remove();});document.body.appendChild(popup);
-  sheet.querySelector('#emt5-x').addEventListener('click',function(){popup.remove();});
-}
-async function saveMT5Edit(userId,oldId){
-  var newId=document.getElementById('emt5-id').value.trim(),newPw=document.getElementById('emt5-pw').value;
-  var errEl=document.getElementById('emt5-error'),sucEl=document.getElementById('emt5-success');errEl.style.display='none';sucEl.style.display='none';
-  if(!newId){errEl.textContent='MT5 ID required';errEl.style.display='block';return;}
-  try{
-    var upd={mt5_id:newId};if(newPw)upd.mt5_credential=btoa(unescape(encodeURIComponent(newPw+'_mmai_'+newId)));
-    var r=await db.from('users').update(upd).eq('id',userId);if(r.error)throw r.error;
-    sucEl.textContent='Updated!';sucEl.style.display='block';setTimeout(function(){document.getElementById('edit-mt5-popup').remove();loadAdminMT5();},1200);
-  }catch(e){errEl.textContent='Error: '+(e.message||'Failed');errEl.style.display='block';}
-}
-
-// ── PROFILE MT5 ───────────────────────────────────────────
-function toggleMT5Pw(){
-  var i=document.getElementById('profile-mt5-pw'),e=document.getElementById('mt5-pw-eye');
-  if(!i)return;i.type=i.type==='password'?'text':'password';if(e)e.className=i.type==='password'?'ti ti-eye':'ti ti-eye-off';
-}
-function loadProfileMT5(){
-  if(!currentUser)return;
-  db.from('users').select('*').eq('id',currentUser.id).single().then(function(res){
-    if(res.data){currentUser=Object.assign(currentUser,res.data);sessionStorage.setItem('mob_user',JSON.stringify(currentUser));}
-    updateMT5ProfileUI(currentUser.connection_status||'disconnected');
-  }).catch(function(){updateMT5ProfileUI(currentUser.connection_status||'disconnected');});
-}
-function updateMT5ProfileUI(status){
-  var badge=document.getElementById('mt5-status-badge'),form=document.getElementById('mt5-connect-form'),pendMsg=document.getElementById('mt5-pending-msg'),connMsg=document.getElementById('mt5-connected-msg');
-  var idEl=document.getElementById('profile-mt5-id'),toggle=document.getElementById('mt5-auto-toggle');
-  if(idEl&&currentUser.mt5_id&&!currentUser.mt5_id.startsWith('ANALYST_')&&!currentUser.mt5_id.startsWith('SUBADMIN_'))idEl.value=currentUser.mt5_id;
-  if(currentUser.allow_auto_trade&&toggle)toggle.classList.add('on');
-  if(status==='connected'){
-    if(badge){badge.textContent='CONNECTED';badge.style.background='rgba(0,200,122,0.12)';badge.style.color='var(--green)';}
-    if(form)form.style.display='none';if(pendMsg)pendMsg.style.display='none';
-    if(connMsg){connMsg.style.display='block';var ci=document.getElementById('mt5-connected-id');if(ci)ci.textContent=currentUser.mt5_id||'';}
-  }else if(status==='pending'){
-    if(badge){badge.textContent='PENDING';badge.style.background='rgba(255,176,32,0.12)';badge.style.color='var(--amber)';}
-    if(form)form.style.display='none';if(pendMsg)pendMsg.style.display='block';if(connMsg)connMsg.style.display='none';
-  }else{
-    if(badge){badge.textContent='NOT CONNECTED';badge.style.background='rgba(255,176,32,0.12)';badge.style.color='var(--amber)';}
-    if(form)form.style.display='block';if(pendMsg)pendMsg.style.display='none';if(connMsg)connMsg.style.display='none';
-  }
-}
-
-// ── MT5 NOTIFICATION ──────────────────────────────────────
-async function checkMT5Notification(){
-  if(!currentUser||!db||currentUser.role!=='user')return;
-  try{
-    var res=await db.from('users').select('connection_status,mt5_notification_shown').eq('id',currentUser.id).single();
-    if(!res.data)return;
-    if(res.data.connection_status==='connected'&&res.data.mt5_notification_shown===false){
-      showMT5ActivatedPopup();
-      db.from('users').update({mt5_notification_shown:true}).eq('id',currentUser.id);
-    }
-  }catch(e){}
-}
-function showMT5ActivatedPopup(){
-  var popup=document.createElement('div');popup.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);z-index:9300;display:flex;align-items:center;justify-content:center;padding:20px;';
-  var box=document.createElement('div');box.style.cssText='width:100%;max-width:340px;background:var(--bg2);border-radius:20px;border:1px solid rgba(0,200,122,0.2);padding:30px 20px;text-align:center;';
-  box.innerHTML='<div style="font-size:48px;margin-bottom:16px;">🎉</div><div style="font-family:Orbitron,sans-serif;font-size:16px;font-weight:800;color:var(--text);margin-bottom:10px;">MT5 ACTIVATED!</div><div style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:24px;">Your MT5 account has been connected by our team. You are now ready to execute trades.</div>';
-  var btn=document.createElement('button');btn.textContent='START TRADING';btn.style.cssText='width:100%;padding:14px;background:var(--grad);border:none;border-radius:12px;color:#fff;font-family:Orbitron,sans-serif;font-size:13px;font-weight:800;letter-spacing:1px;cursor:pointer;';
-  btn.addEventListener('click',function(){popup.remove();switchTab('signals');});box.appendChild(btn);popup.appendChild(box);document.body.appendChild(popup);
-}
-
-// ── EXECUTE TRADE FLOW ────────────────────────────────────
-var _execSelectedOption='';
-async function checkMT5ThenExecute(){
-  if(!currentUser||!db)return;
-  try{
-    var res=await db.from('users').select('mt5_credential,connection_status').eq('id',currentUser.id).single();
-    var status=(res.data&&res.data.connection_status)||'disconnected';
-    if(status==='connected')openExecuteChoicePopup();
-    else if(status==='pending')showNoMT5Warning('pending');
-    else showNoMT5Warning('disconnected');
-  }catch(e){openExecuteChoicePopup();}
-}
-function showNoMT5Warning(status){
-  var ex=document.getElementById('no-mt5-warning');if(ex)ex.remove();
-  var popup=document.createElement('div');popup.id='no-mt5-warning';popup.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);z-index:9200;display:flex;align-items:flex-end;';
-  var sheet=document.createElement('div');sheet.style.cssText='width:100%;background:var(--bg2);border-radius:20px 20px 0 0;border-top:1px solid var(--border);padding:20px 18px 36px;';
-  var isPending=status==='pending';
-  sheet.innerHTML='<div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px;"></div><div style="text-align:center;margin-bottom:16px;"><i class="ti '+(isPending?'ti-clock':'ti-plug-x')+'" style="font-size:40px;color:var(--amber);"></i></div><div style="font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);text-align:center;margin-bottom:8px;">'+(isPending?'MT5 PENDING ACTIVATION':'MT5 NOT CONNECTED')+'</div><div style="font-size:12px;color:var(--text3);text-align:center;margin-bottom:24px;line-height:1.6;">'+(isPending?'Your MT5 request is being processed. Our team will activate within 24 hours.':'Connect your MT5 account in your Profile before executing trades.')+'</div>';
-  var goBtn=document.createElement('button');goBtn.textContent=isPending?'VIEW PROFILE':'GO TO PROFILE';goBtn.style.cssText='width:100%;padding:14px;background:var(--grad);border:none;border-radius:12px;color:#fff;font-family:Orbitron,sans-serif;font-size:13px;font-weight:800;letter-spacing:1px;cursor:pointer;margin-bottom:10px;';
-  goBtn.addEventListener('click',function(){closeTradePopup();popup.remove();switchTab('more');setTimeout(function(){showSubScreen('sub-profile');},400);});
-  var cancelBtn=document.createElement('button');cancelBtn.textContent='Cancel';cancelBtn.style.cssText='width:100%;padding:12px;background:transparent;border:1px solid var(--border);border-radius:12px;color:var(--text2);font-size:13px;cursor:pointer;';
-  cancelBtn.addEventListener('click',function(){popup.remove();});
-  sheet.appendChild(goBtn);sheet.appendChild(cancelBtn);popup.appendChild(sheet);document.body.appendChild(popup);
-}
-function openExecuteChoicePopup(){
-  _execSelectedOption='';resetExecOptions();
-  var btn=document.getElementById('exec-confirm-btn');if(btn){btn.style.opacity='0.4';btn.style.pointerEvents='none';}
-  if(currentSignal){var lbl=document.getElementById('execute-popup-pair');if(lbl)lbl.textContent=(currentSignal.pair||'--')+' · '+(currentSignal.direction||'BUY')+' · '+(currentSignal.timeframe||'H4');}
-  var popup=document.getElementById('execute-choice-popup');if(popup)popup.style.display='flex';
-}
-function closeExecutePopup(){var popup=document.getElementById('execute-choice-popup');if(popup)popup.style.display='none';}
-function resetExecOptions(){
-  ['instant','custom'].forEach(function(opt){
-    var o=document.getElementById('exec-opt-'+opt),r=document.getElementById('radio-'+opt),d=document.getElementById('radio-'+opt+'-dot');
-    if(o)o.style.borderColor='var(--border)';if(r)r.style.borderColor='var(--border)';if(d)d.style.background='transparent';
-  });
-}
-function selectExecOption(option){
-  resetExecOptions();_execSelectedOption=option;
-  var color=option==='instant'?'var(--green)':'#4D9EFF';
-  var o=document.getElementById('exec-opt-'+option),r=document.getElementById('radio-'+option),d=document.getElementById('radio-'+option+'-dot');
-  if(o)o.style.borderColor=color;if(r)r.style.borderColor=color;if(d)d.style.background=color;
-  var btn=document.getElementById('exec-confirm-btn');if(btn){btn.style.opacity='1';btn.style.pointerEvents='auto';}
-}
-function confirmExecution(){
-  if(!_execSelectedOption)return;
-  closeExecutePopup();
-  if(_execSelectedOption==='instant'){executeTrade('smart');}
-  else{closeTradePopup();switchTab('more');setTimeout(function(){showSubScreen('sub-ea');},400);}
-}
-
-// ── LOAD ANALYSTS FOR DROPDOWN ────────────────────────────
-async function loadAnalystOptions(){
-  var select=document.getElementById('auto-analyser');if(!select||!db)return;
-  try{
-    var res=await db.from('users').select('id,name,username,trading_pairs').eq('role','analyst').eq('status','active');
-    if(res.error||!res.data||!res.data.length){select.innerHTML='<option value="">No analysts available</option>';return;}
-    select.innerHTML='<option value="">Select Analyst</option>';
-    res.data.forEach(function(a){var opt=document.createElement('option');opt.value=a.id;opt.textContent=(a.name||a.username)+(a.trading_pairs&&a.trading_pairs!=='all'?' · '+a.trading_pairs.split(',').slice(0,2).join(', '):'');select.appendChild(opt);});
-  }catch(e){select.innerHTML='<option value="">Error loading</option>';}
-}
-
-// ── WIRE TRADE NOW TO MT5 CHECK ───────────────────────────
-// ── DOMCONTENTLOADED ──────────────────────────────────────
 document.addEventListener('DOMContentLoaded',function(){
   var saved=sessionStorage.getItem('mob_user');
   if(saved){try{currentUser=JSON.parse(saved);routeUser(currentUser);if(currentUser&&currentUser.role==='analyst')setTimeout(loadAnalystSignals,500);}catch(e){showScreen('screen-auth');}}
@@ -5449,63 +5430,471 @@ document.addEventListener('DOMContentLoaded',function(){
 });
 
 
-// ── PROFILE MT5 CONNECT ───────────────────────────────────
-function toggleMT5Pw(){
-  var i=document.getElementById('profile-mt5-pw'),e=document.getElementById('mt5-pw-eye');
-  if(!i)return;i.type=i.type==='password'?'text':'password';if(e)e.className=i.type==='password'?'ti ti-eye':'ti ti-eye-off';
+// ── DASHBOARD PRICE REFRESH (Basic plan safe — 4 credits/60s) ─────────
+var _priceRefreshTimer = null;
+var _priceLoaded = false;
+
+function startPriceRefresh() {
+  if(!_priceLoaded) loadLivePrices(); // load once only — no auto-timer (Basic plan limit)
 }
-async function handleMT5Connect(){
-  var mt5Id=document.getElementById('profile-mt5-id').value.trim();
-  var mt5Pw=document.getElementById('profile-mt5-pw').value;
-  var agreed=document.getElementById('mt5-agree-check').checked;
-  var autoOn=document.getElementById('mt5-auto-toggle').classList.contains('on');
-  var errEl=document.getElementById('mt5-connect-error');
-  var sucEl=document.getElementById('mt5-connect-success');
-  errEl.style.display='none';sucEl.style.display='none';
-  if(!mt5Id){errEl.textContent='Please enter your MT5 Account ID';errEl.style.display='block';return;}
-  if(!mt5Pw){errEl.textContent='Please enter your MT5 Master Password';errEl.style.display='block';return;}
-  if(!agreed){errEl.textContent='Please agree to the risk disclaimer';errEl.style.display='block';return;}
-  var encrypted=btoa(unescape(encodeURIComponent(mt5Pw+'_mmai_'+mt5Id)));
+
+function stopPriceRefresh() {
+  if(_priceRefreshTimer) { clearInterval(_priceRefreshTimer); _priceRefreshTimer = null; }
+}
+
+
+function toggleLoginPw(){
+  var i=document.getElementById('input-password');
+  var e=document.getElementById('login-pw-eye');
+  if(!i) return;
+  if(i.type==='password'){
+    i.type='text';
+    if(e){e.className='ti ti-eye-off';}
+  } else {
+    i.type='password';
+    if(e){e.className='ti ti-eye';}
+  }
+}
+
+
+// ── ADMIN SIGNALS ─────────────────────────────────────────────────────
+async function loadAdminSignals(){
+  var el=document.getElementById('admin-signals-list');if(!el)return;
+  el.innerHTML='<div class="empty-state" style="padding:16px;">Loading...</div>';
   try{
-    var updateData={mt5_id:mt5Id,mt5_credential:encrypted};
-    var r=await db.from('users').update(Object.assign({},updateData,{
-      mt5_server:'AsiaFutureTrading-Server',allow_auto_trade:autoOn,
-      mt5_connected:false,connection_status:'pending'
-    })).eq('id',currentUser.id);
-    if(r.error) r=await db.from('users').update(updateData).eq('id',currentUser.id);
+    var res=await db.from('signals').select('*').order('created_at',{ascending:false}).limit(30);
+    if(res.error)throw res.error;
+    if(!res.data||!res.data.length){el.innerHTML='<div class="empty-state" style="padding:16px;"><i class="ti ti-broadcast"></i> No signals</div>';return;}
+    el.innerHTML='';
+    res.data.forEach(function(sig){
+      var dir=(sig.direction||'BUY').toLowerCase(),isAct=sig.status==='active';
+      var card=document.createElement('div');card.style.cssText='padding:11px 13px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;';
+      card.innerHTML='<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><div style="font-size:14px;font-weight:800;color:var(--text);flex:1;">'+(sig.pair||'--')+'</div><div style="padding:3px 9px;border-radius:5px;font-size:9px;font-weight:800;background:'+(dir==='buy'?'rgba(0,200,122,0.12)':'rgba(255,30,60,0.1)')+';color:'+(dir==='buy'?'var(--green)':'var(--red)')+';">'+(sig.direction||'BUY')+'</div><div style="padding:3px 9px;border-radius:5px;font-size:9px;font-weight:800;color:'+(isAct?'var(--green)':'var(--amber)')+';">'+(isAct?'ACTIVE':'INACTIVE')+'</div></div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px;"><div style="background:var(--bg3);border-radius:6px;padding:6px;"><div style="font-size:9px;color:var(--text3);margin-bottom:2px;">ENTRY</div><div style="font-size:11px;font-weight:700;">'+(sig.entry_from||'--')+'-'+(sig.entry_to||'--')+'</div></div><div style="background:var(--bg3);border-radius:6px;padding:6px;"><div style="font-size:9px;color:var(--text3);margin-bottom:2px;">SL</div><div style="font-size:11px;font-weight:700;color:var(--red);">'+(sig.sl||'--')+'</div></div><div style="background:var(--bg3);border-radius:6px;padding:6px;"><div style="font-size:9px;color:var(--text3);margin-bottom:2px;">TP</div><div style="font-size:11px;font-weight:700;color:var(--green);">'+(sig.tp1||'--')+'</div></div></div><div style="font-size:10px;color:var(--text3);margin-bottom:8px;">'+(sig.analyst_name||'Analyst')+' · '+timeAgo(sig.created_at)+'</div>';
+      var br=document.createElement('div');br.style.cssText='display:flex;gap:6px;';
+      var bA=document.createElement('button');bA.style.cssText='flex:1;padding:7px;background:rgba(0,200,122,0.1);border:1px solid rgba(0,200,122,0.2);border-radius:7px;color:var(--green);font-size:11px;font-weight:700;cursor:pointer;';bA.textContent='Active';bA.addEventListener('click',function(){adminUpdateSig(sig.id,'active');});
+      var bI=document.createElement('button');bI.style.cssText='flex:1;padding:7px;background:rgba(255,176,32,0.1);border:1px solid rgba(255,176,32,0.2);border-radius:7px;color:var(--amber);font-size:11px;font-weight:700;cursor:pointer;';bI.textContent='Inactive';bI.addEventListener('click',function(){adminUpdateSig(sig.id,'closed');});
+      var bD=document.createElement('button');bD.style.cssText='flex:1;padding:7px;background:rgba(255,30,60,0.08);border:1px solid rgba(255,30,60,0.15);border-radius:7px;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;';bD.textContent='Delete';bD.addEventListener('click',function(){adminDeleteSig(sig.id);});
+      br.appendChild(bA);br.appendChild(bI);br.appendChild(bD);card.appendChild(br);el.appendChild(card);
+    });
+  }catch(e){el.innerHTML='<div style="padding:12px;color:var(--red);">Error: '+(e.message||'Failed')+'</div>';}
+}
+async function adminUpdateSig(id,st){try{var r=await db.from('signals').update({status:st}).eq('id',id);if(r.error)throw r.error;loadAdminSignals();}catch(e){alert('Error: '+e.message);}}
+async function adminDeleteSig(id){
+  if(!confirm('Delete this signal permanently?'))return;
+  try{
+    // Remove foreign key refs in trades first
+    await db.from('trades').update({signal_id:null}).eq('signal_id',id);
+    var r=await db.from('signals').delete().eq('id',id);
     if(r.error)throw r.error;
-    currentUser.mt5_id=mt5Id;currentUser.connection_status='pending';
-    sessionStorage.setItem('mob_user',JSON.stringify(currentUser));
-    var badge=document.getElementById('mt5-status-badge');
-    if(badge){badge.textContent='PENDING';badge.style.background='rgba(255,176,32,0.12)';badge.style.color='var(--amber)';}
-    updateMT5ProfileUI('pending');
-    sucEl.textContent='Request submitted! Our team will activate within 24 hours.';sucEl.style.display='block';
-  }catch(e){errEl.textContent='Error: '+(e.message||'Failed');errEl.style.display='block';}
+    loadAdminSignals();
+  }catch(e){alert('Delete failed: '+(e.message||'Unknown error'));}
+}
+
+
+async function adminDeleteTicket(id) {
+  if(!confirm('Delete this ticket permanently?')) return;
+  try {
+    var r = await db.from('support_tickets').delete().eq('id', id);
+    if(r.error) throw r.error;
+    loadAdminTickets();
+  } catch(e) { alert('Delete failed: ' + (e.message||'Unknown error')); }
+}
+
+async function adminToggleTicketDone(id, currentStatus) {
+  var newStatus = currentStatus === 'done' ? 'open' : 'done';
+  try {
+    var r = await db.from('support_tickets').update({status: newStatus}).eq('id', id);
+    if(r.error) throw r.error;
+    loadAdminTickets();
+  } catch(e) { alert('Error: ' + (e.message||'Unknown error')); }
+}
+
+
+// ── EXECUTE TRADE — MT5 CHECK + CHOICE POPUP ─────────────────────────
+var _execSelectedOption = '';
+
+async function checkMT5ThenExecute() {
+  if(!currentUser || !db) return;
+  try {
+    // Check if user has MT5 credentials saved
+    var res = await db.from('users').select('mt5_credential,mt5_connected').eq('id',currentUser.id).single();
+    var hasMT5 = res.data && res.data.mt5_credential && res.data.mt5_credential.length > 5;
+
+    if(!hasMT5) {
+      // No MT5 — show warning
+      showNoMT5Warning();
+    } else {
+      // MT5 connected — show execution choice
+      openExecuteChoicePopup();
+    }
+  } catch(e) {
+    // Fallback — show choice popup anyway
+    openExecuteChoicePopup();
+  }
+}
+
+function showNoMT5Warning() {
+  var ex = document.getElementById('no-mt5-warning');
+  if(ex) { ex.style.display = 'flex'; return; }
+  var popup = document.createElement('div');
+  popup.id = 'no-mt5-warning';
+  popup.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);z-index:9200;display:flex;align-items:flex-end;';
+  var sheet = document.createElement('div');
+  sheet.style.cssText = 'width:100%;background:var(--bg2);border-radius:20px 20px 0 0;border-top:1px solid var(--border);padding:20px 18px 36px;';
+  sheet.innerHTML =
+    '<div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px;"></div>' +
+    '<div style="text-align:center;margin-bottom:16px;"><i class="ti ti-plug-x" style="font-size:40px;color:var(--amber);"></i></div>' +
+    '<div style="font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);text-align:center;margin-bottom:8px;">MT5 NOT CONNECTED</div>' +
+    '<div style="font-size:12px;color:var(--text3);text-align:center;margin-bottom:24px;line-height:1.6;">Connect your MT5 account in Smart Tool settings before executing trades.</div>';
+  var goBtn = document.createElement('button');
+  goBtn.textContent = 'GO TO SMART TOOL';
+  goBtn.style.cssText = 'width:100%;padding:14px;background:var(--grad);border:none;border-radius:12px;color:#fff;font-family:Orbitron,sans-serif;font-size:13px;font-weight:800;letter-spacing:1px;cursor:pointer;margin-bottom:10px;';
+  goBtn.addEventListener('click', function(){ closeTradePopup(); popup.remove(); switchTab('more'); });
+  var cancelBtn = document.createElement('button');
+  cancelBtn.textContent = 'Cancel';
+  cancelBtn.style.cssText = 'width:100%;padding:12px;background:transparent;border:1px solid var(--border);border-radius:12px;color:var(--text2);font-size:13px;cursor:pointer;';
+  cancelBtn.addEventListener('click', function(){ popup.remove(); });
+  sheet.appendChild(goBtn);
+  sheet.appendChild(cancelBtn);
+  popup.appendChild(sheet);
+  document.body.appendChild(popup);
+}
+
+function openExecuteChoicePopup() {
+  _execSelectedOption = '';
+  // Reset radio buttons
+  resetExecOptions();
+  // Disable confirm button
+  var btn = document.getElementById('exec-confirm-btn');
+  if(btn) { btn.style.opacity='0.4'; btn.style.pointerEvents='none'; }
+  // Set pair info
+  if(currentSignal) {
+    var lbl = document.getElementById('execute-popup-pair');
+    if(lbl) lbl.textContent = (currentSignal.pair||'--') + ' · ' + (currentSignal.direction||'BUY') + ' · ' + (currentSignal.timeframe||'H4');
+  }
+  var popup = document.getElementById('execute-choice-popup');
+  if(popup) popup.style.display = 'flex';
+}
+
+function closeExecutePopup() {
+  var popup = document.getElementById('execute-choice-popup');
+  if(popup) popup.style.display = 'none';
+}
+
+function resetExecOptions() {
+  // Reset instant
+  var oi = document.getElementById('exec-opt-instant');
+  var ri = document.getElementById('radio-instant');
+  var di = document.getElementById('radio-instant-dot');
+  if(oi) oi.style.borderColor = 'var(--border)';
+  if(ri) ri.style.borderColor = 'var(--border)';
+  if(di) di.style.background = 'transparent';
+  // Reset custom
+  var oc = document.getElementById('exec-opt-custom');
+  var rc = document.getElementById('radio-custom');
+  var dc = document.getElementById('radio-custom-dot');
+  if(oc) oc.style.borderColor = 'var(--border)';
+  if(rc) rc.style.borderColor = 'var(--border)';
+  if(dc) dc.style.background = 'transparent';
+}
+
+function selectExecOption(option) {
+  resetExecOptions();
+  _execSelectedOption = option;
+  if(option === 'instant') {
+    var oi = document.getElementById('exec-opt-instant');
+    var ri = document.getElementById('radio-instant');
+    var di = document.getElementById('radio-instant-dot');
+    if(oi) oi.style.borderColor = 'var(--green)';
+    if(ri) ri.style.borderColor = 'var(--green)';
+    if(di) di.style.background = 'var(--green)';
+  } else {
+    var oc = document.getElementById('exec-opt-custom');
+    var rc = document.getElementById('radio-custom');
+    var dc = document.getElementById('radio-custom-dot');
+    if(oc) oc.style.borderColor = '#4D9EFF';
+    if(rc) rc.style.borderColor = '#4D9EFF';
+    if(dc) dc.style.background = '#4D9EFF';
+  }
+  // Enable confirm button
+  var btn = document.getElementById('exec-confirm-btn');
+  if(btn) { btn.style.opacity='1'; btn.style.pointerEvents='auto'; }
+}
+
+function confirmExecution() {
+  if(!_execSelectedOption) return;
+  closeExecutePopup();
+  if(_execSelectedOption === 'instant') {
+    // Execute with default settings
+    executeTrade('smart');
+  } else {
+    // Navigate to Smart Tool settings
+    closeTradePopup();
+    switchTab('more');
+    setTimeout(function(){
+      showSubScreen('sub-ea');
+    }, 400);
+  }
+}
+
+// ── LOAD REAL ANALYSTS INTO DROPDOWN ─────────────────────────────────
+async function loadAnalystOptions() {
+  var select = document.getElementById('auto-analyser');
+  if(!select || !db) return;
+  try {
+    var res = await db.from('users').select('id,name,username,trading_pairs').eq('role','analyst').eq('status','active');
+    if(res.error || !res.data || !res.data.length) {
+      select.innerHTML = '<option value="">No analysts available</option>';
+      return;
+    }
+    select.innerHTML = '<option value="">Select Analyst</option>';
+    res.data.forEach(function(analyst) {
+      var opt = document.createElement('option');
+      opt.value = analyst.id;
+      var pairs = analyst.trading_pairs && analyst.trading_pairs !== 'all'
+        ? ' · ' + analyst.trading_pairs.split(',').slice(0,2).join(', ')
+        : '';
+      opt.textContent = (analyst.name || analyst.username) + pairs;
+      select.appendChild(opt);
+    });
+  } catch(e) {
+    select.innerHTML = '<option value="">Error loading analysts</option>';
+  }
+}
+
+
+// ══════════════════════════════════════════════════
+// MT5 CONNECTION — Profile Screen
+// ══════════════════════════════════════════════════
+
+function toggleMT5Pw() {
+  var i = document.getElementById('profile-mt5-pw');
+  var e = document.getElementById('mt5-pw-eye');
+  if(!i) return;
+  if(i.type === 'password') { i.type = 'text'; if(e) e.className = 'ti ti-eye-off'; }
+  else { i.type = 'password'; if(e) e.className = 'ti ti-eye'; }
+}
+
+async function handleMT5Connect() {
+  var mt5Id   = document.getElementById('profile-mt5-id').value.trim();
+  var mt5Pw   = document.getElementById('profile-mt5-pw').value;
+  var server = 'AsiaFutureTrading-Server';
+  var agreed  = document.getElementById('mt5-agree-check').checked;
+  var autoOn  = document.getElementById('mt5-auto-toggle').classList.contains('on');
+  var errEl   = document.getElementById('mt5-connect-error');
+  var sucEl   = document.getElementById('mt5-connect-success');
+  errEl.style.display = 'none'; sucEl.style.display = 'none';
+
+  if(!mt5Id)   { errEl.textContent = 'Please enter your MT5 Account ID'; errEl.style.display = 'block'; return; }
+  if(!mt5Pw)   { errEl.textContent = 'Please enter your MT5 Master Password'; errEl.style.display = 'block'; return; }
+  if(!agreed)  { errEl.textContent = 'Please agree to the risk disclaimer'; errEl.style.display = 'block'; return; }
+
+  var encrypted = btoa(unescape(encodeURIComponent(mt5Pw + '_mmai_' + mt5Id)));
+
+  try {
+    // Update core MT5 fields
+    var updateData = { mt5_id: mt5Id, mt5_credential: encrypted };
+
+    // Try to add optional columns gracefully
+    var r = await db.from('users').update(Object.assign({}, updateData, {
+      mt5_server: 'AsiaFutureTrading-Server',
+      allow_auto_trade: autoOn,
+      mt5_connected: true,
+      connection_status: 'connected'
+    })).eq('id', currentUser.id);
+
+    // If optional columns fail, save with core fields only
+    if(r.error) {
+      r = await db.from('users').update(updateData).eq('id', currentUser.id);
+    }
+
+    if(r.error) throw r.error;
+
+    // Update local user
+    currentUser.mt5_id = mt5Id;
+    currentUser.mt5_connected = true;
+    sessionStorage.setItem('mob_user', JSON.stringify(currentUser));
+
+    // Update badge
+    var badge = document.getElementById('mt5-status-badge');
+    if(badge) {
+      badge.textContent = 'CONNECTED';
+      badge.style.background = 'rgba(0,200,122,0.12)';
+      badge.style.color = 'var(--green)';
+    }
+
+    sucEl.textContent = 'MT5 connected successfully!';
+    sucEl.style.display = 'block';
+  } catch(e) {
+    errEl.textContent = 'Error: ' + (e.message || 'Failed to connect');
+    errEl.style.display = 'block';
+  }
+}
+
+// Load existing MT5 data when profile opens
+function loadProfileMT5() {
+  if(!currentUser) return;
+  var idEl     = document.getElementById('profile-mt5-id');
+  var serverEl = document.getElementById('profile-mt5-server');
+  var badge    = document.getElementById('mt5-status-badge');
+  var toggle   = document.getElementById('mt5-auto-toggle');
+
+  if(idEl && currentUser.mt5_id && !currentUser.mt5_id.startsWith('ANALYST_') && !currentUser.mt5_id.startsWith('SUBADMIN_'))
+    idEl.value = currentUser.mt5_id;
+  if(serverEl && currentUser.mt5_server)
+    serverEl.value = currentUser.mt5_server;
+  if(currentUser.allow_auto_trade && toggle)
+    toggle.classList.add('on');
+  if(badge && currentUser.mt5_connected) {
+    badge.textContent = 'CONNECTED';
+    badge.style.background = 'rgba(0,200,122,0.12)';
+    badge.style.color = 'var(--green)';
+  }
+}
+
+// ══════════════════════════════════════════════════
+// SAVE EA SETTINGS — Smart Tool Screen
+// ══════════════════════════════════════════════════
+
+async function saveEASettings() {
+  if(!currentUser || !db) return;
+  var inputs  = document.querySelectorAll('#sub-ea .ea-input');
+  var toggles = document.querySelectorAll('#sub-ea .toggle');
+  var settings = {
+    inputs:   Array.from(inputs).map(function(i){ return i.value; }),
+    toggles:  Array.from(toggles).map(function(t){ return t.classList.contains('on'); }),
+    saved_at: new Date().toISOString()
+  };
+  try {
+    var r = await db.from('users').update({ ea_settings: JSON.stringify(settings) }).eq('id', currentUser.id);
+    if(r.error) throw r.error;
+    // Show success toast
+    var btn = document.querySelector('#sub-ea .red-btn');
+    if(btn) {
+      var orig = btn.textContent;
+      btn.textContent = '✓ SAVED';
+      btn.style.background = 'var(--green)';
+      setTimeout(function(){ btn.textContent = orig; btn.style.background = ''; }, 2000);
+    }
+  } catch(e) { alert('Save failed: ' + (e.message || 'Unknown error')); }
+}
+
+// ══════════════════════════════════════════════════
+// ADMIN MT5 TAB
+// ══════════════════════════════════════════════════
+
+async function loadAdminMT5() {
+  var el = document.getElementById('admin-mt5-list');
+  if(!el || !db) return;
+  el.innerHTML = '<div style="padding:12px;color:var(--text2);font-size:12px;">Loading...</div>';
+  try {
+    var res = await db.from('users').select('*').order('created_at',{ascending:false});
+    if(res.error) throw res.error;
+    var users = (res.data||[]).filter(function(u){
+      return u.role === 'user' || (!u.role && u.mt5_id && !u.mt5_id.startsWith('ANALYST_') && !u.mt5_id.startsWith('SUBADMIN_'));
+    });
+    if(!users.length) {
+      el.innerHTML = '<div class="empty-state" style="padding:16px;"><i class="ti ti-users"></i> No users found</div>';
+      return;
+    }
+    el.innerHTML = '';
+    users.forEach(function(user) {
+      var isConnected = user.mt5_connected === true;
+      var card = document.createElement('div');
+      card.style.cssText = 'padding:12px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;';
+      card.innerHTML =
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">' +
+          '<div>' +
+            '<div style="font-size:13px;font-weight:700;color:var(--text);">' + (user.name||user.username||'--') + '</div>' +
+            '<div style="font-size:11px;color:var(--text3);">@' + (user.username||'--') + '</div>' +
+          '</div>' +
+          '<div style="font-size:10px;font-weight:700;padding:3px 9px;border-radius:5px;background:' + (isConnected?'rgba(0,200,122,0.12)':'rgba(255,176,32,0.1)') + ';color:' + (isConnected?'var(--green)':'var(--amber)') + ';">' + (isConnected?'CONNECTED':'NOT CONNECTED') + '</div>' +
+        '</div>' +
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;">' +
+          '<div style="background:var(--surface);border-radius:7px;padding:8px;">' +
+            '<div style="font-size:9px;color:var(--text3);margin-bottom:3px;">MT5 ID</div>' +
+            '<div style="font-size:12px;font-weight:700;color:var(--text);">' + (user.mt5_id||'--') + '</div>' +
+          '</div>' +
+          '<div style="background:var(--surface);border-radius:7px;padding:8px;">' +
+            '<div style="font-size:9px;color:var(--text3);margin-bottom:3px;">SERVER</div>' +
+            '<div style="font-size:12px;font-weight:700;color:var(--text);">' + (user.mt5_server||'--') + '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div style="background:var(--surface);border-radius:7px;padding:8px;margin-bottom:10px;">' +
+          '<div style="font-size:9px;color:var(--text3);margin-bottom:3px;">MT5 PASSWORD</div>' +
+          '<div style="display:flex;align-items:center;justify-content:space-between;">' +
+            '<div id="mt5pw-' + user.id + '" style="font-size:12px;font-weight:700;color:var(--text);font-family:monospace;">●●●●●●●●</div>' +
+            (user.mt5_credential ? '<button id="revbtn-' + user.id + '" style="font-size:10px;font-weight:700;padding:4px 10px;background:rgba(77,158,255,0.1);border:1px solid rgba(77,158,255,0.2);border-radius:6px;color:#4D9EFF;cursor:pointer;">Reveal</button>' : '<div style="font-size:11px;color:var(--text3);">Not set</div>') +
+          '</div>' +
+        '</div>';
+
+      // Wire reveal button
+      if(user.mt5_credential) {
+        var revBtn = card.querySelector('#revbtn-' + user.id);
+        var pwEl   = card.querySelector('#mt5pw-' + user.id);
+        var revealed = false;
+        revBtn.addEventListener('click', function() {
+          if(!revealed) {
+            try {
+              var dec = decodeURIComponent(escape(atob(user.mt5_credential)));
+              var suf = '_mmai_' + user.mt5_id;
+              var pw  = dec.endsWith(suf) ? dec.slice(0, -suf.length) : dec;
+              pwEl.textContent = pw;
+              revBtn.textContent = 'Hide';
+              revealed = true;
+            } catch(e) { pwEl.textContent = user.mt5_credential; }
+          } else {
+            pwEl.textContent = '●●●●●●●●';
+            revBtn.textContent = 'Reveal';
+            revealed = false;
+          }
+        });
+      }
+      el.appendChild(card);
+    });
+  } catch(e) {
+    el.innerHTML = '<div style="padding:12px;color:var(--red);">Error: ' + (e.message||'failed') + '</div>';
+  }
 }
 
 </script>
 
+  <!-- Execute Choice Popup -->
   <div id="execute-choice-popup" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);z-index:9200;align-items:flex-end;">
     <div style="width:100%;background:var(--bg2);border-radius:20px 20px 0 0;border-top:1px solid var(--border);padding:20px 18px 36px;">
       <div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px;"></div>
       <div style="font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);margin-bottom:4px;">EXECUTE TRADE</div>
       <div id="execute-popup-pair" style="font-size:12px;color:var(--text3);margin-bottom:20px;">XAUUSD · BUY · H4</div>
-      <div id="exec-opt-instant" onclick="selectExecOption('instant')" style="padding:14px;background:var(--bg3);border:2px solid var(--border);border-radius:12px;cursor:pointer;margin-bottom:10px;">
+
+      <!-- Option 1: Instant Execute -->
+      <div id="exec-opt-instant" onclick="selectExecOption('instant')" style="padding:14px;background:var(--bg3);border:2px solid var(--border);border-radius:12px;cursor:pointer;margin-bottom:10px;transition:all .2s;">
         <div style="display:flex;align-items:center;gap:12px;">
-          <div style="width:20px;height:20px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;" id="radio-instant"><div style="width:10px;height:10px;border-radius:50%;background:transparent;" id="radio-instant-dot"></div></div>
-          <div><div style="font-size:13px;font-weight:800;color:var(--text);">INSTANT EXECUTE</div><div style="font-size:11px;color:var(--text3);margin-top:2px;">Default parameters · Lot 0.01 · SL/TP from signal</div></div>
+          <div style="width:20px;height:20px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;" id="radio-instant">
+            <div style="width:10px;height:10px;border-radius:50%;background:transparent;" id="radio-instant-dot"></div>
+          </div>
+          <div>
+            <div style="font-size:13px;font-weight:800;color:var(--text);letter-spacing:.3px;">INSTANT EXECUTE</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px;">Default parameters apply · Lot 0.01 · SL/TP auto from signal</div>
+          </div>
         </div>
       </div>
-      <div id="exec-opt-custom" onclick="selectExecOption('custom')" style="padding:14px;background:var(--bg3);border:2px solid var(--border);border-radius:12px;cursor:pointer;margin-bottom:20px;">
+
+      <!-- Option 2: Custom Execute -->
+      <div id="exec-opt-custom" onclick="selectExecOption('custom')" style="padding:14px;background:var(--bg3);border:2px solid var(--border);border-radius:12px;cursor:pointer;margin-bottom:20px;transition:all .2s;">
         <div style="display:flex;align-items:center;gap:12px;">
-          <div style="width:20px;height:20px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;" id="radio-custom"><div style="width:10px;height:10px;border-radius:50%;background:transparent;" id="radio-custom-dot"></div></div>
-          <div><div style="font-size:13px;font-weight:800;color:var(--text);">CUSTOM EXECUTE</div><div style="font-size:11px;color:var(--text3);margin-top:2px;">Configure first · Use your saved settings</div></div>
+          <div style="width:20px;height:20px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;" id="radio-custom">
+            <div style="width:10px;height:10px;border-radius:50%;background:transparent;" id="radio-custom-dot"></div>
+          </div>
+          <div>
+            <div style="font-size:13px;font-weight:800;color:var(--text);letter-spacing:.3px;">CUSTOM EXECUTE</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px;">Configure before sending · Use your saved settings</div>
+          </div>
         </div>
       </div>
-      <button id="exec-confirm-btn" onclick="confirmExecution()" style="width:100%;padding:14px;background:var(--grad);border:none;border-radius:12px;color:#fff;font-family:Orbitron,sans-serif;font-size:13px;font-weight:800;cursor:pointer;opacity:0.4;pointer-events:none;margin-bottom:10px;">CONFIRM</button>
-      <button onclick="closeExecutePopup()" style="width:100%;padding:12px;background:transparent;border:1px solid var(--border);border-radius:12px;color:var(--text2);font-size:13px;cursor:pointer;">Cancel</button>
+
+      <button id="exec-confirm-btn" onclick="confirmExecution()" style="width:100%;padding:14px;background:var(--grad);border:none;border-radius:12px;color:#fff;font-family:Orbitron,sans-serif;font-size:13px;font-weight:800;letter-spacing:1px;cursor:pointer;opacity:0.4;pointer-events:none;margin-bottom:10px;">CONFIRM</button>
+      <button onclick="closeExecutePopup()" style="width:100%;padding:12px;background:transparent;border:1px solid var(--border);border-radius:12px;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;">Cancel</button>
     </div>
   </div>
-
 </body>
 </html>
