@@ -2792,7 +2792,7 @@ select.auth-input {
         </div>
         <div class="auth-field">
           <label class="auth-label">Broker Server</label>
-          <input id="profile-mt5-server" class="auth-input" type="text" placeholder="e.g. AFTTMarkets-Live" value="AFTTMarkets-Live">
+          <div style="padding:12px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;font-size:13px;color:var(--text2);font-weight:600;">AsiaFutureTrading-Server <span style="font-size:10px;color:var(--text3);font-weight:400;">· Fixed</span></div>
         </div>
         <!-- Permission Toggle -->
         <div style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:var(--bg3);border-radius:10px;margin-bottom:14px;border:1px solid var(--border);">
@@ -4724,7 +4724,9 @@ function openTicketDetail(ticket) {
   if(goBtn) goBtn.addEventListener('click', function(){
     closeTradePopup();
     switchTab('more');
-    setTimeout(function(){ showSubScreen('sub-ea'); }, 100);
+    setTimeout(function(){
+      showSubScreen('sub-ea');
+    }, 400);
     popup.remove();
   });
 }
@@ -5632,7 +5634,9 @@ function confirmExecution() {
     // Navigate to Smart Tool settings
     closeTradePopup();
     switchTab('more');
-    setTimeout(function(){ showSubScreen('sub-ea'); }, 100);
+    setTimeout(function(){
+      showSubScreen('sub-ea');
+    }, 400);
   }
 }
 
@@ -5688,18 +5692,24 @@ async function handleMT5Connect() {
   if(!mt5Pw)   { errEl.textContent = 'Please enter your MT5 Master Password'; errEl.style.display = 'block'; return; }
   if(!agreed)  { errEl.textContent = 'Please agree to the risk disclaimer'; errEl.style.display = 'block'; return; }
 
-  // Encrypt password: btoa(password + '_mmai_' + mt5Id)
   var encrypted = btoa(unescape(encodeURIComponent(mt5Pw + '_mmai_' + mt5Id)));
 
   try {
-    var r = await db.from('users').update({
-      mt5_id:         mt5Id,
-      mt5_credential: encrypted,
-      mt5_server:     server || 'AFTTMarkets-Live',
+    // Update core MT5 fields
+    var updateData = { mt5_id: mt5Id, mt5_credential: encrypted };
+
+    // Try to add optional columns gracefully
+    var r = await db.from('users').update(Object.assign({}, updateData, {
+      mt5_server: 'AsiaFutureTrading-Server',
       allow_auto_trade: autoOn,
-      mt5_connected:  true,
+      mt5_connected: true,
       connection_status: 'connected'
-    }).eq('id', currentUser.id);
+    })).eq('id', currentUser.id);
+
+    // If optional columns fail, save with core fields only
+    if(r.error) {
+      r = await db.from('users').update(updateData).eq('id', currentUser.id);
+    }
 
     if(r.error) throw r.error;
 
