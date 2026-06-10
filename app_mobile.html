@@ -2549,7 +2549,7 @@ select.auth-input {
 
         <!-- SUB-ADMIN SECTION -->
         <div class="section-card" style="margin-top:20px;">
-          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:14px;">CREATE SUB-ADMIN</div>
+          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:14px;">CREATE SUB ADMIN</div>
           <div class="auth-field">
             <label class="auth-label">Full Name</label>
             <input id="mob-subadmin-name" class="auth-input" type="text" placeholder="Sub-admin full name">
@@ -2579,7 +2579,7 @@ select.auth-input {
           </div>
           <div id="mob-subadmin-error" class="error-msg"></div>
           <div id="mob-subadmin-success" class="success-msg"></div>
-          <button class="red-btn" onclick="handleAddSubAdmin()">CREATE SUB-ADMIN</button>
+          <button class="red-btn" onclick="handleAddSubAdmin()">CREATE SUB ADMIN</button>
         </div>
         <div class="section-card" style="margin-top:14px;">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
@@ -5045,7 +5045,11 @@ async function handleAddSubAdmin() {
   if(password.length<6){errEl.textContent='Password must be at least 6 characters';errEl.style.display='block';return;}
   var hash=btoa(unescape(encodeURIComponent(password+'_momentum_salt')));
   try{
+    // Try with allowed_tabs — if column missing, save without it
     var res=await db.from('users').insert([{name,username,password_hash:hash,mt5_id:'SUBADMIN_'+Date.now(),status:'active',role:'sub_admin',allowed_tabs:tabs,created_at:new Date().toISOString()}]);
+    if(res.error&&res.error.message&&res.error.message.indexOf('allowed_tabs')>-1){
+      res=await db.from('users').insert([{name,username,password_hash:hash,mt5_id:'SUBADMIN_'+Date.now(),status:'active',role:'sub_admin',created_at:new Date().toISOString()}]);
+    }
     if(res.error)throw res.error;
     sucEl.textContent='Sub-admin created! Username: '+username;
     sucEl.style.display='block';
