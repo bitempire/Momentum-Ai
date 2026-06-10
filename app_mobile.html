@@ -5045,12 +5045,15 @@ async function handleAddSubAdmin() {
   if(password.length<6){errEl.textContent='Password must be at least 6 characters';errEl.style.display='block';return;}
   var hash=btoa(unescape(encodeURIComponent(password+'_momentum_salt')));
   try{
-    // Try with allowed_tabs — if column missing, save without it
-    var res=await db.from('users').insert([{name,username,password_hash:hash,mt5_id:'SUBADMIN_'+Date.now(),status:'active',role:'sub_admin',allowed_tabs:tabs,created_at:new Date().toISOString()}]);
-    if(res.error&&res.error.message&&res.error.message.indexOf('allowed_tabs')>-1){
-      res=await db.from('users').insert([{name,username,password_hash:hash,mt5_id:'SUBADMIN_'+Date.now(),status:'active',role:'sub_admin',created_at:new Date().toISOString()}]);
+    var insertData={name:name,username:username,password_hash:hash,mt5_id:'SUBADMIN_'+Date.now(),status:'active',role:'sub_admin',created_at:new Date().toISOString()};
+    // Try to add allowed_tabs if column exists
+    try{ insertData.allowed_tabs=tabs; } catch(ex){}
+    var res=await db.from('users').insert([insertData]);
+    // If role constraint fails, show clear message
+    if(res.error&&res.error.message&&(res.error.message.indexOf('role')+res.error.message.indexOf('check')+res.error.message.indexOf('constraint'))>-3){
+      throw new Error('Run this SQL in Supabase first: ALTER TABLE users DROP CONSTRAINT IF EXISTS users_role_check; ALTER TABLE users ADD CONSTRAINT users_role_check CHECK (role IN (\'user\',\'admin\',\'analyst\',\'sub_admin\'));');
     }
-    if(res.error)throw res.error;
+    if(res.error) throw res.error;
     sucEl.textContent='Sub-admin created! Username: '+username;
     sucEl.style.display='block';
     document.getElementById('mob-subadmin-name').value='';
