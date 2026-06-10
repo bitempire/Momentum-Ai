@@ -3877,7 +3877,6 @@ function routeUser(user) {
 
 // ── ENTER APP ──
 function enterApp(user) {
-  setTimeout(loadLivePrices, 2000);
   if(user) {
     var name = user.username || user.name || 'Trader';
     document.getElementById('mob-username').textContent = name;
@@ -3984,7 +3983,6 @@ function switchTab(tab) {
   if(nav) nav.classList.add('active');
   var content = document.getElementById('app-content');
   if(content) content.scrollTop = 0;
-  if(tab==='dashboard') loadLivePrices();
   if(tab==='charts') initTVChart();
   if(tab==='journal') loadJournalData();
   if(tab==='signals') loadSignalsFeed();
