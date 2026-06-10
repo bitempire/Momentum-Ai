@@ -1239,7 +1239,10 @@ select.auth-input {
       </div>
       <div class="auth-field">
         <label class="auth-label">Password</label>
-        <input id="input-password" class="auth-input" type="password" placeholder="••••••••" autocomplete="current-password">
+        <div style="position:relative;">
+        <input id="input-password" class="auth-input" type="password" placeholder="••••••••" autocomplete="current-password" style="padding-right:44px;">
+        <button type="button" onclick="toggleLoginPw()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:18px;padding:0;line-height:1;"><i class="ti ti-eye" id="login-pw-eye"></i></button>
+      </div>
       </div>
       <div class="auth-forgot"><a>Forgot Password?</a></div>
       <button class="auth-btn" id="btn-signin" onclick="handleLogin()">ACCESS SYSTEM</button>
@@ -3870,7 +3873,7 @@ async function handleLogin() {
   try {
     var hash = btoa(unescape(encodeURIComponent(password+'_momentum_salt')));
     var res = await db.from('users').select('*').eq('username',username).limit(1);
-    if(res.error) { errEl.textContent='Connection error: '+res.error.message; errEl.style.display='block'; return; }
+    if(res.error) { errEl.textContent='Connection error: '+res.error.message; errEl.style.display='block'; btn.textContent='ACCESS SYSTEM'; btn.disabled=false; return; }
     if(!res.data||!res.data.length) { errEl.textContent='Username not found. Please check your username.'; errEl.style.display='block'; return; }
     var user = res.data[0];
     if(user.password_hash !== hash) { errEl.textContent='Incorrect password. Please try again.'; errEl.style.display='block'; return; }
@@ -5049,7 +5052,20 @@ async function saveAnalystEdit(id){
     setTimeout(function(){document.getElementById('edit-analyst-popup').remove();loadAdminAnalysts();},1200);
   }catch(e){errEl.textContent='Error: '+(e.message||'failed');errEl.style.display='block';}
 }
-async function deleteAnalystAdmin(id){if(!confirm('Delete this analyst?'))return;var r=await db.from('users').delete().eq('id',id);if(r.error){alert(r.error.message);return;}loadAdminAnalysts();}
+async function deleteAnalystAdmin(id){
+  if(!confirm('Delete this analyst? Their signals will be kept but unlinked from this account.'))return;
+  try{
+    // Step 1: Unlink analyst from their signals (set analyst_id to null)
+    var r1=await db.from('signals').update({analyst_id:null,analyst_name:'Deleted Analyst'}).eq('analyst_id',id);
+    if(r1.error&&r1.error.message&&r1.error.message.indexOf('analyst_id')===-1){
+      // analyst_id column may not exist — skip
+    }
+    // Step 2: Now safe to delete the analyst
+    var r2=await db.from('users').delete().eq('id',id);
+    if(r2.error)throw r2.error;
+    loadAdminAnalysts();
+  }catch(e){alert('Error: '+(e.message||'Could not delete analyst'));}
+}
 
 // ═══════════════════════════════════════════════════
 // ADMIN: SUB-ADMINS
@@ -5326,6 +5342,20 @@ function startPriceRefresh() {
 
 function stopPriceRefresh() {
   if(_priceRefreshTimer) { clearInterval(_priceRefreshTimer); _priceRefreshTimer = null; }
+}
+
+
+function toggleLoginPw(){
+  var i=document.getElementById('input-password');
+  var e=document.getElementById('login-pw-eye');
+  if(!i) return;
+  if(i.type==='password'){
+    i.type='text';
+    if(e){e.className='ti ti-eye-off';}
+  } else {
+    i.type='password';
+    if(e){e.className='ti ti-eye';}
+  }
 }
 
 </script>
