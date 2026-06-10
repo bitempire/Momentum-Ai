@@ -2820,6 +2820,7 @@ select.auth-input {
           <input type="checkbox" id="mt5-agree-check" style="accent-color:var(--red);width:16px;height:16px;flex-shrink:0;">
           <div style="font-size:12px;color:var(--text2);line-height:1.5;">I have read and agree to the risk disclaimer above</div>
         </label>
+        <div id="mt5-status-banner" style="display:none;"></div>
         <div id="mt5-connect-error" class="error-msg"></div>
         <div id="mt5-connect-success" class="success-msg"></div>
         <button class="red-btn" onclick="handleMT5Connect()">CONNECT MT5</button>
@@ -4031,6 +4032,7 @@ function enterApp(user) {
   drawSparklines();
   initTVChart();
   setTimeout(function() { drawGrowthChart(); drawEmotionChart(); loadSavedProfilePhoto(); }, 800);
+  setTimeout(function() { checkMT5ConnectionNotification(); }, 1200);
 }
 
 // ── GROWTH CHART ──
@@ -5678,7 +5680,6 @@ function toggleMT5Pw() {
 async function handleMT5Connect() {
   var mt5Id   = document.getElementById('profile-mt5-id').value.trim();
   var mt5Pw   = document.getElementById('profile-mt5-pw').value;
-  var server = 'AsiaFutureTrading-Server';
   var agreed  = document.getElementById('mt5-agree-check').checked;
   var autoOn  = document.getElementById('mt5-auto-toggle').classList.contains('on');
   var errEl   = document.getElementById('mt5-connect-error');
@@ -5692,41 +5693,33 @@ async function handleMT5Connect() {
   var encrypted = btoa(unescape(encodeURIComponent(mt5Pw + '_mmai_' + mt5Id)));
 
   try {
-    // Update core MT5 fields
-    var updateData = { mt5_id: mt5Id, mt5_credential: encrypted };
-
-    // Try to add optional columns gracefully
-    var r = await db.from('users').update(Object.assign({}, updateData, {
+    var core = { mt5_id: mt5Id, mt5_credential: encrypted };
+    var full = Object.assign({}, core, {
       mt5_server: 'AsiaFutureTrading-Server',
       allow_auto_trade: autoOn,
-      mt5_connected: true,
-      connection_status: 'connected'
-    })).eq('id', currentUser.id);
-
-    // If optional columns fail, save with core fields only
+      mt5_connected: false,
+      connection_status: 'pending',
+      rejection_reason: null,
+      connection_requested_at: new Date().toISOString()
+    });
+    var r = await db.from('users').update(full).eq('id', currentUser.id);
     if(r.error) {
-      r = await db.from('users').update(updateData).eq('id', currentUser.id);
+      r = await db.from('users').update(Object.assign({}, core, { mt5_connected: false, connection_status: 'pending' })).eq('id', currentUser.id);
     }
-
     if(r.error) throw r.error;
 
-    // Update local user
     currentUser.mt5_id = mt5Id;
-    currentUser.mt5_connected = true;
+    currentUser.mt5_connected = false;
+    currentUser.connection_status = 'pending';
+    currentUser.rejection_reason = null;
+    currentUser.allow_auto_trade = autoOn;
     sessionStorage.setItem('mob_user', JSON.stringify(currentUser));
 
-    // Update badge
-    var badge = document.getElementById('mt5-status-badge');
-    if(badge) {
-      badge.textContent = 'CONNECTED';
-      badge.style.background = 'rgba(0,200,122,0.12)';
-      badge.style.color = 'var(--green)';
-    }
-
-    sucEl.textContent = 'MT5 connected successfully!';
+    renderMT5State('pending');
+    sucEl.textContent = "Request submitted! Our team is setting up your connection — this can take up to 24 hours. You'll be notified here once it's active.";
     sucEl.style.display = 'block';
   } catch(e) {
-    errEl.textContent = 'Error: ' + (e.message || 'Failed to connect');
+    errEl.textContent = 'Error: ' + (e.message || 'Failed to submit request');
     errEl.style.display = 'block';
   }
 }
@@ -5734,22 +5727,17 @@ async function handleMT5Connect() {
 // Load existing MT5 data when profile opens
 function loadProfileMT5() {
   if(!currentUser) return;
-  var idEl     = document.getElementById('profile-mt5-id');
-  var serverEl = document.getElementById('profile-mt5-server');
-  var badge    = document.getElementById('mt5-status-badge');
-  var toggle   = document.getElementById('mt5-auto-toggle');
+  var idEl   = document.getElementById('profile-mt5-id');
+  var toggle = document.getElementById('mt5-auto-toggle');
 
   if(idEl && currentUser.mt5_id && !currentUser.mt5_id.startsWith('ANALYST_') && !currentUser.mt5_id.startsWith('SUBADMIN_'))
     idEl.value = currentUser.mt5_id;
-  if(serverEl && currentUser.mt5_server)
-    serverEl.value = currentUser.mt5_server;
   if(currentUser.allow_auto_trade && toggle)
     toggle.classList.add('on');
-  if(badge && currentUser.mt5_connected) {
-    badge.textContent = 'CONNECTED';
-    badge.style.background = 'rgba(0,200,122,0.12)';
-    badge.style.color = 'var(--green)';
-  }
+
+  var state = currentUser.connection_status;
+  if(!state) state = currentUser.mt5_connected ? 'connected' : 'disconnected';
+  renderMT5State(state, currentUser.rejection_reason);
 }
 
 // ══════════════════════════════════════════════════
@@ -5799,7 +5787,19 @@ async function loadAdminMT5() {
     }
     el.innerHTML = '';
     users.forEach(function(user) {
-      var isConnected = user.mt5_connected === true;
+      var state = user.connection_status;
+      if(!state) state = user.mt5_connected ? 'connected' : 'disconnected';
+      var badgeMap = {
+        connected:    ['CONNECTED','rgba(0,200,122,0.12)','var(--green)'],
+        pending:      ['PENDING','rgba(255,176,32,0.12)','var(--amber)'],
+        rejected:     ['REJECTED','rgba(255,30,60,0.10)','var(--red)'],
+        disconnected: ['NOT CONNECTED','rgba(255,255,255,0.05)','var(--text3)']
+      };
+      var b = badgeMap[state] || badgeMap.disconnected;
+      var reqLine = (state === 'pending' && user.connection_requested_at)
+        ? '<div style="font-size:10px;color:var(--text3);margin-top:2px;">Requested: ' + new Date(user.connection_requested_at).toLocaleString() + '</div>' : '';
+      var rejLine = (state === 'rejected' && user.rejection_reason)
+        ? '<div style="font-size:11px;color:var(--red);margin-top:10px;background:rgba(255,30,60,0.07);border:1px solid rgba(255,30,60,0.15);border-radius:7px;padding:7px 9px;">Reason: ' + user.rejection_reason + '</div>' : '';
       var card = document.createElement('div');
       card.style.cssText = 'padding:12px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;';
       card.innerHTML =
@@ -5807,8 +5807,9 @@ async function loadAdminMT5() {
           '<div>' +
             '<div style="font-size:13px;font-weight:700;color:var(--text);">' + (user.name||user.username||'--') + '</div>' +
             '<div style="font-size:11px;color:var(--text3);">@' + (user.username||'--') + '</div>' +
+            reqLine +
           '</div>' +
-          '<div style="font-size:10px;font-weight:700;padding:3px 9px;border-radius:5px;background:' + (isConnected?'rgba(0,200,122,0.12)':'rgba(255,176,32,0.1)') + ';color:' + (isConnected?'var(--green)':'var(--amber)') + ';">' + (isConnected?'CONNECTED':'NOT CONNECTED') + '</div>' +
+          '<div style="font-size:10px;font-weight:700;padding:3px 9px;border-radius:5px;background:' + b[1] + ';color:' + b[2] + ';">' + b[0] + '</div>' +
         '</div>' +
         '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;">' +
           '<div style="background:var(--surface);border-radius:7px;padding:8px;">' +
@@ -5826,9 +5827,25 @@ async function loadAdminMT5() {
             '<div id="mt5pw-' + user.id + '" style="font-size:12px;font-weight:700;color:var(--text);font-family:monospace;">●●●●●●●●</div>' +
             (user.mt5_credential ? '<button id="revbtn-' + user.id + '" style="font-size:10px;font-weight:700;padding:4px 10px;background:rgba(77,158,255,0.1);border:1px solid rgba(77,158,255,0.2);border-radius:6px;color:#4D9EFF;cursor:pointer;">Reveal</button>' : '<div style="font-size:11px;color:var(--text3);">Not set</div>') +
           '</div>' +
-        '</div>';
+        '</div>' +
+        rejLine;
 
-      // Wire reveal button
+      if(state === 'pending') {
+        var actions = document.createElement('div');
+        actions.style.cssText = 'display:flex;gap:6px;margin-top:10px;';
+        var actBtn = document.createElement('button');
+        actBtn.textContent = '✓ Activate';
+        actBtn.style.cssText = 'flex:1;font-size:11px;font-weight:700;padding:9px;background:rgba(0,200,122,0.12);border:1px solid rgba(0,200,122,0.25);border-radius:8px;color:var(--green);cursor:pointer;';
+        actBtn.addEventListener('click', function(){ activateMT5(user.id); });
+        var rejBtn = document.createElement('button');
+        rejBtn.textContent = '✕ Reject';
+        rejBtn.style.cssText = 'flex:1;font-size:11px;font-weight:700;padding:9px;background:rgba(255,30,60,0.08);border:1px solid rgba(255,30,60,0.2);border-radius:8px;color:var(--red);cursor:pointer;';
+        rejBtn.addEventListener('click', function(){ rejectMT5(user.id); });
+        actions.appendChild(actBtn);
+        actions.appendChild(rejBtn);
+        card.appendChild(actions);
+      }
+
       if(user.mt5_credential) {
         var revBtn = card.querySelector('#revbtn-' + user.id);
         var pwEl   = card.querySelector('#mt5pw-' + user.id);
@@ -5855,6 +5872,119 @@ async function loadAdminMT5() {
   } catch(e) {
     el.innerHTML = '<div style="padding:12px;color:var(--red);">Error: ' + (e.message||'failed') + '</div>';
   }
+}
+
+async function activateMT5(id) {
+  try {
+    var r = await db.from('users').update({ connection_status:'connected', mt5_connected:true, mt5_notification_shown:false, connected_at:new Date().toISOString(), rejection_reason:null }).eq('id', id);
+    if(r.error) {
+      r = await db.from('users').update({ connection_status:'connected', mt5_connected:true, mt5_notification_shown:false }).eq('id', id);
+    }
+    if(r.error) throw r.error;
+    loadAdminMT5();
+  } catch(e) { alert('Activate failed: ' + (e.message||'Unknown error')); }
+}
+
+async function rejectMT5(id) {
+  var reason = prompt('Reason for rejection (shown to the user):\n\ne.g. Account balance below $100, invalid login, etc.');
+  if(reason === null) return;
+  reason = (reason || '').trim();
+  if(!reason) reason = 'Connection could not be established. Please check your details and try again.';
+  try {
+    var r = await db.from('users').update({ connection_status:'rejected', mt5_connected:false, mt5_notification_shown:false, rejection_reason:reason }).eq('id', id);
+    if(r.error) {
+      r = await db.from('users').update({ connection_status:'rejected', mt5_connected:false, mt5_notification_shown:false }).eq('id', id);
+    }
+    if(r.error) throw r.error;
+    loadAdminMT5();
+  } catch(e) { alert('Reject failed: ' + (e.message||'Unknown error')); }
+}
+
+function lockMT5Form(locked) {
+  ['profile-mt5-id','profile-mt5-pw','mt5-agree-check'].forEach(function(id){ var e=document.getElementById(id); if(e) e.disabled = locked; });
+  var toggle = document.getElementById('mt5-auto-toggle');
+  if(toggle){ toggle.style.pointerEvents = locked ? 'none' : ''; toggle.style.opacity = locked ? '0.55' : ''; }
+}
+
+function setMT5Badge(text, kind) {
+  var badge = document.getElementById('mt5-status-badge');
+  if(!badge) return;
+  var map = { connected:['rgba(0,200,122,0.12)','var(--green)'], pending:['rgba(255,176,32,0.12)','var(--amber)'], rejected:['rgba(255,30,60,0.10)','var(--red)'], disconnected:['rgba(255,176,32,0.12)','var(--amber)'] };
+  var c = map[kind] || map.disconnected;
+  badge.textContent = text; badge.style.background = c[0]; badge.style.color = c[1];
+}
+
+function renderMT5State(state, reason) {
+  var banner = document.getElementById('mt5-status-banner');
+  var btn = document.querySelector('button.red-btn[onclick="handleMT5Connect()"]');
+  if(state === 'connected') {
+    setMT5Badge('CONNECTED','connected');
+    lockMT5Form(true);
+    if(banner){ banner.style.cssText='display:block;background:rgba(0,200,122,0.07);border:1px solid rgba(0,200,122,0.2);border-radius:10px;padding:11px 12px;margin-bottom:12px;font-size:12px;color:var(--green);line-height:1.6;'; banner.innerHTML='✅ Your MT5 account is connected and active. The EA can now execute signals.'; }
+    if(btn){ btn.textContent='CONNECTED'; btn.disabled=true; btn.style.opacity='0.55'; }
+  } else if(state === 'pending') {
+    setMT5Badge('PENDING','pending');
+    lockMT5Form(true);
+    if(banner){ banner.style.cssText='display:block;background:rgba(255,176,32,0.07);border:1px solid rgba(255,176,32,0.2);border-radius:10px;padding:11px 12px;margin-bottom:12px;font-size:12px;color:var(--amber);line-height:1.6;'; banner.innerHTML="⏳ Connection request submitted. Our team is setting things up — this can take up to 24 hours. You'll be notified here once it's active."; }
+    if(btn){ btn.textContent='REQUEST PENDING'; btn.disabled=true; btn.style.opacity='0.55'; }
+  } else if(state === 'rejected') {
+    setMT5Badge('REJECTED','rejected');
+    lockMT5Form(false);
+    if(banner){ banner.style.cssText='display:block;background:rgba(255,30,60,0.06);border:1px solid rgba(255,30,60,0.18);border-radius:10px;padding:11px 12px;margin-bottom:12px;font-size:12px;color:var(--red);line-height:1.6;'; banner.innerHTML='❌ Your connection request was rejected.' + (reason ? '<br><span style="color:var(--text2);">Reason: ' + reason + '</span>' : '') + '<br><span style="color:var(--text3);">Update your details below and try again.</span>'; }
+    if(btn){ btn.textContent='RETRY CONNECTION'; btn.disabled=false; btn.style.opacity=''; }
+  } else {
+    setMT5Badge('NOT CONNECTED','disconnected');
+    lockMT5Form(false);
+    if(banner){ banner.style.display='none'; banner.innerHTML=''; }
+    if(btn){ btn.textContent='CONNECT MT5'; btn.disabled=false; btn.style.opacity=''; }
+  }
+}
+
+async function checkMT5ConnectionNotification() {
+  if(!currentUser || !db) return;
+  try {
+    var res = await db.from('users').select('connection_status,mt5_notification_shown,rejection_reason,mt5_connected').eq('id', currentUser.id).single();
+    if(res.error || !res.data) return;
+    var d = res.data;
+    if(d.mt5_notification_shown === false && (d.connection_status === 'connected' || d.connection_status === 'rejected')) {
+      currentUser.connection_status = d.connection_status;
+      currentUser.mt5_connected = d.mt5_connected;
+      currentUser.rejection_reason = d.rejection_reason;
+      sessionStorage.setItem('mob_user', JSON.stringify(currentUser));
+      showMT5ConnNotice(d.connection_status, d.rejection_reason);
+      await db.from('users').update({ mt5_notification_shown:true }).eq('id', currentUser.id);
+    }
+  } catch(e) {}
+}
+
+function showMT5ConnNotice(kind, reason) {
+  var ex = document.getElementById('mt5-conn-notice');
+  if(ex) ex.remove();
+  var ok = kind === 'connected';
+  var popup = document.createElement('div');
+  popup.id = 'mt5-conn-notice';
+  popup.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);z-index:9300;display:flex;align-items:flex-end;';
+  var sheet = document.createElement('div');
+  sheet.style.cssText = 'width:100%;background:var(--bg2);border-radius:20px 20px 0 0;border-top:1px solid var(--border);padding:20px 18px 36px;';
+  var icon  = ok ? 'ti-circle-check' : 'ti-circle-x';
+  var color = ok ? 'var(--green)' : 'var(--red)';
+  var title = ok ? 'MT5 CONNECTED' : 'CONNECTION REJECTED';
+  var body  = ok
+    ? "Your MT5 account is now connected and active. You're ready to trade — the EA can execute signals on your account."
+    : ("We couldn't connect your MT5 account." + (reason ? ' Reason: ' + reason : '') + ' Please update your details in Profile and try again.');
+  sheet.innerHTML =
+    '<div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px;"></div>' +
+    '<div style="text-align:center;margin-bottom:16px;"><i class="ti ' + icon + '" style="font-size:46px;color:' + color + ';"></i></div>' +
+    '<div style="font-family:Orbitron,sans-serif;font-size:15px;font-weight:800;color:var(--text);text-align:center;margin-bottom:8px;">' + title + '</div>' +
+    '<div style="font-size:12px;color:var(--text3);text-align:center;margin-bottom:24px;line-height:1.6;">' + body + '</div>';
+  var okBtn = document.createElement('button');
+  okBtn.textContent = ok ? 'GREAT!' : 'GOT IT';
+  okBtn.style.cssText = 'width:100%;padding:14px;background:var(--grad);border:none;border-radius:12px;color:#fff;font-family:Orbitron,sans-serif;font-size:13px;font-weight:800;letter-spacing:1px;cursor:pointer;';
+  okBtn.addEventListener('click', function(){ popup.remove(); });
+  sheet.appendChild(okBtn);
+  popup.appendChild(sheet);
+  popup.addEventListener('click', function(e){ if(e.target===popup) popup.remove(); });
+  document.body.appendChild(popup);
 }
 
 </script>
