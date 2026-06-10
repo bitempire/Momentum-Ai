@@ -2546,6 +2546,48 @@ select.auth-input {
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;"><div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.5px;">EXISTING ANALYSTS</div><button onclick="loadAdminAnalysts()" style="background:transparent;border:none;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;">↻ Refresh</button></div>
           <div id="admin-analyst-list"><div class="empty-state" style="padding:12px;">Loading...</div></div>
         </div>
+
+        <!-- SUB-ADMIN SECTION -->
+        <div class="section-card" style="margin-top:20px;">
+          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:14px;">CREATE SUB-ADMIN</div>
+          <div class="auth-field">
+            <label class="auth-label">Full Name</label>
+            <input id="mob-subadmin-name" class="auth-input" type="text" placeholder="Sub-admin full name">
+          </div>
+          <div class="auth-field">
+            <label class="auth-label">Username</label>
+            <input id="mob-subadmin-username" class="auth-input" type="text" placeholder="subadmin_username">
+          </div>
+          <div class="auth-field">
+            <label class="auth-label">Password</label>
+            <input id="mob-subadmin-password" class="auth-input" type="password" placeholder="Set password">
+          </div>
+          <div class="auth-field">
+            <label class="auth-label">Panel Access</label>
+            <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px 12px;">
+              <div style="font-size:10px;color:var(--text3);margin-bottom:8px;">Tick tabs this sub-admin can access:</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+                <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="dashboard" class="subadmin-tab-check" style="accent-color:var(--red);width:15px;height:15px;"> Dashboard</label>
+                <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="users" class="subadmin-tab-check" style="accent-color:var(--red);width:15px;height:15px;"> Users</label>
+                <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="tickets" class="subadmin-tab-check" style="accent-color:var(--red);width:15px;height:15px;"> Support</label>
+                <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="funds" class="subadmin-tab-check" style="accent-color:var(--red);width:15px;height:15px;"> Fund Requests</label>
+                <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="announce" class="subadmin-tab-check" style="accent-color:var(--red);width:15px;height:15px;"> Announcements</label>
+                <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="signals" class="subadmin-tab-check" style="accent-color:var(--red);width:15px;height:15px;"> Signals</label>
+                <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="analyst" class="subadmin-tab-check" style="accent-color:var(--red);width:15px;height:15px;"> Analysts</label>
+              </div>
+            </div>
+          </div>
+          <div id="mob-subadmin-error" class="error-msg"></div>
+          <div id="mob-subadmin-success" class="success-msg"></div>
+          <button class="red-btn" onclick="handleAddSubAdmin()">CREATE SUB-ADMIN</button>
+        </div>
+        <div class="section-card" style="margin-top:14px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+            <div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.5px;">EXISTING SUB-ADMINS</div>
+            <button onclick="loadAdminSubAdmins()" style="background:transparent;border:none;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;">↻ Refresh</button>
+          </div>
+          <div id="admin-subadmin-list"><div class="empty-state" style="padding:12px;">Loading...</div></div>
+        </div>
       </div>
 
     </div>
@@ -3788,6 +3830,8 @@ function routeUser(user) {
     loadAdminUsers();
     document.getElementById('admin-menu-item').style.display = 'flex';
     enterApp(user);
+  } else if(user.role === 'sub_admin') {
+    enterSubAdmin(user);
   } else if(user.role === 'analyst') {
     showScreen('screen-analyst');
   } else if(user.status === 'pending') {
@@ -4543,7 +4587,7 @@ function switchAdminTab(tab) {
   if(tab === 'users') loadAdminUsers();
   if(tab === 'tickets') loadAdminTickets();
   if(tab === 'funds') loadAdminFunds();
-  if(tab === 'analyst') loadAdminAnalysts();
+  if(tab === 'analyst') { loadAdminAnalysts(); loadAdminSubAdmins(); }
   if(tab === 'announce') loadAdminAnnouncements();
   if(tab === 'signals') loadAdminSignals();
 }
@@ -4980,6 +5024,148 @@ async function deleteAnalystAdmin(id){
   var res=await db.from('users').delete().eq('id',id);
   if(res.error){alert(res.error.message);return;}
   loadAdminAnalysts();
+}
+
+
+// ══════════════════════════════════════════
+// SUB-ADMIN MANAGEMENT
+// ══════════════════════════════════════════
+
+async function handleAddSubAdmin() {
+  var name=document.getElementById('mob-subadmin-name').value.trim();
+  var username=document.getElementById('mob-subadmin-username').value.trim().toLowerCase();
+  var password=document.getElementById('mob-subadmin-password').value;
+  var checks=document.querySelectorAll('.subadmin-tab-check:checked');
+  var tabs=Array.from(checks).map(function(c){return c.value;}).join(',');
+  var errEl=document.getElementById('mob-subadmin-error');
+  var sucEl=document.getElementById('mob-subadmin-success');
+  errEl.style.display='none'; sucEl.style.display='none';
+  if(!name||!username||!password){errEl.textContent='Please fill all fields';errEl.style.display='block';return;}
+  if(!tabs){errEl.textContent='Please select at least one tab';errEl.style.display='block';return;}
+  if(password.length<6){errEl.textContent='Password must be at least 6 characters';errEl.style.display='block';return;}
+  var hash=btoa(unescape(encodeURIComponent(password+'_momentum_salt')));
+  try{
+    var res=await db.from('users').insert([{name,username,password_hash:hash,mt5_id:'SUBADMIN_'+Date.now(),status:'active',role:'sub_admin',allowed_tabs:tabs,created_at:new Date().toISOString()}]);
+    if(res.error)throw res.error;
+    sucEl.textContent='Sub-admin created! Username: '+username;
+    sucEl.style.display='block';
+    document.getElementById('mob-subadmin-name').value='';
+    document.getElementById('mob-subadmin-username').value='';
+    document.getElementById('mob-subadmin-password').value='';
+    document.querySelectorAll('.subadmin-tab-check').forEach(function(c){c.checked=false;});
+    loadAdminSubAdmins();
+  }catch(e){errEl.textContent='Error: '+(e.message||'Failed');errEl.style.display='block';}
+}
+
+async function loadAdminSubAdmins() {
+  var el=document.getElementById('admin-subadmin-list');if(!el)return;
+  el.innerHTML='<div style="padding:12px;color:var(--text2);font-size:12px;">Loading...</div>';
+  try{
+    var res=await db.from('users').select('*').order('created_at',{ascending:false});
+    if(res.error)throw res.error;
+    var subs=(res.data||[]).filter(function(u){return u.role==='sub_admin';});
+    if(!subs.length){el.innerHTML='<div class="empty-state" style="padding:12px;"><i class="ti ti-users"></i> No sub-admins yet</div>';return;}
+    el.innerHTML='';
+    subs.forEach(function(sub){
+      var card=document.createElement('div');
+      card.style.cssText='padding:10px 12px;background:var(--bg3);border-radius:9px;margin-bottom:8px;border:1px solid var(--border);';
+      var tabs=(sub.allowed_tabs||'').split(',').map(function(t){
+        var map={dashboard:'Dashboard',users:'Users',tickets:'Support',funds:'Fund Requests',announce:'Announcements',signals:'Signals',analyst:'Analysts'};
+        return map[t]||t;
+      }).join(' · ');
+      card.innerHTML='<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">'+
+        '<div style="width:34px;height:34px;border-radius:8px;background:rgba(77,158,255,0.1);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#4D9EFF;">'+(sub.name||sub.username||'?').substring(0,2).toUpperCase()+'</div>'+
+        '<div style="flex:1;"><div style="font-size:13px;font-weight:700;color:var(--text);">'+(sub.name||'-')+'</div>'+
+        '<div style="font-size:11px;color:var(--text3);">@'+(sub.username||'-')+'</div></div>'+
+        '<div style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;background:rgba(77,158,255,0.1);color:#4D9EFF;">SUB-ADMIN</div></div>'+
+        '<div style="font-size:10px;color:var(--text3);margin-bottom:8px;line-height:1.6;">Access: <span style="color:#4D9EFF;font-weight:600;">'+tabs+'</span></div>';
+      var btnRow=document.createElement('div');btnRow.style.cssText='display:flex;gap:6px;';
+      var bE=document.createElement('button');
+      bE.style.cssText='flex:1;padding:7px;background:rgba(77,158,255,0.1);border:1px solid rgba(77,158,255,0.2);border-radius:7px;color:#4D9EFF;font-size:11px;font-weight:700;cursor:pointer;';
+      bE.textContent='Edit';bE.addEventListener('click',function(){openEditSubAdminPopup(sub);});
+      var bD=document.createElement('button');
+      bD.style.cssText='flex:1;padding:7px;background:rgba(255,30,60,0.08);border:1px solid rgba(255,30,60,0.15);border-radius:7px;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;';
+      bD.textContent='Delete';bD.addEventListener('click',function(){deleteSubAdmin(sub.id);});
+      btnRow.appendChild(bE);btnRow.appendChild(bD);card.appendChild(btnRow);el.appendChild(card);
+    });
+  }catch(e){el.innerHTML='<div style="padding:12px;color:var(--red);">Error: '+(e.message||'failed')+'</div>';}
+}
+
+function openEditSubAdminPopup(sub) {
+  var ex=document.getElementById('edit-subadmin-popup');if(ex)ex.remove();
+  var popup=document.createElement('div');popup.id='edit-subadmin-popup';
+  popup.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(4px);z-index:9100;display:flex;align-items:flex-end;';
+  var sheet=document.createElement('div');
+  sheet.style.cssText='width:100%;background:var(--bg2);border-radius:20px 20px 0 0;border-top:1px solid var(--border);padding:20px 18px 36px;max-height:90vh;overflow-y:auto;';
+  var allTabs=['dashboard','users','tickets','funds','announce','signals','analyst'];
+  var tabLabels={dashboard:'Dashboard',users:'Users',tickets:'Support',funds:'Fund Requests',announce:'Announcements',signals:'Signals',analyst:'Analysts'};
+  var savedTabs=(sub.allowed_tabs||'').split(',');
+  var tabsHTML=allTabs.map(function(t){
+    var chk=savedTabs.indexOf(t)>-1?'checked':'';
+    return '<label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="'+t+'" class="esa-tab-check" '+chk+' style="accent-color:var(--red);width:15px;height:15px;"> '+tabLabels[t]+'</label>';
+  }).join('');
+  sheet.innerHTML=
+    '<div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 18px;"></div>'+
+    '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">'+
+    '<div style="font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);">EDIT SUB-ADMIN</div>'+
+    '<button id="esa-x-btn" style="width:32px;height:32px;border-radius:50%;background:var(--surface);border:1px solid var(--border);color:var(--text2);font-size:18px;cursor:pointer;">×</button></div>'+
+    '<div class="auth-field"><label class="auth-label">Full Name</label><input id="esa-name" class="auth-input" type="text" value="'+(sub.name||'')+'"></div>'+
+    '<div class="auth-field"><label class="auth-label">New Password <span style="color:var(--text3);font-size:10px;">(leave blank to keep)</span></label><input id="esa-pw" class="auth-input" type="password" placeholder="New password"></div>'+
+    '<div class="auth-field"><label class="auth-label">Status</label><select id="esa-status" class="auth-input"><option value="active"'+(sub.status==='active'?' selected':'')+'>Active</option><option value="suspended"'+(sub.status==='suspended'?' selected':'')+'>Suspended</option></select></div>'+
+    '<div class="auth-field"><label class="auth-label">Panel Access</label><div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px 12px;"><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">'+tabsHTML+'</div></div></div>'+
+    '<div id="esa-error" class="error-msg"></div><div id="esa-success" class="success-msg"></div>';
+  var sb=document.createElement('button');sb.className='red-btn';sb.style.letterSpacing='1px';sb.textContent='SAVE CHANGES';
+  sb.addEventListener('click',function(){saveSubAdminEdit(sub.id);});sheet.appendChild(sb);
+  var cb=document.createElement('button');cb.className='ghost-btn';cb.style.marginTop='10px';cb.textContent='Cancel';
+  cb.addEventListener('click',function(){popup.remove();});sheet.appendChild(cb);
+  popup.appendChild(sheet);
+  popup.addEventListener('click',function(e){if(e.target===popup)popup.remove();});
+  document.body.appendChild(popup);
+  sheet.querySelector('#esa-x-btn').addEventListener('click',function(){popup.remove();});
+}
+
+async function saveSubAdminEdit(id) {
+  var name=document.getElementById('esa-name').value.trim();
+  var pw=document.getElementById('esa-pw').value;
+  var status=document.getElementById('esa-status').value;
+  var checks=document.querySelectorAll('.esa-tab-check:checked');
+  var tabs=Array.from(checks).map(function(c){return c.value;}).join(',');
+  var errEl=document.getElementById('esa-error'),sucEl=document.getElementById('esa-success');
+  errEl.style.display='none';sucEl.style.display='none';
+  if(!tabs){errEl.textContent='Please select at least one tab';errEl.style.display='block';return;}
+  try{
+    var updates={name:name,status:status,allowed_tabs:tabs};
+    if(pw)updates.password_hash=btoa(unescape(encodeURIComponent(pw+'_momentum_salt')));
+    var res=await db.from('users').update(updates).eq('id',id);
+    if(res.error&&res.error.message&&res.error.message.indexOf('allowed_tabs')>-1){
+      delete updates.allowed_tabs;
+      res=await db.from('users').update(updates).eq('id',id);
+    }
+    if(res.error)throw res.error;
+    sucEl.textContent='Sub-admin updated!';sucEl.style.display='block';
+    setTimeout(function(){document.getElementById('edit-subadmin-popup').remove();loadAdminSubAdmins();},1200);
+  }catch(e){errEl.textContent='Error: '+(e.message||'failed');errEl.style.display='block';}
+}
+
+async function deleteSubAdmin(id) {
+  if(!confirm('Delete this sub-admin account?'))return;
+  var res=await db.from('users').delete().eq('id',id);
+  if(res.error){alert(res.error.message);return;}
+  loadAdminSubAdmins();
+}
+
+// ── SUB-ADMIN LOGIN ROUTING ──────────────────────────────────────────
+function enterSubAdmin(user) {
+  showSubScreen('sub-admin');
+  // Hide all admin tabs first
+  var allTabs=['dashboard','users','tickets','funds','announce','signals','analyst'];
+  var allowedTabs=(user.allowed_tabs||'').split(',');
+  allTabs.forEach(function(tab) {
+    var btn=document.getElementById('atab-'+tab)||document.querySelector('[data-tab="'+tab+'"]');
+    if(btn) btn.style.display = allowedTabs.indexOf(tab)>-1 ? '' : 'none';
+  });
+  // Switch to first allowed tab
+  if(allowedTabs.length) switchAdminTab(allowedTabs[0]);
 }
 
 </script>
