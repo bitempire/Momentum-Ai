@@ -1210,6 +1210,7 @@ select.auth-input {
   color: #111111 !important;
 }
 </style>
+<script src="https://unpkg.com/lightweight-charts@4.1.1/dist/lightweight-charts.standalone.production.js"></script>
 </head>
 <body>
 <div class="app-shell">
@@ -3287,6 +3288,9 @@ async function handleFundFollow() {
 
 // ── CHART SYMBOL SEARCH ──
 function searchChartSymbol() {
+  var lbl = document.getElementById('chart-symbol-label');
+  var inp = document.getElementById('chart-symbol-input');
+  if(lbl && inp) lbl.textContent = inp.value.toUpperCase() || currentPair;
   var input = document.getElementById('chart-symbol-input');
   if(!input) return;
   var val = input.value.trim().toUpperCase();
@@ -4099,29 +4103,165 @@ async function executeTrade(method) {
 var tvWidget = null;
 var currentPair = 'XAUUSD';
 var currentTF = '60';
+// ── LIGHTWEIGHT CHARTS ───────────────────────────────────────────
+var _lwChart     = null;
+var _candleSeries = null;
+var _priceLine   = null;
+
+// Interval map: app TF → Twelve Data interval
+var TF_MAP = {
+  '1': '1min', '5': '5min', '15': '15min', '30': '30min',
+  '60': '1h', 'H4': '4h', 'D': '1day', '1D': '1day',
+  'H1': '1h', 'M15': '15min', 'M30': '30min'
+};
+
+// Symbol map: app symbol → Twelve Data symbol
+var CHART_SYMBOL_MAP = {
+  'XAUUSD':'XAU/USD', 'NAS100':'NDX', 'BTCUSD':'BTC/USD',
+  'GBPJPY':'GBP/JPY', 'EURUSD':'EUR/USD', 'GBPUSD':'GBP/USD',
+  'USDJPY':'USD/JPY', 'US30':'DJI', 'NDX':'NDX',
+  'BTCUSDT':'BTC/USD'
+};
+
 function initTVChart() {
   var container = document.getElementById('mob-tv-container');
   if(!container) return;
+
+  // Destroy existing chart
+  if(_lwChart) { try{ _lwChart.remove(); }catch(e){} _lwChart=null; }
   container.innerHTML = '';
+
+  // Create chart
   try {
-    new TradingView.widget({
-      container_id: 'mob-tv-container',
-      symbol: currentPair,
-      interval: currentTF,
-      timezone: 'Asia/Kuala_Lumpur',
-      theme: 'dark',
-      style: '1',
-      locale: 'en',
-      toolbar_bg: '#0d0b14',
-      enable_publishing: false,
-      hide_top_toolbar: false,
-      hide_legend: false,
-      save_image: false,
-      width: '100%',
-      height: 320,
-      studies: []
+    _lwChart = LightweightCharts.createChart(container, {
+      width:  container.clientWidth || 360,
+      height: 340,
+      layout: {
+        background: { color: '#0d0b14' },
+        textColor:  '#a0a0b0',
+      },
+      grid: {
+        vertLines:   { color: 'rgba(255,255,255,0.04)' },
+        horzLines:   { color: 'rgba(255,255,255,0.04)' },
+      },
+      crosshair: {
+        mode: LightweightCharts.CrosshairMode.Normal,
+      },
+      rightPriceScale: {
+        borderColor: 'rgba(255,255,255,0.08)',
+        scaleMargins: { top: 0.1, bottom: 0.1 },
+      },
+      timeScale: {
+        borderColor: 'rgba(255,255,255,0.08)',
+        timeVisible: true,
+        secondsVisible: false,
+      },
+      handleScroll: true,
+      handleScale:  true,
     });
-  } catch(e) {}
+
+    _candleSeries = _lwChart.addCandlestickSeries({
+      upColor:   '#00c87a',
+      downColor: '#FF1E3C',
+      borderUpColor:   '#00c87a',
+      borderDownColor: '#FF1E3C',
+      wickUpColor:   '#00c87a',
+      wickDownColor: '#FF1E3C',
+    });
+
+    // Fit chart on resize
+    if(window.ResizeObserver) {
+      new ResizeObserver(function() {
+        if(_lwChart && container.clientWidth > 0)
+          _lwChart.applyOptions({width: container.clientWidth});
+      }).observe(container);
+    }
+
+    // Load candle data
+    loadChartData();
+
+  } catch(e) {
+    console.error('Chart init error:', e);
+    container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:340px;color:var(--text3);font-size:13px;">Chart unavailable</div>';
+  }
+}
+
+async function loadChartData() {
+  if(!_candleSeries) return;
+  var sym = CHART_SYMBOL_MAP[currentPair] || currentPair;
+  var interval = TF_MAP[currentTF] || '1h';
+
+  // Show loading state
+  var container = document.getElementById('mob-tv-container');
+
+  try {
+    if(!TWELVE_DATA_KEY || TWELVE_DATA_KEY === 'YOUR_TWELVE_DATA_KEY') {
+      showDemoChart();
+      return;
+    }
+
+    var url = 'https://api.twelvedata.com/time_series?symbol=' +
+              encodeURIComponent(sym) + '&interval=' + interval +
+              '&outputsize=120&apikey=' + TWELVE_DATA_KEY;
+
+    var res  = await fetch(url);
+    var data = await res.json();
+
+    if(!data.values || data.status === 'error') {
+      console.warn('Chart data error:', data.message || 'no data');
+      showDemoChart();
+      return;
+    }
+
+    // Lightweight Charts expects: { time, open, high, low, close }
+    // Twelve Data returns newest first → reverse for chronological
+    var candles = data.values.slice().reverse().map(function(v) {
+      return {
+        time:  Math.floor(new Date(v.datetime).getTime() / 1000),
+        open:  parseFloat(v.open),
+        high:  parseFloat(v.high),
+        low:   parseFloat(v.low),
+        close: parseFloat(v.close),
+      };
+    });
+
+    _candleSeries.setData(candles);
+    _lwChart.timeScale().fitContent();
+
+    // Update price display
+    var last = candles[candles.length - 1];
+    if(last) updateChartPrice(last.close);
+
+  } catch(e) {
+    console.warn('Chart data fetch failed:', e.message);
+    showDemoChart();
+  }
+}
+
+function updateChartPrice(price) {
+  var el = document.getElementById('chart-live-price');
+  if(el && price) {
+    el.textContent = price > 1000
+      ? price.toLocaleString('en', {maximumFractionDigits:2})
+      : price.toFixed(4);
+  }
+}
+
+function showDemoChart() {
+  // Show placeholder candles when no API key
+  if(!_candleSeries) return;
+  var base  = 2300, t = Math.floor(Date.now()/1000) - 120*3600;
+  var data  = [];
+  for(var i=0;i<80;i++){
+    var o=base+Math.sin(i*0.3)*30+(Math.random()-0.5)*20;
+    var c=o+(Math.random()-0.5)*25;
+    var h=Math.max(o,c)+(Math.random()*10);
+    var l=Math.min(o,c)-(Math.random()*10);
+    data.push({time:t+(i*3600),open:parseFloat(o.toFixed(2)),high:parseFloat(h.toFixed(2)),low:parseFloat(l.toFixed(2)),close:parseFloat(c.toFixed(2))});
+    base=c;
+  }
+  _candleSeries.setData(data);
+  _lwChart.timeScale().fitContent();
 }
 function switchChartPair(pair, btn) {
   currentPair = pair;
@@ -4130,6 +4270,9 @@ function switchChartPair(pair, btn) {
   initTVChart();
 }
 function switchTF(tf, btn) {
+  // Update label
+  var lbl = document.getElementById('chart-tf-label2');
+  if(lbl) lbl.textContent = tf;
   currentTF = tf;
   document.querySelectorAll('.chart-tf').forEach(function(b) { b.classList.remove('active'); });
   btn.classList.add('active');
@@ -5309,7 +5452,7 @@ async function loadLivePrices() {
 function startPriceAutoRefresh() {
   loadLivePrices();
   if(_priceRefreshTimer) clearInterval(_priceRefreshTimer);
-  _priceRefreshTimer = setInterval(loadLivePrices, 60000); // every 60 seconds
+  _priceRefreshTimer = setInterval(loadLivePrices, 10000); // every 10 seconds
 }
 
 // ══════════════════════════════════════════════════════
