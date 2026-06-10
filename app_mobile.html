@@ -2792,7 +2792,7 @@ select.auth-input {
         </div>
         <div class="auth-field">
           <label class="auth-label">Broker Server</label>
-          <div style="padding:12px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;font-size:13px;color:var(--text2);font-weight:600;">AsiaFutureTrading-Server <span style="font-size:10px;color:var(--text3);font-weight:400;">· Fixed</span></div>
+          <div style="padding:12px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;font-size:13px;color:var(--text2);font-weight:600;">AsiaFutureTrading-Server</div>
         </div>
         <!-- Permission Toggle -->
         <div style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:var(--bg3);border-radius:10px;margin-bottom:14px;border:1px solid var(--border);">
@@ -3999,7 +3999,6 @@ function routeUser(user) {
 // ── ENTER APP ──
 function enterApp(user) {
   _priceLoaded = false;
-  setTimeout(startPriceRefresh, 1500);
   if(user) {
     var name = user.username || user.name || 'Trader';
     document.getElementById('mob-username').textContent = name;
@@ -5679,7 +5678,7 @@ function toggleMT5Pw() {
 async function handleMT5Connect() {
   var mt5Id   = document.getElementById('profile-mt5-id').value.trim();
   var mt5Pw   = document.getElementById('profile-mt5-pw').value;
-  var server  = document.getElementById('profile-mt5-server').value.trim();
+  var server = 'AsiaFutureTrading-Server';
   var agreed  = document.getElementById('mt5-agree-check').checked;
   var autoOn  = document.getElementById('mt5-auto-toggle').classList.contains('on');
   var errEl   = document.getElementById('mt5-connect-error');
