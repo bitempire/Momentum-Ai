@@ -1449,7 +1449,7 @@ select.auth-input {
         <button class="chart-tf" onclick="switchTF('240',this)">4H</button>
         <button class="chart-tf" onclick="switchTF('D',this)">1D</button>
       </div>
-      <div class="chart-container" id="mob-tv-container"></div>
+      <div id="mob-tv-container" style="width:100%;min-height:320px;border-radius:10px;overflow:hidden;"></div>
 
       <!-- LIVE RUNNING POSITIONS -->
       <div class="section-card" style="margin-top:12px;">
@@ -4173,63 +4173,52 @@ async function executeTrade(method) {
 var tvWidget = null;
 var currentPair = 'XAUUSD';
 var currentTF = '60';
-// TradingView symbol map
-var TV_SYMBOL_MAP = {
-  'XAUUSD':'OANDA:XAUUSD','NAS100':'NASDAQ:NDX','BTCUSD':'BINANCE:BTCUSDT',
-  'GBPJPY':'OANDA:GBPJPY','EURUSD':'OANDA:EURUSD','GBPUSD':'OANDA:GBPUSD',
-  'USDJPY':'OANDA:USDJPY','US30':'DJ:DJI'
-};
-var TV_TF_MAP = {'1':'1','5':'5','15':'15','30':'30','60':'60','H1':'60','H4':'240','D':'D','1D':'D'};
-
 function initTVChart() {
   var container = document.getElementById('mob-tv-container');
   if(!container) return;
-  container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:320px;color:var(--text3);font-size:13px;flex-direction:column;gap:8px;"><i class="ti ti-chart-candle" style="font-size:28px;"></i><span>Loading chart...</span></div>';
 
-  // Wait for TradingView script to be ready (retry up to 5 seconds)
-  var attempts = 0;
-  function tryRender() {
-    attempts++;
-    if(typeof TradingView === 'undefined' || !TradingView.widget) {
-      if(attempts < 50) { setTimeout(tryRender, 100); return; } // retry every 100ms
-      container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:320px;color:var(--text3);font-size:13px;">Chart unavailable — check connection</div>';
-      return;
-    }
-    container.innerHTML = '';
-    try {
-      var tvSym = TV_SYMBOL_MAP[currentPair] || ('OANDA:' + currentPair);
-      var tvTF  = TV_TF_MAP[currentTF] || '60';
-      new TradingView.widget({
-        autosize:            true,
-        container_id:        'mob-tv-container',
-        symbol:              tvSym,
-        interval:            tvTF,
-        timezone:            'Asia/Kuala_Lumpur',
-        theme:               'dark',
-        style:               '1',
-        locale:              'en',
-        toolbar_bg:          '#07070a',
-        enable_publishing:   false,
-        hide_top_toolbar:    true,
-        hide_legend:         true,
-        hide_side_toolbar:   true,
-        allow_symbol_change: false,
-        save_image:          false,
-        calendar:            false,
-        hotlist:             false,
-        details:             false,
-        news:                [],
-        studies:             [],
-        withdateranges:      false,
-        show_popup_button:   false,
-      });
-    } catch(e) {
-      console.error('TradingView error:', e);
-      container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:320px;color:var(--text3);font-size:13px;">Chart failed to load</div>';
-    }
-  }
-  tryRender();
+  // TradingView iframe symbol map
+  var TV_SYMBOL_MAP = {
+    'XAUUSD':'OANDA:XAUUSD','NAS100':'NASDAQ:NDX','BTCUSD':'BINANCE:BTCUSDT',
+    'GBPJPY':'FX:GBPJPY','EURUSD':'FX:EURUSD','GBPUSD':'FX:GBPUSD',
+    'USDJPY':'FX:USDJPY','US30':'DJ:DJI','XAGUSD':'OANDA:XAGUSD'
+  };
+  var TV_TF_MAP = {
+    '1':'1','5':'5','15':'15','30':'30',
+    '60':'60','H1':'60','H4':'240','D':'1D','1D':'1D'
+  };
+
+  var sym = encodeURIComponent(TV_SYMBOL_MAP[currentPair] || ('FX:' + currentPair));
+  var tf  = TV_TF_MAP[currentTF] || '60';
+
+  var src = 'https://s.tradingview.com/widgetembed/?' +
+    'symbol=' + sym +
+    '&interval=' + tf +
+    '&theme=dark' +
+    '&style=1' +
+    '&locale=en' +
+    '&hide_top_toolbar=1' +
+    '&hide_legend=1' +
+    '&hide_side_toolbar=1' +
+    '&allow_symbol_change=0' +
+    '&save_image=0' +
+    '&calendar=0' +
+    '&hotlist=0' +
+    '&details=0' +
+    '&withdateranges=0' +
+    '&timezone=Asia%2FKuala_Lumpur';
+
+  container.innerHTML =
+    '<iframe' +
+    ' src="' + src + '"' +
+    ' frameborder="0"' +
+    ' scrolling="no"' +
+    ' allowtransparency="true"' +
+    ' allowfullscreen="true"' +
+    ' style="width:100%;height:320px;border-radius:10px;">' +
+    '</iframe>';
 }
+
 function switchChartPair(pair, btn) {
   currentPair = pair;
   document.querySelectorAll('.chart-pair-btn').forEach(function(b) { b.classList.remove('active'); });
