@@ -1239,7 +1239,10 @@ select.auth-input {
       </div>
       <div class="auth-field">
         <label class="auth-label">Password</label>
-        <input id="input-password" class="auth-input" type="password" placeholder="••••••••" autocomplete="current-password">
+        <div style="position:relative;">
+          <input id="input-password" class="auth-input" type="password" placeholder="••••••••" autocomplete="current-password" style="padding-right:44px;">
+          <button type="button" onclick="toggleLoginPw()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:18px;padding:0;line-height:1;"><i class="ti ti-eye" id="login-pw-eye"></i></button>
+        </div>
       </div>
       <div class="auth-forgot"><a>Forgot Password?</a></div>
       <button class="auth-btn" id="btn-signin" onclick="handleLogin()">ACCESS SYSTEM</button>
@@ -1250,7 +1253,7 @@ select.auth-input {
       <div class="auth-switch">No account? <span onclick="switchAuthTab('register')">Register with AFT →</span></div>
       <div class="auth-status">
         <div class="auth-status-dot"></div>
-        All systems operational · Signal feed live
+        <span style="width:100%;text-align:center;">Powered by Bitempire Sdn Bhd</span>
       </div>
     </div>
     <!-- Register Form -->
@@ -2654,9 +2657,32 @@ select.auth-input {
             <label class="auth-label">Password</label>
             <input id="mob-analyst-password" class="auth-input" type="password" placeholder="Set password">
           </div>
+          <div class="auth-field">
+            <label class="auth-label">Trading Pairs Access</label>
+            <select id="mob-analyst-pairs" class="auth-input">
+              <option value="all">All Pairs</option>
+              <option value="XAUUSD">Gold (XAUUSD) Only</option>
+              <option value="NAS100">NAS100 Only</option>
+              <option value="BTCUSD">Bitcoin (BTCUSD) Only</option>
+              <option value="FOREX">Forex Pairs Only</option>
+              <option value="XAUUSD,NAS100">Gold + NAS100</option>
+              <option value="XAUUSD,BTCUSD">Gold + Bitcoin</option>
+            </select>
+          </div>
           <div id="mob-analyst-error" class="error-msg"></div>
           <div id="mob-analyst-success" class="success-msg"></div>
           <button class="red-btn" id="btn-add-analyst" onclick="handleAddAnalyst()">CREATE ANALYST</button>
+        </div>
+
+        <!-- Analyst List -->
+        <div class="section-card" style="margin-top:14px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+            <div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.5px;">EXISTING ANALYSTS</div>
+            <button onclick="loadAdminAnalysts()" style="background:transparent;border:none;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;">↻ Refresh</button>
+          </div>
+          <div id="admin-analyst-list">
+            <div class="empty-state" style="padding:16px;"><i class="ti ti-users"></i>Loading...</div>
+          </div>
         </div>
       </div>
 
@@ -3955,10 +3981,10 @@ async function handleLogin() {
   try {
     var hash = btoa(unescape(encodeURIComponent(password+'_momentum_salt')));
     var res = await db.from('users').select('*').eq('username',username).limit(1);
-    if(res.error) { errEl.textContent='Connection error: '+res.error.message; errEl.style.display='block'; return; }
-    if(!res.data||!res.data.length) { errEl.textContent='Username not found. Please check your username.'; errEl.style.display='block'; return; }
+    if(res.error) { errEl.textContent='Connection error: '+res.error.message; errEl.style.display='block'; btn.textContent='ACCESS SYSTEM'; btn.disabled=false; return; }
+    if(!res.data||!res.data.length) { errEl.textContent='Username not found. Please check your username.'; errEl.style.display='block'; btn.textContent='ACCESS SYSTEM'; btn.disabled=false; return; }
     var user = res.data[0];
-    if(user.password_hash !== hash) { errEl.textContent='Incorrect password. Please try again.'; errEl.style.display='block'; return; }
+    if(user.password_hash !== hash) { errEl.textContent='Incorrect password. Please try again.'; errEl.style.display='block'; btn.textContent='ACCESS SYSTEM'; btn.disabled=false; return; }
     currentUser = user;
     sessionStorage.setItem('mob_user', JSON.stringify(user));
     routeUser(user);
@@ -4441,32 +4467,108 @@ async function loadAdminUsers() {
   var container = document.getElementById('mob-admin-users');
   if(!container) return;
   try {
-    var res = await db.from('users').select('*').order('created_at',{ascending:false});
+    var res = await db.from('users').select('*').eq('role','user').order('created_at',{ascending:false});
     if(res.error||!res.data) return;
-    var total=res.data.length, active=res.data.filter(function(u){return u.status==='active';}).length, pending=res.data.filter(function(u){return u.status==='pending';}).length;
-    var t=document.getElementById('mob-stat-total'), a=document.getElementById('mob-stat-active'), p=document.getElementById('mob-stat-pending');
-    if(t) t.textContent=total; if(a) a.textContent=active; if(p) p.textContent=pending;
-    container.innerHTML = res.data.map(function(user) {
-      var actions = '';
-      if(user.status==='pending') actions+='<button class="admin-action-btn admin-approve" onclick="approveUser(\''+user.id+'\')">Approve</button>';
-      if(user.status==='active') actions+='<button class="admin-action-btn admin-suspend" onclick="suspendUser(\''+user.id+'\')">Suspend</button>';
-      actions+='<button class="admin-action-btn admin-delete" onclick="deleteUser(\''+user.id+'\')">Delete</button>';
-      return '<div class="admin-user-row">' +
-        '<div class="admin-user-av">'+(user.name||user.username||'?').substring(0,2).toUpperCase()+'</div>' +
-        '<div class="admin-user-info">' +
-          '<div class="admin-user-name">'+(user.name||user.username||'-')+'</div>' +
-          '<div class="admin-user-meta">'+(user.email||'-')+' · MT5: '+(user.mt5_id||'-')+'</div>' +
-          '<div class="admin-action-row">'+actions+'</div>' +
+    var total=res.data.length, pending=res.data.filter(function(u){return u.status==='pending';}).length;
+    var t=document.getElementById('mob-stat-total'), p=document.getElementById('mob-stat-pending');
+    if(t) t.textContent=total; if(p) p.textContent=pending;
+    if(!res.data.length) { container.innerHTML='<div class="empty-state" style="padding:20px;"><i class="ti ti-users"></i>No users found</div>'; return; }
+    container.innerHTML = '';
+    res.data.forEach(function(user) {
+      var isSuspended = user.status === 'suspended';
+      var isPending   = user.status === 'pending';
+      var card = document.createElement('div');
+      card.className = 'admin-user-row';
+      card.innerHTML =
+        '<div class="admin-user-av">' + (user.name||user.username||'?').substring(0,2).toUpperCase() + '</div>' +
+        '<div class="admin-user-info" style="flex:1;">' +
+          '<div class="admin-user-name">' + (user.name||user.username||'-') + '</div>' +
+          '<div class="admin-user-meta">' + (user.email||'-') + ' · MT5: ' + (user.mt5_id||'-') + '</div>' +
         '</div>' +
-        '<div class="admin-status '+user.status+'">'+user.status+'</div>' +
-      '</div>';
-    }).join('');
-  } catch(e) { console.error(e); }
+        '<div class="admin-status ' + user.status + '">' + user.status.toUpperCase() + '</div>';
+      var row = document.createElement('div');
+      row.style.cssText = 'display:flex;gap:6px;margin-top:8px;';
+      if(isPending) {
+        var b1=document.createElement('button'); b1.className='admin-action-btn admin-approve'; b1.textContent='Approve';
+        b1.addEventListener('click',function(){approveUser(user.id);}); row.appendChild(b1);
+      }
+      var b2=document.createElement('button');
+      b2.className='admin-action-btn '+(isSuspended?'admin-approve':'admin-suspend');
+      b2.textContent=isSuspended?'Unsuspend':'Suspend';
+      b2.addEventListener('click',function(){isSuspended?unsuspendUser(user.id):suspendUser(user.id);}); row.appendChild(b2);
+      var b3=document.createElement('button');
+      b3.className='admin-action-btn'; b3.style.cssText='background:rgba(77,158,255,0.1);color:#4D9EFF;border:1px solid rgba(77,158,255,0.2);';
+      b3.textContent='Edit'; b3.addEventListener('click',function(){openEditUserPopup(user);}); row.appendChild(b3);
+      var b4=document.createElement('button');
+      b4.className='admin-action-btn admin-delete'; b4.textContent='Delete';
+      b4.addEventListener('click',function(){deleteUser(user.id);}); row.appendChild(b4);
+      card.appendChild(row);
+      container.appendChild(card);
+    });
+  } catch(e) { console.error('loadAdminUsers error:',e); }
 }
-async function approveUser(id) { await db.from('users').update({status:'active'}).eq('id',id); loadAdminUsers(); }
-async function suspendUser(id) { await db.from('users').update({status:'suspended'}).eq('id',id); loadAdminUsers(); }
-async function deleteUser(id) { if(!confirm('Delete user?')) return; await db.from('users').delete().eq('id',id); loadAdminUsers(); }
-
+async function approveUser(id) {
+  var res=await db.from('users').update({status:'active'}).eq('id',id);
+  if(res.error){alert('Error: '+res.error.message);return;} loadAdminUsers();
+}
+async function suspendUser(id) {
+  var res=await db.from('users').update({status:'suspended'}).eq('id',id);
+  if(res.error){alert('Error: '+res.error.message);return;} loadAdminUsers();
+}
+async function unsuspendUser(id) {
+  var res=await db.from('users').update({status:'active'}).eq('id',id);
+  if(res.error){alert('Error: '+res.error.message);return;} loadAdminUsers();
+}
+async function deleteUser(id) {
+  if(!confirm('Delete this user permanently? This cannot be undone.')) return;
+  var res=await db.from('users').delete().eq('id',id);
+  if(res.error){alert('Error: '+res.error.message);return;} loadAdminUsers();
+}
+function openEditUserPopup(user) {
+  var ex=document.getElementById('edit-user-popup'); if(ex) ex.remove();
+  var popup=document.createElement('div'); popup.id='edit-user-popup';
+  popup.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(4px);z-index:9000;display:flex;align-items:flex-end;';
+  var sheet=document.createElement('div');
+  sheet.style.cssText='width:100%;background:var(--bg2);border-radius:20px 20px 0 0;border-top:1px solid var(--border);padding:20px 18px 36px;max-height:85vh;overflow-y:auto;';
+  sheet.innerHTML=
+    '<div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 18px;"></div>'+
+    '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">'+
+      '<div style="font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);">EDIT USER</div>'+
+      '<button id="eu-close-x" style="width:32px;height:32px;border-radius:50%;background:var(--surface);border:1px solid var(--border);color:var(--text2);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;">×</button>'+
+    '</div>'+
+    '<div class="auth-field"><label class="auth-label">Full Name</label><input id="eu-name" class="auth-input" type="text" value="'+(user.name||'')+'"></div>'+
+    '<div class="auth-field"><label class="auth-label">Email</label><input id="eu-email" class="auth-input" type="email" value="'+(user.email||'')+'"></div>'+
+    '<div class="auth-field"><label class="auth-label">MT5 Account ID</label><input id="eu-mt5" class="auth-input" type="text" value="'+(user.mt5_id||'')+'"></div>'+
+    '<div class="auth-field"><label class="auth-label">Status</label>'+
+    '<select id="eu-status" class="auth-input">'+
+      '<option value="pending"'+(user.status==='pending'?' selected':'')+'>Pending</option>'+
+      '<option value="active"'+(user.status==='active'?' selected':'')+'>Active</option>'+
+      '<option value="suspended"'+(user.status==='suspended'?' selected':'')+'>Suspended</option>'+
+    '</select></div>'+
+    '<div id="eu-error" class="error-msg"></div>'+
+    '<div id="eu-success" class="success-msg"></div>';
+  var sb=document.createElement('button'); sb.className='red-btn'; sb.style.letterSpacing='1px'; sb.textContent='SAVE CHANGES';
+  sb.addEventListener('click',function(){saveUserEdit(user.id);}); sheet.appendChild(sb);
+  var cb=document.createElement('button'); cb.className='ghost-btn'; cb.style.marginTop='10px'; cb.textContent='Cancel';
+  cb.addEventListener('click',function(){popup.remove();}); sheet.appendChild(cb);
+  popup.appendChild(sheet);
+  popup.addEventListener('click',function(e){if(e.target===popup)popup.remove();});
+  document.body.appendChild(popup);
+}
+async function saveUserEdit(userId) {
+  var name=document.getElementById('eu-name').value.trim();
+  var email=document.getElementById('eu-email').value.trim();
+  var mt5=document.getElementById('eu-mt5').value.trim();
+  var status=document.getElementById('eu-status').value;
+  var errEl=document.getElementById('eu-error'), sucEl=document.getElementById('eu-success');
+  errEl.style.display='none'; sucEl.style.display='none';
+  try {
+    var res=await db.from('users').update({name,email,mt5_id:mt5,status}).eq('id',userId);
+    if(res.error) throw res.error;
+    sucEl.textContent='User updated!'; sucEl.style.display='block';
+    setTimeout(function(){document.getElementById('edit-user-popup').remove();loadAdminUsers();},1200);
+  } catch(e){errEl.textContent='Error: '+(e.message||'Could not update');errEl.style.display='block';}
+}
 // ── ADD ANALYST ──
 async function handleAddAnalyst() {
   var name=document.getElementById('mob-analyst-name').value.trim(),
@@ -4478,7 +4580,8 @@ async function handleAddAnalyst() {
   var btn=document.getElementById('btn-add-analyst'); btn.disabled=true;
   try {
     var hash=btoa(unescape(encodeURIComponent(password+'_momentum_salt')));
-    var res=await db.from('users').insert([{name,username,password_hash:hash,mt5_id:'ANALYST_'+Date.now(),status:'active',role:'analyst',created_at:new Date().toISOString()}]);
+    var pairs=document.getElementById('mob-analyst-pairs')?document.getElementById('mob-analyst-pairs').value:'all';
+    var res=await db.from('users').insert([{name,username,password_hash:hash,mt5_id:'ANALYST_'+Date.now(),status:'active',role:'analyst',trading_pairs:pairs,created_at:new Date().toISOString()}]);
     if(res.error) throw res.error;
     sucEl.textContent='Analyst created! Username: '+username+' / Password: '+password;
     sucEl.style.display='block';
@@ -4486,6 +4589,115 @@ async function handleAddAnalyst() {
     document.getElementById('mob-analyst-username').value='';
     document.getElementById('mob-analyst-password').value='';
     loadAdminUsers();
+    loadAdminAnalysts();
+
+
+// ── LOAD ADMIN ANALYSTS ──────────────────────────────────────────────
+async function loadAdminAnalysts() {
+  var el = document.getElementById('admin-analyst-list');
+  if(!el) return;
+  el.innerHTML = '<div class="empty-state" style="padding:12px;"><i class="ti ti-loader"></i> Loading...</div>';
+  try {
+    var res = await db.from('users').select('*').eq('role','analyst').order('created_at',{ascending:false});
+    if(res.error) throw res.error;
+    if(!res.data||!res.data.length) {
+      el.innerHTML='<div class="empty-state" style="padding:12px;"><i class="ti ti-users"></i> No analysts yet</div>';
+      return;
+    }
+    el.innerHTML='';
+    res.data.forEach(function(analyst) {
+      var card = document.createElement('div');
+      card.style.cssText='padding:10px 12px;background:var(--bg3);border-radius:9px;margin-bottom:8px;border:1px solid var(--border);';
+      card.innerHTML=
+        '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">'+
+          '<div style="width:34px;height:34px;border-radius:8px;background:rgba(255,30,60,0.1);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--red);">'+(analyst.name||analyst.username||'?').substring(0,2).toUpperCase()+'</div>'+
+          '<div style="flex:1;">'+
+            '<div style="font-size:13px;font-weight:700;color:var(--text);">'+(analyst.name||'-')+'</div>'+
+            '<div style="font-size:11px;color:var(--text3);">@'+(analyst.username||'-')+'</div>'+
+          '</div>'+
+          '<div style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;background:rgba(0,200,122,0.1);color:var(--green);">'+(analyst.status||'active').toUpperCase()+'</div>'+
+        '</div>'+
+        '<div style="font-size:10px;color:var(--text3);margin-bottom:8px;">Pairs: <span style="color:var(--red);font-weight:600;">'+(analyst.trading_pairs||'All')+'</span></div>';
+      var btnRow = document.createElement('div');
+      btnRow.style.cssText='display:flex;gap:6px;';
+      var bEdit=document.createElement('button');
+      bEdit.style.cssText='flex:1;padding:7px;background:rgba(77,158,255,0.1);border:1px solid rgba(77,158,255,0.2);border-radius:7px;color:#4D9EFF;font-size:11px;font-weight:700;cursor:pointer;';
+      bEdit.textContent='Edit';
+      bEdit.addEventListener('click',function(){openEditAnalystPopup(analyst);});
+      var bDel=document.createElement('button');
+      bDel.style.cssText='flex:1;padding:7px;background:rgba(255,30,60,0.08);border:1px solid rgba(255,30,60,0.15);border-radius:7px;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;';
+      bDel.textContent='Delete';
+      bDel.addEventListener('click',function(){deleteAnalystAdmin(analyst.id);});
+      btnRow.appendChild(bEdit); btnRow.appendChild(bDel);
+      card.appendChild(btnRow);
+      el.appendChild(card);
+    });
+  } catch(e) { el.innerHTML='<div class="empty-state" style="padding:12px;">Error: '+(e.message||'failed')+'</div>'; }
+}
+
+function openEditAnalystPopup(analyst) {
+  var ex=document.getElementById('edit-analyst-popup'); if(ex) ex.remove();
+  var popup=document.createElement('div'); popup.id='edit-analyst-popup';
+  popup.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(4px);z-index:9100;display:flex;align-items:flex-end;';
+  var sheet=document.createElement('div');
+  sheet.style.cssText='width:100%;background:var(--bg2);border-radius:20px 20px 0 0;border-top:1px solid var(--border);padding:20px 18px 36px;max-height:85vh;overflow-y:auto;';
+  sheet.innerHTML=
+    '<div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 18px;"></div>'+
+    '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">'+
+      '<div style="font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);">EDIT ANALYST</div>'+
+      '<button id="ea-close-x" style="width:32px;height:32px;border-radius:50%;background:var(--surface);border:1px solid var(--border);color:var(--text2);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;">×</button>'+
+    '</div>'+
+    '<div class="auth-field"><label class="auth-label">Full Name</label><input id="ea-name" class="auth-input" type="text" value="'+(analyst.name||'')+'"></div>'+
+    '<div class="auth-field"><label class="auth-label">New Password <span style="color:var(--text3);font-size:10px;">(leave blank to keep current)</span></label><input id="ea-pw" class="auth-input" type="password" placeholder="New password"></div>'+
+    '<div class="auth-field"><label class="auth-label">Trading Pairs Access</label>'+
+    '<select id="ea-pairs" class="auth-input">'+
+      '<option value="all"'+((!analyst.trading_pairs||analyst.trading_pairs==='all')?' selected':'')+'>All Pairs</option>'+
+      '<option value="XAUUSD"'+(analyst.trading_pairs==='XAUUSD'?' selected':'')+'>Gold (XAUUSD) Only</option>'+
+      '<option value="NAS100"'+(analyst.trading_pairs==='NAS100'?' selected':'')+'>NAS100 Only</option>'+
+      '<option value="BTCUSD"'+(analyst.trading_pairs==='BTCUSD'?' selected':'')+'>Bitcoin (BTCUSD) Only</option>'+
+      '<option value="FOREX"'+(analyst.trading_pairs==='FOREX'?' selected':'')+'>Forex Pairs Only</option>'+
+      '<option value="XAUUSD,NAS100"'+(analyst.trading_pairs==='XAUUSD,NAS100'?' selected':'')+'>Gold + NAS100</option>'+
+      '<option value="XAUUSD,BTCUSD"'+(analyst.trading_pairs==='XAUUSD,BTCUSD'?' selected':'')+'>Gold + Bitcoin</option>'+
+    '</select></div>'+
+    '<div class="auth-field"><label class="auth-label">Status</label>'+
+    '<select id="ea-status" class="auth-input">'+
+      '<option value="active"'+(analyst.status==='active'?' selected':'')+'>Active</option>'+
+      '<option value="suspended"'+(analyst.status==='suspended'?' selected':'')+'>Suspended</option>'+
+    '</select></div>'+
+    '<div id="ea-error" class="error-msg"></div>'+
+    '<div id="ea-success" class="success-msg"></div>';
+  var sb=document.createElement('button'); sb.className='red-btn'; sb.style.letterSpacing='1px'; sb.textContent='SAVE CHANGES';
+  sb.addEventListener('click',function(){saveAnalystEdit(analyst.id);}); sheet.appendChild(sb);
+  var cb=document.createElement('button'); cb.className='ghost-btn'; cb.style.marginTop='10px'; cb.textContent='Cancel';
+  cb.addEventListener('click',function(){popup.remove();}); sheet.appendChild(cb);
+  popup.appendChild(sheet);
+  popup.addEventListener('click',function(e){if(e.target===popup)popup.remove();});
+  document.body.appendChild(popup);
+}
+
+async function saveAnalystEdit(id) {
+  var name=document.getElementById('ea-name').value.trim();
+  var pw=document.getElementById('ea-pw').value;
+  var pairs=document.getElementById('ea-pairs').value;
+  var status=document.getElementById('ea-status').value;
+  var errEl=document.getElementById('ea-error'), sucEl=document.getElementById('ea-success');
+  errEl.style.display='none'; sucEl.style.display='none';
+  try {
+    var updates={name,trading_pairs:pairs,status};
+    if(pw) updates.password_hash=btoa(unescape(encodeURIComponent(pw+'_momentum_salt')));
+    var res=await db.from('users').update(updates).eq('id',id);
+    if(res.error) throw res.error;
+    sucEl.textContent='Analyst updated!'; sucEl.style.display='block';
+    setTimeout(function(){document.getElementById('edit-analyst-popup').remove();loadAdminAnalysts();},1200);
+  } catch(e){errEl.textContent='Error: '+(e.message||'failed');errEl.style.display='block';}
+}
+
+async function deleteAnalystAdmin(id) {
+  if(!confirm('Delete this analyst? Their posted signals will remain but their account will be removed.')) return;
+  var res=await db.from('users').delete().eq('id',id);
+  if(res.error){alert('Error: '+res.error.message);return;}
+  loadAdminAnalysts();
+}
   } catch(e) { errEl.textContent='Error: '+e.message; errEl.style.display='block'; }
   btn.disabled=false;
 }
@@ -5313,7 +5525,11 @@ async function loadAnalystSignals() {
   if(!container) return;
   container.innerHTML = '<div class="empty-state" style="padding:24px;"><i class="ti ti-loader"></i>Loading...</div>';
   try {
-    var res = await db.from('signals').select('*').order('created_at',{ascending:false}).limit(50);
+    // Filter by current analyst's ID so each analyst only sees their own signals
+    var analystId = currentUser ? currentUser.id : null;
+    var q = db.from('signals').select('*').order('created_at',{ascending:false}).limit(50);
+    if(analystId) q = q.eq('analyst_id', analystId);
+    var res = await q;
     if(res.error) throw res.error;
     _analystAllSignals = res.data || [];
     renderAnalystSignals(_analystAllSignals);
@@ -5655,6 +5871,20 @@ function stopSignalsAutoRefresh() {
   }
 }
 
+
+// ── LOGIN PASSWORD TOGGLE ────────────────
+function toggleLoginPw() {
+  var input = document.getElementById('input-password');
+  var eye   = document.getElementById('login-pw-eye');
+  if(!input) return;
+  if(input.type === 'password') {
+    input.type = 'text';
+    if(eye) { eye.className = 'ti ti-eye-off'; }
+  } else {
+    input.type = 'password';
+    if(eye) { eye.className = 'ti ti-eye'; }
+  }
+}
 </script>
 </body>
 </html>
