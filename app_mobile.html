@@ -4374,6 +4374,7 @@ async function loadAdminUsers() {
       var actions = '';
       if(user.status==='pending') actions+='<button class="admin-action-btn admin-approve" onclick="approveUser(\''+user.id+'\')">Approve</button>';
       if(user.status==='active') actions+='<button class="admin-action-btn admin-suspend" onclick="suspendUser(\''+user.id+'\')">Suspend</button>';
+      if(user.status==='suspended') actions+='<button class="admin-action-btn admin-approve" onclick="unsuspendUser(\''+user.id+'\')">Unsuspend</button>';
       actions+='<button class="admin-action-btn admin-delete" onclick="deleteUser(\''+user.id+'\')">Delete</button>';
       return '<div class="admin-user-row">' +
         '<div class="admin-user-av">'+(user.name||user.username||'?').substring(0,2).toUpperCase()+'</div>' +
@@ -4387,9 +4388,31 @@ async function loadAdminUsers() {
     }).join('');
   } catch(e) { console.error(e); }
 }
-async function approveUser(id) { await db.from('users').update({status:'active'}).eq('id',id); loadAdminUsers(); }
-async function suspendUser(id) { await db.from('users').update({status:'suspended'}).eq('id',id); loadAdminUsers(); }
-async function deleteUser(id) { if(!confirm('Delete user?')) return; await db.from('users').delete().eq('id',id); loadAdminUsers(); }
+async function approveUser(id) {
+  var r=await db.from('users').update({status:'active'}).eq('id',id);
+  if(r.error){alert('Error: '+r.error.message);return;}
+  loadAdminUsers();
+}
+async function unsuspendUser(id) {
+  var r=await db.from('users').update({status:'active'}).eq('id',id);
+  if(r.error){alert('Error: '+r.error.message);return;}
+  loadAdminUsers();
+}
+async function suspendUser(id) {
+  var r=await db.from('users').update({status:'suspended'}).eq('id',id);
+  if(r.error){alert('Error: '+r.error.message);return;}
+  loadAdminUsers();
+}
+async function deleteUser(id) {
+  if(!confirm('Delete this user permanently?')) return;
+  try {
+    // First remove any foreign key references in trades
+    await db.from('trades').update({user_id:null}).eq('user_id',id);
+    var r=await db.from('users').delete().eq('id',id);
+    if(r.error) throw r.error;
+    loadAdminUsers();
+  } catch(e) { alert('Delete failed: '+(e.message||'Unknown error')); }
+}
 
 // ── ADD ANALYST ──
 async function handleAddAnalyst() {
@@ -5146,7 +5169,16 @@ function enterSubAdmin(user){
   },150);
 }
 async function adminUpdateSig(id,st){try{var r=await db.from('signals').update({status:st}).eq('id',id);if(r.error)throw r.error;loadAdminSignals();}catch(e){alert('Error: '+e.message);}}
-async function adminDeleteSig(id){if(!confirm('Delete signal?'))return;try{await db.from('signals').delete().eq('id',id);loadAdminSignals();}catch(e){alert('Error: '+e.message);}}
+async function adminDeleteSig(id){
+  if(!confirm('Delete this signal permanently?'))return;
+  try{
+    // Remove foreign key refs in trades first
+    await db.from('trades').update({signal_id:null}).eq('signal_id',id);
+    var r=await db.from('signals').delete().eq('id',id);
+    if(r.error)throw r.error;
+    loadAdminSignals();
+  }catch(e){alert('Delete failed: '+(e.message||'Unknown error'));}
+}
 
 // ═══════════════════════════════════════════════════
 // ADMIN: ACADEMY
@@ -5368,7 +5400,16 @@ async function loadAdminSignals(){
   }catch(e){el.innerHTML='<div style="padding:12px;color:var(--red);">Error: '+(e.message||'Failed')+'</div>';}
 }
 async function adminUpdateSig(id,st){try{var r=await db.from('signals').update({status:st}).eq('id',id);if(r.error)throw r.error;loadAdminSignals();}catch(e){alert('Error: '+e.message);}}
-async function adminDeleteSig(id){if(!confirm('Delete signal?'))return;try{await db.from('signals').delete().eq('id',id);loadAdminSignals();}catch(e){alert('Error: '+e.message);}}
+async function adminDeleteSig(id){
+  if(!confirm('Delete this signal permanently?'))return;
+  try{
+    // Remove foreign key refs in trades first
+    await db.from('trades').update({signal_id:null}).eq('signal_id',id);
+    var r=await db.from('signals').delete().eq('id',id);
+    if(r.error)throw r.error;
+    loadAdminSignals();
+  }catch(e){alert('Delete failed: '+(e.message||'Unknown error'));}
+}
 
 </script>
 </body>
