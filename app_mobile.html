@@ -2571,10 +2571,10 @@ select.auth-input {
                 <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="dashboard" class="subadmin-tab-check" style="accent-color:var(--red);width:15px;height:15px;"> Dashboard</label>
                 <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="users" class="subadmin-tab-check" style="accent-color:var(--red);width:15px;height:15px;"> Users</label>
                 <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="tickets" class="subadmin-tab-check" style="accent-color:var(--red);width:15px;height:15px;"> Support</label>
-                <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="funds" class="subadmin-tab-check" style="accent-color:var(--red);width:15px;height:15px;"> Fund Requests</label>
+                <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="funds" class="subadmin-tab-check" style="accent-color:var(--red);width:15px;height:15px;"> Fund Management</label>
                 <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="announce" class="subadmin-tab-check" style="accent-color:var(--red);width:15px;height:15px;"> Announcements</label>
                 <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="signals" class="subadmin-tab-check" style="accent-color:var(--red);width:15px;height:15px;"> Signals</label>
-                <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="analyst" class="subadmin-tab-check" style="accent-color:var(--red);width:15px;height:15px;"> Analysts</label>
+                <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="analyst" class="subadmin-tab-check" style="accent-color:var(--red);width:15px;height:15px;"> Administrator</label>
                 <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="academy" class="subadmin-tab-check" style="accent-color:var(--red);width:15px;height:15px;"> Academy</label>
               </div>
             </div>
@@ -5161,7 +5161,7 @@ function openEditSubAdminPopup(sub) {
   var sheet=document.createElement('div');
   sheet.style.cssText='width:100%;background:var(--bg2);border-radius:20px 20px 0 0;border-top:1px solid var(--border);padding:20px 18px 36px;max-height:90vh;overflow-y:auto;';
   var allTabs=['dashboard','users','tickets','funds','announce','signals','analyst','academy'];
-  var tabLabels={dashboard:'Dashboard',users:'Users',tickets:'Support',funds:'Fund Requests',announce:'Announcements',signals:'Signals',analyst:'Analysts',academy:'Academy'};
+  var tabLabels={dashboard:'Dashboard',users:'Users',tickets:'Support',funds:'Fund Management',announce:'Announcements',signals:'Signals',analyst:'Administrator',academy:'Academy'};
   var savedTabs=(sub.allowed_tabs||'').split(',');
   var tabsHTML=allTabs.map(function(t){
     var chk=savedTabs.indexOf(t)>-1?'checked':'';
