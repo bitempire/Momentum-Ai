@@ -4203,7 +4203,7 @@ async function loadChartData() {
 
     var url = 'https://api.twelvedata.com/time_series?symbol=' +
               encodeURIComponent(sym) + '&interval=' + interval +
-              '&outputsize=120&apikey=' + TWELVE_DATA_KEY;
+              '&outputsize=60&apikey=' + TWELVE_DATA_KEY;
 
     var res  = await fetch(url);
     var data = await res.json();
@@ -4499,12 +4499,11 @@ async function initiateScan() {
     var key = '&apikey=' + TWELVE_DATA_KEY;
     var symParam = '?symbol=' + encodeURIComponent(tdSymbol) + '&interval=' + tdInterval;
 
-    var [rsiRes, macdRes, quoteRes, ema20Res] = await Promise.all([
-      fetch(baseUrl + 'rsi' + symParam + '&time_period=14&outputsize=1' + key).then(function(r){return r.json();}),
-      fetch(baseUrl + 'macd' + symParam + '&outputsize=1' + key).then(function(r){return r.json();}),
-      fetch(baseUrl + 'quote?symbol=' + encodeURIComponent(tdSymbol) + key).then(function(r){return r.json();}),
-      fetch(baseUrl + 'ema' + symParam + '&time_period=20&outputsize=1' + key).then(function(r){return r.json();})
-    ]);
+    // Sequential calls to respect rate limit
+    var rsiRes   = await tdFetch(baseUrl + 'rsi'   + symParam + '&time_period=14&outputsize=1' + key);
+    var quoteRes = await tdFetch(baseUrl + 'quote?symbol=' + encodeURIComponent(tdSymbol) + key);
+    var macdRes  = await tdFetch(baseUrl + 'macd'  + symParam + '&outputsize=1' + key);
+    var ema20Res = await tdFetch(baseUrl + 'ema'   + symParam + '&time_period=20&outputsize=1' + key);
 
     // Parse values
     var rsi    = rsiRes.values && rsiRes.values[0] ? parseFloat(rsiRes.values[0].rsi).toFixed(1) : null;
@@ -5459,7 +5458,7 @@ async function loadLivePrices() {
 function startPriceAutoRefresh() {
   loadLivePrices();
   if(_priceRefreshTimer) clearInterval(_priceRefreshTimer);
-  _priceRefreshTimer = setInterval(loadLivePrices, 10000); // every 10 seconds
+  _priceRefreshTimer = setInterval(loadLivePrices, 120000); // every 2 minutes
 }
 
 // ══════════════════════════════════════════════════════
@@ -5536,7 +5535,7 @@ var _chartPriceTimer = null;
 function startChartPriceRefresh() {
   stopChartPriceRefresh();
   fetchChartLivePrice(); // immediate
-  _chartPriceTimer = setInterval(fetchChartLivePrice, 10000); // every 10s
+  _chartPriceTimer = setInterval(fetchChartLivePrice, 120000); // every 2 minutes
 }
 
 function stopChartPriceRefresh() {
@@ -5572,6 +5571,40 @@ async function fetchChartLivePrice() {
   } catch(e) {
     console.warn('Chart price fetch failed:', e.message);
   }
+}
+
+
+// ── TWELVE DATA RATE LIMITER ──────────────────────────────────────────
+// Basic plan: 8 credits/minute. Queue all calls to stay safe.
+var _tdCallQueue  = [];
+var _tdLastCallMs = 0;
+var _tdMinGapMs   = 8000; // min 8 seconds between calls (safe for 8/min)
+
+async function tdFetch(url) {
+  return new Promise(function(resolve, reject) {
+    _tdCallQueue.push({url: url, resolve: resolve, reject: reject});
+    processTdQueue();
+  });
+}
+
+function processTdQueue() {
+  if(!_tdCallQueue.length) return;
+  var now = Date.now();
+  var wait = Math.max(0, _tdMinGapMs - (now - _tdLastCallMs));
+  setTimeout(async function() {
+    if(!_tdCallQueue.length) return;
+    var item = _tdCallQueue.shift();
+    _tdLastCallMs = Date.now();
+    try {
+      var res = await fetch(item.url);
+      var data = await res.json();
+      item.resolve(data);
+    } catch(e) {
+      item.reject(e);
+    }
+    // Process next in queue
+    if(_tdCallQueue.length) processTdQueue();
+  }, wait);
 }
 
 </script>
