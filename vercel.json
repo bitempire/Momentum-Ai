@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "/app_mobile.html",
+      "destination": "/index.html",
       "has": [
         {
           "type": "host",
