@@ -1251,9 +1251,9 @@ select.auth-input {
         <i class="ti ti-world"></i> Visit Our Website
       </button>
       <div class="auth-switch">No account? <span onclick="switchAuthTab('register')">Register with AFT →</span></div>
-      <div class="auth-status">
+      <div class="auth-status" style="justify-content:center;">
         <div class="auth-status-dot"></div>
-        <span style="width:100%;text-align:center;">Powered by Bitempire Sdn Bhd</span>
+        <span>Powered by Bitempire Sdn Bhd</span>
       </div>
     </div>
     <!-- Register Form -->
@@ -2659,15 +2659,35 @@ select.auth-input {
           </div>
           <div class="auth-field">
             <label class="auth-label">Trading Pairs Access</label>
-            <select id="mob-analyst-pairs" class="auth-input">
-              <option value="all">All Pairs</option>
-              <option value="XAUUSD">Gold (XAUUSD) Only</option>
-              <option value="NAS100">NAS100 Only</option>
-              <option value="BTCUSD">Bitcoin (BTCUSD) Only</option>
-              <option value="FOREX">Forex Pairs Only</option>
-              <option value="XAUUSD,NAS100">Gold + NAS100</option>
-              <option value="XAUUSD,BTCUSD">Gold + Bitcoin</option>
-            </select>
+            <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px 12px;">
+              <div style="font-size:10px;color:var(--text3);margin-bottom:8px;">Tick all pairs this analyst is allowed to post signals for:</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;" id="pairs-check-grid">
+                <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);">
+                  <input type="checkbox" value="XAUUSD" class="analyst-pair-check" style="accent-color:var(--red);width:15px;height:15px;"> XAUUSD (Gold)
+                </label>
+                <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);">
+                  <input type="checkbox" value="NAS100" class="analyst-pair-check" style="accent-color:var(--red);width:15px;height:15px;"> NAS100
+                </label>
+                <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);">
+                  <input type="checkbox" value="BTCUSD" class="analyst-pair-check" style="accent-color:var(--red);width:15px;height:15px;"> BTCUSD (Bitcoin)
+                </label>
+                <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);">
+                  <input type="checkbox" value="EURUSD" class="analyst-pair-check" style="accent-color:var(--red);width:15px;height:15px;"> EURUSD
+                </label>
+                <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);">
+                  <input type="checkbox" value="GBPUSD" class="analyst-pair-check" style="accent-color:var(--red);width:15px;height:15px;"> GBPUSD
+                </label>
+                <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);">
+                  <input type="checkbox" value="GBPJPY" class="analyst-pair-check" style="accent-color:var(--red);width:15px;height:15px;"> GBPJPY
+                </label>
+                <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);">
+                  <input type="checkbox" value="USDJPY" class="analyst-pair-check" style="accent-color:var(--red);width:15px;height:15px;"> USDJPY
+                </label>
+                <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);">
+                  <input type="checkbox" value="US30" class="analyst-pair-check" style="accent-color:var(--red);width:15px;height:15px;"> US30 (Dow)
+                </label>
+              </div>
+            </div>
           </div>
           <div id="mob-analyst-error" class="error-msg"></div>
           <div id="mob-analyst-success" class="success-msg"></div>
@@ -4580,7 +4600,8 @@ async function handleAddAnalyst() {
   var btn=document.getElementById('btn-add-analyst'); btn.disabled=true;
   try {
     var hash=btoa(unescape(encodeURIComponent(password+'_momentum_salt')));
-    var pairs=document.getElementById('mob-analyst-pairs')?document.getElementById('mob-analyst-pairs').value:'all';
+    var pairChecks=document.querySelectorAll('.analyst-pair-check:checked');
+    var pairs=pairChecks.length>0?Array.from(pairChecks).map(function(c){return c.value;}).join(','):'all';
     var res=await db.from('users').insert([{name,username,password_hash:hash,mt5_id:'ANALYST_'+Date.now(),status:'active',role:'analyst',trading_pairs:pairs,created_at:new Date().toISOString()}]);
     if(res.error) throw res.error;
     sucEl.textContent='Analyst created! Username: '+username+' / Password: '+password;
@@ -4650,15 +4671,14 @@ function openEditAnalystPopup(analyst) {
     '<div class="auth-field"><label class="auth-label">Full Name</label><input id="ea-name" class="auth-input" type="text" value="'+(analyst.name||'')+'"></div>'+
     '<div class="auth-field"><label class="auth-label">New Password <span style="color:var(--text3);font-size:10px;">(leave blank to keep current)</span></label><input id="ea-pw" class="auth-input" type="password" placeholder="New password"></div>'+
     '<div class="auth-field"><label class="auth-label">Trading Pairs Access</label>'+
-    '<select id="ea-pairs" class="auth-input">'+
-      '<option value="all"'+((!analyst.trading_pairs||analyst.trading_pairs==='all')?' selected':'')+'>All Pairs</option>'+
-      '<option value="XAUUSD"'+(analyst.trading_pairs==='XAUUSD'?' selected':'')+'>Gold (XAUUSD) Only</option>'+
-      '<option value="NAS100"'+(analyst.trading_pairs==='NAS100'?' selected':'')+'>NAS100 Only</option>'+
-      '<option value="BTCUSD"'+(analyst.trading_pairs==='BTCUSD'?' selected':'')+'>Bitcoin (BTCUSD) Only</option>'+
-      '<option value="FOREX"'+(analyst.trading_pairs==='FOREX'?' selected':'')+'>Forex Pairs Only</option>'+
-      '<option value="XAUUSD,NAS100"'+(analyst.trading_pairs==='XAUUSD,NAS100'?' selected':'')+'>Gold + NAS100</option>'+
-      '<option value="XAUUSD,BTCUSD"'+(analyst.trading_pairs==='XAUUSD,BTCUSD'?' selected':'')+'>Gold + Bitcoin</option>'+
-    '</select></div>'+
+    '<div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px 12px;">'+
+    '<div style="font-size:10px;color:var(--text3);margin-bottom:8px;">Tick pairs this analyst can post signals for:</div>'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">'+
+    ['XAUUSD','NAS100','BTCUSD','EURUSD','GBPUSD','GBPJPY','USDJPY','US30'].map(function(p){
+      var checked=(analyst.trading_pairs==='all'||!analyst.trading_pairs||(analyst.trading_pairs||'').split(',').indexOf(p)>-1)?'checked':'';
+      return '<label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="'+p+'" class="ea-pair-check" '+checked+' style="accent-color:var(--red);width:15px;height:15px;"> '+p+'</label>';
+    }).join('')+
+    '</div></div></div>'+
     '<div class="auth-field"><label class="auth-label">Status</label>'+
     '<select id="ea-status" class="auth-input">'+
       '<option value="active"'+(analyst.status==='active'?' selected':'')+'>Active</option>'+
@@ -4678,7 +4698,8 @@ function openEditAnalystPopup(analyst) {
 async function saveAnalystEdit(id) {
   var name=document.getElementById('ea-name').value.trim();
   var pw=document.getElementById('ea-pw').value;
-  var pairs=document.getElementById('ea-pairs').value;
+  var eaPairChecks=document.querySelectorAll('.ea-pair-check:checked');
+  var pairs=eaPairChecks.length>0?Array.from(eaPairChecks).map(function(c){return c.value;}).join(','):'all';
   var status=document.getElementById('ea-status').value;
   var errEl=document.getElementById('ea-error'), sucEl=document.getElementById('ea-success');
   errEl.style.display='none'; sucEl.style.display='none';
@@ -4999,6 +5020,7 @@ function switchAdminTab(tab) {
   if(tab === 'users') loadAdminUsers();
   if(tab === 'tickets') loadAdminTickets();
   if(tab === 'funds') loadAdminFunds();
+  if(tab === 'analyst') loadAdminAnalysts();
   if(tab === 'announce') loadAdminAnnouncements();
   if(tab === 'signals') loadAdminSignals();
 }
