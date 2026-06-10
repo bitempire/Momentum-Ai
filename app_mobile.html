@@ -2356,6 +2356,7 @@ select.auth-input {
           <label class="auth-label">Full Name</label>
           <input id="follow-name" class="auth-input" type="text" placeholder="Your full name">
         </div>
+        <div id="mt5-connect-form">
         <div class="auth-field">
           <label class="auth-label">MT5 Account ID</label>
           <input id="follow-mt5" class="auth-input" type="text" placeholder="Your AFTT MT5 account ID">
@@ -2823,6 +2824,19 @@ select.auth-input {
         <div id="mt5-connect-error" class="error-msg"></div>
         <div id="mt5-connect-success" class="success-msg"></div>
         <button class="red-btn" onclick="handleMT5Connect()">CONNECT MT5</button>
+        </div>
+        <!-- Pending Message -->
+        <div id="mt5-pending-msg" style="display:none;padding:14px;background:rgba(255,176,32,0.08);border:1px solid rgba(255,176,32,0.2);border-radius:12px;margin-bottom:12px;">
+          <div style="font-size:13px;font-weight:700;color:var(--amber);margin-bottom:6px;">⏳ Request Pending</div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.6;">Your MT5 connection request has been submitted. Our team will activate it within 24 hours.</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:8px;">To change your details, please submit a support ticket.</div>
+        </div>
+        <!-- Connected Message -->
+        <div id="mt5-connected-msg" style="display:none;padding:14px;background:rgba(0,200,122,0.08);border:1px solid rgba(0,200,122,0.2);border-radius:12px;margin-bottom:12px;">
+          <div style="font-size:13px;font-weight:700;color:var(--green);margin-bottom:6px;">✅ MT5 Connected</div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.6;">Your MT5 account is active and ready to trade.</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:6px;">MT5 ID: <span id="mt5-connected-id" style="color:var(--text);font-weight:700;"></span></div>
+        </div>
       </div>
 
       <button onclick="handleLogout()" style="width:100%;padding:13px;background:transparent;border:1px solid rgba(255,30,60,0.3);border-radius:12px;color:var(--red);font-size:13px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;">Sign Out</button>
@@ -3851,6 +3865,188 @@ function markLessonComplete() {
   showAcademyLessons();
   openAcademyCategory(currentAcademyLesson.category);
 }
+
+// ═══════════════════════════════════════════════════
+// ADMIN: MT5 ACTIVATE / DEACTIVATE / EDIT
+// ═══════════════════════════════════════════════════
+
+async function adminActivateMT5(userId, userName) {
+  if(!confirm('Activate MT5 for ' + (userName||'this user') + '?')) return;
+  try {
+    var r = await db.from('users').update({
+      mt5_connected: true,
+      connection_status: 'connected',
+      mt5_notification_shown: false
+    }).eq('id', userId);
+    if(r.error) {
+      // Try without mt5_notification_shown if column missing
+      r = await db.from('users').update({
+        mt5_connected: true,
+        connection_status: 'connected'
+      }).eq('id', userId);
+    }
+    if(r.error) throw r.error;
+    loadAdminMT5();
+  } catch(e) { alert('Error: ' + (e.message||'Failed to activate')); }
+}
+
+async function adminDeactivateMT5(userId) {
+  if(!confirm('Deactivate MT5 for this user?')) return;
+  try {
+    var r = await db.from('users').update({
+      mt5_connected: false,
+      connection_status: 'disconnected'
+    }).eq('id', userId);
+    if(r.error) throw r.error;
+    loadAdminMT5();
+  } catch(e) { alert('Error: ' + (e.message||'Failed to deactivate')); }
+}
+
+async function adminSetPendingMT5(userId) {
+  try {
+    var r = await db.from('users').update({ connection_status: 'pending' }).eq('id', userId);
+    if(r.error) throw r.error;
+    loadAdminMT5();
+  } catch(e) { alert('Error: ' + e.message); }
+}
+
+function openEditMT5Popup(user) {
+  var ex = document.getElementById('edit-mt5-popup'); if(ex) ex.remove();
+  var popup = document.createElement('div');
+  popup.id = 'edit-mt5-popup';
+  popup.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);z-index:9300;display:flex;align-items:flex-end;';
+  var sheet = document.createElement('div');
+  sheet.style.cssText = 'width:100%;background:var(--bg2);border-radius:20px 20px 0 0;border-top:1px solid var(--border);padding:20px 18px 36px;max-height:85vh;overflow-y:auto;';
+  sheet.innerHTML =
+    '<div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 18px;"></div>' +
+    '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">' +
+    '<div style="font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);">EDIT MT5 CREDENTIALS</div>' +
+    '<button id="emt5-x" style="width:32px;height:32px;border-radius:50%;background:var(--surface);border:1px solid var(--border);color:var(--text2);font-size:18px;cursor:pointer;">×</button></div>' +
+    '<div style="font-size:12px;color:var(--text3);margin-bottom:14px;">Editing: <span style="color:var(--text);font-weight:700;">' + (user.name||user.username||'User') + '</span></div>' +
+    '<div class="auth-field"><label class="auth-label">MT5 Account ID</label><input id="emt5-id" class="auth-input" type="text" value="' + (user.mt5_id||'') + '"></div>' +
+    '<div class="auth-field"><label class="auth-label">New Password <span style="color:var(--text3);font-size:10px;">(leave blank to keep)</span></label>' +
+    '<div style="position:relative;"><input id="emt5-pw" class="auth-input" type="password" placeholder="New MT5 master password" style="padding-right:44px;">' +
+    ''+
+    '<div id="emt5-error" class="error-msg"></div><div id="emt5-success" class="success-msg"></div>';
+  var saveBtn = document.createElement('button'); saveBtn.className = 'red-btn'; saveBtn.textContent = 'SAVE CHANGES';
+  saveBtn.addEventListener('click', function(){ saveMT5Edit(user.id, user.mt5_id); });
+  var cancelBtn = document.createElement('button'); cancelBtn.className = 'ghost-btn'; cancelBtn.style.marginTop = '10px'; cancelBtn.textContent = 'Cancel';
+  cancelBtn.addEventListener('click', function(){ popup.remove(); });
+  var eyeBtn=sheet.querySelector('#emt5-eye-btn');if(eyeBtn)eyeBtn.addEventListener('click',function(){var i=document.getElementById('emt5-pw');i.type=i.type==='password'?'text':'password';});
+  sheet.appendChild(saveBtn); sheet.appendChild(cancelBtn);
+  popup.appendChild(sheet);
+  popup.addEventListener('click', function(e){ if(e.target===popup) popup.remove(); });
+  document.body.appendChild(popup);
+  // Wire eye button for password field
+  var emt5EyeInput = sheet.querySelector('#emt5-pw');
+  var emt5EyeBtn   = document.createElement('button');
+  emt5EyeBtn.type = 'button';
+  emt5EyeBtn.style.cssText = 'position:absolute;right:12px;top:50%;transform:translateY(-50%);background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:18px;padding:0;';
+  emt5EyeBtn.innerHTML = '<i class="ti ti-eye"></i>';
+  emt5EyeBtn.addEventListener('click', function(){
+    if(emt5EyeInput) emt5EyeInput.type = emt5EyeInput.type==='password' ? 'text' : 'password';
+  });
+  var emt5PwWrap = sheet.querySelector('#emt5-pw') ? sheet.querySelector('#emt5-pw').parentElement : null;
+  if(emt5PwWrap) emt5PwWrap.appendChild(emt5EyeBtn);
+  sheet.querySelector('#emt5-x').addEventListener('click', function(){ popup.remove(); });
+}
+
+async function saveMT5Edit(userId, oldMT5Id) {
+  var newId = document.getElementById('emt5-id').value.trim();
+  var newPw = document.getElementById('emt5-pw').value;
+  var errEl = document.getElementById('emt5-error');
+  var sucEl = document.getElementById('emt5-success');
+  errEl.style.display='none'; sucEl.style.display='none';
+  if(!newId) { errEl.textContent='MT5 ID required'; errEl.style.display='block'; return; }
+  try {
+    var upd = { mt5_id: newId };
+    if(newPw) upd.mt5_credential = btoa(unescape(encodeURIComponent(newPw + '_mmai_' + newId)));
+    var r = await db.from('users').update(upd).eq('id', userId);
+    if(r.error) throw r.error;
+    sucEl.textContent = 'Updated successfully!'; sucEl.style.display='block';
+    setTimeout(function(){ document.getElementById('edit-mt5-popup').remove(); loadAdminMT5(); }, 1200);
+  } catch(e) { errEl.textContent = 'Error: '+(e.message||'Failed'); errEl.style.display='block'; }
+}
+
+// ═══════════════════════════════════════════════════
+// ONE-TIME ACTIVATION NOTIFICATION
+// ═══════════════════════════════════════════════════
+
+async function checkMT5Notification() {
+  if(!currentUser || !db || currentUser.role !== 'user') return;
+  try {
+    var res = await db.from('users')
+      .select('connection_status, mt5_notification_shown')
+      .eq('id', currentUser.id).single();
+    if(!res.data) return;
+    var isConnected = res.data.connection_status === 'connected';
+    var notShown    = res.data.mt5_notification_shown === false;
+    if(isConnected && notShown) {
+      showMT5ActivatedPopup();
+      // Mark as shown
+      db.from('users').update({ mt5_notification_shown: true }).eq('id', currentUser.id);
+    }
+  } catch(e) { /* silent — column may not exist yet */ }
+}
+
+function showMT5ActivatedPopup() {
+  var popup = document.createElement('div');
+  popup.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);z-index:9300;display:flex;align-items:center;justify-content:center;padding:20px;';
+  var box = document.createElement('div');
+  box.style.cssText = 'width:100%;max-width:340px;background:var(--bg2);border-radius:20px;border:1px solid rgba(0,200,122,0.2);padding:30px 20px;text-align:center;';
+  box.innerHTML =
+    '<div style="font-size:48px;margin-bottom:16px;">🎉</div>' +
+    '<div style="font-family:Orbitron,sans-serif;font-size:16px;font-weight:800;color:var(--text);margin-bottom:10px;">MT5 ACTIVATED!</div>' +
+    '<div style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:24px;">Your MT5 account has been connected by our team. You are now ready to execute trades.</div>';
+  var btn = document.createElement('button');
+  btn.textContent = 'START TRADING';
+  btn.style.cssText = 'width:100%;padding:14px;background:var(--grad);border:none;border-radius:12px;color:#fff;font-family:Orbitron,sans-serif;font-size:13px;font-weight:800;letter-spacing:1px;cursor:pointer;';
+  btn.addEventListener('click', function(){ popup.remove(); switchTab('signals'); });
+  box.appendChild(btn);
+  popup.appendChild(box);
+  document.body.appendChild(popup);
+}
+
+
+// ══ PROFILE MT5 STATE MANAGEMENT ══════════════════
+function loadProfileMT5() {
+  if(!currentUser) return;
+  db.from('users').select('*').eq('id', currentUser.id).single().then(function(res) {
+    if(res.data) { currentUser = Object.assign(currentUser, res.data); sessionStorage.setItem('mob_user', JSON.stringify(currentUser)); }
+    updateMT5ProfileUI(currentUser.connection_status || 'disconnected');
+  }).catch(function() {
+    updateMT5ProfileUI(currentUser.connection_status || 'disconnected');
+  });
+}
+
+function updateMT5ProfileUI(status) {
+  var badge   = document.getElementById('mt5-status-badge');
+  var form    = document.getElementById('mt5-connect-form');
+  var pendMsg = document.getElementById('mt5-pending-msg');
+  var connMsg = document.getElementById('mt5-connected-msg');
+  var idEl    = document.getElementById('profile-mt5-id');
+  var toggle  = document.getElementById('mt5-auto-toggle');
+  if(idEl && currentUser.mt5_id && !currentUser.mt5_id.startsWith('ANALYST_') && !currentUser.mt5_id.startsWith('SUBADMIN_'))
+    idEl.value = currentUser.mt5_id;
+  if(currentUser.allow_auto_trade && toggle) toggle.classList.add('on');
+  if(status === 'connected') {
+    if(badge) { badge.textContent='CONNECTED'; badge.style.background='rgba(0,200,122,0.12)'; badge.style.color='var(--green)'; }
+    if(form)    form.style.display    = 'none';
+    if(pendMsg) pendMsg.style.display = 'none';
+    if(connMsg) { connMsg.style.display='block'; var ci=document.getElementById('mt5-connected-id'); if(ci) ci.textContent=currentUser.mt5_id||''; }
+  } else if(status === 'pending') {
+    if(badge) { badge.textContent='PENDING'; badge.style.background='rgba(255,176,32,0.12)'; badge.style.color='var(--amber)'; }
+    if(form)    form.style.display    = 'none';
+    if(pendMsg) pendMsg.style.display = 'block';
+    if(connMsg) connMsg.style.display = 'none';
+  } else {
+    if(badge) { badge.textContent='NOT CONNECTED'; badge.style.background='rgba(255,176,32,0.12)'; badge.style.color='var(--amber)'; }
+    if(form)    form.style.display    = 'block';
+    if(pendMsg) pendMsg.style.display = 'none';
+    if(connMsg) connMsg.style.display = 'none';
+  }
+}
+
 </script>
 <script>
 // ── CONFIG ──
@@ -3998,6 +4194,7 @@ function routeUser(user) {
 
 // ── ENTER APP ──
 function enterApp(user) {
+  setTimeout(checkMT5Notification, 2000);
   _priceLoaded = false;
   if(user) {
     var name = user.username || user.name || 'Trader';
@@ -5516,40 +5713,51 @@ var _execSelectedOption = '';
 async function checkMT5ThenExecute() {
   if(!currentUser || !db) return;
   try {
-    // Check if user has MT5 credentials saved
-    var res = await db.from('users').select('mt5_credential,mt5_connected').eq('id',currentUser.id).single();
-    var hasMT5 = res.data && res.data.mt5_credential && res.data.mt5_credential.length > 5;
+    var res = await db.from('users').select('mt5_credential,mt5_connected,connection_status').eq('id',currentUser.id).single();
+    var status = (res.data && res.data.connection_status) || 'disconnected';
+    var hasCred = res.data && res.data.mt5_credential && res.data.mt5_credential.length > 5;
 
-    if(!hasMT5) {
-      // No MT5 — show warning
-      showNoMT5Warning();
-    } else {
-      // MT5 connected — show execution choice
+    if(status === 'connected') {
       openExecuteChoicePopup();
+    } else if(status === 'pending') {
+      showNoMT5Warning('pending');
+    } else {
+      showNoMT5Warning('disconnected');
     }
   } catch(e) {
-    // Fallback — show choice popup anyway
     openExecuteChoicePopup();
   }
 }
 
-function showNoMT5Warning() {
+function showNoMT5Warning(status) {
   var ex = document.getElementById('no-mt5-warning');
-  if(ex) { ex.style.display = 'flex'; return; }
+  if(ex) ex.remove();
   var popup = document.createElement('div');
   popup.id = 'no-mt5-warning';
   popup.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);z-index:9200;display:flex;align-items:flex-end;';
   var sheet = document.createElement('div');
   sheet.style.cssText = 'width:100%;background:var(--bg2);border-radius:20px 20px 0 0;border-top:1px solid var(--border);padding:20px 18px 36px;';
+  var isPending = status === 'pending';
+  var title = isPending ? 'MT5 PENDING ACTIVATION' : 'MT5 NOT CONNECTED';
+  var msg   = isPending
+    ? 'Your MT5 request is being processed. Our team will activate within 24 hours.'
+    : 'Connect your MT5 account in your Profile before executing trades.';
+  var btnTxt = isPending ? 'VIEW PROFILE' : 'GO TO PROFILE';
+  var iconCls = isPending ? 'ti-clock' : 'ti-plug-x';
+  var iconColor = isPending ? 'var(--amber)' : 'var(--amber)';
   sheet.innerHTML =
     '<div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px;"></div>' +
-    '<div style="text-align:center;margin-bottom:16px;"><i class="ti ti-plug-x" style="font-size:40px;color:var(--amber);"></i></div>' +
-    '<div style="font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);text-align:center;margin-bottom:8px;">MT5 NOT CONNECTED</div>' +
-    '<div style="font-size:12px;color:var(--text3);text-align:center;margin-bottom:24px;line-height:1.6;">Connect your MT5 account in Smart Tool settings before executing trades.</div>';
+    '<div style="text-align:center;margin-bottom:16px;"><i class="ti ' + iconCls + '" style="font-size:40px;color:' + iconColor + ';"></i></div>' +
+    '<div style="font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);text-align:center;margin-bottom:8px;">' + title + '</div>' +
+    '<div style="font-size:12px;color:var(--text3);text-align:center;margin-bottom:24px;line-height:1.6;">' + msg + '</div>';
   var goBtn = document.createElement('button');
-  goBtn.textContent = 'GO TO SMART TOOL';
+  goBtn.textContent = btnTxt;
   goBtn.style.cssText = 'width:100%;padding:14px;background:var(--grad);border:none;border-radius:12px;color:#fff;font-family:Orbitron,sans-serif;font-size:13px;font-weight:800;letter-spacing:1px;cursor:pointer;margin-bottom:10px;';
-  goBtn.addEventListener('click', function(){ closeTradePopup(); popup.remove(); switchTab('more'); });
+  goBtn.addEventListener('click', function(){
+    closeTradePopup(); popup.remove();
+    switchTab('more');
+    setTimeout(function(){ showSubScreen('sub-profile'); }, 400);
+  });
   var cancelBtn = document.createElement('button');
   cancelBtn.textContent = 'Cancel';
   cancelBtn.style.cssText = 'width:100%;padding:12px;background:transparent;border:1px solid var(--border);border-radius:12px;color:var(--text2);font-size:13px;cursor:pointer;';
@@ -5560,341 +5768,4 @@ function showNoMT5Warning() {
   document.body.appendChild(popup);
 }
 
-function openExecuteChoicePopup() {
-  _execSelectedOption = '';
-  // Reset radio buttons
-  resetExecOptions();
-  // Disable confirm button
-  var btn = document.getElementById('exec-confirm-btn');
-  if(btn) { btn.style.opacity='0.4'; btn.style.pointerEvents='none'; }
-  // Set pair info
-  if(currentSignal) {
-    var lbl = document.getElementById('execute-popup-pair');
-    if(lbl) lbl.textContent = (currentSignal.pair||'--') + ' · ' + (currentSignal.direction||'BUY') + ' · ' + (currentSignal.timeframe||'H4');
-  }
-  var popup = document.getElementById('execute-choice-popup');
-  if(popup) popup.style.display = 'flex';
-}
-
-function closeExecutePopup() {
-  var popup = document.getElementById('execute-choice-popup');
-  if(popup) popup.style.display = 'none';
-}
-
-function resetExecOptions() {
-  // Reset instant
-  var oi = document.getElementById('exec-opt-instant');
-  var ri = document.getElementById('radio-instant');
-  var di = document.getElementById('radio-instant-dot');
-  if(oi) oi.style.borderColor = 'var(--border)';
-  if(ri) ri.style.borderColor = 'var(--border)';
-  if(di) di.style.background = 'transparent';
-  // Reset custom
-  var oc = document.getElementById('exec-opt-custom');
-  var rc = document.getElementById('radio-custom');
-  var dc = document.getElementById('radio-custom-dot');
-  if(oc) oc.style.borderColor = 'var(--border)';
-  if(rc) rc.style.borderColor = 'var(--border)';
-  if(dc) dc.style.background = 'transparent';
-}
-
-function selectExecOption(option) {
-  resetExecOptions();
-  _execSelectedOption = option;
-  if(option === 'instant') {
-    var oi = document.getElementById('exec-opt-instant');
-    var ri = document.getElementById('radio-instant');
-    var di = document.getElementById('radio-instant-dot');
-    if(oi) oi.style.borderColor = 'var(--green)';
-    if(ri) ri.style.borderColor = 'var(--green)';
-    if(di) di.style.background = 'var(--green)';
-  } else {
-    var oc = document.getElementById('exec-opt-custom');
-    var rc = document.getElementById('radio-custom');
-    var dc = document.getElementById('radio-custom-dot');
-    if(oc) oc.style.borderColor = '#4D9EFF';
-    if(rc) rc.style.borderColor = '#4D9EFF';
-    if(dc) dc.style.background = '#4D9EFF';
-  }
-  // Enable confirm button
-  var btn = document.getElementById('exec-confirm-btn');
-  if(btn) { btn.style.opacity='1'; btn.style.pointerEvents='auto'; }
-}
-
-function confirmExecution() {
-  if(!_execSelectedOption) return;
-  closeExecutePopup();
-  if(_execSelectedOption === 'instant') {
-    // Execute with default settings
-    executeTrade('smart');
-  } else {
-    // Navigate to Smart Tool settings
-    closeTradePopup();
-    switchTab('more');
-    setTimeout(function(){
-      showSubScreen('sub-ea');
-    }, 400);
-  }
-}
-
-// ── LOAD REAL ANALYSTS INTO DROPDOWN ─────────────────────────────────
-async function loadAnalystOptions() {
-  var select = document.getElementById('auto-analyser');
-  if(!select || !db) return;
-  try {
-    var res = await db.from('users').select('id,name,username,trading_pairs').eq('role','analyst').eq('status','active');
-    if(res.error || !res.data || !res.data.length) {
-      select.innerHTML = '<option value="">No analysts available</option>';
-      return;
-    }
-    select.innerHTML = '<option value="">Select Analyst</option>';
-    res.data.forEach(function(analyst) {
-      var opt = document.createElement('option');
-      opt.value = analyst.id;
-      var pairs = analyst.trading_pairs && analyst.trading_pairs !== 'all'
-        ? ' · ' + analyst.trading_pairs.split(',').slice(0,2).join(', ')
-        : '';
-      opt.textContent = (analyst.name || analyst.username) + pairs;
-      select.appendChild(opt);
-    });
-  } catch(e) {
-    select.innerHTML = '<option value="">Error loading analysts</option>';
-  }
-}
-
-
-// ══════════════════════════════════════════════════
-// MT5 CONNECTION — Profile Screen
-// ══════════════════════════════════════════════════
-
-function toggleMT5Pw() {
-  var i = document.getElementById('profile-mt5-pw');
-  var e = document.getElementById('mt5-pw-eye');
-  if(!i) return;
-  if(i.type === 'password') { i.type = 'text'; if(e) e.className = 'ti ti-eye-off'; }
-  else { i.type = 'password'; if(e) e.className = 'ti ti-eye'; }
-}
-
-async function handleMT5Connect() {
-  var mt5Id   = document.getElementById('profile-mt5-id').value.trim();
-  var mt5Pw   = document.getElementById('profile-mt5-pw').value;
-  var server = 'AsiaFutureTrading-Server';
-  var agreed  = document.getElementById('mt5-agree-check').checked;
-  var autoOn  = document.getElementById('mt5-auto-toggle').classList.contains('on');
-  var errEl   = document.getElementById('mt5-connect-error');
-  var sucEl   = document.getElementById('mt5-connect-success');
-  errEl.style.display = 'none'; sucEl.style.display = 'none';
-
-  if(!mt5Id)   { errEl.textContent = 'Please enter your MT5 Account ID'; errEl.style.display = 'block'; return; }
-  if(!mt5Pw)   { errEl.textContent = 'Please enter your MT5 Master Password'; errEl.style.display = 'block'; return; }
-  if(!agreed)  { errEl.textContent = 'Please agree to the risk disclaimer'; errEl.style.display = 'block'; return; }
-
-  var encrypted = btoa(unescape(encodeURIComponent(mt5Pw + '_mmai_' + mt5Id)));
-
-  try {
-    // Update core MT5 fields
-    var updateData = { mt5_id: mt5Id, mt5_credential: encrypted };
-
-    // Try to add optional columns gracefully
-    var r = await db.from('users').update(Object.assign({}, updateData, {
-      mt5_server: 'AsiaFutureTrading-Server',
-      allow_auto_trade: autoOn,
-      mt5_connected: true,
-      connection_status: 'connected'
-    })).eq('id', currentUser.id);
-
-    // If optional columns fail, save with core fields only
-    if(r.error) {
-      r = await db.from('users').update(updateData).eq('id', currentUser.id);
-    }
-
-    if(r.error) throw r.error;
-
-    // Update local user
-    currentUser.mt5_id = mt5Id;
-    currentUser.mt5_connected = true;
-    sessionStorage.setItem('mob_user', JSON.stringify(currentUser));
-
-    // Update badge
-    var badge = document.getElementById('mt5-status-badge');
-    if(badge) {
-      badge.textContent = 'CONNECTED';
-      badge.style.background = 'rgba(0,200,122,0.12)';
-      badge.style.color = 'var(--green)';
-    }
-
-    sucEl.textContent = 'MT5 connected successfully!';
-    sucEl.style.display = 'block';
-  } catch(e) {
-    errEl.textContent = 'Error: ' + (e.message || 'Failed to connect');
-    errEl.style.display = 'block';
-  }
-}
-
-// Load existing MT5 data when profile opens
-function loadProfileMT5() {
-  if(!currentUser) return;
-  var idEl     = document.getElementById('profile-mt5-id');
-  var serverEl = document.getElementById('profile-mt5-server');
-  var badge    = document.getElementById('mt5-status-badge');
-  var toggle   = document.getElementById('mt5-auto-toggle');
-
-  if(idEl && currentUser.mt5_id && !currentUser.mt5_id.startsWith('ANALYST_') && !currentUser.mt5_id.startsWith('SUBADMIN_'))
-    idEl.value = currentUser.mt5_id;
-  if(serverEl && currentUser.mt5_server)
-    serverEl.value = currentUser.mt5_server;
-  if(currentUser.allow_auto_trade && toggle)
-    toggle.classList.add('on');
-  if(badge && currentUser.mt5_connected) {
-    badge.textContent = 'CONNECTED';
-    badge.style.background = 'rgba(0,200,122,0.12)';
-    badge.style.color = 'var(--green)';
-  }
-}
-
-// ══════════════════════════════════════════════════
-// SAVE EA SETTINGS — Smart Tool Screen
-// ══════════════════════════════════════════════════
-
-async function saveEASettings() {
-  if(!currentUser || !db) return;
-  var inputs  = document.querySelectorAll('#sub-ea .ea-input');
-  var toggles = document.querySelectorAll('#sub-ea .toggle');
-  var settings = {
-    inputs:   Array.from(inputs).map(function(i){ return i.value; }),
-    toggles:  Array.from(toggles).map(function(t){ return t.classList.contains('on'); }),
-    saved_at: new Date().toISOString()
-  };
-  try {
-    var r = await db.from('users').update({ ea_settings: JSON.stringify(settings) }).eq('id', currentUser.id);
-    if(r.error) throw r.error;
-    // Show success toast
-    var btn = document.querySelector('#sub-ea .red-btn');
-    if(btn) {
-      var orig = btn.textContent;
-      btn.textContent = '✓ SAVED';
-      btn.style.background = 'var(--green)';
-      setTimeout(function(){ btn.textContent = orig; btn.style.background = ''; }, 2000);
-    }
-  } catch(e) { alert('Save failed: ' + (e.message || 'Unknown error')); }
-}
-
-// ══════════════════════════════════════════════════
-// ADMIN MT5 TAB
-// ══════════════════════════════════════════════════
-
-async function loadAdminMT5() {
-  var el = document.getElementById('admin-mt5-list');
-  if(!el || !db) return;
-  el.innerHTML = '<div style="padding:12px;color:var(--text2);font-size:12px;">Loading...</div>';
-  try {
-    var res = await db.from('users').select('*').order('created_at',{ascending:false});
-    if(res.error) throw res.error;
-    var users = (res.data||[]).filter(function(u){
-      return u.role === 'user' || (!u.role && u.mt5_id && !u.mt5_id.startsWith('ANALYST_') && !u.mt5_id.startsWith('SUBADMIN_'));
-    });
-    if(!users.length) {
-      el.innerHTML = '<div class="empty-state" style="padding:16px;"><i class="ti ti-users"></i> No users found</div>';
-      return;
-    }
-    el.innerHTML = '';
-    users.forEach(function(user) {
-      var isConnected = user.mt5_connected === true;
-      var card = document.createElement('div');
-      card.style.cssText = 'padding:12px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;';
-      card.innerHTML =
-        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">' +
-          '<div>' +
-            '<div style="font-size:13px;font-weight:700;color:var(--text);">' + (user.name||user.username||'--') + '</div>' +
-            '<div style="font-size:11px;color:var(--text3);">@' + (user.username||'--') + '</div>' +
-          '</div>' +
-          '<div style="font-size:10px;font-weight:700;padding:3px 9px;border-radius:5px;background:' + (isConnected?'rgba(0,200,122,0.12)':'rgba(255,176,32,0.1)') + ';color:' + (isConnected?'var(--green)':'var(--amber)') + ';">' + (isConnected?'CONNECTED':'NOT CONNECTED') + '</div>' +
-        '</div>' +
-        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;">' +
-          '<div style="background:var(--surface);border-radius:7px;padding:8px;">' +
-            '<div style="font-size:9px;color:var(--text3);margin-bottom:3px;">MT5 ID</div>' +
-            '<div style="font-size:12px;font-weight:700;color:var(--text);">' + (user.mt5_id||'--') + '</div>' +
-          '</div>' +
-          '<div style="background:var(--surface);border-radius:7px;padding:8px;">' +
-            '<div style="font-size:9px;color:var(--text3);margin-bottom:3px;">SERVER</div>' +
-            '<div style="font-size:12px;font-weight:700;color:var(--text);">' + (user.mt5_server||'--') + '</div>' +
-          '</div>' +
-        '</div>' +
-        '<div style="background:var(--surface);border-radius:7px;padding:8px;margin-bottom:10px;">' +
-          '<div style="font-size:9px;color:var(--text3);margin-bottom:3px;">MT5 PASSWORD</div>' +
-          '<div style="display:flex;align-items:center;justify-content:space-between;">' +
-            '<div id="mt5pw-' + user.id + '" style="font-size:12px;font-weight:700;color:var(--text);font-family:monospace;">●●●●●●●●</div>' +
-            (user.mt5_credential ? '<button id="revbtn-' + user.id + '" style="font-size:10px;font-weight:700;padding:4px 10px;background:rgba(77,158,255,0.1);border:1px solid rgba(77,158,255,0.2);border-radius:6px;color:#4D9EFF;cursor:pointer;">Reveal</button>' : '<div style="font-size:11px;color:var(--text3);">Not set</div>') +
-          '</div>' +
-        '</div>';
-
-      // Wire reveal button
-      if(user.mt5_credential) {
-        var revBtn = card.querySelector('#revbtn-' + user.id);
-        var pwEl   = card.querySelector('#mt5pw-' + user.id);
-        var revealed = false;
-        revBtn.addEventListener('click', function() {
-          if(!revealed) {
-            try {
-              var dec = decodeURIComponent(escape(atob(user.mt5_credential)));
-              var suf = '_mmai_' + user.mt5_id;
-              var pw  = dec.endsWith(suf) ? dec.slice(0, -suf.length) : dec;
-              pwEl.textContent = pw;
-              revBtn.textContent = 'Hide';
-              revealed = true;
-            } catch(e) { pwEl.textContent = user.mt5_credential; }
-          } else {
-            pwEl.textContent = '●●●●●●●●';
-            revBtn.textContent = 'Reveal';
-            revealed = false;
-          }
-        });
-      }
-      el.appendChild(card);
-    });
-  } catch(e) {
-    el.innerHTML = '<div style="padding:12px;color:var(--red);">Error: ' + (e.message||'failed') + '</div>';
-  }
-}
-
-</script>
-
-  <!-- Execute Choice Popup -->
-  <div id="execute-choice-popup" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);z-index:9200;align-items:flex-end;">
-    <div style="width:100%;background:var(--bg2);border-radius:20px 20px 0 0;border-top:1px solid var(--border);padding:20px 18px 36px;">
-      <div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px;"></div>
-      <div style="font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);margin-bottom:4px;">EXECUTE TRADE</div>
-      <div id="execute-popup-pair" style="font-size:12px;color:var(--text3);margin-bottom:20px;">XAUUSD · BUY · H4</div>
-
-      <!-- Option 1: Instant Execute -->
-      <div id="exec-opt-instant" onclick="selectExecOption('instant')" style="padding:14px;background:var(--bg3);border:2px solid var(--border);border-radius:12px;cursor:pointer;margin-bottom:10px;transition:all .2s;">
-        <div style="display:flex;align-items:center;gap:12px;">
-          <div style="width:20px;height:20px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;" id="radio-instant">
-            <div style="width:10px;height:10px;border-radius:50%;background:transparent;" id="radio-instant-dot"></div>
-          </div>
-          <div>
-            <div style="font-size:13px;font-weight:800;color:var(--text);letter-spacing:.3px;">INSTANT EXECUTE</div>
-            <div style="font-size:11px;color:var(--text3);margin-top:2px;">Default parameters apply · Lot 0.01 · SL/TP auto from signal</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Option 2: Custom Execute -->
-      <div id="exec-opt-custom" onclick="selectExecOption('custom')" style="padding:14px;background:var(--bg3);border:2px solid var(--border);border-radius:12px;cursor:pointer;margin-bottom:20px;transition:all .2s;">
-        <div style="display:flex;align-items:center;gap:12px;">
-          <div style="width:20px;height:20px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;" id="radio-custom">
-            <div style="width:10px;height:10px;border-radius:50%;background:transparent;" id="radio-custom-dot"></div>
-          </div>
-          <div>
-            <div style="font-size:13px;font-weight:800;color:var(--text);letter-spacing:.3px;">CUSTOM EXECUTE</div>
-            <div style="font-size:11px;color:var(--text3);margin-top:2px;">Configure before sending · Use your saved settings</div>
-          </div>
-        </div>
-      </div>
-
-      <button id="exec-confirm-btn" onclick="confirmExecution()" style="width:100%;padding:14px;background:var(--grad);border:none;border-radius:12px;color:#fff;font-family:Orbitron,sans-serif;font-size:13px;font-weight:800;letter-spacing:1px;cursor:pointer;opacity:0.4;pointer-events:none;margin-bottom:10px;">CONFIRM</button>
-      <button onclick="closeExecutePopup()" style="width:100%;padding:12px;background:transparent;border:1px solid var(--border);border-radius:12px;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;">Cancel</button>
-    </div>
-  </div>
-</body>
-</html>
+>
