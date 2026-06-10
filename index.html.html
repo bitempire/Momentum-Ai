@@ -436,8 +436,8 @@ body{background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;overfl
 .lp-price-card{background:#fff;border:1.5px solid #eee;border-radius:20px;padding:30px;position:relative;transition:all .25s;}
 .lp-price-card:hover{transform:translateY(-4px);box-shadow:0 16px 48px rgba(0,0,0,.08);}
 .lp-price-card.pop{background:var(--grad);border-color:transparent;box-shadow:0 20px 60px rgba(232,25,44,.35);}
-.lp-price-card.pop *{color:#fff!important;}
-.lp-pop-tag{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:#fff;color:var(--red)!important;font-size:11px;font-weight:800;padding:4px 14px;border-radius:20px;white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,.1);}
+.lp-price-card.pop *:not(.lp-pop-tag):not(.lp-price-btn){color:#fff!important;}
+.lp-pop-tag{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:#fff!important;color:var(--red);font-size:11px;font-weight:800;padding:4px 14px;border-radius:20px;white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,.1);}
 .lp-price-tier{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#aaa;margin-bottom:6px;}
 .lp-price-name{font-family:'Orbitron',sans-serif;font-size:16px;font-weight:800;color:#07070a;margin-bottom:5px;}
 .lp-price-amount{display:flex;align-items:baseline;gap:4px;margin:14px 0;}
@@ -452,7 +452,7 @@ body{background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;overfl
 .lp-price-btn{width:100%;padding:12px;font-size:13px;font-weight:700;border-radius:10px;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all .2s;border:none;}
 .lp-price-btn.outline{background:transparent;border:1.5px solid #ddd;color:#333;}
 .lp-price-btn.outline:hover{border-color:var(--red);color:var(--red);}
-.lp-price-btn.white-btn{background:#fff;color:var(--red);}
+.lp-price-btn.white-btn{background:#fff!important;color:var(--red)!important;font-weight:800;}
 .lp-price-btn.redbtn{background:var(--grad);color:#fff;}
 .lp-faq-list{max-width:720px;margin:36px auto 0;}
 .lp-faq-item{background:#fff;border:1px solid #eee;border-radius:12px;margin-bottom:9px;overflow:hidden;}
