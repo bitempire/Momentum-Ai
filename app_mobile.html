@@ -5436,9 +5436,7 @@ var _priceRefreshTimer = null;
 var _priceLoaded = false;
 
 function startPriceRefresh() {
-  loadLivePrices();
-  if(_priceRefreshTimer) clearInterval(_priceRefreshTimer);
-  _priceRefreshTimer = setInterval(loadLivePrices, 60000); // every 60 seconds = 4 credits/min
+  if(!_priceLoaded) loadLivePrices(); // load once only — no auto-timer (Basic plan limit)
 }
 
 function stopPriceRefresh() {
