@@ -4960,9 +4960,15 @@ async function saveAnalystEdit(id){
   var errEl=document.getElementById('ea-error'),sucEl=document.getElementById('ea-success');
   errEl.style.display='none';sucEl.style.display='none';
   try{
-    var updates={name:name,trading_pairs:pairs,status:status};
+    // First try with trading_pairs (requires column to exist in Supabase)
+    var updates={name:name,status:status};
     if(pw)updates.password_hash=btoa(unescape(encodeURIComponent(pw+'_momentum_salt')));
-    var res=await db.from('users').update(updates).eq('id',id);
+    // Try to save trading_pairs — if column missing, save without it
+    var res=await db.from('users').update(Object.assign({},updates,{trading_pairs:pairs})).eq('id',id);
+    if(res.error&&res.error.message&&res.error.message.indexOf('trading_pairs')>-1){
+      // Column doesn't exist yet — save without it
+      res=await db.from('users').update(updates).eq('id',id);
+    }
     if(res.error)throw res.error;
     sucEl.textContent='Analyst updated!';sucEl.style.display='block';
     setTimeout(function(){document.getElementById('edit-analyst-popup').remove();loadAdminAnalysts();},1200);
