@@ -2429,7 +2429,7 @@ select.auth-input {
           </div>
           <div class="section-card" style="padding:10px;text-align:center;">
             <div style="font-size:22px;font-weight:800;color:#4D9EFF;" id="astat-funds">--</div>
-            <div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-top:2px;">Fund Management</div>
+            <div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-top:2px;">Fund Requests</div>
           </div>
         </div>
         <div class="section-card">
@@ -2543,106 +2543,7 @@ select.auth-input {
           <div id="mob-analyst-success" class="success-msg"></div>
           <button class="red-btn" id="btn-add-analyst" onclick="handleAddAnalyst()">CREATE ANALYST</button>
         </div>
-        <div class="section-card" style="margin-top:14px;">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;"><div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.5px;">EXISTING ANALYSTS</div><button onclick="loadAdminAnalysts()" style="background:transparent;border:none;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;">↻ Refresh</button></div>
-          <div id="admin-analyst-list"><div class="empty-state" style="padding:12px;">Loading...</div></div>
-        </div>
-
-        <!-- SUB-ADMIN SECTION -->
-        <div class="section-card" style="margin-top:20px;">
-          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:14px;">CREATE SUB ADMIN</div>
-          <div class="auth-field">
-            <label class="auth-label">Full Name</label>
-            <input id="mob-subadmin-name" class="auth-input" type="text" placeholder="Sub-admin full name">
-          </div>
-          <div class="auth-field">
-            <label class="auth-label">Username</label>
-            <input id="mob-subadmin-username" class="auth-input" type="text" placeholder="subadmin_username">
-          </div>
-          <div class="auth-field">
-            <label class="auth-label">Password</label>
-            <input id="mob-subadmin-password" class="auth-input" type="password" placeholder="Set password">
-          </div>
-          <div class="auth-field">
-            <label class="auth-label">Panel Access</label>
-            <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px 12px;">
-              <div style="font-size:10px;color:var(--text3);margin-bottom:8px;">Tick tabs this sub-admin can access:</div>
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
-                <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="dashboard" class="subadmin-tab-check" style="accent-color:var(--red);width:15px;height:15px;"> Dashboard</label>
-                <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="users" class="subadmin-tab-check" style="accent-color:var(--red);width:15px;height:15px;"> Users</label>
-                <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="tickets" class="subadmin-tab-check" style="accent-color:var(--red);width:15px;height:15px;"> Support</label>
-                <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="funds" class="subadmin-tab-check" style="accent-color:var(--red);width:15px;height:15px;"> Fund Management</label>
-                <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="announce" class="subadmin-tab-check" style="accent-color:var(--red);width:15px;height:15px;"> Announcements</label>
-                <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="signals" class="subadmin-tab-check" style="accent-color:var(--red);width:15px;height:15px;"> Signals</label>
-                <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="analyst" class="subadmin-tab-check" style="accent-color:var(--red);width:15px;height:15px;"> Administrator</label>
-                <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="academy" class="subadmin-tab-check" style="accent-color:var(--red);width:15px;height:15px;"> Academy</label>
-              </div>
-            </div>
-          </div>
-          <div id="mob-subadmin-error" class="error-msg"></div>
-          <div id="mob-subadmin-success" class="success-msg"></div>
-          <button class="red-btn" onclick="handleAddSubAdmin()">CREATE SUB ADMIN</button>
-        </div>
-        <div class="section-card" style="margin-top:14px;">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-            <div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.5px;">EXISTING SUB-ADMINS</div>
-            <button onclick="loadAdminSubAdmins()" style="background:transparent;border:none;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;">↻ Refresh</button>
-          </div>
-          <div id="admin-subadmin-list"><div class="empty-state" style="padding:12px;">Loading...</div></div>
-        </div>
       </div>
-
-    <!-- ACADEMY TAB CONTENT -->
-    <div id="atab-content-academy" style="display:none;">
-      <!-- Post Academy Content -->
-      <div class="section-card">
-        <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:14px;">PUBLISH ACADEMY CONTENT</div>
-        <div class="auth-field">
-          <label class="auth-label">Category</label>
-          <select id="academy-category" class="auth-input">
-            <option value="basics">Trading Basics</option>
-            <option value="technical">Technical Analysis</option>
-            <option value="fundamental">Fundamental Analysis</option>
-            <option value="risk">Risk Management</option>
-            <option value="psychology">Trading Psychology</option>
-            <option value="strategy">Strategies</option>
-            <option value="mt5">MT5 Platform Guide</option>
-          </select>
-        </div>
-        <div class="auth-field">
-          <label class="auth-label">Title</label>
-          <input id="academy-title" class="auth-input" type="text" placeholder="Lesson title">
-        </div>
-        <div class="auth-field">
-          <label class="auth-label">Content</label>
-          <textarea id="academy-content" class="auth-input" rows="6" style="resize:vertical;" placeholder="Write lesson content here..."></textarea>
-        </div>
-        <div class="auth-field">
-          <label class="auth-label">Video URL <span style="color:var(--text3);font-size:10px;">(optional — YouTube or direct link)</span></label>
-          <input id="academy-video" class="auth-input" type="text" placeholder="https://youtube.com/...">
-        </div>
-        <div class="auth-field">
-          <label class="auth-label">Level</label>
-          <select id="academy-level" class="auth-input">
-            <option value="beginner">Beginner</option>
-            <option value="intermediate">Intermediate</option>
-            <option value="advanced">Advanced</option>
-          </select>
-        </div>
-        <div id="academy-error" class="error-msg"></div>
-        <div id="academy-success" class="success-msg"></div>
-        <button class="red-btn" onclick="handlePublishAcademy()">PUBLISH LESSON</button>
-      </div>
-
-      <!-- Published Lessons List -->
-      <div class="section-card" style="margin-top:14px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-          <div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.5px;">PUBLISHED LESSONS</div>
-          <button onclick="loadAdminAcademy()" style="background:transparent;border:none;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;">↻ Refresh</button>
-        </div>
-        <div id="admin-academy-list"><div class="empty-state" style="padding:16px;"><i class="ti ti-book"></i> Loading...</div></div>
-      </div>
-    </div>
 
     </div>
   </div>
@@ -3844,9 +3745,9 @@ async function handleLogin() {
     var hash = btoa(unescape(encodeURIComponent(password+'_momentum_salt')));
     var res = await db.from('users').select('*').eq('username',username).limit(1);
     if(res.error) { errEl.textContent='Connection error: '+res.error.message; errEl.style.display='block'; return; }
-    if(!res.data||!res.data.length){ errEl.textContent='Username not found. Please check your username.'; errEl.style.display='block'; btn.textContent='ACCESS SYSTEM'; btn.disabled=false; return; }
+    if(!res.data||!res.data.length){ errEl.textContent='Username not found.'; errEl.style.display='block'; btn.textContent='ACCESS SYSTEM'; btn.disabled=false; return; }
     var user = res.data[0];
-    if(user.password_hash !== hash){ errEl.textContent='Incorrect password. Please try again.'; errEl.style.display='block'; btn.textContent='ACCESS SYSTEM'; btn.disabled=false; return; }
+    if(user.password_hash !== hash){ errEl.textContent='Incorrect password.'; errEl.style.display='block'; btn.textContent='ACCESS SYSTEM'; btn.disabled=false; return; }
     currentUser = user;
     sessionStorage.setItem('mob_user', JSON.stringify(user));
     routeUser(user);
@@ -4020,6 +3921,7 @@ function showSubScreen(id) {
   if(id==='sub-admin') { switchAdminTab('dashboard'); }
   if(id==='sub-profile') { loadSavedProfilePhoto(); loadProfileData(); }
   if(id==='sub-support') { loadMyTickets(); }
+  if(id==='sub-academy') { loadAcademy(); }
 }
 function hideSubScreen(id) {
   var el = document.getElementById(id);
@@ -4088,10 +3990,7 @@ async function loadSignalsFeed() {
       var dirEl = document.createElement('div');
       dirEl.className = 'sig-card-dir ' + dir;
       dirEl.textContent = sig.direction;
-      var sBadge=document.createElement('div');
-      var isAct=sig.status==='active';
-      sBadge.textContent=isAct?'ACTIVE':'INACTIVE';
-      sBadge.style.cssText='padding:4px 9px;border-radius:6px;font-family:Orbitron,sans-serif;font-size:9px;font-weight:800;letter-spacing:.8px;margin-right:5px;flex-shrink:0;'+(isAct?'background:rgba(0,200,122,0.12);color:#00c87a;border:1px solid rgba(0,200,122,0.25);':'background:rgba(255,176,32,0.12);color:#ffb020;border:1px solid rgba(255,176,32,0.25);');
+      var sBadge=document.createElement('div');var isAct=sig.status==='active';sBadge.textContent=isAct?'ACTIVE':'INACTIVE';sBadge.style.cssText='padding:4px 9px;border-radius:6px;font-family:Orbitron,sans-serif;font-size:9px;font-weight:800;letter-spacing:.8px;margin-right:5px;flex-shrink:0;'+(isAct?'background:rgba(0,200,122,0.12);color:#00c87a;border:1px solid rgba(0,200,122,0.25);':'background:rgba(255,176,32,0.12);color:#ffb020;border:1px solid rgba(255,176,32,0.25);');
       top.appendChild(icon);
       top.appendChild(info);
       top.appendChild(sBadge);
@@ -4307,7 +4206,7 @@ async function loadAdminUsers() {
   try {
     var res = await db.from('users').select('*').order('created_at',{ascending:false});
     if(res.error||!res.data) return;
-    res.data=res.data.filter(function(u){return u.role==='user'||(!u.role&&u.mt5_id&&!u.mt5_id.startsWith('ANALYST_'));});
+    res.data=res.data.filter(function(u){return u.role==='user'||(!u.role&&u.mt5_id&&!u.mt5_id.startsWith('ANALYST_')&&!u.mt5_id.startsWith('SUBADMIN_'));});
     var total=res.data.length, active=res.data.filter(function(u){return u.status==='active';}).length, pending=res.data.filter(function(u){return u.status==='pending';}).length;
     var t=document.getElementById('mob-stat-total'), a=document.getElementById('mob-stat-active'), p=document.getElementById('mob-stat-pending');
     if(t) t.textContent=total; if(a) a.textContent=active; if(p) p.textContent=pending;
@@ -4331,7 +4230,7 @@ async function loadAdminUsers() {
 async function approveUser(id){var r=await db.from('users').update({status:'active'}).eq('id',id);if(r.error){alert(r.error.message);return;}loadAdminUsers();}
 async function unsuspendUser(id){var r=await db.from('users').update({status:'active'}).eq('id',id);if(r.error){alert(r.error.message);return;}loadAdminUsers();}
 async function suspendUser(id){var r=await db.from('users').update({status:'suspended'}).eq('id',id);if(r.error){alert(r.error.message);return;}loadAdminUsers();}
-async function deleteUser(id){if(!confirm('Delete this user permanently?'))return;var r=await db.from('users').delete().eq('id',id);if(r.error){alert(r.error.message);return;}loadAdminUsers();}
+async function deleteUser(id){if(!confirm('Delete user permanently?'))return;var r=await db.from('users').delete().eq('id',id);if(r.error){alert(r.error.message);return;}loadAdminUsers();}
 
 // ── ADD ANALYST ──
 async function handleAddAnalyst() {
@@ -4874,48 +4773,65 @@ function showAnnouncementPopup(ann) {
 }
 
 
-// ── LOGIN PASSWORD TOGGLE ─────────────────────────────────────────────
+// ── LOGIN PASSWORD TOGGLE ──────────────────────────────────────────
 function toggleLoginPw(){var i=document.getElementById('input-password'),e=document.getElementById('login-pw-eye');if(!i)return;if(i.type==='password'){i.type='text';if(e)e.className='ti ti-eye-off';}else{i.type='password';if(e)e.className='ti ti-eye';}}
 
-// ── EDIT USER POPUP ───────────────────────────────────────────────────
+// ── ADMIN USERS: Edit + Suspend/Unsuspend ──────────────────────────
 function openEditUserPopup(user){
   var ex=document.getElementById('edit-user-popup');if(ex)ex.remove();
   var popup=document.createElement('div');popup.id='edit-user-popup';
   popup.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(4px);z-index:9000;display:flex;align-items:flex-end;';
-  var sheet=document.createElement('div');
-  sheet.style.cssText='width:100%;background:var(--bg2);border-radius:20px 20px 0 0;border-top:1px solid var(--border);padding:20px 18px 36px;max-height:85vh;overflow-y:auto;';
+  var sheet=document.createElement('div');sheet.style.cssText='width:100%;background:var(--bg2);border-radius:20px 20px 0 0;border-top:1px solid var(--border);padding:20px 18px 36px;max-height:85vh;overflow-y:auto;';
   sheet.innerHTML='<div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 18px;"></div>'+
-    '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">'+
-    '<div style="font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);">EDIT USER</div>'+
-    '<button id="eu-x" style="width:32px;height:32px;border-radius:50%;background:var(--surface);border:1px solid var(--border);color:var(--text2);font-size:18px;cursor:pointer;">×</button></div>'+
+    '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;"><div style="font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);">EDIT USER</div><button id="eu-x" style="width:32px;height:32px;border-radius:50%;background:var(--surface);border:1px solid var(--border);color:var(--text2);font-size:18px;cursor:pointer;">×</button></div>'+
     '<div class="auth-field"><label class="auth-label">Full Name</label><input id="eu-name" class="auth-input" type="text" value="'+(user.name||'')+'"></div>'+
     '<div class="auth-field"><label class="auth-label">Email</label><input id="eu-email" class="auth-input" type="email" value="'+(user.email||'')+'"></div>'+
     '<div class="auth-field"><label class="auth-label">MT5 Account ID</label><input id="eu-mt5" class="auth-input" type="text" value="'+(user.mt5_id||'')+'"></div>'+
-    '<div class="auth-field"><label class="auth-label">Status</label><select id="eu-status" class="auth-input">'+
-    '<option value="pending"'+(user.status==='pending'?' selected':'')+'>Pending</option>'+
-    '<option value="active"'+(user.status==='active'?' selected':'')+'>Active</option>'+
-    '<option value="suspended"'+(user.status==='suspended'?' selected':'')+'>Suspended</option>'+
-    '</select></div>'+
+    '<div class="auth-field"><label class="auth-label">Status</label><select id="eu-status" class="auth-input"><option value="pending"'+(user.status==='pending'?' selected':'')+'>Pending</option><option value="active"'+(user.status==='active'?' selected':'')+'>Active</option><option value="suspended"'+(user.status==='suspended'?' selected':'')+'>Suspended</option></select></div>'+
     '<div id="eu-error" class="error-msg"></div><div id="eu-success" class="success-msg"></div>';
-  var sb=document.createElement('button');sb.className='red-btn';sb.style.letterSpacing='1px';sb.textContent='SAVE CHANGES';
-  sb.addEventListener('click',function(){saveUserEdit(user.id);});sheet.appendChild(sb);
-  var cb=document.createElement('button');cb.className='ghost-btn';cb.style.marginTop='10px';cb.textContent='Cancel';
-  cb.addEventListener('click',function(){popup.remove();});sheet.appendChild(cb);
-  popup.appendChild(sheet);
-  popup.addEventListener('click',function(e){if(e.target===popup)popup.remove();});
-  document.body.appendChild(popup);
-  var xb=sheet.querySelector('#eu-x');if(xb)xb.addEventListener('click',function(){popup.remove();});
+  var sb=document.createElement('button');sb.className='red-btn';sb.style.letterSpacing='1px';sb.textContent='SAVE CHANGES';sb.addEventListener('click',function(){saveUserEdit(user.id);});sheet.appendChild(sb);
+  var cb=document.createElement('button');cb.className='ghost-btn';cb.style.marginTop='10px';cb.textContent='Cancel';cb.addEventListener('click',function(){popup.remove();});sheet.appendChild(cb);
+  popup.appendChild(sheet);popup.addEventListener('click',function(e){if(e.target===popup)popup.remove();});document.body.appendChild(popup);
+  sheet.querySelector('#eu-x').addEventListener('click',function(){popup.remove();});
 }
 async function saveUserEdit(userId){
   var name=document.getElementById('eu-name').value.trim(),email=document.getElementById('eu-email').value.trim(),mt5=document.getElementById('eu-mt5').value.trim(),status=document.getElementById('eu-status').value;
   var errEl=document.getElementById('eu-error'),sucEl=document.getElementById('eu-success');errEl.style.display='none';sucEl.style.display='none';
   try{var res=await db.from('users').update({name,email,mt5_id:mt5,status}).eq('id',userId);if(res.error)throw res.error;
-  sucEl.textContent='User updated!';sucEl.style.display='block';
-  setTimeout(function(){document.getElementById('edit-user-popup').remove();loadAdminUsers();},1200);}
+  sucEl.textContent='User updated!';sucEl.style.display='block';setTimeout(function(){document.getElementById('edit-user-popup').remove();loadAdminUsers();},1200);}
   catch(e){errEl.textContent='Error: '+(e.message||'failed');errEl.style.display='block';}
 }
 
-// ── LOAD ADMIN ANALYSTS ───────────────────────────────────────────────
+// ── ADMIN USERS: Render with Edit/Suspend/Delete ───────────────────
+var _origLoadAdminUsers = loadAdminUsers;
+async function loadAdminUsers() {
+  if(!db) return;
+  var container = document.getElementById('mob-admin-users');
+  if(!container) return;
+  try {
+    var res = await db.from('users').select('*').order('created_at',{ascending:false});
+    if(res.error||!res.data) return;
+    res.data=res.data.filter(function(u){return u.role==='user'||(!u.role&&u.mt5_id&&!u.mt5_id.startsWith('ANALYST_')&&!u.mt5_id.startsWith('SUBADMIN_'));});
+    var total=res.data.length,pending=res.data.filter(function(u){return u.status==='pending';}).length;
+    var t=document.getElementById('mob-stat-total'),p=document.getElementById('mob-stat-pending');
+    if(t)t.textContent=total;if(p)p.textContent=pending;
+    if(!res.data.length){container.innerHTML='<div class="empty-state" style="padding:20px;"><i class="ti ti-users"></i>No users</div>';return;}
+    container.innerHTML='';
+    res.data.forEach(function(user){
+      var isSuspended=user.status==='suspended',isPending=user.status==='pending';
+      var card=document.createElement('div');card.className='admin-user-row';
+      card.innerHTML='<div class="admin-user-av">'+(user.name||user.username||'?').substring(0,2).toUpperCase()+'</div><div class="admin-user-info" style="flex:1;"><div class="admin-user-name">'+(user.name||user.username||'-')+'</div><div class="admin-user-meta">'+(user.email||'-')+' · MT5: '+(user.mt5_id||'-')+'</div></div><div class="admin-status '+user.status+'">'+(user.status||'').toUpperCase()+'</div>';
+      var row=document.createElement('div');row.style.cssText='display:flex;gap:6px;margin-top:8px;';
+      if(isPending){var b1=document.createElement('button');b1.className='admin-action-btn admin-approve';b1.textContent='Approve';b1.addEventListener('click',function(){approveUser(user.id);});row.appendChild(b1);}
+      var b2=document.createElement('button');b2.className='admin-action-btn '+(isSuspended?'admin-approve':'admin-suspend');b2.textContent=isSuspended?'Unsuspend':'Suspend';b2.addEventListener('click',function(){isSuspended?unsuspendUser(user.id):suspendUser(user.id);});row.appendChild(b2);
+      var b3=document.createElement('button');b3.className='admin-action-btn';b3.style.cssText='background:rgba(77,158,255,0.1);color:#4D9EFF;border:1px solid rgba(77,158,255,0.2);';b3.textContent='Edit';b3.addEventListener('click',function(){openEditUserPopup(user);});row.appendChild(b3);
+      var b4=document.createElement('button');b4.className='admin-action-btn admin-delete';b4.textContent='Delete';b4.addEventListener('click',function(){deleteUser(user.id);});row.appendChild(b4);
+      card.appendChild(row);container.appendChild(card);
+    });
+  }catch(e){console.error('loadAdminUsers:',e);}
+}
+
+// ── ADMIN ANALYSTS ─────────────────────────────────────────────────
 async function loadAdminAnalysts(){
   var el=document.getElementById('admin-analyst-list');if(!el)return;
   el.innerHTML='<div style="padding:12px;color:var(--text2);font-size:12px;">Loading...</div>';
@@ -4926,14 +4842,8 @@ async function loadAdminAnalysts(){
     if(!analysts.length){el.innerHTML='<div class="empty-state" style="padding:12px;"><i class="ti ti-users"></i> No analysts yet</div>';return;}
     el.innerHTML='';
     analysts.forEach(function(analyst){
-      var card=document.createElement('div');
-      card.style.cssText='padding:10px 12px;background:var(--bg3);border-radius:9px;margin-bottom:8px;border:1px solid var(--border);';
-      card.innerHTML='<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">'+
-        '<div style="width:34px;height:34px;border-radius:8px;background:rgba(255,30,60,0.1);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--red);">'+(analyst.name||analyst.username||'?').substring(0,2).toUpperCase()+'</div>'+
-        '<div style="flex:1;"><div style="font-size:13px;font-weight:700;color:var(--text);">'+(analyst.name||'-')+'</div>'+
-        '<div style="font-size:11px;color:var(--text3);">@'+(analyst.username||'-')+'</div></div>'+
-        '<div style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;background:rgba(0,200,122,0.1);color:var(--green);">'+(analyst.status||'active').toUpperCase()+'</div></div>'+
-        '<div style="font-size:10px;color:var(--text3);margin-bottom:8px;">Pairs: <span style="color:var(--red);font-weight:600;">'+(analyst.trading_pairs||'All')+'</span></div>';
+      var card=document.createElement('div');card.style.cssText='padding:10px 12px;background:var(--bg3);border-radius:9px;margin-bottom:8px;border:1px solid var(--border);';
+      card.innerHTML='<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;"><div style="width:34px;height:34px;border-radius:8px;background:rgba(255,30,60,0.1);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--red);">'+(analyst.name||analyst.username||'?').substring(0,2).toUpperCase()+'</div><div style="flex:1;"><div style="font-size:13px;font-weight:700;color:var(--text);">'+(analyst.name||'-')+'</div><div style="font-size:11px;color:var(--text3);">@'+(analyst.username||'-')+'</div></div><div style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;background:rgba(0,200,122,0.1);color:var(--green);">'+(analyst.status||'active').toUpperCase()+'</div></div><div style="font-size:10px;color:var(--text3);margin-bottom:8px;">Pairs: <span style="color:var(--red);font-weight:600;">'+(analyst.trading_pairs||'All')+'</span></div>';
       var btnRow=document.createElement('div');btnRow.style.cssText='display:flex;gap:6px;';
       var bE=document.createElement('button');bE.style.cssText='flex:1;padding:7px;background:rgba(77,158,255,0.1);border:1px solid rgba(77,158,255,0.2);border-radius:7px;color:#4D9EFF;font-size:11px;font-weight:700;cursor:pointer;';bE.textContent='Edit';bE.addEventListener('click',function(){openEditAnalystPopup(analyst);});
       var bD=document.createElement('button');bD.style.cssText='flex:1;padding:7px;background:rgba(255,30,60,0.08);border:1px solid rgba(255,30,60,0.15);border-radius:7px;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;';bD.textContent='Delete';bD.addEventListener('click',function(){deleteAnalystAdmin(analyst.id);});
@@ -4941,432 +4851,303 @@ async function loadAdminAnalysts(){
     });
   }catch(e){el.innerHTML='<div style="padding:12px;color:var(--red);">Error: '+(e.message||'failed')+'</div>';}
 }
-
 function openEditAnalystPopup(analyst){
   var ex=document.getElementById('edit-analyst-popup');if(ex)ex.remove();
-  var popup=document.createElement('div');popup.id='edit-analyst-popup';
-  popup.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(4px);z-index:9100;display:flex;align-items:flex-end;';
+  var popup=document.createElement('div');popup.id='edit-analyst-popup';popup.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(4px);z-index:9100;display:flex;align-items:flex-end;';
   var sheet=document.createElement('div');sheet.style.cssText='width:100%;background:var(--bg2);border-radius:20px 20px 0 0;border-top:1px solid var(--border);padding:20px 18px 36px;max-height:85vh;overflow-y:auto;';
   var pairs=['XAUUSD','NAS100','BTCUSD','EURUSD','GBPUSD','GBPJPY','USDJPY','US30'];
-  var savedPairs=(analyst.trading_pairs||'all').split(',');
-  var pairsHTML=pairs.map(function(p){
-    var chk=(analyst.trading_pairs==='all'||!analyst.trading_pairs||savedPairs.indexOf(p)>-1)?'checked':'';
-    return '<label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="'+p+'" class="ea-pair-check" '+chk+' style="accent-color:var(--red);width:15px;height:15px;"> '+p+'</label>';
-  }).join('');
-  sheet.innerHTML='<div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 18px;"></div>'+
-    '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">'+
-    '<div style="font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);">EDIT ANALYST</div>'+
-    '<button id="ea-x" style="width:32px;height:32px;border-radius:50%;background:var(--surface);border:1px solid var(--border);color:var(--text2);font-size:18px;cursor:pointer;">×</button></div>'+
-    '<div class="auth-field"><label class="auth-label">Full Name</label><input id="ea-name" class="auth-input" type="text" value="'+(analyst.name||'')+'"></div>'+
-    '<div class="auth-field"><label class="auth-label">New Password <span style="color:var(--text3);font-size:10px;">(leave blank to keep)</span></label><input id="ea-pw" class="auth-input" type="password" placeholder="New password"></div>'+
-    '<div class="auth-field"><label class="auth-label">Trading Pairs</label><div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px 12px;"><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">'+pairsHTML+'</div></div></div>'+
-    '<div class="auth-field"><label class="auth-label">Status</label><select id="ea-status" class="auth-input"><option value="active"'+(analyst.status==='active'?' selected':'')+'>Active</option><option value="suspended"'+(analyst.status==='suspended'?' selected':'')+'>Suspended</option></select></div>'+
-    '<div id="ea-error" class="error-msg"></div><div id="ea-success" class="success-msg"></div>';
+  var savedPairs=(analyst.trading_pairs&&analyst.trading_pairs!=='all')?analyst.trading_pairs.split(','):[];
+  var pairsHTML=pairs.map(function(p){var chk=(!analyst.trading_pairs||analyst.trading_pairs==='all'||savedPairs.indexOf(p)>-1)?'checked':'';return '<label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="'+p+'" class="ea-pair-check" '+chk+' style="accent-color:var(--red);width:15px;height:15px;"> '+p+'</label>';}).join('');
+  sheet.innerHTML='<div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 18px;"></div><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;"><div style="font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);">EDIT ANALYST</div><button id="ea-x-btn" style="width:32px;height:32px;border-radius:50%;background:var(--surface);border:1px solid var(--border);color:var(--text2);font-size:18px;cursor:pointer;">×</button></div><div class="auth-field"><label class="auth-label">Full Name</label><input id="ea-name" class="auth-input" type="text" value="'+(analyst.name||'')+'"></div><div class="auth-field"><label class="auth-label">New Password <span style="color:var(--text3);font-size:10px;">(leave blank to keep)</span></label><input id="ea-pw" class="auth-input" type="password" placeholder="New password"></div><div class="auth-field"><label class="auth-label">Trading Pairs</label><div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px 12px;"><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">'+pairsHTML+'</div></div></div><div class="auth-field"><label class="auth-label">Status</label><select id="ea-status" class="auth-input"><option value="active"'+(analyst.status==='active'?' selected':'')+'>Active</option><option value="suspended"'+(analyst.status==='suspended'?' selected':'')+'>Suspended</option></select></div><div id="ea-error" class="error-msg"></div><div id="ea-success" class="success-msg"></div>';
   var sb=document.createElement('button');sb.className='red-btn';sb.style.letterSpacing='1px';sb.textContent='SAVE CHANGES';sb.addEventListener('click',function(){saveAnalystEdit(analyst.id);});sheet.appendChild(sb);
   var cb=document.createElement('button');cb.className='ghost-btn';cb.style.marginTop='10px';cb.textContent='Cancel';cb.addEventListener('click',function(){popup.remove();});sheet.appendChild(cb);
-  popup.appendChild(sheet);popup.addEventListener('click',function(e){if(e.target===popup)popup.remove();});
-  document.body.appendChild(popup);
-  var xb=sheet.querySelector('#ea-x');if(xb)xb.addEventListener('click',function(){popup.remove();});
+  popup.appendChild(sheet);popup.addEventListener('click',function(e){if(e.target===popup)popup.remove();});document.body.appendChild(popup);
+  sheet.querySelector('#ea-x-btn').addEventListener('click',function(){popup.remove();});
 }
-
 async function saveAnalystEdit(id){
   var name=document.getElementById('ea-name').value.trim(),pw=document.getElementById('ea-pw').value,status=document.getElementById('ea-status').value;
   var pairChecks=document.querySelectorAll('.ea-pair-check:checked');
   var pairs=pairChecks.length>0?Array.from(pairChecks).map(function(c){return c.value;}).join(','):'all';
   var errEl=document.getElementById('ea-error'),sucEl=document.getElementById('ea-success');errEl.style.display='none';sucEl.style.display='none';
-  try{var updates={name,trading_pairs:pairs,status};if(pw)updates.password_hash=btoa(unescape(encodeURIComponent(pw+'_momentum_salt')));
-  var res=await db.from('users').update(updates).eq('id',id);if(res.error)throw res.error;
-  sucEl.textContent='Analyst updated!';sucEl.style.display='block';
-  setTimeout(function(){document.getElementById('edit-analyst-popup').remove();loadAdminAnalysts();},1200);}
-  catch(e){errEl.textContent='Error: '+(e.message||'failed');errEl.style.display='block';}
-}
-
-async function deleteAnalystAdmin(id){
-  if(!confirm('Delete this analyst? Their signals will remain.'))return;
-  var res=await db.from('users').delete().eq('id',id);
-  if(res.error){alert(res.error.message);return;}loadAdminAnalysts();
-}
-
-
-// ── LOAD ADMIN ANALYSTS ─────────────────────────────────────────────
-async function loadAdminAnalysts(){
-  var el=document.getElementById('admin-analyst-list');if(!el)return;
-  el.innerHTML='<div style="padding:12px;color:var(--text2);font-size:12px;">Loading...</div>';
   try{
-    var res=await db.from('users').select('*').order('created_at',{ascending:false});
-    if(res.error)throw res.error;
-    var analysts=(res.data||[]).filter(function(u){return u.role==='analyst';});
-    if(!analysts.length){el.innerHTML='<div class="empty-state" style="padding:12px;"><i class="ti ti-users"></i> No analysts yet</div>';return;}
-    el.innerHTML='';
-    analysts.forEach(function(analyst){
-      var card=document.createElement('div');
-      card.style.cssText='padding:10px 12px;background:var(--bg3);border-radius:9px;margin-bottom:8px;border:1px solid var(--border);';
-      card.innerHTML='<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">'+
-        '<div style="width:34px;height:34px;border-radius:8px;background:rgba(255,30,60,0.1);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--red);">'+(analyst.name||analyst.username||'?').substring(0,2).toUpperCase()+'</div>'+
-        '<div style="flex:1;"><div style="font-size:13px;font-weight:700;color:var(--text);">'+(analyst.name||'-')+'</div>'+
-        '<div style="font-size:11px;color:var(--text3);">@'+(analyst.username||'-')+'</div></div>'+
-        '<div style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;background:rgba(0,200,122,0.1);color:var(--green);">'+(analyst.status||'active').toUpperCase()+'</div></div>'+
-        '<div style="font-size:10px;color:var(--text3);margin-bottom:8px;">Pairs: <span style="color:var(--red);font-weight:600;">'+(analyst.trading_pairs||'All')+'</span></div>';
-      var btnRow=document.createElement('div');btnRow.style.cssText='display:flex;gap:6px;';
-      var bE=document.createElement('button');
-      bE.style.cssText='flex:1;padding:7px;background:rgba(77,158,255,0.1);border:1px solid rgba(77,158,255,0.2);border-radius:7px;color:#4D9EFF;font-size:11px;font-weight:700;cursor:pointer;';
-      bE.textContent='Edit';bE.addEventListener('click',function(){openEditAnalystPopup(analyst);});
-      var bD=document.createElement('button');
-      bD.style.cssText='flex:1;padding:7px;background:rgba(255,30,60,0.08);border:1px solid rgba(255,30,60,0.15);border-radius:7px;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;';
-      bD.textContent='Delete';bD.addEventListener('click',function(){deleteAnalystAdmin(analyst.id);});
-      btnRow.appendChild(bE);btnRow.appendChild(bD);card.appendChild(btnRow);el.appendChild(card);
-    });
-  }catch(e){el.innerHTML='<div style="padding:12px;color:var(--red);">Error: '+(e.message||'failed')+'</div>';}
-}
-
-function openEditAnalystPopup(analyst){
-  var ex=document.getElementById('edit-analyst-popup');if(ex)ex.remove();
-  var popup=document.createElement('div');popup.id='edit-analyst-popup';
-  popup.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(4px);z-index:9100;display:flex;align-items:flex-end;';
-  var sheet=document.createElement('div');
-  sheet.style.cssText='width:100%;background:var(--bg2);border-radius:20px 20px 0 0;border-top:1px solid var(--border);padding:20px 18px 36px;max-height:85vh;overflow-y:auto;';
-  var pairs=['XAUUSD','NAS100','BTCUSD','EURUSD','GBPUSD','GBPJPY','USDJPY','US30'];
-  var savedPairs=(analyst.trading_pairs&&analyst.trading_pairs!=='all')?analyst.trading_pairs.split(','):[];
-  var pairsHTML=pairs.map(function(p){
-    var chk=(!analyst.trading_pairs||analyst.trading_pairs==='all'||savedPairs.indexOf(p)>-1)?'checked':'';
-    return '<label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="'+p+'" class="ea-pair-check" '+chk+' style="accent-color:var(--red);width:15px;height:15px;"> '+p+'</label>';
-  }).join('');
-  sheet.innerHTML=
-    '<div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 18px;"></div>'+
-    '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">'+
-    '<div style="font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);">EDIT ANALYST</div>'+
-    '<button id="ea-x-btn" style="width:32px;height:32px;border-radius:50%;background:var(--surface);border:1px solid var(--border);color:var(--text2);font-size:18px;cursor:pointer;">×</button></div>'+
-    '<div class="auth-field"><label class="auth-label">Full Name</label><input id="ea-name" class="auth-input" type="text" value="'+(analyst.name||'')+'"></div>'+
-    '<div class="auth-field"><label class="auth-label">New Password <span style="color:var(--text3);font-size:10px;">(leave blank to keep)</span></label><input id="ea-pw" class="auth-input" type="password" placeholder="New password"></div>'+
-    '<div class="auth-field"><label class="auth-label">Trading Pairs</label><div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px 12px;"><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">'+pairsHTML+'</div></div></div>'+
-    '<div class="auth-field"><label class="auth-label">Status</label><select id="ea-status" class="auth-input"><option value="active"'+(analyst.status==='active'?' selected':'')+'>Active</option><option value="suspended"'+(analyst.status==='suspended'?' selected':'')+'>Suspended</option></select></div>'+
-    '<div id="ea-error" class="error-msg"></div><div id="ea-success" class="success-msg"></div>';
-  var sb=document.createElement('button');sb.className='red-btn';sb.style.letterSpacing='1px';sb.textContent='SAVE CHANGES';
-  sb.addEventListener('click',function(){saveAnalystEdit(analyst.id);});sheet.appendChild(sb);
-  var cb=document.createElement('button');cb.className='ghost-btn';cb.style.marginTop='10px';cb.textContent='Cancel';
-  cb.addEventListener('click',function(){popup.remove();});sheet.appendChild(cb);
-  popup.appendChild(sheet);
-  popup.addEventListener('click',function(e){if(e.target===popup)popup.remove();});
-  document.body.appendChild(popup);
-  sheet.querySelector('#ea-x-btn').addEventListener('click',function(){popup.remove();});
-}
-
-async function saveAnalystEdit(id){
-  var name=document.getElementById('ea-name').value.trim();
-  var pw=document.getElementById('ea-pw').value;
-  var status=document.getElementById('ea-status').value;
-  var pairChecks=document.querySelectorAll('.ea-pair-check:checked');
-  var pairs=pairChecks.length>0?Array.from(pairChecks).map(function(c){return c.value;}).join(','):'all';
-  var errEl=document.getElementById('ea-error'),sucEl=document.getElementById('ea-success');
-  errEl.style.display='none';sucEl.style.display='none';
-  try{
-    // First try with trading_pairs (requires column to exist in Supabase)
-    var updates={name:name,status:status};
-    if(pw)updates.password_hash=btoa(unescape(encodeURIComponent(pw+'_momentum_salt')));
-    // Try to save trading_pairs — if column missing, save without it
+    var updates={name:name,status:status};if(pw)updates.password_hash=btoa(unescape(encodeURIComponent(pw+'_momentum_salt')));
     var res=await db.from('users').update(Object.assign({},updates,{trading_pairs:pairs})).eq('id',id);
-    if(res.error&&res.error.message&&res.error.message.indexOf('trading_pairs')>-1){
-      // Column doesn't exist yet — save without it
-      res=await db.from('users').update(updates).eq('id',id);
-    }
+    if(res.error&&res.error.message&&res.error.message.indexOf('trading_pairs')>-1)res=await db.from('users').update(updates).eq('id',id);
     if(res.error)throw res.error;
     sucEl.textContent='Analyst updated!';sucEl.style.display='block';
     setTimeout(function(){document.getElementById('edit-analyst-popup').remove();loadAdminAnalysts();},1200);
   }catch(e){errEl.textContent='Error: '+(e.message||'failed');errEl.style.display='block';}
 }
+async function deleteAnalystAdmin(id){if(!confirm('Delete this analyst?'))return;var res=await db.from('users').delete().eq('id',id);if(res.error){alert(res.error.message);return;}loadAdminAnalysts();}
 
-async function deleteAnalystAdmin(id){
-  if(!confirm('Delete this analyst? Their signals will remain.'))return;
-  var res=await db.from('users').delete().eq('id',id);
-  if(res.error){alert(res.error.message);return;}
-  loadAdminAnalysts();
-}
-
-
-// ══════════════════════════════════════════
-// SUB-ADMIN MANAGEMENT
-// ══════════════════════════════════════════
-
-async function handleAddSubAdmin() {
-  var name=document.getElementById('mob-subadmin-name').value.trim();
-  var username=document.getElementById('mob-subadmin-username').value.trim().toLowerCase();
-  var password=document.getElementById('mob-subadmin-password').value;
-  var checks=document.querySelectorAll('.subadmin-tab-check:checked');
-  var tabs=Array.from(checks).map(function(c){return c.value;}).join(',');
-  var errEl=document.getElementById('mob-subadmin-error');
-  var sucEl=document.getElementById('mob-subadmin-success');
-  errEl.style.display='none'; sucEl.style.display='none';
+// ── ADMIN SUB-ADMINS ───────────────────────────────────────────────
+async function handleAddSubAdmin(){
+  var name=document.getElementById('mob-subadmin-name').value.trim(),username=document.getElementById('mob-subadmin-username').value.trim().toLowerCase(),password=document.getElementById('mob-subadmin-password').value;
+  var checks=document.querySelectorAll('.subadmin-tab-check:checked'),tabs=Array.from(checks).map(function(c){return c.value;}).join(',');
+  var errEl=document.getElementById('mob-subadmin-error'),sucEl=document.getElementById('mob-subadmin-success');errEl.style.display='none';sucEl.style.display='none';
   if(!name||!username||!password){errEl.textContent='Please fill all fields';errEl.style.display='block';return;}
   if(!tabs){errEl.textContent='Please select at least one tab';errEl.style.display='block';return;}
   if(password.length<6){errEl.textContent='Password must be at least 6 characters';errEl.style.display='block';return;}
   var hash=btoa(unescape(encodeURIComponent(password+'_momentum_salt')));
   try{
-    var insertData={name:name,username:username,password_hash:hash,mt5_id:'SUBADMIN_'+Date.now(),status:'active',role:'sub_admin',created_at:new Date().toISOString()};
-    // Try to add allowed_tabs if column exists
-    try{ insertData.allowed_tabs=tabs; } catch(ex){}
-    var res=await db.from('users').insert([insertData]);
-    // If role constraint fails, show clear message
-    if(res.error&&res.error.message&&(res.error.message.indexOf('role')+res.error.message.indexOf('check')+res.error.message.indexOf('constraint'))>-3){
-      throw new Error('Run this SQL in Supabase first: ALTER TABLE users DROP CONSTRAINT IF EXISTS users_role_check; ALTER TABLE users ADD CONSTRAINT users_role_check CHECK (role IN (\'user\',\'admin\',\'analyst\',\'sub_admin\'));');
-    }
-    if(res.error) throw res.error;
-    sucEl.textContent='Sub-admin created! Username: '+username;
-    sucEl.style.display='block';
-    document.getElementById('mob-subadmin-name').value='';
-    document.getElementById('mob-subadmin-username').value='';
-    document.getElementById('mob-subadmin-password').value='';
+    var data={name:name,username:username,password_hash:hash,mt5_id:'SUBADMIN_'+Date.now(),status:'active',role:'sub_admin',allowed_tabs:tabs,created_at:new Date().toISOString()};
+    var res=await db.from('users').insert([data]);
+    if(res.error)throw res.error;
+    sucEl.textContent='Sub-admin created! Username: '+username;sucEl.style.display='block';
+    document.getElementById('mob-subadmin-name').value='';document.getElementById('mob-subadmin-username').value='';document.getElementById('mob-subadmin-password').value='';
     document.querySelectorAll('.subadmin-tab-check').forEach(function(c){c.checked=false;});
     loadAdminSubAdmins();
   }catch(e){errEl.textContent='Error: '+(e.message||'Failed');errEl.style.display='block';}
 }
-
-async function loadAdminSubAdmins() {
+async function loadAdminSubAdmins(){
   var el=document.getElementById('admin-subadmin-list');if(!el)return;
   el.innerHTML='<div style="padding:12px;color:var(--text2);font-size:12px;">Loading...</div>';
   try{
-    var res=await db.from('users').select('*').order('created_at',{ascending:false});
-    if(res.error)throw res.error;
+    var res=await db.from('users').select('*').order('created_at',{ascending:false});if(res.error)throw res.error;
     var subs=(res.data||[]).filter(function(u){return u.role==='sub_admin';});
     if(!subs.length){el.innerHTML='<div class="empty-state" style="padding:12px;"><i class="ti ti-users"></i> No sub-admins yet</div>';return;}
     el.innerHTML='';
     subs.forEach(function(sub){
-      var card=document.createElement('div');
-      card.style.cssText='padding:10px 12px;background:var(--bg3);border-radius:9px;margin-bottom:8px;border:1px solid var(--border);';
-      var tabs=(sub.allowed_tabs||'').split(',').map(function(t){
-        var map={dashboard:'Dashboard',users:'Users',tickets:'Support',funds:'Fund Requests',announce:'Announcements',signals:'Signals',analyst:'Analysts'};
-        return map[t]||t;
-      }).join(' · ');
-      card.innerHTML='<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">'+
-        '<div style="width:34px;height:34px;border-radius:8px;background:rgba(77,158,255,0.1);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#4D9EFF;">'+(sub.name||sub.username||'?').substring(0,2).toUpperCase()+'</div>'+
-        '<div style="flex:1;"><div style="font-size:13px;font-weight:700;color:var(--text);">'+(sub.name||'-')+'</div>'+
-        '<div style="font-size:11px;color:var(--text3);">@'+(sub.username||'-')+'</div></div>'+
-        '<div style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;background:rgba(77,158,255,0.1);color:#4D9EFF;">SUB-ADMIN</div></div>'+
-        '<div style="font-size:10px;color:var(--text3);margin-bottom:8px;line-height:1.6;">Access: <span style="color:#4D9EFF;font-weight:600;">'+tabs+'</span></div>';
+      var card=document.createElement('div');card.style.cssText='padding:10px 12px;background:var(--bg3);border-radius:9px;margin-bottom:8px;border:1px solid var(--border);';
+      var map={dashboard:'Dashboard',users:'Users',tickets:'Support',funds:'Fund Management',announce:'Announcements',signals:'Signals',analyst:'Administrator',academy:'Academy'};
+      var tabs=(sub.allowed_tabs||'').split(',').map(function(t){return map[t]||t;}).join(' · ');
+      card.innerHTML='<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;"><div style="width:34px;height:34px;border-radius:8px;background:rgba(77,158,255,0.1);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#4D9EFF;">'+(sub.name||sub.username||'?').substring(0,2).toUpperCase()+'</div><div style="flex:1;"><div style="font-size:13px;font-weight:700;color:var(--text);">'+(sub.name||'-')+'</div><div style="font-size:11px;color:var(--text3);">@'+(sub.username||'-')+'</div></div><div style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;background:rgba(77,158,255,0.1);color:#4D9EFF;">SUB-ADMIN</div></div><div style="font-size:10px;color:var(--text3);margin-bottom:8px;line-height:1.6;">Access: <span style="color:#4D9EFF;font-weight:600;">'+tabs+'</span></div>';
       var btnRow=document.createElement('div');btnRow.style.cssText='display:flex;gap:6px;';
-      var bE=document.createElement('button');
-      bE.style.cssText='flex:1;padding:7px;background:rgba(77,158,255,0.1);border:1px solid rgba(77,158,255,0.2);border-radius:7px;color:#4D9EFF;font-size:11px;font-weight:700;cursor:pointer;';
-      bE.textContent='Edit';bE.addEventListener('click',function(){openEditSubAdminPopup(sub);});
-      var bD=document.createElement('button');
-      bD.style.cssText='flex:1;padding:7px;background:rgba(255,30,60,0.08);border:1px solid rgba(255,30,60,0.15);border-radius:7px;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;';
-      bD.textContent='Delete';bD.addEventListener('click',function(){deleteSubAdmin(sub.id);});
+      var bE=document.createElement('button');bE.style.cssText='flex:1;padding:7px;background:rgba(77,158,255,0.1);border:1px solid rgba(77,158,255,0.2);border-radius:7px;color:#4D9EFF;font-size:11px;font-weight:700;cursor:pointer;';bE.textContent='Edit';bE.addEventListener('click',function(){openEditSubAdminPopup(sub);});
+      var bD=document.createElement('button');bD.style.cssText='flex:1;padding:7px;background:rgba(255,30,60,0.08);border:1px solid rgba(255,30,60,0.15);border-radius:7px;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;';bD.textContent='Delete';bD.addEventListener('click',function(){deleteSubAdmin(sub.id);});
       btnRow.appendChild(bE);btnRow.appendChild(bD);card.appendChild(btnRow);el.appendChild(card);
     });
   }catch(e){el.innerHTML='<div style="padding:12px;color:var(--red);">Error: '+(e.message||'failed')+'</div>';}
 }
-
-function openEditSubAdminPopup(sub) {
+function openEditSubAdminPopup(sub){
   var ex=document.getElementById('edit-subadmin-popup');if(ex)ex.remove();
-  var popup=document.createElement('div');popup.id='edit-subadmin-popup';
-  popup.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(4px);z-index:9100;display:flex;align-items:flex-end;';
-  var sheet=document.createElement('div');
-  sheet.style.cssText='width:100%;background:var(--bg2);border-radius:20px 20px 0 0;border-top:1px solid var(--border);padding:20px 18px 36px;max-height:90vh;overflow-y:auto;';
+  var popup=document.createElement('div');popup.id='edit-subadmin-popup';popup.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(4px);z-index:9100;display:flex;align-items:flex-end;';
+  var sheet=document.createElement('div');sheet.style.cssText='width:100%;background:var(--bg2);border-radius:20px 20px 0 0;border-top:1px solid var(--border);padding:20px 18px 36px;max-height:90vh;overflow-y:auto;';
   var allTabs=['dashboard','users','tickets','funds','announce','signals','analyst','academy'];
   var tabLabels={dashboard:'Dashboard',users:'Users',tickets:'Support',funds:'Fund Management',announce:'Announcements',signals:'Signals',analyst:'Administrator',academy:'Academy'};
   var savedTabs=(sub.allowed_tabs||'').split(',');
-  var tabsHTML=allTabs.map(function(t){
-    var chk=savedTabs.indexOf(t)>-1?'checked':'';
-    return '<label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="'+t+'" class="esa-tab-check" '+chk+' style="accent-color:var(--red);width:15px;height:15px;"> '+tabLabels[t]+'</label>';
-  }).join('');
-  sheet.innerHTML=
-    '<div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 18px;"></div>'+
-    '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">'+
-    '<div style="font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);">EDIT SUB-ADMIN</div>'+
-    '<button id="esa-x-btn" style="width:32px;height:32px;border-radius:50%;background:var(--surface);border:1px solid var(--border);color:var(--text2);font-size:18px;cursor:pointer;">×</button></div>'+
-    '<div class="auth-field"><label class="auth-label">Full Name</label><input id="esa-name" class="auth-input" type="text" value="'+(sub.name||'')+'"></div>'+
-    '<div class="auth-field"><label class="auth-label">New Password <span style="color:var(--text3);font-size:10px;">(leave blank to keep)</span></label><input id="esa-pw" class="auth-input" type="password" placeholder="New password"></div>'+
-    '<div class="auth-field"><label class="auth-label">Status</label><select id="esa-status" class="auth-input"><option value="active"'+(sub.status==='active'?' selected':'')+'>Active</option><option value="suspended"'+(sub.status==='suspended'?' selected':'')+'>Suspended</option></select></div>'+
-    '<div class="auth-field"><label class="auth-label">Panel Access</label><div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px 12px;"><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">'+tabsHTML+'</div></div></div>'+
-    '<div id="esa-error" class="error-msg"></div><div id="esa-success" class="success-msg"></div>';
-  var sb=document.createElement('button');sb.className='red-btn';sb.style.letterSpacing='1px';sb.textContent='SAVE CHANGES';
-  sb.addEventListener('click',function(){saveSubAdminEdit(sub.id);});sheet.appendChild(sb);
-  var cb=document.createElement('button');cb.className='ghost-btn';cb.style.marginTop='10px';cb.textContent='Cancel';
-  cb.addEventListener('click',function(){popup.remove();});sheet.appendChild(cb);
-  popup.appendChild(sheet);
-  popup.addEventListener('click',function(e){if(e.target===popup)popup.remove();});
-  document.body.appendChild(popup);
+  var tabsHTML=allTabs.map(function(t){var chk=savedTabs.indexOf(t)>-1?'checked':'';return '<label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="'+t+'" class="esa-tab-check" '+chk+' style="accent-color:var(--red);width:15px;height:15px;"> '+tabLabels[t]+'</label>';}).join('');
+  sheet.innerHTML='<div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 18px;"></div><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;"><div style="font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);">EDIT SUB-ADMIN</div><button id="esa-x-btn" style="width:32px;height:32px;border-radius:50%;background:var(--surface);border:1px solid var(--border);color:var(--text2);font-size:18px;cursor:pointer;">×</button></div><div class="auth-field"><label class="auth-label">Full Name</label><input id="esa-name" class="auth-input" type="text" value="'+(sub.name||'')+'"></div><div class="auth-field"><label class="auth-label">New Password</label><input id="esa-pw" class="auth-input" type="password" placeholder="Leave blank to keep"></div><div class="auth-field"><label class="auth-label">Status</label><select id="esa-status" class="auth-input"><option value="active"'+(sub.status==='active'?' selected':'')+'>Active</option><option value="suspended"'+(sub.status==='suspended'?' selected':'')+'>Suspended</option></select></div><div class="auth-field"><label class="auth-label">Panel Access</label><div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px 12px;"><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">'+tabsHTML+'</div></div></div><div id="esa-error" class="error-msg"></div><div id="esa-success" class="success-msg"></div>';
+  var sb=document.createElement('button');sb.className='red-btn';sb.style.letterSpacing='1px';sb.textContent='SAVE CHANGES';sb.addEventListener('click',function(){saveSubAdminEdit(sub.id);});sheet.appendChild(sb);
+  var cb=document.createElement('button');cb.className='ghost-btn';cb.style.marginTop='10px';cb.textContent='Cancel';cb.addEventListener('click',function(){popup.remove();});sheet.appendChild(cb);
+  popup.appendChild(sheet);popup.addEventListener('click',function(e){if(e.target===popup)popup.remove();});document.body.appendChild(popup);
   sheet.querySelector('#esa-x-btn').addEventListener('click',function(){popup.remove();});
 }
-
-async function saveSubAdminEdit(id) {
-  var name=document.getElementById('esa-name').value.trim();
-  var pw=document.getElementById('esa-pw').value;
-  var status=document.getElementById('esa-status').value;
-  var checks=document.querySelectorAll('.esa-tab-check:checked');
-  var tabs=Array.from(checks).map(function(c){return c.value;}).join(',');
-  var errEl=document.getElementById('esa-error'),sucEl=document.getElementById('esa-success');
-  errEl.style.display='none';sucEl.style.display='none';
-  if(!tabs){errEl.textContent='Please select at least one tab';errEl.style.display='block';return;}
+async function saveSubAdminEdit(id){
+  var name=document.getElementById('esa-name').value.trim(),pw=document.getElementById('esa-pw').value,status=document.getElementById('esa-status').value;
+  var checks=document.querySelectorAll('.esa-tab-check:checked'),tabs=Array.from(checks).map(function(c){return c.value;}).join(',');
+  var errEl=document.getElementById('esa-error'),sucEl=document.getElementById('esa-success');errEl.style.display='none';sucEl.style.display='none';
+  if(!tabs){errEl.textContent='Select at least one tab';errEl.style.display='block';return;}
   try{
-    var updates={name:name,status:status,allowed_tabs:tabs};
-    if(pw)updates.password_hash=btoa(unescape(encodeURIComponent(pw+'_momentum_salt')));
-    var res=await db.from('users').update(updates).eq('id',id);
-    if(res.error&&res.error.message&&res.error.message.indexOf('allowed_tabs')>-1){
-      delete updates.allowed_tabs;
-      res=await db.from('users').update(updates).eq('id',id);
-    }
-    if(res.error)throw res.error;
-    sucEl.textContent='Sub-admin updated!';sucEl.style.display='block';
-    setTimeout(function(){document.getElementById('edit-subadmin-popup').remove();loadAdminSubAdmins();},1200);
+    var updates={name:name,status:status,allowed_tabs:tabs};if(pw)updates.password_hash=btoa(unescape(encodeURIComponent(pw+'_momentum_salt')));
+    var res=await db.from('users').update(updates).eq('id',id);if(res.error)throw res.error;
+    sucEl.textContent='Sub-admin updated!';sucEl.style.display='block';setTimeout(function(){document.getElementById('edit-subadmin-popup').remove();loadAdminSubAdmins();},1200);
   }catch(e){errEl.textContent='Error: '+(e.message||'failed');errEl.style.display='block';}
 }
+async function deleteSubAdmin(id){if(!confirm('Delete this sub-admin?'))return;var res=await db.from('users').delete().eq('id',id);if(res.error){alert(res.error.message);return;}loadAdminSubAdmins();}
+function enterSubAdmin(user){showSubScreen('sub-admin');var allTabs=['dashboard','users','tickets','funds','announce','signals','analyst','academy'];var allowedTabs=(user.allowed_tabs||'').split(',');allTabs.forEach(function(tab){var btn=document.getElementById('atab-'+tab)||document.querySelector('[data-tab="'+tab+'"]');if(btn)btn.style.display=allowedTabs.indexOf(tab)>-1?'':'none';});if(allowedTabs.length)switchAdminTab(allowedTabs[0]);}
 
-async function deleteSubAdmin(id) {
-  if(!confirm('Delete this sub-admin account?'))return;
-  var res=await db.from('users').delete().eq('id',id);
-  if(res.error){alert(res.error.message);return;}
-  loadAdminSubAdmins();
+// ── ADMIN SIGNALS ──────────────────────────────────────────────────
+async function loadAdminSignals(){
+  var el=document.getElementById('admin-signals-list');if(!el)return;
+  el.innerHTML='<div class="empty-state" style="padding:16px;">Loading...</div>';
+  try{
+    var filter=document.getElementById('signal-status-filter');var status=filter?filter.value:'all';
+    var q=db.from('signals').select('*').order('created_at',{ascending:false}).limit(30);if(status!=='all')q=q.eq('status',status);
+    var res=await q;if(res.error)throw res.error;
+    if(!res.data||!res.data.length){el.innerHTML='<div class="empty-state" style="padding:16px;"><i class="ti ti-broadcast"></i> No signals</div>';return;}
+    el.innerHTML='';
+    res.data.forEach(function(sig){
+      var dir=(sig.direction||'BUY').toLowerCase(),isActive=sig.status==='active';
+      var card=document.createElement('div');card.style.cssText='padding:11px 13px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;';
+      card.innerHTML='<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><div style="font-size:14px;font-weight:800;color:var(--text);flex:1;">'+(sig.pair||'--')+'</div><div style="padding:3px 9px;border-radius:5px;font-size:9px;font-weight:800;background:'+(dir==='buy'?'rgba(0,200,122,0.12)':'rgba(255,30,60,0.1)')+';color:'+(dir==='buy'?'var(--green)':'var(--red)')+';">'+(sig.direction||'BUY')+'</div><div style="padding:3px 9px;border-radius:5px;font-size:9px;font-weight:800;color:'+(isActive?'var(--green)':'var(--amber)')+';">'+(isActive?'ACTIVE':'INACTIVE')+'</div></div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px;"><div style="background:var(--bg3);border-radius:6px;padding:6px;"><div style="font-size:9px;color:var(--text3);margin-bottom:2px;">ENTRY</div><div style="font-size:11px;font-weight:700;color:var(--text);">'+(sig.entry_from||'--')+'-'+(sig.entry_to||'--')+'</div></div><div style="background:var(--bg3);border-radius:6px;padding:6px;"><div style="font-size:9px;color:var(--text3);margin-bottom:2px;">SL</div><div style="font-size:11px;font-weight:700;color:var(--red);">'+(sig.sl||'--')+'</div></div><div style="background:var(--bg3);border-radius:6px;padding:6px;"><div style="font-size:9px;color:var(--text3);margin-bottom:2px;">TP</div><div style="font-size:11px;font-weight:700;color:var(--green);">'+(sig.tp1||'--')+'</div></div></div><div style="font-size:10px;color:var(--text3);margin-bottom:8px;">'+(sig.analyst_name||'Analyst')+' · '+(sig.timeframe||'H4')+' · '+timeAgo(sig.created_at)+'</div>';
+      var btnRow=document.createElement('div');btnRow.style.cssText='display:flex;gap:6px;';
+      var bA=document.createElement('button');bA.style.cssText='flex:1;padding:7px;background:rgba(0,200,122,0.1);border:1px solid rgba(0,200,122,0.2);border-radius:7px;color:var(--green);font-size:11px;font-weight:700;cursor:pointer;';bA.textContent='Active';bA.addEventListener('click',function(){adminUpdateSignalStatus(sig.id,'active');});
+      var bI=document.createElement('button');bI.style.cssText='flex:1;padding:7px;background:rgba(255,176,32,0.1);border:1px solid rgba(255,176,32,0.2);border-radius:7px;color:var(--amber);font-size:11px;font-weight:700;cursor:pointer;';bI.textContent='Inactive';bI.addEventListener('click',function(){adminUpdateSignalStatus(sig.id,'closed');});
+      var bD=document.createElement('button');bD.style.cssText='flex:1;padding:7px;background:rgba(255,30,60,0.08);border:1px solid rgba(255,30,60,0.15);border-radius:7px;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;';bD.textContent='Delete';bD.addEventListener('click',function(){adminDeleteSignal(sig.id);});
+      btnRow.appendChild(bA);btnRow.appendChild(bI);btnRow.appendChild(bD);card.appendChild(btnRow);el.appendChild(card);
+    });
+  }catch(e){el.innerHTML='<div style="padding:12px;color:var(--red);">Error: '+(e.message||'Failed')+'</div>';}
 }
+async function adminUpdateSignalStatus(sigId,newStatus){try{var res=await db.from('signals').update({status:newStatus}).eq('id',sigId);if(res.error)throw res.error;loadAdminSignals();}catch(e){alert('Error: '+(e.message||'Could not update'));}}
+async function adminDeleteSignal(sigId){if(!confirm('Delete this signal permanently?'))return;try{await db.from('signals').delete().eq('id',sigId);loadAdminSignals();}catch(e){alert('Error: '+(e.message||'Could not delete'));}}
 
-// ── SUB-ADMIN LOGIN ROUTING ──────────────────────────────────────────
-function enterSubAdmin(user) {
-  showSubScreen('sub-admin');
-  // Hide all admin tabs first
-  var allTabs=['dashboard','users','tickets','funds','announce','signals','analyst','academy'];
-  var allowedTabs=(user.allowed_tabs||'').split(',');
-  allTabs.forEach(function(tab) {
-    var btn=document.getElementById('atab-'+tab)||document.querySelector('[data-tab="'+tab+'"]');
-    if(btn) btn.style.display = allowedTabs.indexOf(tab)>-1 ? '' : 'none';
-  });
-  // Switch to first allowed tab
-  if(allowedTabs.length) switchAdminTab(allowedTabs[0]);
-}
-
-
-// ══════════════════════════════════════
-// ADMIN ACADEMY MANAGEMENT
-// ══════════════════════════════════════
-
-async function handlePublishAcademy() {
-  var category = document.getElementById('academy-category').value;
-  var title    = document.getElementById('academy-title').value.trim();
-  var content  = document.getElementById('academy-content').value.trim();
-  var video    = document.getElementById('academy-video').value.trim();
-  var level    = document.getElementById('academy-level').value;
-  var errEl    = document.getElementById('academy-error');
-  var sucEl    = document.getElementById('academy-success');
-  errEl.style.display='none'; sucEl.style.display='none';
+// ── ADMIN ACADEMY ──────────────────────────────────────────────────
+async function handlePublishAcademy(){
+  var category=document.getElementById('academy-category').value,title=document.getElementById('academy-title').value.trim(),content=document.getElementById('academy-content').value.trim(),video=document.getElementById('academy-video').value.trim(),level=document.getElementById('academy-level').value;
+  var errEl=document.getElementById('academy-error'),sucEl=document.getElementById('academy-success');errEl.style.display='none';sucEl.style.display='none';
   if(!title||!content){errEl.textContent='Title and content are required';errEl.style.display='block';return;}
   try{
     var res=await db.from('academy').insert([{category,title,content,video_url:video||null,level,published:true,created_at:new Date().toISOString()}]);
     if(res.error)throw res.error;
     sucEl.textContent='Lesson published!';sucEl.style.display='block';
-    document.getElementById('academy-title').value='';
-    document.getElementById('academy-content').value='';
-    document.getElementById('academy-video').value='';
+    document.getElementById('academy-title').value='';document.getElementById('academy-content').value='';document.getElementById('academy-video').value='';
     setTimeout(function(){sucEl.style.display='none';loadAdminAcademy();},1500);
   }catch(e){errEl.textContent='Error: '+(e.message||'Failed');errEl.style.display='block';}
 }
-
-async function loadAdminAcademy() {
+async function loadAdminAcademy(){
   var el=document.getElementById('admin-academy-list');if(!el)return;
   el.innerHTML='<div style="padding:12px;color:var(--text2);font-size:12px;">Loading...</div>';
   try{
-    var res=await db.from('academy').select('*').order('created_at',{ascending:false});
-    if(res.error)throw res.error;
+    var res=await db.from('academy').select('*').order('created_at',{ascending:false});if(res.error)throw res.error;
     if(!res.data||!res.data.length){el.innerHTML='<div class="empty-state" style="padding:16px;"><i class="ti ti-book"></i> No lessons published yet</div>';return;}
     var levelColors={beginner:'var(--green)',intermediate:'var(--amber)',advanced:'var(--red)'};
     el.innerHTML='';
     res.data.forEach(function(lesson){
-      var card=document.createElement('div');
-      card.style.cssText='padding:11px 13px;background:var(--bg3);border-radius:9px;margin-bottom:8px;border:1px solid var(--border);';
-      card.innerHTML=
-        '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">'+
-        '<div style="flex:1;font-size:13px;font-weight:700;color:var(--text);">'+lesson.title+'</div>'+
-        '<div style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;background:rgba(255,30,60,0.1);color:var(--red);">'+lesson.category+'</div>'+
-        '<div style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;color:'+(levelColors[lesson.level]||'var(--text3)')+';background:rgba(255,255,255,0.05);">'+lesson.level+'</div>'+
-        '</div>'+
-        '<div style="font-size:11px;color:var(--text3);margin-bottom:8px;line-height:1.5;">'+lesson.content.substring(0,100)+(lesson.content.length>100?'...':'')+'</div>';
-      var btnRow=document.createElement('div');btnRow.style.cssText='display:flex;gap:6px;';
-      var bDel=document.createElement('button');
-      bDel.style.cssText='flex:1;padding:7px;background:rgba(255,30,60,0.08);border:1px solid rgba(255,30,60,0.15);border-radius:7px;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;';
-      bDel.textContent='Delete';
-      bDel.addEventListener('click',function(){deleteAcademyLesson(lesson.id);});
-      btnRow.appendChild(bDel);card.appendChild(btnRow);el.appendChild(card);
+      var card=document.createElement('div');card.style.cssText='padding:11px 13px;background:var(--bg3);border-radius:9px;margin-bottom:8px;border:1px solid var(--border);';
+      card.innerHTML='<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><div style="flex:1;font-size:13px;font-weight:700;color:var(--text);">'+lesson.title+'</div><div style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;background:rgba(255,30,60,0.1);color:var(--red);">'+lesson.category+'</div><div style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;color:'+(levelColors[lesson.level]||'var(--text3)')+';background:rgba(255,255,255,0.05);">'+lesson.level+'</div></div><div style="font-size:11px;color:var(--text3);margin-bottom:8px;line-height:1.5;">'+lesson.content.substring(0,100)+(lesson.content.length>100?'...':'')+'</div>';
+      var bDel=document.createElement('button');bDel.style.cssText='width:100%;padding:7px;background:rgba(255,30,60,0.08);border:1px solid rgba(255,30,60,0.15);border-radius:7px;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;';bDel.textContent='Delete';bDel.addEventListener('click',function(){deleteAcademyLesson(lesson.id);});card.appendChild(bDel);el.appendChild(card);
     });
   }catch(e){el.innerHTML='<div style="padding:12px;color:var(--red);">Error: '+(e.message||'failed')+'</div>';}
 }
+async function deleteAcademyLesson(id){if(!confirm('Delete this lesson?'))return;var res=await db.from('academy').delete().eq('id',id);if(res.error){alert(res.error.message);return;}loadAdminAcademy();}
 
-async function deleteAcademyLesson(id){
-  if(!confirm('Delete this lesson?'))return;
-  var res=await db.from('academy').delete().eq('id',id);
-  if(res.error){alert(res.error.message);return;}
-  loadAdminAcademy();
+// ── USER ACADEMY (reads from Supabase) ────────────────────────────
+var _academyData=[];
+var _academyCategoryMeta={basics:{label:'Trading Basics',icon:'ti-book',color:'rgba(255,176,32,0.12)',iconColor:'var(--amber)'},technical:{label:'Technical Analysis',icon:'ti-chart-line',color:'rgba(77,158,255,0.12)',iconColor:'#4D9EFF'},fundamental:{label:'Fundamental Analysis',icon:'ti-world',color:'rgba(0,200,122,0.12)',iconColor:'var(--green)'},risk:{label:'Risk Management',icon:'ti-shield',color:'rgba(255,30,60,0.12)',iconColor:'var(--red)'},psychology:{label:'Trading Psychology',icon:'ti-brain',color:'rgba(168,85,247,0.12)',iconColor:'#a855f7'},strategy:{label:'Strategies',icon:'ti-target',color:'rgba(255,176,32,0.12)',iconColor:'var(--amber)'},mt5:{label:'MT5 Platform Guide',icon:'ti-device-desktop',color:'rgba(77,158,255,0.12)',iconColor:'#4D9EFF'}};
+
+async function loadAcademy(){
+  var catView=document.getElementById('academy-categories');
+  if(!catView)return;
+  // Show loading
+  catView.innerHTML='<div class="empty-state" style="padding:20px;"><i class="ti ti-loader"></i> Loading...</div>';
+  try{
+    var res=await db.from('academy').select('*').order('created_at',{ascending:true});
+    if(res.error)throw res.error;
+    _academyData=res.data||[];
+    renderAcademyCategories(catView);
+  }catch(e){catView.innerHTML='<div class="empty-state" style="padding:20px;color:var(--red);">Error loading academy</div>';}
 }
 
+function renderAcademyCategories(catView){
+  var groups={};_academyData.forEach(function(l){var cat=l.category||'basics';if(!groups[cat])groups[cat]=[];groups[cat].push(l);});
+  var cats=Object.keys(groups);
+  if(!cats.length){catView.innerHTML='<div class="empty-state" style="padding:20px;"><i class="ti ti-book"></i> No lessons yet</div>';return;}
+  catView.innerHTML='<div style="font-size:12px;color:var(--text3);margin-bottom:14px;">Select a category to start learning</div>';
+  cats.forEach(function(cat){
+    var meta=_academyCategoryMeta[cat]||{label:cat,icon:'ti-book',color:'rgba(255,255,255,0.08)',iconColor:'var(--text)'};
+    var count=groups[cat].length;
+    var div=document.createElement('div');div.className='more-menu-item';div.style.marginBottom='8px';div.style.cursor='pointer';
+    div.innerHTML='<div class="more-menu-icon" style="background:'+meta.color+';border-color:transparent;"><i class="ti '+meta.icon+'" style="color:'+meta.iconColor+';"></i></div><div class="more-menu-text"><div class="more-menu-label">'+meta.label+'</div><div class="more-menu-sub">'+count+' lesson'+(count!==1?'s':'')+'</div></div><i class="ti ti-chevron-right more-menu-arrow"></i>';
+    div.addEventListener('click',function(){openAcademyCategory(cat);});
+    catView.appendChild(div);
+  });
+}
 
-// ── ADMIN SIGNALS ─────────────────────────────────────────────────────
-async function loadAdminSignals() {
-  var el = document.getElementById('admin-signals-list');
-  if(!el) return;
-  el.innerHTML = '<div class="empty-state" style="padding:16px;">Loading...</div>';
-  try {
-    var filter = document.getElementById('signal-status-filter');
-    var status = filter ? filter.value : 'all';
-    var q = db.from('signals').select('*').order('created_at',{ascending:false}).limit(30);
-    if(status !== 'all') q = q.eq('status', status);
-    var res = await q;
-    if(res.error) throw res.error;
-    if(!res.data||!res.data.length) {
-      el.innerHTML = '<div class="empty-state" style="padding:16px;"><i class="ti ti-broadcast"></i> No signals found</div>';
-      return;
-    }
-    el.innerHTML = '';
-    res.data.forEach(function(sig) {
-      var dir = (sig.direction||'BUY').toLowerCase();
-      var isActive = sig.status === 'active';
-      var statusColor = isActive ? 'var(--green)' : 'var(--amber)';
-      var card = document.createElement('div');
-      card.style.cssText = 'padding:11px 13px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;';
-      card.innerHTML =
-        '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">' +
-          '<div style="font-size:14px;font-weight:800;color:var(--text);flex:1;">' + (sig.pair||'--') + '</div>' +
-          '<div style="padding:3px 9px;border-radius:5px;font-size:9px;font-weight:800;background:' + (dir==='buy'?'rgba(0,200,122,0.12)':'rgba(255,30,60,0.1)') + ';color:' + (dir==='buy'?'var(--green)':'var(--red)') + ';">' + (sig.direction||'BUY') + '</div>' +
-          '<div style="padding:3px 9px;border-radius:5px;font-size:9px;font-weight:800;color:' + statusColor + ';background:rgba(255,255,255,0.05);">' + (isActive?'ACTIVE':'INACTIVE') + '</div>' +
-        '</div>' +
-        '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px;">' +
-          '<div style="background:var(--bg3);border-radius:6px;padding:6px;"><div style="font-size:9px;color:var(--text3);margin-bottom:2px;">ENTRY</div><div style="font-size:11px;font-weight:700;color:var(--text);">' + (sig.entry_from||'--') + '-' + (sig.entry_to||'--') + '</div></div>' +
-          '<div style="background:var(--bg3);border-radius:6px;padding:6px;"><div style="font-size:9px;color:var(--text3);margin-bottom:2px;">SL</div><div style="font-size:11px;font-weight:700;color:var(--red);">' + (sig.sl||'--') + '</div></div>' +
-          '<div style="background:var(--bg3);border-radius:6px;padding:6px;"><div style="font-size:9px;color:var(--text3);margin-bottom:2px;">TP</div><div style="font-size:11px;font-weight:700;color:var(--green);">' + (sig.tp1||'--') + '</div></div>' +
-        '</div>' +
-        '<div style="font-size:10px;color:var(--text3);margin-bottom:8px;">' + (sig.analyst_name||'Analyst') + ' · ' + (sig.timeframe||'H4') + ' · ' + timeAgo(sig.created_at) + '</div>';
-      var btnRow = document.createElement('div');
-      btnRow.style.cssText = 'display:flex;gap:6px;';
-      var bA = document.createElement('button');
-      bA.style.cssText = 'flex:1;padding:7px;background:rgba(0,200,122,0.1);border:1px solid rgba(0,200,122,0.2);border-radius:7px;color:var(--green);font-size:11px;font-weight:700;cursor:pointer;';
-      bA.textContent = 'Active';
-      bA.addEventListener('click', function(){ adminUpdateSignalStatus(sig.id, 'active'); });
-      var bI = document.createElement('button');
-      bI.style.cssText = 'flex:1;padding:7px;background:rgba(255,176,32,0.1);border:1px solid rgba(255,176,32,0.2);border-radius:7px;color:var(--amber);font-size:11px;font-weight:700;cursor:pointer;';
-      bI.textContent = 'Inactive';
-      bI.addEventListener('click', function(){ adminUpdateSignalStatus(sig.id, 'closed'); });
-      var bD = document.createElement('button');
-      bD.style.cssText = 'flex:1;padding:7px;background:rgba(255,30,60,0.08);border:1px solid rgba(255,30,60,0.15);border-radius:7px;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;';
-      bD.textContent = 'Delete';
-      bD.addEventListener('click', function(){ adminDeleteSignal(sig.id); });
-      btnRow.appendChild(bA); btnRow.appendChild(bI); btnRow.appendChild(bD);
-      card.appendChild(btnRow);
-      el.appendChild(card);
-    });
-  } catch(e) {
-    el.innerHTML = '<div style="padding:12px;color:var(--red);">Error: ' + (e.message||'Failed') + '</div>';
+function openAcademyCategory(cat){
+  var lessons=_academyData.filter(function(l){return l.category===cat;});
+  var meta=_academyCategoryMeta[cat]||{label:cat};
+  var catView=document.getElementById('academy-categories');
+  if(catView)catView.style.display='none';
+  var lessonsView=document.getElementById('academy-lessons');
+  if(!lessonsView){
+    var content=document.getElementById('academy-content');
+    lessonsView=document.createElement('div');lessonsView.id='academy-lessons';
+    if(content)content.appendChild(lessonsView);
   }
+  lessonsView.style.display='block';
+  var levelColors={beginner:'var(--green)',intermediate:'var(--amber)',advanced:'var(--red)'};
+  lessonsView.innerHTML=''; var _lb=document.createElement('button');_lb.style.cssText='background:transparent;border:none;color:var(--red);font-size:13px;font-weight:700;cursor:pointer;padding:0;margin-bottom:16px;display:flex;align-items:center;gap:6px;';_lb.innerHTML='<i class="ti ti-arrow-left"></i> Back';_lb.addEventListener('click',function(){lessonsView.style.display='none';document.getElementById('academy-categories').style.display='block';});lessonsView.appendChild(_lb);var _lt=document.createElement('div');_lt.style.cssText='font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);margin-bottom:14px;';_lt.textContent=meta.label;lessonsView.appendChild(_lt);
+  if(!lessons.length){lessonsView.innerHTML+='<div class="empty-state" style="padding:20px;">No lessons here yet</div>';return;}
+  lessons.forEach(function(lesson){
+    var card=document.createElement('div');card.style.cssText='padding:13px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:10px;cursor:pointer;';
+    card.innerHTML='<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><div style="flex:1;font-size:13px;font-weight:700;color:var(--text);">'+lesson.title+'</div><div style="font-size:9px;font-weight:700;padding:2px 8px;border-radius:4px;color:'+(levelColors[lesson.level]||'var(--text3)')+';background:rgba(255,255,255,0.05);">'+(lesson.level||'beginner').toUpperCase()+'</div></div><div style="font-size:11px;color:var(--text3);line-height:1.5;">'+(lesson.content||'').substring(0,80)+(lesson.content&&lesson.content.length>80?'...':'')+'</div>'+(lesson.video_url?'<div style="margin-top:8px;font-size:11px;color:#4D9EFF;display:flex;align-items:center;gap:4px;"><i class="ti ti-player-play"></i> Video included</div>':'');
+    card.addEventListener('click',function(){openAcademyLesson(lesson,lessonsView);});
+    lessonsView.appendChild(card);
+  });
 }
 
-async function adminUpdateSignalStatus(sigId, newStatus) {
-  try {
-    var res = await db.from('signals').update({status: newStatus}).eq('id', sigId);
-    if(res.error) throw res.error;
-    loadAdminSignals();
-  } catch(e) { alert('Error: ' + (e.message||'Could not update')); }
+function openAcademyLesson(lesson,lessonsView){
+  if(lessonsView)lessonsView.style.display='none';
+  var detailView=document.getElementById('academy-detail');
+  if(!detailView){var content=document.getElementById('academy-content');detailView=document.createElement('div');detailView.id='academy-detail';if(content)content.appendChild(detailView);}
+  detailView.style.display='block';
+  var levelColors={beginner:'var(--green)',intermediate:'var(--amber)',advanced:'var(--red)'};
+  detailView.innerHTML='';
+  var _db=document.createElement('button');_db.style.cssText='background:transparent;border:none;color:var(--red);font-size:13px;font-weight:700;cursor:pointer;padding:0;margin-bottom:16px;display:flex;align-items:center;gap:6px;';_db.innerHTML='<i class="ti ti-arrow-left"></i> Back';_db.addEventListener('click',function(){detailView.style.display='none';if(lessonsView)lessonsView.style.display='block';});detailView.appendChild(_db);
+  var _dc=document.createElement('div');
+  _dc.innerHTML=
+    '<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;"><div style="flex:1;font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);">'+lesson.title+'</div><div style="font-size:9px;font-weight:700;padding:3px 8px;border-radius:5px;color:'+(levelColors[lesson.level]||'var(--text3)')+';background:rgba(255,255,255,0.06);">'+lesson.level.toUpperCase()+'</div></div>'+
+    (lesson.video_url?'<div style="margin-bottom:14px;background:var(--bg3);border-radius:10px;overflow:hidden;"><a href="'+lesson.video_url+'" target="_blank" style="display:flex;align-items:center;gap:10px;padding:13px;text-decoration:none;"><div style="width:40px;height:40px;border-radius:8px;background:rgba(255,30,60,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ti ti-player-play" style="color:var(--red);font-size:18px;"></i></div><div><div style="font-size:13px;font-weight:700;color:var(--text);">Watch Video</div><div style="font-size:11px;color:var(--text3);">Tap to open</div></div></a></div>':'')+
+    '<div style="font-size:13px;color:var(--text2);line-height:1.9;white-space:pre-wrap;">'+(lesson.content||'')+'</div>';
+  detailView.appendChild(_dc);
 }
 
-async function adminDeleteSignal(sigId) {
-  if(!confirm('Delete this signal permanently?')) return;
-  try {
-    await db.from('signals').delete().eq('id', sigId);
-    loadAdminSignals();
-  } catch(e) { alert('Error: ' + (e.message||'Could not delete')); }
+// ── ANALYST SIGNALS MANAGEMENT ────────────────────────────────────
+var _analystAllSignals=[];
+async function loadAnalystSignals(){
+  var container=document.getElementById('analyst-signals-list');if(!container)return;
+  container.innerHTML='<div class="empty-state" style="padding:24px;"><i class="ti ti-loader"></i>Loading...</div>';
+  try{
+    var q2=db.from('signals').select('*').order('created_at',{ascending:false}).limit(50);if(currentUser&&currentUser.id)q2=q2.eq('analyst_id',currentUser.id);
+    var res=await q2;if(res.error)throw res.error;
+    _analystAllSignals=res.data||[];renderAnalystSignals(_analystAllSignals);
+  }catch(e){container.innerHTML='<div class="empty-state" style="padding:24px;color:var(--red);">Error: '+(e.message||'Failed')+'</div>';}
 }
+function renderAnalystSignals(signals){
+  var container=document.getElementById('analyst-signals-list');if(!container)return;
+  if(!signals||!signals.length){container.innerHTML='<div class="empty-state" style="padding:24px;"><i class="ti ti-broadcast"></i>No signals yet.</div>';return;}
+  container.innerHTML='';
+  signals.forEach(function(sig){
+    var dir=(sig.direction||'BUY').toLowerCase();
+    var isActive=sig.status==='active';
+    var statusColor=isActive?'var(--green)':sig.status==='closed'?'var(--amber)':'var(--text3)';
+    var card=document.createElement('div');card.style.cssText='background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:13px;margin-bottom:10px;';
+    var topRow=document.createElement('div');topRow.style.cssText='display:flex;align-items:center;gap:10px;margin-bottom:10px;';
+    topRow.innerHTML='<div style="width:38px;height:38px;border-radius:10px;background:'+(dir==='buy'?'rgba(0,200,122,0.12)':'rgba(255,30,60,0.1)')+';display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;">'+(dir==='buy'?'📈':'📉')+'</div><div style="flex:1;min-width:0;"><div style="font-size:14px;font-weight:800;color:var(--text);">'+(sig.pair||'--')+'</div><div style="font-size:11px;color:var(--text3);margin-top:1px;">'+timeAgo(sig.created_at)+' · '+(sig.timeframe||'H4')+'</div></div><div style="padding:4px 10px;border-radius:6px;font-family:Orbitron,sans-serif;font-size:10px;font-weight:800;background:'+(dir==='buy'?'rgba(0,200,122,0.12)':'rgba(255,30,60,0.1)')+';color:'+(dir==='buy'?'var(--green)':'var(--red)')+';">'+(sig.direction||'BUY')+'</div><div style="margin-left:6px;padding:4px 10px;border-radius:6px;font-size:10px;font-weight:700;color:'+statusColor+';">'+(isActive?'ACTIVE':sig.status==='closed'?'INACTIVE':'INACTIVE').toUpperCase()+'</div>';
+    card.appendChild(topRow);
+    var lvlRow=document.createElement('div');lvlRow.style.cssText='display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px;';
+    lvlRow.innerHTML='<div style="background:var(--bg3);border-radius:7px;padding:7px;"><div style="font-size:9px;color:var(--text3);letter-spacing:.5px;margin-bottom:2px;">ENTRY</div><div style="font-size:11px;font-weight:700;color:var(--text);">'+(sig.entry_from||'--')+'-'+(sig.entry_to||'--')+'</div></div><div style="background:var(--bg3);border-radius:7px;padding:7px;"><div style="font-size:9px;color:var(--text3);letter-spacing:.5px;margin-bottom:2px;">SL</div><div style="font-size:12px;font-weight:700;color:var(--red);">'+(sig.sl||'--')+'</div></div><div style="background:var(--bg3);border-radius:7px;padding:7px;"><div style="font-size:9px;color:var(--text3);letter-spacing:.5px;margin-bottom:2px;">TP</div><div style="font-size:12px;font-weight:700;color:var(--green);">'+(sig.tp1||'--')+'</div></div>';
+    card.appendChild(lvlRow);
+    var btnRow=document.createElement('div');btnRow.style.cssText='display:flex;gap:6px;';
+    function makeBtn(label,action){var b=document.createElement('button');b.textContent=label;b.style.cssText=(action==='delete'?'padding:8px 14px;':'flex:1;padding:8px;')+(action==='active'?'background:rgba(0,200,122,0.1);border:1px solid rgba(0,200,122,0.2);border-radius:8px;color:var(--green);':action==='inactive'?'background:rgba(255,176,32,0.1);border:1px solid rgba(255,176,32,0.2);border-radius:8px;color:var(--amber);':action==='edit'?'background:rgba(77,158,255,0.1);border:1px solid rgba(77,158,255,0.2);border-radius:8px;color:#4D9EFF;':'background:rgba(255,30,60,0.08);border:1px solid rgba(255,30,60,0.2);border-radius:8px;color:var(--red);')+'font-size:11px;font-weight:700;cursor:pointer;';
+    b.addEventListener('click',function(){if(action==='active')setSignalStatus(sig.id,'active');else if(action==='inactive')setSignalStatus(sig.id,'closed');else if(action==='edit')openEditSignal(sig.id);else if(action==='delete')deleteAnalystSignal(sig.id);});return b;}
+    btnRow.appendChild(makeBtn('Active','active'));btnRow.appendChild(makeBtn('Inactive','inactive'));btnRow.appendChild(makeBtn('Edit','edit'));btnRow.appendChild(makeBtn('Delete','delete'));
+    card.appendChild(btnRow);container.appendChild(card);
+  });
+}
+function filterAnalystSignals(filter,btn){
+  document.querySelectorAll('.analyst-sig-filter').forEach(function(b){b.classList.remove('active');b.style.background='var(--surface)';b.style.borderColor='var(--border)';b.style.color='var(--text2)';});
+  if(btn){btn.classList.add('active');btn.style.background='rgba(255,30,60,0.12)';btn.style.borderColor='rgba(255,30,60,0.3)';btn.style.color='var(--red)';}
+  if(filter==='all')renderAnalystSignals(_analystAllSignals);
+  else renderAnalystSignals(_analystAllSignals.filter(function(s){return s.status===filter||(filter==='closed'&&s.status==='closed');}));
+}
+async function setSignalStatus(sigId,newStatus){
+  try{var res=await db.from('signals').update({status:newStatus}).eq('id',sigId);if(res.error)throw res.error;_analystAllSignals=_analystAllSignals.map(function(s){return s.id===sigId?Object.assign({},s,{status:newStatus}):s;});renderAnalystSignals(_analystAllSignals);}
+  catch(e){alert('Error: '+(e.message||'Could not update status'));}
+}
+async function deleteAnalystSignal(sigId){
+  if(!confirm('Delete this signal?'))return;
+  try{var res=await db.from('signals').delete().eq('id',sigId);if(res.error)throw res.error;_analystAllSignals=_analystAllSignals.filter(function(s){return s.id!==sigId;});renderAnalystSignals(_analystAllSignals);}
+  catch(e){alert('Error: '+(e.message||'Could not delete signal'));}
+}
+function openEditSignal(sigId){
+  var sig=_analystAllSignals.find(function(s){return s.id===sigId;});if(!sig)return;
+  document.getElementById('edit-sig-id').value=sigId;document.getElementById('edit-sig-pair').value=sig.pair||'';document.getElementById('edit-sig-direction').value=sig.direction||'BUY';document.getElementById('edit-sig-entry-from').value=sig.entry_from||'';document.getElementById('edit-sig-entry-to').value=sig.entry_to||'';document.getElementById('edit-sig-sl').value=sig.sl||'';document.getElementById('edit-sig-tp1').value=sig.tp1||'';document.getElementById('edit-sig-tp2').value=sig.tp2||'';document.getElementById('edit-sig-timeframe').value=sig.timeframe||'H4';document.getElementById('edit-sig-strength').value=sig.strength||75;document.getElementById('edit-sig-strength-val').textContent=(sig.strength||75)+'%';document.getElementById('edit-sig-commentary').value=sig.commentary||'';
+  setEditDirection((sig.direction||'BUY').toLowerCase());
+  document.getElementById('edit-sig-error').style.display='none';document.getElementById('edit-sig-success').style.display='none';
+  document.getElementById('analyst-edit-popup').style.display='flex';
+}
+function closeAnalystEditPopup(){document.getElementById('analyst-edit-popup').style.display='none';}
+function setEditDirection(dir){
+  document.getElementById('edit-sig-direction').value=dir.toUpperCase();
+  var b=document.getElementById('edit-dir-buy'),s=document.getElementById('edit-dir-sell');
+  if(dir==='buy'){b.style.background='rgba(0,200,122,0.12)';b.style.color='var(--green)';b.style.border='1px solid rgba(0,200,122,0.25)';s.style.background='var(--surface)';s.style.color='var(--text2)';s.style.border='1px solid var(--border)';}
+  else{s.style.background='rgba(255,30,60,0.1)';s.style.color='var(--red)';s.style.border='1px solid rgba(255,30,60,0.25)';b.style.background='var(--surface)';b.style.color='var(--text2)';b.style.border='1px solid var(--border)';}
+}
+async function handleUpdateSignal(){
+  var sigId=document.getElementById('edit-sig-id').value,pair=document.getElementById('edit-sig-pair').value,direction=document.getElementById('edit-sig-direction').value,ef=document.getElementById('edit-sig-entry-from').value,et=document.getElementById('edit-sig-entry-to').value,sl=document.getElementById('edit-sig-sl').value,tp1=document.getElementById('edit-sig-tp1').value,tp2=document.getElementById('edit-sig-tp2').value,tf=document.getElementById('edit-sig-timeframe').value,strength=document.getElementById('edit-sig-strength').value,commentary=document.getElementById('edit-sig-commentary').value;
+  var errEl=document.getElementById('edit-sig-error'),sucEl=document.getElementById('edit-sig-success');errEl.style.display='none';sucEl.style.display='none';
+  if(!pair||!ef||!et||!sl||!tp1){errEl.textContent='Please fill all required fields';errEl.style.display='block';return;}
+  try{
+    var res=await db.from('signals').update({pair,direction,entry_from:parseFloat(ef),entry_to:parseFloat(et),sl:parseFloat(sl),tp1:parseFloat(tp1),tp2:tp2?parseFloat(tp2):null,timeframe:tf,strength:parseInt(strength),commentary,updated_at:new Date().toISOString()}).eq('id',sigId);
+    if(res.error)throw res.error;
+    _analystAllSignals=_analystAllSignals.map(function(s){return s.id===sigId?Object.assign({},s,{pair,direction,entry_from:parseFloat(ef),entry_to:parseFloat(et),sl:parseFloat(sl),tp1:parseFloat(tp1),timeframe:tf,strength:parseInt(strength),commentary}):s;});
+    sucEl.textContent='Signal updated!';sucEl.style.display='block';setTimeout(function(){closeAnalystEditPopup();renderAnalystSignals(_analystAllSignals);},1500);
+  }catch(e){errEl.textContent='Error: '+(e.message||'Could not update');errEl.style.display='block';}
+}
+function loadAnalystScreen(user){var nameEl=document.querySelector('#screen-analyst .app-header-name');if(nameEl&&user)nameEl.textContent=user.name||user.username||'ANALYST';setTimeout(loadAnalystSignals,500);}
+document.addEventListener('DOMContentLoaded',function(){var saved=sessionStorage.getItem('mob_user');if(saved){try{currentUser=JSON.parse(saved);routeUser(currentUser);if(currentUser&&currentUser.role==='analyst')setTimeout(loadAnalystSignals,500);}catch(e){showScreen('screen-auth');}}else{showScreen('screen-auth');}});
 
 </script>
 </body>
