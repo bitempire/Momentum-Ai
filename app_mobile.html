@@ -3915,7 +3915,8 @@ function switchTab(tab) {
   var content = document.getElementById('app-content');
   if(content) content.scrollTop = 0;
   if(tab==='dashboard') { loadLivePrices(); }
-  if(tab==='charts') initTVChart();
+  if(tab==='charts') { initTVChart(); startChartPriceRefresh(); }
+  else { stopChartPriceRefresh(); }
   if(tab==='signals') loadSignalsFeed();
   if(tab==='more'&&currentUser&&currentUser.role==='admin') loadAdminUsers();
 }
@@ -4228,9 +4229,11 @@ async function loadChartData() {
     _candleSeries.setData(candles);
     _lwChart.timeScale().fitContent();
 
-    // Update price display
+    // Update price from last candle immediately
     var last = candles[candles.length - 1];
     if(last) updateChartPrice(last.close);
+    // Then fetch true live price
+    fetchChartLivePrice();
 
   } catch(e) {
     console.warn('Chart data fetch failed:', e.message);
@@ -4243,8 +4246,12 @@ function updateChartPrice(price) {
   if(el && price) {
     el.textContent = price > 1000
       ? price.toLocaleString('en', {maximumFractionDigits:2})
-      : price.toFixed(4);
+      : price.toFixed(5);
+    el.style.color = 'var(--text)';
   }
+  // Also update symbol label
+  var symEl = document.getElementById('chart-symbol-label');
+  if(symEl) symEl.textContent = currentPair || 'XAUUSD';
 }
 
 function showDemoChart() {
@@ -5520,6 +5527,51 @@ function loadJournalTradesTable(trades) {
       '<div style="text-align:right;"><div style="font-size:13px;font-weight:800;color:' + (pnl>=0?'var(--green)':'var(--red)') + ';">' + (pnl>=0?'+':'') + pnl.toFixed(0) + '</div><div style="font-size:10px;color:var(--text3);">' + (trade.status||'closed') + '</div></div>';
     el.appendChild(row);
   });
+}
+
+
+// ── CHART LIVE PRICE REFRESH ─────────────────────────────────────────
+var _chartPriceTimer = null;
+
+function startChartPriceRefresh() {
+  stopChartPriceRefresh();
+  fetchChartLivePrice(); // immediate
+  _chartPriceTimer = setInterval(fetchChartLivePrice, 10000); // every 10s
+}
+
+function stopChartPriceRefresh() {
+  if(_chartPriceTimer) { clearInterval(_chartPriceTimer); _chartPriceTimer = null; }
+}
+
+async function fetchChartLivePrice() {
+  if(!TWELVE_DATA_KEY || TWELVE_DATA_KEY === 'YOUR_TWELVE_DATA_KEY') return;
+  var sym = CHART_SYMBOL_MAP[currentPair] || currentPair;
+  try {
+    var url = 'https://api.twelvedata.com/price?symbol=' +
+              encodeURIComponent(sym) + '&apikey=' + TWELVE_DATA_KEY;
+    var res  = await fetch(url);
+    var data = await res.json();
+    if(data.price) {
+      var price = parseFloat(data.price);
+      updateChartPrice(price);
+      // Also update the last candle on the chart
+      if(_candleSeries && _lwChart) {
+        var now = Math.floor(Date.now() / 1000);
+        // Get last bar and update its close
+        try {
+          _candleSeries.update({
+            time:  now - (now % 3600), // round to hour
+            open:  price,
+            high:  price,
+            low:   price,
+            close: price
+          });
+        } catch(e) {} // silent if time issues
+      }
+    }
+  } catch(e) {
+    console.warn('Chart price fetch failed:', e.message);
+  }
 }
 
 </script>
