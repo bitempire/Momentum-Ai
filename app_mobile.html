@@ -4806,11 +4806,17 @@ async function loadAdminTickets() {
         '<div style="font-size:11px;color:var(--text2);margin-bottom:10px;">' + (t.message||'').substring(0,100) + '...</div>';
       // Reply form
       var replyDiv = document.createElement('div');
-      replyDiv.innerHTML = '<div style="display:flex;gap:6px;">' +
+      replyDiv.innerHTML = '<div style="display:flex;gap:6px;margin-bottom:6px;">' +
         '<input id="reply-' + t.id + '" class="auth-input" type="text" placeholder="Type reply..." style="flex:1;padding:8px 10px;font-size:12px;">' +
-        '<button style="padding:8px 12px;background:var(--grad);border:none;border-radius:8px;color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;flex-shrink:0;">Reply</button>' +
+        '<button class="reply-btn-' + t.id + '" style="padding:8px 12px;background:var(--grad);border:none;border-radius:8px;color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;flex-shrink:0;">Reply</button>' +
+        '</div>' +
+        '<div style="display:flex;gap:6px;">' +
+        '<button class="done-btn-' + t.id + '" style="flex:1;padding:7px;background:rgba(0,200,122,0.1);border:1px solid rgba(0,200,122,0.2);border-radius:7px;color:var(--green);font-size:11px;font-weight:700;cursor:pointer;">' + (t.status==='done'?'Reopen':'Mark Done') + '</button>' +
+        '<button class="del-btn-' + t.id + '" style="flex:1;padding:7px;background:rgba(255,30,60,0.08);border:1px solid rgba(255,30,60,0.15);border-radius:7px;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;">Delete</button>' +
         '</div>';
-      replyDiv.querySelector('button').addEventListener('click', function() { adminReplyTicket(t.id); });
+      replyDiv.querySelector('.reply-btn-' + t.id).addEventListener('click', function() { adminReplyTicket(t.id); });
+      replyDiv.querySelector('.done-btn-' + t.id).addEventListener('click', function() { adminToggleTicketDone(t.id, t.status); });
+      replyDiv.querySelector('.del-btn-' + t.id).addEventListener('click', function() { adminDeleteTicket(t.id); });
       div.appendChild(replyDiv);
       el.appendChild(div);
     });
@@ -5409,6 +5415,25 @@ async function adminDeleteSig(id){
     if(r.error)throw r.error;
     loadAdminSignals();
   }catch(e){alert('Delete failed: '+(e.message||'Unknown error'));}
+}
+
+
+async function adminDeleteTicket(id) {
+  if(!confirm('Delete this ticket permanently?')) return;
+  try {
+    var r = await db.from('support_tickets').delete().eq('id', id);
+    if(r.error) throw r.error;
+    loadAdminTickets();
+  } catch(e) { alert('Delete failed: ' + (e.message||'Unknown error')); }
+}
+
+async function adminToggleTicketDone(id, currentStatus) {
+  var newStatus = currentStatus === 'done' ? 'open' : 'done';
+  try {
+    var r = await db.from('support_tickets').update({status: newStatus}).eq('id', id);
+    if(r.error) throw r.error;
+    loadAdminTickets();
+  } catch(e) { alert('Error: ' + (e.message||'Unknown error')); }
 }
 
 </script>
