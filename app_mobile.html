@@ -160,6 +160,65 @@ select.auth-input {
   font-weight: 800;
   color: #fff;
 }
+.app-header-switcher {
+  display: flex; align-items: center; gap: 5px;
+  padding: 5px 9px; border-radius: 7px; cursor: pointer;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.14);
+  font-size: 12px; font-weight: 700; color: var(--text);
+  font-family: 'Sora', sans-serif; letter-spacing: 0.3px;
+}
+.app-header-switcher.open { border-color: rgba(255,30,60,0.55); background: rgba(255,30,60,0.10); }
+.app-header-switcher .ti { font-size: 13px; color: var(--text2); }
+.app-header-avatar { cursor: pointer; }
+.hdr-dd-backdrop { position: fixed; inset: 0; z-index: 998; display: none; }
+.hdr-dd-backdrop.show { display: block; }
+.hdr-dd {
+  position: absolute; top: calc(100% + 6px); z-index: 1000;
+  background: #13111c; border: 0.5px solid rgba(255,255,255,0.10);
+  border-radius: 12px; overflow: hidden; min-width: 210px;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.55); display: none;
+}
+.hdr-dd.show { display: block; }
+#acct-dropdown { right: 56px; }
+#avatar-dropdown { right: 14px; min-width: 200px; }
+.hdr-dd-head {
+  padding: 9px 13px 7px; font-size: 10px; letter-spacing: 0.6px;
+  text-transform: uppercase; color: var(--text3); font-family: 'Sora', sans-serif;
+}
+.acct-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 13px; cursor: pointer;
+  border-top: 0.5px solid rgba(255,255,255,0.06);
+}
+.acct-row:hover { background: rgba(255,255,255,0.03); }
+.acct-row.active { background: rgba(255,30,60,0.09); }
+.acct-row .acct-id { font-size: 13px; font-weight: 700; color: var(--text); }
+.acct-row .acct-sv { font-size: 11px; color: var(--text2); margin-top: 2px; }
+.acct-row .ti { color: var(--red); font-size: 16px; }
+.acct-add {
+  display: flex; align-items: center; gap: 8px;
+  padding: 11px 13px; cursor: pointer; color: var(--red);
+  font-size: 13px; font-weight: 700;
+  border-top: 0.5px solid rgba(255,255,255,0.06);
+}
+.acct-add:hover { background: rgba(255,30,60,0.06); }
+.avtr-user { display: flex; align-items: center; gap: 11px; padding: 13px; }
+.avtr-badge {
+  display: inline-flex; align-items: center; gap: 4px; margin-top: 4px;
+  padding: 3px 8px; border-radius: 5px;
+  background: rgba(255,30,60,0.12); border: 1px solid rgba(255,30,60,0.3);
+  font-family: 'Orbitron', sans-serif; font-size: 9px; font-weight: 700;
+  letter-spacing: 1px; color: var(--red);
+}
+.avtr-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 11px 13px; cursor: pointer; font-size: 13px; color: var(--text);
+  border-top: 0.5px solid rgba(255,255,255,0.06);
+}
+.avtr-item:hover { background: rgba(255,255,255,0.03); }
+.avtr-item .ti { font-size: 17px; color: var(--text2); }
+.avtr-item.danger, .avtr-item.danger .ti { color: var(--red); }
 .app-header-title {
   font-family: 'Orbitron', sans-serif;
   font-size: 13px;
@@ -1329,9 +1388,15 @@ select.auth-input {
     </div>
     <div id="app-header-title-center" class="app-header-title" style="display:none;"></div>
     <div class="app-header-right">
-      <div class="app-header-badge"><i class="ti ti-crown" style="font-size:11px;"></i>PREMIUM</div>
-      <div class="app-header-avatar" id="header-avatar">AD</div>
+      <div class="app-header-switcher" id="header-switcher" onclick="toggleAcctDropdown(event)">
+        <span id="header-switcher-id">--</span>
+        <i class="ti ti-chevron-down"></i>
+      </div>
+      <div class="app-header-avatar" id="header-avatar" onclick="toggleAvatarDropdown(event)">AD</div>
     </div>
+    <div class="hdr-dd-backdrop" id="hdr-dd-backdrop" onclick="closeHeaderDropdowns()"></div>
+    <div class="hdr-dd" id="acct-dropdown"></div>
+    <div class="hdr-dd" id="avatar-dropdown"></div>
   </div>
 
   <!-- MAIN CONTENT AREA -->
@@ -4163,6 +4228,117 @@ function enterApp(user) {
   initTVChart();
   setTimeout(function() { drawGrowthChart(); drawEmotionChart(); loadSavedProfilePhoto(); }, 800);
   setTimeout(function() { checkMT5ConnectionNotification(); }, 1200);
+  loadActiveAccount();
+}
+
+// ── MULTI-ACCOUNT: HEADER SWITCHER (Pass 1, header-only) ──
+let activeAccount = null;
+window._userAccounts = [];
+
+async function loadActiveAccount() {
+  try {
+    if(!currentUser || !currentUser.id) { renderHeaderSwitcher(); return; }
+    var res = await db.from('mt5_accounts').select('*').eq('user_id', currentUser.id);
+    var accts = (res && res.data) ? res.data : [];
+    window._userAccounts = accts;
+    var activeId = currentUser.active_account_id;
+    activeAccount = accts.filter(function(a){return a.id===activeId;})[0]
+                 || accts.filter(function(a){return a.mt5_connected||a.connection_status==='connected';})[0]
+                 || accts[0] || null;
+  } catch(e) { console.warn('loadActiveAccount:', e.message); }
+  renderHeaderSwitcher();
+}
+
+function renderHeaderSwitcher() {
+  var idEl = document.getElementById('header-switcher-id');
+  if(!idEl) return;
+  idEl.textContent = (activeAccount && activeAccount.mt5_id) ? activeAccount.mt5_id : 'Connect';
+}
+
+function connectedAccounts() {
+  return (window._userAccounts||[]).filter(function(a){
+    return a.mt5_connected || a.connection_status==='connected';
+  });
+}
+
+function closeHeaderDropdowns() {
+  ['acct-dropdown','avatar-dropdown'].forEach(function(id){
+    var el=document.getElementById(id); if(el) el.classList.remove('show');
+  });
+  var bd=document.getElementById('hdr-dd-backdrop'); if(bd) bd.classList.remove('show');
+  var sw=document.getElementById('header-switcher'); if(sw) sw.classList.remove('open');
+}
+
+function toggleAcctDropdown(e) {
+  if(e) e.stopPropagation();
+  var dd=document.getElementById('acct-dropdown'); if(!dd) return;
+  var wasOpen = dd.classList.contains('show');
+  closeHeaderDropdowns();
+  if(wasOpen) return;
+  var conn = connectedAccounts();
+  var html = '<div class="hdr-dd-head">Connected accounts</div>';
+  if(conn.length===0) {
+    html += '<div class="acct-row" style="cursor:default;"><span class="acct-id" style="color:var(--text2);font-weight:600;">No account connected</span></div>';
+  } else {
+    conn.forEach(function(a){
+      var isAct = activeAccount && a.id===activeAccount.id;
+      html += '<div class="acct-row'+(isAct?' active':'')+'" onclick="selectAccount(\''+a.id+'\')">'+
+                '<span><span class="acct-id">'+(a.mt5_id||'--')+'</span>'+
+                '<div class="acct-sv">'+(a.mt5_server||a.broker||'')+'</div></span>'+
+                (isAct?'<i class="ti ti-check"></i>':'')+
+              '</div>';
+    });
+  }
+  html += '<div class="acct-add" onclick="closeHeaderDropdowns();showSubScreen(\'sub-profile\');"><i class="ti ti-plus" style="font-size:16px;"></i>Connect account</div>';
+  dd.innerHTML = html;
+  dd.classList.add('show');
+  var bd=document.getElementById('hdr-dd-backdrop'); if(bd) bd.classList.add('show');
+  var sw=document.getElementById('header-switcher'); if(sw) sw.classList.add('open');
+}
+
+async function selectAccount(accId) {
+  var a = (window._userAccounts||[]).filter(function(x){return x.id===accId;})[0];
+  if(!a) { closeHeaderDropdowns(); return; }
+  if(activeAccount && a.id===activeAccount.id) { closeHeaderDropdowns(); return; }
+  closeHeaderDropdowns();
+  var ok = window.confirm('Switch to account '+(a.mt5_id||'')+'?\n\nAll trading, journal and charts will use this account.');
+  if(!ok) return;
+  try {
+    var res = await db.from('users').update({active_account_id:accId}).eq('id',currentUser.id);
+    if(res && res.error) { alert('Could not switch account: '+res.error.message); return; }
+    currentUser.active_account_id = accId;
+    try { sessionStorage.setItem('mob_user', JSON.stringify(currentUser)); } catch(e2) {}
+    activeAccount = a;
+    renderHeaderSwitcher();
+  } catch(e) { alert('Could not switch account: '+e.message); }
+}
+
+function toggleAvatarDropdown(e) {
+  if(e) e.stopPropagation();
+  var dd=document.getElementById('avatar-dropdown'); if(!dd) return;
+  var wasOpen = dd.classList.contains('show');
+  closeHeaderDropdowns();
+  if(wasOpen) return;
+  var name = (currentUser && (currentUser.name||currentUser.username)) || 'Trader';
+  var initials = name.substring(0,2).toUpperCase();
+  var role = currentUser ? currentUser.role : '';
+  var isPremium = !(role==='admin'||role==='analyst'||role==='sub_admin');
+  var roleLbl = role==='admin' ? 'Super Admin' : role==='analyst' ? 'Analyst' : role==='sub_admin' ? 'Sub Admin' : '';
+  var topRight = isPremium
+    ? '<span class="avtr-badge"><i class="ti ti-crown" style="font-size:10px;"></i>PREMIUM</span>'
+    : '<span class="avtr-badge" style="background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.15);color:var(--text2);font-family:Sora,sans-serif;">'+roleLbl+'</span>';
+  var html = '<div class="avtr-user">'+
+      '<div class="app-header-avatar" style="width:38px;height:38px;font-size:13px;">'+initials+'</div>'+
+      '<div style="display:flex;flex-direction:column;">'+
+        '<span style="font-size:14px;font-weight:700;color:var(--text);">'+name+'</span>'+
+        topRight+
+      '</div></div>'+
+    '<div class="avtr-item" onclick="closeHeaderDropdowns();showSubScreen(\'sub-profile\');"><i class="ti ti-user"></i>Profile</div>'+
+    '<div class="avtr-item" onclick="closeHeaderDropdowns();showSubScreen(\'sub-support\');"><i class="ti ti-headset"></i>Customer Support</div>'+
+    '<div class="avtr-item danger" onclick="closeHeaderDropdowns();handleLogout();"><i class="ti ti-logout"></i>Sign Out</div>';
+  dd.innerHTML = html;
+  dd.classList.add('show');
+  var bd=document.getElementById('hdr-dd-backdrop'); if(bd) bd.classList.add('show');
 }
 
 // ── GROWTH CHART ──
