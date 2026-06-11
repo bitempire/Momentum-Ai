@@ -2621,8 +2621,13 @@ select.auth-input {
             <option value="mt5">MT5 Platform Guide</option>
           </select>
         </div>
+        <input type="hidden" id="academy-edit-id" value="">
         <div class="auth-field"><label class="auth-label">Title</label><input id="academy-title" class="auth-input" type="text" placeholder="Lesson title"></div>
-        <div class="auth-field"><label class="auth-label">Content</label><textarea id="academy-content" class="auth-input" rows="5" style="resize:vertical;" placeholder="Write lesson content..."></textarea></div>
+        <div class="auth-field"><label class="auth-label">Summary <span style="color:var(--text3);font-size:10px;">(shown on lesson card)</span></label><input id="academy-summary" class="auth-input" type="text" placeholder="Short one-line summary"></div>
+        <div class="auth-field"><label class="auth-label">Article Sections</label>
+          <div id="academy-sections"></div>
+          <button type="button" onclick="addAcademySection()" style="width:100%;padding:10px;background:rgba(77,158,255,0.1);border:1px solid rgba(77,158,255,0.2);border-radius:9px;color:#4D9EFF;font-size:12px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;margin-top:4px;">+ Add Section</button>
+        </div>
         <div class="auth-field"><label class="auth-label">Video URL <span style="color:var(--text3);font-size:10px;">(optional)</span></label><input id="academy-video" class="auth-input" type="text" placeholder="https://youtube.com/..."></div>
         <div class="auth-field"><label class="auth-label">Level</label>
           <select id="academy-level" class="auth-input">
@@ -2633,7 +2638,8 @@ select.auth-input {
         </div>
         <div id="academy-error" class="error-msg"></div>
         <div id="academy-success" class="success-msg"></div>
-        <button class="red-btn" onclick="handlePublishAcademy()">PUBLISH LESSON</button>
+        <button class="red-btn" id="academy-publish-btn" onclick="handlePublishAcademy()">PUBLISH LESSON</button>
+        <button type="button" id="academy-cancel-edit" onclick="resetAcademyForm()" style="display:none;width:100%;margin-top:8px;padding:11px;background:transparent;border:1px solid var(--border);border-radius:12px;color:var(--text2);font-size:12px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;">Cancel Edit</button>
       </div>
       <div class="section-card" style="margin-top:14px;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
@@ -5267,19 +5273,36 @@ async function adminDeleteSig(id){
 // ADMIN: ACADEMY
 // ═══════════════════════════════════════════════════
 async function handlePublishAcademy(){
-  var cat=document.getElementById('academy-category').value,title=document.getElementById('academy-title').value.trim(),content=document.getElementById('academy-content').value.trim(),video=document.getElementById('academy-video').value.trim(),level=document.getElementById('academy-level').value;
+  var cat=document.getElementById('academy-category').value;
+  var title=document.getElementById('academy-title').value.trim();
+  var summary=document.getElementById('academy-summary').value.trim();
+  var video=document.getElementById('academy-video').value.trim();
+  var level=document.getElementById('academy-level').value;
+  var editId=document.getElementById('academy-edit-id').value;
+  var sections=gatherAcademySections();
   var errEl=document.getElementById('academy-error'),sucEl=document.getElementById('academy-success');errEl.style.display='none';sucEl.style.display='none';
-  if(!title||!content){errEl.textContent='Title and content required';errEl.style.display='block';return;}
+  if(!title||!sections.length){errEl.textContent='Title and at least one section are required';errEl.style.display='block';return;}
+  var content=JSON.stringify(sections);
   try{
-    var res=await db.from('academy').insert([{category:cat,title:title,content:content,video_url:video||null,level:level,published:true,created_at:new Date().toISOString()}]);
+    var row={category:cat,title:title,summary:summary||null,content:content,video_url:video||null,level:level,published:true};
+    var res;
+    if(editId){ res=await db.from('academy').update(row).eq('id',editId); }
+    else { row.created_at=new Date().toISOString(); res=await db.from('academy').insert([row]); }
+    if(res.error){
+      delete row.summary;
+      if(editId){ res=await db.from('academy').update(row).eq('id',editId); }
+      else { res=await db.from('academy').insert([row]); }
+    }
     if(res.error)throw res.error;
-    sucEl.textContent='Lesson published!';sucEl.style.display='block';
-    document.getElementById('academy-title').value='';document.getElementById('academy-content').value='';document.getElementById('academy-video').value='';
-    setTimeout(function(){sucEl.style.display='none';loadAdminAcademy();},1500);
+    sucEl.textContent=editId?'Lesson updated!':'Lesson published!';sucEl.style.display='block';
+    resetAcademyForm();
+    setTimeout(function(){sucEl.style.display='none';loadAdminAcademy();},1200);
   }catch(e){errEl.textContent='Error: '+(e.message||'Failed');errEl.style.display='block';}
 }
 async function loadAdminAcademy(){
   var el=document.getElementById('admin-academy-list');if(!el)return;
+  var secWrap=document.getElementById('academy-sections');
+  if(secWrap && !secWrap.children.length) addAcademySection();
   el.innerHTML='<div style="padding:12px;color:var(--text2);font-size:12px;">Loading...</div>';
   try{
     var res=await db.from('academy').select('*').order('created_at',{ascending:false});if(res.error)throw res.error;
@@ -5287,13 +5310,91 @@ async function loadAdminAcademy(){
     var lc={beginner:'var(--green)',intermediate:'var(--amber)',advanced:'var(--red)'};
     el.innerHTML='';
     res.data.forEach(function(ls){
+      var snippet=ls.summary || academySnippet(ls.content);
       var card=document.createElement('div');card.style.cssText='padding:11px 13px;background:var(--bg3);border-radius:9px;margin-bottom:8px;border:1px solid var(--border);';
-      card.innerHTML='<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><div style="flex:1;font-size:13px;font-weight:700;color:var(--text);">'+ls.title+'</div><div style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;background:rgba(255,30,60,0.1);color:var(--red);">'+ls.category+'</div><div style="font-size:9px;padding:2px 7px;border-radius:4px;color:'+(lc[ls.level]||'var(--text3)')+';background:rgba(255,255,255,0.05);">'+ls.level+'</div></div><div style="font-size:11px;color:var(--text3);margin-bottom:8px;">'+ls.content.substring(0,80)+(ls.content.length>80?'...':'')+'</div>';
-      var b=document.createElement('button');b.style.cssText='width:100%;padding:7px;background:rgba(255,30,60,0.08);border:1px solid rgba(255,30,60,0.15);border-radius:7px;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;';b.textContent='Delete';b.addEventListener('click',function(){deleteLesson(ls.id);});card.appendChild(b);el.appendChild(card);
+      card.innerHTML='<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><div style="flex:1;font-size:13px;font-weight:700;color:var(--text);">'+ls.title+'</div><div style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;background:rgba(255,30,60,0.1);color:var(--red);">'+ls.category+'</div><div style="font-size:9px;padding:2px 7px;border-radius:4px;color:'+(lc[ls.level]||'var(--text3)')+';background:rgba(255,255,255,0.05);">'+(ls.level||'')+'</div></div><div style="font-size:11px;color:var(--text3);margin-bottom:8px;">'+snippet+'</div>';
+      var row=document.createElement('div');row.style.cssText='display:flex;gap:6px;';
+      var eb=document.createElement('button');eb.style.cssText='flex:1;padding:7px;background:rgba(77,158,255,0.1);border:1px solid rgba(77,158,255,0.2);border-radius:7px;color:#4D9EFF;font-size:11px;font-weight:700;cursor:pointer;';eb.textContent='Edit';eb.addEventListener('click',function(){editAcademyLesson(ls);});
+      var db2=document.createElement('button');db2.style.cssText='flex:1;padding:7px;background:rgba(255,30,60,0.08);border:1px solid rgba(255,30,60,0.15);border-radius:7px;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;';db2.textContent='Delete';db2.addEventListener('click',function(){deleteLesson(ls.id);});
+      row.appendChild(eb);row.appendChild(db2);card.appendChild(row);el.appendChild(card);
     });
   }catch(e){el.innerHTML='<div style="padding:12px;color:var(--red);">Error: '+(e.message||'failed')+'</div>';}
 }
 async function deleteLesson(id){if(!confirm('Delete lesson?'))return;var r=await db.from('academy').delete().eq('id',id);if(r.error){alert(r.error.message);return;}loadAdminAcademy();}
+
+function academyParseSections(content){
+  if(!content) return [];
+  try{ var p=JSON.parse(content); if(Array.isArray(p)) return p; }catch(e){}
+  return [{h:'',d:content}];
+}
+function academySnippet(content){
+  var secs=academyParseSections(content);
+  var txt=secs.map(function(s){return (s.h?s.h+' ':'')+(s.d||'');}).join(' ').trim();
+  return txt.substring(0,80)+(txt.length>80?'...':'');
+}
+function addAcademySection(h,d){
+  var wrap=document.getElementById('academy-sections');if(!wrap)return;
+  var block=document.createElement('div');
+  block.className='academy-section-block';
+  block.style.cssText='border:1px solid var(--border);border-radius:9px;padding:10px;margin-bottom:10px;background:var(--bg3);';
+  block.innerHTML='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;"><span style="font-size:10px;color:var(--text3);">Sub-header <span style="color:var(--red);">(red, optional)</span></span><button type="button" class="acad-sec-remove" style="background:transparent;border:none;color:var(--text3);font-size:18px;cursor:pointer;line-height:1;padding:0 4px;">&times;</button></div><input class="acad-sec-h auth-input" type="text" placeholder="Sub-header (optional)" style="margin-bottom:8px;"><span style="font-size:10px;color:var(--text3);display:block;margin-bottom:6px;">Detail (white)</span><textarea class="acad-sec-d auth-input" rows="3" style="resize:vertical;" placeholder="Detail text..."></textarea>';
+  wrap.appendChild(block);
+  if(h) block.querySelector('.acad-sec-h').value=h;
+  if(d) block.querySelector('.acad-sec-d').value=d;
+  block.querySelector('.acad-sec-remove').addEventListener('click',function(){ block.remove(); if(!wrap.children.length) addAcademySection(); });
+}
+function gatherAcademySections(){
+  var blocks=document.querySelectorAll('#academy-sections .academy-section-block');
+  var out=[];
+  blocks.forEach(function(bl){
+    var h=bl.querySelector('.acad-sec-h').value.trim();
+    var d=bl.querySelector('.acad-sec-d').value.trim();
+    if(h||d) out.push({h:h,d:d});
+  });
+  return out;
+}
+function resetAcademyForm(){
+  var ei=document.getElementById('academy-edit-id'); if(ei) ei.value='';
+  var t=document.getElementById('academy-title'); if(t) t.value='';
+  var sm=document.getElementById('academy-summary'); if(sm) sm.value='';
+  var v=document.getElementById('academy-video'); if(v) v.value='';
+  var wrap=document.getElementById('academy-sections'); if(wrap) wrap.innerHTML='';
+  addAcademySection();
+  var pb=document.getElementById('academy-publish-btn'); if(pb) pb.textContent='PUBLISH LESSON';
+  var ce=document.getElementById('academy-cancel-edit'); if(ce) ce.style.display='none';
+}
+function editAcademyLesson(ls){
+  var ei=document.getElementById('academy-edit-id'); if(ei) ei.value=ls.id;
+  var ct=document.getElementById('academy-category'); if(ct) ct.value=ls.category||'basics';
+  var t=document.getElementById('academy-title'); if(t) t.value=ls.title||'';
+  var sm=document.getElementById('academy-summary'); if(sm) sm.value=ls.summary||'';
+  var v=document.getElementById('academy-video'); if(v) v.value=ls.video_url||'';
+  var lv=document.getElementById('academy-level'); if(lv) lv.value=ls.level||'beginner';
+  var wrap=document.getElementById('academy-sections'); if(wrap) wrap.innerHTML='';
+  var secs=academyParseSections(ls.content);
+  if(!secs.length) secs=[{h:'',d:''}];
+  secs.forEach(function(s){ addAcademySection(s.h||'', s.d||''); });
+  var pb=document.getElementById('academy-publish-btn'); if(pb) pb.textContent='UPDATE LESSON';
+  var ce=document.getElementById('academy-cancel-edit'); if(ce) ce.style.display='block';
+  var form=document.getElementById('atab-content-academy'); if(form && form.scrollIntoView) form.scrollIntoView({behavior:'smooth'});
+}
+var _acDone=[];
+function loadAcademyDone(){
+  _acDone=[];
+  if(currentUser && currentUser.academy_done){
+    try{ var p=JSON.parse(currentUser.academy_done); if(Array.isArray(p)) _acDone=p; }catch(e){}
+  }
+}
+function isAcademyDone(id){ return _acDone.indexOf(id) > -1 || _acDone.indexOf(String(id)) > -1; }
+async function markAcademyDone(id){
+  if(isAcademyDone(id)) return;
+  _acDone.push(id);
+  if(currentUser){
+    currentUser.academy_done=JSON.stringify(_acDone);
+    sessionStorage.setItem('mob_user',JSON.stringify(currentUser));
+    try{ await db.from('users').update({academy_done:currentUser.academy_done}).eq('id',currentUser.id); }catch(e){}
+  }
+}
 
 // ═══════════════════════════════════════════════════
 // USER: ACADEMY
@@ -5302,6 +5403,7 @@ var _acData=[];
 var _acMeta={basics:{label:'Trading Basics',icon:'ti-book',color:'rgba(255,176,32,0.12)',ic:'var(--amber)'},technical:{label:'Technical Analysis',icon:'ti-chart-line',color:'rgba(77,158,255,0.12)',ic:'#4D9EFF'},fundamental:{label:'Fundamental Analysis',icon:'ti-world',color:'rgba(0,200,122,0.12)',ic:'var(--green)'},risk:{label:'Risk Management',icon:'ti-shield',color:'rgba(255,30,60,0.12)',ic:'var(--red)'},psychology:{label:'Trading Psychology',icon:'ti-brain',color:'rgba(168,85,247,0.12)',ic:'#a855f7'},strategy:{label:'Strategies',icon:'ti-target',color:'rgba(255,176,32,0.12)',ic:'var(--amber)'},mt5:{label:'MT5 Platform Guide',icon:'ti-device-desktop',color:'rgba(77,158,255,0.12)',ic:'#4D9EFF'}};
 
 async function loadAcademy(){
+  loadAcademyDone();
   var cv=document.getElementById('academy-categories');if(!cv)return;
   cv.innerHTML='<div class="empty-state" style="padding:20px;"><i class="ti ti-loader"></i> Loading...</div>';
   var lv=document.getElementById('academy-lessons');if(lv)lv.style.display='none';
@@ -5333,15 +5435,23 @@ function openAcademyCategory(cat){
   var content=document.getElementById('academy-content');
   var lv=document.getElementById('academy-lessons');
   if(!lv){lv=document.createElement('div');lv.id='academy-lessons';if(content)content.appendChild(lv);}
+  var dvOld=document.getElementById('academy-detail'); if(dvOld) dvOld.style.display='none';
   lv.style.display='block';lv.innerHTML='';
   var bb=document.createElement('button');bb.style.cssText='background:transparent;border:none;color:var(--red);font-size:13px;font-weight:700;cursor:pointer;padding:0;margin-bottom:16px;display:flex;align-items:center;gap:6px;';bb.innerHTML='<i class="ti ti-arrow-left"></i> Back';bb.addEventListener('click',function(){lv.style.display='none';if(cv)cv.style.display='block';});lv.appendChild(bb);
   var td=document.createElement('div');td.style.cssText='font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);margin-bottom:14px;';td.textContent=m.label;lv.appendChild(td);
-  if(!lessons.length){lv.innerHTML+='<div class="empty-state" style="padding:20px;">No lessons here yet</div>';return;}
+  if(!lessons.length){var em=document.createElement('div');em.className='empty-state';em.style.padding='20px';em.textContent='No lessons here yet';lv.appendChild(em);return;}
   var lc={beginner:'var(--green)',intermediate:'var(--amber)',advanced:'var(--red)'};
   lessons.forEach(function(ls){
-    var card=document.createElement('div');card.style.cssText='padding:13px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:10px;cursor:pointer;';
-    card.innerHTML='<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><div style="flex:1;font-size:13px;font-weight:700;color:var(--text);">'+ls.title+'</div><div style="font-size:9px;font-weight:700;padding:2px 8px;border-radius:4px;color:'+(lc[ls.level]||'var(--text3)')+';background:rgba(255,255,255,0.05);">'+(ls.level||'beginner').toUpperCase()+'</div></div><div style="font-size:11px;color:var(--text3);line-height:1.5;">'+(ls.content||'').substring(0,80)+(ls.content&&ls.content.length>80?'...':'')+'</div>'+(ls.video_url?'<div style="margin-top:6px;font-size:11px;color:#4D9EFF;display:flex;align-items:center;gap:4px;"><i class="ti ti-player-play"></i> Video</div>':'');
-    card.addEventListener('click',function(){openAcademyLesson(ls,lv);});lv.appendChild(card);
+    var done=isAcademyDone(ls.id);
+    var summary=ls.summary || academySnippet(ls.content);
+    var card=document.createElement('div');card.style.cssText='padding:13px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:10px;';
+    card.innerHTML='<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><div style="flex:1;font-size:13px;font-weight:700;color:var(--text);">'+ls.title+'</div><div style="font-size:9px;font-weight:700;padding:2px 8px;border-radius:4px;color:'+(lc[ls.level]||'var(--text3)')+';background:rgba(255,255,255,0.05);">'+(ls.level||'beginner').toUpperCase()+'</div></div><div style="font-size:11px;color:var(--text3);line-height:1.5;margin-bottom:10px;">'+summary+'</div>';
+    var btn=document.createElement('button');
+    if(done){ btn.textContent='\u2713 Done'; btn.style.cssText='width:100%;padding:9px;background:rgba(0,200,122,0.12);border:1px solid rgba(0,200,122,0.25);border-radius:8px;color:var(--green);font-size:12px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;'; }
+    else { btn.textContent='Read Now'; btn.style.cssText='width:100%;padding:9px;background:linear-gradient(135deg,#FF1E3C,#C40024);border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;'; }
+    btn.addEventListener('click',function(){openAcademyLesson(ls,lv);});
+    card.appendChild(btn);
+    lv.appendChild(card);
   });
 }
 function openAcademyLesson(ls,lv){
@@ -5352,10 +5462,28 @@ function openAcademyLesson(ls,lv){
   dv.style.display='block';dv.innerHTML='';
   var bb=document.createElement('button');bb.style.cssText='background:transparent;border:none;color:var(--red);font-size:13px;font-weight:700;cursor:pointer;padding:0;margin-bottom:16px;display:flex;align-items:center;gap:6px;';bb.innerHTML='<i class="ti ti-arrow-left"></i> Back';bb.addEventListener('click',function(){dv.style.display='none';if(lv)lv.style.display='block';});dv.appendChild(bb);
   var lc={beginner:'var(--green)',intermediate:'var(--amber)',advanced:'var(--red)'};
-  var dc=document.createElement('div');
-  dc.innerHTML='<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;"><div style="flex:1;font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);">'+ls.title+'</div><div style="font-size:9px;padding:3px 8px;border-radius:5px;color:'+(lc[ls.level]||'var(--text3)')+';background:rgba(255,255,255,0.06);">'+(ls.level||'beginner').toUpperCase()+'</div></div>'+(ls.video_url?'<div style="margin-bottom:14px;background:var(--bg3);border-radius:10px;overflow:hidden;"><a href="'+ls.video_url+'" target="_blank" style="display:flex;align-items:center;gap:10px;padding:13px;text-decoration:none;"><div style="width:40px;height:40px;border-radius:8px;background:rgba(255,30,60,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ti ti-player-play" style="color:var(--red);font-size:18px;"></i></div><div><div style="font-size:13px;font-weight:700;color:var(--text);">Watch Video</div><div style="font-size:11px;color:var(--text3);">Tap to open</div></div></a></div>':'')+
-  '<div style="font-size:13px;color:var(--text2);line-height:1.9;white-space:pre-wrap;">'+(ls.content||'')+'</div>';
-  dv.appendChild(dc);
+  var head=document.createElement('div');
+  head.innerHTML='<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;"><div style="flex:1;font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);">'+ls.title+'</div><div style="font-size:9px;padding:3px 8px;border-radius:5px;color:'+(lc[ls.level]||'var(--text3)')+';background:rgba(255,255,255,0.06);">'+(ls.level||'beginner').toUpperCase()+'</div></div>'+(ls.video_url?'<div style="margin-bottom:14px;background:var(--bg3);border-radius:10px;overflow:hidden;"><a href="'+ls.video_url+'" target="_blank" style="display:flex;align-items:center;gap:10px;padding:13px;text-decoration:none;"><div style="width:40px;height:40px;border-radius:8px;background:rgba(255,30,60,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ti ti-player-play" style="color:var(--red);font-size:18px;"></i></div><div><div style="font-size:13px;font-weight:700;color:var(--text);">Watch Video</div><div style="font-size:11px;color:var(--text3);">Tap to open</div></div></a></div>':'');
+  dv.appendChild(head);
+  var secs=academyParseSections(ls.content);
+  secs.forEach(function(s){
+    if(s.h){ var hh=document.createElement('div');hh.style.cssText='font-family:Orbitron,sans-serif;font-size:13px;font-weight:800;color:var(--red);margin:16px 0 6px;';hh.textContent=s.h;dv.appendChild(hh); }
+    if(s.d){ var dd=document.createElement('div');dd.style.cssText='font-size:13px;color:var(--text2);line-height:1.9;white-space:pre-wrap;margin-bottom:6px;';dd.textContent=s.d;dv.appendChild(dd); }
+  });
+  var doneStyleA='width:100%;margin-top:22px;padding:13px;border:none;border-radius:12px;font-family:Orbitron,sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;cursor:pointer;';
+  var doneDone='background:rgba(0,200,122,0.15);color:var(--green);';
+  var doneTodo='background:linear-gradient(135deg,#FF1E3C,#C40024);color:#fff;box-shadow:0 6px 20px rgba(255,30,60,0.3);';
+  var doneBtn=document.createElement('button');
+  var isDone=isAcademyDone(ls.id);
+  doneBtn.style.cssText=doneStyleA+(isDone?doneDone:doneTodo);
+  doneBtn.textContent=isDone?'\u2713 COMPLETED':'MARK AS DONE';
+  doneBtn.addEventListener('click',function(){
+    if(isAcademyDone(ls.id)) return;
+    markAcademyDone(ls.id);
+    doneBtn.textContent='\u2713 COMPLETED';
+    doneBtn.style.cssText=doneStyleA+doneDone;
+  });
+  dv.appendChild(doneBtn);
 }
 
 // ═══════════════════════════════════════════════════
