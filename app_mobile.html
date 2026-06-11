@@ -1476,8 +1476,8 @@ select.auth-input {
               <div class="trade-meta">Entry: 2,318.40 · 0.1 lot · 2h 14m</div>
             </div>
             <div>
-              <div class="trade-pnl win">+$284</div>
-              <div style="font-size:10px;color:var(--text3);text-align:right;">+142 pts</div>
+              <div class="trade-pnl win">+$284.00</div>
+              <div style="font-size:10px;color:var(--text3);text-align:right;">+142.00 pts</div>
             </div>
           </div>
           <div class="trade-item">
@@ -1487,15 +1487,15 @@ select.auth-input {
               <div class="trade-meta">Entry: 19,842.0 · 0.5 lot · 45m</div>
             </div>
             <div>
-              <div class="trade-pnl win">+$156</div>
-              <div style="font-size:10px;color:var(--text3);text-align:right;">+62 pts</div>
+              <div class="trade-pnl win">+$156.00</div>
+              <div style="font-size:10px;color:var(--text3);text-align:right;">+62.00 pts</div>
             </div>
           </div>
 
         </div>
         <div style="display:flex;justify-content:space-between;padding:10px 0 0;border-top:1px solid var(--border);margin-top:10px;">
           <div style="font-size:11px;color:var(--text2);">Total P&L Today</div>
-          <div style="font-size:13px;font-weight:800;color:var(--green);">+$440</div>
+          <div style="font-size:13px;font-weight:800;color:var(--green);">+$440.00</div>
         </div>
       </div>
 
@@ -1507,17 +1507,17 @@ select.auth-input {
             <div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg3);border-radius:10px;">
               <div style="width:36px;height:36px;border-radius:9px;background:rgba(0,200,122,0.1);display:flex;align-items:center;justify-content:center;font-size:14px;">📈</div>
               <div style="flex:1;"><div style="font-size:13px;font-weight:700;color:var(--text);">XAUUSD BUY</div><div style="font-size:11px;color:var(--text3);">Entry: 2,295 · TP Hit ✓</div></div>
-              <div style="text-align:right;"><div style="font-size:12px;font-weight:800;color:var(--green);">+245 pts</div><div style="font-size:10px;color:var(--text3);">2d ago</div></div>
+              <div style="text-align:right;"><div style="font-size:12px;font-weight:800;color:var(--green);">+245.00 pts</div><div style="font-size:10px;color:var(--text3);">2d ago</div></div>
             </div>
             <div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg3);border-radius:10px;">
               <div style="width:36px;height:36px;border-radius:9px;background:rgba(0,200,122,0.1);display:flex;align-items:center;justify-content:center;font-size:14px;">📈</div>
               <div style="flex:1;"><div style="font-size:13px;font-weight:700;color:var(--text);">NAS100 BUY</div><div style="font-size:11px;color:var(--text3);">Entry: 19,620 · TP Hit ✓</div></div>
-              <div style="text-align:right;"><div style="font-size:12px;font-weight:800;color:var(--green);">+182 pts</div><div style="font-size:10px;color:var(--text3);">3d ago</div></div>
+              <div style="text-align:right;"><div style="font-size:12px;font-weight:800;color:var(--green);">+182.00 pts</div><div style="font-size:10px;color:var(--text3);">3d ago</div></div>
             </div>
             <div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg3);border-radius:10px;">
               <div style="width:36px;height:36px;border-radius:9px;background:rgba(255,30,60,0.08);display:flex;align-items:center;justify-content:center;font-size:14px;">📉</div>
               <div style="flex:1;"><div style="font-size:13px;font-weight:700;color:var(--text);">EURUSD SELL</div><div style="font-size:11px;color:var(--text3);">Entry: 1.0892 · SL Hit ✗</div></div>
-              <div style="text-align:right;"><div style="font-size:12px;font-weight:800;color:var(--red);">-38 pts</div><div style="font-size:10px;color:var(--text3);">4d ago</div></div>
+              <div style="text-align:right;"><div style="font-size:12px;font-weight:800;color:var(--red);">-38.00 pts</div><div style="font-size:10px;color:var(--text3);">4d ago</div></div>
             </div>
           </div>
         </div>
@@ -4454,7 +4454,9 @@ function initTVChart() {
     'symbol=' + sym +
     '&interval=' + tf +
     '&theme=dark' +
-    '&style=1' +
+    '&style=2' +
+    '&disabled_features=' + encodeURIComponent('["create_volume_indicator_by_default"]') +
+    '&overrides=' + encodeURIComponent('{"mainSeriesProperties.lineStyle.color":"#FF1E3C"}') +
     '&locale=en' +
     '&hide_top_toolbar=1' +
     '&hide_legend=1' +
