@@ -5786,22 +5786,18 @@ async function adminToggleTicketDone(id, currentStatus) {
 var _execSelectedOption = '';
 
 async function checkMT5ThenExecute() {
-  if(!currentUser || !db) { alert('MT5 DEBUG v3\nNO currentUser or db'); return; }
-  var cs, mc, creds, dbgErr='none';
-  var dbgId = currentUser.id;
-  var dbgUser = currentUser.username;
+  if(!currentUser || !db) { showNoMT5Warning('disconnected'); return; }
+  var cs, mc, creds;
   try {
     var res = await db.from('users').select('*').eq('id', currentUser.id).single();
-    if(res.error) dbgErr = 'res.error: ' + res.error.message;
     if(res.data) { cs = res.data.connection_status; mc = res.data.mt5_connected; creds = res.data.mt5_credential; }
-  } catch(ex) { dbgErr = 'throw: ' + ((ex && ex.message) || ex); }
+  } catch(ex) {}
   if(cs === undefined && mc === undefined) {
     cs = currentUser.connection_status; mc = currentUser.mt5_connected; creds = currentUser.mt5_credential;
   }
   var blocked   = (cs === 'pending' || cs === 'suspended' || cs === 'rejected');
   var hasCreds  = !!(creds && String(creds).length > 5);
   var isConnected = !blocked && (mc === true || mc === 'true' || mc === 1 || cs === 'connected' || hasCreds);
-  alert('MT5 DEBUG v3\nid = ' + dbgId + '\nusername = ' + dbgUser + '\nerr = ' + dbgErr + '\ncs = ' + cs + '\nmc = ' + mc + '\nhasCreds = ' + hasCreds + '\nisConnected = ' + isConnected);
   if(isConnected) { openExecuteChoicePopup(); }
   else { showNoMT5Warning(cs || 'disconnected'); }
 }
