@@ -1855,6 +1855,18 @@ select.auth-input {
       <div class="sub-title">EA SETTINGS</div>
     </div>
     <div class="sub-content">
+      <!-- Auto-approve trades -->
+      <div class="section-card" style="margin-bottom:10px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div style="flex:1;padding-right:12px;">
+            <div style="font-size:13px;font-weight:700;color:var(--text);">Auto-approve trades</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px;line-height:1.5;">Skip the confirmation prompt and place trades automatically.</div>
+          </div>
+          <div id="auto-approve-toggle" data-on="0" onclick="toggleAutoApprove(this)" style="width:46px;height:26px;border-radius:13px;background:var(--border);position:relative;cursor:pointer;flex-shrink:0;transition:background .2s;">
+            <div id="auto-approve-knob" style="position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;"></div>
+          </div>
+        </div>
+      </div>
       <!-- Lot Size & Risk -->
       <div class="section-card">
         <div class="section-title" style="font-size:13px;margin-bottom:12px;">Lot Size <span>& Risk</span></div>
@@ -4227,6 +4239,7 @@ function showSubScreen(id) {
   if(id==='sub-support') { loadMyTickets(); }
   if(id==='sub-academy') { loadAcademy(); }
   if(id==='sub-profile') { loadProfileMT5(); }
+  if(id==='sub-ea') { setAutoApproveUI(tradeConsentAll()); }
 }
 function hideSubScreen(id) {
   var el = document.getElementById(id);
@@ -5774,27 +5787,28 @@ var _execSelectedOption = '';
 
 async function checkMT5ThenExecute() {
   if(!currentUser || !db) return;
+  var state = 'disconnected';
   try {
-    // Check if user has MT5 credentials saved
-    var res = await db.from('users').select('mt5_credential,mt5_connected').eq('id',currentUser.id).single();
-    var hasMT5 = res.data && res.data.mt5_credential && res.data.mt5_credential.length > 5;
-
-    if(!hasMT5) {
-      // No MT5 — show warning
-      showNoMT5Warning();
-    } else {
-      // MT5 connected — show execution choice
-      openExecuteChoicePopup();
-    }
+    var res = await db.from('users').select('connection_status,mt5_connected').eq('id',currentUser.id).single();
+    if(res.data) state = res.data.connection_status || (res.data.mt5_connected ? 'connected' : 'disconnected');
   } catch(e) {
-    // Fallback — show choice popup anyway
-    openExecuteChoicePopup();
+    state = currentUser.connection_status || (currentUser.mt5_connected ? 'connected' : 'disconnected');
   }
+  if(state === 'connected') { openExecuteChoicePopup(); }
+  else { showNoMT5Warning(state); }
 }
 
-function showNoMT5Warning() {
+function showNoMT5Warning(state) {
   var ex = document.getElementById('no-mt5-warning');
-  if(ex) { ex.style.display = 'flex'; return; }
+  if(ex) ex.remove();
+  var map = {
+    pending:      ['MT5 SETUP IN PROGRESS', "Your MT5 connection is still being set up — this can take up to 24 hours. You'll be notified once it's active.", 'ti-clock', 'var(--amber)'],
+    suspended:    ['MT5 SUSPENDED', 'Your MT5 connection is suspended. Please contact support to restore it.', 'ti-player-pause', 'var(--amber)'],
+    rejected:     ['CONNECTION REJECTED', 'Your MT5 connection was rejected. Please reconnect from your Profile.', 'ti-plug-x', 'var(--red)'],
+    disconnected: ['MT5 NOT CONNECTED', 'Connect your MT5 account in your Profile before executing trades.', 'ti-plug-x', 'var(--amber)']
+  };
+  var m = map[state] || map.disconnected;
+  var goToProfile = (state === 'rejected' || state === 'disconnected');
   var popup = document.createElement('div');
   popup.id = 'no-mt5-warning';
   popup.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);z-index:9200;display:flex;align-items:flex-end;';
@@ -5802,13 +5816,17 @@ function showNoMT5Warning() {
   sheet.style.cssText = 'width:100%;background:var(--bg2);border-radius:20px 20px 0 0;border-top:1px solid var(--border);padding:20px 18px 36px;';
   sheet.innerHTML =
     '<div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px;"></div>' +
-    '<div style="text-align:center;margin-bottom:16px;"><i class="ti ti-plug-x" style="font-size:40px;color:var(--amber);"></i></div>' +
-    '<div style="font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);text-align:center;margin-bottom:8px;">MT5 NOT CONNECTED</div>' +
-    '<div style="font-size:12px;color:var(--text3);text-align:center;margin-bottom:24px;line-height:1.6;">Connect your MT5 account in Smart Tool settings before executing trades.</div>';
+    '<div style="text-align:center;margin-bottom:16px;"><i class="ti ' + m[2] + '" style="font-size:40px;color:' + m[3] + ';"></i></div>' +
+    '<div style="font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);text-align:center;margin-bottom:8px;">' + m[0] + '</div>' +
+    '<div style="font-size:12px;color:var(--text3);text-align:center;margin-bottom:24px;line-height:1.6;">' + m[1] + '</div>';
   var goBtn = document.createElement('button');
-  goBtn.textContent = 'GO TO SMART TOOL';
+  goBtn.textContent = goToProfile ? 'GO TO PROFILE' : 'OK';
   goBtn.style.cssText = 'width:100%;padding:14px;background:var(--grad);border:none;border-radius:12px;color:#fff;font-family:Orbitron,sans-serif;font-size:13px;font-weight:800;letter-spacing:1px;cursor:pointer;margin-bottom:10px;';
-  goBtn.addEventListener('click', function(){ closeTradePopup(); popup.remove(); switchTab('more'); });
+  goBtn.addEventListener('click', function(){
+    popup.remove();
+    if(!goToProfile) return;
+    closeTradePopup(); switchTab('more'); setTimeout(function(){ showSubScreen('sub-profile'); }, 300);
+  });
   var cancelBtn = document.createElement('button');
   cancelBtn.textContent = 'Cancel';
   cancelBtn.style.cssText = 'width:100%;padding:12px;background:transparent;border:1px solid var(--border);border-radius:12px;color:var(--text2);font-size:13px;cursor:pointer;';
@@ -5884,8 +5902,7 @@ function confirmExecution() {
   if(!_execSelectedOption) return;
   closeExecutePopup();
   if(_execSelectedOption === 'instant') {
-    // Execute with default settings
-    executeTrade('smart');
+    requestTradeConsent();
   } else {
     // Navigate to Smart Tool settings
     closeTradePopup();
@@ -5894,6 +5911,67 @@ function confirmExecution() {
       showSubScreen('sub-ea');
     }, 400);
   }
+}
+
+function tradeConsentAll(){
+  return !!(currentUser && (currentUser.trade_consent_all === true || currentUser.trade_consent_all === 'true'));
+}
+async function setTradeConsentAll(val){
+  if(!currentUser) return;
+  currentUser.trade_consent_all = val;
+  sessionStorage.setItem('mob_user', JSON.stringify(currentUser));
+  try{ await db.from('users').update({ trade_consent_all: val }).eq('id', currentUser.id); }catch(e){}
+}
+function requestTradeConsent(){
+  if(tradeConsentAll()){ executeTrade('smart'); return; }
+  openTradeConsentSheet();
+}
+function openTradeConsentSheet(){
+  var ex=document.getElementById('trade-consent-sheet'); if(ex) ex.remove();
+  var popup=document.createElement('div');
+  popup.id='trade-consent-sheet';
+  popup.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);z-index:9300;display:flex;align-items:flex-end;';
+  var sheet=document.createElement('div');
+  sheet.style.cssText='width:100%;background:var(--bg2);border-radius:20px 20px 0 0;border-top:1px solid var(--border);padding:20px 18px 36px;';
+  sheet.innerHTML=
+    '<div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 18px;"></div>'+
+    '<div style="text-align:center;margin-bottom:8px;"><i class="ti ti-alert-triangle" style="font-size:34px;color:var(--amber);"></i></div>'+
+    '<div style="font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);text-align:center;margin-bottom:10px;">TRADE AUTHORIZATION</div>'+
+    '<div style="font-size:12px;color:var(--text3);text-align:center;line-height:1.7;margin-bottom:18px;">By confirming, you authorize Momentum AI to place this trade on your connected MT5 account using your current Smart Tool settings. Trading carries risk of loss, and you remain responsible for your account.</div>'+
+    '<label style="display:flex;align-items:center;gap:10px;padding:11px;background:var(--bg3);border:1px solid var(--border);border-radius:9px;cursor:pointer;margin-bottom:8px;"><input type="checkbox" id="consent-authorize" style="accent-color:var(--red);width:16px;height:16px;flex-shrink:0;"><span style="font-size:12px;color:var(--text2);">I authorize this trade</span></label>'+
+    '<label style="display:flex;align-items:center;gap:10px;padding:11px;background:var(--bg3);border:1px solid var(--border);border-radius:9px;cursor:pointer;margin-bottom:16px;"><input type="checkbox" id="consent-all" style="accent-color:var(--red);width:16px;height:16px;flex-shrink:0;"><span style="font-size:12px;color:var(--text2);">Allow all future trades — do not ask me again</span></label>';
+  var confirmBtn=document.createElement('button');
+  confirmBtn.textContent='CONFIRM & EXECUTE';
+  confirmBtn.style.cssText='width:100%;padding:14px;background:var(--grad);border:none;border-radius:12px;color:#fff;font-family:Orbitron,sans-serif;font-size:13px;font-weight:800;letter-spacing:1px;cursor:pointer;opacity:0.45;pointer-events:none;margin-bottom:10px;';
+  var cancelBtn=document.createElement('button');
+  cancelBtn.textContent='Cancel';
+  cancelBtn.style.cssText='width:100%;padding:12px;background:transparent;border:1px solid var(--border);border-radius:12px;color:var(--text2);font-size:13px;cursor:pointer;';
+  sheet.appendChild(confirmBtn); sheet.appendChild(cancelBtn);
+  popup.appendChild(sheet); document.body.appendChild(popup);
+  var authChk=document.getElementById('consent-authorize');
+  authChk.addEventListener('change',function(){ if(authChk.checked){confirmBtn.style.opacity='1';confirmBtn.style.pointerEvents='auto';}else{confirmBtn.style.opacity='0.45';confirmBtn.style.pointerEvents='none';} });
+  cancelBtn.addEventListener('click',function(){ popup.remove(); });
+  popup.addEventListener('click',function(e){ if(e.target===popup) popup.remove(); });
+  confirmBtn.addEventListener('click',function(){
+    if(!authChk.checked) return;
+    var allowAll=document.getElementById('consent-all').checked;
+    popup.remove();
+    if(allowAll) setTradeConsentAll(true);
+    executeTrade('smart');
+  });
+}
+function setAutoApproveUI(on){
+  var el=document.getElementById('auto-approve-toggle');
+  var knob=document.getElementById('auto-approve-knob');
+  if(!el||!knob) return;
+  el.setAttribute('data-on', on?'1':'0');
+  el.style.background = on ? 'var(--red)' : 'var(--border)';
+  knob.style.left = on ? '23px' : '3px';
+}
+function toggleAutoApprove(el){
+  var on = el.getAttribute('data-on') === '1';
+  setAutoApproveUI(!on);
+  setTradeConsentAll(!on);
 }
 
 // ── LOAD REAL ANALYSTS INTO DROPDOWN ─────────────────────────────────
