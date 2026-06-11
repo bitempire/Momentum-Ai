@@ -1356,9 +1356,9 @@ select.auth-input {
           <canvas class="mkt-spark" data-trend="dn" data-color="#FF1E3C"></canvas>
         </div>
         <div class="mkt-card up">
-          <div class="mkt-sym" id="sym-NAS100">NAS100</div>
-          <div class="mkt-price" id="price-NAS100">19,842</div>
-          <div class="mkt-change" id="change-NAS100" up">▲ +0.52%</div>
+          <div class="mkt-sym" id="sym-DXY">DXY</div>
+          <div class="mkt-price" id="price-DXY">99.50</div>
+          <div class="mkt-change" id="change-DXY" up">▲ +0.52%</div>
           <canvas class="mkt-spark" data-trend="up" data-color="#00c87a"></canvas>
         </div>
         <div class="mkt-card dn">
@@ -1368,9 +1368,9 @@ select.auth-input {
           <canvas class="mkt-spark" data-trend="dn" data-color="#FF1E3C"></canvas>
         </div>
         <div class="mkt-card up">
-          <div class="mkt-sym" id="sym-GBPJPY">GBPJPY</div>
-          <div class="mkt-price" id="price-GBPJPY">192.45</div>
-          <div class="mkt-change" id="change-GBPJPY" up">▲ +0.34%</div>
+          <div class="mkt-sym" id="sym-USOIL">USOIL</div>
+          <div class="mkt-price" id="price-USOIL">64.50</div>
+          <div class="mkt-change" id="change-USOIL" up">▲ +0.34%</div>
           <canvas class="mkt-spark" data-trend="up" data-color="#00c87a"></canvas>
         </div>
       </div>
@@ -4272,7 +4272,7 @@ async function loadDashboardSignals() {
       var dir = sig.direction.toLowerCase();
       return '<div class="dash-sig-item">' +
         '<div class="dash-sig-icon '+dir+'">'+( dir==='buy' ? '📈' : '📉' )+'</div>' +
-        '<div class="dash-sig-info"><div class="dash-sig-pair">'+sig.pair+'</div><div class="dash-sig-entry">'+sig.entry_from+' - '+sig.entry_to+'</div></div>' +
+        '<div class="dash-sig-info"><div class="dash-sig-pair">'+sig.pair+'</div><div class="dash-sig-entry">'+fmtPrice(sig.pair,sig.entry_from)+' - '+fmtPrice(sig.pair,sig.entry_to)+'</div></div>' +
         '<div class="dash-sig-right"><div class="dash-sig-dir '+dir+'">'+sig.direction+'</div><div class="dash-sig-strength">'+sig.strength+'%</div></div>' +
         '</div>';
     }).join('');
@@ -4394,16 +4394,16 @@ function openTradePopup(sigId) {
   currentSignal = window._signalStore[sigId];
   if(!currentSignal) return;
   document.getElementById('popup-title').textContent = currentSignal.pair+' - '+currentSignal.direction;
-  document.getElementById('popup-sub').textContent = 'Entry: '+currentSignal.entry_from+' - '+currentSignal.entry_to+' · SL: '+currentSignal.sl+' · TP: '+currentSignal.tp1;
-  document.getElementById('popup-entry').textContent = currentSignal.entry_to;
-  document.getElementById('popup-sl').textContent = currentSignal.sl;
-  document.getElementById('popup-tp').textContent = currentSignal.tp1;
+  document.getElementById('popup-sub').textContent = 'Entry: '+fmtPrice(currentSignal.pair,currentSignal.entry_from)+' - '+fmtPrice(currentSignal.pair,currentSignal.entry_to)+' · SL: '+fmtPrice(currentSignal.pair,currentSignal.sl)+' · TP: '+fmtPrice(currentSignal.pair,currentSignal.tp1);
+  document.getElementById('popup-entry').textContent = fmtPrice(currentSignal.pair,currentSignal.entry_to);
+  document.getElementById('popup-sl').textContent = fmtPrice(currentSignal.pair,currentSignal.sl);
+  document.getElementById('popup-tp').textContent = fmtPrice(currentSignal.pair,currentSignal.tp1);
   var em = document.getElementById('popup-entry-m');
   var sm = document.getElementById('popup-sl-m');
   var tm = document.getElementById('popup-tp-m');
-  if(em) em.textContent = currentSignal.entry_to;
-  if(sm) sm.textContent = currentSignal.sl;
-  if(tm) tm.textContent = currentSignal.tp1;
+  if(em) em.textContent = fmtPrice(currentSignal.pair,currentSignal.entry_to);
+  if(sm) sm.textContent = fmtPrice(currentSignal.pair,currentSignal.sl);
+  if(tm) tm.textContent = fmtPrice(currentSignal.pair,currentSignal.tp1);
   document.getElementById('trade-success-note').style.display = 'none';
   switchTradeTab('smart');
   document.getElementById('trade-popup').classList.add('active');
@@ -5227,7 +5227,38 @@ function _processTdQueue() {
   }, wait);
 }
 
-var TWELVE_SYMBOLS = {'XAUUSD':'XAU/USD','NAS100':'NDX','BTCUSD':'BTC/USD','GBPJPY':'GBP/JPY'};
+function mktDecimals(pair){
+  var p=(pair||'').toString().toUpperCase();
+  if(p.indexOf('JPY')>=0) return 3;
+  var fx=['EUR','GBP','AUD','NZD','CAD','CHF','USD'];
+  if(p.length===6 && fx.indexOf(p.slice(0,3))>=0 && fx.indexOf(p.slice(3))>=0) return 5;
+  return 2;
+}
+function fmtPrice(pair,val){
+  if(val===null||val===undefined||val==='') return val;
+  var n=parseFloat(val); if(isNaN(n)) return val;
+  var d=mktDecimals(pair);
+  return n.toLocaleString('en',{minimumFractionDigits:d,maximumFractionDigits:d});
+}
+function drawSpark(canvas){
+  if(!canvas) return;
+  var trend=canvas.dataset.trend, color=canvas.dataset.color;
+  var W=canvas.parentElement.clientWidth-24, H=36;
+  canvas.width=W>0?W:120; canvas.height=H;
+  var ctx=canvas.getContext('2d'); ctx.clearRect(0,0,canvas.width,H);
+  var pts=[],v=50;
+  for(var i=0;i<20;i++){ var r=(Math.random()-(trend==='up'?0.35:0.65))*8; v+=r; v=Math.max(8,Math.min(92,v)); pts.push(v); }
+  var mn=Math.min.apply(null,pts),mx=Math.max.apply(null,pts),range=mx-mn||1;
+  var step=canvas.width/(pts.length-1);
+  var grad=ctx.createLinearGradient(0,0,0,H);
+  grad.addColorStop(0,color+'44'); grad.addColorStop(1,color+'00');
+  ctx.beginPath();
+  pts.forEach(function(pt,i){ var x=i*step,y=H-4-((pt-mn)/range)*(H-8); i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); });
+  ctx.strokeStyle=color; ctx.lineWidth=1.5; ctx.stroke();
+  ctx.lineTo(canvas.width,H); ctx.lineTo(0,H); ctx.closePath();
+  ctx.fillStyle=grad; ctx.fill();
+}
+var TWELVE_SYMBOLS = {'XAUUSD':'XAU/USD','DXY':'DXY','BTCUSD':'BTC/USD','USOIL':'WTI/USD'};
 
 async function loadLivePrices() {
   if(!TWELVE_DATA_KEY) return;
@@ -5244,9 +5275,14 @@ async function loadLivePrices() {
       var pEl=document.getElementById('price-'+app);
       var cEl=document.getElementById('change-'+app);
       var sEl=document.getElementById('sym-'+app);
-      if(pEl) pEl.textContent = price>1000 ? price.toLocaleString('en',{maximumFractionDigits:2}) : price.toFixed(4);
+      if(pEl) pEl.textContent = fmtPrice(app, price);
       if(cEl) { cEl.textContent=(isUp?'▲ +':'▼ ')+chg+'%'; cEl.className='mkt-change '+(isUp?'up':'dn'); }
-      if(sEl&&sEl.parentElement) sEl.parentElement.className='mkt-card '+(isUp?'up':'dn');
+      if(sEl&&sEl.parentElement) {
+        var card=sEl.parentElement;
+        card.className='mkt-card '+(isUp?'up':'dn');
+        var spark=card.querySelector('.mkt-spark');
+        if(spark){ spark.dataset.trend=isUp?'up':'dn'; spark.dataset.color=isUp?'#00c87a':'#FF1E3C'; drawSpark(spark); }
+      }
     });
   } catch(e) { console.warn('loadLivePrices:', e.message); }
 }
@@ -5268,8 +5304,8 @@ async function loadJournalData() {
     var now = new Date(), ms = new Date(now.getFullYear(),now.getMonth(),1);
     var monthPnl = trades.filter(function(t){return new Date(t.created_at)>=ms;}).reduce(function(s,t){return s+parseFloat(t.pnl||0);},0);
     var bEl=document.getElementById('journal-balance'), gEl=document.getElementById('journal-growth');
-    if(bEl) bEl.textContent='$'+Math.abs(totalPnl).toLocaleString('en',{maximumFractionDigits:0});
-    if(gEl) { gEl.textContent=(totalPnl>=0?'+':'')+totalPnl.toFixed(0)+' pts'; gEl.style.color=totalPnl>=0?'var(--green)':'var(--red)'; }
+    if(bEl) bEl.textContent='$'+Math.abs(totalPnl).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2});
+    if(gEl) { gEl.textContent=(totalPnl>=0?'+':'')+totalPnl.toFixed(2)+' pts'; gEl.style.color=totalPnl>=0?'var(--green)':'var(--red)'; }
   } catch(e) { console.warn('loadJournalData:', e.message); }
 }
 
@@ -5666,7 +5702,7 @@ function renderAnalystSignals(sigs){
     top.innerHTML='<div style="width:38px;height:38px;border-radius:10px;background:'+(dir==='buy'?'rgba(0,200,122,0.12)':'rgba(255,30,60,0.1)')+';display:flex;align-items:center;justify-content:center;font-size:17px;">'+(dir==='buy'?'📈':'📉')+'</div><div style="flex:1;"><div style="font-size:14px;font-weight:800;color:var(--text);">'+(sig.pair||'--')+'</div><div style="font-size:11px;color:var(--text3);">'+timeAgo(sig.created_at)+' · '+(sig.timeframe||'H4')+'</div></div><div style="padding:4px 10px;border-radius:6px;font-family:Orbitron,sans-serif;font-size:10px;font-weight:800;background:'+(dir==='buy'?'rgba(0,200,122,0.12)':'rgba(255,30,60,0.1)')+';color:'+(dir==='buy'?'var(--green)':'var(--red)')+';">'+(sig.direction||'BUY')+'</div><div style="margin-left:4px;padding:4px 10px;border-radius:6px;font-size:10px;font-weight:700;color:'+(isAct?'var(--green)':'var(--amber)')+';">'+(isAct?'ACTIVE':'INACTIVE')+'</div>';
     card.appendChild(top);
     var lv=document.createElement('div');lv.style.cssText='display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px;';
-    lv.innerHTML='<div style="background:var(--bg3);border-radius:7px;padding:7px;"><div style="font-size:9px;color:var(--text3);margin-bottom:2px;">ENTRY</div><div style="font-size:11px;font-weight:700;">'+(sig.entry_from||'--')+'-'+(sig.entry_to||'--')+'</div></div><div style="background:var(--bg3);border-radius:7px;padding:7px;"><div style="font-size:9px;color:var(--text3);margin-bottom:2px;">SL</div><div style="font-size:12px;font-weight:700;color:var(--red);">'+(sig.sl||'--')+'</div></div><div style="background:var(--bg3);border-radius:7px;padding:7px;"><div style="font-size:9px;color:var(--text3);margin-bottom:2px;">TP</div><div style="font-size:12px;font-weight:700;color:var(--green);">'+(sig.tp1||'--')+'</div></div>';
+    lv.innerHTML='<div style="background:var(--bg3);border-radius:7px;padding:7px;"><div style="font-size:9px;color:var(--text3);margin-bottom:2px;">ENTRY</div><div style="font-size:11px;font-weight:700;">'+fmtPrice(sig.pair,(sig.entry_from||'--'))+'-'+fmtPrice(sig.pair,(sig.entry_to||'--'))+'</div></div><div style="background:var(--bg3);border-radius:7px;padding:7px;"><div style="font-size:9px;color:var(--text3);margin-bottom:2px;">SL</div><div style="font-size:12px;font-weight:700;color:var(--red);">'+fmtPrice(sig.pair,(sig.sl||'--'))+'</div></div><div style="background:var(--bg3);border-radius:7px;padding:7px;"><div style="font-size:9px;color:var(--text3);margin-bottom:2px;">TP</div><div style="font-size:12px;font-weight:700;color:var(--green);">'+fmtPrice(sig.pair,(sig.tp1||'--'))+'</div></div>';
     card.appendChild(lv);
     var br=document.createElement('div');br.style.cssText='display:flex;gap:6px;';
     function mkBtn(txt,style,fn){var b=document.createElement('button');b.textContent=txt;b.style.cssText=style+'font-size:11px;font-weight:700;cursor:pointer;';b.addEventListener('click',fn);return b;}
@@ -5762,7 +5798,7 @@ async function loadAdminSignals(){
     res.data.forEach(function(sig){
       var dir=(sig.direction||'BUY').toLowerCase(),isAct=sig.status==='active';
       var card=document.createElement('div');card.style.cssText='padding:11px 13px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;';
-      card.innerHTML='<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><div style="font-size:14px;font-weight:800;color:var(--text);flex:1;">'+(sig.pair||'--')+'</div><div style="padding:3px 9px;border-radius:5px;font-size:9px;font-weight:800;background:'+(dir==='buy'?'rgba(0,200,122,0.12)':'rgba(255,30,60,0.1)')+';color:'+(dir==='buy'?'var(--green)':'var(--red)')+';">'+(sig.direction||'BUY')+'</div><div style="padding:3px 9px;border-radius:5px;font-size:9px;font-weight:800;color:'+(isAct?'var(--green)':'var(--amber)')+';">'+(isAct?'ACTIVE':'INACTIVE')+'</div></div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px;"><div style="background:var(--bg3);border-radius:6px;padding:6px;"><div style="font-size:9px;color:var(--text3);margin-bottom:2px;">ENTRY</div><div style="font-size:11px;font-weight:700;">'+(sig.entry_from||'--')+'-'+(sig.entry_to||'--')+'</div></div><div style="background:var(--bg3);border-radius:6px;padding:6px;"><div style="font-size:9px;color:var(--text3);margin-bottom:2px;">SL</div><div style="font-size:11px;font-weight:700;color:var(--red);">'+(sig.sl||'--')+'</div></div><div style="background:var(--bg3);border-radius:6px;padding:6px;"><div style="font-size:9px;color:var(--text3);margin-bottom:2px;">TP</div><div style="font-size:11px;font-weight:700;color:var(--green);">'+(sig.tp1||'--')+'</div></div></div><div style="font-size:10px;color:var(--text3);margin-bottom:8px;">'+(sig.analyst_name||'Analyst')+' · '+timeAgo(sig.created_at)+'</div>';
+      card.innerHTML='<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><div style="font-size:14px;font-weight:800;color:var(--text);flex:1;">'+(sig.pair||'--')+'</div><div style="padding:3px 9px;border-radius:5px;font-size:9px;font-weight:800;background:'+(dir==='buy'?'rgba(0,200,122,0.12)':'rgba(255,30,60,0.1)')+';color:'+(dir==='buy'?'var(--green)':'var(--red)')+';">'+(sig.direction||'BUY')+'</div><div style="padding:3px 9px;border-radius:5px;font-size:9px;font-weight:800;color:'+(isAct?'var(--green)':'var(--amber)')+';">'+(isAct?'ACTIVE':'INACTIVE')+'</div></div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px;"><div style="background:var(--bg3);border-radius:6px;padding:6px;"><div style="font-size:9px;color:var(--text3);margin-bottom:2px;">ENTRY</div><div style="font-size:11px;font-weight:700;">'+fmtPrice(sig.pair,(sig.entry_from||'--'))+'-'+fmtPrice(sig.pair,(sig.entry_to||'--'))+'</div></div><div style="background:var(--bg3);border-radius:6px;padding:6px;"><div style="font-size:9px;color:var(--text3);margin-bottom:2px;">SL</div><div style="font-size:11px;font-weight:700;color:var(--red);">'+fmtPrice(sig.pair,(sig.sl||'--'))+'</div></div><div style="background:var(--bg3);border-radius:6px;padding:6px;"><div style="font-size:9px;color:var(--text3);margin-bottom:2px;">TP</div><div style="font-size:11px;font-weight:700;color:var(--green);">'+fmtPrice(sig.pair,(sig.tp1||'--'))+'</div></div></div><div style="font-size:10px;color:var(--text3);margin-bottom:8px;">'+(sig.analyst_name||'Analyst')+' · '+timeAgo(sig.created_at)+'</div>';
       var br=document.createElement('div');br.style.cssText='display:flex;gap:6px;';
       var bA=document.createElement('button');bA.style.cssText='flex:1;padding:7px;background:rgba(0,200,122,0.1);border:1px solid rgba(0,200,122,0.2);border-radius:7px;color:var(--green);font-size:11px;font-weight:700;cursor:pointer;';bA.textContent='Active';bA.addEventListener('click',function(){adminUpdateSig(sig.id,'active');});
       var bI=document.createElement('button');bI.style.cssText='flex:1;padding:7px;background:rgba(255,176,32,0.1);border:1px solid rgba(255,176,32,0.2);border-radius:7px;color:var(--amber);font-size:11px;font-weight:700;cursor:pointer;';bI.textContent='Inactive';bI.addEventListener('click',function(){adminUpdateSig(sig.id,'closed');});
