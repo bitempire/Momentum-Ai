@@ -1259,12 +1259,12 @@ select.auth-input {
     <!-- Register Form -->
     <div id="form-register" style="display:none;">
       <div class="auth-title">Get Started</div>
-      <div class="auth-sub">Register your AFT MT5 account</div>
+      <div class="auth-sub">Register your Momentum AI Account</div>
       <div id="reg-error" class="error-msg"></div>
       <div id="reg-success" class="success-msg"></div>
       <div class="auth-field">
         <label class="auth-label">MT5 Account ID</label>
-        <input id="reg-mt5" class="auth-input" type="text" placeholder="Your AFTT Markets MT5 ID">
+        <input id="reg-mt5" class="auth-input" type="text" placeholder="Your Asia Future Trading MT5 ID">
       </div>
       <div class="auth-field">
         <label class="auth-label">Full Name</label>
@@ -1280,20 +1280,19 @@ select.auth-input {
       </div>
       <div class="auth-field">
         <label class="auth-label">Password</label>
-        <input id="reg-password" class="auth-input" type="password" placeholder="Create a strong password">
+        <div style="position:relative;">
+        <input id="reg-password" class="auth-input" type="password" placeholder="Create a strong password" style="padding-right:44px;">
+        <button type="button" onclick="toggleRegPw()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:18px;padding:0;line-height:1;"><i class="ti ti-eye" id="reg-pw-eye"></i></button>
+        </div>
       </div>
       <div class="auth-field">
-        <label class="auth-label">Broker</label>
+        <label class="auth-label">Server</label>
         <select id="reg-broker" class="auth-input">
-          <option value="">Select your broker</option>
-          <option value="AFTT Markets">AFTT Markets</option>
-          <option value="IC Markets">IC Markets</option>
-          <option value="Exness">Exness</option>
-          <option value="Other">Other</option>
+          <option value="AsiaFutureTrading-Server">AsiaFutureTrading-Server</option>
         </select>
       </div>
       <button class="auth-btn" id="btn-register" onclick="handleRegister()">CREATE ACCOUNT</button>
-      <button class="ghost-btn" onclick="window.open('https://www.afttmarkets.com','_blank')">Register with AFT First →</button>
+      <button class="ghost-btn" onclick="window.open('https://www.afttmarkets.com','_blank')">Create Account with AFT →</button>
       <div class="auth-switch" style="margin-top:12px;">Have an account? <span onclick="switchAuthTab('signin')">Sign In →</span></div>
     </div>
   </div>
@@ -1408,11 +1407,15 @@ select.auth-input {
         </select>
         <select id="filter-timeframe" class="auth-input" style="flex:1;min-width:80px;padding:9px 12px;font-size:12px;" onchange="applySignalFilters()">
           <option value="">Timeframe</option>
+          <option value="M1">M1</option>
+          <option value="M5">M5</option>
           <option value="M15">M15</option>
           <option value="M30">M30</option>
           <option value="H1">H1</option>
           <option value="H4">H4</option>
           <option value="D1">D1</option>
+          <option value="W1">Weekly</option>
+          <option value="MN1">Monthly</option>
         </select>
       </div>
       <div id="mob-signals-list">
@@ -1451,6 +1454,8 @@ select.auth-input {
         <button class="chart-tf active" onclick="switchTF('60',this)">1H</button>
         <button class="chart-tf" onclick="switchTF('240',this)">4H</button>
         <button class="chart-tf" onclick="switchTF('D',this)">1D</button>
+        <button class="chart-tf" onclick="switchTF('W',this)">1W</button>
+        <button class="chart-tf" onclick="switchTF('M',this)">1M</button>
       </div>
       <div id="mob-tv-container" style="width:100%;min-height:320px;border-radius:10px;overflow:hidden;"></div>
 
@@ -3041,11 +3046,15 @@ select.auth-input {
         <div>
           <div style="font-size:9px;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px;">Timeframe</div>
           <select id="scan-tf" class="auth-input" style="font-size:12px;padding:8px 10px;">
+            <option value="M1">M1</option>
+            <option value="M5">M5</option>
             <option value="M15">M15</option>
             <option value="M30">M30</option>
             <option value="H1">H1</option>
             <option value="H4" selected>H4</option>
             <option value="D1">1 Day</option>
+            <option value="W1">Weekly</option>
+            <option value="MN1">Monthly</option>
           </select>
         </div>
       </div>
@@ -3490,11 +3499,15 @@ select.auth-input {
         <div class="auth-field">
           <label class="auth-label">Timeframe</label>
           <select id="sig-timeframe" class="auth-input">
+            <option value="M1">M1</option>
+            <option value="M5">M5</option>
             <option value="M15">M15</option>
             <option value="M30">M30</option>
             <option value="H1">H1</option>
             <option value="H4" selected>H4</option>
             <option value="D1">D1</option>
+            <option value="W1">Weekly</option>
+            <option value="MN1">Monthly</option>
           </select>
         </div>
       </div>
@@ -3546,7 +3559,7 @@ select.auth-input {
       </div>
       <div class="form-row">
         <div class="auth-field"><label class="auth-label">Take Profit 2</label><input id="edit-sig-tp2" class="auth-input" type="number" step="any"></div>
-        <div class="auth-field"><label class="auth-label">Timeframe</label><select id="edit-sig-timeframe" class="auth-input"><option value="M15">M15</option><option value="M30">M30</option><option value="H1">H1</option><option value="H4" selected>H4</option><option value="D1">D1</option></select></div>
+        <div class="auth-field"><label class="auth-label">Timeframe</label><select id="edit-sig-timeframe" class="auth-input"><option value="M1">M1</option><option value="M5">M5</option><option value="M15">M15</option><option value="M30">M30</option><option value="H1">H1</option><option value="H4" selected>H4</option><option value="D1">D1</option><option value="W1">Weekly</option><option value="MN1">Monthly</option></select></div>
       </div>
       <div class="auth-field"><label class="auth-label">Strength: <span id="edit-sig-strength-val">75%</span></label><input id="edit-sig-strength" type="range" min="1" max="100" value="75" style="width:100%;accent-color:var(--red);" oninput="document.getElementById('edit-sig-strength-val').textContent=this.value+'%'"></div>
       <div class="auth-field"><label class="auth-label">Commentary</label><textarea id="edit-sig-commentary" class="auth-input" rows="3" style="resize:vertical;"></textarea></div>
@@ -4431,7 +4444,7 @@ function initTVChart() {
   };
   var TV_TF_MAP = {
     '1':'1','5':'5','15':'15','30':'30',
-    '60':'60','H1':'60','H4':'240','D':'1D','1D':'1D'
+    '60':'60','H1':'60','H4':'240','D':'1D','1D':'1D','W':'W','M':'M'
   };
 
   var sym = encodeURIComponent(TV_SYMBOL_MAP[currentPair] || ('FX:' + currentPair));
@@ -5716,6 +5729,13 @@ function stopPriceRefresh() {
 }
 
 
+function toggleRegPw(){
+  var i=document.getElementById('reg-password');
+  var e=document.getElementById('reg-pw-eye');
+  if(!i) return;
+  if(i.type==='password'){ i.type='text'; if(e){e.className='ti ti-eye-off';} }
+  else { i.type='password'; if(e){e.className='ti ti-eye';} }
+}
 function toggleLoginPw(){
   var i=document.getElementById('input-password');
   var e=document.getElementById('login-pw-eye');
