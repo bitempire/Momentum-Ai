@@ -1803,6 +1803,11 @@ select.auth-input {
         <div class="more-menu-text"><div class="more-menu-label">Customer Support</div><div class="more-menu-sub">Get help from our team</div></div>
         <i class="ti ti-chevron-right more-menu-arrow"></i>
       </div>
+      <div class="more-menu-item" onclick="showSubScreen('sub-followus')">
+        <div class="more-menu-icon"><i class="ti ti-share"></i></div>
+        <div class="more-menu-text"><div class="more-menu-label">Follow Us</div><div class="more-menu-sub">Connect on social media</div></div>
+        <i class="ti ti-chevron-right more-menu-arrow"></i>
+      </div>
       <div class="more-menu-item" id="admin-menu-item" style="display:none;" onclick="openAdminPanel()">
         <div class="more-menu-icon"><i class="ti ti-shield-lock"></i></div>
         <div class="more-menu-text"><div class="more-menu-label">Admin Panel</div><div class="more-menu-sub">Manage users & signals</div></div>
@@ -2833,6 +2838,99 @@ select.auth-input {
       </div>
 
       <button onclick="handleLogout()" style="width:100%;padding:13px;background:transparent;border:1px solid rgba(255,30,60,0.3);border-radius:12px;color:var(--red);font-size:13px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;">Sign Out</button>
+    </div>
+  </div>
+
+  <!-- Follow Us -->
+  <div id="sub-followus" class="sub-screen">
+    <div class="sub-header">
+      <button class="sub-back" onclick="hideSubScreen('sub-followus')"><i class="ti ti-arrow-left"></i></button>
+      <div class="sub-title">FOLLOW US</div>
+    </div>
+    <div class="sub-content">
+      <div style="font-size:12px;color:var(--text3);margin-bottom:14px;">Stay connected and never miss an update.</div>
+
+      <div class="more-menu-item" onclick="openSocial('instagram')" style="margin-bottom:8px;">
+        <div class="more-menu-icon" style="background:rgba(228,64,95,0.12);border-color:rgba(228,64,95,0.2);"><i class="ti ti-brand-instagram" style="color:#E4405F;"></i></div>
+        <div class="more-menu-text"><div class="more-menu-label">Instagram</div><div class="more-menu-sub">Photos & reels</div></div>
+        <i class="ti ti-external-link more-menu-arrow"></i>
+      </div>
+
+      <div class="more-menu-item" onclick="openSocial('threads')" style="margin-bottom:8px;">
+        <div class="more-menu-icon" style="background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.12);"><i class="ti ti-brand-threads" style="color:var(--text);"></i></div>
+        <div class="more-menu-text"><div class="more-menu-label">Threads</div><div class="more-menu-sub">Join the conversation</div></div>
+        <i class="ti ti-external-link more-menu-arrow"></i>
+      </div>
+
+      <div class="more-menu-item" onclick="openSocial('facebook')" style="margin-bottom:8px;">
+        <div class="more-menu-icon" style="background:rgba(24,119,242,0.12);border-color:rgba(24,119,242,0.2);"><i class="ti ti-brand-facebook" style="color:#1877F2;"></i></div>
+        <div class="more-menu-text"><div class="more-menu-label">Facebook</div><div class="more-menu-sub">Like our page</div></div>
+        <i class="ti ti-external-link more-menu-arrow"></i>
+      </div>
+
+      <div class="more-menu-item" onclick="openSocial('tiktok')" style="margin-bottom:8px;">
+        <div class="more-menu-icon" style="background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.12);"><i class="ti ti-brand-tiktok" style="color:var(--text);"></i></div>
+        <div class="more-menu-text"><div class="more-menu-label">TikTok</div><div class="more-menu-sub">Short videos</div></div>
+        <i class="ti ti-external-link more-menu-arrow"></i>
+      </div>
+
+      <div class="more-menu-item" onclick="openSocial('youtube')" style="margin-bottom:8px;">
+        <div class="more-menu-icon" style="background:rgba(255,0,0,0.1);border-color:rgba(255,0,0,0.2);"><i class="ti ti-brand-youtube" style="color:#FF0000;"></i></div>
+        <div class="more-menu-text"><div class="more-menu-label">YouTube</div><div class="more-menu-sub">Tutorials & live</div></div>
+        <i class="ti ti-external-link more-menu-arrow"></i>
+      </div>
+
+      <div class="more-menu-item" onclick="openSocial('twitter')" style="margin-bottom:8px;">
+        <div class="more-menu-icon" style="background:rgba(29,161,242,0.12);border-color:rgba(29,161,242,0.2);"><i class="ti ti-brand-twitter" style="color:#1DA1F2;"></i></div>
+        <div class="more-menu-text"><div class="more-menu-label">Twitter</div><div class="more-menu-sub">Latest updates</div></div>
+        <i class="ti ti-external-link more-menu-arrow"></i>
+      </div>
+
+      <div class="more-menu-item" onclick="openSocial('x')" style="margin-bottom:8px;">
+        <div class="more-menu-icon" style="background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.12);"><i class="ti ti-brand-x" style="color:var(--text);"></i></div>
+        <div class="more-menu-text"><div class="more-menu-label">X</div><div class="more-menu-sub">Latest updates</div></div>
+        <i class="ti ti-external-link more-menu-arrow"></i>
+      </div>
+
+      <div class="more-menu-item" onclick="openSocial('telegram')" style="margin-bottom:8px;">
+        <div class="more-menu-icon" style="background:rgba(0,136,204,0.15);border-color:rgba(0,136,204,0.2);"><i class="ti ti-brand-telegram" style="color:#0088CC;"></i></div>
+        <div class="more-menu-text"><div class="more-menu-label">Telegram</div><div class="more-menu-sub">Join our channel</div></div>
+        <i class="ti ti-external-link more-menu-arrow"></i>
+      </div>
+
+      <div class="more-menu-item" onclick="openSocial('linkedin')" style="margin-bottom:8px;">
+        <div class="more-menu-icon" style="background:rgba(10,102,194,0.12);border-color:rgba(10,102,194,0.2);"><i class="ti ti-brand-linkedin" style="color:#0A66C2;"></i></div>
+        <div class="more-menu-text"><div class="more-menu-label">LinkedIn</div><div class="more-menu-sub">Company updates</div></div>
+        <i class="ti ti-external-link more-menu-arrow"></i>
+      </div>
+
+      <div style="height:1px;background:var(--border);margin:18px 0 14px;"></div>
+      <div style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.5px;margin-bottom:12px;">BROKER PARTNER</div>
+
+      <div class="more-menu-item" onclick="openSocial('partner_website')" style="margin-bottom:8px;">
+        <div class="more-menu-icon" style="background:rgba(77,158,255,0.12);border-color:rgba(77,158,255,0.2);"><i class="ti ti-world" style="color:#4D9EFF;"></i></div>
+        <div class="more-menu-text"><div class="more-menu-label">Website</div><div class="more-menu-sub">Visit our broker partner</div></div>
+        <i class="ti ti-external-link more-menu-arrow"></i>
+      </div>
+
+      <div class="more-menu-item" onclick="openSocial('partner_instagram')" style="margin-bottom:8px;">
+        <div class="more-menu-icon" style="background:rgba(228,64,95,0.12);border-color:rgba(228,64,95,0.2);"><i class="ti ti-brand-instagram" style="color:#E4405F;"></i></div>
+        <div class="more-menu-text"><div class="more-menu-label">Instagram</div><div class="more-menu-sub">Partner page</div></div>
+        <i class="ti ti-external-link more-menu-arrow"></i>
+      </div>
+
+      <div class="more-menu-item" onclick="openSocial('partner_facebook')" style="margin-bottom:8px;">
+        <div class="more-menu-icon" style="background:rgba(24,119,242,0.12);border-color:rgba(24,119,242,0.2);"><i class="ti ti-brand-facebook" style="color:#1877F2;"></i></div>
+        <div class="more-menu-text"><div class="more-menu-label">Facebook</div><div class="more-menu-sub">Partner page</div></div>
+        <i class="ti ti-external-link more-menu-arrow"></i>
+      </div>
+
+      <div class="more-menu-item" onclick="openSocial('partner_linkedin')" style="margin-bottom:8px;">
+        <div class="more-menu-icon" style="background:rgba(10,102,194,0.12);border-color:rgba(10,102,194,0.2);"><i class="ti ti-brand-linkedin" style="color:#0A66C2;"></i></div>
+        <div class="more-menu-text"><div class="more-menu-label">LinkedIn</div><div class="more-menu-sub">Partner page</div></div>
+        <i class="ti ti-external-link more-menu-arrow"></i>
+      </div>
+
     </div>
   </div>
 
@@ -4531,6 +4629,37 @@ function applySignalFilters() {
     if(timeframe && tf !== timeframe) show = false;
     card.style.display = show ? '' : 'none';
   });
+}
+
+// ── SOCIAL LINKS (fill these in to activate Follow Us) ──
+var SOCIAL_LINKS = {
+  instagram: '',
+  threads:   '',
+  facebook:  '',
+  tiktok:    '',
+  youtube:   '',
+  twitter:   '',
+  x:         '',
+  telegram:  '',
+  linkedin:  '',
+  partner_website:   '',
+  partner_instagram: '',
+  partner_facebook:  '',
+  partner_linkedin:  ''
+};
+function openSocial(key){
+  var url = SOCIAL_LINKS[key];
+  if(url && url.trim()){ window.open(url.trim(), '_blank'); }
+  else { showSocialToast('Link coming soon'); }
+}
+function showSocialToast(msg){
+  var ex = document.getElementById('social-toast'); if(ex) ex.remove();
+  var t = document.createElement('div');
+  t.id = 'social-toast';
+  t.textContent = msg;
+  t.style.cssText = 'position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--bg2);border:1px solid var(--border);color:var(--text);font-size:12px;font-weight:600;padding:10px 18px;border-radius:20px;z-index:9500;box-shadow:0 6px 20px rgba(0,0,0,0.45);font-family:Sora,sans-serif;';
+  document.body.appendChild(t);
+  setTimeout(function(){ if(t.parentNode) t.remove(); }, 1800);
 }
 
 // ── INIT ──
