@@ -5787,19 +5787,20 @@ var _execSelectedOption = '';
 
 async function checkMT5ThenExecute() {
   if(!currentUser || !db) return;
-  var connected = false, state = 'disconnected';
+  var cs, mc, creds;
   try {
-    var res = await db.from('users').select('connection_status,mt5_connected').eq('id',currentUser.id).single();
-    if(res.data) {
-      connected = (res.data.mt5_connected === true) || (res.data.connection_status === 'connected');
-      state = res.data.connection_status || 'disconnected';
-    }
+    var res = await db.from('users').select('connection_status,mt5_connected,mt5_credential').eq('id',currentUser.id).single();
+    if(res.error) throw res.error;
+    cs = res.data.connection_status; mc = res.data.mt5_connected; creds = res.data.mt5_credential;
   } catch(e) {
-    connected = (currentUser.mt5_connected === true) || (currentUser.connection_status === 'connected');
-    state = currentUser.connection_status || 'disconnected';
+    cs = currentUser.connection_status; mc = currentUser.mt5_connected; creds = currentUser.mt5_credential;
   }
-  if(connected) { openExecuteChoicePopup(); }
-  else { showNoMT5Warning(state); }
+  var blocked   = (cs === 'pending' || cs === 'suspended' || cs === 'rejected');
+  var hasCreds  = !!(creds && String(creds).length > 5);
+  var isConnected = !blocked && (mc === true || mc === 'true' || mc === 1 || cs === 'connected' || hasCreds);
+  alert('MT5 DEBUG v2\ncs = ' + cs + '\nmc = ' + mc + '  (type: ' + (typeof mc) + ')\nhasCreds = ' + hasCreds + '\nblocked = ' + blocked + '\nisConnected = ' + isConnected);
+  if(isConnected) { openExecuteChoicePopup(); }
+  else { showNoMT5Warning(cs || 'disconnected'); }
 }
 
 function showNoMT5Warning(state) {
