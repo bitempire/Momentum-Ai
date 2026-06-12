@@ -2880,7 +2880,7 @@ select.auth-input {
       <!-- MT5 Connection -->
       <div class="section-card" style="margin-bottom:14px;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-          <div style="font-family:Orbitron,sans-serif;font-size:12px;font-weight:800;color:var(--text);">MT5 CONNECTION</div>
+          <div style="font-family:Orbitron,sans-serif;font-size:12px;font-weight:800;color:var(--text);">ADD MT5 ACCOUNT</div>
           <div id="mt5-status-badge" style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:5px;background:rgba(255,176,32,0.12);color:var(--amber);">NOT CONNECTED</div>
         </div>
         <div class="auth-field">
@@ -6286,32 +6286,31 @@ async function handleMT5Connect() {
   var encrypted = btoa(unescape(encodeURIComponent(mt5Pw + '_mmai_' + mt5Id)));
 
   try {
-    var core = { mt5_id: mt5Id, mt5_credential: encrypted };
-    var full = Object.assign({}, core, {
+    var existing = [];
+    try { var ex = await db.from('mt5_accounts').select('*').eq('user_id', currentUser.id); existing = (ex&&ex.data)?ex.data:[]; } catch(ee) {}
+    if(existing.length >= 5) { errEl.textContent = 'You have reached the maximum of 5 accounts.'; errEl.style.display='block'; return; }
+    if(existing.some(function(a){ return (a.mt5_id||'')===mt5Id; })) { errEl.textContent = 'This MT5 account is already added.'; errEl.style.display='block'; return; }
+
+    var r = await db.from('mt5_accounts').insert({
+      user_id: currentUser.id,
+      label: mt5Id,
+      mt5_id: mt5Id,
+      mt5_credential: encrypted,
       mt5_server: 'AsiaFutureTrading-Server',
+      broker: 'Asia Future Trading',
       allow_auto_trade: autoOn,
       mt5_connected: false,
       connection_status: 'pending',
-      rejection_reason: null,
-      status_reason: null,
-      notice_kind: null,
       connection_requested_at: new Date().toISOString()
     });
-    var r = await db.from('users').update(full).eq('id', currentUser.id);
-    if(r.error) {
-      r = await db.from('users').update(Object.assign({}, core, { mt5_connected: false, connection_status: 'pending' })).eq('id', currentUser.id);
-    }
     if(r.error) throw r.error;
 
-    currentUser.mt5_id = mt5Id;
-    currentUser.mt5_connected = false;
-    currentUser.connection_status = 'pending';
-    currentUser.rejection_reason = null;
-    currentUser.allow_auto_trade = autoOn;
-    sessionStorage.setItem('mob_user', JSON.stringify(currentUser));
-
-    renderMT5State('pending');
-    sucEl.textContent = "Request submitted! Our team is setting up your connection — this can take up to 24 hours. You'll be notified here once it's active.";
+    document.getElementById('profile-mt5-id').value = '';
+    document.getElementById('profile-mt5-pw').value = '';
+    document.getElementById('mt5-agree-check').checked = false;
+    var tg = document.getElementById('mt5-auto-toggle'); if(tg) tg.classList.remove('on');
+    renderProfileAccounts();
+    sucEl.textContent = "Account request submitted! Setup can take up to 24 hours — it will show as Pending below until active.";
     sucEl.style.display = 'block';
   } catch(e) {
     errEl.textContent = 'Error: ' + (e.message || 'Failed to submit request');
@@ -6323,16 +6322,17 @@ async function handleMT5Connect() {
 function loadProfileMT5() {
   if(!currentUser) return;
   var idEl   = document.getElementById('profile-mt5-id');
+  var pwEl   = document.getElementById('profile-mt5-pw');
   var toggle = document.getElementById('mt5-auto-toggle');
-
-  if(idEl && currentUser.mt5_id && !currentUser.mt5_id.startsWith('ANALYST_') && !currentUser.mt5_id.startsWith('SUBADMIN_'))
-    idEl.value = currentUser.mt5_id;
-  if(currentUser.allow_auto_trade && toggle)
-    toggle.classList.add('on');
-
-  var state = currentUser.connection_status;
-  if(!state) state = currentUser.mt5_connected ? 'connected' : 'disconnected';
-  renderMT5State(state, currentUser.status_reason || currentUser.rejection_reason);
+  var agree  = document.getElementById('mt5-agree-check');
+  if(idEl) idEl.value = '';
+  if(pwEl) pwEl.value = '';
+  if(toggle) toggle.classList.remove('on');
+  if(agree) agree.checked = false;
+  lockMT5Form(false);
+  setMT5Badge('ADD ACCOUNT','disconnected');
+  var banner = document.getElementById('mt5-status-banner'); if(banner){ banner.style.display='none'; banner.innerHTML=''; }
+  var btn = document.querySelector('button.red-btn[onclick="handleMT5Connect()"]'); if(btn){ btn.textContent='REQUEST ACCOUNT'; btn.disabled=false; btn.style.opacity=''; }
   renderProfileAccounts();
 }
 
@@ -6363,9 +6363,13 @@ async function renderProfileAccounts() {
     else if(st==='rejected') { cls='red'; lbl='REJECTED'; }
     var isActive = activeId && a.id===activeId;
     html += '<div class="pacct-row">'+
-      '<div><div class="pacct-id">'+(a.mt5_id||'--')+(isActive?'<span class="pacct-active">ACTIVE</span>':'')+'</div>'+
+      '<div style="flex:1;"><div class="pacct-id">'+(a.mt5_id||'--')+(isActive?'<span class="pacct-active">ACTIVE</span>':'')+'</div>'+
       '<div class="pacct-sv">'+(a.mt5_server||a.broker||'')+'</div></div>'+
-      '<div class="pacct-badge '+cls+'">'+lbl+'</div>'+
+      '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:9px;">'+
+        '<div class="pacct-badge '+cls+'">'+lbl+'</div>'+
+        '<div style="display:flex;align-items:center;gap:7px;"><span style="font-size:10px;color:var(--text3);font-weight:600;">Auto</span>'+
+          '<div class="toggle'+(a.allow_auto_trade?' on':'')+'" onclick="toggleAccountAuto(\''+a.id+'\',this)"></div></div>'+
+      '</div>'+
     '</div>';
   });
   list.innerHTML = html;
@@ -6374,6 +6378,17 @@ async function renderProfileAccounts() {
 // ══════════════════════════════════════════════════
 // SAVE EA SETTINGS — Smart Tool Screen
 // ══════════════════════════════════════════════════
+
+async function toggleAccountAuto(accId, el) {
+  if(!el) return;
+  el.classList.toggle('on');
+  var on = el.classList.contains('on');
+  try {
+    var r = await db.from('mt5_accounts').update({allow_auto_trade:on}).eq('id',accId);
+    if(r && r.error) { el.classList.toggle('on'); alert('Could not update: '+r.error.message); return; }
+    (window._userAccounts||[]).forEach(function(a){ if(a.id===accId) a.allow_auto_trade=on; });
+  } catch(e) { el.classList.toggle('on'); alert('Could not update: '+e.message); }
+}
 
 async function saveEASettings() {
   if(!currentUser || !db) return;
