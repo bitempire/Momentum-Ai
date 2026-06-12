@@ -4248,6 +4248,8 @@ function enterApp(user) {
   setTimeout(function() { drawGrowthChart(); drawEmotionChart(); loadSavedProfilePhoto(); }, 800);
   setTimeout(function() { checkMT5ConnectionNotification(); }, 1200);
   loadActiveAccount();
+  loadAFTPrices();
+  if(!window._aftPricePoll) window._aftPricePoll = setInterval(loadAFTPrices, 8000);
 }
 
 // ── MULTI-ACCOUNT: HEADER SWITCHER (Pass 1, header-only) ──
@@ -5482,6 +5484,40 @@ async function loadLivePrices() {
       }
     });
   } catch(e) { console.warn('loadLivePrices:', e.message); }
+  loadAFTPrices();
+}
+
+// Reads real AFT prices from Supabase live_prices (connector fills this).
+// If the table is empty, does nothing — the source above stays as fallback.
+async function loadAFTPrices() {
+  if(!db) return false;
+  try {
+    var res = await db.from('live_prices').select('*');
+    var rows = (res && res.data) ? res.data : [];
+    if(!rows.length) return false;
+    var applied = false;
+    rows.forEach(function(r){
+      var sym = r.symbol;
+      var pEl = document.getElementById('price-'+sym);
+      if(!pEl) return;
+      var price = parseFloat(r.last!=null?r.last:(r.bid!=null?r.bid:r.ask));
+      if(isNaN(price)) return;
+      var chg = (r.change_pct!=null)?parseFloat(r.change_pct):0;
+      var isUp = chg>=0;
+      pEl.textContent = fmtPrice(sym, price);
+      var cEl = document.getElementById('change-'+sym);
+      if(cEl){ cEl.textContent=(isUp?'▲ +':'▼ ')+Math.abs(chg).toFixed(2)+'%'; cEl.className='mkt-change '+(isUp?'up':'dn'); }
+      var sEl = document.getElementById('sym-'+sym);
+      if(sEl&&sEl.parentElement){
+        var card=sEl.parentElement;
+        card.className='mkt-card '+(isUp?'up':'dn');
+        var spark=card.querySelector('.mkt-spark');
+        if(spark){ spark.dataset.trend=isUp?'up':'dn'; spark.dataset.color=isUp?'#00c87a':'#FF1E3C'; drawSpark(spark); }
+      }
+      applied = true;
+    });
+    return applied;
+  } catch(e) { console.warn('loadAFTPrices:', e.message); return false; }
 }
 
 // ═══════════════════════════════════════════════════
