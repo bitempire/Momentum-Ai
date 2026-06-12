@@ -4249,7 +4249,8 @@ function enterApp(user) {
   setTimeout(function() { checkMT5ConnectionNotification(); }, 1200);
   loadActiveAccount();
   loadAFTPrices();
-  if(!window._aftPricePoll) window._aftPricePoll = setInterval(loadAFTPrices, 8000);
+  refreshActiveBalance();
+  if(!window._aftPricePoll) window._aftPricePoll = setInterval(function(){ loadAFTPrices(); refreshActiveBalance(); }, 8000);
 }
 
 // ── MULTI-ACCOUNT: HEADER SWITCHER (Pass 1, header-only) ──
@@ -4268,6 +4269,7 @@ async function loadActiveAccount() {
                  || accts[0] || null;
   } catch(e) { console.warn('loadActiveAccount:', e.message); }
   renderHeaderSwitcher();
+  loadAccountStats();
 }
 
 function renderHeaderSwitcher() {
@@ -4331,6 +4333,7 @@ async function selectAccount(accId) {
     try { sessionStorage.setItem('mob_user', JSON.stringify(currentUser)); } catch(e2) {}
     activeAccount = a;
     renderHeaderSwitcher();
+    loadAccountStats();
   } catch(e) { alert('Could not switch account: '+e.message); }
 }
 
@@ -4436,7 +4439,7 @@ function switchTab(tab) {
   if(content) content.scrollTop = 0;
   if(tab==='dashboard') { if(!_priceLoaded) { loadLivePrices(); _priceLoaded=true; } }
   if(tab==='charts') initTVChart();
-  if(tab==='journal') loadJournalData();
+  if(tab==='journal') { loadJournalData(); refreshActiveBalance(); }
   if(tab==='signals') loadSignalsFeed();
   if(tab==='more'&&currentUser&&currentUser.role==='admin') loadAdminUsers();
 }
@@ -5523,6 +5526,23 @@ async function loadAFTPrices() {
 // ═══════════════════════════════════════════════════
 // JOURNAL — Reads from Supabase trades table
 // ═══════════════════════════════════════════════════
+// Shows the ACTIVE account's real balance (connector fills mt5_accounts.balance).
+function loadAccountStats() {
+  if(!activeAccount) return;
+  var bEl = document.getElementById('journal-balance');
+  if(bEl && activeAccount.balance!=null && activeAccount.balance!=='') {
+    bEl.textContent = '$'+parseFloat(activeAccount.balance).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2});
+  }
+}
+async function refreshActiveBalance() {
+  if(!db || !activeAccount || !activeAccount.id) return;
+  try {
+    var res = await db.from('mt5_accounts').select('*').eq('id', activeAccount.id).single();
+    var d = res && res.data; var a = Array.isArray(d) ? d[0] : d;
+    if(a) { activeAccount = a; loadAccountStats(); }
+  } catch(e) {}
+}
+
 async function loadJournalData() {
   if(!currentUser||!db) return;
   try {
