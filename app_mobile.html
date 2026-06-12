@@ -219,6 +219,16 @@ select.auth-input {
 .avtr-item:hover { background: rgba(255,255,255,0.03); }
 .avtr-item .ti { font-size: 17px; color: var(--text2); }
 .avtr-item.danger, .avtr-item.danger .ti { color: var(--red); }
+.pacct-row { display:flex; align-items:center; justify-content:space-between; padding:11px 12px; background:var(--bg3); border:1px solid var(--border); border-radius:10px; margin-bottom:8px; }
+.pacct-id { font-size:13px; font-weight:700; color:var(--text); display:flex; align-items:center; gap:7px; }
+.pacct-sv { font-size:11px; color:var(--text2); margin-top:2px; }
+.pacct-active { font-size:8px; font-weight:800; letter-spacing:0.5px; padding:2px 6px; border-radius:4px; background:rgba(255,30,60,0.12); border:1px solid rgba(255,30,60,0.3); color:var(--red); }
+.pacct-badge { font-size:9px; font-weight:700; letter-spacing:0.4px; padding:3px 9px; border-radius:5px; }
+.pacct-badge.green { background:rgba(0,200,122,0.12); color:var(--green); }
+.pacct-badge.amber { background:rgba(255,176,32,0.12); color:var(--amber); }
+.pacct-badge.grey { background:rgba(255,255,255,0.06); color:var(--text2); }
+.pacct-badge.red { background:rgba(255,30,60,0.12); color:var(--red); }
+.pacct-empty { font-size:12px; color:var(--text3); padding:10px 2px; }
 .app-header-title {
   font-family: 'Orbitron', sans-serif;
   font-size: 13px;
@@ -2918,6 +2928,15 @@ select.auth-input {
         <div id="mt5-connect-error" class="error-msg"></div>
         <div id="mt5-connect-success" class="success-msg"></div>
         <button class="red-btn" onclick="handleMT5Connect()">CONNECT MT5</button>
+      </div>
+
+      <!-- Connected Accounts List -->
+      <div class="section-card" style="margin-bottom:14px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <div style="font-family:Orbitron,sans-serif;font-size:12px;font-weight:800;color:var(--text);">CONNECTED ACCOUNTS</div>
+          <div id="pacct-count" style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:5px;background:rgba(255,255,255,0.06);color:var(--text2);">0/5</div>
+        </div>
+        <div id="profile-accounts-list"></div>
       </div>
 
       <button onclick="handleLogout()" style="width:100%;padding:13px;background:transparent;border:1px solid rgba(255,30,60,0.3);border-radius:12px;color:var(--red);font-size:13px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;">Sign Out</button>
@@ -6314,6 +6333,42 @@ function loadProfileMT5() {
   var state = currentUser.connection_status;
   if(!state) state = currentUser.mt5_connected ? 'connected' : 'disconnected';
   renderMT5State(state, currentUser.status_reason || currentUser.rejection_reason);
+  renderProfileAccounts();
+}
+
+async function renderProfileAccounts() {
+  var list = document.getElementById('profile-accounts-list');
+  var countEl = document.getElementById('pacct-count');
+  if(!list) return;
+  list.innerHTML = '<div class="pacct-empty">Loading...</div>';
+  var accts = [];
+  try {
+    if(currentUser && currentUser.id) {
+      var res = await db.from('mt5_accounts').select('*').eq('user_id', currentUser.id);
+      accts = (res && res.data) ? res.data : [];
+      window._userAccounts = accts;
+    }
+  } catch(e) {}
+  if(countEl) countEl.textContent = accts.length + '/5';
+  if(!accts.length) { list.innerHTML = '<div class="pacct-empty">No accounts connected yet.</div>'; return; }
+  var activeId = currentUser ? currentUser.active_account_id : null;
+  var html = '';
+  accts.forEach(function(a){
+    var st = (a.connection_status||'').toLowerCase();
+    var conn = a.mt5_connected || st==='connected';
+    var cls='grey', lbl='NOT CONNECTED';
+    if(conn) { cls='green'; lbl='CONNECTED'; }
+    else if(st==='pending'||st==='pending_setup') { cls='amber'; lbl='PENDING'; }
+    else if(st==='suspended') { cls='red'; lbl='SUSPENDED'; }
+    else if(st==='rejected') { cls='red'; lbl='REJECTED'; }
+    var isActive = activeId && a.id===activeId;
+    html += '<div class="pacct-row">'+
+      '<div><div class="pacct-id">'+(a.mt5_id||'--')+(isActive?'<span class="pacct-active">ACTIVE</span>':'')+'</div>'+
+      '<div class="pacct-sv">'+(a.mt5_server||a.broker||'')+'</div></div>'+
+      '<div class="pacct-badge '+cls+'">'+lbl+'</div>'+
+    '</div>';
+  });
+  list.innerHTML = html;
 }
 
 // ══════════════════════════════════════════════════
