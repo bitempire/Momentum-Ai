@@ -4591,10 +4591,9 @@ async function executeTrade(method) {
     var ins = await db.from('trade_commands').insert([cmd]);
     if(ins.error) throw new Error(ins.error.message);
     document.getElementById('trade-success-note').style.display = 'flex';
-    if(btn){ btn.textContent='Placing\u2026'; btn.disabled=true; }
+    if(btn){ btn.textContent='Placing\u2026'; btn.disabled=true; setTimeout(function(){ btn.textContent=origText; btn.disabled=false; }, 1500); }
     var cid = (ins.data && ins.data.id) ? ins.data.id : null;
-    if(cid) pollTradeCommand(cid, btn, origText);
-    else if(btn){ btn.textContent=origText; btn.disabled=false; }
+    if(cid) pollTradeCommand(cid);
   } catch(e) { alert('Error: '+e.message); if(btn){ btn.textContent=origText; btn.disabled=false; } }
 }
 function mtTradeBtn(method){
@@ -4602,25 +4601,17 @@ function mtTradeBtn(method){
   if(method==='smart') return document.querySelector('button[onclick="checkMT5ThenExecute()"]');
   return null;
 }
-async function pollTradeCommand(id, btn, origText){
+async function pollTradeCommand(id){
   var tries=0;
   var timer=setInterval(async function(){
     tries++;
     try{
       var r=await db.from('trade_commands').select('status,result').eq('id',id).single();
       var row = (r && r.data) ? (Array.isArray(r.data)?r.data[0]:r.data) : null;
-      if(row){
-        if(row.status==='filled'){
-          clearInterval(timer);
-          if(btn){ btn.textContent='Filled \u2713'; setTimeout(function(){ btn.textContent=origText; btn.disabled=false; }, 2500); }
-        } else if(row.status==='failed'){
-          clearInterval(timer);
-          if(btn){ btn.textContent=origText; btn.disabled=false; }
-          alert('Trade failed: '+(row.result||'unknown error'));
-        }
-      }
+      if(row && row.status==='failed'){ clearInterval(timer); alert('Trade failed: '+(row.result||'unknown error')); }
+      else if(row && row.status==='filled'){ clearInterval(timer); }
     }catch(e){}
-    if(tries>=25){ clearInterval(timer); if(btn){ btn.textContent=origText; btn.disabled=false; } }
+    if(tries>=25) clearInterval(timer);
   }, 2000);
 }
 
