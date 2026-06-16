@@ -4581,35 +4581,46 @@ async function executeTrade(method) {
   var sym = (currentSignal.pair||'').toString().toUpperCase().replace('/','');
   var tradeSymMap = { 'BTCUSD':'BTCUSDT', 'DXY':'USDX', 'USOIL':'WTI' };
   if(tradeSymMap[sym]) sym = tradeSymMap[sym];
+  var btn = mtTradeBtn(method);
+  var origText = btn ? btn.textContent : '';
   try {
     if(currentUser) {
       await db.from('trades').insert([{user_id:currentUser.id,signal_id:currentSignal.id,method,volume,pair:currentSignal.pair,direction:currentSignal.direction,entry:currentSignal.entry_to,sl:currentSignal.sl,tp:currentSignal.tp1,status:'executed',executed_at:new Date().toISOString()}]);
     }
     var cmd = { account_id: activeAccount.id, mt5_id: activeAccount.mt5_id, action:'open', symbol: sym, side: side, volume: volume, stop_loss: (currentSignal.sl||null), take_profit: (currentSignal.tp1||null), signal_id: currentSignal.id, status:'pending' };
-    var ins = await db.from('trade_commands').insert([cmd]).select();
+    var ins = await db.from('trade_commands').insert([cmd]);
+    if(ins.error) throw new Error(ins.error.message);
     document.getElementById('trade-success-note').style.display = 'flex';
-    document.querySelectorAll('.trade-execute-btn').forEach(function(b) { b.textContent='Placing\u2026'; b.disabled=true; });
-    if(ins && ins.data && ins.data[0]) pollTradeCommand(ins.data[0].id);
-  } catch(e) { alert('Error: '+e.message); }
+    if(btn){ btn.textContent='Placing\u2026'; btn.disabled=true; }
+    var cid = (ins.data && ins.data.id) ? ins.data.id : null;
+    if(cid) pollTradeCommand(cid, btn, origText);
+    else if(btn){ btn.textContent=origText; btn.disabled=false; }
+  } catch(e) { alert('Error: '+e.message); if(btn){ btn.textContent=origText; btn.disabled=false; } }
 }
-async function pollTradeCommand(id){
+function mtTradeBtn(method){
+  if(method==='manual') return document.querySelector('button[onclick="executeTrade(\'manual\')"]');
+  if(method==='smart') return document.querySelector('button[onclick="checkMT5ThenExecute()"]');
+  return null;
+}
+async function pollTradeCommand(id, btn, origText){
   var tries=0;
   var timer=setInterval(async function(){
     tries++;
     try{
       var r=await db.from('trade_commands').select('status,result').eq('id',id).single();
-      if(r && r.data){
-        if(r.data.status==='filled'){
+      var row = (r && r.data) ? (Array.isArray(r.data)?r.data[0]:r.data) : null;
+      if(row){
+        if(row.status==='filled'){
           clearInterval(timer);
-          document.querySelectorAll('.trade-execute-btn').forEach(function(b){ b.textContent='Filled \u2713'; });
-        } else if(r.data.status==='failed'){
+          if(btn){ btn.textContent='Filled \u2713'; setTimeout(function(){ btn.textContent=origText; btn.disabled=false; }, 2500); }
+        } else if(row.status==='failed'){
           clearInterval(timer);
-          document.querySelectorAll('.trade-execute-btn').forEach(function(b){ b.textContent='Trade Now'; b.disabled=false; });
-          alert('Trade failed: '+(r.data.result||'unknown error'));
+          if(btn){ btn.textContent=origText; btn.disabled=false; }
+          alert('Trade failed: '+(row.result||'unknown error'));
         }
       }
     }catch(e){}
-    if(tries>=20) clearInterval(timer);
+    if(tries>=25){ clearInterval(timer); if(btn){ btn.textContent=origText; btn.disabled=false; } }
   }, 2000);
 }
 
