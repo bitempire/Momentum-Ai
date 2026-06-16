@@ -1544,33 +1544,11 @@ select.auth-input {
           </div>
         </div>
         <div id="mob-live-positions">
-          <div class="trade-item">
-            <div class="trade-icon win">📈</div>
-            <div class="trade-info">
-              <div class="trade-pair">XAUUSD <span style="font-size:10px;color:var(--green);font-weight:700;">BUY</span></div>
-              <div class="trade-meta">Entry: 2,318.40 · 0.1 lot · 2h 14m</div>
-            </div>
-            <div>
-              <div class="trade-pnl win">+$284.00</div>
-              <div style="font-size:10px;color:var(--text3);text-align:right;">+142.00 pts</div>
-            </div>
-          </div>
-          <div class="trade-item">
-            <div class="trade-icon win">📈</div>
-            <div class="trade-info">
-              <div class="trade-pair">NAS100 <span style="font-size:10px;color:var(--green);font-weight:700;">BUY</span></div>
-              <div class="trade-meta">Entry: 19,842.0 · 0.5 lot · 45m</div>
-            </div>
-            <div>
-              <div class="trade-pnl win">+$156.00</div>
-              <div style="font-size:10px;color:var(--text3);text-align:right;">+62.00 pts</div>
-            </div>
-          </div>
-
+          <div style="text-align:center;font-size:12px;color:var(--text3);padding:16px 0;">Loading positions...</div>
         </div>
         <div style="display:flex;justify-content:space-between;padding:10px 0 0;border-top:1px solid var(--border);margin-top:10px;">
-          <div style="font-size:11px;color:var(--text2);">Total P&L Today</div>
-          <div style="font-size:13px;font-weight:800;color:var(--green);">+$440.00</div>
+          <div style="font-size:11px;color:var(--text2);">Total P&L (Open)</div>
+          <div style="font-size:13px;font-weight:800;color:var(--text3);" id="mob-positions-total">$0.00</div>
         </div>
       </div>
 
@@ -4215,7 +4193,8 @@ function enterApp(user) {
   loadActiveAccount();
   loadAFTPrices();
   refreshActiveBalance();
-  if(!window._aftPricePoll) window._aftPricePoll = setInterval(function(){ loadAFTPrices(); refreshActiveBalance(); }, 8000);
+  loadLivePositions();
+  if(!window._aftPricePoll) window._aftPricePoll = setInterval(function(){ loadAFTPrices(); refreshActiveBalance(); loadLivePositions(); }, 8000);
 }
 
 // ── MULTI-ACCOUNT: HEADER SWITCHER (Pass 1, header-only) ──
@@ -5508,6 +5487,49 @@ async function loadAFTPrices() {
     });
     return applied;
   } catch(e) { console.warn('loadAFTPrices:', e.message); return false; }
+}
+
+// Reads real open positions from Supabase (data worker fills this).
+async function loadLivePositions(){
+  if(!db) return;
+  var box = document.getElementById('mob-live-positions');
+  var totalEl = document.getElementById('mob-positions-total');
+  if(!box) return;
+  var mt5 = (activeAccount && activeAccount.mt5_id) ? activeAccount.mt5_id : null;
+  if(!mt5){
+    box.innerHTML = '<div style="text-align:center;font-size:12px;color:var(--text3);padding:16px 0;">Connect your MT5 account</div>';
+    if(totalEl){ totalEl.textContent='—'; totalEl.style.color='var(--text3)'; }
+    return;
+  }
+  try{
+    var res = await db.from('positions').select('*').eq('mt5_id', mt5);
+    var rows = (res && res.data) ? res.data : [];
+    if(!rows.length){
+      box.innerHTML = '<div style="text-align:center;font-size:12px;color:var(--text3);padding:16px 0;">No open positions</div>';
+      if(totalEl){ totalEl.textContent='$0.00'; totalEl.style.color='var(--text3)'; }
+      return;
+    }
+    var html=''; var total=0;
+    rows.forEach(function(p){
+      var profit = parseFloat(p.profit)||0; total += profit;
+      var win = profit>=0;
+      var side = (p.side||'').toString().toUpperCase();
+      var sideColor = (side==='SELL') ? 'var(--red)' : 'var(--green)';
+      var pColor = win ? 'var(--green)' : 'var(--red)';
+      var op = (p.open_price!=null) ? p.open_price : '';
+      var vol = (p.volume!=null) ? p.volume : '';
+      html += '<div class="trade-item">'+
+        '<div class="trade-icon" style="background:'+(win?'rgba(0,200,122,0.12)':'rgba(255,30,60,0.10)')+';">'+(side==='SELL'?'\uD83D\uDCC9':'\uD83D\uDCC8')+'</div>'+
+        '<div class="trade-info">'+
+          '<div class="trade-pair">'+p.symbol+' <span style="font-size:10px;color:'+sideColor+';font-weight:700;">'+side+'</span></div>'+
+          '<div class="trade-meta">Entry: '+op+' \u00b7 '+vol+' lot</div>'+
+        '</div>'+
+        '<div><div class="trade-pnl" style="color:'+pColor+';font-weight:800;">'+(win?'+':'')+'$'+profit.toFixed(2)+'</div></div>'+
+      '</div>';
+    });
+    box.innerHTML = html;
+    if(totalEl){ totalEl.textContent=(total>=0?'+':'')+'$'+total.toFixed(2); totalEl.style.color=(total>=0?'var(--green)':'var(--red)'); }
+  }catch(e){ console.warn('loadLivePositions:', e.message); }
 }
 
 // ═══════════════════════════════════════════════════
