@@ -4194,7 +4194,7 @@ function enterApp(user) {
   loadAFTPrices();
   refreshActiveBalance();
   loadLivePositions();
-  if(!window._aftPricePoll) window._aftPricePoll = setInterval(function(){ loadAFTPrices(); refreshActiveBalance(); loadLivePositions(); }, 8000);
+  if(!window._aftPricePoll) window._aftPricePoll = setInterval(function(){ loadAFTPrices(); refreshActiveBalance(); loadLivePositions(); }, 4000);
 }
 
 // ── MULTI-ACCOUNT: HEADER SWITCHER (Pass 1, header-only) ──
