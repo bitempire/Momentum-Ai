@@ -4573,14 +4573,44 @@ function selectTradeOpt(opt) {
 }
 async function executeTrade(method) {
   if(!currentSignal) return;
+  if(!activeAccount || !activeAccount.mt5_id){ alert('Connect your MT5 account first.'); return; }
   var volume = method==='manual' ? parseFloat(document.getElementById('trade-volume').value) : null;
+  if(!volume || isNaN(volume) || volume<=0) volume = 0.01;
+  var dir = (currentSignal.direction||'').toString().toUpperCase();
+  var side = (dir==='SELL'||dir==='SHORT') ? 'SELL' : 'BUY';
+  var sym = (currentSignal.pair||'').toString().toUpperCase().replace('/','');
+  var tradeSymMap = { 'BTCUSD':'BTCUSDT', 'DXY':'USDX', 'USOIL':'WTI' };
+  if(tradeSymMap[sym]) sym = tradeSymMap[sym];
   try {
     if(currentUser) {
       await db.from('trades').insert([{user_id:currentUser.id,signal_id:currentSignal.id,method,volume,pair:currentSignal.pair,direction:currentSignal.direction,entry:currentSignal.entry_to,sl:currentSignal.sl,tp:currentSignal.tp1,status:'executed',executed_at:new Date().toISOString()}]);
     }
+    var cmd = { account_id: activeAccount.id, mt5_id: activeAccount.mt5_id, action:'open', symbol: sym, side: side, volume: volume, stop_loss: (currentSignal.sl||null), take_profit: (currentSignal.tp1||null), signal_id: currentSignal.id, status:'pending' };
+    var ins = await db.from('trade_commands').insert([cmd]).select();
     document.getElementById('trade-success-note').style.display = 'flex';
-    document.querySelectorAll('.trade-execute-btn').forEach(function(b) { b.textContent='Sent to MT5'; b.disabled=true; });
+    document.querySelectorAll('.trade-execute-btn').forEach(function(b) { b.textContent='Placing\u2026'; b.disabled=true; });
+    if(ins && ins.data && ins.data[0]) pollTradeCommand(ins.data[0].id);
   } catch(e) { alert('Error: '+e.message); }
+}
+async function pollTradeCommand(id){
+  var tries=0;
+  var timer=setInterval(async function(){
+    tries++;
+    try{
+      var r=await db.from('trade_commands').select('status,result').eq('id',id).single();
+      if(r && r.data){
+        if(r.data.status==='filled'){
+          clearInterval(timer);
+          document.querySelectorAll('.trade-execute-btn').forEach(function(b){ b.textContent='Filled \u2713'; });
+        } else if(r.data.status==='failed'){
+          clearInterval(timer);
+          document.querySelectorAll('.trade-execute-btn').forEach(function(b){ b.textContent='Trade Now'; b.disabled=false; });
+          alert('Trade failed: '+(r.data.result||'unknown error'));
+        }
+      }
+    }catch(e){}
+    if(tries>=20) clearInterval(timer);
+  }, 2000);
 }
 
 // ── CHARTS ──
