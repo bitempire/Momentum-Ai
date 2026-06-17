@@ -3399,7 +3399,10 @@ select.auth-input {
         <div id="auto-trade-status-text" style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">Auto Trade</div>
         <div id="auto-trade-status-sub" style="font-size:11px;color:var(--text3);line-height:1.6;">Loading...</div>
       </div>
-      <button onclick="closeTradePopup();showSubScreen('sub-trade-settings')" style="width:100%;padding:13px;background:var(--grad);border:none;border-radius:12px;color:#fff;font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;">GO TO TRADE SETTINGS</button>
+      <div style="display:flex;gap:8px;">
+        <button onclick="closeTradePopup();showSubScreen('sub-trade-settings')" style="flex:1;padding:13px;background:var(--grad);border:none;border-radius:12px;color:#fff;font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;">TRADE SETTINGS</button>
+        <button onclick="confirmStopAutoTrade()" id="stop-auto-btn" style="flex:1;padding:13px;background:transparent;border:1px solid var(--red);border-radius:12px;color:var(--red);font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;">STOP AUTO</button>
+      </div>
     </div>
 
     <div class="trade-note" id="trade-success-note" style="display:none;">
@@ -6577,6 +6580,30 @@ async function saveAutoTradeSettings() {
     if(btn){ var orig=btn.textContent; btn.textContent='✓ SAVED'; btn.style.background='var(--green)'; setTimeout(function(){ btn.textContent=orig; btn.style.background=''; },2000); }
   } catch(e) { alert('Save failed: '+(e.message||'Unknown error')); }
 }
+function confirmStopAutoTrade() {
+  var popup = document.createElement('div');
+  popup.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);z-index:9300;display:flex;align-items:center;justify-content:center;padding:20px;';
+  popup.innerHTML =
+    '<div style="background:var(--bg2);border-radius:20px;border:1px solid var(--border);padding:24px;width:100%;max-width:340px;text-align:center;">' +
+    '<div style="font-size:32px;margin-bottom:12px;">⚠️</div>' +
+    '<div style="font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);margin-bottom:10px;">STOP AUTO TRADE?</div>' +
+    '<div style="font-size:12px;color:var(--text3);line-height:1.7;margin-bottom:20px;">This will disable Auto Trade immediately. No new trades will be placed automatically. Your existing open positions will not be affected.</div>' +
+    '<button id="confirm-stop-auto" style="width:100%;padding:13px;background:var(--grad);border:none;border-radius:12px;color:#fff;font-family:Orbitron,sans-serif;font-size:12px;font-weight:700;cursor:pointer;margin-bottom:8px;">YES, STOP AUTO TRADE</button>' +
+    '<button id="cancel-stop-auto" style="width:100%;padding:12px;background:transparent;border:1px solid var(--border);border-radius:12px;color:var(--text2);font-size:13px;cursor:pointer;">Cancel</button>' +
+    '</div>';
+  document.body.appendChild(popup);
+  document.getElementById('cancel-stop-auto').onclick = function(){ popup.remove(); };
+  popup.onclick = function(e){ if(e.target===popup) popup.remove(); };
+  document.getElementById('confirm-stop-auto').onclick = async function(){
+    popup.remove();
+    try {
+      await db.from('users').update({auto_trade: false}).eq('id', currentUser.id);
+      currentUser.auto_trade = false;
+      updateAutoTradeStatusInPopup();
+    } catch(e) { alert('Error: '+(e.message||'Could not stop auto trade')); }
+  };
+}
+
 async function updateAutoTradeStatusInPopup() {
   var textEl = document.getElementById('auto-trade-status-text');
   var subEl = document.getElementById('auto-trade-status-sub');
@@ -6588,16 +6615,19 @@ async function updateAutoTradeStatusInPopup() {
     if(!d) return;
     currentUser.auto_trade = d.auto_trade;
     currentUser.auto_analyst_ids = d.auto_analyst_ids;
+    var stopBtn = document.getElementById('stop-auto-btn');
     if(d.auto_trade) {
       var ids = [];
       try{ ids = JSON.parse(d.auto_analyst_ids||'[]'); }catch(e){}
       textEl.textContent = 'Auto Trade is ON';
       textEl.style.color = 'var(--green)';
       subEl.textContent = 'Following '+ids.length+' analyst'+(ids.length!==1?'s':'')+'. Trades placed automatically when they post signals.';
+      if(stopBtn) stopBtn.style.display = 'block';
     } else {
       textEl.textContent = 'Auto Trade is OFF';
       textEl.style.color = 'var(--text3)';
       subEl.textContent = 'Go to Trade Settings to enable Auto Trade and choose which analysts to follow.';
+      if(stopBtn) stopBtn.style.display = 'none';
     }
   } catch(e) {}
 }
