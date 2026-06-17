@@ -6767,19 +6767,30 @@ async function loadAdminMT5() {
   if(!el || !db) return;
   el.innerHTML = '<div style="padding:12px;color:var(--text2);font-size:12px;">Loading...</div>';
   try {
-    var res = await db.from('users').select('*').order('created_at',{ascending:false});
+    // Load all MT5 accounts with user info
+    var res = await db.from('mt5_accounts').select('*').order('created_at',{ascending:false});
     if(res.error) throw res.error;
-    var users = (res.data||[]).filter(function(u){
-      return u.role === 'user' || (!u.role && u.mt5_id && !u.mt5_id.startsWith('ANALYST_') && !u.mt5_id.startsWith('SUBADMIN_'));
-    });
-    if(!users.length) {
-      el.innerHTML = '<div class="empty-state" style="padding:16px;"><i class="ti ti-users"></i> No users found</div>';
+    var accounts = res.data||[];
+    // Also load users for name/username lookup
+    var uRes = await db.from('users').select('id,name,username,email').eq('role','user');
+    var usersMap = {};
+    (uRes.data||[]).forEach(function(u){ usersMap[u.id] = u; });
+    if(!accounts.length) {
+      el.innerHTML = '<div class="empty-state" style="padding:16px;"><i class="ti ti-database"></i> No MT5 accounts found</div>';
       return;
     }
     el.innerHTML = '';
-    users.forEach(function(user) {
-      var state = user.connection_status;
-      if(!state) state = user.mt5_connected ? 'connected' : 'disconnected';
+    accounts.forEach(function(acct) {
+      // Map account to user-like object for existing UI
+      var owner = usersMap[acct.user_id] || {};
+      var user = Object.assign({}, acct, {
+        name: owner.name || acct.mt5_id,
+        username: owner.username || '',
+        email: owner.email || '',
+        mt5_server: acct.broker || acct.mt5_server || '--'
+      });
+      var state = acct.connection_status;
+      if(!state) state = acct.mt5_connected ? 'connected' : 'disconnected';
       var badgeMap = {
         connected:    ['CONNECTED','rgba(0,200,122,0.12)','var(--green)'],
         pending:      ['PENDING','rgba(255,176,32,0.12)','var(--amber)'],
@@ -6825,21 +6836,21 @@ async function loadAdminMT5() {
 
       var acts = [];
       if(state === 'pending') {
-        acts.push(['✓ Activate','green',function(){ mt5Activate(user.id); }]);
-        acts.push(['✕ Reject','red',function(){ openMT5ReasonSheet('rejected', user.id); }]);
+        acts.push(['✓ Activate','green',function(){ mt5Activate(acct.id); }]);
+        acts.push(['✕ Reject','red',function(){ openMT5ReasonSheet('rejected', acct.id); }]);
       } else if(state === 'connected') {
-        acts.push(['Edit','blue',function(){ openMT5EditSheet(user); }]);
-        acts.push(['Suspend','amber',function(){ openMT5ReasonSheet('suspended', user.id); }]);
-        acts.push(['Disconnect','red',function(){ openMT5ReasonSheet('disconnected', user.id); }]);
+        acts.push(['Edit','blue',function(){ openMT5EditSheet(acct); }]);
+        acts.push(['Suspend','amber',function(){ openMT5ReasonSheet('suspended', acct.id); }]);
+        acts.push(['Disconnect','red',function(){ openMT5ReasonSheet('disconnected', acct.id); }]);
       } else if(state === 'suspended') {
-        acts.push(['Resume','green',function(){ mt5Resume(user.id); }]);
-        acts.push(['Disconnect','red',function(){ openMT5ReasonSheet('disconnected', user.id); }]);
-        acts.push(['Edit','blue',function(){ openMT5EditSheet(user); }]);
+        acts.push(['Resume','green',function(){ mt5Resume(acct.id); }]);
+        acts.push(['Disconnect','red',function(){ openMT5ReasonSheet('disconnected', acct.id); }]);
+        acts.push(['Edit','blue',function(){ openMT5EditSheet(acct); }]);
       } else if(state === 'rejected') {
-        acts.push(['Edit','blue',function(){ openMT5EditSheet(user); }]);
-        acts.push(['Re-allow','green',function(){ mt5Reallow(user.id); }]);
+        acts.push(['Edit','blue',function(){ openMT5EditSheet(acct); }]);
+        acts.push(['Re-allow','green',function(){ mt5Reallow(acct.id); }]);
       } else {
-        acts.push(['Edit','blue',function(){ openMT5EditSheet(user); }]);
+        acts.push(['Edit','blue',function(){ openMT5EditSheet(acct); }]);
       }
       var actRow = document.createElement('div');
       actRow.style.cssText = 'display:flex;gap:6px;margin-top:10px;';
@@ -6852,15 +6863,15 @@ async function loadAdminMT5() {
       });
       card.appendChild(actRow);
 
-      if(user.mt5_credential) {
-        var revBtn = card.querySelector('#revbtn-' + user.id);
-        var pwEl   = card.querySelector('#mt5pw-' + user.id);
+      if(acct.mt5_credential) {
+        var revBtn = card.querySelector('#revbtn-' + acct.id);
+        var pwEl   = card.querySelector('#mt5pw-' + acct.id);
         var revealed = false;
         revBtn.addEventListener('click', function() {
           if(!revealed) {
             try {
               var dec = decodeURIComponent(escape(atob(user.mt5_credential)));
-              var suf = '_mmai_' + user.mt5_id;
+              var suf = '_mmai_' + (acct.mt5_id||user.mt5_id);
               var pw  = dec.endsWith(suf) ? dec.slice(0, -suf.length) : dec;
               pwEl.textContent = pw;
               revBtn.textContent = 'Hide';
@@ -6886,12 +6897,12 @@ function mt5BtnStyle(kind){
   return 'flex:1;font-size:11px;font-weight:700;padding:9px;background:' + col[0] + ';border:1px solid ' + col[1] + ';border-radius:8px;color:' + col[2] + ';cursor:pointer;';
 }
 
-async function applyMT5Transition(userId, core, extra, noticeKind, reason){
-  var base = Object.assign({ mt5_notification_shown:false }, core);
-  var full = Object.assign({}, base, extra||{}, { notice_kind:noticeKind, status_reason:(reason||null) });
+async function applyMT5Transition(acctId, core, extra, noticeKind, reason){
+  var base = Object.assign({}, core);
+  var full = Object.assign({}, base, extra||{}, { connection_status: core.connection_status, status_reason:(reason||null) });
   try {
-    var r = await db.from('users').update(full).eq('id', userId);
-    if(r.error) r = await db.from('users').update(base).eq('id', userId);
+    var r = await db.from('mt5_accounts').update(full).eq('id', acctId);
+    if(r.error) r = await db.from('mt5_accounts').update(base).eq('id', acctId);
     if(r.error) throw r.error;
     loadAdminMT5();
   } catch(e){ alert('Action failed: ' + (e.message||'Unknown error')); }
@@ -6902,7 +6913,7 @@ function mt5Resume(id){ applyMT5Transition(id, { connection_status:'connected', 
 function mt5Reallow(id){ applyMT5Transition(id, { connection_status:'disconnected', mt5_connected:false }, {}, 'reopened', null); }
 function mt5Reject(id, reason){ applyMT5Transition(id, { connection_status:'rejected', mt5_connected:false }, { rejection_reason:reason }, 'rejected', reason); }
 function mt5Suspend(id, reason){ applyMT5Transition(id, { connection_status:'suspended', mt5_connected:false }, {}, 'suspended', reason); }
-function mt5Disconnect(id, reason){ applyMT5Transition(id, { connection_status:'disconnected', mt5_connected:false, mt5_id:null, mt5_credential:null, mt5_server:null, allow_auto_trade:false }, { connected_at:null }, 'disconnected', reason); }
+function mt5Disconnect(id, reason){ applyMT5Transition(id, { connection_status:'disconnected', mt5_connected:false }, { connected_at:null }, 'disconnected', reason); }
 
 function openMT5ReasonSheet(actionKind, userId){
   var ex = document.getElementById('mt5-reason-sheet'); if(ex) ex.remove();
