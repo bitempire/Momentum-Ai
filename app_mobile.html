@@ -3005,216 +3005,163 @@ select.auth-input {
     <div class="sub-header">
       <button class="sub-back" onclick="hideSubScreen('sub-scanner')"><i class="ti ti-arrow-left"></i></button>
       <div class="sub-title">MAI SCANNER</div>
-      <div style="margin-left:auto;display:flex;align-items:center;gap:5px;font-size:10px;color:var(--amber);font-weight:700;">
-        <div style="width:6px;height:6px;border-radius:50%;background:var(--amber);"></div>DEMO
+      <div id="scanner-status-badge" style="margin-left:auto;display:flex;align-items:center;gap:5px;font-size:10px;color:var(--amber);font-weight:700;">
+        <div style="width:6px;height:6px;border-radius:50%;background:var(--amber);"></div>READY
       </div>
     </div>
     <div class="sub-content">
-      <!-- Dropdowns row -->
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px;">
+
+      <!-- HEADER PRICE -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
         <div>
-          <div style="font-size:9px;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px;">Category</div>
-          <select id="scan-category" class="auth-input" style="font-size:12px;padding:8px 10px;" onchange="updateScanSymbols()">
-            <option value="metals">Metals</option>
-            <option value="indices">Indices</option>
-            <option value="crypto">Crypto</option>
-            <option value="forex">Forex</option>
-          </select>
+          <div style="font-family:'Orbitron',sans-serif;font-size:16px;font-weight:800;color:var(--text);" id="scan-pair-label">XAUUSD <span style="color:var(--red);">H4</span></div>
+          <div style="font-size:10px;color:var(--text3);" id="scan-last-time">Select pair and scan</div>
         </div>
-        <div>
-          <div style="font-size:9px;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px;">Symbol</div>
-          <select id="scan-symbol" class="auth-input" style="font-size:12px;padding:8px 10px;">
-            <option value="XAUUSD">XAUUSD</option>
-            <option value="XAGUSD">XAGUSD</option>
-          </select>
-        </div>
-        <div>
-          <div style="font-size:9px;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px;">Timeframe</div>
-          <select id="scan-tf" class="auth-input" style="font-size:12px;padding:8px 10px;">
-            <option value="M1">M1</option>
-            <option value="M5">M5</option>
-            <option value="M15">M15</option>
-            <option value="M30">M30</option>
-            <option value="H1">H1</option>
-            <option value="H4" selected>H4</option>
-            <option value="D1">1 Day</option>
-            <option value="W1">Weekly</option>
-            <option value="MN1">Monthly</option>
-          </select>
+        <div style="text-align:right;">
+          <div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:800;color:var(--text);" id="scan-price">—</div>
+          <div style="font-size:10px;" id="scan-change">—</div>
         </div>
       </div>
-      <!-- Initiate Scan button -->
-      <button onclick="initiateScan()" class="red-btn" style="margin-bottom:12px;letter-spacing:1px;">INITIATE SCAN</button>
-      <!-- Last scan info -->
-      <div id="scan-status" style="text-align:center;font-size:10px;color:var(--text3);margin-bottom:12px;">Press Initiate Scan to begin analysis</div>
 
-      <!-- Scan results - hidden until scan -->
+      <!-- FILTERS -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px;">
+        <select id="scan-symbol" class="auth-input" style="font-size:12px;padding:8px 10px;">
+          <option value="GC=F">XAUUSD (Gold)</option>
+          <option value="BTC-USD">BTCUSD</option>
+          <option value="EURUSD=X">EURUSD</option>
+          <option value="GBPJPY=X">GBPJPY</option>
+          <option value="GBPUSD=X">GBPUSD</option>
+          <option value="^IXIC">NAS100</option>
+          <option value="^DJI">US30</option>
+          <option value="DX-Y.NYB">DXY</option>
+          <option value="CL=F">USOIL</option>
+        </select>
+        <select id="scan-tf" class="auth-input" style="font-size:12px;padding:8px 10px;">
+          <option value="60m">H1</option>
+          <option value="1d" selected>H4</option>
+          <option value="1d">D1</option>
+          <option value="1wk">W1</option>
+        </select>
+      </div>
+
+      <!-- SCAN BUTTON -->
+      <button id="scan-btn" onclick="runMAIScanner()" style="width:100%;padding:11px;background:var(--red);border:none;border-radius:10px;color:#fff;font-family:'Orbitron',sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;cursor:pointer;margin-bottom:10px;">▶ INITIATE SCAN</button>
+
+      <!-- RESULTS (hidden until scan) -->
       <div id="scan-results" style="display:none;">
-        <!-- Price bar -->
-        <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:10px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;">
-          <div>
-            <div style="font-family:'Orbitron',sans-serif;font-size:16px;font-weight:800;color:var(--text);" id="scan-pair-title">XAUUSD</div>
-            <div style="font-size:11px;color:var(--text3);">Current Price · <span id="scan-tf-label">H4</span></div>
+
+        <!-- SENTIMENT -->
+        <div class="section-card" style="margin-bottom:10px;padding:12px;">
+          <div style="font-size:10px;font-weight:800;color:var(--red);letter-spacing:1px;margin-bottom:10px;">SENTIMENT ANALYSIS</div>
+          <div style="display:flex;align-items:center;gap:10px;background:rgba(255,30,60,0.03);border:0.5px solid rgba(255,30,60,0.12);border-radius:10px;padding:10px;margin-bottom:10px;">
+            <div style="flex-shrink:0;text-align:center;">
+              <svg id="sent-gauge-svg" width="80" height="55" viewBox="0 0 80 55" role="img" aria-label="Sentiment confidence gauge">
+                <defs><linearGradient id="sentGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#FF1E3C"/><stop offset="50%" stop-color="#FFB020"/><stop offset="100%" stop-color="#00C87A"/></linearGradient></defs>
+                <path d="M 6 48 A 34 34 0 0 1 74 48" fill="none" stroke="#1e1e1e" stroke-width="6" stroke-linecap="round"/>
+                <path d="M 6 48 A 34 34 0 0 1 74 48" fill="none" stroke="url(#sentGrad)" stroke-width="6" stroke-linecap="round" stroke-dasharray="106.8" stroke-dashoffset="106.8" opacity="0.15"/>
+                <path id="sent-gauge-fill" d="M 6 48 A 34 34 0 0 1 74 48" fill="none" stroke="url(#sentGrad)" stroke-width="6" stroke-linecap="round" stroke-dasharray="106.8" stroke-dashoffset="106.8"/>
+                <line id="sent-needle" x1="40" y1="48" x2="40" y2="18" transform="rotate(-90 40 48)" stroke="#555" stroke-width="1.5" stroke-linecap="round"/>
+                <circle cx="40" cy="48" r="3" fill="#555"/>
+                <circle cx="40" cy="48" r="1.2" fill="#141414"/>
+                <text id="sent-gauge-pct" x="40" y="42" text-anchor="middle" font-size="13" font-weight="800" fill="#E0E0E0" font-family="monospace">—</text>
+              </svg>
+              <div id="sent-verdict-label" style="font-size:11px;font-weight:800;color:var(--text3);margin-top:-2px;">—</div>
+            </div>
+            <div style="flex:1;">
+              <div style="font-size:9px;color:var(--text3);margin-bottom:4px;">BEAR ←——————→ BULL</div>
+              <div id="sent-scale-bars" style="display:flex;gap:2px;margin-bottom:4px;">
+                <div style="flex:1;height:5px;background:#1e1e1e;border-radius:2px;"></div>
+                <div style="flex:1;height:5px;background:#1e1e1e;border-radius:2px;"></div>
+                <div style="flex:1;height:5px;background:#1e1e1e;border-radius:2px;"></div>
+                <div style="flex:1;height:5px;background:#1e1e1e;border-radius:2px;"></div>
+                <div style="flex:1;height:5px;background:#1e1e1e;border-radius:2px;"></div>
+                <div style="flex:1;height:5px;background:#1e1e1e;border-radius:2px;"></div>
+                <div style="flex:1;height:5px;background:#1e1e1e;border-radius:2px;"></div>
+                <div style="flex:1;height:5px;background:#1e1e1e;border-radius:2px;"></div>
+                <div style="flex:1;height:5px;background:#1e1e1e;border-radius:2px;"></div>
+                <div style="flex:1;height:5px;background:#1e1e1e;border-radius:2px;"></div>
+              </div>
+              <div id="sent-scale-label" style="font-size:11px;color:var(--text3);">—</div>
+            </div>
           </div>
-          <div style="text-align:right;">
-            <div style="font-size:18px;font-weight:800;color:var(--text);">3,348.75</div>
-            <div style="font-size:11px;color:var(--red);font-weight:700;">-0.25% (24h)</div>
+          <div id="sent-factors"></div>
+          <div style="display:flex;justify-content:space-between;margin-top:8px;padding-top:8px;border-top:0.5px solid var(--border);">
+            <span style="font-size:10px;color:var(--text3);">SENTIMENT VERDICT</span>
+            <span id="sent-verdict" style="font-size:11px;font-weight:800;color:var(--text3);">—</span>
           </div>
         </div>
 
-        <!-- SENTIMENT ANALYSIS -->
-        <div class="section-card" style="margin-bottom:10px;">
-          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:1px;margin-bottom:12px;">SENTIMENT ANALYSIS</div>
-          <!-- Gauge -->
-          <div style="text-align:center;margin-bottom:12px;">
-            <svg width="130" height="75" viewBox="0 0 130 75">
-              <path d="M 18 70 A 52 52 0 0 1 112 70" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="10" stroke-linecap="round"/>
-              <path d="M 18 70 A 52 52 0 0 1 100 30" fill="none" stroke="#FF1E3C" stroke-width="10" stroke-linecap="round"/>
-              <text x="65" y="60" text-anchor="middle" font-size="20" font-weight="800" fill="#f4f7fa">87%</text>
-              <text x="65" y="73" text-anchor="middle" font-size="9" font-weight="700" fill="#00c87a">BULLISH</text>
-            </svg>
-            <div style="font-size:9px;color:var(--text3);letter-spacing:.5px;margin-top:2px;">CONFIDENCE SCORE</div>
-          </div>
-          <!-- Breakdown -->
-          <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:10px;">
-            <div style="display:flex;align-items:center;gap:8px;"><div style="width:8px;height:8px;border-radius:50%;background:#4D9EFF;flex-shrink:0;"></div><div style="font-size:11px;color:var(--text2);flex:1;">Technical Trend</div><div style="height:4px;width:60px;background:rgba(255,255,255,0.08);border-radius:2px;"><div style="width:100%;height:100%;background:#4D9EFF;border-radius:2px;"></div></div><div style="font-size:11px;font-weight:700;color:#4D9EFF;width:28px;text-align:right;">35%</div></div>
-            <div style="display:flex;align-items:center;gap:8px;"><div style="width:8px;height:8px;border-radius:50%;background:#00c87a;flex-shrink:0;"></div><div style="font-size:11px;color:var(--text2);flex:1;">Economic News</div><div style="height:4px;width:60px;background:rgba(255,255,255,0.08);border-radius:2px;"><div style="width:71%;height:100%;background:#00c87a;border-radius:2px;"></div></div><div style="font-size:11px;font-weight:700;color:#00c87a;width:28px;text-align:right;">25%</div></div>
-            <div style="display:flex;align-items:center;gap:8px;"><div style="width:8px;height:8px;border-radius:50%;background:#FFB020;flex-shrink:0;"></div><div style="font-size:11px;color:var(--text2);flex:1;">USD Index DXY</div><div style="height:4px;width:60px;background:rgba(255,255,255,0.08);border-radius:2px;"><div style="width:43%;height:100%;background:#FFB020;border-radius:2px;"></div></div><div style="font-size:11px;font-weight:700;color:#FFB020;width:28px;text-align:right;">15%</div></div>
-            <div style="display:flex;align-items:center;gap:8px;"><div style="width:8px;height:8px;border-radius:50%;background:#9B59B6;flex-shrink:0;"></div><div style="font-size:11px;color:var(--text2);flex:1;">Bond Yield US10Y</div><div style="height:4px;width:60px;background:rgba(255,255,255,0.08);border-radius:2px;"><div style="width:29%;height:100%;background:#9B59B6;border-radius:2px;"></div></div><div style="font-size:11px;font-weight:700;color:#9B59B6;width:28px;text-align:right;">10%</div></div>
-            <div style="display:flex;align-items:center;gap:8px;"><div style="width:8px;height:8px;border-radius:50%;background:#FF6B5E;flex-shrink:0;"></div><div style="font-size:11px;color:var(--text2);flex:1;">COT Positioning</div><div style="height:4px;width:60px;background:rgba(255,255,255,0.08);border-radius:2px;"><div style="width:29%;height:100%;background:#FF6B5E;border-radius:2px;"></div></div><div style="font-size:11px;font-weight:700;color:#FF6B5E;width:28px;text-align:right;">10%</div></div>
-            <div style="display:flex;align-items:center;gap:8px;"><div style="width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0;"></div><div style="font-size:11px;color:var(--text2);flex:1;">VIX Fear Index</div><div style="height:4px;width:60px;background:rgba(255,255,255,0.08);border-radius:2px;"><div style="width:14%;height:100%;background:var(--red);border-radius:2px;"></div></div><div style="font-size:11px;font-weight:700;color:var(--red);width:28px;text-align:right;">5%</div></div>
-          </div>
-          <div style="display:flex;justify-content:space-between;padding-top:8px;border-top:1px solid var(--border);">
-            <div style="font-size:11px;color:var(--text3);">Sentiment Verdict</div>
-            <div style="font-size:13px;font-weight:800;color:#00c87a;">BULLISH</div>
-          </div>
-        </div>
-
-        <!-- TECHNICAL ANALYSIS -->
-        <div class="section-card" style="margin-bottom:10px;">
-          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:1px;margin-bottom:12px;">TECHNICAL ANALYSIS</div>
-          <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px;">
-            <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:11px;color:var(--text3);width:95px;flex-shrink:0;">Moving Avg (50)</span><div style="flex:1;height:4px;background:rgba(255,255,255,0.08);border-radius:2px;"><div style="width:85%;height:100%;background:#00c87a;border-radius:2px;"></div></div><span style="font-size:10px;font-weight:700;color:#00c87a;width:45px;text-align:right;">ABOVE</span></div>
-            <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:11px;color:var(--text3);width:95px;flex-shrink:0;">EMA 200</span><div style="flex:1;height:4px;background:rgba(255,255,255,0.08);border-radius:2px;"><div style="width:90%;height:100%;background:#00c87a;border-radius:2px;"></div></div><span style="font-size:10px;font-weight:700;color:#00c87a;width:45px;text-align:right;">ABOVE</span></div>
-            <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:11px;color:var(--text3);width:95px;flex-shrink:0;">Bollinger Bands</span><div style="flex:1;height:4px;background:rgba(255,255,255,0.08);border-radius:2px;"><div style="width:62%;height:100%;background:#FFB020;border-radius:2px;"></div></div><span style="font-size:10px;font-weight:700;color:#FFB020;width:45px;text-align:right;">MID-UP</span></div>
-            <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:11px;color:var(--text3);width:95px;flex-shrink:0;">Stochastic</span><div style="flex:1;height:4px;background:rgba(255,255,255,0.08);border-radius:2px;"><div style="width:55%;height:100%;background:#4D9EFF;border-radius:2px;"></div></div><span style="font-size:10px;font-weight:700;color:#4D9EFF;width:45px;text-align:right;">NEUTRAL</span></div>
-            <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:11px;color:var(--text3);width:95px;flex-shrink:0;">RSI (14)</span><div style="flex:1;height:4px;background:rgba(255,255,255,0.08);border-radius:2px;"><div style="width:38%;height:100%;background:#00c87a;border-radius:2px;"></div></div><span style="font-size:10px;font-weight:700;color:#00c87a;width:45px;text-align:right;">38</span></div>
-            <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:11px;color:var(--text3);width:95px;flex-shrink:0;">MACD</span><div style="flex:1;height:4px;background:rgba(255,255,255,0.08);border-radius:2px;"><div style="width:72%;height:100%;background:#00c87a;border-radius:2px;"></div></div><span style="font-size:10px;font-weight:700;color:#00c87a;width:45px;text-align:right;">BULLISH</span></div>
-            <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:11px;color:var(--text3);width:95px;flex-shrink:0;">ATR</span><div style="flex:1;height:4px;background:rgba(255,255,255,0.08);border-radius:2px;"><div style="width:50%;height:100%;background:#FFB020;border-radius:2px;"></div></div><span style="font-size:10px;font-weight:700;color:#FFB020;width:45px;text-align:right;">14.2</span></div>
-            <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:11px;color:var(--text3);width:95px;flex-shrink:0;">Volume</span><div style="flex:1;height:4px;background:rgba(255,255,255,0.08);border-radius:2px;"><div style="width:88%;height:100%;background:#00c87a;border-radius:2px;"></div></div><span style="font-size:10px;font-weight:700;color:#00c87a;width:45px;text-align:right;">HIGH</span></div>
-          </div>
-          <!-- Key levels -->
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px;">
-            <div style="background:rgba(0,200,122,0.07);border:1px solid rgba(0,200,122,0.15);border-radius:8px;padding:8px;">
+        <!-- TECHNICAL -->
+        <div class="section-card" style="margin-bottom:10px;padding:12px;">
+          <div style="font-size:10px;font-weight:800;color:var(--red);letter-spacing:1px;margin-bottom:10px;">TECHNICAL ANALYSIS</div>
+          <div id="tech-indicators"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px;">
+            <div style="background:rgba(0,200,122,0.06);border:0.5px solid rgba(0,200,122,0.15);border-radius:8px;padding:7px;">
               <div style="font-size:9px;color:var(--text3);margin-bottom:2px;">KEY SUPPORT</div>
-              <div style="font-size:11px;font-weight:800;color:#00c87a;">3,280 – 3,300</div>
+              <div id="tech-support" style="font-size:12px;font-weight:700;color:var(--green);">—</div>
             </div>
-            <div style="background:rgba(255,30,60,0.06);border:1px solid rgba(255,30,60,0.12);border-radius:8px;padding:8px;">
+            <div style="background:rgba(255,30,60,0.04);border:0.5px solid rgba(255,30,60,0.12);border-radius:8px;padding:7px;">
               <div style="font-size:9px;color:var(--text3);margin-bottom:2px;">KEY RESISTANCE</div>
-              <div style="font-size:11px;font-weight:800;color:var(--red);">3,380 – 3,400</div>
+              <div id="tech-resistance" style="font-size:12px;font-weight:700;color:var(--red);">—</div>
             </div>
           </div>
-          <!-- Direction + Momentum -->
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px;">
-            <div style="background:rgba(255,255,255,0.04);border-radius:8px;padding:8px;text-align:center;">
-              <div style="font-size:9px;color:var(--text3);margin-bottom:3px;">DIRECTION</div>
-              <div style="font-size:13px;font-weight:800;color:#00c87a;">Bullish</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px;">
+            <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:8px;padding:7px;text-align:center;">
+              <div style="font-size:9px;color:var(--text3);margin-bottom:2px;">DIRECTION</div>
+              <div id="tech-direction" style="font-size:13px;font-weight:800;color:var(--text3);">—</div>
             </div>
-            <div style="background:rgba(255,255,255,0.04);border-radius:8px;padding:8px;text-align:center;">
-              <div style="font-size:9px;color:var(--text3);margin-bottom:3px;">MOMENTUM</div>
-              <div style="font-size:13px;font-weight:800;color:#FFB020;">Moderate</div>
+            <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:8px;padding:7px;text-align:center;">
+              <div style="font-size:9px;color:var(--text3);margin-bottom:2px;">MOMENTUM</div>
+              <div id="tech-momentum" style="font-size:13px;font-weight:800;color:var(--text3);">—</div>
             </div>
           </div>
-          <!-- MAI Scenario -->
-          <div style="background:rgba(255,255,255,0.03);border-radius:8px;padding:10px;">
-            <div style="font-size:9px;color:var(--red);font-weight:700;letter-spacing:.5px;margin-bottom:6px;">MAI SCENARIO</div>
-            <div style="font-size:11px;color:var(--text2);line-height:1.7;"><span style="color:#00c87a;font-weight:700;">Bullish:</span> If price breaks above 3,380 resistance, expect continuation toward 3,420 with sustained buying pressure.</div>
-            <div style="font-size:11px;color:var(--text2);line-height:1.7;margin-top:4px;"><span style="color:var(--red);font-weight:700;">Bearish:</span> If price drops below 3,300 support, expect pullback toward 3,260 demand zone.</div>
-          </div>
-          <div style="margin-top:8px;padding:8px;background:rgba(0,200,122,0.06);border-left:3px solid #00c87a;border-radius:0 6px 6px 0;">
-            <div style="font-size:9px;color:var(--text3);margin-bottom:3px;">TECHNICAL VERDICT · Strong</div>
-            <div style="font-size:11px;color:var(--text2);line-height:1.6;">Price above key moving averages. RSI shows healthy buying pressure. Market structure remains bullish above nearest support zone.</div>
-          </div>
+          <div id="tech-scenario" style="margin-top:8px;padding:8px;background:var(--surface);border-radius:8px;border:0.5px solid var(--border);font-size:11px;color:var(--text3);line-height:1.6;"></div>
+          <div id="tech-verdict-box" style="margin-top:8px;padding:7px;border-left:2px solid var(--green);border-radius:0 6px 6px 0;font-size:11px;color:var(--text3);line-height:1.5;background:rgba(0,200,122,0.04);"></div>
         </div>
 
-        <!-- FUNDAMENTAL ANALYSIS -->
-        <div class="section-card" style="margin-bottom:10px;">
-          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:1px;margin-bottom:10px;">FUNDAMENTAL ANALYSIS</div>
-          <div style="font-size:9px;font-weight:700;color:var(--text3);letter-spacing:.5px;margin-bottom:8px;">UPCOMING HIGH IMPACT NEWS</div>
-          <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px;">
-            <div style="display:flex;gap:8px;align-items:flex-start;padding:8px;background:rgba(255,30,60,0.05);border-radius:8px;">
-              <div style="width:6px;height:6px;background:var(--red);border-radius:50%;flex-shrink:0;margin-top:3px;"></div>
-              <div><div style="font-size:11px;font-weight:700;color:var(--text);">ADP Non-Farm Employment Change</div><div style="font-size:10px;color:var(--text3);margin-top:1px;">Tomorrow 12:15 AM MYT · F: 116K · P: 109K</div></div>
-            </div>
-            <div style="display:flex;gap:8px;align-items:flex-start;padding:8px;background:rgba(255,176,32,0.05);border-radius:8px;">
-              <div style="width:6px;height:6px;background:#FFB020;border-radius:50%;flex-shrink:0;margin-top:3px;"></div>
-              <div><div style="font-size:11px;font-weight:700;color:var(--text);">ISM Services PMI</div><div style="font-size:10px;color:var(--text3);margin-top:1px;">Tomorrow 02:00 AM MYT · F: 53.7 · P: 53.6</div></div>
-            </div>
-            <div style="display:flex;gap:8px;align-items:flex-start;padding:8px;background:rgba(255,176,32,0.05);border-radius:8px;">
-              <div style="width:6px;height:6px;background:#FFB020;border-radius:50%;flex-shrink:0;margin-top:3px;"></div>
-              <div><div style="font-size:11px;font-weight:700;color:var(--text);">Average Hourly Earnings m/m</div><div style="font-size:10px;color:var(--text3);margin-top:1px;">Sat 06 Jun 12:30 AM MYT · F: 0.3% · P: 0.2%</div></div>
-            </div>
-          </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px;">
-            <div style="background:rgba(77,158,255,0.08);border:1px solid rgba(77,158,255,0.15);border-radius:8px;padding:8px;text-align:center;">
-              <div style="font-size:9px;color:var(--text3);margin-bottom:2px;">US DOLLAR</div>
-              <div style="font-size:13px;font-weight:800;color:#4D9EFF;">Bullish</div>
-              <div style="font-size:9px;color:var(--text3);margin-top:1px;">Fundamental</div>
-            </div>
-            <div style="background:rgba(255,30,60,0.06);border:1px solid rgba(255,30,60,0.12);border-radius:8px;padding:8px;text-align:center;">
-              <div style="font-size:9px;color:var(--text3);margin-bottom:2px;">GOLD</div>
-              <div style="font-size:13px;font-weight:800;color:var(--red);">Bearish</div>
-              <div style="font-size:9px;color:var(--text3);margin-top:1px;">Fundamental</div>
-            </div>
-          </div>
-          <div style="padding:8px;background:rgba(255,176,32,0.05);border-left:3px solid #FFB020;border-radius:0 6px 6px 0;">
-            <div style="font-size:9px;color:var(--text3);margin-bottom:3px;">FUNDAMENTAL VERDICT · Neutral · Moderate</div>
-            <div style="font-size:11px;color:var(--text2);line-height:1.6;">No major high-impact news currently active. Upcoming USD-related events may affect volatility in the next 24 hours.</div>
-          </div>
+        <!-- FUNDAMENTAL -->
+        <div class="section-card" style="margin-bottom:10px;padding:12px;">
+          <div style="font-size:10px;font-weight:800;color:var(--red);letter-spacing:1px;margin-bottom:8px;">FUNDAMENTAL ANALYSIS</div>
+          <div style="font-size:9px;color:var(--text3);letter-spacing:.5px;margin-bottom:6px;">UPCOMING HIGH IMPACT NEWS</div>
+          <div id="fund-news"></div>
+          <div id="fund-verdict-box" style="margin-top:8px;padding:7px;border-left:2px solid var(--amber);border-radius:0 6px 6px 0;font-size:11px;color:var(--text3);line-height:1.5;background:rgba(255,176,32,0.04);"></div>
         </div>
 
-        <!-- OVERALL AI VERDICT -->
-        <div class="section-card" style="margin-bottom:10px;background:rgba(255,30,60,0.05);border-color:rgba(255,30,60,0.2);">
-          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:1px;margin-bottom:12px;">OVERALL AI VERDICT</div>
-          <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;margin-bottom:10px;">
-            <div style="text-align:center;"><div style="font-size:9px;color:var(--text3);margin-bottom:3px;">DIRECTION</div><div style="font-size:13px;font-weight:800;color:#00c87a;">Bullish</div></div>
-            <div style="text-align:center;"><div style="font-size:9px;color:var(--text3);margin-bottom:3px;">MOMENTUM</div><div style="font-size:13px;font-weight:800;color:var(--text);">Strong</div></div>
-            <div style="text-align:center;"><div style="font-size:9px;color:var(--text3);margin-bottom:3px;">CONFIDENCE</div><div style="font-size:13px;font-weight:800;color:var(--red);">82%</div></div>
-            <div style="text-align:center;"><div style="font-size:9px;color:var(--text3);margin-bottom:3px;">RISK</div><div style="font-size:13px;font-weight:800;color:#FFB020;">Moderate</div></div>
+        <!-- OVERALL VERDICT -->
+        <div style="background:rgba(255,30,60,0.04);border:0.5px solid rgba(255,30,60,0.2);border-radius:12px;padding:12px;margin-bottom:10px;">
+          <div style="font-size:10px;font-weight:800;color:var(--red);letter-spacing:1px;margin-bottom:8px;">OVERALL AI VERDICT</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;margin-bottom:8px;">
+            <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:8px;padding:7px;text-align:center;">
+              <div style="font-size:9px;color:var(--text3);margin-bottom:2px;">DIRECTION</div>
+              <div id="verdict-direction" style="font-size:12px;font-weight:800;color:var(--text3);">—</div>
+            </div>
+            <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:8px;padding:7px;text-align:center;">
+              <div style="font-size:9px;color:var(--text3);margin-bottom:2px;">MOMENTUM</div>
+              <div id="verdict-momentum" style="font-size:12px;font-weight:800;color:var(--text3);">—</div>
+            </div>
+            <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:8px;padding:7px;text-align:center;">
+              <div style="font-size:9px;color:var(--text3);margin-bottom:2px;">CONFIDENCE</div>
+              <div id="verdict-confidence" style="font-size:12px;font-weight:800;color:var(--text3);">—</div>
+            </div>
+            <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:8px;padding:7px;text-align:center;">
+              <div style="font-size:9px;color:var(--text3);margin-bottom:2px;">RISK</div>
+              <div id="verdict-risk" style="font-size:12px;font-weight:800;color:var(--text3);">—</div>
+            </div>
           </div>
-          <div style="margin-bottom:10px;">
-            <div style="height:6px;background:rgba(255,255,255,0.08);border-radius:3px;margin-bottom:4px;"><div style="width:82%;height:100%;background:var(--grad);border-radius:3px;"></div></div>
-            <div style="display:flex;justify-content:space-between;"><span style="font-size:9px;color:var(--text3);">AI Confidence</span><span style="font-size:9px;font-weight:700;color:var(--red);">82%</span></div>
+          <div style="height:4px;background:#1e1e1e;border-radius:2px;overflow:hidden;margin-bottom:8px;">
+            <div id="verdict-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#FF1E3C,#FFB020,#00C87A);border-radius:2px;transition:width 1s;"></div>
           </div>
-          <div style="background:rgba(0,0,0,0.15);border-radius:8px;padding:10px;">
-            <div style="font-size:9px;color:var(--text3);letter-spacing:.5px;margin-bottom:5px;">FINAL AI SUMMARY</div>
-            <div style="font-size:11px;color:var(--text2);line-height:1.7;">Technical analysis shows strong bullish structure. Sentiment supports further upside while fundamental impact remains neutral. Momentum AI suggests bullish continuation as long as price holds above the 3,300 key support area.</div>
-          </div>
+          <div style="font-size:9px;color:var(--text3);letter-spacing:.5px;margin-bottom:5px;">FINAL AI SUMMARY</div>
+          <div id="verdict-summary" style="font-size:11px;color:var(--text3);line-height:1.7;">Run a scan to see the AI verdict.</div>
         </div>
 
-        <!-- Generate Report button -->
-        <button onclick="generateMAIReport()" class="red-btn" style="letter-spacing:1px;margin-bottom:4px;">GENERATE MAI FULL REPORT</button>
-        <div style="text-align:center;font-size:9px;color:var(--text3);margin-bottom:8px;">Placeholder data — connect broker API for live analysis</div>
+        <!-- GENERATE REPORT -->
+        <button onclick="generateMAIReport()" style="width:100%;padding:11px;background:transparent;border:1px solid var(--red);border-radius:10px;color:var(--red);font-family:'Orbitron',sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;cursor:pointer;margin-bottom:12px;">⬇ GENERATE MAI FULL REPORT</button>
+
       </div>
     </div>
   </div>
 
-  <!-- MAI Report Popup -->
-  <div id="mai-report-popup" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:9999;flex-direction:column;">
-    <div style="background:var(--bg2);flex:1;overflow-y:auto;border-radius:20px 20px 0 0;margin-top:60px;padding:20px;">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-        <div>
-          <div style="color:var(--red);font-family:'Orbitron',sans-serif;font-size:13px;font-weight:800;letter-spacing:1px;">MAI INTELLIGENCE REPORT</div>
-          <div style="font-size:11px;color:var(--text3);margin-top:2px;" id="report-subtitle">XAUUSD · H4 · Loading...</div>
-        </div>
-        <button onclick="closeMAIReport()" style="background:rgba(255,255,255,0.1);border:none;border-radius:50%;width:32px;height:32px;color:var(--text);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;">×</button>
-      </div>
-      <div id="mai-report-content" style="font-size:13px;color:var(--text2);line-height:1.9;">
-        <div style="text-align:center;padding:30px;"><i class="ti ti-brain" style="font-size:36px;color:var(--red);display:block;margin-bottom:10px;"></i>Generating report...</div>
-      </div>
-    </div>
-  </div>
-  <!-- Trading Academy -->
   <div id="sub-academy" class="sub-screen">
     <div class="sub-header">
       <button class="sub-back" onclick="hideSubScreen('sub-academy')"><i class="ti ti-arrow-left"></i></button>
@@ -4581,6 +4528,15 @@ async function executeTrade(method) {
       method:       method
     };
     if(smartSettings) cmd.smart_settings = JSON.stringify(smartSettings);
+    // Scanner verification for auto trades
+    if(method === 'auto' && activeAccount && activeAccount.auto_entry_confirm === 'scanner') {
+      var scanOk = await verifyScannerBeforeTrade(sym, side);
+      if(!scanOk) {
+        alert('MAI Scanner: Market direction does not confirm this signal. Trade blocked.');
+        if(btn){ btn.textContent=origText; btn.disabled=false; }
+        return;
+      }
+    }
     var ins = await db.from('trade_commands').insert([cmd]);
     if(ins.error) throw new Error(ins.error.message);
     document.getElementById('trade-success-note').style.display = 'flex';
@@ -6976,6 +6932,337 @@ async function saveEASettings() {
 // ══════════════════════════════════════════════════
 // ADMIN MT5 TAB
 // ══════════════════════════════════════════════════
+
+
+// ═══════════════════════════════════════════════════
+// MAI SCANNER
+// ═══════════════════════════════════════════════════
+window._lastScanData = null;
+
+function updateSentimentGauge(pct, direction) {
+  var fill = document.getElementById('sent-gauge-fill');
+  var needle = document.getElementById('sent-needle');
+  var pctEl = document.getElementById('sent-gauge-pct');
+  var label = document.getElementById('sent-verdict-label');
+  if(!fill||!needle||!pctEl) return;
+  var total = 106.8;
+  var offset = total - (pct/100)*total;
+  fill.setAttribute('stroke-dashoffset', offset.toFixed(1));
+  var deg = -90 + (pct/100)*180;
+  needle.setAttribute('transform','rotate('+deg+' 40 48)');
+  var col = pct>=65?'#00C87A':pct>=45?'#FFB020':'#FF1E3C';
+  needle.setAttribute('stroke', col);
+  needle.nextElementSibling.setAttribute('fill', col);
+  pctEl.textContent = Math.round(pct)+'%';
+  pctEl.setAttribute('fill', col);
+  label.textContent = direction.toUpperCase();
+  label.style.color = col;
+}
+
+function updateSentimentScale(pct) {
+  var bars = document.getElementById('sent-scale-bars');
+  var label = document.getElementById('sent-scale-label');
+  if(!bars) return;
+  var bulls = Math.round(pct/10);
+  var divs = bars.querySelectorAll('div');
+  divs.forEach(function(d,i){
+    if(i < bulls) {
+      var intensity = 0.3 + (i/10)*0.7;
+      d.style.background = pct>=50?'#00C87A':'#FF1E3C';
+      d.style.opacity = intensity;
+    } else {
+      d.style.background = '#1e1e1e';
+      d.style.opacity = '1';
+    }
+  });
+  if(label) {
+    var txt = pct>=75?'strongly bullish':pct>=60?'moderately bullish':pct>=45?'neutral':pct>=30?'moderately bearish':'strongly bearish';
+    label.innerHTML = 'Leaning <span style="font-weight:700;color:'+(pct>=50?'#00C87A':'#FF1E3C')+'">'+txt+'</span>';
+  }
+}
+
+async function runMAIScanner() {
+  var btn = document.getElementById('scan-btn');
+  var badge = document.getElementById('scanner-status-badge');
+  var sym = document.getElementById('scan-symbol').value;
+  var tf = document.getElementById('scan-tf').value;
+  var symName = document.getElementById('scan-symbol').options[document.getElementById('scan-symbol').selectedIndex].text.split(' ')[0];
+  var tfName = document.getElementById('scan-tf').options[document.getElementById('scan-tf').selectedIndex].text;
+
+  btn.textContent = '⟳ SCANNING...';
+  btn.style.background = '#333';
+  if(badge) { badge.innerHTML = '<div style="width:6px;height:6px;border-radius:50%;background:var(--amber);animation:pulse 1s infinite;"></div>SCANNING'; badge.style.color='var(--amber)'; }
+
+  document.getElementById('scan-pair-label').innerHTML = symName+' <span style="color:var(--red);">'+tfName+'</span>';
+  document.getElementById('scan-results').style.display = 'block';
+
+  try {
+    // 1. FETCH OHLC from Yahoo Finance via allorigins proxy
+    var yhSym = sym;
+    var interval = tf==='60m'?'60m':tf==='1d'?'1d':'1d';
+    var range = tf==='1wk'?'1y':'6mo';
+    var yhUrl = 'https://query1.finance.yahoo.com/v8/finance/chart/'+yhSym+'?interval='+interval+'&range='+range;
+    var proxyUrl = 'https://api.allorigins.win/raw?url='+encodeURIComponent(yhUrl);
+    
+    var resp = await fetch(proxyUrl);
+    var yhData = await resp.json();
+    var result = yhData.chart && yhData.chart.result && yhData.chart.result[0];
+    
+    var closes = [], highs = [], lows = [], volumes = [];
+    if(result && result.indicators && result.indicators.quote && result.indicators.quote[0]) {
+      var q = result.indicators.quote[0];
+      closes = (q.close||[]).filter(function(v){return v!=null;});
+      highs = (q.high||[]).filter(function(v){return v!=null;});
+      lows = (q.low||[]).filter(function(v){return v!=null;});
+      volumes = (q.volume||[]).filter(function(v){return v!=null;});
+    }
+
+    var price = closes.length ? closes[closes.length-1] : 0;
+    var prevPrice = closes.length>1 ? closes[closes.length-2] : price;
+    var chgPct = prevPrice>0 ? ((price-prevPrice)/prevPrice*100).toFixed(2) : 0;
+
+    // Update price display
+    document.getElementById('scan-price').textContent = price>100?price.toFixed(2):price.toFixed(4);
+    var chgEl = document.getElementById('scan-change');
+    chgEl.textContent = (chgPct>=0?'+':'')+chgPct+'% (24h)';
+    chgEl.style.color = chgPct>=0?'#00C87A':'#FF1E3C';
+    document.getElementById('scan-last-time').textContent = 'Last scan: '+new Date().toLocaleTimeString();
+
+    // 2. CALCULATE TECHNICAL INDICATORS
+    function calcSMA(data, period) {
+      if(data.length < period) return null;
+      var sum = data.slice(-period).reduce(function(a,b){return a+b;},0);
+      return sum/period;
+    }
+    function calcEMA(data, period) {
+      if(data.length < period) return null;
+      var k = 2/(period+1);
+      var ema = data.slice(0,period).reduce(function(a,b){return a+b;},0)/period;
+      for(var i=period;i<data.length;i++){ema=data[i]*k+ema*(1-k);}
+      return ema;
+    }
+    function calcRSI(data, period) {
+      if(data.length < period+1) return 50;
+      var gains=0, losses=0;
+      for(var i=data.length-period;i<data.length;i++){
+        var diff=data[i]-data[i-1];
+        if(diff>0) gains+=diff; else losses+=Math.abs(diff);
+      }
+      var rs=(gains/period)/(losses/period||0.001);
+      return 100-(100/(1+rs));
+    }
+    function calcMACD(data) {
+      var ema12=calcEMA(data,12), ema26=calcEMA(data,26);
+      if(!ema12||!ema26) return {macd:0,signal:0,hist:0};
+      return {macd:ema12-ema26, hist:ema12-ema26};
+    }
+    function calcBB(data, period) {
+      var sma=calcSMA(data,period);
+      if(!sma) return {upper:0,lower:0,mid:sma};
+      var variance=data.slice(-period).reduce(function(s,v){return s+Math.pow(v-sma,2);},0)/period;
+      var std=Math.sqrt(variance);
+      return {upper:sma+2*std, lower:sma-2*std, mid:sma};
+    }
+
+    var sma50 = calcSMA(closes, 50);
+    var ema200 = calcEMA(closes, 200);
+    var rsi = calcRSI(closes, 14);
+    var macd = calcMACD(closes);
+    var bb = calcBB(closes, 20);
+    var atr = highs.length>=14 ? highs.slice(-14).reduce(function(s,h,i){return s+(h-(lows.slice(-14)[i]||h));},0)/14 : 0;
+
+    var aboveSMA50 = sma50 && price > sma50;
+    var aboveEMA200 = ema200 && price > ema200;
+    var bbPos = bb.upper>bb.lower ? (price-bb.lower)/(bb.upper-bb.lower) : 0.5;
+    var macdBull = macd.macd > 0;
+
+    // Support & Resistance (recent swing highs/lows)
+    var recentLows = lows.slice(-20).sort(function(a,b){return a-b;});
+    var recentHighs = highs.slice(-20).sort(function(a,b){return b-a;});
+    var support = recentLows[Math.floor(recentLows.length*0.1)];
+    var resistance = recentHighs[Math.floor(recentHighs.length*0.1)];
+
+    // Bull signals count
+    var bullSignals = [aboveSMA50, aboveEMA200, rsi>50, macdBull, bbPos>0.5].filter(Boolean).length;
+    var techBullPct = (bullSignals/5)*100;
+    var techDir = techBullPct>=60?'Bullish':techBullPct>=40?'Neutral':'Bearish';
+    var techMom = rsi>60?'Strong':rsi>45?'Moderate':'Weak';
+
+    // Render technical indicators
+    var techHTML = '';
+    function indRow(name, val, label, col) {
+      var w = Math.min(100, Math.max(5, parseFloat(val)||50));
+      return '<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:0.5px solid var(--border);">'+
+        '<span style="flex:0 0 110px;font-size:11px;color:var(--text3);">'+name+'</span>'+
+        '<div style="flex:1;height:3px;background:#1e1e1e;border-radius:2px;overflow:hidden;"><div style="height:100%;width:'+w+'%;background:'+col+';border-radius:2px;"></div></div>'+
+        '<span style="font-size:10px;font-weight:700;color:'+col+';min-width:50px;text-align:right;">'+label+'</span>'+
+      '</div>';
+    }
+    techHTML += indRow('Moving Avg (50)', aboveSMA50?85:15, aboveSMA50?'ABOVE':'BELOW', aboveSMA50?'#00C87A':'#FF1E3C');
+    techHTML += indRow('EMA 200', aboveEMA200?90:10, aboveEMA200?'ABOVE':'BELOW', aboveEMA200?'#00C87A':'#FF1E3C');
+    techHTML += indRow('Bollinger Bands', bbPos*100, bbPos>0.7?'UPPER':bbPos>0.3?'MID':'LOWER', bbPos>0.6?'#00C87A':bbPos>0.4?'#FFB020':'#FF1E3C');
+    techHTML += indRow('RSI (14)', rsi, rsi.toFixed(0), rsi>70?'#FF1E3C':rsi>50?'#00C87A':'#FFB020');
+    techHTML += indRow('MACD', macdBull?70:30, macdBull?'BULLISH':'BEARISH', macdBull?'#00C87A':'#FF1E3C');
+    techHTML += indRow('ATR', 55, atr.toFixed(2), '#FFB020');
+    document.getElementById('tech-indicators').innerHTML = techHTML;
+
+    var fmt = price>100 ? function(v){return v.toFixed(2);} : function(v){return v.toFixed(4);};
+    document.getElementById('tech-support').textContent = fmt(support);
+    document.getElementById('tech-resistance').textContent = fmt(resistance);
+    document.getElementById('tech-direction').textContent = techDir;
+    document.getElementById('tech-direction').style.color = techDir==='Bullish'?'#00C87A':techDir==='Bearish'?'#FF1E3C':'#FFB020';
+    document.getElementById('tech-momentum').textContent = techMom;
+    document.getElementById('tech-momentum').style.color = techMom==='Strong'?'#00C87A':techMom==='Moderate'?'#FFB020':'#FF1E3C';
+
+    // 3. GET DXY from live_prices for sentiment
+    var dxyBull = false;
+    try {
+      var dxyRes = await db.from('live_prices').select('bid,change_pct').eq('symbol','DXY').single();
+      var dxy = dxyRes && dxyRes.data ? (Array.isArray(dxyRes.data)?dxyRes.data[0]:dxyRes.data) : null;
+      if(dxy) dxyBull = parseFloat(dxy.change_pct||0) > 0;
+    } catch(e) {}
+
+    // 4. CALL CLAUDE AI for full analysis
+    var prompt = `You are MAI Scanner, a professional trading AI. Analyse ${symName} on ${tfName} timeframe.
+
+Current data:
+- Price: ${price.toFixed(4)}
+- 24h Change: ${chgPct}%
+- RSI(14): ${rsi.toFixed(1)}
+- Above MA50: ${aboveSMA50}
+- Above EMA200: ${aboveEMA200}
+- MACD: ${macdBull?'Bullish':'Bearish'}
+- Bollinger Position: ${(bbPos*100).toFixed(0)}%
+- Support: ${fmt(support)}
+- Resistance: ${fmt(resistance)}
+- ATR: ${atr.toFixed(2)}
+- DXY: ${dxyBull?'Bullish':'Bearish'}
+
+Respond ONLY with valid JSON (no markdown):
+{
+  "sentiment_score": <0-100 number>,
+  "sentiment_direction": "<Bullish|Bearish|Neutral>",
+  "sentiment_factors": {
+    "technical_trend": <0-100>,
+    "economic_news": <0-100>,
+    "dxy_impact": <0-100>,
+    "bond_yield": <0-100>,
+    "cot_positioning": <0-100>,
+    "vix_fear": <0-100>
+  },
+  "tech_scenario_bullish": "<one sentence>",
+  "tech_scenario_bearish": "<one sentence>",
+  "tech_verdict": "<one sentence technical summary>",
+  "fund_news": [
+    {"name": "<event name>", "time": "<when>", "forecast": "<value>", "previous": "<value>", "impact": "<High|Medium|Low>"},
+    {"name": "<event name>", "time": "<when>", "forecast": "<value>", "previous": "<value>", "impact": "<High|Medium|Low>"}
+  ],
+  "fund_verdict": "<one sentence fundamental summary>",
+  "overall_direction": "<Bullish|Bearish|Neutral>",
+  "overall_momentum": "<Strong|Moderate|Weak>",
+  "overall_confidence": <0-100>,
+  "overall_risk": "<Low|Moderate|High>",
+  "overall_summary": "<2 sentence final summary>"
+}`;
+
+    var aiResp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({model:'claude-sonnet-4-6', max_tokens:1000, messages:[{role:'user', content:prompt}]})
+    });
+    var aiData = await aiResp.json();
+    var aiText = aiData.content && aiData.content[0] ? aiData.content[0].text : '{}';
+    var ai = JSON.parse(aiText.replace(/```json|```/g,'').trim());
+
+    // 5. RENDER SENTIMENT
+    var sentPct = ai.sentiment_score || 50;
+    var sentDir = ai.sentiment_direction || 'Neutral';
+    updateSentimentGauge(sentPct, sentDir);
+    updateSentimentScale(sentPct);
+
+    var factors = ai.sentiment_factors || {};
+    var factorColors = ['#4D9EFF','#00C87A','#FFB020','#A05AFF','#FF6B9D','#FF1E3C'];
+    var factorNames = ['Technical Trend','Economic News','USD Index DXY','Bond Yield','COT Positioning','VIX Fear Index'];
+    var factorKeys = ['technical_trend','economic_news','dxy_impact','bond_yield','cot_positioning','vix_fear'];
+    var factorsHTML = factorKeys.map(function(k,i){
+      var v = factors[k]||50;
+      return '<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:0.5px solid var(--border);">'+
+        '<div style="width:7px;height:7px;border-radius:50%;background:'+factorColors[i]+';flex-shrink:0;"></div>'+
+        '<span style="flex:0 0 110px;font-size:11px;color:var(--text3);">'+factorNames[i]+'</span>'+
+        '<div style="flex:1;height:3px;background:#1e1e1e;border-radius:2px;overflow:hidden;"><div style="height:100%;width:'+v+'%;background:'+factorColors[i]+';border-radius:2px;"></div></div>'+
+        '<span style="font-size:10px;font-weight:700;color:'+factorColors[i]+';min-width:28px;text-align:right;">'+v+'%</span>'+
+      '</div>';
+    }).join('');
+    document.getElementById('sent-factors').innerHTML = factorsHTML;
+    var svEl = document.getElementById('sent-verdict');
+    svEl.textContent = sentDir.toUpperCase();
+    svEl.style.color = sentDir==='Bullish'?'#00C87A':sentDir==='Bearish'?'#FF1E3C':'#FFB020';
+
+    // 6. RENDER TECHNICAL
+    var techScenario = document.getElementById('tech-scenario');
+    if(techScenario) techScenario.innerHTML = '<span style="font-size:9px;color:var(--red);font-weight:700;letter-spacing:.5px;">MAI SCENARIO</span><br><span style="color:#00C87A;font-weight:700;">Bullish:</span> '+(ai.tech_scenario_bullish||'—')+'<br><span style="color:#FF1E3C;font-weight:700;">Bearish:</span> '+(ai.tech_scenario_bearish||'—');
+    var techVerdictBox = document.getElementById('tech-verdict-box');
+    if(techVerdictBox) techVerdictBox.innerHTML = '<span style="color:#00C87A;font-weight:700;">Technical Verdict</span><br>'+(ai.tech_verdict||'—');
+
+    // 7. RENDER FUNDAMENTAL
+    var newsHTML = (ai.fund_news||[]).map(function(n){
+      var col = n.impact==='High'?'#FF1E3C':n.impact==='Medium'?'#FFB020':'#555';
+      return '<div style="display:flex;align-items:flex-start;gap:7px;padding:6px 0;border-bottom:0.5px solid var(--border);">'+
+        '<div style="width:7px;height:7px;border-radius:50%;background:'+col+';margin-top:3px;flex-shrink:0;"></div>'+
+        '<div><div style="font-size:11px;font-weight:700;color:var(--text);">'+n.name+'</div>'+
+        '<div style="font-size:10px;color:var(--text3);">'+n.time+' · F: '+n.forecast+' · P: '+n.previous+'</div></div>'+
+      '</div>';
+    }).join('');
+    document.getElementById('fund-news').innerHTML = newsHTML || '<div style="font-size:11px;color:var(--text3);padding:8px 0;">No major events found</div>';
+    document.getElementById('fund-verdict-box').innerHTML = '<span style="color:#FFB020;font-weight:700;">Fundamental Verdict</span><br>'+(ai.fund_verdict||'—');
+
+    // 8. RENDER OVERALL VERDICT
+    var od = ai.overall_direction||'Neutral';
+    var oc = ai.overall_confidence||50;
+    var odEl = document.getElementById('verdict-direction'); if(odEl){odEl.textContent=od;odEl.style.color=od==='Bullish'?'#00C87A':od==='Bearish'?'#FF1E3C':'#FFB020';}
+    var omEl = document.getElementById('verdict-momentum'); if(omEl) omEl.textContent=ai.overall_momentum||'—';
+    var ocEl = document.getElementById('verdict-confidence'); if(ocEl){ocEl.textContent=oc+'%';ocEl.style.color=oc>=65?'#00C87A':oc>=45?'#FFB020':'#FF1E3C';}
+    var orEl = document.getElementById('verdict-risk'); if(orEl){orEl.textContent=ai.overall_risk||'—';orEl.style.color=ai.overall_risk==='Low'?'#00C87A':ai.overall_risk==='High'?'#FF1E3C':'#FFB020';}
+    var vbar = document.getElementById('verdict-bar'); if(vbar) vbar.style.width=oc+'%';
+    var vsEl = document.getElementById('verdict-summary'); if(vsEl) vsEl.textContent=ai.overall_summary||'—';
+
+    // Save for scanner verification in auto trade
+    window._lastScanData = {symbol:symName, direction:od, confidence:oc, timestamp:Date.now()};
+
+    btn.textContent = '✓ SCAN COMPLETE';
+    btn.style.background = '#00C87A';
+    if(badge) { badge.innerHTML = '<div style="width:6px;height:6px;border-radius:50%;background:#00C87A;"></div>LIVE'; badge.style.color='#00C87A'; }
+    setTimeout(function(){ btn.textContent='▶ INITIATE SCAN'; btn.style.background='var(--red)'; },2000);
+
+  } catch(e) {
+    btn.textContent = '✕ SCAN FAILED';
+    btn.style.background = '#FF1E3C';
+    if(badge) { badge.innerHTML = '<div style="width:6px;height:6px;border-radius:50%;background:var(--red);"></div>ERROR'; badge.style.color='var(--red)'; }
+    setTimeout(function(){ btn.textContent='▶ INITIATE SCAN'; btn.style.background='var(--red)'; },2000);
+    console.warn('Scanner error:', e.message);
+  }
+}
+
+async function generateMAIReport() {
+  if(!window._lastScanData) { alert('Run a scan first'); return; }
+  alert('MAI Full Report — coming soon! This will generate a PDF with full analysis.');
+}
+
+// Scanner verification for Auto Trade
+async function verifyScannerBeforeTrade(symbol, analystDirection) {
+  try {
+    var symMap = {'XAUUSD':'GC=F','BTCUSD':'BTC-USD','EURUSD':'EURUSD=X','GBPJPY':'GBPJPY=X','GBPUSD':'GBPUSD=X','NAS100':'^IXIC','US30':'^DJI','DXY':'DX-Y.NYB','USOIL':'CL=F'};
+    var yhSym = symMap[symbol] || symbol;
+    document.getElementById('scan-symbol').value = yhSym;
+    await runMAIScanner();
+    if(!window._lastScanData) return false;
+    var scanDir = window._lastScanData.direction.toUpperCase();
+    var sigDir = analystDirection.toUpperCase();
+    if((sigDir==='BUY'||sigDir==='BULLISH') && scanDir==='BULLISH') return true;
+    if((sigDir==='SELL'||sigDir==='BEARISH') && scanDir==='BEARISH') return true;
+    return false;
+  } catch(e) { return false; }
+}
 
 async function loadAdminMT5() {
   var el = document.getElementById('admin-mt5-list');
