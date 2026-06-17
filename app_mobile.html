@@ -4343,17 +4343,24 @@ function switchTab(tab) {
 // ── SUB SCREENS ──
 // Sub-screen navigation with parent tracking
 var _subScreenParent = {};
+var _subScreenStack = [];
 function showSubScreenFrom(id, parentId) {
   _subScreenParent[id] = parentId;
+  // Hide parent first so screens don't stack
+  var parentEl = document.getElementById(parentId);
+  if(parentEl) parentEl.classList.remove('active');
   showSubScreen(id);
 }
 function goBackSubScreen(id) {
   hideSubScreen(id);
-  var parent = _subScreenParent[id];
+  var parent = _subScreenParent[id] || null;
+  delete _subScreenParent[id];
   if(parent && parent !== 'more') {
-    showSubScreen(parent);
+    // Show parent without triggering its own parent tracking
+    var el = document.getElementById(parent);
+    if(el) el.classList.add('active');
   }
-  // if parent is 'more' or undefined, just hide — More tab already visible
+  // if parent is 'more' or undefined/null, just hide — More tab already visible
 }
 function showSubScreen(id) {
   var el = document.getElementById(id);
