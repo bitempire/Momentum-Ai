@@ -5622,7 +5622,7 @@ window._journalRange = '30d';
 async function loadJournalData() {
   if(!activeAccount||!db) return;
   try {
-    var res = await db.from('closed_trades').select('*').eq('mt5_id', activeAccount.mt5_id).order('close_time',{ascending:false}).limit(200);
+    var res = await db.from('closed_trades').select('*').eq('mt5_id', String(activeAccount.mt5_id)).order('close_time',{ascending:false}).limit(200);
     if(res.error) throw res.error;
     var trades = res.data || [];
     window._journalTrades = trades;
