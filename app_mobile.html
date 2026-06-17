@@ -4529,7 +4529,8 @@ async function executeTrade(method) {
       stop_loss:    (currentSignal.sl||null),
       take_profit:  (currentSignal.tp1||null),
       signal_id:    currentSignal.id,
-      status:       'pending'
+      status:       'pending',
+      method:       method
     };
     if(smartSettings) cmd.smart_settings = JSON.stringify(smartSettings);
     var ins = await db.from('trade_commands').insert([cmd]);
