@@ -4243,6 +4243,9 @@ async function selectAccount(accId) {
     activeAccount = a;
     renderHeaderSwitcher();
     loadAccountStats();
+    // Reload settings for new account
+    window._eaSettings = {};
+    loadEASettings();
   } catch(e) { alert('Could not switch account: '+e.message); }
 }
 
@@ -6513,7 +6516,8 @@ async function toggleAccountAuto(accId, el) {
 async function loadAutoTradeSettings() {
   if(!currentUser || !db) return;
   try {
-    var r = await db.from('users').select('auto_trade,auto_analyst_ids,auto_use_smart,auto_entry_confirm').eq('id',currentUser.id).single();
+    if(!activeAccount) return;
+    var r = await db.from('mt5_accounts').select('auto_trade,auto_analyst_ids,auto_use_smart,auto_entry_confirm').eq('id',activeAccount.id).single();
     var d = r && r.data ? (Array.isArray(r.data)?r.data[0]:r.data) : null;
     if(!d) return;
     // Set enable toggle
@@ -6569,13 +6573,16 @@ async function saveAutoTradeSettings() {
   var checks = document.querySelectorAll('#at-analyst-list input[type=checkbox]:checked');
   var analystIds = Array.from(checks).map(function(c){ return c.value; });
   try {
-    var r = await db.from('users').update({
+    if(!activeAccount) throw new Error('No active account');
+    var r = await db.from('mt5_accounts').update({
       auto_trade: on,
       auto_analyst_ids: JSON.stringify(analystIds),
       auto_use_smart: useSmart,
       auto_entry_confirm: ec
-    }).eq('id', currentUser.id);
+    }).eq('id', activeAccount.id);
     if(r && r.error) throw r.error;
+    activeAccount.auto_trade = on;
+    activeAccount.auto_analyst_ids = JSON.stringify(analystIds);
     var btn = document.querySelector('#sub-auto-trade .red-btn');
     if(btn){ var orig=btn.textContent; btn.textContent='✓ SAVED'; btn.style.background='var(--green)'; setTimeout(function(){ btn.textContent=orig; btn.style.background=''; },2000); }
   } catch(e) { alert('Save failed: '+(e.message||'Unknown error')); }
@@ -6597,8 +6604,9 @@ function confirmStopAutoTrade() {
   document.getElementById('confirm-stop-auto').onclick = async function(){
     popup.remove();
     try {
-      await db.from('users').update({auto_trade: false}).eq('id', currentUser.id);
-      currentUser.auto_trade = false;
+      if(!activeAccount) return;
+      await db.from('mt5_accounts').update({auto_trade: false}).eq('id', activeAccount.id);
+      activeAccount.auto_trade = false;
       updateAutoTradeStatusInPopup();
     } catch(e) { alert('Error: '+(e.message||'Could not stop auto trade')); }
   };
@@ -6610,7 +6618,8 @@ async function updateAutoTradeStatusInPopup() {
   if(!textEl || !subEl || !currentUser || !db) return;
   try {
     // Always read fresh from DB
-    var r = await db.from('users').select('auto_trade,auto_analyst_ids').eq('id',currentUser.id).single();
+    if(!activeAccount) return;
+    var r = await db.from('mt5_accounts').select('auto_trade,auto_analyst_ids').eq('id',activeAccount.id).single();
     var d = r && r.data ? (Array.isArray(r.data)?r.data[0]:r.data) : null;
     if(!d) return;
     currentUser.auto_trade = d.auto_trade;
@@ -6665,7 +6674,8 @@ async function saveAutoTradeSetting() {
   var on = document.getElementById('ea-auto-trade').classList.contains('on');
   var analystId = document.getElementById('ea-auto-analyst').value;
   try {
-    await db.from('users').update({auto_trade: on, auto_analyst_id: analystId||null}).eq('id', currentUser.id);
+    if(!activeAccount) return;
+    await db.from('mt5_accounts').update({auto_trade: on, auto_analyst_ids: analystId?JSON.stringify([analystId]):null}).eq('id', activeAccount.id);
   } catch(e) {}
 }
 
@@ -6716,23 +6726,17 @@ function applyEASettingsToUI(s) {
   setInp('ea-trail-when',   s.trail_when);
 }
 async function loadEASettings() {
-  if(!currentUser || !db) return;
+  if(!activeAccount || !db) return;
   try {
-    var r = await db.from('users').select('ea_settings').eq('id', currentUser.id).single();
+    var r = await db.from('mt5_accounts').select('ea_settings').eq('id', activeAccount.id).single();
     var d = r && r.data ? (Array.isArray(r.data)?r.data[0]:r.data) : null;
     if(d && d.ea_settings) {
       var s = typeof d.ea_settings==='string' ? JSON.parse(d.ea_settings) : d.ea_settings;
       window._eaSettings = s;
       applyEASettingsToUI(s);
+    } else {
+      window._eaSettings = {};
     }
-    // Load auto trade setting
-    var autoOn = d && d.auto_trade;
-    var autoAnalyst = d && d.auto_analyst_id;
-    var autoEl = document.getElementById('ea-auto-trade');
-    if(autoEl) { if(autoOn) autoEl.classList.add('on'); else autoEl.classList.remove('on'); }
-    var row = document.getElementById('ea-auto-analyst-row');
-    if(row) row.style.display = autoOn ? 'block' : 'none';
-    if(autoOn) { loadAnalystOptions().then(function(){ var sel=document.getElementById('ea-auto-analyst'); if(sel&&autoAnalyst) sel.value=autoAnalyst; }); }
   } catch(e) {}
 }
 async function saveEASettings() {
@@ -6740,9 +6744,10 @@ async function saveEASettings() {
   var settings = getEASettingsFromUI();
   window._eaSettings = settings;
   try {
-    var r = await db.from('users').update({ ea_settings: JSON.stringify(settings) }).eq('id', currentUser.id);
-    if(r.error) throw r.error;
-    await saveAutoTradeSetting();
+    if(!activeAccount) throw new Error('No active account');
+    var r = await db.from('mt5_accounts').update({ ea_settings: JSON.stringify(settings) }).eq('id', activeAccount.id);
+    if(r && r.error) throw r.error;
+    activeAccount.ea_settings = JSON.stringify(settings);
     var btn = document.querySelector('#sub-smart-tool .red-btn');
     if(btn) {
       var orig = btn.textContent;
