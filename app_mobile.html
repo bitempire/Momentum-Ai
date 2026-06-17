@@ -4906,7 +4906,7 @@ async function generateMAIReport() {
   var prompt = 'You are MAI, the Momentum AI trading intelligence system. Write a professional corporate-style market intelligence report for ' + symbol + ' on the ' + tf + ' timeframe. Use a storytelling approach that is precise, clear, and engaging. Even a beginner should understand it. Write in flowing paragraphs, no bullet points, no dashes between words, no emojis. Section titles should be in uppercase bold. Include these exact sections: Market Overview, Technical Perspective, Fundamental Landscape, Sentiment Reading, MAI Verdict. Keep it concise but complete. Current data context: RSI at 38 (oversold), MACD bullish crossover, price above EMA 50 and 200, volume high, key support 3280-3300, key resistance 3380-3400, ADP Employment news tomorrow, USD bullish, Gold bearish fundamental, retail 64% long, Fear and Greed at 62 (Greed), AI confidence 82% bullish, risk moderate.';
   
   try {
-    var response = await fetch('https://api.anthropic.com/v1/messages', {
+    var response = await fetch('https://rhtworywcqcxkahlmezg.supabase.co/functions/v1/claude-proxy', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -5791,7 +5791,7 @@ async function generateJournalInsight(winRate, avgWin, avgLoss, revCount, method
   insightEl.textContent = 'Analysing your trades...';
   try {
     var prompt = 'You are a trading coach. Give a 2-sentence personalised insight for a trader with these stats: Win Rate '+winRate+'%, Avg Win $'+avgWin.toFixed(2)+', Avg Loss $'+avgLoss.toFixed(2)+', Revenge trades '+revCount+', Current streak '+streak+', Best pair '+bestPair+', Manual trades '+methods.manual.length+', Smart Tool trades '+methods.smart.length+', Auto trades '+methods.auto.length+'. Be specific, actionable and encouraging. Max 40 words.';
-    var r = await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:100,messages:[{role:'user',content:prompt}]})});
+    var r = await fetch('https://rhtworywcqcxkahlmezg.supabase.co/functions/v1/claude-proxy',{method:'POST',headers:{'Content-Type':'application/json','apikey':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJodHdvcnl3Y3FjeGthaGxtZXpnIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MDQxNzA5OCwiZXhwIjoyMDk1OTkzMDk4fQ.uBENk3aHAX16KuG8UnCXIpuyc5uZT4D37YZfY77lp0A'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:100,messages:[{role:'user',content:prompt}]})});
     var d = await r.json();
     var txt = d.content && d.content[0] ? d.content[0].text : null;
     if(txt) insightEl.textContent = txt;
@@ -7212,9 +7212,9 @@ Respond ONLY with valid JSON (no markdown):
 
     var ai = {};
     try {
-      var aiResp = await fetch('https://api.anthropic.com/v1/messages', {
+      var aiResp = await fetch('https://rhtworywcqcxkahlmezg.supabase.co/functions/v1/claude-proxy', {
         method: 'POST',
-        headers: {'Content-Type':'application/json'},
+        headers: {'Content-Type':'application/json','apikey':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJodHdvcnl3Y3FjeGthaGxtZXpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0MTcwOTgsImV4cCI6MjA5NTk5MzA5OH0.FwZ1HxWz0gbkVTkW14SfSDZWNbPVlRe3SHts_lU--ec'},
         body: JSON.stringify({model:'claude-sonnet-4-6', max_tokens:1000, messages:[{role:'user', content:prompt}]})
       });
       var aiData = await aiResp.json();
