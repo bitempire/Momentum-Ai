@@ -1876,7 +1876,7 @@ select.auth-input {
             <div style="font-size:13px;font-weight:700;color:var(--text);">Auto-approve trades</div>
             <div style="font-size:11px;color:var(--text3);margin-top:2px;line-height:1.5;">Skip the confirmation prompt and place trades automatically.</div>
           </div>
-          <div id="auto-approve-toggle" data-on="0" onclick="toggleAutoApprove(this)" style="width:46px;height:26px;border-radius:13px;background:var(--border);position:relative;cursor:pointer;flex-shrink:0;transition:background .2s;">
+          <div id="ea-auto-approve" data-on="0" onclick="toggleAutoApprove(this)" style="width:46px;height:26px;border-radius:13px;background:var(--border);position:relative;cursor:pointer;flex-shrink:0;transition:background .2s;">
             <div id="auto-approve-knob" style="position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;"></div>
           </div>
         </div>
@@ -1886,15 +1886,15 @@ select.auth-input {
         <div class="section-title" style="font-size:13px;margin-bottom:12px;">Lot Size <span>& Risk</span></div>
         <div class="ea-toggle-row">
           <div><div class="ea-toggle-label">Auto Risk Mode</div><div class="ea-toggle-sub">Calculate lot size from % of balance</div></div>
-          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+          <div class="toggle on" id="ea-auto-risk" onclick="this.classList.toggle('on')"></div>
         </div>
         <div class="ea-input-row" style="margin-top:12px;">
           <label class="ea-input-label">Risk Per Trade (%)</label>
-          <input class="ea-input" type="number" value="1.0" step="0.1" min="0.1" max="10">
+          <input class="ea-input" id="ea-risk-pct" type="number" value="1.0" step="0.1" min="0.1" max="10">
         </div>
         <div class="ea-input-row">
           <label class="ea-input-label">Max Total Lots</label>
-          <input class="ea-input" type="number" value="0.50" step="0.01">
+          <input class="ea-input" id="ea-max-lots" type="number" value="0.50" step="0.01">
         </div>
       </div>
       <!-- Entry & DCA -->
@@ -1902,15 +1902,15 @@ select.auth-input {
         <div class="section-title" style="font-size:13px;margin-bottom:12px;">Entry <span>& DCA</span></div>
         <div class="ea-toggle-row">
           <div><div class="ea-toggle-label">Enable DCA</div><div class="ea-toggle-sub">Auto add positions on drawdown</div></div>
-          <div class="toggle" onclick="this.classList.toggle('on')"></div>
+          <div class="toggle" id="ea-dca" onclick="this.classList.toggle('on')"></div>
         </div>
         <div class="ea-input-row" style="margin-top:12px;">
           <label class="ea-input-label">Points Between Each Position</label>
-          <input class="ea-input" type="number" value="10">
+          <input class="ea-input" id="ea-dca-points" type="number" value="10">
         </div>
         <div class="ea-input-row">
           <label class="ea-input-label">Max Positions Per Signal</label>
-          <input class="ea-input" type="number" value="4" min="1" max="10">
+          <input class="ea-input" id="ea-dca-max" type="number" value="4" min="1" max="10">
         </div>
       </div>
       <!-- Stop Loss Behaviour -->
@@ -1918,7 +1918,7 @@ select.auth-input {
         <div class="section-title" style="font-size:13px;margin-bottom:12px;">Stop Loss <span>Behaviour</span></div>
         <div class="ea-input-row">
           <label class="ea-input-label">When Price Hits SL</label>
-          <select class="ea-input">
+          <select class="ea-input" id="ea-sl-behaviour">
             <option>Close Immediately</option>
             <option>Wait for Candle Close</option>
             <option>Scale Out 50%</option>
@@ -1926,7 +1926,7 @@ select.auth-input {
         </div>
         <div class="ea-toggle-row">
           <div><div class="ea-toggle-label">SL from Signal</div><div class="ea-toggle-sub">Auto-filled from each signal</div></div>
-          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+          <div class="toggle on" id="ea-sl-signal" onclick="this.classList.toggle('on')"></div>
         </div>
       </div>
       <!-- Take Profit -->
@@ -1934,11 +1934,11 @@ select.auth-input {
         <div class="section-title" style="font-size:13px;margin-bottom:12px;">Take <span>Profit</span></div>
         <div class="ea-toggle-row">
           <div><div class="ea-toggle-label">Partial Close at TP</div><div class="ea-toggle-sub">Close part of position when TP hit</div></div>
-          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+          <div class="toggle on" id="ea-partial-close" onclick="this.classList.toggle('on')"></div>
         </div>
         <div class="ea-input-row" style="margin-top:12px;">
           <label class="ea-input-label">Close % at TP</label>
-          <select class="ea-input">
+          <select class="ea-input" id="ea-partial-pct">
             <option>25%</option>
             <option>50%</option>
             <option selected>75%</option>
@@ -1951,15 +1951,15 @@ select.auth-input {
         <div class="section-title" style="font-size:13px;margin-bottom:12px;">Breakeven <span>SL</span></div>
         <div class="ea-toggle-row">
           <div><div class="ea-toggle-label">Move SL to Breakeven</div><div class="ea-toggle-sub">After partial close at TP</div></div>
-          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+          <div class="toggle on" id="ea-breakeven" onclick="this.classList.toggle('on')"></div>
         </div>
         <div class="ea-input-row" style="margin-top:12px;">
           <label class="ea-input-label">Breakeven Buffer (pts)</label>
-          <input class="ea-input" type="number" value="3">
+          <input class="ea-input" id="ea-be-buffer" type="number" value="3">
         </div>
         <div class="ea-input-row">
           <label class="ea-input-label">Activate When</label>
-          <select class="ea-input">
+          <select class="ea-input" id="ea-be-when">
             <option>After TP partial close</option>
             <option>After X pips profit</option>
             <option>Immediately at entry</option>
@@ -1971,15 +1971,15 @@ select.auth-input {
         <div class="section-title" style="font-size:13px;margin-bottom:12px;">Trailing <span>Stop</span></div>
         <div class="ea-toggle-row">
           <div><div class="ea-toggle-label">Enable Trailing Stop</div><div class="ea-toggle-sub">SL follows price to lock profit</div></div>
-          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+          <div class="toggle on" id="ea-trailing" onclick="this.classList.toggle('on')"></div>
         </div>
         <div class="ea-input-row" style="margin-top:12px;">
           <label class="ea-input-label">Trail Step Size (pts)</label>
-          <input class="ea-input" type="number" value="5">
+          <input class="ea-input" id="ea-trail-step" type="number" value="5">
         </div>
         <div class="ea-input-row">
           <label class="ea-input-label">Start Trailing When</label>
-          <select class="ea-input">
+          <select class="ea-input" id="ea-trail-when">
             <option>After breakeven set</option>
             <option>After X pips profit</option>
             <option>Immediately</option>
@@ -4105,6 +4105,7 @@ function enterApp(user) {
   loadAFTPrices();
   refreshActiveBalance();
   loadLivePositions();
+  loadEASettings();
   if(!window._aftPricePoll) window._aftPricePoll = setInterval(function(){ loadAFTPrices(); refreshActiveBalance(); loadLivePositions(); checkDataFreshness(); }, 4000);
   window._lastDataUpdate = Date.now();
 }
@@ -4465,8 +4466,6 @@ function selectTradeOpt(opt) {
 async function executeTrade(method) {
   if(!currentSignal) return;
   if(!activeAccount || !activeAccount.mt5_id){ alert('Connect your MT5 account first.'); return; }
-  var volume = method==='manual' ? parseFloat(document.getElementById('trade-volume').value) : null;
-  if(!volume || isNaN(volume) || volume<=0) volume = 0.01;
   var dir = (currentSignal.direction||'').toString().toUpperCase();
   var side = (dir==='SELL'||dir==='SHORT') ? 'SELL' : 'BUY';
   var sym = (currentSignal.pair||'').toString().toUpperCase().replace('/','');
@@ -4474,11 +4473,65 @@ async function executeTrade(method) {
   if(tradeSymMap[sym]) sym = tradeSymMap[sym];
   var btn = mtTradeBtn(method);
   var origText = btn ? btn.textContent : '';
+
+  // Calculate volume
+  var volume = 0.01;
+  if(method==='manual') {
+    volume = parseFloat(document.getElementById('trade-volume').value)||0.01;
+  } else if(method==='smart') {
+    var ea = window._eaSettings || {};
+    if(ea.auto_risk && activeAccount.balance && ea.risk_pct) {
+      // Auto lot size: balance * risk% / (SL points * pip value)
+      // Simplified: risk_pct% of balance / 100, min 0.01
+      var bal = parseFloat(activeAccount.balance)||0;
+      var riskAmt = bal * (ea.risk_pct/100);
+      var slPts = currentSignal.sl ? Math.abs((parseFloat(currentSignal.entry_to)||0) - parseFloat(currentSignal.sl)) : 10;
+      // For gold: 1 lot = $100/pt, for forex: 1 lot = $10/pip approx
+      var pipVal = (sym==='XAUUSD'||sym==='XAGUSD') ? 100 : 10;
+      volume = Math.max(0.01, Math.min(parseFloat(ea.max_lots)||0.50, Math.round((riskAmt/(slPts*pipVal))*100)/100));
+    } else {
+      volume = parseFloat((window._eaSettings||{}).max_lots)||0.01;
+    }
+  }
+  if(!volume || isNaN(volume) || volume<=0) volume = 0.01;
+
+  // Build smart tool settings to attach to command
+  var smartSettings = null;
+  if(method==='smart') {
+    var ea = window._eaSettings || {};
+    smartSettings = {
+      dca_enabled:      !!ea.dca_enabled,
+      dca_points:       ea.dca_points||10,
+      dca_max_pos:      ea.dca_max_pos||4,
+      partial_close:    !!ea.partial_close,
+      partial_pct:      ea.partial_pct||'75%',
+      breakeven:        !!ea.breakeven,
+      breakeven_buffer: ea.breakeven_buffer||3,
+      breakeven_when:   ea.breakeven_when||'After TP partial close',
+      trailing:         !!ea.trailing,
+      trail_step:       ea.trail_step||5,
+      trail_when:       ea.trail_when||'After breakeven set',
+      sl_from_signal:   ea.sl_from_signal!==false
+    };
+  }
+
   try {
     if(currentUser) {
       await db.from('trades').insert([{user_id:currentUser.id,signal_id:currentSignal.id,method,volume,pair:currentSignal.pair,direction:currentSignal.direction,entry:currentSignal.entry_to,sl:currentSignal.sl,tp:currentSignal.tp1,status:'executed',executed_at:new Date().toISOString()}]);
     }
-    var cmd = { account_id: activeAccount.id, mt5_id: activeAccount.mt5_id, action:'open', symbol: sym, side: side, volume: volume, stop_loss: (currentSignal.sl||null), take_profit: (currentSignal.tp1||null), signal_id: currentSignal.id, status:'pending' };
+    var cmd = {
+      account_id:   activeAccount.id,
+      mt5_id:       activeAccount.mt5_id,
+      action:       'open',
+      symbol:       sym,
+      side:         side,
+      volume:       volume,
+      stop_loss:    (currentSignal.sl||null),
+      take_profit:  (currentSignal.tp1||null),
+      signal_id:    currentSignal.id,
+      status:       'pending'
+    };
+    if(smartSettings) cmd.smart_settings = JSON.stringify(smartSettings);
     var ins = await db.from('trade_commands').insert([cmd]);
     if(ins.error) throw new Error(ins.error.message);
     document.getElementById('trade-success-note').style.display = 'flex';
@@ -6380,19 +6433,71 @@ async function toggleAccountAuto(accId, el) {
   } catch(e) { el.classList.toggle('on'); alert('Could not update: '+e.message); }
 }
 
+function getEASettingsFromUI() {
+  function tog(id){ var el=document.getElementById(id); return el?el.classList.contains('on'):false; }
+  function inp(id){ var el=document.getElementById(id); return el?el.value:''; }
+  return {
+    auto_approve:      tog('ea-auto-approve'),
+    auto_risk:         tog('ea-auto-risk'),
+    risk_pct:          parseFloat(inp('ea-risk-pct'))||1.0,
+    max_lots:          parseFloat(inp('ea-max-lots'))||0.50,
+    dca_enabled:       tog('ea-dca'),
+    dca_points:        parseFloat(inp('ea-dca-points'))||10,
+    dca_max_pos:       parseInt(inp('ea-dca-max'))||4,
+    sl_behaviour:      inp('ea-sl-behaviour'),
+    sl_from_signal:    tog('ea-sl-signal'),
+    partial_close:     tog('ea-partial-close'),
+    partial_pct:       inp('ea-partial-pct'),
+    breakeven:         tog('ea-breakeven'),
+    breakeven_buffer:  parseFloat(inp('ea-be-buffer'))||3,
+    breakeven_when:    inp('ea-be-when'),
+    trailing:          tog('ea-trailing'),
+    trail_step:        parseFloat(inp('ea-trail-step'))||5,
+    trail_when:        inp('ea-trail-when'),
+    saved_at:          new Date().toISOString()
+  };
+}
+function applyEASettingsToUI(s) {
+  if(!s) return;
+  function setTog(id,val){ var el=document.getElementById(id); if(el){ if(val) el.classList.add('on'); else el.classList.remove('on'); } }
+  function setInp(id,val){ var el=document.getElementById(id); if(el) el.value=val; }
+  setTog('ea-auto-approve', s.auto_approve);
+  setTog('ea-auto-risk',    s.auto_risk);
+  setInp('ea-risk-pct',     s.risk_pct);
+  setInp('ea-max-lots',     s.max_lots);
+  setTog('ea-dca',          s.dca_enabled);
+  setInp('ea-dca-points',   s.dca_points);
+  setInp('ea-dca-max',      s.dca_max_pos);
+  setInp('ea-sl-behaviour', s.sl_behaviour);
+  setTog('ea-sl-signal',    s.sl_from_signal);
+  setTog('ea-partial-close',s.partial_close);
+  setInp('ea-partial-pct',  s.partial_pct);
+  setTog('ea-breakeven',    s.breakeven);
+  setInp('ea-be-buffer',    s.breakeven_buffer);
+  setInp('ea-be-when',      s.breakeven_when);
+  setTog('ea-trailing',     s.trailing);
+  setInp('ea-trail-step',   s.trail_step);
+  setInp('ea-trail-when',   s.trail_when);
+}
+async function loadEASettings() {
+  if(!currentUser || !db) return;
+  try {
+    var r = await db.from('users').select('ea_settings').eq('id', currentUser.id).single();
+    var d = r && r.data ? (Array.isArray(r.data)?r.data[0]:r.data) : null;
+    if(d && d.ea_settings) {
+      var s = typeof d.ea_settings==='string' ? JSON.parse(d.ea_settings) : d.ea_settings;
+      window._eaSettings = s;
+      applyEASettingsToUI(s);
+    }
+  } catch(e) {}
+}
 async function saveEASettings() {
   if(!currentUser || !db) return;
-  var inputs  = document.querySelectorAll('#sub-ea .ea-input');
-  var toggles = document.querySelectorAll('#sub-ea .toggle');
-  var settings = {
-    inputs:   Array.from(inputs).map(function(i){ return i.value; }),
-    toggles:  Array.from(toggles).map(function(t){ return t.classList.contains('on'); }),
-    saved_at: new Date().toISOString()
-  };
+  var settings = getEASettingsFromUI();
+  window._eaSettings = settings;
   try {
     var r = await db.from('users').update({ ea_settings: JSON.stringify(settings) }).eq('id', currentUser.id);
     if(r.error) throw r.error;
-    // Show success toast
     var btn = document.querySelector('#sub-ea .red-btn');
     if(btn) {
       var orig = btn.textContent;
