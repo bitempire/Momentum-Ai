@@ -1414,6 +1414,7 @@ select.auth-input {
     <div class="hdr-dd" id="acct-dropdown"></div>
     <div class="hdr-dd" id="avatar-dropdown"></div>
   </div>
+  <div id="data-stale-banner" style="display:none;align-items:center;justify-content:center;gap:6px;background:rgba(255,176,32,0.12);border-bottom:1px solid rgba(255,176,32,0.25);padding:6px 12px;font-size:11px;font-weight:700;color:var(--amber);"><i class="ti ti-wifi-off" style="font-size:13px;"></i> Data connection lost — reconnecting...</div>
 
   <!-- MAIN CONTENT AREA -->
   <div class="app-content" id="app-content">
@@ -4104,7 +4105,8 @@ function enterApp(user) {
   loadAFTPrices();
   refreshActiveBalance();
   loadLivePositions();
-  if(!window._aftPricePoll) window._aftPricePoll = setInterval(function(){ loadAFTPrices(); refreshActiveBalance(); loadLivePositions(); }, 4000);
+  if(!window._aftPricePoll) window._aftPricePoll = setInterval(function(){ loadAFTPrices(); refreshActiveBalance(); loadLivePositions(); checkDataFreshness(); }, 4000);
+  window._lastDataUpdate = Date.now();
 }
 
 // ── MULTI-ACCOUNT: HEADER SWITCHER (Pass 1, header-only) ──
@@ -5395,6 +5397,7 @@ async function loadAFTPrices() {
       }
       applied = true;
     });
+    if(applied) window._lastDataUpdate = Date.now();
     return applied;
   } catch(e) { console.warn('loadAFTPrices:', e.message); return false; }
 }
@@ -5440,6 +5443,18 @@ async function loadLivePositions(){
     box.innerHTML = html;
     if(totalEl){ totalEl.textContent=(total>=0?'+':'')+'$'+total.toFixed(2); totalEl.style.color=(total>=0?'var(--green)':'var(--red)'); }
   }catch(e){ console.warn('loadLivePositions:', e.message); }
+}
+// Data freshness indicator
+function checkDataFreshness(){
+  var banner = document.getElementById('data-stale-banner');
+  if(!banner) return;
+  var last = window._lastDataUpdate || 0;
+  var stale = last > 0 && (Date.now() - last) > 60000;
+  if(stale){
+    banner.style.display='flex';
+  } else {
+    banner.style.display='none';
+  }
 }
 
 // ═══════════════════════════════════════════════════
