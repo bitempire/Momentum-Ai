@@ -1881,6 +1881,20 @@ select.auth-input {
           </div>
         </div>
       </div>
+      <!-- Auto Trading -->
+      <div class="section-card" style="margin-bottom:10px;">
+        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Auto <span>Trading</span></div>
+        <div class="ea-toggle-row">
+          <div><div class="ea-toggle-label">Enable Auto Trading</div><div class="ea-toggle-sub">Automatically trade when analyst posts a signal</div></div>
+          <div class="toggle" id="ea-auto-trade" onclick="toggleAutoTrade(this)"></div>
+        </div>
+        <div id="ea-auto-analyst-row" style="margin-top:12px;display:none;">
+          <label class="ea-input-label">Follow Analyst</label>
+          <select class="ea-input" id="ea-auto-analyst">
+            <option value="">-- Select Analyst --</option>
+          </select>
+        </div>
+      </div>
       <!-- Lot Size & Risk -->
       <div class="section-card">
         <div class="section-title" style="font-size:13px;margin-bottom:12px;">Lot Size <span>& Risk</span></div>
@@ -6434,6 +6448,38 @@ async function toggleAccountAuto(accId, el) {
   } catch(e) { el.classList.toggle('on'); alert('Could not update: '+e.message); }
 }
 
+// AUTO TRADING
+function toggleAutoTrade(el) {
+  el.classList.toggle('on');
+  var on = el.classList.contains('on');
+  var row = document.getElementById('ea-auto-analyst-row');
+  if(row) row.style.display = on ? 'block' : 'none';
+  if(on) loadAnalystOptions();
+}
+async function loadAnalystOptions() {
+  var sel = document.getElementById('ea-auto-analyst');
+  if(!sel || !db) return;
+  try {
+    var r = await db.from('users').select('id,name').eq('role','analyst');
+    var analysts = (r && r.data) ? (Array.isArray(r.data)?r.data:r.data?[r.data]:[]) : [];
+    sel.innerHTML = '<option value="">-- Select Analyst --</option>';
+    analysts.forEach(function(a){
+      var opt = document.createElement('option');
+      opt.value = a.id;
+      opt.textContent = a.name || a.id;
+      sel.appendChild(opt);
+    });
+  } catch(e) {}
+}
+async function saveAutoTradeSetting() {
+  if(!currentUser || !db) return;
+  var on = document.getElementById('ea-auto-trade').classList.contains('on');
+  var analystId = document.getElementById('ea-auto-analyst').value;
+  try {
+    await db.from('users').update({auto_trade: on, auto_analyst_id: analystId||null}).eq('id', currentUser.id);
+  } catch(e) {}
+}
+
 function getEASettingsFromUI() {
   function tog(id){ var el=document.getElementById(id); return el?el.classList.contains('on'):false; }
   function inp(id){ var el=document.getElementById(id); return el?el.value:''; }
@@ -6490,6 +6536,14 @@ async function loadEASettings() {
       window._eaSettings = s;
       applyEASettingsToUI(s);
     }
+    // Load auto trade setting
+    var autoOn = d && d.auto_trade;
+    var autoAnalyst = d && d.auto_analyst_id;
+    var autoEl = document.getElementById('ea-auto-trade');
+    if(autoEl) { if(autoOn) autoEl.classList.add('on'); else autoEl.classList.remove('on'); }
+    var row = document.getElementById('ea-auto-analyst-row');
+    if(row) row.style.display = autoOn ? 'block' : 'none';
+    if(autoOn) { loadAnalystOptions().then(function(){ var sel=document.getElementById('ea-auto-analyst'); if(sel&&autoAnalyst) sel.value=autoAnalyst; }); }
   } catch(e) {}
 }
 async function saveEASettings() {
@@ -6499,6 +6553,7 @@ async function saveEASettings() {
   try {
     var r = await db.from('users').update({ ea_settings: JSON.stringify(settings) }).eq('id', currentUser.id);
     if(r.error) throw r.error;
+    await saveAutoTradeSetting();
     var btn = document.querySelector('#sub-ea .red-btn');
     if(btn) {
       var orig = btn.textContent;
