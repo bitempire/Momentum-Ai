@@ -7333,8 +7333,123 @@ Respond ONLY with valid JSON (no markdown):
 }
 
 async function generateMAIReport() {
-  if(!window._lastScanData) { alert('Run a scan first'); return; }
-  alert('MAI Full Report — coming soon! This will generate a PDF with full analysis.');
+  if(!window._lastScanData) { alert('Run a scan first.'); return; }
+  var d = window._lastScanData;
+  var now = new Date().toLocaleString();
+  var sym = document.getElementById('scan-pair-label').textContent;
+  var price = document.getElementById('scan-price').textContent;
+  var change = document.getElementById('scan-change').textContent;
+  var sentVerdict = document.getElementById('sent-verdict').textContent;
+  var techDir = document.getElementById('tech-direction').textContent;
+  var techMom = document.getElementById('tech-momentum').textContent;
+  var support = document.getElementById('tech-support').textContent;
+  var resistance = document.getElementById('tech-resistance').textContent;
+  var scenario = document.getElementById('tech-scenario').textContent;
+  var techVerd = document.getElementById('tech-verdict-box').textContent;
+  var fundVerd = document.getElementById('fund-verdict-box').textContent;
+  var overDir = document.getElementById('verdict-direction').textContent;
+  var overMom = document.getElementById('verdict-momentum').textContent;
+  var overConf = document.getElementById('verdict-confidence').textContent;
+  var overRisk = document.getElementById('verdict-risk').textContent;
+  var summary = document.getElementById('verdict-summary').textContent;
+
+  var dirColor = overDir==='Bullish'?'#00C87A':overDir==='Bearish'?'#FF1E3C':'#FFB020';
+
+  var html = `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>MAI Scanner Report - ${sym}</title>
+<style>
+  body{font-family:Arial,sans-serif;background:#0D0D0D;color:#E0E0E0;margin:0;padding:20px;}
+  .header{background:#141414;border:1px solid #2a2a2a;border-radius:12px;padding:20px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;}
+  .logo{font-size:22px;font-weight:800;color:#FF1E3C;letter-spacing:2px;}
+  .pair{font-size:20px;font-weight:800;color:#E0E0E0;}
+  .price{font-size:24px;font-weight:800;color:#E0E0E0;text-align:right;}
+  .section{background:#141414;border:1px solid #2a2a2a;border-radius:10px;padding:16px;margin-bottom:12px;}
+  .sec-title{font-size:11px;font-weight:800;color:#FF1E3C;letter-spacing:1px;margin-bottom:12px;text-transform:uppercase;}
+  .grid4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin-bottom:12px;}
+  .stat-box{background:#1a1a1a;border-radius:8px;padding:10px;text-align:center;}
+  .stat-label{font-size:9px;color:#555;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;}
+  .stat-val{font-size:16px;font-weight:800;}
+  .row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #1e1e1e;font-size:12px;}
+  .row:last-child{border-bottom:none;}
+  .green{color:#00C87A;} .red{color:#FF1E3C;} .amber{color:#FFB020;}
+  .verdict-bar{height:6px;background:#1e1e1e;border-radius:3px;overflow:hidden;margin:8px 0;}
+  .verdict-fill{height:100%;background:linear-gradient(90deg,#FF1E3C,#FFB020,#00C87A);border-radius:3px;}
+  .summary{font-size:12px;color:#aaa;line-height:1.7;margin-top:8px;}
+  .scenario{background:#0a0a0a;border-radius:8px;padding:10px;font-size:11px;color:#888;line-height:1.7;margin-top:8px;}
+  .footer{text-align:center;font-size:10px;color:#555;margin-top:16px;}
+  .badge{display:inline-block;padding:4px 10px;border-radius:5px;font-size:11px;font-weight:800;}
+  @media print{body{background:#fff;color:#000;}.section{border:1px solid #ddd;}.sec-title{color:#c00;}.stat-box{background:#f5f5f5;}.scenario{background:#f9f9f9;}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div>
+    <div class="logo">✦ MOMENTUM AI</div>
+    <div style="font-size:11px;color:#555;margin-top:4px;">MAI Scanner Full Report</div>
+    <div style="font-size:11px;color:#555;">Generated: ${now}</div>
+  </div>
+  <div style="text-align:right;">
+    <div class="pair">${sym}</div>
+    <div class="price">${price}</div>
+    <div style="font-size:12px;color:${change.includes('-')?'#FF1E3C':'#00C87A'};">${change}</div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-title">Overall AI Verdict</div>
+  <div class="grid4">
+    <div class="stat-box"><div class="stat-label">Direction</div><div class="stat-val" style="color:${dirColor};">${overDir}</div></div>
+    <div class="stat-box"><div class="stat-label">Momentum</div><div class="stat-val">${overMom}</div></div>
+    <div class="stat-box"><div class="stat-label">Confidence</div><div class="stat-val" style="color:#00C87A;">${overConf}</div></div>
+    <div class="stat-box"><div class="stat-label">Risk</div><div class="stat-val" style="color:#FFB020;">${overRisk}</div></div>
+  </div>
+  <div class="verdict-bar"><div class="verdict-fill" style="width:${overConf};"></div></div>
+  <div class="summary">${summary}</div>
+</div>
+
+<div class="section">
+  <div class="sec-title">Sentiment Analysis</div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+    <span style="font-size:13px;color:#888;">Sentiment Verdict</span>
+    <span style="font-size:14px;font-weight:800;color:${sentVerdict==='BULLISH'?'#00C87A':sentVerdict==='BEARISH'?'#FF1E3C':'#FFB020'};">${sentVerdict}</span>
+  </div>
+  <div id="rpt-factors"></div>
+</div>
+
+<div class="section">
+  <div class="sec-title">Technical Analysis</div>
+  <div class="grid4" style="margin-bottom:10px;">
+    <div class="stat-box"><div class="stat-label">Direction</div><div class="stat-val" style="color:${techDir==='Bullish'?'#00C87A':'#FF1E3C'};">${techDir}</div></div>
+    <div class="stat-box"><div class="stat-label">Momentum</div><div class="stat-val">${techMom}</div></div>
+    <div class="stat-box"><div class="stat-label">Support</div><div class="stat-val" style="color:#00C87A;font-size:13px;">${support}</div></div>
+    <div class="stat-box"><div class="stat-label">Resistance</div><div class="stat-val" style="color:#FF1E3C;font-size:13px;">${resistance}</div></div>
+  </div>
+  <div class="scenario">${scenario}</div>
+  <div style="margin-top:8px;padding:8px;border-left:3px solid #00C87A;font-size:11px;color:#888;line-height:1.5;">${techVerd}</div>
+</div>
+
+<div class="section">
+  <div class="sec-title">Fundamental Analysis</div>
+  <div id="rpt-news"></div>
+  <div style="margin-top:8px;padding:8px;border-left:3px solid #FFB020;font-size:11px;color:#888;line-height:1.5;">${fundVerd}</div>
+</div>
+
+<div class="footer">
+  <div>✦ MOMENTUM AI — Trade Beyond Emotion</div>
+  <div style="margin-top:4px;">This report is for informational purposes only. Not financial advice.</div>
+</div>
+
+<div id="rpt-autoprint" style="display:none">autoprint</div>
+</body>
+</html>`;
+
+  var w = window.open('', '_blank');
+  w.document.write(html);
+  w.document.close();
+  w.onload = function(){ w.print(); };
 }
 
 // Scanner verification for Auto Trade
