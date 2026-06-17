@@ -1571,204 +1571,174 @@ select.auth-input {
     <!-- ── TAB: JOURNAL ── -->
     <div id="tab-journal" class="app-tab" style="display:none;">
 
-      <!-- Header stats -->
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;">
-        <div class="section-card" style="padding:10px;text-align:center;">
-          <div style="font-size:9px;color:var(--text3);letter-spacing:.8px;text-transform:uppercase;margin-bottom:4px;">Balance</div>
-          <div style="font-family:'Orbitron',sans-serif;font-size:14px;font-weight:800;color:var(--text);" id="journal-balance">$24,530</div>
-        </div>
-        <div class="section-card" style="padding:10px;text-align:center;">
-          <div style="font-size:9px;color:var(--text3);letter-spacing:.8px;text-transform:uppercase;margin-bottom:4px;">Growth</div>
-          <div style="font-family:'Orbitron',sans-serif;font-size:14px;font-weight:800;color:var(--green);" id="journal-growth">—</div>
-        </div>
-        <div class="section-card" style="padding:10px;text-align:center;">
-          <div style="font-size:9px;color:var(--text3);letter-spacing:.8px;text-transform:uppercase;margin-bottom:4px;">Month</div>
-          <div style="font-family:'Orbitron',sans-serif;font-size:14px;font-weight:800;color:var(--green);">—</div>
-        </div>
-      </div>
-
-      <!-- Trader Performance Score -->
-      <div class="section-card" style="margin-bottom:12px;">
-        <div class="section-title" style="font-size:13px;margin-bottom:14px;">Trader <span>Performance Score</span></div>
-        <div style="display:flex;align-items:center;gap:16px;margin-bottom:14px;">
-          <!-- Score ring -->
-          <div style="position:relative;width:80px;height:80px;flex-shrink:0;">
-            <svg width="80" height="80" viewBox="0 0 80 80" style="transform:rotate(-90deg);">
-              <circle cx="40" cy="40" r="34" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="8"/>
-              <circle cx="40" cy="40" r="34" fill="none" stroke="url(#scoreGrad)" stroke-width="8" stroke-linecap="round" stroke-dasharray="0 213"/>
+      <!-- PERFORMANCE SCORE WITH GAUGE -->
+      <div class="section-card" style="margin-bottom:10px;padding:12px;">
+        <div style="display:flex;gap:10px;align-items:stretch;">
+          <!-- Gauge Box -->
+          <div style="flex:0 0 110px;background:rgba(255,30,60,0.03);border:0.5px solid rgba(255,30,60,0.2);border-radius:12px;padding:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+            <svg id="perf-gauge-svg" width="100" height="70" viewBox="0 0 100 70" role="img" aria-label="Performance gauge">
+              <defs><linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#FF1E3C"/><stop offset="50%" stop-color="#FFB020"/><stop offset="100%" stop-color="#00C87A"/></linearGradient></defs>
+              <g stroke="#2a2a2a" stroke-width="1">
+                <line x1="50" y1="8" x2="50" y2="14" transform="rotate(-90 50 58)"/>
+                <line x1="50" y1="8" x2="50" y2="12" transform="rotate(-72 50 58)"/>
+                <line x1="50" y1="8" x2="50" y2="12" transform="rotate(-54 50 58)"/>
+                <line x1="50" y1="8" x2="50" y2="12" transform="rotate(-36 50 58)"/>
+                <line x1="50" y1="8" x2="50" y2="14" transform="rotate(-18 50 58)"/>
+                <line x1="50" y1="8" x2="50" y2="12" transform="rotate(0 50 58)"/>
+                <line x1="50" y1="8" x2="50" y2="12" transform="rotate(18 50 58)"/>
+                <line x1="50" y1="8" x2="50" y2="12" transform="rotate(36 50 58)"/>
+                <line x1="50" y1="8" x2="50" y2="14" transform="rotate(54 50 58)"/>
+                <line x1="50" y1="8" x2="50" y2="12" transform="rotate(72 50 58)"/>
+                <line x1="50" y1="8" x2="50" y2="14" transform="rotate(90 50 58)"/>
+              </g>
+              <path d="M 8 58 A 42 42 0 0 1 92 58" fill="none" stroke="#1e1e1e" stroke-width="6" stroke-linecap="round"/>
+              <path d="M 8 58 A 42 42 0 0 1 92 58" fill="none" stroke="url(#gaugeGrad)" stroke-width="6" stroke-linecap="round" stroke-dasharray="131.9" stroke-dashoffset="0" opacity="0.15"/>
+              <path id="gauge-fill" d="M 8 58 A 42 42 0 0 1 92 58" fill="none" stroke="url(#gaugeGrad)" stroke-width="6" stroke-linecap="round" stroke-dasharray="131.9" stroke-dashoffset="131.9"/>
+              <line id="gauge-needle" x1="50" y1="58" x2="50" y2="20" transform="rotate(-90 50 58)" stroke="#FF1E3C" stroke-width="1.5" stroke-linecap="round"/>
+              <circle cx="50" cy="58" r="3.5" fill="#FF1E3C"/>
+              <circle cx="50" cy="58" r="1.5" fill="#141414"/>
+              <text id="gauge-score" x="50" y="52" text-anchor="middle" font-size="18" font-weight="800" fill="#E0E0E0" font-family="monospace">—</text>
+              <text x="50" y="62" text-anchor="middle" font-size="8" fill="#444" font-family="monospace">/100</text>
+              <text x="8" y="68" text-anchor="middle" font-size="7" fill="#333">0</text>
+              <text x="50" y="16" text-anchor="middle" font-size="7" fill="#333">50</text>
+              <text x="92" y="68" text-anchor="middle" font-size="7" fill="#333">100</text>
             </svg>
-            <defs><linearGradient id="scoreGrad" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#FF1E3C"/><stop offset="100%" stop-color="#C40024"/></linearGradient></defs>
-            <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
-              <div style="font-family:'Orbitron',sans-serif;font-size:20px;font-weight:900;color:var(--text);">—</div>
-              <div style="font-size:9px;color:var(--text3);">/100</div>
+            <div style="font-size:9px;color:#555;letter-spacing:.8px;text-transform:uppercase;margin-top:2px;">Performance</div>
+            <div id="perf-grade" style="font-size:10px;font-weight:700;color:#555;margin-top:1px;">● Awaiting Data</div>
+          </div>
+          <!-- Divider -->
+          <div style="width:0.5px;background:rgba(255,255,255,0.06);flex-shrink:0;"></div>
+          <!-- Stats -->
+          <div style="flex:1;padding:6px 0 6px 10px;display:flex;flex-direction:column;justify-content:center;gap:7px;">
+            <div style="font-size:12px;font-weight:800;color:var(--text);margin-bottom:2px;">Trader <span style="color:var(--red);">Score</span></div>
+            <div style="display:flex;flex-direction:column;gap:3px;">
+              <div style="display:flex;justify-content:space-between;"><span style="font-size:9px;color:#444;letter-spacing:.8px;text-transform:uppercase;">Win Rate</span><span id="ps-winrate" style="font-size:11px;font-weight:700;color:#00C87A;">—</span></div>
+              <div style="height:3px;background:#1e1e1e;border-radius:2px;overflow:hidden;"><div id="pb-winrate" style="height:100%;width:0%;background:#00C87A;border-radius:2px;"></div></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:3px;">
+              <div style="display:flex;justify-content:space-between;"><span style="font-size:9px;color:#444;letter-spacing:.8px;text-transform:uppercase;">Discipline</span><span id="ps-disc" style="font-size:11px;font-weight:700;color:#4D9EFF;">—</span></div>
+              <div style="height:3px;background:#1e1e1e;border-radius:2px;overflow:hidden;"><div id="pb-disc" style="height:100%;width:0%;background:#4D9EFF;border-radius:2px;"></div></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:3px;">
+              <div style="display:flex;justify-content:space-between;"><span style="font-size:9px;color:#444;letter-spacing:.8px;text-transform:uppercase;">Risk Mgmt</span><span id="ps-risk" style="font-size:11px;font-weight:700;color:#FFB020;">—</span></div>
+              <div style="height:3px;background:#1e1e1e;border-radius:2px;overflow:hidden;"><div id="pb-risk" style="height:100%;width:0%;background:#FFB020;border-radius:2px;"></div></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:3px;">
+              <div style="display:flex;justify-content:space-between;"><span style="font-size:9px;color:#444;letter-spacing:.8px;text-transform:uppercase;">Psychology</span><span id="ps-psych" style="font-size:11px;font-weight:700;color:#A05AFF;">—</span></div>
+              <div style="height:3px;background:#1e1e1e;border-radius:2px;overflow:hidden;"><div id="pb-psych" style="height:100%;width:0%;background:#A05AFF;border-radius:2px;"></div></div>
             </div>
           </div>
-          <div style="flex:1;">
-            <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
-              <div style="width:8px;height:8px;border-radius:50%;background:var(--green);"></div>
-              <div style="font-size:13px;font-weight:700;color:var(--text3);">Awaiting Data</div>
-            </div>
-            <div style="font-size:12px;color:var(--text2);line-height:1.6;">Live stats appear once you have trade history.</div>
-          </div>
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
-          <div style="text-align:center;"><div style="font-size:15px;font-weight:800;color:var(--text3);">—</div><div style="font-size:9px;color:var(--text3);margin-top:2px;">Win Rate</div></div>
-          <div style="text-align:center;"><div style="font-size:15px;font-weight:800;color:var(--text3);">—</div><div style="font-size:9px;color:var(--text3);margin-top:2px;">Discipline</div></div>
-          <div style="text-align:center;"><div style="font-size:15px;font-weight:800;color:var(--text3);">—</div><div style="font-size:9px;color:var(--text3);margin-top:2px;">Psychology</div></div>
-          <div style="text-align:center;"><div style="font-size:15px;font-weight:800;color:var(--text3);">—</div><div style="font-size:9px;color:var(--text3);margin-top:2px;">Risk Mgmt</div></div>
         </div>
       </div>
 
-      <!-- Stats cards -->
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;">
-        <div class="section-card" style="padding:10px;">
-          <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Total Trades</div>
-          <div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:800;color:var(--text);">—</div>
-        </div>
-        <div class="section-card" style="padding:10px;">
-          <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Win Rate</div>
-          <div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:800;color:var(--text3);">—</div>
-        </div>
-        <div class="section-card" style="padding:10px;">
-          <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Net Profit</div>
-          <div style="font-family:'Orbitron',sans-serif;font-size:16px;font-weight:800;color:var(--text3);">—</div>
-        </div>
-        <div class="section-card" style="padding:10px;">
-          <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Profit Factor</div>
-          <div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:800;color:var(--text);">—</div>
-        </div>
-        <div class="section-card" style="padding:10px;">
-          <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Discipline</div>
-          <div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:800;color:var(--text3);">—</div>
-        </div>
-        <div class="section-card" style="padding:10px;">
-          <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Max Drawdown</div>
-          <div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:800;color:var(--text3);">—</div>
-        </div>
+      <!-- 6 STAT CARDS -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px;">
+        <div class="section-card" style="padding:8px;"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Total Trades</div><div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:800;color:var(--text);" id="j-total">—</div></div>
+        <div class="section-card" style="padding:8px;"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Win Rate</div><div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:800;" id="j-winrate">—</div></div>
+        <div class="section-card" style="padding:8px;"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Net P&L</div><div style="font-family:'Orbitron',sans-serif;font-size:15px;font-weight:800;" id="j-netpnl">—</div></div>
+        <div class="section-card" style="padding:8px;"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Profit Factor</div><div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:800;color:var(--text);" id="j-pf">—</div></div>
+        <div class="section-card" style="padding:8px;"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Max DD</div><div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:800;" id="j-maxdd">—</div></div>
+        <div class="section-card" style="padding:8px;"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Avg R:R</div><div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:800;color:var(--text);" id="j-rr">—</div></div>
       </div>
 
-      <!-- Account Growth Chart -->
-      <div class="section-card" style="margin-bottom:12px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+      <!-- ACCOUNT GROWTH CHART -->
+      <div class="section-card" style="margin-bottom:10px;padding:12px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
           <div class="section-title" style="font-size:13px;margin-bottom:0;">Account <span>Growth</span></div>
           <div style="display:flex;gap:4px;">
-            <button onclick="this.parentElement.querySelectorAll('button').forEach(b=>b.style.background='transparent');this.style.background='var(--red)';this.style.color='#fff';" style="padding:4px 8px;border-radius:5px;font-size:9px;font-weight:700;border:1px solid var(--border);color:var(--text3);background:transparent;cursor:pointer;">7D</button>
-            <button onclick="this.parentElement.querySelectorAll('button').forEach(b=>{b.style.background='transparent';b.style.color='var(--text3)'});this.style.background='var(--red)';this.style.color='#fff';" style="padding:4px 8px;border-radius:5px;font-size:9px;font-weight:700;border:1px solid var(--red);color:#fff;background:var(--red);cursor:pointer;">30D</button>
-            <button onclick="this.parentElement.querySelectorAll('button').forEach(b=>{b.style.background='transparent';b.style.color='var(--text3)'});this.style.background='var(--red)';this.style.color='#fff';" style="padding:4px 8px;border-radius:5px;font-size:9px;font-weight:700;border:1px solid var(--border);color:var(--text3);background:transparent;cursor:pointer;">ALL</button>
+            <button id="jbtn-7d" onclick="setJournalRange('7d',this)" style="padding:3px 7px;border-radius:4px;font-size:9px;font-weight:700;border:1px solid var(--border);color:var(--text3);background:transparent;cursor:pointer;">7D</button>
+            <button id="jbtn-30d" onclick="setJournalRange('30d',this)" style="padding:3px 7px;border-radius:4px;font-size:9px;font-weight:700;border:1px solid var(--red);color:#fff;background:var(--red);cursor:pointer;">30D</button>
+            <button id="jbtn-all" onclick="setJournalRange('all',this)" style="padding:3px 7px;border-radius:4px;font-size:9px;font-weight:700;border:1px solid var(--border);color:var(--text3);background:transparent;cursor:pointer;">ALL</button>
           </div>
         </div>
-        <canvas id="growth-chart" style="width:100%;height:140px;"></canvas>
-        <div style="display:flex;justify-content:space-between;margin-top:8px;">
-          <div style="font-size:10px;color:var(--text3);">—</div>
-          <div style="font-size:10px;color:var(--text3);">—</div>
-          <div style="font-size:11px;font-weight:700;color:var(--text3);">—</div>
+        <div style="position:relative;height:90px;"><canvas id="j-growth-chart" role="img" aria-label="Account P&L growth chart">Account growth over time.</canvas></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px;">
+          <div style="background:rgba(0,200,122,0.06);border:0.5px solid rgba(0,200,122,0.15);border-radius:8px;padding:7px;"><div style="font-size:9px;color:#555;letter-spacing:.5px;text-transform:uppercase;margin-bottom:2px;">Best Trade</div><div id="j-best-trade" style="font-size:12px;font-weight:700;color:#00C87A;">—</div></div>
+          <div style="background:rgba(255,30,60,0.04);border:0.5px solid rgba(255,30,60,0.12);border-radius:8px;padding:7px;"><div style="font-size:9px;color:#555;letter-spacing:.5px;text-transform:uppercase;margin-bottom:2px;">Worst Trade</div><div id="j-worst-trade" style="font-size:12px;font-weight:700;color:#FF1E3C;">—</div></div>
         </div>
       </div>
 
-      <!-- Journal Analytics -->
-      <div class="section-card" style="margin-bottom:12px;">
-        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Journal <span>Analytics</span></div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-          <!-- Trading Statistics -->
-          <div>
-            <div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:8px;">Trading Statistics</div>
-            <div style="display:flex;flex-direction:column;gap:5px;">
-              <div style="display:flex;justify-content:space-between;"><span style="font-size:11px;color:var(--text3);">Avg Win</span><span style="font-size:11px;font-weight:700;color:var(--text3);">—</span></div>
-              <div style="display:flex;justify-content:space-between;"><span style="font-size:11px;color:var(--text3);">Avg Loss</span><span style="font-size:11px;font-weight:700;color:var(--text3);">—</span></div>
-              <div style="display:flex;justify-content:space-between;"><span style="font-size:11px;color:var(--text3);">Risk:Reward</span><span style="font-size:11px;font-weight:700;color:var(--text3);">—</span></div>
-              <div style="display:flex;justify-content:space-between;"><span style="font-size:11px;color:var(--text3);">Best Trade</span><span style="font-size:11px;font-weight:700;color:var(--text3);">—</span></div>
-              <div style="display:flex;justify-content:space-between;"><span style="font-size:11px;color:var(--text3);">Worst Trade</span><span style="font-size:11px;font-weight:700;color:var(--text3);">—</span></div>
-              <div style="display:flex;justify-content:space-between;"><span style="font-size:11px;color:var(--text3);">Hold Time</span><span style="font-size:11px;font-weight:700;color:var(--text3);">—</span></div>
+      <!-- 3-TAB ANALYTICS -->
+      <div class="section-card" style="margin-bottom:10px;padding:12px;">
+        <div style="display:flex;gap:6px;margin-bottom:10px;">
+          <button class="j-tab-btn active" onclick="switchJournalTab('analytics',this)" style="flex:1;padding:7px;background:var(--red);border:1px solid var(--red);border-radius:8px;color:#fff;font-size:11px;font-weight:700;cursor:pointer;">Analytics</button>
+          <button class="j-tab-btn" onclick="switchJournalTab('discipline',this)" style="flex:1;padding:7px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;">Discipline</button>
+          <button class="j-tab-btn" onclick="switchJournalTab('emotions',this)" style="flex:1;padding:7px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;">Emotions</button>
+        </div>
+        <!-- ANALYTICS -->
+        <div id="jtab-analytics">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <div>
+              <div style="font-size:10px;font-weight:700;color:var(--text3);margin-bottom:6px;letter-spacing:.5px;">TRADING STATS</div>
+              <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid var(--border);"><span style="font-size:11px;color:var(--text3);">Avg Win</span><span id="j-avg-win" style="font-size:12px;font-weight:700;color:#00C87A;">—</span></div>
+              <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid var(--border);"><span style="font-size:11px;color:var(--text3);">Avg Loss</span><span id="j-avg-loss" style="font-size:12px;font-weight:700;color:#FF1E3C;">—</span></div>
+              <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid var(--border);"><span style="font-size:11px;color:var(--text3);">Risk:Reward</span><span id="j-rr2" style="font-size:12px;font-weight:700;color:var(--text);">—</span></div>
+              <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid var(--border);"><span style="font-size:11px;color:var(--text3);">Avg Hold</span><span id="j-hold" style="font-size:12px;font-weight:700;color:var(--text);">—</span></div>
+              <div style="display:flex;justify-content:space-between;padding:5px 0;"><span style="font-size:11px;color:var(--text3);">Win Streak</span><span id="j-streak" style="font-size:12px;font-weight:700;color:#FFB020;">—</span></div>
+            </div>
+            <div>
+              <div style="font-size:10px;font-weight:700;color:var(--text3);margin-bottom:6px;letter-spacing:.5px;">ASSET MIX</div>
+              <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid var(--border);"><span style="font-size:11px;color:var(--text3);">Gold</span><span id="j-gold-pct" style="font-size:12px;font-weight:700;color:#FFB020;">—</span></div>
+              <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid var(--border);"><span style="font-size:11px;color:var(--text3);">Forex</span><span id="j-forex-pct" style="font-size:12px;font-weight:700;color:#4D9EFF;">—</span></div>
+              <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid var(--border);"><span style="font-size:11px;color:var(--text3);">Crypto</span><span id="j-crypto-pct" style="font-size:12px;font-weight:700;color:#A05AFF;">—</span></div>
+              <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid var(--border);"><span style="font-size:11px;color:var(--text3);">Indices</span><span id="j-idx-pct" style="font-size:12px;font-weight:700;color:#00C87A;">—</span></div>
+              <div style="display:flex;justify-content:space-between;padding:5px 0;"><span style="font-size:11px;color:var(--text3);">Best Session</span><span id="j-best-session" style="font-size:12px;font-weight:700;color:var(--text);">—</span></div>
             </div>
           </div>
-          <!-- Asset Performance -->
-          <div>
-            <div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:8px;">Asset Performance</div>
-            <div style="display:flex;flex-direction:column;gap:7px;">
-              <div><div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="font-size:11px;color:var(--text3);">Forex</span><span style="font-size:11px;font-weight:700;color:var(--text3);">—</span></div><div style="height:4px;background:var(--surface2);border-radius:2px;"><div style="width:0%;height:100%;background:var(--grad);border-radius:2px;"></div></div></div>
-              <div><div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="font-size:11px;color:var(--text3);">Gold</span><span style="font-size:11px;font-weight:700;color:var(--text3);">—</span></div><div style="height:4px;background:var(--surface2);border-radius:2px;"><div style="width:0%;height:100%;background:var(--grad);border-radius:2px;"></div></div></div>
-              <div><div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="font-size:11px;color:var(--text3);">Crypto</span><span style="font-size:11px;font-weight:700;color:var(--text3);">—</span></div><div style="height:4px;background:var(--surface2);border-radius:2px;"><div style="width:0%;height:100%;background:var(--grad);border-radius:2px;"></div></div></div>
-              <div><div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="font-size:11px;color:var(--text3);">Indices</span><span style="font-size:11px;font-weight:700;color:var(--text3);">—</span></div><div style="height:4px;background:var(--surface2);border-radius:2px;"><div style="width:0%;height:100%;background:var(--grad);border-radius:2px;"></div></div></div>
+          <div style="margin-top:8px;padding-top:8px;border-top:0.5px solid var(--border);">
+            <div style="font-size:10px;font-weight:700;color:var(--text3);margin-bottom:6px;letter-spacing:.5px;">METHOD BREAKDOWN</div>
+            <div id="j-method-breakdown">
+              <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid var(--border);"><div style="display:flex;align-items:center;gap:6px;"><span style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:rgba(77,158,255,.1);color:#4D9EFF;">MANUAL</span><span style="font-size:11px;color:var(--text3);" id="j-m-count">—</span></div><span id="j-m-stats" style="font-size:12px;font-weight:700;color:var(--text3);">—</span></div>
+              <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid var(--border);"><div style="display:flex;align-items:center;gap:6px;"><span style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:rgba(255,176,32,.1);color:#FFB020;">TOOLS</span><span style="font-size:11px;color:var(--text3);" id="j-t-count">—</span></div><span id="j-t-stats" style="font-size:12px;font-weight:700;color:var(--text3);">—</span></div>
+              <div style="display:flex;justify-content:space-between;padding:5px 0;"><div style="display:flex;align-items:center;gap:6px;"><span style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:rgba(160,90,255,.1);color:#A05AFF;">AUTO</span><span style="font-size:11px;color:var(--text3);" id="j-a-count">—</span></div><span id="j-a-stats" style="font-size:12px;font-weight:700;color:var(--text3);">—</span></div>
             </div>
           </div>
         </div>
-      </div>
-
-      <!-- Trading Discipline -->
-      <div class="section-card" style="margin-bottom:12px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-          <div class="section-title" style="font-size:13px;margin-bottom:0;">Trading <span>Discipline</span></div>
-          <div style="text-align:right;"><div style="font-family:'Orbitron',sans-serif;font-size:20px;font-weight:800;color:var(--text3);">—</div><div style="font-size:9px;color:var(--text3);">Overall Score</div></div>
+        <!-- DISCIPLINE -->
+        <div id="jtab-discipline" style="display:none;">
+          <div style="display:flex;justify-content:flex-end;margin-bottom:8px;"><span style="font-size:11px;color:var(--text3);">Overall <span id="j-disc-score" style="color:#00C87A;font-weight:700;">—</span></span></div>
+          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;"><div id="jd-sl-dot" style="width:8px;height:8px;border-radius:50%;background:#555;flex-shrink:0;"></div><span style="flex:1;font-size:12px;color:var(--text);">Used Stop Loss</span><span id="jd-sl" style="font-size:12px;font-weight:700;color:var(--text3);">—</span></div>
+          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;"><div id="jd-risk-dot" style="width:8px;height:8px;border-radius:50%;background:#555;flex-shrink:0;"></div><span style="flex:1;font-size:12px;color:var(--text);">Risk Under 2%</span><span id="jd-risk" style="font-size:12px;font-weight:700;color:var(--text3);">—</span></div>
+          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;"><div id="jd-over-dot" style="width:8px;height:8px;border-radius:50%;background:#555;flex-shrink:0;"></div><span style="flex:1;font-size:12px;color:var(--text);">Overleveraged</span><span id="jd-over" style="font-size:12px;font-weight:700;color:var(--text3);">—</span></div>
+          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;"><div id="jd-rev-dot" style="width:8px;height:8px;border-radius:50%;background:#555;flex-shrink:0;"></div><span style="flex:1;font-size:12px;color:var(--text);">No Revenge Trading</span><span id="jd-rev" style="font-size:12px;font-weight:700;color:var(--text3);">—</span></div>
+          <div id="j-disc-tip" style="display:none;margin-top:8px;padding:8px;background:rgba(255,176,32,0.06);border:0.5px solid rgba(255,176,32,0.2);border-radius:8px;font-size:11px;color:var(--text3);line-height:1.6;"></div>
         </div>
-        <div style="display:flex;flex-direction:column;gap:8px;">
-          <div style="display:flex;align-items:center;gap:8px;"><div style="width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--text3);">–</div><span style="font-size:13px;color:var(--text);">Used Stop Loss</span></div>
-          <div style="display:flex;align-items:center;gap:8px;"><div style="width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--text3);">–</div><span style="font-size:13px;color:var(--text);">Followed Setup</span></div>
-          <div style="display:flex;align-items:center;gap:8px;"><div style="width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--text3);">–</div><span style="font-size:13px;color:var(--text);">Overleveraged</span></div>
-          <div style="display:flex;align-items:center;gap:8px;"><div style="width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--text3);">–</div><span style="font-size:13px;color:var(--text);">Risk Under 2%</span></div>
-          <div style="display:flex;align-items:center;gap:8px;"><div style="width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--text3);">–</div><span style="font-size:13px;color:var(--text);">No Revenge Trading</span></div>
-        </div>
-      </div>
-
-      <!-- Emotion Tracker -->
-      <div class="section-card" style="margin-bottom:12px;">
-        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Emotion <span>Tracker</span></div>
-        <div style="display:flex;align-items:center;gap:14px;">
-          <div style="flex:1;display:flex;flex-direction:column;gap:7px;">
-            <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:14px;">😎</span><span style="font-size:12px;color:var(--text2);flex:1;">Calm</span><span style="font-size:12px;font-weight:700;color:var(--text3);">—</span></div>
-            <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:14px;">😊</span><span style="font-size:12px;color:var(--text2);flex:1;">Confident</span><span style="font-size:12px;font-weight:700;color:var(--text3);">—</span></div>
-            <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:14px;">😐</span><span style="font-size:12px;color:var(--text2);flex:1;">Neutral</span><span style="font-size:12px;font-weight:700;color:var(--text3);">—</span></div>
-            <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:14px;">😰</span><span style="font-size:12px;color:var(--text2);flex:1;">Fear</span><span style="font-size:12px;font-weight:700;color:var(--text3);">—</span></div>
-            <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:14px;">😤</span><span style="font-size:12px;color:var(--text2);flex:1;">Revenge</span><span style="font-size:12px;font-weight:700;color:var(--text3);">—</span></div>
-          </div>
-          <canvas id="emotion-chart" width="90" height="90"></canvas>
-        </div>
-        <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
-          <span style="font-size:12px;color:var(--text2);">Overall Emotion Score</span>
-          <span style="font-family:'Orbitron',sans-serif;font-size:16px;font-weight:800;color:var(--text3);">—</span>
+        <!-- EMOTIONS -->
+        <div id="jtab-emotions" style="display:none;">
+          <div style="display:flex;justify-content:flex-end;margin-bottom:8px;"><span style="font-size:11px;color:var(--text3);">Emotion Score <span id="j-emo-score" style="color:#4D9EFF;font-weight:700;">—</span></span></div>
+          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;"><span style="font-size:15px;">😊</span><span style="flex:0 0 70px;font-size:12px;color:var(--text);">Calm</span><div style="flex:1;height:4px;background:var(--surface2);border-radius:2px;overflow:hidden;"><div id="je-calm" style="height:100%;width:0%;background:#00C87A;border-radius:2px;"></div></div><span id="je-calm-v" style="font-size:11px;font-weight:700;color:#00C87A;margin-left:6px;min-width:30px;">—</span></div>
+          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;"><span style="font-size:15px;">😎</span><span style="flex:0 0 70px;font-size:12px;color:var(--text);">Confident</span><div style="flex:1;height:4px;background:var(--surface2);border-radius:2px;overflow:hidden;"><div id="je-conf" style="height:100%;width:0%;background:#4D9EFF;border-radius:2px;"></div></div><span id="je-conf-v" style="font-size:11px;font-weight:700;color:#4D9EFF;margin-left:6px;min-width:30px;">—</span></div>
+          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;"><span style="font-size:15px;">😐</span><span style="flex:0 0 70px;font-size:12px;color:var(--text);">Neutral</span><div style="flex:1;height:4px;background:var(--surface2);border-radius:2px;overflow:hidden;"><div id="je-neu" style="height:100%;width:0%;background:#888;border-radius:2px;"></div></div><span id="je-neu-v" style="font-size:11px;font-weight:700;color:#888;margin-left:6px;min-width:30px;">—</span></div>
+          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;"><span style="font-size:15px;">😰</span><span style="flex:0 0 70px;font-size:12px;color:var(--text);">Fear</span><div style="flex:1;height:4px;background:var(--surface2);border-radius:2px;overflow:hidden;"><div id="je-fear" style="height:100%;width:0%;background:#FFB020;border-radius:2px;"></div></div><span id="je-fear-v" style="font-size:11px;font-weight:700;color:#FFB020;margin-left:6px;min-width:30px;">—</span></div>
+          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;"><span style="font-size:15px;">😡</span><span style="flex:0 0 70px;font-size:12px;color:var(--text);">Revenge</span><div style="flex:1;height:4px;background:var(--surface2);border-radius:2px;overflow:hidden;"><div id="je-rev" style="height:100%;width:0%;background:#FF1E3C;border-radius:2px;"></div></div><span id="je-rev-v" style="font-size:11px;font-weight:700;color:#FF1E3C;margin-left:6px;min-width:30px;">—</span></div>
+          <div style="margin-top:8px;text-align:center;font-size:11px;color:var(--text3);">Log your emotion after each trade in Recent Trades</div>
         </div>
       </div>
 
-      <!-- MAI Insight -->
-      <div style="background:rgba(255,30,60,0.04);border:1px solid rgba(255,30,60,0.15);border-left:3px solid var(--red);border-radius:12px;padding:14px;margin-bottom:12px;">
-        <div style="display:flex;align-items:center;gap:7px;margin-bottom:10px;">
-          <i class="ti ti-sparkles" style="color:var(--red);font-size:16px;"></i>
-          <div style="font-size:13px;font-weight:800;color:var(--red);">Momentum AI Insight</div>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:7px;"><div style="font-size:12px;color:var(--text2);line-height:1.6;">Insights appear once you have trade history.</div></div>
+      <!-- AI INSIGHT -->
+      <div style="background:rgba(255,30,60,0.04);border:0.5px solid rgba(255,30,60,0.2);border-left:2px solid var(--red);border-radius:10px;padding:12px;margin-bottom:10px;">
+        <div style="display:flex;align-items:center;gap:7px;margin-bottom:6px;"><i class="ti ti-sparkles" style="color:var(--red);font-size:14px;"></i><div style="font-size:11px;font-weight:800;color:var(--red);letter-spacing:.5px;">MOMENTUM AI INSIGHT</div></div>
+        <div id="j-ai-insight" style="font-size:12px;color:var(--text3);line-height:1.7;">Insights appear once you have trade history.</div>
       </div>
 
-      <!-- Recent Trades Table -->
-      <div class="section-card" style="margin-bottom:12px;">
-        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Recent <span>Trades</span></div>
-        <!-- Table header -->
-        <div style="display:grid;grid-template-columns:50px 1fr 50px 50px;gap:6px;padding:6px 0;border-bottom:1px solid var(--border);margin-bottom:6px;">
-          <div style="font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;">Date</div>
-          <div style="font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;">Asset</div>
-          <div style="font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;">P&L</div>
-          <div style="font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;">Result</div>
+      <!-- RECENT TRADES -->
+      <div class="section-card" style="margin-bottom:10px;padding:12px;">
+        <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:8px;">Recent <span style="color:var(--red);">Trades</span></div>
+        <div style="display:flex;padding-bottom:5px;border-bottom:0.5px solid var(--border);margin-bottom:4px;">
+          <span style="font-size:10px;color:var(--text3);flex:0 0 55px;">DATE</span>
+          <span style="font-size:10px;color:var(--text3);flex:1;">ASSET</span>
+          <span style="font-size:10px;color:var(--text3);text-align:right;">P&L</span>
         </div>
-        <div style="text-align:center;font-size:12px;color:var(--text3);padding:20px 0;">No trades yet</div>
-        <div style="text-align:center;font-size:11px;color:var(--text3);margin-top:10px;padding-top:10px;border-top:1px solid var(--border);"></div>
+        <div id="j-recent-trades"><div style="text-align:center;font-size:12px;color:var(--text3);padding:16px 0;">No trades yet</div></div>
+        <div style="text-align:center;margin-top:8px;"><span id="j-view-all" style="display:none;font-size:11px;color:var(--red);cursor:pointer;font-weight:700;">View all trades →</span></div>
       </div>
 
-      <!-- Bottom stats row -->
+      <!-- BOTTOM 4 CARDS -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
-        <div class="section-card" style="padding:12px;">
-          <div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:4px;">Best Pair</div>
-          <div style="font-family:'Orbitron',sans-serif;font-size:14px;font-weight:800;color:var(--text3);">—</div>
-        </div>
-        <div class="section-card" style="padding:12px;">
-          <div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:4px;">Best Session</div>
-          <div style="font-family:'Orbitron',sans-serif;font-size:14px;font-weight:800;color:var(--text3);">—</div>
-        </div>
-        <div class="section-card" style="padding:12px;">
-          <div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:4px;">Win Streak</div>
-          <div style="font-family:'Orbitron',sans-serif;font-size:14px;font-weight:800;color:var(--text3);">—</div>
-        </div>
-        <div class="section-card" style="padding:12px;">
-          <div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:4px;">Monthly Return</div>
-          <div style="font-family:'Orbitron',sans-serif;font-size:14px;font-weight:800;color:var(--text3);">—</div>
-        </div>
+        <div class="section-card" style="padding:8px;"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Best Pair</div><div id="j-best-pair" style="font-family:'Orbitron',sans-serif;font-size:13px;font-weight:800;color:#FFB020;">—</div><div id="j-best-pair-sub" style="font-size:10px;color:var(--text3);margin-top:2px;">—</div></div>
+        <div class="section-card" style="padding:8px;"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Best Session</div><div id="j-best-session2" style="font-family:'Orbitron',sans-serif;font-size:13px;font-weight:800;color:var(--text);">—</div><div style="font-size:10px;color:var(--text3);margin-top:2px;">By avg profit</div></div>
+        <div class="section-card" style="padding:8px;"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Win Streak</div><div id="j-win-streak" style="font-family:'Orbitron',sans-serif;font-size:13px;font-weight:800;color:#00C87A;">—</div><div style="font-size:10px;color:var(--text3);margin-top:2px;">Current streak</div></div>
+        <div class="section-card" style="padding:8px;"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Monthly Return</div><div id="j-monthly-return" style="font-family:'Orbitron',sans-serif;font-size:13px;font-weight:800;color:#00C87A;">—</div><div id="j-monthly-label" style="font-size:10px;color:var(--text3);margin-top:2px;">This month</div></div>
       </div>
 
     </div>
@@ -5609,23 +5579,268 @@ async function refreshActiveBalance() {
   } catch(e) {}
 }
 
+function switchJournalTab(name, el) {
+  document.querySelectorAll('.j-tab-btn').forEach(function(b){
+    b.style.background='transparent'; b.style.borderColor='var(--border)'; b.style.color='var(--text3)';
+  });
+  el.style.background='var(--red)'; el.style.borderColor='var(--red)'; el.style.color='#fff';
+  ['analytics','discipline','emotions'].forEach(function(t){
+    var el2=document.getElementById('jtab-'+t); if(el2) el2.style.display=t===name?'block':'none';
+  });
+}
+function setJournalRange(range, el) {
+  document.querySelectorAll('#jbtn-7d,#jbtn-30d,#jbtn-all').forEach(function(b){
+    b.style.background='transparent'; b.style.borderColor='var(--border)'; b.style.color='var(--text3)';
+  });
+  el.style.background='var(--red)'; el.style.borderColor='var(--red)'; el.style.color='#fff';
+  window._journalRange = range;
+  renderJournalChart(window._journalTrades || []);
+}
+function updateGauge(score) {
+  var fill = document.getElementById('gauge-fill');
+  var needle = document.getElementById('gauge-needle');
+  var scoreEl = document.getElementById('gauge-score');
+  var gradeEl = document.getElementById('perf-grade');
+  if(!fill||!needle||!scoreEl) return;
+  var total = 131.9;
+  var offset = total - (score/100)*total;
+  fill.setAttribute('stroke-dashoffset', offset.toFixed(1));
+  var deg = -90 + (score/100)*180;
+  needle.setAttribute('transform', 'rotate('+deg+' 50 58)');
+  scoreEl.textContent = Math.round(score);
+  var grade = score>=80?'● Excellent':score>=65?'● Good':score>=50?'● Average':'● Needs Work';
+  var col = score>=80?'#00C87A':score>=65?'#FFB020':score>=50?'#4D9EFF':'#FF1E3C';
+  gradeEl.textContent = grade; gradeEl.style.color = col;
+}
+function renderJournalChart(trades) {
+  var range = window._journalRange || '30d';
+  var now = new Date();
+  var cutoff = new Date();
+  if(range==='7d') cutoff.setDate(now.getDate()-7);
+  else if(range==='30d') cutoff.setDate(now.getDate()-30);
+  else cutoff = new Date(0);
+  var filtered = trades.filter(function(t){ return new Date(t.close_time||t.created_at) >= cutoff; });
+  filtered.sort(function(a,b){ return new Date(a.close_time||a.created_at)-new Date(b.close_time||b.created_at); });
+  var running=0, labels=[], data=[];
+  filtered.forEach(function(t){
+    running += parseFloat(t.profit||0);
+    var d = new Date(t.close_time||t.created_at);
+    labels.push((d.getMonth()+1)+'/'+d.getDate());
+    data.push(parseFloat(running.toFixed(2)));
+  });
+  if(!labels.length){ labels=['—']; data=[0]; }
+  var canvas = document.getElementById('j-growth-chart');
+  if(!canvas) return;
+  if(window._journalChart) { window._journalChart.destroy(); }
+  window._journalChart = new Chart(canvas, {
+    type:'line',
+    data:{labels:labels,datasets:[{data:data,borderColor:'#FF1E3C',backgroundColor:'rgba(255,30,60,0.06)',borderWidth:1.5,pointRadius:0,fill:true,tension:0.4}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{enabled:false}},scales:{x:{display:false},y:{display:false}}}
+  });
+}
+window._journalRange = '30d';
 async function loadJournalData() {
-  if(!currentUser||!db) return;
+  if(!activeAccount||!db) return;
   try {
-    var res = await db.from('trades').select('*').eq('user_id',currentUser.id).order('created_at',{ascending:false}).limit(50);
-    if(res.error||!res.data) return;
-    var trades = res.data;
-    if(!trades.length) return;
-    var wins = trades.filter(function(t){return parseFloat(t.pnl||0)>0;}).length;
-    var losses = trades.filter(function(t){return parseFloat(t.pnl||0)<0;}).length;
-    var total = wins+losses;
-    var totalPnl = trades.reduce(function(s,t){return s+parseFloat(t.pnl||0);},0);
-    var now = new Date(), ms = new Date(now.getFullYear(),now.getMonth(),1);
-    var monthPnl = trades.filter(function(t){return new Date(t.created_at)>=ms;}).reduce(function(s,t){return s+parseFloat(t.pnl||0);},0);
-    var bEl=document.getElementById('journal-balance'), gEl=document.getElementById('journal-growth');
-    if(bEl) bEl.textContent='$'+Math.abs(totalPnl).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2});
-    if(gEl) { gEl.textContent=(totalPnl>=0?'+':'')+totalPnl.toFixed(2)+' pts'; gEl.style.color=totalPnl>=0?'var(--green)':'var(--red)'; }
+    var res = await db.from('closed_trades').select('*').eq('mt5_id', activeAccount.mt5_id).order('close_time',{ascending:false}).limit(200);
+    if(res.error) throw res.error;
+    var trades = res.data || [];
+    window._journalTrades = trades;
+    if(!trades.length) {
+      renderJournalChart([]);
+      updateGauge(0);
+      return;
+    }
+    var wins = trades.filter(function(t){return parseFloat(t.profit||0)>0;});
+    var losses = trades.filter(function(t){return parseFloat(t.profit||0)<0;});
+    var total = trades.length;
+    var winRate = total>0 ? Math.round((wins.length/total)*100) : 0;
+    var totalPnl = trades.reduce(function(s,t){return s+parseFloat(t.profit||0);},0);
+    var grossWin = wins.reduce(function(s,t){return s+parseFloat(t.profit||0);},0);
+    var grossLoss = Math.abs(losses.reduce(function(s,t){return s+parseFloat(t.profit||0);},0));
+    var profitFactor = grossLoss>0 ? (grossWin/grossLoss).toFixed(2) : grossWin>0?'∞':'—';
+    var avgWin = wins.length>0 ? grossWin/wins.length : 0;
+    var avgLoss = losses.length>0 ? grossLoss/losses.length : 0;
+    var rr = avgLoss>0 ? '1:'+(avgWin/avgLoss).toFixed(1) : '—';
+    var bestTrade = trades.reduce(function(b,t){return parseFloat(t.profit||0)>parseFloat(b.profit||0)?t:b;}, trades[0]);
+    var worstTrade = trades.reduce(function(b,t){return parseFloat(t.profit||0)<parseFloat(b.profit||0)?t:b;}, trades[0]);
+    // Max drawdown
+    var runPnl=0, peak=0, maxDD=0;
+    trades.slice().reverse().forEach(function(t){ runPnl+=parseFloat(t.profit||0); if(runPnl>peak)peak=runPnl; var dd=peak-runPnl; if(dd>maxDD)maxDD=dd; });
+    // Avg hold time
+    var holdsWithDur = trades.filter(function(t){return t.duration_seconds>0;});
+    var avgHoldSec = holdsWithDur.length>0 ? holdsWithDur.reduce(function(s,t){return s+t.duration_seconds;},0)/holdsWithDur.length : 0;
+    var avgHoldStr = avgHoldSec>0 ? Math.floor(avgHoldSec/3600)+'h '+Math.floor((avgHoldSec%3600)/60)+'m' : '—';
+    // Win streak
+    var streak=0, maxStreak=0;
+    trades.slice().reverse().forEach(function(t){if(parseFloat(t.profit||0)>0){streak++;if(streak>maxStreak)maxStreak=streak;}else{streak=0;}});
+    // Asset mix
+    var assetCounts={Gold:0,Forex:0,Crypto:0,Indices:0};
+    trades.forEach(function(t){
+      var s=(t.symbol||'').toUpperCase();
+      if(s.includes('XAU')||s.includes('XAG')) assetCounts.Gold++;
+      else if(s.includes('BTC')||s.includes('ETH')||s.includes('USDT')) assetCounts.Crypto++;
+      else if(s.includes('US30')||s.includes('NAS')||s.includes('SPX')||s.includes('DAX')) assetCounts.Indices++;
+      else assetCounts.Forex++;
+    });
+    var totalAssets=Object.values(assetCounts).reduce(function(s,v){return s+v;},0);
+    // Method breakdown
+    var methods={manual:[],smart:[],auto:[]};
+    trades.forEach(function(t){ var m=(t.method||'manual').toLowerCase(); if(methods[m])methods[m].push(t); else methods.manual.push(t); });
+    function methodStats(arr){
+      if(!arr.length) return '—';
+      var w=arr.filter(function(t){return parseFloat(t.profit||0)>0;});
+      var pnl=arr.reduce(function(s,t){return s+parseFloat(t.profit||0);},0);
+      var wr=Math.round((w.length/arr.length)*100);
+      var pnlStr=(pnl>=0?'+$':'-$')+Math.abs(pnl).toFixed(0);
+      return pnlStr+' · '+wr+'% WR';
+    }
+    // Monthly return
+    var now2=new Date(), ms2=new Date(now2.getFullYear(),now2.getMonth(),1);
+    var monthTrades=trades.filter(function(t){return new Date(t.close_time||t.created_at)>=ms2;});
+    var monthPnl=monthTrades.reduce(function(s,t){return s+parseFloat(t.profit||0);},0);
+    var monthRet=activeAccount.balance>0?(monthPnl/activeAccount.balance*100).toFixed(1):'—';
+    // Discipline
+    var slUsed=trades.filter(function(t){return parseFloat(t.sl||0)>0;}).length;
+    var slPct=Math.round((slUsed/total)*100);
+    var riskOk=trades.filter(function(t){
+      var risk=Math.abs(parseFloat(t.open_price||0)-parseFloat(t.sl||0))*parseFloat(t.volume||0)*100;
+      var bal=parseFloat(activeAccount.balance||3000);
+      return risk<=bal*0.02;
+    }).length;
+    var riskPct=Math.round((riskOk/total)*100);
+    var overLev=trades.filter(function(t){return parseFloat(t.volume||0)>0.1;}).length;
+    // Revenge trades (loss followed immediately by another trade within 5 min)
+    var revCount=0;
+    for(var i=1;i<trades.length;i++){
+      if(parseFloat(trades[i].profit||0)<0){
+        var prevTime=new Date(trades[i-1].close_time||trades[i-1].created_at);
+        var curTime=new Date(trades[i].close_time||trades[i].created_at);
+        if(Math.abs(curTime-prevTime)<300000) revCount++;
+      }
+    }
+    var discScore=Math.round((slPct*0.4)+(riskPct*0.4)+((revCount===0?100:Math.max(0,100-revCount*20))*0.2));
+    // Performance score
+    var perfScore=Math.round((winRate*0.35)+(discScore*0.25)+((profitFactor==='∞'||profitFactor==='—'?50:Math.min(100,parseFloat(profitFactor)*25))*0.2)+(Math.min(100,100-maxDD)*0.2));
+    perfScore=Math.min(100,Math.max(0,perfScore));
+    // UPDATE UI
+    // Stat cards
+    var el=document.getElementById('j-total'); if(el) el.textContent=total;
+    el=document.getElementById('j-winrate'); if(el){el.textContent=winRate+'%';el.style.color=winRate>=50?'var(--green)':'var(--red)';}
+    el=document.getElementById('j-netpnl'); if(el){el.textContent=(totalPnl>=0?'+$':'-$')+Math.abs(totalPnl).toFixed(2);el.style.color=totalPnl>=0?'var(--green)':'var(--red)';}
+    el=document.getElementById('j-pf'); if(el) el.textContent=profitFactor;
+    el=document.getElementById('j-maxdd'); if(el){el.textContent='-$'+maxDD.toFixed(2);el.style.color='var(--red)';}
+    el=document.getElementById('j-rr'); if(el) el.textContent=rr;
+    el=document.getElementById('j-rr2'); if(el) el.textContent=rr;
+    // Analytics
+    el=document.getElementById('j-avg-win'); if(el) el.textContent='+$'+avgWin.toFixed(2);
+    el=document.getElementById('j-avg-loss'); if(el) el.textContent='-$'+avgLoss.toFixed(2);
+    el=document.getElementById('j-hold'); if(el) el.textContent=avgHoldStr;
+    el=document.getElementById('j-streak'); if(el) el.textContent=maxStreak+' trades';
+    if(totalAssets>0){
+      el=document.getElementById('j-gold-pct'); if(el) el.textContent=Math.round(assetCounts.Gold/totalAssets*100)+'%';
+      el=document.getElementById('j-forex-pct'); if(el) el.textContent=Math.round(assetCounts.Forex/totalAssets*100)+'%';
+      el=document.getElementById('j-crypto-pct'); if(el) el.textContent=Math.round(assetCounts.Crypto/totalAssets*100)+'%';
+      el=document.getElementById('j-idx-pct'); if(el) el.textContent=Math.round(assetCounts.Indices/totalAssets*100)+'%';
+    }
+    // Method breakdown
+    el=document.getElementById('j-m-count'); if(el) el.textContent=methods.manual.length+' trades';
+    el=document.getElementById('j-t-count'); if(el) el.textContent=methods.smart.length+' trades';
+    el=document.getElementById('j-a-count'); if(el) el.textContent=methods.auto.length+' trades';
+    el=document.getElementById('j-m-stats'); if(el){el.textContent=methodStats(methods.manual);el.style.color=methods.manual.length?'var(--green)':'var(--text3)';}
+    el=document.getElementById('j-t-stats'); if(el){el.textContent=methodStats(methods.smart);el.style.color=methods.smart.length?'var(--green)':'var(--text3)';}
+    el=document.getElementById('j-a-stats'); if(el){el.textContent=methodStats(methods.auto);el.style.color=methods.auto.length?'var(--green)':'var(--text3)';}
+    // Best/worst trade
+    el=document.getElementById('j-best-trade'); if(el) el.textContent='+$'+parseFloat(bestTrade.profit||0).toFixed(2)+' '+bestTrade.symbol;
+    el=document.getElementById('j-worst-trade'); if(el) el.textContent='-$'+Math.abs(parseFloat(worstTrade.profit||0)).toFixed(2)+' '+worstTrade.symbol;
+    // Performance score gauge
+    updateGauge(perfScore);
+    el=document.getElementById('ps-winrate'); if(el) el.textContent=winRate+'%';
+    el=document.getElementById('pb-winrate'); if(el) el.style.width=winRate+'%';
+    el=document.getElementById('ps-disc'); if(el) el.textContent=discScore+'%';
+    el=document.getElementById('pb-disc'); if(el) el.style.width=discScore+'%';
+    el=document.getElementById('ps-risk'); if(el) el.textContent=riskPct+'%';
+    el=document.getElementById('pb-risk'); if(el) el.style.width=riskPct+'%';
+    var psychScore=Math.min(100,Math.round(100-revCount*15));
+    el=document.getElementById('ps-psych'); if(el) el.textContent=psychScore+'%';
+    el=document.getElementById('pb-psych'); if(el) el.style.width=psychScore+'%';
+    // Discipline tab
+    el=document.getElementById('j-disc-score'); if(el){el.textContent=discScore+'%';el.style.color=discScore>=70?'var(--green)':discScore>=50?'var(--amber)':'var(--red)';}
+    el=document.getElementById('jd-sl'); if(el){el.textContent=slPct+'%';el.style.color=slPct>=80?'var(--green)':'var(--red)';}
+    el=document.getElementById('jd-sl-dot'); if(el) el.style.background=slPct>=80?'var(--green)':'var(--red)';
+    el=document.getElementById('jd-risk'); if(el){el.textContent=riskPct+'%';el.style.color=riskPct>=70?'var(--green)':'var(--amber)';}
+    el=document.getElementById('jd-risk-dot'); if(el) el.style.background=riskPct>=70?'var(--green)':'var(--amber)';
+    el=document.getElementById('jd-over'); if(el){el.textContent=overLev+' trades';el.style.color=overLev===0?'var(--green)':'var(--red)';}
+    el=document.getElementById('jd-over-dot'); if(el) el.style.background=overLev===0?'var(--green)':'var(--red)';
+    el=document.getElementById('jd-rev'); if(el){el.textContent=revCount===0?'✓ Clean':revCount+' detected';el.style.color=revCount===0?'var(--green)':'var(--red)';}
+    el=document.getElementById('jd-rev-dot'); if(el) el.style.background=revCount===0?'var(--green)':'var(--red)';
+    var tipEl=document.getElementById('j-disc-tip');
+    if(tipEl&&(overLev>0||revCount>0)){
+      var tips=[];
+      if(overLev>0) tips.push(overLev+' trades exceeded lot limit — reduce size on volatile sessions');
+      if(revCount>0) tips.push(revCount+' possible revenge trades — take a break after 2 consecutive losses');
+      tipEl.style.display='block'; tipEl.innerHTML='⚡ '+tips.join('<br>⚡ ');
+    }
+    // Bottom cards
+    var pairMap={};
+    trades.forEach(function(t){ var s=t.symbol||'—'; if(!pairMap[s]) pairMap[s]={pnl:0,wins:0,total:0}; pairMap[s].pnl+=parseFloat(t.profit||0); pairMap[s].total++; if(parseFloat(t.profit||0)>0) pairMap[s].wins++; });
+    var bestPair=Object.keys(pairMap).sort(function(a,b){return pairMap[b].pnl-pairMap[a].pnl;})[0];
+    if(bestPair){
+      el=document.getElementById('j-best-pair'); if(el) el.textContent=bestPair;
+      el=document.getElementById('j-best-pair-sub'); if(el) el.textContent='+$'+pairMap[bestPair].pnl.toFixed(0)+' · '+Math.round(pairMap[bestPair].wins/pairMap[bestPair].total*100)+'% WR';
+    }
+    el=document.getElementById('j-win-streak'); if(el) el.textContent=maxStreak+' trades';
+    el=document.getElementById('j-monthly-return'); if(el){el.textContent=(monthPnl>=0?'+':'')+monthPnl.toFixed(2)+' ('+monthRet+'%)';el.style.color=monthPnl>=0?'var(--green)':'var(--red)';}
+    // Recent trades list
+    var tradeList=document.getElementById('j-recent-trades');
+    var viewAll=document.getElementById('j-view-all');
+    if(tradeList){
+      if(!trades.length){ tradeList.innerHTML='<div style="text-align:center;font-size:12px;color:var(--text3);padding:16px 0;">No closed trades yet</div>'; }
+      else {
+        var show=trades.slice(0,5);
+        tradeList.innerHTML=show.map(function(t){
+          var pnl=parseFloat(t.profit||0);
+          var isWin=pnl>0;
+          var d=new Date(t.close_time||t.created_at);
+          var dateStr=(d.getMonth()+1)+'/'+(d.getDate());
+          var method=(t.method||'manual').toLowerCase();
+          var mBadge=method==='smart'?'<span style="font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;background:rgba(255,176,32,.1);color:#FFB020;">TOOLS</span>':method==='auto'?'<span style="font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;background:rgba(160,90,255,.1);color:#A05AFF;">AUTO</span>':'<span style="font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;background:rgba(77,158,255,.1);color:#4D9EFF;">MANUAL</span>';
+          var sideBadge=t.side==='BUY'?'<span style="font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;background:rgba(0,200,122,.12);color:#00C87A;">BUY</span>':'<span style="font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;background:rgba(255,30,60,.1);color:#FF1E3C;">SELL</span>';
+          return '<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:0.5px solid var(--border);">'+
+            '<div style="flex:0 0 40px;font-size:10px;color:var(--text3);">'+dateStr+'</div>'+
+            '<div style="flex:1;">'+
+              '<div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;"><span style="font-size:12px;font-weight:700;color:var(--text);">'+t.symbol+'</span>'+sideBadge+mBadge+'</div>'+
+              '<div style="font-size:10px;color:var(--text3);">'+parseFloat(t.volume||0).toFixed(2)+' lot</div>'+
+            '</div>'+
+            '<div style="text-align:right;">'+
+              '<div style="font-size:13px;font-weight:700;color:'+(isWin?'var(--green)':'var(--red)')+'">'+(isWin?'+$':'-$')+Math.abs(pnl).toFixed(2)+'</div>'+
+              '<div style="font-size:9px;color:'+(isWin?'var(--green)':'var(--red)')+'">'+(isWin?'WIN':'LOSS')+'</div>'+
+            '</div>'+
+          '</div>';
+        }).join('');
+        if(viewAll) { viewAll.style.display=trades.length>5?'block':'none'; }
+      }
+    }
+    // AI Insight via Claude API
+    if(trades.length>=3){
+      generateJournalInsight(winRate, avgWin, avgLoss, revCount, methods, maxStreak, bestPair);
+    }
+    // Render chart
+    renderJournalChart(trades);
   } catch(e) { console.warn('loadJournalData:', e.message); }
+}
+async function generateJournalInsight(winRate, avgWin, avgLoss, revCount, methods, streak, bestPair) {
+  var insightEl = document.getElementById('j-ai-insight');
+  if(!insightEl) return;
+  insightEl.textContent = 'Analysing your trades...';
+  try {
+    var prompt = 'You are a trading coach. Give a 2-sentence personalised insight for a trader with these stats: Win Rate '+winRate+'%, Avg Win $'+avgWin.toFixed(2)+', Avg Loss $'+avgLoss.toFixed(2)+', Revenge trades '+revCount+', Current streak '+streak+', Best pair '+bestPair+', Manual trades '+methods.manual.length+', Smart Tool trades '+methods.smart.length+', Auto trades '+methods.auto.length+'. Be specific, actionable and encouraging. Max 40 words.';
+    var r = await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:100,messages:[{role:'user',content:prompt}]})});
+    var d = await r.json();
+    var txt = d.content && d.content[0] ? d.content[0].text : null;
+    if(txt) insightEl.textContent = txt;
+    else insightEl.textContent = 'Keep building your trade history for personalised AI insights.';
+  } catch(e) { insightEl.textContent = 'Keep building your trade history for personalised AI insights.'; }
 }
 
 // ═══════════════════════════════════════════════════
