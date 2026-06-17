@@ -1781,9 +1781,9 @@ select.auth-input {
         <div class="more-menu-text"><div class="more-menu-label">My Profile</div><div class="more-menu-sub">Account details & MT5 info</div></div>
         <i class="ti ti-chevron-right more-menu-arrow"></i>
       </div>
-      <div class="more-menu-item" onclick="showSubScreen('sub-ea')">
-        <div class="more-menu-icon"><i class="ti ti-robot"></i></div>
-        <div class="more-menu-text"><div class="more-menu-label">Smart Trading Tools</div><div class="more-menu-sub">EA settings, DCA, trailing stop</div></div>
+      <div class="more-menu-item" onclick="showSubScreen('sub-trade-settings')">
+        <div class="more-menu-icon"><i class="ti ti-adjustments-alt"></i></div>
+        <div class="more-menu-text"><div class="more-menu-label">Trade Settings</div><div class="more-menu-sub">Smart Tool, Auto Trade configuration</div></div>
         <i class="ti ti-chevron-right more-menu-arrow"></i>
       </div>
       <div class="more-menu-item" onclick="showSubScreen('sub-news')">
@@ -1862,39 +1862,14 @@ select.auth-input {
 
   <!-- SUB SCREENS (slide in from right) -->
 
-  <!-- EA Settings -->
-  <div id="sub-ea" class="sub-screen">
+  <!-- Smart Tool Settings -->
+  <div id="sub-smart-tool" class="sub-screen">
     <div class="sub-header">
-      <button class="sub-back" onclick="hideSubScreen('sub-ea')"><i class="ti ti-arrow-left"></i></button>
-      <div class="sub-title">EA SETTINGS</div>
+      <button class="sub-back" onclick="hideSubScreen('sub-smart-tool')"><i class="ti ti-arrow-left"></i></button>
+      <div class="sub-title">SMART TOOL</div>
     </div>
     <div class="sub-content">
-      <!-- Auto-approve trades -->
-      <div class="section-card" style="margin-bottom:10px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;">
-          <div style="flex:1;padding-right:12px;">
-            <div style="font-size:13px;font-weight:700;color:var(--text);">Auto-approve trades</div>
-            <div style="font-size:11px;color:var(--text3);margin-top:2px;line-height:1.5;">Skip the confirmation prompt and place trades automatically.</div>
-          </div>
-          <div id="ea-auto-approve" data-on="0" onclick="toggleAutoApprove(this)" style="width:46px;height:26px;border-radius:13px;background:var(--border);position:relative;cursor:pointer;flex-shrink:0;transition:background .2s;">
-            <div id="auto-approve-knob" style="position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;"></div>
-          </div>
-        </div>
-      </div>
-      <!-- Auto Trading -->
-      <div class="section-card" style="margin-bottom:10px;">
-        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Auto <span>Trading</span></div>
-        <div class="ea-toggle-row">
-          <div><div class="ea-toggle-label">Enable Auto Trading</div><div class="ea-toggle-sub">Automatically trade when analyst posts a signal</div></div>
-          <div class="toggle" id="ea-auto-trade" onclick="toggleAutoTrade(this)"></div>
-        </div>
-        <div id="ea-auto-analyst-row" style="margin-top:12px;display:none;">
-          <label class="ea-input-label">Follow Analyst</label>
-          <select class="ea-input" id="ea-auto-analyst">
-            <option value="">-- Select Analyst --</option>
-          </select>
-        </div>
-      </div>
+
       <!-- Lot Size & Risk -->
       <div class="section-card">
         <div class="section-title" style="font-size:13px;margin-bottom:12px;">Lot Size <span>& Risk</span></div>
@@ -2001,6 +1976,94 @@ select.auth-input {
         </div>
       </div>
       <button class="red-btn" onclick="saveEASettings()">SAVE SETTINGS</button>
+    </div>
+  </div>
+
+  <!-- Trade Settings Hub -->
+  <div id="sub-trade-settings" class="sub-screen">
+    <div class="sub-header">
+      <button class="sub-back" onclick="hideSubScreen('sub-trade-settings')"><i class="ti ti-arrow-left"></i></button>
+      <div class="sub-title">TRADE SETTINGS</div>
+    </div>
+    <div class="sub-content">
+      <div style="font-size:11px;color:var(--text3);margin-bottom:14px;line-height:1.6;">Configure how Momentum AI executes and manages your trades.</div>
+      <div class="more-menu-item" onclick="showSubScreen('sub-smart-tool')" style="background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-bottom:10px;padding:14px;">
+        <div class="more-menu-icon" style="background:rgba(0,200,122,0.1);"><i class="ti ti-tool" style="color:var(--green);"></i></div>
+        <div class="more-menu-text">
+          <div class="more-menu-label">Smart Tool</div>
+          <div class="more-menu-sub">AI-powered risk, DCA, trailing stop, breakeven, partial close</div>
+        </div>
+        <i class="ti ti-chevron-right more-menu-arrow"></i>
+      </div>
+      <div class="more-menu-item" onclick="showSubScreen('sub-auto-trade')" style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;">
+        <div class="more-menu-icon" style="background:rgba(255,30,60,0.1);"><i class="ti ti-robot" style="color:var(--red);"></i></div>
+        <div class="more-menu-text">
+          <div class="more-menu-label">Auto Trade</div>
+          <div class="more-menu-sub">Follow analysts and trade automatically when signals are posted</div>
+        </div>
+        <i class="ti ti-chevron-right more-menu-arrow"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- Auto Trade Settings -->
+  <div id="sub-auto-trade" class="sub-screen">
+    <div class="sub-header">
+      <button class="sub-back" onclick="hideSubScreen('sub-auto-trade')"><i class="ti ti-arrow-left"></i></button>
+      <div class="sub-title">AUTO TRADE</div>
+    </div>
+    <div class="sub-content">
+      <!-- Enable Auto Trade -->
+      <div class="section-card" style="margin-bottom:10px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div style="flex:1;padding-right:12px;">
+            <div style="font-size:13px;font-weight:700;color:var(--text);">Enable Auto Trade</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px;line-height:1.5;">Automatically place trades when your followed analysts post signals.</div>
+          </div>
+          <div class="toggle" id="at-enable" onclick="toggleAutoTradeEnable(this)"></div>
+        </div>
+      </div>
+      <!-- Follow Analysts -->
+      <div class="section-card" style="margin-bottom:10px;" id="at-analysts-section">
+        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Follow <span>Analysts</span></div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:10px;">Select one or more analysts to follow. A trade will be placed automatically when they post an active signal.</div>
+        <div id="at-analyst-list" style="display:flex;flex-direction:column;gap:8px;">
+          <div style="font-size:12px;color:var(--text3);padding:12px;text-align:center;">Loading analysts...</div>
+        </div>
+        <!-- Warning: multiple analysts on same account -->
+        <div id="at-multi-warning" style="display:none;margin-top:10px;padding:10px;background:rgba(255,176,32,0.08);border:1px solid rgba(255,176,32,0.25);border-radius:8px;">
+          <div style="font-size:11px;font-weight:700;color:var(--amber);margin-bottom:4px;">⚠️ Multiple Analysts Selected</div>
+          <div style="font-size:11px;color:var(--text3);line-height:1.6;">Following multiple analysts on one MT5 account increases drawdown risk. We recommend using 1 MT5 account per analyst for better risk management.</div>
+        </div>
+        <!-- Warning: mixing Smart Tool + Auto -->
+        <div id="at-mix-warning" style="display:none;margin-top:8px;padding:10px;background:rgba(255,30,60,0.06);border:1px solid rgba(255,30,60,0.2);border-radius:8px;">
+          <div style="font-size:11px;font-weight:700;color:var(--red);margin-bottom:4px;">⚠️ Smart Tool Active on This Account</div>
+          <div style="font-size:11px;color:var(--text3);line-height:1.6;">Mixing Smart Tool and Auto trades on the same account may cause conflicting positions. Consider using separate MT5 accounts.</div>
+        </div>
+      </div>
+      <!-- Use Smart Tool Settings -->
+      <div class="section-card" style="margin-bottom:10px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div style="flex:1;padding-right:12px;">
+            <div style="font-size:13px;font-weight:700;color:var(--text);">Use Smart Tool Settings</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px;">Apply your AI risk settings to all auto trades.</div>
+          </div>
+          <div class="toggle on" id="at-use-smart"></div>
+        </div>
+      </div>
+      <!-- Entry Confirmation -->
+      <div class="section-card" style="margin-bottom:10px;">
+        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Entry <span>Confirmation</span></div>
+        <label style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg3);border-radius:8px;cursor:pointer;border:1px solid var(--border);margin-bottom:8px;">
+          <input type="radio" name="at-entry-confirm" value="instant" id="at-instant" checked style="accent-color:var(--red);width:16px;height:16px;">
+          <div><div style="font-size:13px;font-weight:700;color:var(--text);">Instant Execution</div><div style="font-size:11px;color:var(--text3);">Signal posted — trade executes immediately</div></div>
+        </label>
+        <label style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg3);border-radius:8px;cursor:pointer;border:1px solid var(--border);">
+          <input type="radio" name="at-entry-confirm" value="scanner" id="at-scanner" style="accent-color:var(--red);width:16px;height:16px;">
+          <div><div style="font-size:13px;font-weight:700;color:var(--text);">Check MAI Scanner First</div><div style="font-size:11px;color:var(--text3);">Signal — AI checks direction — execute if confirmed</div></div>
+        </label>
+      </div>
+      <button class="red-btn" onclick="saveAutoTradeSettings()">SAVE AUTO TRADE</button>
     </div>
   </div>
 
@@ -3231,7 +3294,7 @@ select.auth-input {
         <div class="more-menu-item" style="margin-bottom:8px;" onclick="openAcademyCategory('ea')">
           <div class="more-menu-icon" style="background:rgba(155,89,182,0.12);border-color:rgba(155,89,182,0.2);"><i class="ti ti-robot" style="color:#9B59B6;"></i></div>
           <div class="more-menu-text">
-            <div class="more-menu-label">EA & Smart Tools</div>
+            <div class="more-menu-label">Trade Settings</div>
             <div class="more-menu-sub">6 lessons · Advanced</div>
           </div>
           <div style="display:flex;align-items:center;gap:6px;">
@@ -3305,7 +3368,8 @@ select.auth-input {
     <!-- SMART TOOL TAB -->
     <div id="trade-content-smart">
       <div style="padding:12px;background:rgba(0,200,122,0.06);border:1px solid rgba(0,200,122,0.15);border-radius:10px;font-size:12px;color:var(--green);margin-bottom:12px;">
-        Will use your Smart Tool settings — DCA, trailing stop, partial close, breakeven
+        <div style="font-weight:700;margin-bottom:4px;">AI Smart Tool Active</div>
+        <div id="smart-tool-summary" style="color:var(--text3);">Loading your settings...</div>
       </div>
       <div class="trade-levels-row">
         <div class="trade-level-box"><div class="trade-level-lbl">Entry</div><div class="trade-level-val" id="popup-entry">--</div></div>
@@ -3313,6 +3377,7 @@ select.auth-input {
         <div class="trade-level-box"><div class="trade-level-lbl">Take Profit</div><div class="trade-level-val tp" id="popup-tp">--</div></div>
       </div>
       <button class="trade-execute-btn" onclick="checkMT5ThenExecute()">EXECUTE WITH SMART TOOL</button>
+      <button onclick="closeTradePopup();showSubScreen('sub-smart-tool')" style="width:100%;margin-top:8px;padding:10px;background:transparent;border:1px solid var(--border);border-radius:10px;color:var(--text2);font-size:12px;cursor:pointer;font-family:'Sora',sans-serif;">⚙️ Adjust Smart Tool Settings</button>
     </div>
 
     <!-- MANUAL TAB -->
@@ -3327,46 +3392,14 @@ select.auth-input {
       <button class="trade-execute-btn" onclick="executeTrade('manual')">EXECUTE TRADE</button>
     </div>
 
-    <!-- AUTOMATED TRADING TAB -->
+    <!-- AUTO TAB — status only, no settings -->
     <div id="trade-content-auto" style="display:none;">
-      <div class="section-card" style="margin-bottom:10px;">
-        <div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px;">Choose Analyst</div>
-        <select id="auto-analyser" class="auth-input" style="font-size:13px;padding:10px 14px;">
-          <option value="">Loading analysts...</option>
-        </select>
+      <div id="auto-trade-status-box" style="padding:16px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;text-align:center;margin-bottom:12px;">
+        <div style="font-size:28px;margin-bottom:8px;">🤖</div>
+        <div id="auto-trade-status-text" style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">Auto Trade</div>
+        <div id="auto-trade-status-sub" style="font-size:11px;color:var(--text3);line-height:1.6;">Loading...</div>
       </div>
-      <div class="section-card" style="margin-bottom:10px;">
-        <div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.8px;text-transform:uppercase;margin-bottom:10px;">Risk Controls</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-          <div>
-            <label style="font-size:10px;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;display:block;margin-bottom:5px;">Max Daily DD %</label>
-            <input type="number" value="3" min="1" max="20" class="auth-input" style="padding:9px 12px;font-size:14px;">
-          </div>
-          <div>
-            <label style="font-size:10px;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;display:block;margin-bottom:5px;">Overall DD %</label>
-            <input type="number" value="10" min="1" max="50" class="auth-input" style="padding:9px 12px;font-size:14px;">
-          </div>
-        </div>
-      </div>
-      <div class="section-card" style="margin-bottom:10px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;">
-          <div><div style="font-size:13px;font-weight:700;color:var(--text);">Use Smart Tool Settings</div><div style="font-size:11px;color:var(--text3);margin-top:2px;">Apply EA settings to automated trades</div></div>
-          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
-        </div>
-      </div>
-      <div class="section-card" style="margin-bottom:12px;">
-        <div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.8px;text-transform:uppercase;margin-bottom:10px;">Entry Confirmation</div>
-        <label style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg3);border-radius:8px;cursor:pointer;border:1px solid var(--border);margin-bottom:8px;">
-          <input type="radio" name="entry-confirm" value="instant" checked style="accent-color:var(--red);width:16px;height:16px;">
-          <div><div style="font-size:13px;font-weight:700;color:var(--text);">Instant Execution</div><div style="font-size:11px;color:var(--text3);">Signal appears — trade executes immediately</div></div>
-        </label>
-        <label style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg3);border-radius:8px;cursor:pointer;border:1px solid var(--border);">
-          <input type="radio" name="entry-confirm" value="scanner" style="accent-color:var(--red);width:16px;height:16px;">
-          <div><div style="font-size:13px;font-weight:700;color:var(--text);">Check MAI Scanner First</div><div style="font-size:11px;color:var(--text3);">Signal — MAI checks direction — execute if confirmed</div></div>
-        </label>
-      </div>
-      <button class="trade-execute-btn" onclick="activateAutoTrading()">ACTIVATE AUTOMATED TRADING</button>
-      <div style="text-align:center;font-size:10px;color:var(--text3);margin-top:8px;">Requires MT5 VPS connection — Phase 6</div>
+      <button onclick="closeTradePopup();showSubScreen('sub-trade-settings')" style="width:100%;padding:13px;background:var(--grad);border:none;border-radius:12px;color:#fff;font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;">GO TO TRADE SETTINGS</button>
     </div>
 
     <div class="trade-note" id="trade-success-note" style="display:none;">
@@ -3642,6 +3675,8 @@ async function handleChangePassword() {
 
 // ── TRADE TABS ──
 function switchTradeTab(tab) {
+  if(tab==='auto') { updateAutoTradeStatusInPopup(); }
+  if(tab==='smart') { updateSmartToolSummary(); }
   if(tab === 'auto') loadAnalystOptions();
   var tabs = ['smart','manual','auto'];
   tabs.forEach(function(t) {
@@ -3834,14 +3869,14 @@ var academyData = {
     ]
   },
   ea: {
-    title: 'EA & Smart Tools',
+    title: 'AI Trading Tools',
     lessons: [
       { title: 'What is an Expert Advisor (EA)?', tag: 'Advanced · 7 min read', body: 'An Expert Advisor (EA) is an automated trading program that runs on MetaTrader 5. It can execute trades, manage positions, and apply complex strategies automatically 24/7. Momentum AI uses a custom EA connected to our signal system to automate trade execution.', tip: '💡 Pro Tip: EAs do not replace judgment — they execute your strategy consistently without emotional interference.' },
       { title: 'DCA — Dollar Cost Averaging', tag: 'Advanced · 8 min read', body: 'DCA adds positions at predefined intervals when price moves against you, lowering your average entry price. Example: Buy XAUUSD at 2,300. Price drops to 2,290 — add second position. Average entry = 2,295. When price recovers, you exit both positions at breakeven or profit.', tip: '💡 Pro Tip: DCA works best in ranging markets. In strong trends, it can amplify losses. Always set a maximum DCA limit.' },
       { title: 'Trailing Stop Explained', tag: 'Advanced · 7 min read', body: 'A trailing stop moves your stop loss automatically as price moves in your favor. If you buy XAUUSD at 2,300 with a 20 pip trail, when price reaches 2,320 your SL moves to 2,300. When price reaches 2,340, SL moves to 2,320. This locks in profits while letting winners run.', tip: '💡 Pro Tip: Activate trailing stop only after reaching breakeven. This ensures you cannot lose money on a winning trade.' },
       { title: 'Partial Close Strategy', tag: 'Advanced · 6 min read', body: 'Partial close means closing a percentage of your position at TP1 to lock in profits, while keeping the rest running to TP2. Example: Close 50% at TP1, move SL to breakeven, let remaining 50% run to TP2. This strategy ensures you always profit on winning trades.', tip: '💡 Pro Tip: Move SL to breakeven immediately after partial close at TP1. This makes the remaining trade risk-free.' },
       { title: 'Breakeven SL Setup', tag: 'Advanced · 5 min read', body: 'Breakeven SL moves your stop loss to your exact entry price after a certain profit threshold. Once at breakeven, you cannot lose money on the trade — worst case is a scratch (zero profit/loss). Typically activated after 15-20 pips of profit.', tip: '💡 Pro Tip: Use breakeven before news events to protect your open positions from sudden volatility spikes.' },
-      { title: 'Connecting EA to Momentum AI', tag: 'Advanced · 8 min read', body: 'The Momentum AI EA connects to our signal feed via the broker API. When an analyst posts a signal, the EA automatically receives it and executes the trade based on your Smart Tool settings. The EA checks your risk parameters, calculates lot size, places entry, SL and TP automatically.', tip: '💡 Pro Tip: Always test the EA on a demo account before running it live. Confirm all settings match your risk tolerance.' }
+      { title: 'Connecting AI Tools to Momentum AI', tag: 'Advanced · 8 min read', body: 'The Momentum AI Smart Tool connects to your broker via secure API. When an analyst posts a signal, the AI automatically receives it and executes the trade based on your Trade Settings. The AI checks your risk parameters, calculates lot size, places entry, SL and TP automatically.', tip: '💡 Pro Tip: Always test with small lot sizes first. Confirm all settings match your risk tolerance before going live.' }
     ]
   },
   psychology: {
@@ -4314,7 +4349,9 @@ function showSubScreen(id) {
   if(id==='sub-support') { loadMyTickets(); }
   if(id==='sub-academy') { loadAcademy(); }
   if(id==='sub-profile') { loadProfileMT5(); }
-  if(id==='sub-ea') { setAutoApproveUI(tradeConsentAll()); }
+  if(id==='sub-trade-settings'||id==='sub-ea') { setAutoApproveUI(tradeConsentAll()); }
+  if(id==='sub-auto-trade') { loadAutoTradeSettings(); }
+  if(id==='sub-smart-tool') { loadEASettings(); }
 }
 function hideSubScreen(id) {
   var el = document.getElementById(id);
@@ -4466,7 +4503,7 @@ function openTradePopup(sigId) {
   if(sm) sm.textContent = fmtPrice(currentSignal.pair,currentSignal.sl);
   if(tm) tm.textContent = fmtPrice(currentSignal.pair,currentSignal.tp1);
   document.getElementById('trade-success-note').style.display = 'none';
-  switchTradeTab('smart');
+  switchTradeTab('smart'); updateSmartToolSummary();
   document.getElementById('trade-popup').classList.add('active');
 }
 function closeTradePopup() { document.getElementById('trade-popup').classList.remove('active'); }
@@ -5036,7 +5073,7 @@ function openTicketDetail(ticket) {
     closeTradePopup();
     switchTab('more');
     setTimeout(function(){
-      showSubScreen('sub-ea');
+      showSubScreen('sub-smart-tool');
     }, 400);
     popup.remove();
   });
@@ -6224,7 +6261,7 @@ function confirmExecution() {
     closeTradePopup();
     switchTab('more');
     setTimeout(function(){
-      showSubScreen('sub-ea');
+      showSubScreen('sub-smart-tool');
     }, 400);
   }
 }
@@ -6448,14 +6485,107 @@ async function toggleAccountAuto(accId, el) {
   } catch(e) { el.classList.toggle('on'); alert('Could not update: '+e.message); }
 }
 
-// AUTO TRADING
-function toggleAutoTrade(el) {
-  el.classList.toggle('on');
-  var on = el.classList.contains('on');
-  var row = document.getElementById('ea-auto-analyst-row');
-  if(row) row.style.display = on ? 'block' : 'none';
-  if(on) loadAnalystOptions();
+// AUTO TRADE SETTINGS PAGE
+async function loadAutoTradeSettings() {
+  if(!currentUser || !db) return;
+  try {
+    var r = await db.from('users').select('auto_trade,auto_analyst_ids,auto_use_smart,auto_entry_confirm').eq('id',currentUser.id).single();
+    var d = r && r.data ? (Array.isArray(r.data)?r.data[0]:r.data) : null;
+    if(!d) return;
+    // Set enable toggle
+    var enEl = document.getElementById('at-enable');
+    if(enEl){ if(d.auto_trade) enEl.classList.add('on'); else enEl.classList.remove('on'); }
+    // Set use smart toggle
+    var smEl = document.getElementById('at-use-smart');
+    if(smEl){ if(d.auto_use_smart!==false) smEl.classList.add('on'); else smEl.classList.remove('on'); }
+    // Set entry confirm
+    var ec = d.auto_entry_confirm || 'instant';
+    var ecEl = document.getElementById('at-'+ec);
+    if(ecEl) ecEl.checked = true;
+    // Load analysts
+    await loadAutoAnalystList(d.auto_analyst_ids||[]);
+  } catch(e) {}
 }
+async function loadAutoAnalystList(selectedIds) {
+  var list = document.getElementById('at-analyst-list');
+  if(!list || !db) return;
+  try {
+    var r = await db.from('users').select('id,name').eq('role','analyst');
+    var analysts = (r && r.data) ? (Array.isArray(r.data)?r.data:[r.data]) : [];
+    if(!analysts.length){ list.innerHTML='<div style="font-size:12px;color:var(--text3);padding:12px;text-align:center;">No analysts available yet</div>'; return; }
+    list.innerHTML = '';
+    analysts.forEach(function(a){
+      var checked = selectedIds.includes(a.id);
+      var row = document.createElement('label');
+      row.style.cssText='display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg3);border-radius:8px;cursor:pointer;border:1px solid var(--border);';
+      row.innerHTML='<input type="checkbox" value="'+a.id+'" '+(checked?'checked':'')+' style="accent-color:var(--red);width:16px;height:16px;" onchange="checkAutoWarnings()"><div><div style="font-size:13px;font-weight:700;color:var(--text);">'+(a.name||'Analyst')+'</div></div>';
+      list.appendChild(row);
+    });
+    checkAutoWarnings();
+  } catch(e) { list.innerHTML='<div style="font-size:12px;color:var(--text3);padding:12px;text-align:center;">Could not load analysts</div>'; }
+}
+function checkAutoWarnings() {
+  var checks = document.querySelectorAll('#at-analyst-list input[type=checkbox]:checked');
+  var multiWarn = document.getElementById('at-multi-warning');
+  var mixWarn = document.getElementById('at-mix-warning');
+  if(multiWarn) multiWarn.style.display = checks.length > 1 ? 'block' : 'none';
+  // Check if smart tool trades exist on active account
+  var hasSmartTrades = window._eaSettings && (window._eaSettings.trailing || window._eaSettings.breakeven || window._eaSettings.partial_close);
+  if(mixWarn) mixWarn.style.display = (checks.length > 0 && hasSmartTrades) ? 'block' : 'none';
+}
+function toggleAutoTradeEnable(el) {
+  el.classList.toggle('on');
+}
+async function saveAutoTradeSettings() {
+  if(!currentUser || !db) return;
+  var on = document.getElementById('at-enable').classList.contains('on');
+  var useSmart = document.getElementById('at-use-smart').classList.contains('on');
+  var entryConfirm = document.querySelector('input[name="at-entry-confirm"]:checked');
+  var ec = entryConfirm ? entryConfirm.value : 'instant';
+  var checks = document.querySelectorAll('#at-analyst-list input[type=checkbox]:checked');
+  var analystIds = Array.from(checks).map(function(c){ return c.value; });
+  try {
+    var r = await db.from('users').update({
+      auto_trade: on,
+      auto_analyst_ids: JSON.stringify(analystIds),
+      auto_use_smart: useSmart,
+      auto_entry_confirm: ec
+    }).eq('id', currentUser.id);
+    if(r && r.error) throw r.error;
+    var btn = document.querySelector('#sub-auto-trade .red-btn');
+    if(btn){ var orig=btn.textContent; btn.textContent='✓ SAVED'; btn.style.background='var(--green)'; setTimeout(function(){ btn.textContent=orig; btn.style.background=''; },2000); }
+  } catch(e) { alert('Save failed: '+(e.message||'Unknown error')); }
+}
+function updateAutoTradeStatusInPopup() {
+  var textEl = document.getElementById('auto-trade-status-text');
+  var subEl = document.getElementById('auto-trade-status-sub');
+  if(!textEl || !subEl || !currentUser) return;
+  if(currentUser.auto_trade) {
+    var ids = [];
+    try{ ids = JSON.parse(currentUser.auto_analyst_ids||'[]'); }catch(e){}
+    textEl.textContent = 'Auto Trade is ON';
+    textEl.style.color = 'var(--green)';
+    subEl.textContent = 'Following '+ids.length+' analyst'+(ids.length!==1?'s':'')+'. Trades will be placed automatically when they post signals.';
+  } else {
+    textEl.textContent = 'Auto Trade is OFF';
+    textEl.style.color = 'var(--text3)';
+    subEl.textContent = 'Go to Trade Settings to enable Auto Trade and choose which analysts to follow.';
+  }
+}
+function updateSmartToolSummary() {
+  var el = document.getElementById('smart-tool-summary');
+  if(!el) return;
+  var ea = window._eaSettings || {};
+  var parts = [];
+  if(ea.auto_risk) parts.push('Risk '+( ea.risk_pct||1)+'% per trade');
+  if(ea.partial_close) parts.push('Partial close '+( ea.partial_pct||'75%')+' at TP');
+  if(ea.breakeven) parts.push('Breakeven SL');
+  if(ea.trailing) parts.push('Trailing '+( ea.trail_step||5)+' pts');
+  if(ea.dca_enabled) parts.push('DCA enabled');
+  el.textContent = parts.length ? parts.join(' · ') : 'No settings saved yet — tap Adjust below';
+}
+
+// AUTO TRADING (legacy - kept for compatibility)
 async function loadAnalystOptions() {
   var sel = document.getElementById('ea-auto-analyst');
   if(!sel || !db) return;
@@ -6554,7 +6684,7 @@ async function saveEASettings() {
     var r = await db.from('users').update({ ea_settings: JSON.stringify(settings) }).eq('id', currentUser.id);
     if(r.error) throw r.error;
     await saveAutoTradeSetting();
-    var btn = document.querySelector('#sub-ea .red-btn');
+    var btn = document.querySelector('#sub-smart-tool .red-btn');
     if(btn) {
       var orig = btn.textContent;
       btn.textContent = '✓ SAVED';
