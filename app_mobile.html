@@ -7334,28 +7334,141 @@ Respond ONLY with valid JSON (no markdown):
 
 async function generateMAIReport() {
   if(!window._lastScanData) { alert('Run a scan first.'); return; }
+
+  // Show loading popup
+  var existingPopup = document.getElementById('mai-report-popup');
+  if(existingPopup) existingPopup.remove();
+
+  var popup = document.createElement('div');
+  popup.id = 'mai-report-popup';
+  popup.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);z-index:9999;display:flex;align-items:flex-end;';
+  popup.innerHTML = `
+    <div style="width:100%;background:var(--bg2);border-radius:20px 20px 0 0;border-top:1px solid var(--border);max-height:90vh;overflow-y:auto;padding:20px 18px 40px;">
+      <div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px;"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <div>
+          <div style="font-size:13px;font-weight:800;color:var(--red);letter-spacing:1px;">✦ MAI FULL REPORT</div>
+          <div id="rpt-meta" style="font-size:10px;color:var(--text3);margin-top:2px;"></div>
+        </div>
+        <button onclick="document.getElementById('mai-report-popup').remove()" style="width:32px;height:32px;border-radius:50%;background:var(--surface);border:1px solid var(--border);color:var(--text2);font-size:18px;cursor:pointer;">×</button>
+      </div>
+      <div id="rpt-content" style="font-size:13px;color:var(--text2);line-height:1.9;">
+        <div style="text-align:center;padding:30px;color:var(--text3);">
+          <div style="font-size:20px;margin-bottom:8px;">⟳</div>
+          Generating report...
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(popup);
+  popup.addEventListener('click', function(e){ if(e.target===popup) popup.remove(); });
   var d = window._lastScanData;
   var now = new Date().toLocaleString();
-  var sym = document.getElementById('scan-pair-label').textContent;
-  var price = document.getElementById('scan-price').textContent;
-  var change = document.getElementById('scan-change').textContent;
-  var sentVerdict = document.getElementById('sent-verdict').textContent;
-  var techDir = document.getElementById('tech-direction').textContent;
-  var techMom = document.getElementById('tech-momentum').textContent;
-  var support = document.getElementById('tech-support').textContent;
-  var resistance = document.getElementById('tech-resistance').textContent;
-  var scenario = document.getElementById('tech-scenario').textContent;
-  var techVerd = document.getElementById('tech-verdict-box').textContent;
-  var fundVerd = document.getElementById('fund-verdict-box').textContent;
-  var overDir = document.getElementById('verdict-direction').textContent;
-  var overMom = document.getElementById('verdict-momentum').textContent;
-  var overConf = document.getElementById('verdict-confidence').textContent;
-  var overRisk = document.getElementById('verdict-risk').textContent;
-  var summary = document.getElementById('verdict-summary').textContent;
+  var sym = document.getElementById('scan-pair-label') ? document.getElementById('scan-pair-label').textContent : 'Unknown';
+  var price = document.getElementById('scan-price') ? document.getElementById('scan-price').textContent : '—';
+  var change = document.getElementById('scan-change') ? document.getElementById('scan-change').textContent : '—';
+  var sentVerdict = document.getElementById('sent-verdict') ? document.getElementById('sent-verdict').textContent : '—';
+  var techDir = document.getElementById('tech-direction') ? document.getElementById('tech-direction').textContent : '—';
+  var techMom = document.getElementById('tech-momentum') ? document.getElementById('tech-momentum').textContent : '—';
+  var support = document.getElementById('tech-support') ? document.getElementById('tech-support').textContent : '—';
+  var resistance = document.getElementById('tech-resistance') ? document.getElementById('tech-resistance').textContent : '—';
+  var scenario = document.getElementById('tech-scenario') ? document.getElementById('tech-scenario').textContent : '—';
+  var techVerd = document.getElementById('tech-verdict-box') ? document.getElementById('tech-verdict-box').textContent : '—';
+  var fundVerd = document.getElementById('fund-verdict-box') ? document.getElementById('fund-verdict-box').textContent : '—';
+  var overDir = document.getElementById('verdict-direction') ? document.getElementById('verdict-direction').textContent : '—';
+  var overMom = document.getElementById('verdict-momentum') ? document.getElementById('verdict-momentum').textContent : '—';
+  var overConf = document.getElementById('verdict-confidence') ? document.getElementById('verdict-confidence').textContent : '—';
+  var overRisk = document.getElementById('verdict-risk') ? document.getElementById('verdict-risk').textContent : '—';
+  var summary = document.getElementById('verdict-summary') ? document.getElementById('verdict-summary').textContent : '—';
+  var fundNews = document.getElementById('fund-news') ? document.getElementById('fund-news').textContent : '—';
 
-  var dirColor = overDir==='Bullish'?'#00C87A':overDir==='Bearish'?'#FF1E3C':'#FFB020';
+  // Update popup meta
+  var metaEl = document.getElementById('rpt-meta');
+  if(metaEl) metaEl.textContent = sym + ' · ' + now;
 
-  var html = `<!DOCTYPE html>
+  // Generate storytelling report via Claude
+  var reportPrompt = \`You are a senior market analyst at Momentum AI. Write a professional, storytelling-style market research report for \${sym} based on this scan data:
+
+Price: \${price} (\${change})
+Overall Verdict: \${overDir} | Momentum: \${overMom} | Confidence: \${overConf} | Risk: \${overRisk}
+Sentiment: \${sentVerdict}
+Technical: Direction \${techDir} | Momentum \${techMom} | Support \${support} | Resistance \${resistance}
+Technical Verdict: \${techVerd}
+Scenario: \${scenario}
+Fundamental: \${fundVerd}
+Upcoming News: \${fundNews}
+AI Summary: \${summary}
+
+Write a flowing, professional research report in paragraph form with these sections:
+1. EXECUTIVE SUMMARY (2-3 sentences — the big picture verdict)
+2. MARKET SENTIMENT (1-2 paragraphs — what the market is feeling and why)
+3. TECHNICAL PICTURE (2 paragraphs — what the charts are saying, key levels, indicators)
+4. FUNDAMENTAL BACKDROP (1-2 paragraphs — macro context, upcoming catalysts)
+5. TRADING OUTLOOK (1-2 paragraphs — what to watch, scenarios, risk management)
+6. CONCLUSION (1 paragraph — final verdict and actionable insight)
+
+Write like a professional analyst. Use specific price levels. Be direct and confident. No bullet points — only flowing paragraphs. Each section title in CAPS followed by a colon.\`;
+
+  try {
+    var rptResp = await fetch('https://rhtworywcqcxkahlmezg.supabase.co/functions/v1/claude-proxy', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({model:'claude-sonnet-4-6', max_tokens:1500, messages:[{role:'user', content:reportPrompt}]})
+    });
+    var rptData = await rptResp.json();
+    var rptText = rptData.content && rptData.content[0] ? rptData.content[0].text : 'Report generation failed.';
+
+    // Format the report nicely
+    var dirColor = overDir==='Bullish'?'var(--green)':overDir==='Bearish'?'var(--red)':'var(--amber)';
+    var formatted = '<div style="background:var(--surface);border:0.5px solid var(--border);border-radius:12px;padding:14px;margin-bottom:16px;">'
+      + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">'
+      + '<div><div style="font-size:9px;color:var(--text3);margin-bottom:2px;">PAIR</div><div style="font-size:14px;font-weight:800;color:var(--text);">'+sym+'</div></div>'
+      + '<div><div style="font-size:9px;color:var(--text3);margin-bottom:2px;">PRICE</div><div style="font-size:14px;font-weight:800;color:var(--text);">'+price+'</div></div>'
+      + '<div><div style="font-size:9px;color:var(--text3);margin-bottom:2px;">VERDICT</div><div style="font-size:14px;font-weight:800;color:'+dirColor+';">'+overDir.toUpperCase()+'</div></div>'
+      + '<div><div style="font-size:9px;color:var(--text3);margin-bottom:2px;">CONFIDENCE</div><div style="font-size:14px;font-weight:800;color:var(--green);">'+overConf+'</div></div>'
+      + '</div>'
+      + '<div style="height:4px;background:#1e1e1e;border-radius:2px;margin-top:10px;overflow:hidden;"><div style="height:100%;width:'+overConf+';background:linear-gradient(90deg,#FF1E3C,#FFB020,#00C87A);border-radius:2px;"></div></div>'
+      + '</div>';
+
+    // Parse sections
+    var sections = rptText.split(/
+(?=[A-Z\s]+:)/);
+    sections.forEach(function(sec) {
+      if(!sec.trim()) return;
+      var colonIdx = sec.indexOf(':');
+      if(colonIdx > 0 && colonIdx < 40) {
+        var title = sec.substring(0, colonIdx).trim();
+        var body = sec.substring(colonIdx+1).trim();
+        formatted += '<div style="margin-bottom:16px;">'
+          + '<div style="font-size:10px;font-weight:800;color:var(--red);letter-spacing:1px;margin-bottom:6px;">'+title+'</div>'
+          + '<div style="font-size:13px;color:var(--text2);line-height:1.9;">'+body.replace(/
+
+/g,'</p><p style="margin-top:10px;">').replace(/
+/g,' ')+'</div>'
+          + '</div>';
+      } else {
+        formatted += '<div style="font-size:13px;color:var(--text2);line-height:1.9;margin-bottom:12px;">'+sec.replace(/
+
+/g,'</p><p style="margin-top:10px;">').replace(/
+/g,' ')+'</div>';
+      }
+    });
+
+    formatted += '<div style="margin-top:16px;padding-top:12px;border-top:0.5px solid var(--border);text-align:center;font-size:10px;color:var(--text3);">✦ Momentum AI · Trade Beyond Emotion · Not financial advice</div>';
+
+    var contentEl = document.getElementById('rpt-content');
+    if(contentEl) contentEl.innerHTML = formatted;
+
+  } catch(e) {
+    var contentEl = document.getElementById('rpt-content');
+    if(contentEl) contentEl.innerHTML = '<div style="color:var(--text3);font-size:12px;padding:20px;text-align:center;">Failed to generate report. Please try again.</div>';
+  }
+
+  // Remove the old window.open code below
+  var SKIP_OLD_CODE = true;
+  if(SKIP_OLD_CODE) return;
+
+  var html = \`<!DOCTYPE html
 <html>
 <head>
 <meta charset="UTF-8">
@@ -7446,10 +7559,6 @@ async function generateMAIReport() {
 </body>
 </html>`;
 
-  var w = window.open('', '_blank');
-  w.document.write(html);
-  w.document.close();
-  w.onload = function(){ w.print(); };
 }
 
 // Scanner verification for Auto Trade
