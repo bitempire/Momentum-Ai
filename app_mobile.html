@@ -7230,7 +7230,12 @@ Respond ONLY with valid JSON (no markdown):
       });
       var aiData = await aiResp.json();
       var aiText = aiData.content && aiData.content[0] ? aiData.content[0].text : '{}';
-      ai = JSON.parse(aiText.replace(/```json|```/g,'').trim());
+      console.log('Claude raw response:', aiText.substring(0,200));
+      // Extract JSON from response
+      var jsonMatch = aiText.match(/\{[\s\S]*\}/);
+      var jsonStr = jsonMatch ? jsonMatch[0] : aiText.replace(/```json|```/g,'').trim();
+      ai = JSON.parse(jsonStr);
+      console.log('Claude AI parsed ok, direction:', ai.overall_direction);
     } catch(aiErr) {
       console.warn('Claude API error:', aiErr.message);
       // Fallback: generate sentiment from technical data
