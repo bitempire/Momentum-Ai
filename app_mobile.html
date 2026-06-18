@@ -1585,6 +1585,18 @@ html[data-theme="light"] .theme-switch .knob { left: 22px; }
       </div>
       <div id="mob-tv-container" style="width:100%;min-height:320px;border-radius:10px;overflow:hidden;"></div>
 
+      <!-- LIVE BALANCE / EQUITY STRIP -->
+      <div style="display:flex;gap:8px;margin-top:12px;">
+        <div style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px 12px;">
+          <div style="font-size:11px;color:var(--text2);margin-bottom:4px;">Balance</div>
+          <div id="mob-chart-balance" style="font-size:17px;font-weight:800;color:var(--text3);">—</div>
+        </div>
+        <div style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px 12px;">
+          <div style="font-size:11px;color:var(--text2);margin-bottom:4px;">Equity</div>
+          <div id="mob-chart-equity" style="font-size:17px;font-weight:800;color:var(--text3);">—</div>
+        </div>
+      </div>
+
       <!-- LIVE RUNNING POSITIONS -->
       <div class="section-card" style="margin-top:12px;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
@@ -5637,11 +5649,34 @@ function checkDataFreshness(){
 // ═══════════════════════════════════════════════════
 // Shows the ACTIVE account's real balance (connector fills mt5_accounts.balance).
 function loadAccountStats() {
+  renderChartEquityStrip();
   if(!activeAccount) return;
   var bEl = document.getElementById('journal-balance');
   if(bEl && activeAccount.balance!=null && activeAccount.balance!=='') {
     bEl.textContent = '$'+parseFloat(activeAccount.balance).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2});
   }
+}
+// Chart tab: Balance + Equity tiles. Equity is white when equal to balance,
+// green when above (floating profit), red when below (floating loss). Strict to the cent.
+function renderChartEquityStrip() {
+  var balEl = document.getElementById('mob-chart-balance');
+  var eqEl  = document.getElementById('mob-chart-equity');
+  if(!balEl || !eqEl) return;
+  if(!activeAccount || activeAccount.balance==null || activeAccount.balance==='') {
+    balEl.textContent='—'; balEl.style.color='var(--text3)';
+    eqEl.textContent='—';  eqEl.style.color='var(--text3)';
+    return;
+  }
+  var bal = parseFloat(activeAccount.balance)||0;
+  var eq  = (activeAccount.equity!=null && activeAccount.equity!=='') ? (parseFloat(activeAccount.equity)||0) : bal;
+  var fmt = function(n){ return '$'+n.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2}); };
+  balEl.textContent = fmt(bal);
+  balEl.style.color = 'var(--text)';
+  eqEl.textContent = fmt(eq);
+  var balC = Math.round(bal*100), eqC = Math.round(eq*100);
+  if(eqC > balC)      eqEl.style.color = 'var(--green)';
+  else if(eqC < balC) eqEl.style.color = 'var(--red)';
+  else                eqEl.style.color = 'var(--text)';
 }
 async function refreshActiveBalance() {
   if(!db || !activeAccount || !activeAccount.id) return;
