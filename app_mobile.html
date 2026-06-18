@@ -12,6 +12,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Momentum AI">
 <meta name="theme-color" content="#0D0D0D">
+<script>(function(){try{var t=localStorage.getItem('momentum_theme');if(t==='light'){document.documentElement.setAttribute('data-theme','light');var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content','#f3f4f7');}}catch(e){}})();</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800;900&family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
@@ -37,6 +38,31 @@
   --nav-h: 64px;
   --header-h: 56px;
 }
+
+/* ═══════════════════════════════════
+   LIGHT THEME
+═══════════════════════════════════ */
+html[data-theme="light"] {
+  --bg: #f3f4f7;
+  --bg2: #ffffff;
+  --bg3: #eceef2;
+  --surface: rgba(12,14,22,0.035);
+  --surface2: rgba(12,14,22,0.06);
+  --border: rgba(12,14,22,0.10);
+  --text: #14161c;
+  --text2: rgba(20,22,28,0.62);
+  --text3: rgba(20,22,28,0.40);
+}
+/* Light-mode tuning for chrome that uses hardcoded white overlays */
+html[data-theme="light"] .hdr-dd { background: #ffffff; border-color: rgba(12,14,22,0.10); box-shadow: 0 8px 28px rgba(12,14,22,0.16); }
+html[data-theme="light"] .acct-row,
+html[data-theme="light"] .acct-add,
+html[data-theme="light"] .avtr-item,
+html[data-theme="light"] .avtr-toggle { border-top-color: rgba(12,14,22,0.08); }
+html[data-theme="light"] .acct-row:hover,
+html[data-theme="light"] .avtr-item:hover,
+html[data-theme="light"] .avtr-toggle:hover { background: rgba(12,14,22,0.04); }
+html[data-theme="light"] .pacct-badge.grey { background: rgba(12,14,22,0.06); }
 
 /* ═══════════════════════════════════
    BASE RESET
@@ -225,6 +251,23 @@ select.auth-input {
 .avtr-item:hover { background: rgba(255,255,255,0.03); }
 .avtr-item .ti { font-size: 17px; color: var(--text2); }
 .avtr-item.danger, .avtr-item.danger .ti { color: var(--red); }
+.avtr-toggle {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 11px 13px; cursor: pointer; font-size: 13px; color: var(--text);
+  border-top: 0.5px solid rgba(255,255,255,0.06);
+}
+.avtr-toggle:hover { background: rgba(255,255,255,0.03); }
+.avtr-toggle .avtr-toggle-left { display: flex; align-items: center; gap: 10px; }
+.avtr-toggle .avtr-toggle-left .ti { font-size: 17px; color: var(--text2); }
+.theme-switch {
+  position: relative; width: 42px; height: 24px; border-radius: 999px; flex-shrink: 0;
+  background: var(--surface2); border: 1px solid var(--border); transition: background .2s;
+}
+.theme-switch .knob {
+  position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; border-radius: 50%;
+  background: var(--grad); box-shadow: 0 1px 3px rgba(0,0,0,0.35); transition: left .2s;
+}
+html[data-theme="light"] .theme-switch .knob { left: 22px; }
 .pacct-row { display:flex; align-items:center; justify-content:space-between; padding:11px 12px; background:var(--bg3); border:1px solid var(--border); border-radius:10px; margin-bottom:8px; }
 .pacct-id { font-size:13px; font-weight:700; color:var(--text); display:flex; align-items:center; gap:7px; }
 .pacct-sv { font-size:11px; color:var(--text2); margin-top:2px; }
@@ -4181,6 +4224,7 @@ function toggleAvatarDropdown(e) {
   var topRight = isPremium
     ? '<span class="avtr-badge"><i class="ti ti-crown" style="font-size:10px;"></i>PREMIUM</span>'
     : '<span class="avtr-badge" style="background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.15);color:var(--text2);font-family:Sora,sans-serif;">'+roleLbl+'</span>';
+  var isLight = document.documentElement.getAttribute('data-theme')==='light';
   var html = '<div class="avtr-user">'+
       '<div class="app-header-avatar" style="width:38px;height:38px;font-size:13px;">'+initials+'</div>'+
       '<div style="display:flex;flex-direction:column;">'+
@@ -4189,6 +4233,10 @@ function toggleAvatarDropdown(e) {
       '</div></div>'+
     '<div class="avtr-item" onclick="closeHeaderDropdowns();showSubScreen(\'sub-profile\');"><i class="ti ti-user"></i>Profile</div>'+
     '<div class="avtr-item" onclick="closeHeaderDropdowns();showSubScreen(\'sub-support\');"><i class="ti ti-headset"></i>Customer Support</div>'+
+    '<div class="avtr-toggle" onclick="toggleTheme(event)">'+
+      '<span class="avtr-toggle-left"><i class="ti ti-'+(isLight?'sun':'moon-stars')+'" id="theme-toggle-icon"></i><span id="theme-toggle-label">'+(isLight?'Light Mode':'Dark Mode')+'</span></span>'+
+      '<span class="theme-switch"><span class="knob"></span></span>'+
+    '</div>'+
     '<div class="avtr-item danger" onclick="closeHeaderDropdowns();handleLogout();"><i class="ti ti-logout"></i>Sign Out</div>';
   dd.innerHTML = html;
   dd.classList.add('show');
@@ -4236,6 +4284,33 @@ function drawEmotionChart() {
   ctx.fillStyle = '#0d0b14';
   ctx.fill();
 }
+
+// ── THEME (dark / light) ──
+function applyTheme(t) {
+  if (t === 'light') document.documentElement.setAttribute('data-theme', 'light');
+  else document.documentElement.removeAttribute('data-theme');
+  var meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', t === 'light' ? '#f3f4f7' : '#0D0D0D');
+}
+function toggleTheme(e) {
+  if (e) e.stopPropagation();
+  var isLight = document.documentElement.getAttribute('data-theme') === 'light';
+  var next = isLight ? 'dark' : 'light';
+  applyTheme(next);
+  try { localStorage.setItem('momentum_theme', next); } catch(err) {}
+  // Update the open dropdown label/icon (the switch knob animates via CSS)
+  var nowLight = next === 'light';
+  var lbl = document.getElementById('theme-toggle-label');
+  var ic  = document.getElementById('theme-toggle-icon');
+  if (lbl) lbl.textContent = nowLight ? 'Light Mode' : 'Dark Mode';
+  if (ic)  ic.className = 'ti ti-' + (nowLight ? 'sun' : 'moon-stars');
+}
+function initTheme() {
+  var saved = 'dark';
+  try { saved = localStorage.getItem('momentum_theme') || 'dark'; } catch(err) {}
+  applyTheme(saved);
+}
+initTheme();
 
 // ── LOGOUT ──
 function handleLogout() {
@@ -4607,7 +4682,7 @@ function initTVChart() {
   var src = 'https://s.tradingview.com/widgetembed/?' +
     'symbol=' + sym +
     '&interval=' + tf +
-    '&theme=dark' +
+    '&theme=' + (document.documentElement.getAttribute('data-theme')==='light'?'light':'dark') +
     '&style=2' +
     '&disabled_features=' + encodeURIComponent('["create_volume_indicator_by_default"]') +
     '&overrides=' + encodeURIComponent('{"mainSeriesProperties.lineStyle.color":"#FF1E3C"}') +
