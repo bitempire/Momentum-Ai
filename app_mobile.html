@@ -4634,7 +4634,8 @@ async function executeTrade(method) {
     note.style.color = '#c98a00';
     note.innerHTML = '<i class="ti ti-loader"></i>Placing trade\u2026 confirming with MT5.';
     if(btn){ btn.textContent='Placing\u2026'; btn.disabled=true; }
-    var cid = (ins.data && ins.data[0] && ins.data[0].id) ? ins.data[0].id : null;
+    var _row = ins.data ? (Array.isArray(ins.data) ? ins.data[0] : ins.data) : null;
+    var cid = (_row && _row.id) ? _row.id : null;
     if(cid) { pollTradeCommand(cid, btn, origText); }
     else { if(btn){ btn.textContent=origText; btn.disabled=false; } }
   } catch(e) { alert('Error: '+e.message); if(btn){ btn.textContent=origText; btn.disabled=false; } }
