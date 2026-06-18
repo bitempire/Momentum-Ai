@@ -4665,9 +4665,9 @@ async function executeTrade(method) {
     var _row = ins.data ? (Array.isArray(ins.data) ? ins.data[0] : ins.data) : null;
     var cid = (_row && _row.id) ? _row.id : null;
     if(_armed){
-      // Step 2: basic armed note. Full countdown + Cancel button comes in Step 3.
-      note.innerHTML = '<i class="ti ti-clock"></i>Armed \u2014 waiting for price to enter the entry zone.';
-      if(btn){ btn.textContent=origText; btn.disabled=false; }
+      // Step 3: full armed UI - countdown + Cancel + auto-resolve
+      if(cid){ armedCountdown(cid, btn, origText); }
+      else { note.innerHTML = '<i class="ti ti-clock"></i>Armed \u2014 waiting for price to enter the entry zone.'; if(btn){ btn.textContent=origText; btn.disabled=false; } }
     } else {
       note.innerHTML = '<i class="ti ti-loader"></i>Placing trade\u2026 confirming with MT5.';
       if(btn){ btn.textContent='Placing\u2026'; btn.disabled=true; }
@@ -4703,6 +4703,49 @@ async function pollTradeCommand(id, btn, origText){
       clearInterval(timer); resetBtn();
       if(note){ note.style.display='flex'; note.style.background='rgba(255,180,0,0.12)'; note.style.color='#c98a00'; note.innerHTML='<i class="ti ti-clock"></i>Still pending. Check if the trade worker is running, or view MT5 terminal.'; }
     }
+  }, 2000);
+}
+
+// ── ARMED ORDER UI (Step 3): 5-min countdown + Cancel + auto-resolve ──
+function cancelArmed(id){ var f = window._armedCancels && window._armedCancels[id]; if(f) f(); }
+function armedCountdown(id, btn, origText){
+  var note=document.getElementById('trade-success-note');
+  if(btn){ btn.textContent=origText||'EXECUTE TRADE'; btn.disabled=false; }
+  var deadline = Date.now() + 5*60*1000;
+  var done=false, tick=null, poll=null;
+  function clearAll(){ done=true; if(tick) clearInterval(tick); if(poll) clearInterval(poll); }
+  function show(html,bg,col){ if(note){ note.style.display='flex'; note.style.background=bg; note.style.color=col; note.innerHTML=html; } }
+  function render(){
+    if(done) return;
+    var ms = deadline - Date.now();
+    if(ms<=0){ expire(); return; }
+    var s = Math.ceil(ms/1000), mm = Math.floor(s/60), ss = s%60;
+    var t = mm+':'+(ss<10?'0':'')+ss;
+    show('<i class="ti ti-clock"></i>Armed \u00b7 waiting for entry zone \u00b7 '+t+'<button onclick="cancelArmed(\''+id+'\')" style="margin-left:auto;background:rgba(255,60,60,0.15);color:#d33;border:none;border-radius:6px;padding:4px 11px;font-size:11px;font-weight:700;cursor:pointer;">Cancel</button>','rgba(255,180,0,0.12)','#c98a00');
+  }
+  async function expire(){
+    if(done) return; clearAll();
+    try{ await db.from('trade_commands').update({status:'expired'}).eq('id',id); }catch(e){}
+    show('<i class="ti ti-circle-x"></i>Entry zone not reached in 5 min \u2014 order expired.','rgba(150,150,150,0.15)','#777');
+  }
+  window._armedCancels = window._armedCancels || {};
+  window._armedCancels[id] = async function(){
+    if(done) return; clearAll();
+    try{ await db.from('trade_commands').update({status:'cancelled'}).eq('id',id); }catch(e){}
+    show('<i class="ti ti-circle-x"></i>Armed order cancelled.','rgba(255,60,60,0.10)','#d33');
+  };
+  tick = setInterval(render, 1000); render();
+  poll = setInterval(async function(){
+    if(done) return;
+    try{
+      var r=await db.from('trade_commands').select('status,result').eq('id',id).single();
+      var row=(r&&r.data)?(Array.isArray(r.data)?r.data[0]:r.data):null;
+      if(!row) return;
+      if(row.status==='filled'||row.status==='executed'){ clearAll(); show('<i class="ti ti-circle-check"></i>Price hit the zone \u2014 trade filled on MT5!','rgba(40,200,120,0.12)','#1a9d5a'); }
+      else if(row.status==='failed'){ clearAll(); show('<i class="ti ti-alert-circle"></i>Trade failed: '+(row.result||'unknown error'),'rgba(255,60,60,0.12)','#d33'); }
+      else if(row.status==='cancelled'){ clearAll(); show('<i class="ti ti-circle-x"></i>Armed order cancelled.','rgba(255,60,60,0.10)','#d33'); }
+      else if(row.status==='expired'){ clearAll(); show('<i class="ti ti-circle-x"></i>Entry zone not reached \u2014 order expired.','rgba(150,150,150,0.15)','#777'); }
+    }catch(e){}
   }, 2000);
 }
 
