@@ -256,6 +256,7 @@ select.auth-input {
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
   padding: 16px 16px calc(var(--nav-h) + 16px);
   min-height: 0;
   height: 100%;
@@ -7810,5 +7811,108 @@ function showMT5ConnNotice(kind, reason) {
       <div style="margin-top:20px;padding-top:12px;border-top:0.5px solid var(--border);text-align:center;font-size:10px;color:var(--text3);">✦ Momentum AI · Trade Beyond Emotion · Not financial advice</div>
     </div>
   </div>
+<!-- ══════════ PULL-TO-REFRESH ══════════ -->
+<style>
+#ptr-indicator{
+  position:fixed; top:0; left:0; right:0;
+  display:flex; align-items:center; justify-content:center;
+  height:56px; pointer-events:none; z-index:9000;
+  transform:translateY(-60px); opacity:0;
+  transition:none;
+}
+#ptr-indicator.ptr-snap{ transition:transform .25s ease, opacity .25s ease; }
+#ptr-spinner{
+  width:26px; height:26px; border-radius:50%;
+  border:2.5px solid rgba(255,255,255,0.18);
+  border-top-color:var(--green,#26d07c);
+  box-shadow:0 2px 10px rgba(0,0,0,0.35);
+  background:var(--bg2,#15171c);
+}
+#ptr-indicator.ptr-spin #ptr-spinner{ animation:ptrSpin .7s linear infinite; }
+@keyframes ptrSpin{ to{ transform:rotate(360deg); } }
+</style>
+<div id="ptr-indicator"><div id="ptr-spinner"></div></div>
+<script>
+(function(){
+  var content = document.getElementById('app-content');
+  var ind = document.getElementById('ptr-indicator');
+  var spin = document.getElementById('ptr-spinner');
+  if(!content || !ind) return;
+
+  var THRESHOLD = 70, MAXPULL = 110;
+  var startY = 0, startX = 0, dist = 0, pulling = false, refreshing = false;
+
+  function setIndicator(d){
+    var p = Math.min(1, d / THRESHOLD);
+    ind.style.transform = 'translateY(' + (d - 60) + 'px)';
+    ind.style.opacity = p;
+    spin.style.transform = 'rotate(' + (d * 3) + 'deg)';
+  }
+  function reset(snap){
+    ind.classList.toggle('ptr-snap', !!snap);
+    ind.classList.remove('ptr-spin');
+    ind.style.transform = 'translateY(-60px)';
+    ind.style.opacity = 0;
+    spin.style.transform = '';
+    dist = 0;
+  }
+
+  // Refresh whatever tab the user is currently on + common live data
+  function refreshCurrentView(){
+    var fns = ['loadAFTPrices','refreshActiveBalance','loadLivePositions','checkDataFreshness'];
+    fns.forEach(function(n){ try{ if(typeof window[n]==='function') window[n](); }catch(e){} });
+    var active = document.querySelector('#screen-app .app-tab.active');
+    var id = active ? active.id : '';
+    try{
+      if(id==='tab-dashboard'){ if(typeof loadLivePrices==='function') loadLivePrices(); if(typeof loadDashboardSignals==='function') loadDashboardSignals(); }
+      else if(id==='tab-journal'){ if(typeof loadJournalData==='function') loadJournalData(); }
+      else if(id==='tab-signals'){ if(typeof loadSignalsFeed==='function') loadSignalsFeed(); }
+    }catch(e){}
+  }
+
+  function doRefresh(){
+    refreshing = true;
+    ind.classList.add('ptr-snap','ptr-spin');
+    ind.style.transform = 'translateY(' + (THRESHOLD - 60) + 'px)';
+    ind.style.opacity = 1;
+    try{ refreshCurrentView(); }catch(e){}
+    setTimeout(function(){
+      reset(true);
+      setTimeout(function(){ refreshing = false; ind.classList.remove('ptr-snap'); }, 280);
+    }, 900);
+  }
+
+  content.addEventListener('touchstart', function(e){
+    if(refreshing) return;
+    if(content.scrollTop <= 0){
+      startY = e.touches[0].clientY;
+      startX = e.touches[0].clientX;
+      pulling = true; dist = 0;
+      ind.classList.remove('ptr-snap');
+    } else { pulling = false; }
+  }, {passive:true});
+
+  content.addEventListener('touchmove', function(e){
+    if(!pulling || refreshing) return;
+    var y = e.touches[0].clientY, x = e.touches[0].clientX;
+    var dy = y - startY, dx = x - startX;
+    // only a vertical down-pull at the very top counts
+    if(dy > 0 && Math.abs(dy) > Math.abs(dx) && content.scrollTop <= 0){
+      e.preventDefault();
+      dist = Math.min(MAXPULL, dy * 0.5); // resistance
+      setIndicator(dist);
+    } else if(dy <= 0){
+      pulling = false; reset(false);
+    }
+  }, {passive:false});
+
+  content.addEventListener('touchend', function(){
+    if(!pulling || refreshing) return;
+    pulling = false;
+    if(dist >= THRESHOLD){ doRefresh(); }
+    else { reset(true); }
+  }, {passive:true});
+})();
+</script>
 </body>
 </html>
