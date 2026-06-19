@@ -7247,30 +7247,23 @@ async function runMAIScanner() {
       } catch(e) {}
     }
 
-    // Fetch OHLC history from TwelveData (reliable, respects the selected timeframe)
-    var tdKey = '9ea2aa62ec4f4a0c82550e9db6509653';
+    // Fetch OHLC history from TwelveData via the app's rate-limit-safe queue (respects timeframe)
     var tdSymMap = {'GC=F':'XAU/USD','BTC-USD':'BTC/USD','EURUSD=X':'EUR/USD','GBPJPY=X':'GBP/JPY','GBPUSD=X':'GBP/USD','^IXIC':'QQQ','^DJI':'DIA','DX-Y.NYB':'UUP','CL=F':'USO'};
     var tdIvMap = {'H1':'1h','H4':'4h','D1':'1day','W1':'1week'};
     var tdSym = tdSymMap[sym] || 'XAU/USD';
     var tdIv = tdIvMap[tf] || '1day';
     try {
-      var tdUrl = 'https://api.twelvedata.com/time_series?symbol='+encodeURIComponent(tdSym)+'&interval='+tdIv+'&outputsize=220&apikey='+tdKey;
-      var tdResp = await Promise.race([
-        fetch(tdUrl),
-        new Promise(function(_,rej){setTimeout(function(){rej(new Error('timeout'))},12000)})
-      ]);
-      if(tdResp.ok) {
-        var tdData = await tdResp.json();
-        if(tdData && tdData.values && tdData.values.length) {
-          // TwelveData returns newest-first -> reverse to oldest-first
-          for(var ti=tdData.values.length-1; ti>=0; ti--){
-            var v = tdData.values[ti];
-            if(v && v.close!=null){
-              closes.push(parseFloat(v.close));
-              highs.push(parseFloat(v.high));
-              lows.push(parseFloat(v.low));
-              volumes.push(parseFloat(v.volume||0));
-            }
+      var tdUrl = 'https://api.twelvedata.com/time_series?symbol='+encodeURIComponent(tdSym)+'&interval='+tdIv+'&outputsize=220&apikey='+TWELVE_DATA_KEY;
+      var tdData = await tdFetch(tdUrl);
+      if(tdData && tdData.values && tdData.values.length) {
+        // TwelveData returns newest-first -> reverse to oldest-first
+        for(var ti=tdData.values.length-1; ti>=0; ti--){
+          var v = tdData.values[ti];
+          if(v && v.close!=null){
+            closes.push(parseFloat(v.close));
+            highs.push(parseFloat(v.high));
+            lows.push(parseFloat(v.low));
+            volumes.push(parseFloat(v.volume||0));
           }
         }
       }
