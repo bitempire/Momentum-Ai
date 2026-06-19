@@ -4599,14 +4599,25 @@ async function executeTrade(method) {
   }
 
   try {
-    // === ENTRY ZONE GATE (Step 2): decide fire / arm / block ===
+    // === ENTRY ZONE GATE: trade only if IN zone + active + SL not hit; else tag the reason ===
     var _zFrom = parseFloat(currentSignal.entry_from);
     var _zTo   = parseFloat(currentSignal.entry_to);
     var _hasZone = !isNaN(_zFrom) && !isNaN(_zTo);
     var _zLo = _hasZone ? Math.min(_zFrom,_zTo) : null;
     var _zHi = _hasZone ? Math.max(_zFrom,_zTo) : null;
     var _armed = false;
+    function _zoneStop(msg){
+      var n = document.getElementById('trade-success-note');
+      if(n){ n.style.display='flex'; n.style.background='rgba(255,180,0,0.12)'; n.style.color='#c98a00'; n.innerHTML='<i class="ti ti-alert-triangle"></i>'+msg; }
+      if(btn){ btn.textContent=origText; btn.disabled=false; }
+    }
     if(_hasZone){
+      // Tag 1: signal no longer active
+      var _sigStatus = (currentSignal.status||'active').toString().toLowerCase();
+      if(_sigStatus !== 'active'){
+        _zoneStop('Signal is no longer active \u2014 trade not placed.');
+        return;
+      }
       var _pairKey = (currentSignal.pair||'').toString().toUpperCase().replace('/','');
       var _live = null;
       try{
@@ -4614,17 +4625,23 @@ async function executeTrade(method) {
         var _zrow = (_zr && _zr.data) ? (Array.isArray(_zr.data)?_zr.data[0]:_zr.data) : null;
         if(_zrow && _zrow.bid!=null) _live = parseFloat(_zrow.bid);
       }catch(e){}
-      if(_live!==null && !isNaN(_live)){
-        var _missed = false;
-        if(_live>=_zLo && _live<=_zHi){ _armed = false; }            // in zone -> fire now
-        else if(side==='BUY'){ _armed = (_live>_zHi); _missed = !_armed; }  // BUY: above=wait, below=missed
-        else { _armed = (_live<_zLo); _missed = !_armed; }           // SELL: below=wait, above=missed
-        if(_missed){
-          alert('Price has already moved past the entry zone ('+fmtPrice(currentSignal.pair,_zLo)+' \u2013 '+fmtPrice(currentSignal.pair,_zHi)+'). Trade blocked to protect your entry.');
-          if(btn){ btn.textContent=origText; btn.disabled=false; }
-          return;
-        }
+      // Tag 2: live price unavailable - cannot verify the zone
+      if(_live===null || isNaN(_live)){
+        _zoneStop('Live price unavailable right now \u2014 trade not placed, please try again.');
+        return;
       }
+      // Tag 3: price has hit the stop loss -> signal invalid
+      var _sl = parseFloat(currentSignal.sl);
+      if(!isNaN(_sl) && ((side==='BUY' && _live<=_sl) || (side==='SELL' && _live>=_sl))){
+        _zoneStop('Price has hit the stop loss ('+fmtPrice(currentSignal.pair,_sl)+') \u2014 signal invalid, trade not placed.');
+        return;
+      }
+      // Tag 4: price not in the entry zone
+      if(!(_live>=_zLo && _live<=_zHi)){
+        _zoneStop('Price ('+fmtPrice(currentSignal.pair,_live)+') is not in the entry zone ('+fmtPrice(currentSignal.pair,_zLo)+' \u2013 '+fmtPrice(currentSignal.pair,_zHi)+') \u2014 trade not placed.');
+        return;
+      }
+      // Passed all checks: price IS in zone, signal active, SL not hit -> proceed to fire
     }
     // === END ENTRY ZONE GATE ===
     if(currentUser && !_armed) {
