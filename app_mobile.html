@@ -3093,10 +3093,10 @@ html[data-theme="light"] .theme-switch .knob { left: 22px; }
           <option value="CL=F">USOIL</option>
         </select>
         <select id="scan-tf" class="auth-input" style="font-size:12px;padding:8px 10px;">
-          <option value="60m">H1</option>
-          <option value="1d" selected>H4</option>
-          <option value="1d">D1</option>
-          <option value="1wk">W1</option>
+          <option value="H1">H1</option>
+          <option value="H4" selected>H4</option>
+          <option value="D1">D1</option>
+          <option value="W1">W1</option>
         </select>
       </div>
 
@@ -7247,66 +7247,48 @@ async function runMAIScanner() {
       } catch(e) {}
     }
 
-    // Try Yahoo Finance with multiple proxies for OHLC history
-    var yhUrl = 'https://query1.finance.yahoo.com/v8/finance/chart/'+sym+'?interval=1d&range=6mo';
-    var proxies = [
-      'https://api.allorigins.win/raw?url='+encodeURIComponent(yhUrl),
-      'https://corsproxy.io/?'+encodeURIComponent(yhUrl),
-      'https://proxy.cors.sh/'+yhUrl
-    ];
-    
-    var yhData = null;
-    // Route Yahoo Finance through our Edge Function to avoid CORS
-    var edgeYhUrl = 'https://rhtworywcqcxkahlmezg.supabase.co/functions/v1/claude-proxy?yahoo='+encodeURIComponent(yhUrl);
+    // Fetch OHLC history from TwelveData (reliable, respects the selected timeframe)
+    var tdKey = '9ea2aa62ec4f4a0c82550e9db6509653';
+    var tdSymMap = {'GC=F':'XAU/USD','BTC-USD':'BTC/USD','EURUSD=X':'EUR/USD','GBPJPY=X':'GBP/JPY','GBPUSD=X':'GBP/USD','^IXIC':'QQQ','^DJI':'DIA','DX-Y.NYB':'UUP','CL=F':'USO'};
+    var tdIvMap = {'H1':'1h','H4':'4h','D1':'1day','W1':'1week'};
+    var tdSym = tdSymMap[sym] || 'XAU/USD';
+    var tdIv = tdIvMap[tf] || '1day';
     try {
-      var presp = await Promise.race([
-        fetch(edgeYhUrl),
+      var tdUrl = 'https://api.twelvedata.com/time_series?symbol='+encodeURIComponent(tdSym)+'&interval='+tdIv+'&outputsize=220&apikey='+tdKey;
+      var tdResp = await Promise.race([
+        fetch(tdUrl),
         new Promise(function(_,rej){setTimeout(function(){rej(new Error('timeout'))},12000)})
       ]);
-      if(presp.ok) yhData = await presp.json();
-    } catch(pe) {
-      // Try direct proxies as fallback
-      for(var pi=0;pi<proxies.length;pi++){
-        try {
-          var presp2 = await Promise.race([
-            fetch(proxies[pi]),
-            new Promise(function(_,rej){setTimeout(function(){rej(new Error('timeout'))},8000)})
-          ]);
-          if(presp2.ok) { yhData = await presp2.json(); if(yhData&&yhData.chart) break; }
-        } catch(pe2) { continue; }
+      if(tdResp.ok) {
+        var tdData = await tdResp.json();
+        if(tdData && tdData.values && tdData.values.length) {
+          // TwelveData returns newest-first -> reverse to oldest-first
+          for(var ti=tdData.values.length-1; ti>=0; ti--){
+            var v = tdData.values[ti];
+            if(v && v.close!=null){
+              closes.push(parseFloat(v.close));
+              highs.push(parseFloat(v.high));
+              lows.push(parseFloat(v.low));
+              volumes.push(parseFloat(v.volume||0));
+            }
+          }
+        }
       }
-    }
+    } catch(te) {}
 
-    var result = yhData && yhData.chart && yhData.chart.result && yhData.chart.result[0];
-    if(result && result.indicators && result.indicators.quote && result.indicators.quote[0]) {
-      var q = result.indicators.quote[0];
-      closes = (q.close||[]).filter(function(v){return v!=null;});
-      highs = (q.high||[]).filter(function(v){return v!=null;});
-      lows = (q.low||[]).filter(function(v){return v!=null;});
-      volumes = (q.volume||[]).filter(function(v){return v!=null;});
-    }
-
-    // Use Yahoo price if we dont have live price
+    // Use latest close if we dont have a live price
     if(!price && closes.length) {
       price = closes[closes.length-1];
       prevPrice = closes.length>1 ? closes[closes.length-2] : price;
       chgPct = prevPrice>0 ? ((price-prevPrice)/prevPrice*100).toFixed(2) : 0;
     }
 
-    // If still no OHLC data, generate synthetic from current price for TA
-    if(!closes.length && price>0) {
-      // Generate 200 synthetic candles around current price for basic TA
-      var volatility = price * 0.005;
-      var synPrice = price * 0.85;
-      for(var si=0;si<200;si++){
-        var rnd = (Math.random()-0.48)*volatility;
-        synPrice = Math.max(price*0.7, Math.min(price*1.3, synPrice+rnd));
-        closes.push(synPrice);
-        highs.push(synPrice+volatility*0.5);
-        lows.push(synPrice-volatility*0.5);
-        volumes.push(1000000);
-      }
-      closes[closes.length-1] = price;
+    // No data guard - never fake it
+    if(!closes.length) {
+      if(badge){ badge.innerHTML='<div style="width:6px;height:6px;border-radius:50%;background:var(--red);"></div>NO DATA'; badge.style.color='var(--red)'; }
+      btn.textContent='▶ INITIATE SCAN'; btn.style.background='var(--red)';
+      alert('Scanner: market data unavailable right now. Please try again in a moment.');
+      return;
     }
 
     // Update price display
