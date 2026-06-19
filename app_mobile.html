@@ -7252,22 +7252,26 @@ async function runMAIScanner() {
     var tdIvMap = {'H1':'1h','H4':'4h','D1':'1day','W1':'1week'};
     var tdSym = tdSymMap[sym] || 'XAU/USD';
     var tdIv = tdIvMap[tf] || '1day';
-    try {
-      var tdUrl = 'https://api.twelvedata.com/time_series?symbol='+encodeURIComponent(tdSym)+'&interval='+tdIv+'&outputsize=220&apikey='+TWELVE_DATA_KEY;
-      var tdData = await tdFetch(tdUrl);
-      if(tdData && tdData.values && tdData.values.length) {
-        // TwelveData returns newest-first -> reverse to oldest-first
-        for(var ti=tdData.values.length-1; ti>=0; ti--){
-          var v = tdData.values[ti];
-          if(v && v.close!=null){
-            closes.push(parseFloat(v.close));
-            highs.push(parseFloat(v.high));
-            lows.push(parseFloat(v.low));
-            volumes.push(parseFloat(v.volume||0));
+    var tdUrl = 'https://api.twelvedata.com/time_series?symbol='+encodeURIComponent(tdSym)+'&interval='+tdIv+'&outputsize=500&apikey='+TWELVE_DATA_KEY;
+    // Try up to 2 times - shields against a momentary rate-limit hiccup
+    for(var attempt=0; attempt<2 && !closes.length; attempt++){
+      if(attempt>0){ await new Promise(function(r){setTimeout(r,2500);}); }
+      try {
+        var tdData = await tdFetch(tdUrl);
+        if(tdData && tdData.values && tdData.values.length) {
+          // TwelveData returns newest-first -> reverse to oldest-first
+          for(var ti=tdData.values.length-1; ti>=0; ti--){
+            var v = tdData.values[ti];
+            if(v && v.close!=null){
+              closes.push(parseFloat(v.close));
+              highs.push(parseFloat(v.high));
+              lows.push(parseFloat(v.low));
+              volumes.push(parseFloat(v.volume||0));
+            }
           }
         }
-      }
-    } catch(te) {}
+      } catch(te) {}
+    }
 
     // Use latest close if we dont have a live price
     if(!price && closes.length) {
@@ -7289,7 +7293,7 @@ async function runMAIScanner() {
     var chgEl = document.getElementById('scan-change');
     chgEl.textContent = (chgPct>=0?'+':'')+chgPct+'% (24h)';
     chgEl.style.color = chgPct>=0?'#00C87A':'#FF1E3C';
-    document.getElementById('scan-last-time').textContent = 'Last scan: '+new Date().toLocaleTimeString()+'  ·  '+tdIv+' · '+closes.length+' bars · last '+(closes[closes.length-1]).toFixed(2);
+    document.getElementById('scan-last-time').textContent = 'Last scan: '+new Date().toLocaleTimeString();
 
     // 2. CALCULATE TECHNICAL INDICATORS
     function calcSMA(data, period) {
