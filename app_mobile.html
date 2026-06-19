@@ -7289,7 +7289,7 @@ async function runMAIScanner() {
     var chgEl = document.getElementById('scan-change');
     chgEl.textContent = (chgPct>=0?'+':'')+chgPct+'% (24h)';
     chgEl.style.color = chgPct>=0?'#00C87A':'#FF1E3C';
-    document.getElementById('scan-last-time').textContent = 'Last scan: '+new Date().toLocaleTimeString();
+    document.getElementById('scan-last-time').textContent = 'Last scan: '+new Date().toLocaleTimeString()+'  ·  '+tdIv+' · '+closes.length+' bars · last '+(closes[closes.length-1]).toFixed(2);
 
     // 2. CALCULATE TECHNICAL INDICATORS
     function calcSMA(data, period) {
