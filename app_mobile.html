@@ -802,14 +802,14 @@ html[data-theme="light"] .theme-switch .knob { left: 22px; }
 .sig-card-dir.sell { background: rgba(255,30,60,0.1); color: var(--red); border: 1px solid rgba(255,30,60,0.2); }
 .sig-card-levels {
   display: grid;
-  grid-template-columns: repeat(3,1fr);
-  gap: 8px;
+  grid-template-columns: repeat(4,1fr);
+  gap: 6px;
   margin-bottom: 12px;
 }
 .sig-level {
   background: var(--bg3);
   border-radius: 8px;
-  padding: 8px 10px;
+  padding: 8px 7px;
 }
 .sig-level-lbl { font-size: 9px; color: var(--text3); letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 3px; }
 .sig-level-val { font-size: 13px; font-weight: 700; color: var(--text); }
@@ -4464,7 +4464,7 @@ async function loadSignalsFeed() {
       // Levels row
       var levels = document.createElement('div');
       levels.className = 'sig-card-levels';
-      [['Entry From', sig.entry_from, ''], ['Stop Loss', sig.sl, ' sl'], ['Take Profit', sig.tp1, ' tp']].forEach(function(lev) {
+      [['Entry From', sig.entry_from, ''], ['Entry To', sig.entry_to, ''], ['Stop Loss', sig.sl, ' sl'], ['Take Profit', sig.tp1, ' tp']].forEach(function(lev) {
         var lbox = document.createElement('div');
         lbox.className = 'sig-level';
         var llbl = document.createElement('div');
