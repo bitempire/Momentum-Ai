@@ -4200,7 +4200,7 @@ function enterApp(user) {
   initTVChart();
   setTimeout(function() { drawGrowthChart(); drawEmotionChart(); loadSavedProfilePhoto(); }, 800);
   setTimeout(function() { checkMT5ConnectionNotification(); }, 1200);
-  loadActiveAccount();
+  loadActiveAccount().then(checkCampaignBanner);
   loadAFTPrices();
   refreshActiveBalance();
   loadLivePositions();
@@ -4455,40 +4455,89 @@ function updateDepositBanner(){
   if(!currentUser || isStaff || funded || depositBannerDismissed()){ b.style.display='none'; return; }
   b.style.display='block';
 }
+async function redeemPromo(code){
+  code = (code||'').trim().toUpperCase();
+  if(!code) return {ok:false,msg:'Enter a promo code.'};
+  if(!activeAccount || !activeAccount.id) return {ok:false,msg:'Connect your MT5 account first.'};
+  try {
+    var res = await db.from('promo_codes').select('*').eq('code', code);
+    var rows = (res && res.data) ? res.data : [];
+    var pc = rows[0];
+    if(!pc || pc.active===false) return {ok:false,msg:'Invalid promo code.'};
+    if(pc.expiry && new Date(pc.expiry) < new Date()) return {ok:false,msg:'This code has expired.'};
+    if(pc.max_uses!=null && pc.max_uses>0 && (pc.used_count||0) >= pc.max_uses) return {ok:false,msg:'This code has reached its limit.'};
+    if(pc.per_user_once!==false){
+      var rr = await db.from('promo_redemptions').select('mt5_id,account_id').eq('code', code);
+      var mine = ((rr&&rr.data)||[]).some(function(r){ return (activeAccount.mt5_id && r.mt5_id===activeAccount.mt5_id) || r.account_id===activeAccount.id; });
+      if(mine) return {ok:false,msg:'You have already used this code.'};
+    }
+    var days = parseInt(pc.access_days,10) || 3;
+    var until = new Date(Date.now() + days*24*60*60*1000).toISOString();
+    var up = await db.from('mt5_accounts').update({premium_status:'promo', premium_until:until}).eq('id', activeAccount.id);
+    if(up && up.error) return {ok:false,msg:'Could not apply: '+(up.error.message||'failed')};
+    await db.from('promo_redemptions').insert([{ code:code, user_id:(currentUser?currentUser.id:null), account_id:activeAccount.id, mt5_id:activeAccount.mt5_id||null, claimed_at:new Date().toISOString() }]);
+    await db.from('promo_codes').update({ used_count:(pc.used_count||0)+1 }).eq('id', pc.id);
+    await loadActiveAccount();
+    return {ok:true,msg:'Premium unlocked for '+days+' days!',days:days};
+  } catch(e){ return {ok:false,msg:'Could not apply code: '+(e.message||'failed')}; }
+}
 async function applyPromoCode(){
   var inp = document.getElementById('promo-code-input');
   var msg = document.getElementById('promo-msg');
   var btn = document.getElementById('promo-apply-btn');
   function show(text, ok){ if(msg){ msg.style.display='block'; msg.textContent=text; msg.style.color = ok?'var(--green)':'var(--red)'; } }
   if(!inp) return;
-  var code = (inp.value||'').trim().toUpperCase();
-  if(!code){ show('Enter a promo code.', false); return; }
-  if(!activeAccount || !activeAccount.id){ show('Connect your MT5 account first.', false); return; }
   if(btn){ btn.textContent='...'; btn.disabled=true; }
+  var r = await redeemPromo(inp.value);
+  show(r.msg, r.ok);
+  if(r.ok){ inp.value=''; setTimeout(function(){ closeDepositPopup(); updateDepositBanner(); }, 1500); }
+  if(btn){ btn.textContent='Apply'; btn.disabled=false; }
+}
+var _campaignCode = null;
+async function checkCampaignBanner(){
+  var b=document.getElementById('campaign-banner'); if(!b || !db) return;
+  _campaignCode=null;
+  if(!currentUser) return;
+  var role=currentUser.role;
+  if(role==='admin'||role==='analyst'||role==='sub_admin') return;
+  var funded = activeAccount && activeAccount.balance!=null && activeAccount.balance!=='' && parseFloat(activeAccount.balance)>=100;
+  if(funded) return;
+  try{ if(sessionStorage.getItem('momentum_campaign_dismissed')==='1') return; }catch(e){}
   try {
-    var res = await db.from('promo_codes').select('*').eq('code', code);
-    var rows = (res && res.data) ? res.data : [];
-    var pc = rows[0];
-    if(!pc || pc.active===false){ show('Invalid promo code.', false); return; }
-    if(pc.expiry && new Date(pc.expiry) < new Date()){ show('This code has expired.', false); return; }
-    if(pc.max_uses!=null && pc.max_uses>0 && (pc.used_count||0) >= pc.max_uses){ show('This code has reached its limit.', false); return; }
-    if(pc.per_user_once!==false){
-      var rr = await db.from('promo_redemptions').select('mt5_id,account_id').eq('code', code);
-      var mine = ((rr&&rr.data)||[]).some(function(r){ return (activeAccount.mt5_id && r.mt5_id===activeAccount.mt5_id) || r.account_id===activeAccount.id; });
-      if(mine){ show('You have already used this code.', false); return; }
+    var res=await db.from('promo_codes').select('*').eq('is_campaign', true);
+    var rows=(res&&res.data)||[]; var now=new Date();
+    var c=rows.filter(function(r){
+      if(r.active===false) return false;
+      if(r.expiry && new Date(r.expiry)<=now) return false;
+      if(r.max_uses!=null && r.max_uses>0 && (r.used_count||0)>=r.max_uses) return false;
+      if(!r.image_url) return false;
+      return true;
+    })[0];
+    if(!c) return;
+    if(activeAccount && activeAccount.id){
+      var rr=await db.from('promo_redemptions').select('mt5_id,account_id').eq('code', c.code);
+      var claimed=((rr&&rr.data)||[]).some(function(r){ return (activeAccount.mt5_id && r.mt5_id===activeAccount.mt5_id) || r.account_id===activeAccount.id; });
+      if(claimed) return;
     }
-    var days = parseInt(pc.access_days,10) || 3;
-    var until = new Date(Date.now() + days*24*60*60*1000).toISOString();
-    var up = await db.from('mt5_accounts').update({premium_status:'promo', premium_until:until}).eq('id', activeAccount.id);
-    if(up && up.error) throw up.error;
-    await db.from('promo_redemptions').insert([{ code:code, user_id:(currentUser?currentUser.id:null), account_id:activeAccount.id, mt5_id:activeAccount.mt5_id||null, claimed_at:new Date().toISOString() }]);
-    await db.from('promo_codes').update({ used_count:(pc.used_count||0)+1 }).eq('id', pc.id);
-    show('Premium unlocked for '+days+' days!', true);
-    if(inp) inp.value='';
-    await loadActiveAccount();
-    setTimeout(function(){ closeDepositPopup(); updateDepositBanner(); }, 1500);
-  } catch(e){ show('Could not apply code: '+(e.message||'failed'), false); }
-  finally { if(btn){ btn.textContent='Apply'; btn.disabled=false; } }
+    _campaignCode=c.code;
+    var img=document.getElementById('campaign-banner-img'); if(img) img.src=c.image_url;
+    var t=document.getElementById('campaign-banner-title'); if(t) t.textContent=c.campaign||'Limited offer';
+    var s=document.getElementById('campaign-banner-sub'); if(s) s.textContent='Claim '+(c.access_days||3)+' days premium free';
+    var m=document.getElementById('campaign-banner-msg'); if(m){ m.style.display='none'; m.textContent=''; }
+    b.style.display='flex';
+  } catch(e){}
+}
+function dismissCampaignBanner(){ try{ sessionStorage.setItem('momentum_campaign_dismissed','1'); }catch(e){} var b=document.getElementById('campaign-banner'); if(b) b.style.display='none'; }
+async function claimCampaign(){
+  if(!_campaignCode) return;
+  var btn=document.getElementById('campaign-claim-btn');
+  var m=document.getElementById('campaign-banner-msg');
+  function show(t,ok){ if(m){ m.style.display='block'; m.style.color=ok?'var(--green)':'var(--red)'; m.textContent=t; } }
+  if(btn){ btn.textContent='Claiming...'; btn.disabled=true; }
+  var r=await redeemPromo(_campaignCode);
+  show(r.msg, r.ok);
+  if(btn){ btn.textContent='Claim now'; btn.disabled=false; }
+  if(r.ok){ setTimeout(function(){ var b=document.getElementById('campaign-banner'); if(b) b.style.display='none'; updateDepositBanner(); }, 1600); }
 }
 function switchTab(tab) {
   if(_premiumTabs.indexOf(tab)>=0 && !premiumGate()) return;
@@ -8170,6 +8219,11 @@ async function loadAdminPromos(){
           '</div>' +
           '<div style="font-size:9px;font-weight:700;padding:3px 9px;border-radius:5px;background:'+statusBg+';color:'+statusCol+';">'+statusTxt+'</div>' +
         '</div>';
+      var bBanner=document.createElement('button');
+      bBanner.textContent = c.is_campaign ? '\u2605 Login banner: ON' : 'Set as login banner';
+      bBanner.style.cssText='width:100%;font-size:11px;font-weight:700;padding:9px;border-radius:8px;cursor:pointer;margin-bottom:6px;'+(c.is_campaign?'background:rgba(240,178,50,0.13);border:1px solid rgba(240,178,50,0.3);color:var(--gold);':'background:rgba(77,158,255,0.1);border:1px solid rgba(77,158,255,0.2);color:#4D9EFF;');
+      bBanner.addEventListener('click', function(){ setCampaignBanner(c.id, !c.is_campaign); });
+      card.appendChild(bBanner);
       var row=document.createElement('div');
       row.style.cssText='display:flex;gap:6px;';
       var bT=document.createElement('button');
@@ -8200,6 +8254,19 @@ async function deletePromoCode(id, code){
     if(r&&r.error) throw r.error;
     loadAdminPromos();
   } catch(e){ alert('Could not delete: '+(e.message||'failed')); }
+}
+async function setCampaignBanner(id, makeOn){
+  try {
+    if(makeOn){
+      var cur = await db.from('promo_codes').select('id').eq('is_campaign', true);
+      var ids = ((cur&&cur.data)||[]).map(function(x){return x.id;}).filter(function(x){return x!==id;});
+      for(var i=0;i<ids.length;i++){ await db.from('promo_codes').update({is_campaign:false}).eq('id', ids[i]); }
+      await db.from('promo_codes').update({is_campaign:true}).eq('id', id);
+    } else {
+      await db.from('promo_codes').update({is_campaign:false}).eq('id', id);
+    }
+    loadAdminPromos();
+  } catch(e){ alert('Could not update banner: '+(e.message||'failed')); }
 }
 
 function lockMT5Form(locked) {
@@ -8501,6 +8568,18 @@ function showMT5ConnNotice(kind, reason) {
       <div id="promo-msg" style="display:none;font-size:11.5px;margin-top:9px;line-height:1.4;text-align:left;"></div>
     </div>
     <button onclick="closeDepositPopup()" style="width:100%;background:transparent;border:none;color:var(--text3);padding:10px;font-size:13px;cursor:pointer;margin-top:8px;">Maybe later</button>
+  </div>
+</div>
+<div id="campaign-banner" style="display:none;position:fixed;inset:0;z-index:99998;background:rgba(0,0,0,0.7);align-items:center;justify-content:center;padding:20px;">
+  <div style="background:var(--bg2);border:0.5px solid var(--border);border-radius:18px;max-width:340px;width:100%;overflow:hidden;position:relative;">
+    <i class="ti ti-x" onclick="dismissCampaignBanner()" style="position:absolute;top:12px;right:12px;font-size:18px;color:#fff;background:rgba(0,0,0,0.45);border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2;"></i>
+    <img id="campaign-banner-img" alt="" style="width:100%;display:block;aspect-ratio:1/1;object-fit:cover;background:var(--bg3);" />
+    <div style="padding:18px 18px 20px;text-align:center;">
+      <div id="campaign-banner-title" style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:4px;">Limited offer</div>
+      <div id="campaign-banner-sub" style="font-size:12.5px;color:var(--text3);margin-bottom:14px;">Claim your free premium access</div>
+      <div id="campaign-banner-msg" style="display:none;font-size:12px;margin-bottom:10px;line-height:1.4;"></div>
+      <button class="auth-btn" id="campaign-claim-btn" onclick="claimCampaign()" style="background:var(--grad);">Claim now</button>
+    </div>
   </div>
 </div>
 </body>
