@@ -2552,7 +2552,7 @@ html[data-theme="light"] .theme-switch .knob { left: 22px; }
       <!-- ── ANNOUNCEMENTS TAB ── -->
       <div id="atab-content-announce" style="display:none;">
         <div class="section-card" style="margin-bottom:12px;">
-          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">POST ANNOUNCEMENT <span style="color:var(--green);">&middot; v7 campaign-promo</span></div>
+          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">POST ANNOUNCEMENT <span style="color:var(--green);">&middot; v8 mt5-prompt</span></div>
           <div class="auth-field">
             <label class="auth-label">Title</label>
             <input id="ann-title" class="auth-input" type="text" placeholder="Announcement title">
@@ -2907,7 +2907,7 @@ html[data-theme="light"] .theme-switch .knob { left: 22px; }
       <!-- Sign Out -->
 
       <!-- MT5 Connection -->
-      <div class="section-card" style="margin-bottom:14px;">
+      <div class="section-card" id="mt5-connect-section" style="margin-bottom:14px;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
           <div style="font-family:Orbitron,sans-serif;font-size:12px;font-weight:800;color:var(--text);">ADD MT5 ACCOUNT</div>
           <div id="mt5-status-badge" style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:5px;background:rgba(255,176,32,0.12);color:var(--amber);">NOT CONNECTED</div>
@@ -4478,7 +4478,7 @@ function updateDepositBanner(){
 async function redeemPromo(code){
   code = (code||'').trim().toUpperCase();
   if(!code) return {ok:false,msg:'Enter a promo code.'};
-  if(!activeAccount || !activeAccount.id) return {ok:false,msg:'Connect your MT5 account first.'};
+  if(!activeAccount || !activeAccount.id) return {ok:false,msg:'Connect your MT5 account first.',needMt5:true};
   try {
     var _claim = await userPromoClaim();
     if(_claim){
@@ -4592,6 +4592,8 @@ async function applyProfilePromo(){
   if(!inp.value.trim()){ show('Enter a promo code.', false); return; }
   if(btn){ btn.textContent='...'; btn.disabled=true; }
   var r = await redeemPromo(inp.value);
+  if(btn){ btn.textContent='Apply'; btn.disabled=false; }
+  if(r.needMt5){ showMt5ConnectPrompt(); return; }
   show(r.msg, r.ok);
   if(btn){ btn.textContent='Apply'; }
   if(r.ok){
@@ -4663,12 +4665,28 @@ async function claimCampaign(){
   if(!code){ show('Enter your promo code.', false); return; }
   if(btn){ btn.textContent='Claiming...'; btn.disabled=true; }
   var r=await redeemPromo(code);
-  show(r.msg, r.ok);
   if(btn){ btn.textContent='Claim now'; btn.disabled=false; }
+  if(r.needMt5){ showMt5ConnectPrompt(); return; }
+  show(r.msg, r.ok);
   if(r.ok){
     if(inp) inp.value='';
     setTimeout(function(){ if(_campaignTimer){ clearInterval(_campaignTimer); _campaignTimer=null; } var b=document.getElementById('campaign-banner'); if(b) b.style.display='none'; updateDepositBanner(); }, 1600);
   }
+}
+// ---- Connect-MT5 prompt (used when a promo claim has no MT5 account) ----
+function showMt5ConnectPrompt(){ var p=document.getElementById('mt5-connect-prompt'); if(p) p.style.display='flex'; }
+function mt5PromptLater(){ var p=document.getElementById('mt5-connect-prompt'); if(p) p.style.display='none'; }
+function mt5PromptConnectNow(){
+  var p=document.getElementById('mt5-connect-prompt'); if(p) p.style.display='none';
+  if(_campaignTimer){ clearInterval(_campaignTimer); _campaignTimer=null; }
+  var cb=document.getElementById('campaign-banner'); if(cb) cb.style.display='none';
+  try{ if(typeof closeHeaderDropdowns==='function') closeHeaderDropdowns(); }catch(e){}
+  if(typeof showSubScreen==='function') showSubScreen('sub-profile');
+  setTimeout(function(){
+    var sec=document.getElementById('mt5-connect-section');
+    if(sec && sec.scrollIntoView){ try{ sec.scrollIntoView({behavior:'smooth',block:'center'}); }catch(e){ sec.scrollIntoView(); } }
+    var idi=document.getElementById('profile-mt5-id'); if(idi){ try{ idi.focus(); }catch(e){} }
+  }, 350);
 }
 function switchTab(tab) {
   if(_premiumTabs.indexOf(tab)>=0 && !premiumGate()) return;
@@ -8805,6 +8823,16 @@ function showMT5ConnNotice(kind, reason) {
       <div id="campaign-banner-msg" style="display:none;font-size:12px;margin-bottom:10px;line-height:1.4;"></div>
       <button class="auth-btn" id="campaign-claim-btn" onclick="claimCampaign()" style="background:var(--grad);">Claim now</button>
     </div>
+  </div>
+</div>
+<!-- Connect-MT5 prompt (shown when a promo claim needs an MT5 account) -->
+<div id="mt5-connect-prompt" style="display:none;position:fixed;inset:0;z-index:100000;background:rgba(0,0,0,0.7);align-items:center;justify-content:center;padding:20px;">
+  <div style="background:var(--bg2);border:0.5px solid var(--border);border-radius:18px;max-width:330px;width:100%;padding:24px 20px;text-align:center;position:relative;">
+    <div style="width:54px;height:54px;border-radius:14px;background:var(--grad);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;"><i class="ti ti-plug-connected" style="font-size:26px;color:#fff;"></i></div>
+    <div style="font-size:17px;font-weight:700;color:var(--text);margin-bottom:6px;">Connect your MT5 account</div>
+    <div style="font-size:12.5px;color:var(--text3);line-height:1.6;margin-bottom:18px;">You need a connected MT5 account before you can claim this promo. Connect now to unlock your premium access.</div>
+    <button class="auth-btn" onclick="mt5PromptConnectNow()" style="background:var(--grad);margin-bottom:8px;">Connect now</button>
+    <button onclick="mt5PromptLater()" style="width:100%;background:transparent;border:none;color:var(--text3);padding:10px;font-size:13px;cursor:pointer;">Connect later</button>
   </div>
 </div>
 <div id="announcement-popup" style="display:none;position:fixed;inset:0;z-index:99997;background:rgba(0,0,0,0.7);align-items:center;justify-content:center;padding:20px;">
