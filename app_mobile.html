@@ -780,8 +780,8 @@ html[data-theme="light"] .theme-switch .knob { left: 22px; }
   color: var(--red);
 }
 .sig-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
+  background: linear-gradient(160deg, #20202a, #141418);
+  border: 1px solid rgba(255,255,255,0.1);
   border-radius: 14px;
   padding: 14px;
   margin-bottom: 10px;
@@ -791,6 +791,8 @@ html[data-theme="light"] .theme-switch .knob { left: 22px; }
   align-items: center;
   gap: 10px;
   margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
 }
 .sig-card-icon {
   width: 40px; height: 40px;
@@ -802,8 +804,8 @@ html[data-theme="light"] .theme-switch .knob { left: 22px; }
   font-size: 18px;
   flex-shrink: 0;
 }
-.sig-card-icon.buy { background: rgba(0,200,122,0.12); }
-.sig-card-icon.sell { background: rgba(255,30,60,0.1); }
+.sig-card-icon.buy { background: #0f9d63; }
+.sig-card-icon.sell { background: #d12a3a; }
 .sig-card-pair { font-size: 15px; font-weight: 800; color: var(--text); }
 .sig-card-time { font-size: 11px; color: var(--text3); margin-top: 1px; }
 .sig-card-dir {
@@ -836,10 +838,16 @@ html[data-theme="light"] .theme-switch .knob { left: 22px; }
 }
 .sig-level-wide .sig-level-lbl { margin-bottom: 0; }
 .sig-level {
-  background: var(--bg3);
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.09);
   border-radius: 8px;
-  padding: 8px 9px;
+  padding: 8px 10px;
 }
+.sig-level.lv-sl { border-left: 2px solid var(--red); }
+.sig-level.lv-tp { border-left: 2px solid var(--green); }
+html[data-theme="light"] .sig-card { background: linear-gradient(160deg, #ffffff, #f3f4f7); border-color: rgba(0,0,0,0.08); }
+html[data-theme="light"] .sig-card-top { border-bottom-color: rgba(0,0,0,0.07); }
+html[data-theme="light"] .sig-level { background: rgba(0,0,0,0.03); border-color: rgba(0,0,0,0.09); }
 .sig-level-lbl { font-size: 8px; color: var(--text3); letter-spacing: 0.6px; text-transform: uppercase; margin-bottom: 4px; }
 .sig-level-val { font-size: 13px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .sig-level-val.sl { color: var(--red); }
@@ -2585,7 +2593,7 @@ html[data-theme="light"] .theme-switch .knob { left: 22px; }
       <!-- ── ANNOUNCEMENTS TAB ── -->
       <div id="atab-content-announce" style="display:none;">
         <div class="section-card" style="margin-bottom:12px;">
-          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">POST ANNOUNCEMENT <span style="color:var(--green);">&middot; v12 entry-fullrow</span></div>
+          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">POST ANNOUNCEMENT <span style="color:var(--green);">&middot; v13 card-polish</span></div>
           <div class="auth-field">
             <label class="auth-label">Title</label>
             <input id="ann-title" class="auth-input" type="text" placeholder="Announcement title">
@@ -4838,7 +4846,7 @@ async function loadSignalsFeed() {
       top.className = 'sig-card-top';
       var icon = document.createElement('div');
       icon.className = 'sig-card-icon ' + dir;
-      icon.innerHTML = '<i class="ti ti-trending-'+(dir==='buy'?'up':'down')+'" style="color:'+(dir==='buy'?'var(--green)':'var(--red)')+';font-size:20px;"></i>';
+      icon.innerHTML = '<i class="ti ti-trending-'+(dir==='buy'?'up':'down')+'" style="color:#fff;font-size:20px;"></i>';
       var info = document.createElement('div');
       var pairEl = document.createElement('div');
       pairEl.className = 'sig-card-pair';
@@ -4865,7 +4873,7 @@ async function loadSignalsFeed() {
       levels.className = 'sig-card-levels';
       var _entryZone = fmtPrice(sig.pair, sig.entry_from) + ' – ' + fmtPrice(sig.pair, sig.entry_to);
       function _mkLevel(lbl, val, cls){
-        var lbox=document.createElement('div'); lbox.className='sig-level';
+        var lbox=document.createElement('div'); lbox.className='sig-level'+(cls===' sl'?' lv-sl':cls===' tp'?' lv-tp':'');
         var llbl=document.createElement('div'); llbl.className='sig-level-lbl'; llbl.textContent=lbl;
         var lval=document.createElement('div'); lval.className='sig-level-val'+cls; lval.textContent=(val||'--');
         lbox.appendChild(llbl); lbox.appendChild(lval); return lbox;
