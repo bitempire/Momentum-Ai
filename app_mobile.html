@@ -4524,9 +4524,25 @@ async function checkCampaignBanner(){
     var s=document.getElementById('campaign-banner-sub'); if(s) s.textContent='Claim '+(c.access_days||3)+' days premium free';
     var m=document.getElementById('campaign-banner-msg'); if(m){ m.style.display='none'; m.textContent=''; }
     b.style.display='flex';
+    startCampaignCountdown();
   } catch(e){}
 }
-function dismissCampaignBanner(){ try{ sessionStorage.setItem('momentum_campaign_dismissed','1'); }catch(e){} var b=document.getElementById('campaign-banner'); if(b) b.style.display='none'; }
+var _campaignTimer=null;
+function startCampaignCountdown(){
+  var cd=document.getElementById('campaign-countdown');
+  var x=document.getElementById('campaign-close-x');
+  if(!cd||!x) return;
+  if(_campaignTimer){ clearInterval(_campaignTimer); _campaignTimer=null; }
+  var n=5;
+  cd.style.display='flex'; cd.textContent=n;
+  x.style.display='none';
+  _campaignTimer=setInterval(function(){
+    n--;
+    if(n<=0){ clearInterval(_campaignTimer); _campaignTimer=null; cd.style.display='none'; x.style.display='flex'; }
+    else { cd.textContent=n; }
+  },1000);
+}
+function dismissCampaignBanner(){ if(_campaignTimer){ clearInterval(_campaignTimer); _campaignTimer=null; } try{ sessionStorage.setItem('momentum_campaign_dismissed','1'); }catch(e){} var b=document.getElementById('campaign-banner'); if(b) b.style.display='none'; }
 async function claimCampaign(){
   if(!_campaignCode) return;
   var btn=document.getElementById('campaign-claim-btn');
@@ -4536,7 +4552,7 @@ async function claimCampaign(){
   var r=await redeemPromo(_campaignCode);
   show(r.msg, r.ok);
   if(btn){ btn.textContent='Claim now'; btn.disabled=false; }
-  if(r.ok){ setTimeout(function(){ var b=document.getElementById('campaign-banner'); if(b) b.style.display='none'; updateDepositBanner(); }, 1600); }
+  if(r.ok){ setTimeout(function(){ if(_campaignTimer){ clearInterval(_campaignTimer); _campaignTimer=null; } var b=document.getElementById('campaign-banner'); if(b) b.style.display='none'; updateDepositBanner(); }, 1600); }
 }
 function switchTab(tab) {
   if(_premiumTabs.indexOf(tab)>=0 && !premiumGate()) return;
@@ -8571,7 +8587,10 @@ function showMT5ConnNotice(kind, reason) {
 </div>
 <div id="campaign-banner" style="display:none;position:fixed;inset:0;z-index:99998;background:rgba(0,0,0,0.7);align-items:center;justify-content:center;padding:20px;">
   <div style="background:var(--bg2);border:0.5px solid var(--border);border-radius:18px;max-width:340px;width:100%;overflow:hidden;position:relative;">
-    <i class="ti ti-x" onclick="dismissCampaignBanner()" style="position:absolute;top:12px;right:12px;font-size:18px;color:#fff;background:rgba(0,0,0,0.45);border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2;"></i>
+    <div style="position:absolute;top:12px;right:12px;z-index:2;">
+      <span id="campaign-countdown" style="font-size:12px;font-weight:700;color:#fff;background:rgba(0,0,0,0.55);border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;">5</span>
+      <i id="campaign-close-x" class="ti ti-x" onclick="dismissCampaignBanner()" style="display:none;font-size:18px;color:#fff;background:rgba(0,0,0,0.45);border-radius:50%;width:30px;height:30px;align-items:center;justify-content:center;cursor:pointer;"></i>
+    </div>
     <img id="campaign-banner-img" alt="" style="width:100%;display:block;aspect-ratio:1/1;object-fit:cover;background:var(--bg3);" />
     <div style="padding:18px 18px 20px;text-align:center;">
       <div id="campaign-banner-title" style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:4px;">Limited offer</div>
