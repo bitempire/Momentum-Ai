@@ -2729,7 +2729,7 @@ html[data-theme="light"] .theme-switch .knob { left: 22px; }
           </button>
         </div>
         <div style="font-size:16px;font-weight:800;color:var(--text);" id="profile-name-display">Trader</div>
-        <div style="font-size:12px;color:var(--text3);margin-top:2px;" id="profile-role-display">Premium User</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:2px;" id="profile-role-display">Basic User</div>
         <div style="font-size:10px;color:var(--text3);margin-top:4px;">Tap pencil to change avatar</div>
       </div>
 
@@ -2772,7 +2772,7 @@ html[data-theme="light"] .theme-switch .knob { left: 22px; }
           </div>
           <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">
             <span style="font-size:12px;color:var(--text3);">Plan</span>
-            <span style="font-size:12px;font-weight:700;padding:3px 10px;background:var(--grad);color:#fff;border-radius:5px;font-family:'Orbitron',sans-serif;font-size:10px;">PREMIUM</span>
+            <span id="profile-plan" style="font-size:12px;font-weight:700;padding:3px 10px;background:rgba(255,255,255,0.06);color:var(--text2);border-radius:5px;font-family:'Orbitron',sans-serif;font-size:10px;">BASIC</span>
           </div>
           <div style="display:flex;justify-content:space-between;padding:10px 0;">
             <span style="font-size:12px;color:var(--text3);">Status</span>
@@ -4128,7 +4128,7 @@ function enterApp(user) {
     var profStatus = document.getElementById('profile-status');
     if(profAv) profAv.textContent = name.substring(0,2).toUpperCase();
     if(profName) profName.textContent = user.name || user.username || 'Trader';
-    if(profRole) profRole.textContent = user.role === 'admin' ? 'Super Admin' : user.role === 'analyst' ? 'Analyst' : 'Premium User';
+    if(profRole) profRole.textContent = user.role === 'admin' ? 'Super Admin' : user.role === 'analyst' ? 'Analyst' : (isPremiumUser() ? 'Premium User' : 'Basic User');
     if(profUser) profUser.textContent = '@' + (user.username || '--');
     if(profEmail) profEmail.textContent = user.email || '--';
     if(profMt5) profMt5.textContent = user.mt5_id || '--';
@@ -4250,11 +4250,17 @@ function toggleAvatarDropdown(e) {
   var name = (currentUser && (currentUser.name||currentUser.username)) || 'Trader';
   var initials = name.substring(0,2).toUpperCase();
   var role = currentUser ? currentUser.role : '';
-  var isPremium = !(role==='admin'||role==='analyst'||role==='sub_admin');
+  var isStaff = (role==='admin'||role==='analyst'||role==='sub_admin');
   var roleLbl = role==='admin' ? 'Super Admin' : role==='analyst' ? 'Analyst' : role==='sub_admin' ? 'Sub Admin' : '';
-  var topRight = isPremium
-    ? '<span class="avtr-badge"><i class="ti ti-crown" style="font-size:10px;"></i>PREMIUM</span>'
-    : '<span class="avtr-badge" style="background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.15);color:var(--text2);font-family:Sora,sans-serif;">'+roleLbl+'</span>';
+  var basicBadge = '<span class="avtr-badge" style="background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.15);color:var(--text2);font-family:Sora,sans-serif;">BASIC</span>';
+  var topRight;
+  if(isStaff){
+    topRight = '<span class="avtr-badge" style="background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.15);color:var(--text2);font-family:Sora,sans-serif;">'+roleLbl+'</span>';
+  } else if(isPremiumUser()){
+    topRight = '<span class="avtr-badge"><i class="ti ti-crown" style="font-size:10px;"></i>PREMIUM</span>';
+  } else {
+    topRight = basicBadge;
+  }
   var isLight = document.documentElement.getAttribute('data-theme')==='light';
   var html = '<div class="avtr-user">'+
       '<div class="app-header-avatar" style="width:38px;height:38px;font-size:13px;">'+initials+'</div>'+
@@ -5316,7 +5322,10 @@ function loadProfileData() {
   var nameDisplay = document.getElementById('profile-name-display');
   if(nameDisplay) nameDisplay.textContent = name;
   var roleDisplay = document.getElementById('profile-role-display');
-  if(roleDisplay) roleDisplay.textContent = (currentUser.role || 'Premium User').charAt(0).toUpperCase() + (currentUser.role || 'premium user').slice(1);
+  if(roleDisplay){
+    var _r = currentUser.role;
+    roleDisplay.textContent = _r==='admin' ? 'Super Admin' : _r==='analyst' ? 'Analyst' : _r==='sub_admin' ? 'Sub Admin' : (isPremiumUser() ? 'Premium User' : 'Basic User');
+  }
   
   // Update info fields
   var nameVal = document.getElementById('profile-name-val');
@@ -5334,6 +5343,13 @@ function loadProfileData() {
     statusEl.textContent = (currentUser.status || 'Active').charAt(0).toUpperCase() + (currentUser.status || 'active').slice(1);
     statusEl.style.color = currentUser.status === 'active' ? 'var(--green)' : 'var(--amber)';
     statusEl.style.background = currentUser.status === 'active' ? 'rgba(0,200,122,0.1)' : 'rgba(255,176,32,0.1)';
+  }
+  var planEl = document.getElementById('profile-plan');
+  if(planEl){
+    var _prem = isPremiumUser();
+    planEl.textContent = _prem ? 'PREMIUM' : 'BASIC';
+    planEl.style.background = _prem ? 'var(--grad)' : 'rgba(255,255,255,0.06)';
+    planEl.style.color = _prem ? '#fff' : 'var(--text2)';
   }
 }
 
