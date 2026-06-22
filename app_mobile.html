@@ -1465,6 +1465,16 @@ html[data-theme="light"] .theme-switch .knob { left: 22px; }
   <!-- MAIN CONTENT AREA -->
   <div class="app-content" id="app-content">
 
+    <!-- Deposit-now banner (shows to not-yet-funded users; hides at balance >= $100) -->
+    <div id="deposit-banner" style="display:none;position:sticky;top:0;z-index:50;margin:0 0 10px;">
+      <div style="display:flex;align-items:center;gap:11px;background:rgba(240,178,50,0.12);border:0.5px solid rgba(240,178,50,0.32);border-radius:12px;padding:11px 12px;backdrop-filter:blur(8px);">
+        <i class="ti ti-crown" style="font-size:20px;color:var(--gold);flex-shrink:0;"></i>
+        <div style="flex:1;line-height:1.3;"><div style="font-size:13px;font-weight:700;color:var(--text);">Unlock Premium</div><div style="font-size:11px;color:var(--text2);">Deposit $100 to activate</div></div>
+        <div onclick="openDepositPage()" style="font-size:12px;font-weight:700;color:#1a1405;background:var(--gold);padding:7px 13px;border-radius:8px;flex-shrink:0;cursor:pointer;">Deposit</div>
+        <i class="ti ti-x" onclick="dismissDepositBanner()" style="font-size:15px;color:var(--text3);flex-shrink:0;cursor:pointer;"></i>
+      </div>
+    </div>
+
     <!-- ── TAB: DASHBOARD ── -->
     <div id="tab-dashboard" class="app-tab active" style="display:block;">
       <!-- Welcome card -->
@@ -4173,6 +4183,7 @@ async function loadActiveAccount() {
   } catch(e) { console.warn('loadActiveAccount:', e.message); }
   renderHeaderSwitcher();
   loadAccountStats();
+  updateDepositBanner();
 }
 
 function renderHeaderSwitcher() {
@@ -4237,6 +4248,7 @@ async function selectAccount(accId) {
     activeAccount = a;
     renderHeaderSwitcher();
     loadAccountStats();
+    updateDepositBanner();
     // Reload settings for new account
     window._eaSettings = {};
     loadEASettings();
@@ -4376,6 +4388,16 @@ function premiumGate(){ if(isPremiumUser()) return true; showDepositPopup(); ret
 function openDepositPage(){ try{ window.open(BROKER_DEPOSIT_URL,'_blank'); }catch(e){} }
 function showDepositPopup(){ var m=document.getElementById('deposit-popup'); if(m) m.style.display='flex'; }
 function closeDepositPopup(){ var m=document.getElementById('deposit-popup'); if(m) m.style.display='none'; }
+function depositBannerDismissed(){ try{ return sessionStorage.getItem('momentum_deposit_banner_dismissed')==='1'; }catch(e){ return false; } }
+function dismissDepositBanner(){ try{ sessionStorage.setItem('momentum_deposit_banner_dismissed','1'); }catch(e){} var b=document.getElementById('deposit-banner'); if(b) b.style.display='none'; }
+function updateDepositBanner(){
+  var b=document.getElementById('deposit-banner'); if(!b) return;
+  var role = currentUser ? currentUser.role : '';
+  var isStaff = (role==='admin'||role==='analyst'||role==='sub_admin');
+  var funded = activeAccount && activeAccount.balance!=null && activeAccount.balance!=='' && parseFloat(activeAccount.balance) >= 100;
+  if(!currentUser || isStaff || funded || depositBannerDismissed()){ b.style.display='none'; return; }
+  b.style.display='block';
+}
 function switchTab(tab) {
   if(_premiumTabs.indexOf(tab)>=0 && !premiumGate()) return;
   document.querySelectorAll('.app-tab').forEach(function(t) { 
@@ -5837,7 +5859,7 @@ async function refreshActiveBalance() {
   try {
     var res = await db.from('mt5_accounts').select('*').eq('id', activeAccount.id).single();
     var d = res && res.data; var a = Array.isArray(d) ? d[0] : d;
-    if(a) { activeAccount = a; loadAccountStats(); }
+    if(a) { activeAccount = a; loadAccountStats(); updateDepositBanner(); }
   } catch(e) {}
 }
 
