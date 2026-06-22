@@ -25,6 +25,7 @@
   --red2: #C40024;
   --green: #00c87a;
   --amber: #ffb020;
+  --blue: #3B82F6;
   --bg: #07070a;
   --bg2: #0d0b14;
   --bg3: #100e18;
@@ -2772,7 +2773,7 @@ html[data-theme="light"] .theme-switch .knob { left: 22px; }
           </div>
           <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">
             <span style="font-size:12px;color:var(--text3);">Plan</span>
-            <span id="profile-plan" style="font-size:12px;font-weight:700;padding:3px 10px;background:rgba(255,255,255,0.06);color:var(--text2);border-radius:5px;font-family:'Orbitron',sans-serif;font-size:10px;">BASIC</span>
+            <span id="profile-plan" style="font-size:12px;font-weight:700;padding:3px 10px;background:rgba(59,130,246,0.13);color:var(--blue);border-radius:5px;font-family:'Orbitron',sans-serif;font-size:10px;">BASIC</span>
           </div>
           <div style="display:flex;justify-content:space-between;padding:10px 0;">
             <span style="font-size:12px;color:var(--text3);">Status</span>
@@ -4252,7 +4253,7 @@ function toggleAvatarDropdown(e) {
   var role = currentUser ? currentUser.role : '';
   var isStaff = (role==='admin'||role==='analyst'||role==='sub_admin');
   var roleLbl = role==='admin' ? 'Super Admin' : role==='analyst' ? 'Analyst' : role==='sub_admin' ? 'Sub Admin' : '';
-  var basicBadge = '<span class="avtr-badge" style="background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.15);color:var(--text2);font-family:Sora,sans-serif;">BASIC</span>';
+  var basicBadge = '<span class="avtr-badge" style="background:rgba(59,130,246,0.13);border-color:rgba(59,130,246,0.35);color:var(--blue);font-family:Sora,sans-serif;">BASIC</span>';
   var topRight;
   if(isStaff){
     topRight = '<span class="avtr-badge" style="background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.15);color:var(--text2);font-family:Sora,sans-serif;">'+roleLbl+'</span>';
@@ -5348,8 +5349,8 @@ function loadProfileData() {
   if(planEl){
     var _prem = isPremiumUser();
     planEl.textContent = _prem ? 'PREMIUM' : 'BASIC';
-    planEl.style.background = _prem ? 'var(--grad)' : 'rgba(255,255,255,0.06)';
-    planEl.style.color = _prem ? '#fff' : 'var(--text2)';
+    planEl.style.background = _prem ? 'var(--grad)' : 'rgba(59,130,246,0.13)';
+    planEl.style.color = _prem ? '#fff' : 'var(--blue)';
   }
 }
 
