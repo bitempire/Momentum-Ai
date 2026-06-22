@@ -4351,7 +4351,25 @@ function handleLogout() {
 }
 
 // ── TABS ──
+// ── PREMIUM GATE ──
+var BROKER_DEPOSIT_URL = 'https://client.afttmarkets.com/funds/deposit';
+var _premiumScreens = ['sub-scanner','sub-leaderboard','sub-smart-tool','sub-auto-trade'];
+var _premiumTabs = ['journal'];
+function isPremiumUser(){
+  var a=(typeof activeAccount!=='undefined'&&activeAccount)?activeAccount:null;
+  if(!a) return false;
+  if(a.premium_manual) return true;
+  if(a.premium_until && new Date(a.premium_until) > new Date()) return true;
+  if(a.premium_status && ['active','trial','promo','provisional','premium'].indexOf(a.premium_status)>=0) return true;
+  if(a.balance!=null && parseFloat(a.balance) >= 100) return true;
+  return false;
+}
+function premiumGate(){ if(isPremiumUser()) return true; showDepositPopup(); return false; }
+function openDepositPage(){ try{ window.open(BROKER_DEPOSIT_URL,'_blank'); }catch(e){} }
+function showDepositPopup(){ var m=document.getElementById('deposit-popup'); if(m) m.style.display='flex'; }
+function closeDepositPopup(){ var m=document.getElementById('deposit-popup'); if(m) m.style.display='none'; }
 function switchTab(tab) {
+  if(_premiumTabs.indexOf(tab)>=0 && !premiumGate()) return;
   document.querySelectorAll('.app-tab').forEach(function(t) { 
     t.classList.remove('active');
     t.style.display = 'none';
@@ -4375,6 +4393,7 @@ function switchTab(tab) {
 var _subScreenParent = {};
 var _subScreenStack = [];
 function showSubScreenFrom(id, parentId) {
+  if(_premiumScreens.indexOf(id)>=0 && !premiumGate()) return;
   _subScreenParent[id] = parentId;
   // Hide parent first so screens don't stack
   var parentEl = document.getElementById(parentId);
@@ -4393,6 +4412,7 @@ function goBackSubScreen(id) {
   // if parent is 'more' or undefined/null, just hide — More tab already visible
 }
 function showSubScreen(id) {
+  if(_premiumScreens.indexOf(id)>=0 && !premiumGate()) return;
   var el = document.getElementById(id);
   if(el) { el.classList.add('active'); }
   if(id==='sub-admin') { switchAdminTab('dashboard'); }
@@ -8136,6 +8156,16 @@ function showMT5ConnNotice(kind, reason) {
     <div id="rpm-note" style="display:none;font-size:11px;color:var(--amber);margin-top:12px;line-height:1.5;background:rgba(255,176,32,0.06);border-radius:8px;padding:10px;">Deposit $100 within 24h of connecting your MT5 to keep Premium, otherwise it switches to Basic.</div>
     <button class="auth-btn" id="rpm-continue" style="margin-top:18px;" onclick="submitRegister()">Continue</button>
     <button onclick="closeRegPlan()" style="width:100%;background:transparent;border:none;color:var(--text3);padding:10px;font-size:13px;cursor:pointer;margin-top:4px;">Back</button>
+  </div>
+</div>
+<div id="deposit-popup" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.65);align-items:center;justify-content:center;padding:20px;">
+  <div style="background:var(--bg2);border:0.5px solid var(--border);border-radius:18px;padding:24px 20px;max-width:320px;width:100%;text-align:center;position:relative;">
+    <i class="ti ti-x" onclick="closeDepositPopup()" style="position:absolute;top:14px;right:14px;font-size:18px;color:var(--text3);cursor:pointer;"></i>
+    <div style="width:54px;height:54px;border-radius:14px;background:var(--grad);display:flex;align-items:center;justify-content:center;margin:4px auto 14px;"><i class="ti ti-crown" style="font-size:28px;color:#fff;"></i></div>
+    <div style="font-size:17px;font-weight:700;color:var(--text);margin-bottom:6px;">Premium feature</div>
+    <div style="font-size:12.5px;color:var(--text3);line-height:1.6;margin-bottom:16px;">Deposit $100 to unlock auto-trade, the MAI Scanner, smart tool, journal and leaderboard.</div>
+    <button class="auth-btn" onclick="openDepositPage()" style="background:var(--grad);">Deposit now</button>
+    <button onclick="closeDepositPopup()" style="width:100%;background:transparent;border:none;color:var(--text3);padding:10px;font-size:13px;cursor:pointer;margin-top:4px;">Maybe later</button>
   </div>
 </div>
 </body>
