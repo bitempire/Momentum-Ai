@@ -2552,7 +2552,7 @@ html[data-theme="light"] .theme-switch .knob { left: 22px; }
       <!-- ── ANNOUNCEMENTS TAB ── -->
       <div id="atab-content-announce" style="display:none;">
         <div class="section-card" style="margin-bottom:12px;">
-          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">POST ANNOUNCEMENT <span style="color:var(--green);">&middot; v4 active-popup</span></div>
+          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">POST ANNOUNCEMENT <span style="color:var(--green);">&middot; v5 profile-promo</span></div>
           <div class="auth-field">
             <label class="auth-label">Title</label>
             <input id="ann-title" class="auth-input" type="text" placeholder="Announcement title">
@@ -2840,6 +2840,17 @@ html[data-theme="light"] .theme-switch .knob { left: 22px; }
             <span style="font-size:12px;font-weight:700;padding:3px 10px;background:rgba(0,200,122,0.1);color:var(--green);border-radius:5px;" id="profile-status">Active</span>
           </div>
         </div>
+      </div>
+
+      <!-- Promo Code -->
+      <div class="section-card" style="margin-bottom:12px;">
+        <div class="section-title" style="font-size:13px;margin-bottom:6px;">Promo <span>Code</span></div>
+        <div style="font-size:11px;color:var(--text3);line-height:1.5;margin-bottom:12px;">Have a code? Redeem it to unlock Premium. One promo per MT5 account.</div>
+        <div style="display:flex;gap:8px;">
+          <input id="profile-promo-input" type="text" placeholder="No active promo" disabled style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-size:13px;text-transform:uppercase;opacity:0.45;cursor:not-allowed;" />
+          <button id="profile-promo-btn" onclick="applyProfilePromo()" disabled style="font-size:12px;font-weight:700;padding:10px 16px;background:rgba(240,178,50,0.13);border:1px solid rgba(240,178,50,0.3);border-radius:8px;color:var(--gold);cursor:not-allowed;white-space:nowrap;opacity:0.45;">Apply</button>
+        </div>
+        <div id="profile-promo-msg" style="display:none;font-size:11px;margin-top:8px;line-height:1.4;"></div>
       </div>
 
       <!-- Security -->
@@ -4468,6 +4479,7 @@ async function redeemPromo(code){
   code = (code||'').trim().toUpperCase();
   if(!code) return {ok:false,msg:'Enter a promo code.'};
   if(!activeAccount || !activeAccount.id) return {ok:false,msg:'Connect your MT5 account first.'};
+  try { var _usedAny = await accountUsedPromo(); if(_usedAny) return {ok:false,msg:'This account has already used a promo code.'}; } catch(e){}
   try {
     var res = await db.from('promo_codes').select('*').eq('code', code);
     var rows = (res && res.data) ? res.data : [];
@@ -4501,6 +4513,79 @@ async function applyPromoCode(){
   show(r.msg, r.ok);
   if(r.ok){ inp.value=''; setTimeout(function(){ closeDepositPopup(); updateDepositBanner(); }, 1500); }
   if(btn){ btn.textContent='Apply'; btn.disabled=false; }
+}
+// ---- Profile promo code (single entry point) ----
+async function isPromoLive(){
+  if(!db) return false;
+  try {
+    var res = await db.from('promo_codes').select('code,expiry,active,max_uses,used_count').eq('active', true);
+    var rows=(res&&res.data)||[]; var now=new Date();
+    return rows.some(function(r){
+      if(r.active===false) return false;
+      if(r.expiry && new Date(r.expiry) <= now) return false;
+      if(r.max_uses!=null && r.max_uses>0 && (r.used_count||0) >= r.max_uses) return false;
+      return true;
+    });
+  } catch(e){ return false; }
+}
+async function accountUsedPromo(){
+  if(!db || !activeAccount) return false;
+  try {
+    if(activeAccount.mt5_id){
+      var r1 = await db.from('promo_redemptions').select('id').eq('mt5_id', activeAccount.mt5_id);
+      if(((r1&&r1.data)||[]).length) return true;
+    }
+    if(activeAccount.id){
+      var r2 = await db.from('promo_redemptions').select('id').eq('account_id', activeAccount.id);
+      if(((r2&&r2.data)||[]).length) return true;
+    }
+  } catch(e){}
+  return false;
+}
+async function refreshProfilePromo(){
+  var inp=document.getElementById('profile-promo-input');
+  var btn=document.getElementById('profile-promo-btn');
+  var msg=document.getElementById('profile-promo-msg');
+  if(!inp||!btn) return;
+  function lock(text){
+    inp.disabled=true; btn.disabled=true;
+    inp.style.opacity='0.45'; btn.style.opacity='0.45';
+    inp.style.cursor='not-allowed'; btn.style.cursor='not-allowed';
+    inp.value=''; inp.placeholder='No active promo';
+    if(msg){ if(text){ msg.style.display='block'; msg.textContent=text; msg.style.color='var(--text3)'; } else { msg.style.display='none'; msg.textContent=''; } }
+  }
+  function unlock(){
+    inp.disabled=false; btn.disabled=false;
+    inp.style.opacity='1'; btn.style.opacity='1';
+    inp.style.cursor='text'; btn.style.cursor='pointer';
+    inp.placeholder='Enter promo code';
+    if(msg){ msg.style.display='none'; msg.textContent=''; }
+  }
+  lock('');
+  if(!db || !currentUser || !activeAccount || !activeAccount.id){ lock('Connect your MT5 account first.'); return; }
+  try { if(await accountUsedPromo()){ lock('You have already used a promo on this account.'); return; } } catch(e){}
+  try { if(await isPromoLive()){ unlock(); } else { lock('No active promo available right now.'); } }
+  catch(e){ lock('No active promo available right now.'); }
+}
+async function applyProfilePromo(){
+  var inp=document.getElementById('profile-promo-input');
+  var btn=document.getElementById('profile-promo-btn');
+  var msg=document.getElementById('profile-promo-msg');
+  if(!inp || inp.disabled) return;
+  function show(t,ok){ if(msg){ msg.style.display='block'; msg.textContent=t; msg.style.color=ok?'var(--green)':'var(--red)'; } }
+  if(!inp.value.trim()){ show('Enter a promo code.', false); return; }
+  if(btn){ btn.textContent='...'; btn.disabled=true; }
+  var r = await redeemPromo(inp.value);
+  show(r.msg, r.ok);
+  if(btn){ btn.textContent='Apply'; }
+  if(r.ok){
+    inp.value='';
+    if(typeof loadProfileData==='function') loadProfileData();
+    if(typeof updateDepositBanner==='function') updateDepositBanner();
+    setTimeout(refreshProfilePromo, 1200);
+  } else {
+    if(btn){ btn.disabled=false; }
+  }
 }
 var _campaignCode = null;
 async function checkCampaignBanner(){
@@ -5540,6 +5625,7 @@ function loadProfileData() {
     planEl.style.background = _prem ? 'var(--grad)' : 'rgba(59,130,246,0.13)';
     planEl.style.color = _prem ? '#fff' : 'var(--blue)';
   }
+  refreshProfilePromo();
 }
 
 
@@ -8680,14 +8766,6 @@ function showMT5ConnNotice(kind, reason) {
     <div style="font-size:17px;font-weight:700;color:var(--text);margin-bottom:6px;">Premium feature</div>
     <div style="font-size:12.5px;color:var(--text3);line-height:1.6;margin-bottom:16px;">Deposit $100 to unlock auto-trade, the MAI Scanner, smart tool, journal and leaderboard.</div>
     <button class="auth-btn" onclick="openDepositPage()" style="background:var(--grad);">Deposit now</button>
-    <div id="promo-section" style="display:none;">
-      <div style="display:flex;align-items:center;gap:8px;margin:14px 0 10px;"><div style="flex:1;height:1px;background:var(--border);"></div><div style="font-size:11px;color:var(--text3);">or</div><div style="flex:1;height:1px;background:var(--border);"></div></div>
-      <div style="display:flex;gap:6px;">
-        <input id="promo-code-input" type="text" placeholder="Enter promo code" style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:9px 11px;color:var(--text);font-size:13px;text-transform:uppercase;" />
-        <button onclick="applyPromoCode()" id="promo-apply-btn" style="font-size:12px;font-weight:700;padding:9px 14px;background:rgba(240,178,50,0.13);border:1px solid rgba(240,178,50,0.3);border-radius:8px;color:var(--gold);cursor:pointer;white-space:nowrap;">Apply</button>
-      </div>
-      <div id="promo-msg" style="display:none;font-size:11.5px;margin-top:9px;line-height:1.4;text-align:left;"></div>
-    </div>
     <button onclick="closeDepositPopup()" style="width:100%;background:transparent;border:none;color:var(--text3);padding:10px;font-size:13px;cursor:pointer;margin-top:8px;">Maybe later</button>
   </div>
 </div>
