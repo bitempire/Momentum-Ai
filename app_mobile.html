@@ -632,44 +632,57 @@ html[data-theme="light"] .theme-switch .knob { left: 22px; }
 .dash-welcome {
   background: var(--grad);
   border-radius: 14px;
-  padding: 16px;
   margin-bottom: 12px;
   position: relative;
   overflow: hidden;
+  display: flex;
 }
-.dash-welcome::before {
-  content: '';
+.dash-welcome-bar {
+  width: 4px;
+  flex-shrink: 0;
+  background: linear-gradient(180deg, #FFD27A, var(--red));
+}
+.dash-welcome-body {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  padding: 13px 16px;
+}
+.dash-welcome-grid {
   position: absolute;
-  top: -30px; right: -30px;
-  width: 120px; height: 120px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.06);
+  inset: 0;
+  background-image: linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+  background-size: 22px 22px;
+  pointer-events: none;
+  z-index: 0;
 }
-.dash-welcome-label { font-size: 10px; color: rgba(255,255,255,0.6); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+.dash-welcome-content { position: relative; z-index: 1; }
+.dash-welcome-label { font-size: 10px; color: rgba(255,255,255,0.62); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 3px; }
 .dash-welcome-name {
   font-family: 'Orbitron', sans-serif;
-  font-size: 17px;
-  font-weight: 900;
+  font-size: 19px;
+  font-weight: 800;
   color: #fff;
-  margin-bottom: 2px;
-  letter-spacing: -0.5px;
+  margin-bottom: 3px;
+  letter-spacing: 0.3px;
 }
-.dash-welcome-sub { font-size: 11px; color: rgba(255,255,255,0.65); }
+.dash-welcome-sub { font-size: 11px; color: rgba(255,255,255,0.78); }
 .dash-welcome-badge {
   position: absolute;
-  top: 14px; right: 14px;
+  top: 12px; right: 14px;
   display: flex;
   align-items: center;
   gap: 4px;
   padding: 4px 9px;
-  background: rgba(255,255,255,0.15);
-  border-radius: 6px;
-  font-size: 9px;
+  border-radius: 20px;
+  font-size: 9.5px;
   font-weight: 800;
-  color: #fff;
+  letter-spacing: 0.5px;
   font-family: 'Orbitron', sans-serif;
-  letter-spacing: 1px;
+  z-index: 2;
 }
+.dash-welcome-badge.premium { background: linear-gradient(135deg,#F8CC4C,#E0982A); color: #3a2400; box-shadow: 0 0 10px rgba(240,178,50,0.5); }
+.dash-welcome-badge.basic { background: linear-gradient(135deg,#5BA3F5,#2E6FD4); color: #06203f; box-shadow: 0 0 10px rgba(59,130,246,0.45); }
 
 /* Market cards */
 .market-grid {
@@ -789,6 +802,8 @@ html[data-theme="light"] .theme-switch .knob { left: 22px; }
   font-size: 18px;
   flex-shrink: 0;
 }
+.sig-card-icon.buy { background: rgba(0,200,122,0.12); }
+.sig-card-icon.sell { background: rgba(255,30,60,0.1); }
 .sig-card-pair { font-size: 15px; font-weight: 800; color: var(--text); }
 .sig-card-time { font-size: 11px; color: var(--text3); margin-top: 1px; }
 .sig-card-dir {
@@ -1479,10 +1494,16 @@ html[data-theme="light"] .theme-switch .knob { left: 22px; }
     <div id="tab-dashboard" class="app-tab active" style="display:block;">
       <!-- Welcome card -->
       <div class="dash-welcome">
-
-        <div class="dash-welcome-label">Welcome Back</div>
-        <div class="dash-welcome-name" id="mob-username">Trader</div>
-        <div class="dash-welcome-sub">Let's accelerate your wealth today</div>
+        <div class="dash-welcome-bar"></div>
+        <div class="dash-welcome-body">
+          <div class="dash-welcome-grid"></div>
+          <span class="dash-welcome-badge basic" id="dash-tier-badge"><i class="ti ti-bolt" style="font-size:11px;" aria-hidden="true"></i>BASIC</span>
+          <div class="dash-welcome-content">
+            <div class="dash-welcome-label">Welcome Back</div>
+            <div class="dash-welcome-name" id="mob-username">Trader</div>
+            <div class="dash-welcome-sub">Let's accelerate your wealth today</div>
+          </div>
+        </div>
       </div>
       <!-- Market Overview -->
       <div class="section-title" style="margin-bottom:10px;">Market <span>Overview</span></div>
@@ -2552,7 +2573,7 @@ html[data-theme="light"] .theme-switch .knob { left: 22px; }
       <!-- ── ANNOUNCEMENTS TAB ── -->
       <div id="atab-content-announce" style="display:none;">
         <div class="section-card" style="margin-bottom:12px;">
-          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">POST ANNOUNCEMENT <span style="color:var(--green);">&middot; v8 mt5-prompt</span></div>
+          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">POST ANNOUNCEMENT <span style="color:var(--green);">&middot; v9 hero-icons</span></div>
           <div class="auth-field">
             <label class="auth-label">Title</label>
             <input id="ann-title" class="auth-input" type="text" placeholder="Announcement title">
@@ -4247,6 +4268,13 @@ async function loadActiveAccount() {
   renderHeaderSwitcher();
   loadAccountStats();
   updateDepositBanner();
+  updateWelcomeBadge();
+}
+function updateWelcomeBadge(){
+  var b=document.getElementById('dash-tier-badge'); if(!b) return;
+  var prem = (typeof isPremiumUser==='function') ? isPremiumUser() : false;
+  if(prem){ b.className='dash-welcome-badge premium'; b.innerHTML='<i class="ti ti-crown" style="font-size:11px;" aria-hidden="true"></i>PREMIUM'; }
+  else { b.className='dash-welcome-badge basic'; b.innerHTML='<i class="ti ti-bolt" style="font-size:11px;" aria-hidden="true"></i>BASIC'; }
 }
 
 function renderHeaderSwitcher() {
@@ -4760,7 +4788,7 @@ async function loadDashboardSignals() {
     container.innerHTML = res.data.map(function(sig) {
       var dir = sig.direction.toLowerCase();
       return '<div class="dash-sig-item">' +
-        '<div class="dash-sig-icon '+dir+'">'+( dir==='buy' ? '📈' : '📉' )+'</div>' +
+        '<div class="dash-sig-icon '+dir+'"><i class="ti ti-trending-'+(dir==='buy'?'up':'down')+'" style="color:'+(dir==='buy'?'var(--green)':'var(--red)')+';font-size:19px;"></i></div>' +
         '<div class="dash-sig-info"><div class="dash-sig-pair">'+sig.pair+'</div><div class="dash-sig-entry">'+fmtPrice(sig.pair,sig.entry_from)+' - '+fmtPrice(sig.pair,sig.entry_to)+'</div></div>' +
         '<div class="dash-sig-right"><div class="dash-sig-dir '+dir+'">'+sig.direction+'</div><div class="dash-sig-strength">'+sig.strength+'%</div></div>' +
         '</div>';
@@ -4797,8 +4825,8 @@ async function loadSignalsFeed() {
       var top = document.createElement('div');
       top.className = 'sig-card-top';
       var icon = document.createElement('div');
-      icon.className = 'sig-card-icon';
-      icon.textContent = dir==='buy' ? '📈' : '📉';
+      icon.className = 'sig-card-icon ' + dir;
+      icon.innerHTML = '<i class="ti ti-trending-'+(dir==='buy'?'up':'down')+'" style="color:'+(dir==='buy'?'var(--green)':'var(--red)')+';font-size:20px;"></i>';
       var info = document.createElement('div');
       var pairEl = document.createElement('div');
       pairEl.className = 'sig-card-pair';
@@ -6906,7 +6934,7 @@ function renderAnalystSignals(sigs){
     var dir=(sig.direction||'BUY').toLowerCase(),isAct=sig.status==='active';
     var card=document.createElement('div');card.style.cssText='background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:13px;margin-bottom:10px;';
     var top=document.createElement('div');top.style.cssText='display:flex;align-items:center;gap:10px;margin-bottom:10px;';
-    top.innerHTML='<div style="width:38px;height:38px;border-radius:10px;background:'+(dir==='buy'?'rgba(0,200,122,0.12)':'rgba(255,30,60,0.1)')+';display:flex;align-items:center;justify-content:center;font-size:17px;">'+(dir==='buy'?'📈':'📉')+'</div><div style="flex:1;"><div style="font-size:14px;font-weight:800;color:var(--text);">'+(sig.pair||'--')+'</div><div style="font-size:11px;color:var(--text3);">'+timeAgo(sig.created_at)+' · '+(sig.timeframe||'H4')+'</div></div><div style="padding:4px 10px;border-radius:6px;font-family:Orbitron,sans-serif;font-size:10px;font-weight:800;background:'+(dir==='buy'?'rgba(0,200,122,0.12)':'rgba(255,30,60,0.1)')+';color:'+(dir==='buy'?'var(--green)':'var(--red)')+';">'+(sig.direction||'BUY')+'</div><div style="margin-left:4px;padding:4px 10px;border-radius:6px;font-size:10px;font-weight:700;color:'+(isAct?'var(--green)':'var(--amber)')+';">'+(isAct?'ACTIVE':'INACTIVE')+'</div>';
+    top.innerHTML='<div style="width:38px;height:38px;border-radius:10px;background:'+(dir==='buy'?'rgba(0,200,122,0.12)':'rgba(255,30,60,0.1)')+';display:flex;align-items:center;justify-content:center;font-size:17px;"><i class="ti ti-trending-'+(dir==='buy'?'up':'down')+'" style="color:'+(dir==='buy'?'var(--green)':'var(--red)')+';font-size:18px;"></i></div><div style="flex:1;"><div style="font-size:14px;font-weight:800;color:var(--text);">'+(sig.pair||'--')+'</div><div style="font-size:11px;color:var(--text3);">'+timeAgo(sig.created_at)+' · '+(sig.timeframe||'H4')+'</div></div><div style="padding:4px 10px;border-radius:6px;font-family:Orbitron,sans-serif;font-size:10px;font-weight:800;background:'+(dir==='buy'?'rgba(0,200,122,0.12)':'rgba(255,30,60,0.1)')+';color:'+(dir==='buy'?'var(--green)':'var(--red)')+';">'+(sig.direction||'BUY')+'</div><div style="margin-left:4px;padding:4px 10px;border-radius:6px;font-size:10px;font-weight:700;color:'+(isAct?'var(--green)':'var(--amber)')+';">'+(isAct?'ACTIVE':'INACTIVE')+'</div>';
     card.appendChild(top);
     var lv=document.createElement('div');lv.style.cssText='display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px;';
     lv.innerHTML='<div style="background:var(--bg3);border-radius:7px;padding:7px;"><div style="font-size:9px;color:var(--text3);margin-bottom:2px;">ENTRY</div><div style="font-size:11px;font-weight:700;">'+fmtPrice(sig.pair,(sig.entry_from||'--'))+'-'+fmtPrice(sig.pair,(sig.entry_to||'--'))+'</div></div><div style="background:var(--bg3);border-radius:7px;padding:7px;"><div style="font-size:9px;color:var(--text3);margin-bottom:2px;">SL</div><div style="font-size:12px;font-weight:700;color:var(--red);">'+fmtPrice(sig.pair,(sig.sl||'--'))+'</div></div><div style="background:var(--bg3);border-radius:7px;padding:7px;"><div style="font-size:9px;color:var(--text3);margin-bottom:2px;">TP</div><div style="font-size:12px;font-weight:700;color:var(--green);">'+fmtPrice(sig.pair,(sig.tp1||'--'))+'</div></div>';
