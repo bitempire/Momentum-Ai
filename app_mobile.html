@@ -2474,6 +2474,7 @@ html[data-theme="light"] .theme-switch .knob { left: 22px; }
       <button class="admin-tab-btn" data-tab="mt5" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">MT5</button>
       <button class="admin-tab-btn" data-tab="analyst" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Administrator</button>
       <button class="admin-tab-btn" data-tab="academy" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Academy</button>
+      <button class="admin-tab-btn" data-tab="promo" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;display:none;">Promo</button>
     </div>
     <div class="sub-content">
 
@@ -2676,6 +2677,45 @@ html[data-theme="light"] .theme-switch .knob { left: 22px; }
         <div id="admin-mt5-list"><div class="empty-state" style="padding:16px;"><i class="ti ti-loader"></i> Loading...</div></div>
       </div>
     </div>
+    <div id="atab-content-promo" style="display:none;">
+      <div class="section-card" style="margin-bottom:12px;">
+        <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:14px;">CREATE PROMO CODE</div>
+        <div class="auth-field"><label class="auth-label">Code</label>
+          <input id="promo-f-code" class="auth-input" placeholder="e.g. RAYA2026" style="text-transform:uppercase;" />
+        </div>
+        <div class="auth-field"><label class="auth-label">Access days</label>
+          <select id="promo-f-days" class="auth-input">
+            <option value="3">3 days</option>
+            <option value="7">7 days</option>
+            <option value="14">14 days</option>
+            <option value="30">30 days</option>
+          </select>
+        </div>
+        <div class="auth-field"><label class="auth-label">Expiry date (optional)</label>
+          <input id="promo-f-expiry" type="date" class="auth-input" />
+        </div>
+        <div class="auth-field"><label class="auth-label">Max uses (blank = unlimited)</label>
+          <input id="promo-f-max" type="number" min="1" class="auth-input" placeholder="Unlimited" />
+        </div>
+        <div class="auth-field"><label class="auth-label">Campaign name (optional)</label>
+          <input id="promo-f-campaign" class="auth-input" placeholder="e.g. RAYA2026" />
+        </div>
+        <div class="auth-field"><label class="auth-label">Campaign image (square 1:1, under 300KB)</label>
+          <input id="promo-f-image" type="file" accept="image/png,image/jpeg,image/webp" onchange="onPromoImagePick(event)" class="auth-input" style="padding:8px;" />
+          <div id="promo-img-preview" style="display:none;margin-top:10px;"><img id="promo-img-preview-el" alt="preview" style="width:100px;height:100px;object-fit:cover;border-radius:10px;border:1px solid var(--border);" /></div>
+        </div>
+        <div id="promo-f-msg" style="display:none;font-size:12px;margin:6px 0;line-height:1.4;"></div>
+        <button class="auth-btn" id="promo-create-btn" onclick="createPromoCode()">Create code</button>
+      </div>
+      <div class="section-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.5px;">PROMO CODES</div>
+          <button onclick="loadAdminPromos()" style="background:transparent;border:none;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;">↻ Refresh</button>
+        </div>
+        <div id="admin-promo-list"><div class="empty-state" style="padding:16px;"><i class="ti ti-loader"></i> Loading...</div></div>
+      </div>
+    </div>
+
     <div id="atab-content-academy" style="display:none;">
       <div class="section-card">
         <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:14px;">PUBLISH ACADEMY CONTENT</div>
@@ -4387,8 +4427,24 @@ function isPremiumUser(){
 }
 function premiumGate(){ if(isPremiumUser()) return true; showDepositPopup(); return false; }
 function openDepositPage(){ try{ window.open(BROKER_DEPOSIT_URL,'_blank'); }catch(e){} }
-function showDepositPopup(){ var m=document.getElementById('deposit-popup'); if(m) m.style.display='flex'; }
+function showDepositPopup(){ var m=document.getElementById('deposit-popup'); if(m) m.style.display='flex'; var pm=document.getElementById('promo-msg'); if(pm){ pm.style.display='none'; pm.textContent=''; } checkPromoAvailable(); }
 function closeDepositPopup(){ var m=document.getElementById('deposit-popup'); if(m) m.style.display='none'; }
+async function checkPromoAvailable(){
+  var sec=document.getElementById('promo-section'); if(!sec) return;
+  sec.style.display='none';
+  if(!db) return;
+  try {
+    var res = await db.from('promo_codes').select('code,expiry,active,max_uses,used_count').eq('active', true);
+    var rows=(res&&res.data)||[]; var now=new Date();
+    var live = rows.some(function(r){
+      if(r.active===false) return false;
+      if(r.expiry && new Date(r.expiry) <= now) return false;
+      if(r.max_uses!=null && r.max_uses>0 && (r.used_count||0) >= r.max_uses) return false;
+      return true;
+    });
+    if(live) sec.style.display='block';
+  } catch(e){}
+}
 function depositBannerDismissed(){ try{ return sessionStorage.getItem('momentum_deposit_banner_dismissed')==='1'; }catch(e){ return false; } }
 function dismissDepositBanner(){ try{ sessionStorage.setItem('momentum_deposit_banner_dismissed','1'); }catch(e){} var b=document.getElementById('deposit-banner'); if(b) b.style.display='none'; }
 function updateDepositBanner(){
@@ -5420,7 +5476,7 @@ function loadProfileData() {
 
 // ── ADMIN TAB SWITCHER ──
 function switchAdminTab(tab) {
-  var tabs = ['dashboard','users','tickets','funds','announce','signals','mt5','analyst','academy'];
+  var tabs = ['dashboard','users','tickets','funds','announce','signals','mt5','analyst','academy','promo'];
   tabs.forEach(function(t) {
     // Support both old id-based and new data-tab-based buttons
     var btn = document.getElementById('atab-' + t) ||
@@ -5442,6 +5498,7 @@ function switchAdminTab(tab) {
   if(tab === 'mt5') loadAdminMT5();
   if(tab === 'analyst') { loadAdminAnalysts(); loadAdminSubAdmins(); }
   if(tab === 'academy') loadAdminAcademy();
+  if(tab === 'promo') loadAdminPromos();
   if(tab === 'announce') loadAdminAnnouncements();
   if(tab === 'signals') loadAdminSignals();
   if(tab === 'mt5') loadAdminMT5();
@@ -8010,11 +8067,139 @@ function openAdminPanel(){
 
 function applyAdminTabAccess(){
   if(!currentUser) return;
-  if(currentUser.role === 'admin') return;
+  var promoBtn = document.querySelector('[data-tab="promo"]');
+  var isSuper = currentUser.role === 'admin';
+  if(promoBtn) promoBtn.style.display = isSuper ? '' : 'none';
+  if(isSuper) return;
   var allTabs = ['dashboard','users','tickets','funds','announce','signals','mt5','analyst','academy'];
   var allowed = (currentUser.allowed_tabs||'').split(',').map(function(x){ return x.trim(); }).filter(Boolean);
   allTabs.forEach(function(t){ var bb=document.querySelector('[data-tab="'+t+'"]'); if(bb) bb.style.display = allowed.indexOf(t) > -1 ? '' : 'none'; });
   if(allowed.length) switchAdminTab(allowed[0]);
+}
+
+var _promoImageData = null;
+function onPromoImagePick(e){
+  var f = e && e.target && e.target.files && e.target.files[0];
+  var prev = document.getElementById('promo-img-preview');
+  var prevEl = document.getElementById('promo-img-preview-el');
+  var msg = document.getElementById('promo-f-msg');
+  _promoImageData = null;
+  if(prev) prev.style.display='none';
+  if(!f) return;
+  if(f.size > 500*1024){
+    if(msg){ msg.style.display='block'; msg.style.color='var(--red)'; msg.textContent='Image too big ('+Math.round(f.size/1024)+'KB). Please keep it under 300KB.'; }
+    if(e.target) e.target.value='';
+    return;
+  }
+  var rd = new FileReader();
+  rd.onload = function(){
+    _promoImageData = rd.result;
+    if(prevEl) prevEl.src = rd.result;
+    if(prev) prev.style.display='block';
+    if(msg) msg.style.display='none';
+  };
+  rd.readAsDataURL(f);
+}
+async function createPromoCode(){
+  var msg = document.getElementById('promo-f-msg');
+  var btn = document.getElementById('promo-create-btn');
+  function show(t, ok){ if(msg){ msg.style.display='block'; msg.style.color=ok?'var(--green)':'var(--red)'; msg.textContent=t; } }
+  var code = (document.getElementById('promo-f-code').value||'').trim().toUpperCase();
+  var days = parseInt(document.getElementById('promo-f-days').value,10)||3;
+  var expiryV = document.getElementById('promo-f-expiry').value;
+  var maxV = document.getElementById('promo-f-max').value;
+  var campaign = (document.getElementById('promo-f-campaign').value||'').trim();
+  if(!code){ show('Enter a code.', false); return; }
+  var row = {
+    code: code,
+    campaign: campaign||null,
+    access_days: days,
+    expiry: expiryV ? new Date(expiryV+'T23:59:59').toISOString() : null,
+    max_uses: maxV ? (parseInt(maxV,10)||null) : null,
+    used_count: 0,
+    per_user_once: true,
+    active: true,
+    image_url: _promoImageData||null
+  };
+  if(btn){ btn.textContent='Creating...'; btn.disabled=true; }
+  try {
+    var r = await db.from('promo_codes').insert([row]);
+    if(r && r.error) throw r.error;
+    show('Code "'+code+'" created.', true);
+    document.getElementById('promo-f-code').value='';
+    document.getElementById('promo-f-expiry').value='';
+    document.getElementById('promo-f-max').value='';
+    document.getElementById('promo-f-campaign').value='';
+    var fimg=document.getElementById('promo-f-image'); if(fimg) fimg.value='';
+    _promoImageData=null;
+    var prev=document.getElementById('promo-img-preview'); if(prev) prev.style.display='none';
+    loadAdminPromos();
+  } catch(e){
+    var m=(e.message||'failed');
+    if(/duplicate|unique/i.test(m)) m='That code already exists.';
+    show('Could not create: '+m, false);
+  } finally { if(btn){ btn.textContent='Create code'; btn.disabled=false; } }
+}
+async function loadAdminPromos(){
+  var el = document.getElementById('admin-promo-list');
+  if(!el || !db) return;
+  el.innerHTML = '<div style="padding:12px;color:var(--text2);font-size:12px;">Loading...</div>';
+  try {
+    var res = await db.from('promo_codes').select('*').order('created_at',{ascending:false});
+    if(res.error) throw res.error;
+    var codes = res.data||[];
+    if(!codes.length){ el.innerHTML='<div class="empty-state" style="padding:16px;"><i class="ti ti-ticket"></i> No promo codes yet</div>'; return; }
+    el.innerHTML='';
+    var now=new Date();
+    codes.forEach(function(c){
+      var expired = c.expiry && new Date(c.expiry) < now;
+      var usedTxt = (c.used_count||0) + (c.max_uses!=null && c.max_uses>0 ? ' / '+c.max_uses : ' used');
+      var statusTxt = c.active===false ? 'OFF' : (expired ? 'EXPIRED' : 'LIVE');
+      var statusCol = c.active===false ? 'var(--text3)' : (expired ? 'var(--red)' : 'var(--green)');
+      var statusBg = c.active===false ? 'rgba(255,255,255,0.05)' : (expired ? 'rgba(255,30,60,0.1)' : 'rgba(0,200,122,0.12)');
+      var img = c.image_url ? '<img src="'+c.image_url+'" alt="" style="width:42px;height:42px;border-radius:8px;object-fit:cover;flex-shrink:0;" />' : '';
+      var card=document.createElement('div');
+      card.style.cssText='padding:12px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;';
+      card.innerHTML =
+        '<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">' +
+          img +
+          '<div style="flex:1;">' +
+            '<div style="font-size:14px;font-weight:700;color:var(--text);font-family:monospace;">' + c.code + '</div>' +
+            '<div style="font-size:11px;color:var(--text3);">' + c.access_days + ' days &middot; ' + usedTxt + (c.campaign?(' &middot; '+c.campaign):'') + '</div>' +
+            (c.expiry?'<div style="font-size:10px;color:var(--text3);">Expires '+new Date(c.expiry).toLocaleDateString()+'</div>':'') +
+          '</div>' +
+          '<div style="font-size:9px;font-weight:700;padding:3px 9px;border-radius:5px;background:'+statusBg+';color:'+statusCol+';">'+statusTxt+'</div>' +
+        '</div>';
+      var row=document.createElement('div');
+      row.style.cssText='display:flex;gap:6px;';
+      var bT=document.createElement('button');
+      bT.textContent = c.active===false ? 'Activate' : 'Deactivate';
+      bT.style.cssText = mt5BtnStyle(c.active===false?'green':'amber');
+      bT.addEventListener('click', function(){ togglePromoActive(c.id, c.active===false); });
+      var bD=document.createElement('button');
+      bD.textContent='Delete';
+      bD.style.cssText = mt5BtnStyle('red');
+      bD.addEventListener('click', function(){ deletePromoCode(c.id, c.code); });
+      row.appendChild(bT); row.appendChild(bD);
+      card.appendChild(row);
+      el.appendChild(card);
+    });
+  } catch(e){ el.innerHTML='<div style="padding:12px;color:var(--red);">Error: '+(e.message||'failed')+'</div>'; }
+}
+async function togglePromoActive(id, makeActive){
+  try {
+    var r=await db.from('promo_codes').update({active:!!makeActive}).eq('id',id);
+    if(r&&r.error) throw r.error;
+    loadAdminPromos();
+  } catch(e){ alert('Could not update: '+(e.message||'failed')); }
+}
+async function deletePromoCode(id, code){
+  if(!window.confirm('Delete code '+(code||'')+'? This cannot be undone.')) return;
+  try {
+    var r=await db.from('promo_codes').delete().eq('id',id);
+    if(r&&r.error) throw r.error;
+    loadAdminPromos();
+  } catch(e){ alert('Could not delete: '+(e.message||'failed')); }
 }
 
 function lockMT5Form(locked) {
@@ -8307,12 +8492,14 @@ function showMT5ConnNotice(kind, reason) {
     <div style="font-size:17px;font-weight:700;color:var(--text);margin-bottom:6px;">Premium feature</div>
     <div style="font-size:12.5px;color:var(--text3);line-height:1.6;margin-bottom:16px;">Deposit $100 to unlock auto-trade, the MAI Scanner, smart tool, journal and leaderboard.</div>
     <button class="auth-btn" onclick="openDepositPage()" style="background:var(--grad);">Deposit now</button>
-    <div style="display:flex;align-items:center;gap:8px;margin:14px 0 10px;"><div style="flex:1;height:1px;background:var(--border);"></div><div style="font-size:11px;color:var(--text3);">or</div><div style="flex:1;height:1px;background:var(--border);"></div></div>
-    <div style="display:flex;gap:6px;">
-      <input id="promo-code-input" type="text" placeholder="Enter promo code" style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:9px 11px;color:var(--text);font-size:13px;text-transform:uppercase;" />
-      <button onclick="applyPromoCode()" id="promo-apply-btn" style="font-size:12px;font-weight:700;padding:9px 14px;background:rgba(240,178,50,0.13);border:1px solid rgba(240,178,50,0.3);border-radius:8px;color:var(--gold);cursor:pointer;white-space:nowrap;">Apply</button>
+    <div id="promo-section" style="display:none;">
+      <div style="display:flex;align-items:center;gap:8px;margin:14px 0 10px;"><div style="flex:1;height:1px;background:var(--border);"></div><div style="font-size:11px;color:var(--text3);">or</div><div style="flex:1;height:1px;background:var(--border);"></div></div>
+      <div style="display:flex;gap:6px;">
+        <input id="promo-code-input" type="text" placeholder="Enter promo code" style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:9px 11px;color:var(--text);font-size:13px;text-transform:uppercase;" />
+        <button onclick="applyPromoCode()" id="promo-apply-btn" style="font-size:12px;font-weight:700;padding:9px 14px;background:rgba(240,178,50,0.13);border:1px solid rgba(240,178,50,0.3);border-radius:8px;color:var(--gold);cursor:pointer;white-space:nowrap;">Apply</button>
+      </div>
+      <div id="promo-msg" style="display:none;font-size:11.5px;margin-top:9px;line-height:1.4;text-align:left;"></div>
     </div>
-    <div id="promo-msg" style="display:none;font-size:11.5px;margin-top:9px;line-height:1.4;text-align:left;"></div>
     <button onclick="closeDepositPopup()" style="width:100%;background:transparent;border:none;color:var(--text3);padding:10px;font-size:13px;cursor:pointer;margin-top:8px;">Maybe later</button>
   </div>
 </div>
