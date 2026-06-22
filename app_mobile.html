@@ -1410,6 +1410,20 @@ html[data-theme="light"] .theme-switch .knob { left: 22px; }
           <option value="AsiaFutureTrading-Server">AsiaFutureTrading-Server</option>
         </select>
       </div>
+      <div class="auth-field">
+        <label class="auth-label">Choose your plan</label>
+        <div style="display:flex;gap:8px;">
+          <div class="reg-plan-opt" data-plan="basic" onclick="selectRegPlan('basic')" style="flex:1;border:1px solid var(--green);background:rgba(0,200,122,0.08);border-radius:10px;padding:12px;cursor:pointer;text-align:center;transition:all .15s;">
+            <div style="font-size:14px;font-weight:700;color:var(--text);">Basic</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px;">Free access</div>
+          </div>
+          <div class="reg-plan-opt" data-plan="premium" onclick="selectRegPlan('premium')" style="flex:1;border:1px solid var(--border);background:transparent;border-radius:10px;padding:12px;cursor:pointer;text-align:center;transition:all .15s;">
+            <div style="font-size:14px;font-weight:700;color:var(--text);">Premium</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px;">Full access</div>
+          </div>
+        </div>
+        <div id="reg-plan-note" style="display:none;font-size:11px;color:var(--amber);margin-top:8px;line-height:1.5;">Premium needs a $100 deposit within 24h of connecting your MT5, or it switches to Basic.</div>
+      </div>
       <button class="auth-btn" id="btn-register" onclick="handleRegister()">CREATE ACCOUNT</button>
       <button class="ghost-btn" onclick="window.open('https://www.afttmarkets.com','_blank')">Create Account with AFT →</button>
       <div class="auth-switch" style="margin-top:12px;">Have an account? <span onclick="switchAuthTab('signin')">Sign In →</span></div>
@@ -4044,6 +4058,8 @@ async function handleLogin() {
 }
 
 // ── REGISTER ──
+var _regPlan='basic';
+function selectRegPlan(p){_regPlan=p;var opts=document.querySelectorAll('.reg-plan-opt');for(var i=0;i<opts.length;i++){var el=opts[i];var on=el.getAttribute('data-plan')===p;el.style.borderColor=on?'var(--green)':'var(--border)';el.style.background=on?'rgba(0,200,122,0.08)':'transparent';}var note=document.getElementById('reg-plan-note');if(note)note.style.display=(p==='premium')?'block':'none';}
 async function handleRegister() {
   var mt5 = document.getElementById('reg-mt5').value.trim();
   var name = document.getElementById('reg-name').value.trim();
@@ -4059,7 +4075,7 @@ async function handleRegister() {
   btn.textContent = 'CREATING...'; btn.disabled = true;
   try {
     var hash = btoa(unescape(encodeURIComponent(password+'_momentum_salt')));
-    var res = await db.from('users').insert([{name,email,username,password_hash:hash,mt5_id:mt5,broker:broker||'AFTT Markets',status:'pending',role:'user',created_at:new Date().toISOString()}]);
+    var res = await db.from('users').insert([{name,email,username,password_hash:hash,mt5_id:mt5,broker:broker||'AFTT Markets',plan_choice:_regPlan,status:'pending',role:'user',created_at:new Date().toISOString()}]);
     if(res.error) { errEl.textContent='Error: '+res.error.message; errEl.style.display='block'; return; }
     document.getElementById('pending-mt5-val').textContent = mt5;
     showScreen('screen-pending');
