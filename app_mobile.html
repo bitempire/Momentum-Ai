@@ -2552,7 +2552,7 @@ html[data-theme="light"] .theme-switch .knob { left: 22px; }
       <!-- ── ANNOUNCEMENTS TAB ── -->
       <div id="atab-content-announce" style="display:none;">
         <div class="section-card" style="margin-bottom:12px;">
-          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">POST ANNOUNCEMENT <span style="color:var(--green);">&middot; v3 edit+active</span></div>
+          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">POST ANNOUNCEMENT <span style="color:var(--green);">&middot; v4 active-popup</span></div>
           <div class="auth-field">
             <label class="auth-label">Title</label>
             <input id="ann-title" class="auth-input" type="text" placeholder="Announcement title">
@@ -5884,8 +5884,6 @@ async function checkAndShowAnnouncement() {
     actives.sort(function(x,y){ return new Date(y.updated_at||y.created_at) - new Date(x.updated_at||x.created_at); });
     var ann = actives[0];
     if(ann.target === 'premium' && !isPremiumUser()) return false;
-    var lastSeen = localStorage.getItem('last_ann_seen');
-    if(lastSeen === annKey(ann)) return false;
     showAnnouncementPopup(ann);
     return true;
   } catch(e) { return false; }
@@ -5904,7 +5902,6 @@ function showAnnouncementPopup(ann) {
 }
 function closeAnnouncementPopup() {
   var p=document.getElementById('announcement-popup'); if(p) p.style.display='none';
-  if(_annCurrentKey){ try{ localStorage.setItem('last_ann_seen', _annCurrentKey); }catch(e){} }
   if(_pendingCampaignAfterAnn){ _pendingCampaignAfterAnn=false; checkCampaignBanner(); }
 }
 
