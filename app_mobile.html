@@ -4381,6 +4381,7 @@ var _premiumTabs = ['journal'];
 function isPremiumUser(){
   var a=(typeof activeAccount!=='undefined'&&activeAccount)?activeAccount:null;
   if(!a) return false;
+  if(a.premium_status === 'basic') return false;
   if(a.premium_manual) return true;
   if(a.premium_until && new Date(a.premium_until) > new Date()) return true;
   if(a.premium_status && ['active','trial','promo','provisional','premium'].indexOf(a.premium_status)>=0) return true;
@@ -7772,9 +7773,9 @@ async function loadAdminMT5() {
 
       var pRow = document.createElement('div');
       pRow.style.cssText = 'display:flex;gap:6px;margin-top:6px;';
-      if(grantedPremiumAcct(acct)){
+      if(_prem){
         var bSetB = document.createElement('button');
-        bSetB.textContent = 'Set Basic';
+        bSetB.textContent = 'Change to Basic';
         bSetB.style.cssText = mt5BtnStyle('amber');
         bSetB.addEventListener('click', function(){ mt5SetBasic(acct.id); });
         pRow.appendChild(bSetB);
@@ -7824,17 +7825,11 @@ function mt5BtnStyle(kind){
 
 function isPremiumAcct(a){
   if(!a) return false;
+  if(a.premium_status === 'basic') return false;
   if(a.premium_manual) return true;
   if(a.premium_until && new Date(a.premium_until) > new Date()) return true;
   if(a.premium_status && ['active','trial','promo','provisional','premium'].indexOf(a.premium_status)>=0) return true;
   if(a.balance!=null && a.balance!=='' && parseFloat(a.balance) >= 100) return true;
-  return false;
-}
-function grantedPremiumAcct(a){
-  if(!a) return false;
-  if(a.premium_manual) return true;
-  if(a.premium_status && ['active','trial','promo','provisional','premium'].indexOf(a.premium_status)>=0) return true;
-  if(a.premium_until && new Date(a.premium_until) > new Date()) return true;
   return false;
 }
 var _adminMt5Plan = 'all';
