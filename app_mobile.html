@@ -1410,20 +1410,6 @@ html[data-theme="light"] .theme-switch .knob { left: 22px; }
           <option value="AsiaFutureTrading-Server">AsiaFutureTrading-Server</option>
         </select>
       </div>
-      <div class="auth-field">
-        <label class="auth-label">Choose your plan</label>
-        <div style="display:flex;gap:8px;">
-          <div class="reg-plan-opt" data-plan="basic" onclick="selectRegPlan('basic')" style="flex:1;border:1px solid var(--green);background:rgba(0,200,122,0.08);border-radius:10px;padding:12px;cursor:pointer;text-align:center;transition:all .15s;">
-            <div style="font-size:14px;font-weight:700;color:var(--text);">Basic</div>
-            <div style="font-size:11px;color:var(--text3);margin-top:2px;">Free access</div>
-          </div>
-          <div class="reg-plan-opt" data-plan="premium" onclick="selectRegPlan('premium')" style="flex:1;border:1px solid var(--border);background:transparent;border-radius:10px;padding:12px;cursor:pointer;text-align:center;transition:all .15s;">
-            <div style="font-size:14px;font-weight:700;color:var(--text);">Premium</div>
-            <div style="font-size:11px;color:var(--text3);margin-top:2px;">Full access</div>
-          </div>
-        </div>
-        <div id="reg-plan-note" style="display:none;font-size:11px;color:var(--amber);margin-top:8px;line-height:1.5;">Premium needs a $100 deposit within 24h of connecting your MT5, or it switches to Basic.</div>
-      </div>
       <button class="auth-btn" id="btn-register" onclick="handleRegister()">CREATE ACCOUNT</button>
       <button class="ghost-btn" onclick="window.open('https://www.afttmarkets.com','_blank')">Create Account with AFT →</button>
       <div class="auth-switch" style="margin-top:12px;">Have an account? <span onclick="switchAuthTab('signin')">Sign In →</span></div>
@@ -4059,8 +4045,27 @@ async function handleLogin() {
 
 // ── REGISTER ──
 var _regPlan='basic';
-function selectRegPlan(p){_regPlan=p;var opts=document.querySelectorAll('.reg-plan-opt');for(var i=0;i<opts.length;i++){var el=opts[i];var on=el.getAttribute('data-plan')===p;el.style.borderColor=on?'var(--green)':'var(--border)';el.style.background=on?'rgba(0,200,122,0.08)':'transparent';}var note=document.getElementById('reg-plan-note');if(note)note.style.display=(p==='premium')?'block':'none';}
+function pickRegPlan(p){_regPlan=p;
+  var b=document.getElementById('rpm-basic'),pr=document.getElementById('rpm-premium');
+  if(b){b.style.borderColor=p==='basic'?'var(--green)':'var(--border)';b.style.background=p==='basic'?'rgba(0,200,122,0.07)':'transparent';var bc=b.querySelector('.rpm-check');if(bc)bc.style.opacity=p==='basic'?'1':'0';}
+  if(pr){pr.style.borderColor=p==='premium'?'var(--green)':'var(--border)';pr.style.background=p==='premium'?'rgba(0,200,122,0.07)':'transparent';var pc=pr.querySelector('.rpm-check');if(pc)pc.style.opacity=p==='premium'?'1':'0';}
+  var note=document.getElementById('rpm-note');if(note)note.style.display=p==='premium'?'block':'none';
+}
+function openRegPlan(){_regPlan='basic';pickRegPlan('basic');var m=document.getElementById('reg-plan-modal');if(m)m.style.display='flex';}
+function closeRegPlan(){var m=document.getElementById('reg-plan-modal');if(m)m.style.display='none';}
 async function handleRegister() {
+  var mt5 = document.getElementById('reg-mt5').value.trim();
+  var name = document.getElementById('reg-name').value.trim();
+  var email = document.getElementById('reg-email').value.trim();
+  var username = document.getElementById('reg-username').value.trim();
+  var password = document.getElementById('reg-password').value;
+  var errEl = document.getElementById('reg-error');
+  var sucEl = document.getElementById('reg-success');
+  errEl.style.display = 'none'; sucEl.style.display = 'none';
+  if(!mt5||!name||!email||!username||!password) { errEl.textContent='Please fill in all fields'; errEl.style.display='block'; return; }
+  openRegPlan();
+}
+async function submitRegister() {
   var mt5 = document.getElementById('reg-mt5').value.trim();
   var name = document.getElementById('reg-name').value.trim();
   var email = document.getElementById('reg-email').value.trim();
@@ -4068,19 +4073,17 @@ async function handleRegister() {
   var password = document.getElementById('reg-password').value;
   var broker = document.getElementById('reg-broker').value;
   var errEl = document.getElementById('reg-error');
-  var sucEl = document.getElementById('reg-success');
-  errEl.style.display = 'none'; sucEl.style.display = 'none';
-  if(!mt5||!name||!email||!username||!password) { errEl.textContent='Please fill in all fields'; errEl.style.display='block'; return; }
-  var btn = document.getElementById('btn-register');
+  var btn = document.getElementById('rpm-continue');
   btn.textContent = 'CREATING...'; btn.disabled = true;
   try {
     var hash = btoa(unescape(encodeURIComponent(password+'_momentum_salt')));
     var res = await db.from('users').insert([{name,email,username,password_hash:hash,mt5_id:mt5,broker:broker||'AFTT Markets',plan_choice:_regPlan,status:'pending',role:'user',created_at:new Date().toISOString()}]);
-    if(res.error) { errEl.textContent='Error: '+res.error.message; errEl.style.display='block'; return; }
+    if(res.error) { closeRegPlan(); errEl.textContent='Error: '+res.error.message; errEl.style.display='block'; btn.textContent='Continue'; btn.disabled=false; return; }
+    closeRegPlan();
     document.getElementById('pending-mt5-val').textContent = mt5;
     showScreen('screen-pending');
-  } catch(e) { errEl.textContent='Error: '+e.message; errEl.style.display='block'; }
-  btn.textContent = 'CREATE ACCOUNT'; btn.disabled = false;
+  } catch(e) { closeRegPlan(); errEl.textContent='Error: '+e.message; errEl.style.display='block'; }
+  btn.textContent = 'Continue'; btn.disabled = false;
 }
 
 // ── ROUTE USER ──
@@ -8116,5 +8119,24 @@ function showMT5ConnNotice(kind, reason) {
   }, {passive:true});
 })();
 </script>
+<div id="reg-plan-modal" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.65);align-items:center;justify-content:center;padding:20px;">
+  <div style="background:var(--bg2);border:0.5px solid var(--border);border-radius:18px;padding:24px 20px;max-width:360px;width:100%;">
+    <div style="font-size:18px;font-weight:700;color:var(--text);text-align:center;">Choose your plan</div>
+    <div style="font-size:12px;color:var(--text3);text-align:center;margin:4px 0 18px;">You can upgrade anytime</div>
+    <div id="rpm-basic" onclick="pickRegPlan('basic')" style="display:flex;align-items:center;gap:12px;border:1.5px solid var(--green);background:rgba(0,200,122,0.07);border-radius:12px;padding:14px;cursor:pointer;margin-bottom:10px;">
+      <div style="width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ti ti-user" style="font-size:20px;color:var(--text);"></i></div>
+      <div style="flex:1;"><div style="font-size:15px;font-weight:700;color:var(--text);">Basic</div><div style="font-size:11px;color:var(--text3);">Free — core features</div></div>
+      <i class="ti ti-circle-check rpm-check" style="font-size:20px;color:var(--green);opacity:1;"></i>
+    </div>
+    <div id="rpm-premium" onclick="pickRegPlan('premium')" style="display:flex;align-items:center;gap:12px;border:1.5px solid var(--border);background:transparent;border-radius:12px;padding:14px;cursor:pointer;">
+      <div style="width:38px;height:38px;border-radius:10px;background:rgba(255,176,32,0.13);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ti ti-crown" style="font-size:20px;color:var(--amber);"></i></div>
+      <div style="flex:1;"><div style="font-size:15px;font-weight:700;color:var(--text);">Premium</div><div style="font-size:11px;color:var(--text3);">Full access — all features</div></div>
+      <i class="ti ti-circle-check rpm-check" style="font-size:20px;color:var(--green);opacity:0;"></i>
+    </div>
+    <div id="rpm-note" style="display:none;font-size:11px;color:var(--amber);margin-top:12px;line-height:1.5;background:rgba(255,176,32,0.06);border-radius:8px;padding:10px;">Deposit $100 within 24h of connecting your MT5 to keep Premium, otherwise it switches to Basic.</div>
+    <button class="auth-btn" id="rpm-continue" style="margin-top:18px;" onclick="submitRegister()">Continue</button>
+    <button onclick="closeRegPlan()" style="width:100%;background:transparent;border:none;color:var(--text3);padding:10px;font-size:13px;cursor:pointer;margin-top:4px;">Back</button>
+  </div>
+</div>
 </body>
 </html>
