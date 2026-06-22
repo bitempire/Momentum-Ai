@@ -2568,6 +2568,11 @@ html[data-theme="light"] .theme-switch .knob { left: 22px; }
               <option value="premium">Premium Users Only</option>
             </select>
           </div>
+          <div class="auth-field">
+            <label class="auth-label">Image (optional, square 1:1, under 300KB)</label>
+            <input id="ann-image" type="file" accept="image/png,image/jpeg,image/webp" onchange="onAnnImagePick(event)" class="auth-input" style="padding:8px;">
+            <div id="ann-img-preview" style="display:none;margin-top:10px;"><img id="ann-img-preview-el" alt="preview" style="width:100px;height:100px;object-fit:cover;border-radius:10px;border:1px solid var(--border);"></div>
+          </div>
           <div id="ann-error" class="error-msg"></div>
           <div id="ann-success" class="success-msg"></div>
           <button class="red-btn" onclick="postAnnouncement()">POST ANNOUNCEMENT</button>
@@ -4200,7 +4205,10 @@ function enterApp(user) {
   initTVChart();
   setTimeout(function() { drawGrowthChart(); drawEmotionChart(); loadSavedProfilePhoto(); }, 800);
   setTimeout(function() { checkMT5ConnectionNotification(); }, 1200);
-  loadActiveAccount().then(checkCampaignBanner);
+  loadActiveAccount().then(async function(){
+    var shown = await checkAndShowAnnouncement();
+    if(!shown) checkCampaignBanner();
+  });
   loadAFTPrices();
   refreshActiveBalance();
   loadLivePositions();
@@ -5746,6 +5754,24 @@ async function loadAdminAnnouncements() {
   } catch(e) {}
 }
 
+var _annImageData = null;
+function onAnnImagePick(e){
+  var f = e && e.target && e.target.files && e.target.files[0];
+  var prev = document.getElementById('ann-img-preview');
+  var prevEl = document.getElementById('ann-img-preview-el');
+  var errEl = document.getElementById('ann-error');
+  _annImageData = null;
+  if(prev) prev.style.display='none';
+  if(!f) return;
+  if(f.size > 500*1024){
+    if(errEl){ errEl.style.display='block'; errEl.textContent='Image too big ('+Math.round(f.size/1024)+'KB). Please keep it under 300KB.'; }
+    if(e.target) e.target.value='';
+    return;
+  }
+  var rd = new FileReader();
+  rd.onload = function(){ _annImageData = rd.result; if(prevEl) prevEl.src = rd.result; if(prev) prev.style.display='block'; if(errEl) errEl.style.display='none'; };
+  rd.readAsDataURL(f);
+}
 async function postAnnouncement() {
   var title = document.getElementById('ann-title').value.trim();
   var message = document.getElementById('ann-message').value.trim();
@@ -5760,6 +5786,7 @@ async function postAnnouncement() {
       title: title,
       message: message,
       target: target,
+      image_url: _annImageData || null,
       admin_id: currentUser ? currentUser.id : null,
       created_at: new Date().toISOString()
     }]);
@@ -5772,6 +5799,9 @@ async function postAnnouncement() {
     sucEl.style.display = 'block';
     document.getElementById('ann-title').value = '';
     document.getElementById('ann-message').value = '';
+    var fimg=document.getElementById('ann-image'); if(fimg) fimg.value='';
+    _annImageData=null;
+    var prev=document.getElementById('ann-img-preview'); if(prev) prev.style.display='none';
     loadAdminAnnouncements();
   } catch(e) {
     console.error('postAnnouncement error:', e);
@@ -5782,21 +5812,33 @@ async function postAnnouncement() {
 
 // ── ANNOUNCEMENT POPUP ON DASHBOARD ──
 async function checkAndShowAnnouncement() {
-  if(!db) return;
+  if(!db) return false;
   try {
     var res = await db.from('announcements').select('*').order('created_at',{ascending:false}).limit(1);
-    if(res.error) { console.error('Ann error:', res.error); return; }
-    if(!res.data || !res.data.length) return;
+    if(res.error) return false;
+    if(!res.data || !res.data.length) return false;
     var ann = res.data[0];
     var lastSeen = localStorage.getItem('last_ann_seen');
-    if(lastSeen === ann.id) return;
+    if(lastSeen === String(ann.id)) return false;
+    if(ann.target === 'premium' && !isPremiumUser()) return false;
     showAnnouncementPopup(ann);
-  } catch(e) { console.error('checkAnn error:', e); }
+    return true;
+  } catch(e) { return false; }
 }
 
+var _annCurrentId = null;
 function showAnnouncementPopup(ann) {
-  // Disabled temporarily - will re-enable via notification bell
-  return;
+  if(!ann) return;
+  _annCurrentId = ann.id;
+  var img=document.getElementById('ann-pop-img');
+  if(img){ if(ann.image_url){ img.src=ann.image_url; img.style.display='block'; } else { img.style.display='none'; img.removeAttribute('src'); } }
+  var t=document.getElementById('ann-pop-title'); if(t) t.textContent=ann.title||'';
+  var m=document.getElementById('ann-pop-msg'); if(m) m.textContent=ann.message||'';
+  var p=document.getElementById('announcement-popup'); if(p) p.style.display='flex';
+}
+function closeAnnouncementPopup() {
+  var p=document.getElementById('announcement-popup'); if(p) p.style.display='none';
+  if(_annCurrentId!=null){ try{ localStorage.setItem('last_ann_seen', String(_annCurrentId)); }catch(e){} }
 }
 
 
@@ -8597,6 +8639,18 @@ function showMT5ConnNotice(kind, reason) {
       <div id="campaign-banner-sub" style="font-size:12.5px;color:var(--text3);margin-bottom:14px;">Claim your free premium access</div>
       <div id="campaign-banner-msg" style="display:none;font-size:12px;margin-bottom:10px;line-height:1.4;"></div>
       <button class="auth-btn" id="campaign-claim-btn" onclick="claimCampaign()" style="background:var(--grad);">Claim now</button>
+    </div>
+  </div>
+</div>
+<div id="announcement-popup" style="display:none;position:fixed;inset:0;z-index:99997;background:rgba(0,0,0,0.7);align-items:center;justify-content:center;padding:20px;">
+  <div style="background:var(--bg2);border:0.5px solid var(--border);border-radius:18px;max-width:340px;width:100%;overflow:hidden;position:relative;">
+    <i class="ti ti-x" onclick="closeAnnouncementPopup()" style="position:absolute;top:10px;right:10px;font-size:16px;color:#fff;background:rgba(0,0,0,0.45);border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2;"></i>
+    <img id="ann-pop-img" alt="" style="display:none;width:100%;aspect-ratio:1/1;object-fit:cover;background:var(--bg3);" />
+    <div style="padding:18px;">
+      <div style="display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;color:var(--red);background:rgba(255,30,60,0.12);padding:3px 9px;border-radius:5px;margin-bottom:10px;"><i class="ti ti-speakerphone" style="font-size:12px;"></i>ANNOUNCEMENT</div>
+      <div id="ann-pop-title" style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:6px;"></div>
+      <div id="ann-pop-msg" style="font-size:12.5px;color:var(--text2);line-height:1.6;margin-bottom:16px;white-space:pre-wrap;"></div>
+      <button class="auth-btn" onclick="closeAnnouncementPopup()" style="background:var(--grad);">Got it</button>
     </div>
   </div>
 </div>
