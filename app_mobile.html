@@ -4248,10 +4248,7 @@ async function selectAccount(accId) {
     if(res && res.error) { alert('Could not switch account: '+res.error.message); return; }
     currentUser.active_account_id = accId;
     try { sessionStorage.setItem('mob_user', JSON.stringify(currentUser)); } catch(e2) {}
-    activeAccount = a;
-    renderHeaderSwitcher();
-    loadAccountStats();
-    updateDepositBanner();
+    await loadActiveAccount();
     // Reload settings for new account
     window._eaSettings = {};
     loadEASettings();
