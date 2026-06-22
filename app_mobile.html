@@ -2668,11 +2668,14 @@ html[data-theme="light"] .theme-switch .knob { left: 22px; }
           <div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.5px;">USER MT5 CREDENTIALS</div>
           <button onclick="loadAdminMT5()" style="background:transparent;border:none;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;">↻ Refresh</button>
         </div>
+        <div id="admin-mt5-plan-filter" style="display:flex;gap:6px;margin-bottom:12px;">
+          <button onclick="setAdminMt5Plan('all',this)" style="flex:1;font-size:11px;font-weight:700;padding:7px;background:rgba(240,178,50,0.12);border:1px solid rgba(240,178,50,0.3);border-radius:8px;color:var(--gold);cursor:pointer;font-family:Sora,sans-serif;">All</button>
+          <button onclick="setAdminMt5Plan('basic',this)" style="flex:1;font-size:11px;font-weight:700;padding:7px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--text3);cursor:pointer;font-family:Sora,sans-serif;">Basic</button>
+          <button onclick="setAdminMt5Plan('premium',this)" style="flex:1;font-size:11px;font-weight:700;padding:7px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--text3);cursor:pointer;font-family:Sora,sans-serif;">Premium</button>
+        </div>
         <div id="admin-mt5-list"><div class="empty-state" style="padding:16px;"><i class="ti ti-loader"></i> Loading...</div></div>
       </div>
     </div>
-
-    <!-- ACADEMY TAB -->
     <div id="atab-content-academy" style="display:none;">
       <div class="section-card">
         <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:14px;">PUBLISH ACADEMY CONTENT</div>
@@ -7673,7 +7676,15 @@ async function loadAdminMT5() {
       return;
     }
     el.innerHTML = '';
+    var _shown = 0;
     accounts.forEach(function(acct) {
+      var _prem = isPremiumAcct(acct);
+      if(_adminMt5Plan==='basic' && _prem) return;
+      if(_adminMt5Plan==='premium' && !_prem) return;
+      _shown++;
+      var planBadge = _prem
+        ? '<div style="font-size:9px;font-weight:700;padding:2px 8px;border-radius:5px;background:rgba(240,178,50,0.13);color:var(--gold);">PREMIUM</div>'
+        : '<div style="font-size:9px;font-weight:700;padding:2px 8px;border-radius:5px;background:rgba(59,130,246,0.13);color:var(--blue);">BASIC</div>';
       // Map account to user-like object for existing UI
       var owner = usersMap[acct.user_id] || {};
       var user = Object.assign({}, acct, {
@@ -7706,7 +7717,10 @@ async function loadAdminMT5() {
             '<div style="font-size:11px;color:var(--text3);">@' + (user.username||'--') + '</div>' +
             reqLine +
           '</div>' +
-          '<div style="font-size:10px;font-weight:700;padding:3px 9px;border-radius:5px;background:' + b[1] + ';color:' + b[2] + ';">' + b[0] + '</div>' +
+          '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">' +
+            '<div style="font-size:10px;font-weight:700;padding:3px 9px;border-radius:5px;background:' + b[1] + ';color:' + b[2] + ';">' + b[0] + '</div>' +
+            planBadge +
+          '</div>' +
         '</div>' +
         '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;">' +
           '<div style="background:var(--surface);border-radius:7px;padding:8px;">' +
@@ -7756,6 +7770,23 @@ async function loadAdminMT5() {
       });
       card.appendChild(actRow);
 
+      var pRow = document.createElement('div');
+      pRow.style.cssText = 'display:flex;gap:6px;margin-top:6px;';
+      if(grantedPremiumAcct(acct)){
+        var bSetB = document.createElement('button');
+        bSetB.textContent = 'Set Basic';
+        bSetB.style.cssText = mt5BtnStyle('amber');
+        bSetB.addEventListener('click', function(){ mt5SetBasic(acct.id); });
+        pRow.appendChild(bSetB);
+      } else {
+        var bMkP = document.createElement('button');
+        bMkP.textContent = 'Make Premium';
+        bMkP.style.cssText = mt5BtnStyle('gold');
+        bMkP.addEventListener('click', function(){ mt5SetPremium(acct.id); });
+        pRow.appendChild(bMkP);
+      }
+      card.appendChild(pRow);
+
       if(acct.mt5_credential) {
         var revBtn = card.querySelector('#revbtn-' + acct.id);
         var pwEl   = card.querySelector('#mt5pw-' + acct.id);
@@ -7779,15 +7810,59 @@ async function loadAdminMT5() {
       }
       el.appendChild(card);
     });
+    if(_shown===0){ el.innerHTML = '<div class="empty-state" style="padding:16px;"><i class="ti ti-database"></i> No accounts in this filter</div>'; }
   } catch(e) {
     el.innerHTML = '<div style="padding:12px;color:var(--red);">Error: ' + (e.message||'failed') + '</div>';
   }
 }
 
 function mt5BtnStyle(kind){
-  var m = { green:['rgba(0,200,122,0.12)','rgba(0,200,122,0.25)','var(--green)'], red:['rgba(255,30,60,0.08)','rgba(255,30,60,0.2)','var(--red)'], amber:['rgba(255,176,32,0.1)','rgba(255,176,32,0.25)','var(--amber)'], blue:['rgba(77,158,255,0.1)','rgba(77,158,255,0.2)','#4D9EFF'] };
+  var m = { green:['rgba(0,200,122,0.12)','rgba(0,200,122,0.25)','var(--green)'], red:['rgba(255,30,60,0.08)','rgba(255,30,60,0.2)','var(--red)'], amber:['rgba(255,176,32,0.1)','rgba(255,176,32,0.25)','var(--amber)'], blue:['rgba(77,158,255,0.1)','rgba(77,158,255,0.2)','#4D9EFF'], gold:['rgba(240,178,50,0.12)','rgba(240,178,50,0.3)','var(--gold)'] };
   var col = m[kind] || m.blue;
   return 'flex:1;font-size:11px;font-weight:700;padding:9px;background:' + col[0] + ';border:1px solid ' + col[1] + ';border-radius:8px;color:' + col[2] + ';cursor:pointer;';
+}
+
+function isPremiumAcct(a){
+  if(!a) return false;
+  if(a.premium_manual) return true;
+  if(a.premium_until && new Date(a.premium_until) > new Date()) return true;
+  if(a.premium_status && ['active','trial','promo','provisional','premium'].indexOf(a.premium_status)>=0) return true;
+  if(a.balance!=null && a.balance!=='' && parseFloat(a.balance) >= 100) return true;
+  return false;
+}
+function grantedPremiumAcct(a){
+  if(!a) return false;
+  if(a.premium_manual) return true;
+  if(a.premium_status && ['active','trial','promo','provisional','premium'].indexOf(a.premium_status)>=0) return true;
+  if(a.premium_until && new Date(a.premium_until) > new Date()) return true;
+  return false;
+}
+var _adminMt5Plan = 'all';
+function setAdminMt5Plan(p, el){
+  _adminMt5Plan = p;
+  var row = document.getElementById('admin-mt5-plan-filter');
+  if(row) row.querySelectorAll('button').forEach(function(b){ b.style.background='transparent'; b.style.color='var(--text3)'; b.style.borderColor='var(--border)'; });
+  if(el){ el.style.background='rgba(240,178,50,0.12)'; el.style.color='var(--gold)'; el.style.borderColor='rgba(240,178,50,0.3)'; }
+  loadAdminMT5();
+}
+async function mt5SetPremium(id){
+  if(!db) return;
+  if(!window.confirm('Grant Premium to this account for 30 days?')) return;
+  var until = new Date(Date.now()+30*24*60*60*1000).toISOString();
+  try {
+    var r = await db.from('mt5_accounts').update({premium_manual:true, premium_status:'active', premium_until:until}).eq('id', id);
+    if(r.error) throw r.error;
+    loadAdminMT5();
+  } catch(e){ alert('Could not set premium: '+(e.message||'failed')); }
+}
+async function mt5SetBasic(id){
+  if(!db) return;
+  if(!window.confirm('Remove Premium from this account?')) return;
+  try {
+    var r = await db.from('mt5_accounts').update({premium_manual:false, premium_status:'basic', premium_until:null}).eq('id', id);
+    if(r.error) throw r.error;
+    loadAdminMT5();
+  } catch(e){ alert('Could not set basic: '+(e.message||'failed')); }
 }
 
 async function applyMT5Transition(acctId, core, extra, noticeKind, reason){
