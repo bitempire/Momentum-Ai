@@ -682,7 +682,7 @@ html[data-theme="light"] .theme-switch .knob { left: 22px; }
   z-index: 2;
 }
 .dash-welcome-badge.premium { background: linear-gradient(135deg,#F8CC4C,#E0982A); color: #3a2400; box-shadow: 0 0 10px rgba(240,178,50,0.5); }
-.dash-welcome-badge.basic { background: linear-gradient(135deg,#5BA3F5,#2E6FD4); color: #06203f; box-shadow: 0 0 10px rgba(59,130,246,0.45); }
+.dash-welcome-badge.basic { background: linear-gradient(135deg,#EFF1F3,#BFC5CD 55%,#9AA1AA); color: #2a2d33; box-shadow: 0 0 10px rgba(200,208,216,0.4); }
 
 /* Market cards */
 .market-grid {
@@ -780,8 +780,8 @@ html[data-theme="light"] .theme-switch .knob { left: 22px; }
   color: var(--red);
 }
 .sig-card {
-  background: linear-gradient(160deg, #20202a, #141418);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: linear-gradient(160deg, #15151b, #0d0d10);
+  border: 1px solid rgba(255,255,255,0.08);
   border-radius: 14px;
   padding: 14px;
   margin-bottom: 10px;
@@ -838,16 +838,17 @@ html[data-theme="light"] .theme-switch .knob { left: 22px; }
 }
 .sig-level-wide .sig-level-lbl { margin-bottom: 0; }
 .sig-level {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.09);
+  background: #111114;
+  border: 1px solid rgba(255,255,255,0.06);
   border-radius: 8px;
   padding: 8px 10px;
 }
+.sig-level-wide { border-left: 2px solid var(--blue); }
 .sig-level.lv-sl { border-left: 2px solid var(--red); }
 .sig-level.lv-tp { border-left: 2px solid var(--green); }
 html[data-theme="light"] .sig-card { background: linear-gradient(160deg, #ffffff, #f3f4f7); border-color: rgba(0,0,0,0.08); }
 html[data-theme="light"] .sig-card-top { border-bottom-color: rgba(0,0,0,0.07); }
-html[data-theme="light"] .sig-level { background: rgba(0,0,0,0.03); border-color: rgba(0,0,0,0.09); }
+html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,0,0,0.08); }
 .sig-level-lbl { font-size: 8px; color: var(--text3); letter-spacing: 0.6px; text-transform: uppercase; margin-bottom: 4px; }
 .sig-level-val { font-size: 13px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .sig-level-val.sl { color: var(--red); }
@@ -2593,7 +2594,7 @@ html[data-theme="light"] .sig-level { background: rgba(0,0,0,0.03); border-color
       <!-- ── ANNOUNCEMENTS TAB ── -->
       <div id="atab-content-announce" style="display:none;">
         <div class="section-card" style="margin-bottom:12px;">
-          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">POST ANNOUNCEMENT <span style="color:var(--green);">&middot; v13 card-polish</span></div>
+          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">POST ANNOUNCEMENT <span style="color:var(--green);">&middot; v15 dark-platinum</span></div>
           <div class="auth-field">
             <label class="auth-label">Title</label>
             <input id="ann-title" class="auth-input" type="text" placeholder="Announcement title">
@@ -7104,17 +7105,17 @@ var _execSelectedOption = '';
 
 async function checkMT5ThenExecute() {
   if(!currentUser || !db) { showNoMT5Warning('disconnected'); return; }
-  var cs, mc, creds;
+  var acct = activeAccount;
+  if(!acct || !acct.id) { showNoMT5Warning('disconnected'); return; }
+  var cs, mc;
   try {
-    var res = await db.from('users').select('*').eq('id', currentUser.id).single();
-    if(res.data) { cs = res.data.connection_status; mc = res.data.mt5_connected; creds = res.data.mt5_credential; }
+    var res = await db.from('mt5_accounts').select('connection_status,mt5_connected').eq('id', acct.id).single();
+    if(res && res.data) { cs = res.data.connection_status; mc = res.data.mt5_connected; }
   } catch(ex) {}
-  if(cs === undefined && mc === undefined) {
-    cs = currentUser.connection_status; mc = currentUser.mt5_connected; creds = currentUser.mt5_credential;
-  }
+  if(cs === undefined && mc === undefined) { cs = acct.connection_status; mc = acct.mt5_connected; }
+  cs = (cs || '').toLowerCase();
   var blocked   = (cs === 'pending' || cs === 'suspended' || cs === 'rejected');
-  var hasCreds  = !!(creds && String(creds).length > 5);
-  var isConnected = !blocked && (mc === true || mc === 'true' || mc === 1 || cs === 'connected' || hasCreds);
+  var isConnected = !blocked && (mc === true || mc === 'true' || mc === 1 || cs === 'connected');
   if(isConnected) { openExecuteChoicePopup(); }
   else { showNoMT5Warning(cs || 'disconnected'); }
 }
