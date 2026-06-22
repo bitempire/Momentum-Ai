@@ -2552,7 +2552,7 @@ html[data-theme="light"] .theme-switch .knob { left: 22px; }
       <!-- ── ANNOUNCEMENTS TAB ── -->
       <div id="atab-content-announce" style="display:none;">
         <div class="section-card" style="margin-bottom:12px;">
-          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">POST ANNOUNCEMENT <span style="color:var(--green);">&middot; image v2</span></div>
+          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">POST ANNOUNCEMENT <span style="color:var(--green);">&middot; v3 edit+active</span></div>
           <div class="auth-field">
             <label class="auth-label">Title</label>
             <input id="ann-title" class="auth-input" type="text" placeholder="Announcement title">
@@ -2575,7 +2575,8 @@ html[data-theme="light"] .theme-switch .knob { left: 22px; }
           </div>
           <div id="ann-error" class="error-msg"></div>
           <div id="ann-success" class="success-msg"></div>
-          <button class="red-btn" onclick="postAnnouncement()">POST ANNOUNCEMENT</button>
+          <button class="red-btn" id="ann-post-btn" onclick="postAnnouncement()">POST ANNOUNCEMENT</button>
+          <button id="ann-cancel-btn" onclick="cancelAnnEdit()" style="display:none;width:100%;background:transparent;border:none;color:var(--text3);padding:10px;font-size:13px;cursor:pointer;margin-top:4px;">Cancel edit</button>
         </div>
         <div class="section-card">
           <div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.5px;margin-bottom:10px;">PAST ANNOUNCEMENTS</div>
@@ -4207,7 +4208,7 @@ function enterApp(user) {
   setTimeout(function() { checkMT5ConnectionNotification(); }, 1200);
   loadActiveAccount().then(async function(){
     var shown = await checkAndShowAnnouncement();
-    if(!shown) checkCampaignBanner();
+    if(shown){ _pendingCampaignAfterAnn = true; } else { checkCampaignBanner(); }
   });
   loadAFTPrices();
   refreshActiveBalance();
@@ -5742,16 +5743,81 @@ async function loadAdminAnnouncements() {
   var el = document.getElementById('admin-ann-list');
   if(!el || !db) return;
   try {
-    var res = await db.from('announcements').select('*').order('created_at',{ascending:false}).limit(10);
+    var res = await db.from('announcements').select('*').order('created_at',{ascending:false}).limit(20);
     if(!res.data || !res.data.length) { el.innerHTML = '<div class="empty-state" style="padding:16px;"><i class="ti ti-speakerphone"></i>No announcements yet</div>'; return; }
-    el.innerHTML = res.data.map(function(a) {
-      return '<div style="padding:10px 0;border-bottom:1px solid var(--border);">' +
-        '<div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:2px;">' + (a.title||'Announcement') + '</div>' +
-        '<div style="font-size:11px;color:var(--text2);margin-bottom:4px;">' + (a.message||'').substring(0,100) + '...</div>' +
-        '<div style="font-size:10px;color:var(--text3);">' + new Date(a.created_at).toLocaleDateString() + ' · ' + (a.target||'all') + '</div>' +
-      '</div>';
-    }).join('');
+    window._adminAnns = res.data;
+    el.innerHTML = '';
+    res.data.forEach(function(a){
+      var active = a.active!==false;
+      var statusTxt = active ? 'ACTIVE' : 'INACTIVE';
+      var statusCol = active ? 'var(--green)' : 'var(--text3)';
+      var statusBg = active ? 'rgba(0,200,122,0.12)' : 'rgba(255,255,255,0.05)';
+      var img = a.image_url ? '<img src="'+a.image_url+'" alt="" style="width:40px;height:40px;border-radius:7px;object-fit:cover;flex-shrink:0;">' : '';
+      var snip = (a.message||'').substring(0,80) + ((a.message||'').length>80?'...':'');
+      var card=document.createElement('div');
+      card.style.cssText='padding:12px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;';
+      card.innerHTML =
+        '<div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;">'+
+          img+
+          '<div style="flex:1;min-width:0;">'+
+            '<div style="font-size:13px;font-weight:700;color:var(--text);">'+(a.title||'Announcement')+'</div>'+
+            '<div style="font-size:11px;color:var(--text2);margin:2px 0;">'+snip+'</div>'+
+            '<div style="font-size:10px;color:var(--text3);">'+new Date(a.created_at).toLocaleDateString()+' &middot; '+(a.target||'all')+'</div>'+
+          '</div>'+
+          '<div style="font-size:9px;font-weight:700;padding:3px 8px;border-radius:5px;background:'+statusBg+';color:'+statusCol+';flex-shrink:0;">'+statusTxt+'</div>'+
+        '</div>';
+      var row=document.createElement('div'); row.style.cssText='display:flex;gap:6px;';
+      var bE=document.createElement('button'); bE.textContent='Edit'; bE.style.cssText=mt5BtnStyle('blue'); bE.addEventListener('click',function(){ editAnnouncement(a.id); }); row.appendChild(bE);
+      var bA=document.createElement('button'); bA.textContent=active?'Deactivate':'Activate'; bA.style.cssText=mt5BtnStyle(active?'amber':'green'); bA.addEventListener('click',function(){ toggleAnnActive(a.id, !active); }); row.appendChild(bA);
+      var bD=document.createElement('button'); bD.textContent='Delete'; bD.style.cssText=mt5BtnStyle('red'); bD.addEventListener('click',function(){ deleteAnnouncement(a.id); }); row.appendChild(bD);
+      card.appendChild(row);
+      el.appendChild(card);
+    });
   } catch(e) {}
+}
+function editAnnouncement(id){
+  var a = (window._adminAnns||[]).filter(function(x){return x.id===id;})[0];
+  if(!a) return;
+  _editingAnnId = id;
+  document.getElementById('ann-title').value = a.title||'';
+  document.getElementById('ann-message').value = a.message||'';
+  var tg=document.getElementById('ann-target'); if(tg) tg.value = a.target||'all';
+  _annImageData = a.image_url || null;
+  var prev=document.getElementById('ann-img-preview'); var prevEl=document.getElementById('ann-img-preview-el');
+  if(a.image_url){ if(prevEl) prevEl.src=a.image_url; if(prev) prev.style.display='block'; } else { if(prev) prev.style.display='none'; }
+  var pb=document.getElementById('ann-post-btn'); if(pb) pb.textContent='UPDATE ANNOUNCEMENT';
+  var cb=document.getElementById('ann-cancel-btn'); if(cb) cb.style.display='block';
+  var err=document.getElementById('ann-error'); if(err) err.style.display='none';
+  var suc=document.getElementById('ann-success'); if(suc) suc.style.display='none';
+  try{ document.getElementById('ann-title').scrollIntoView({behavior:'smooth',block:'center'}); }catch(e){}
+}
+function cancelAnnEdit(){
+  _editingAnnId = null;
+  document.getElementById('ann-title').value='';
+  document.getElementById('ann-message').value='';
+  var tg=document.getElementById('ann-target'); if(tg) tg.value='all';
+  var fimg=document.getElementById('ann-image'); if(fimg) fimg.value='';
+  _annImageData=null;
+  var prev=document.getElementById('ann-img-preview'); if(prev) prev.style.display='none';
+  var pb=document.getElementById('ann-post-btn'); if(pb) pb.textContent='POST ANNOUNCEMENT';
+  var cb=document.getElementById('ann-cancel-btn'); if(cb) cb.style.display='none';
+}
+async function toggleAnnActive(id, makeActive){
+  try {
+    var upd = { active: !!makeActive };
+    if(makeActive) upd.updated_at = new Date().toISOString();
+    var r = await db.from('announcements').update(upd).eq('id', id);
+    if(r&&r.error) throw r.error;
+    loadAdminAnnouncements();
+  } catch(e){ alert('Could not update: '+(e.message||'failed')); }
+}
+async function deleteAnnouncement(id){
+  if(!window.confirm('Delete this announcement?')) return;
+  try {
+    var r = await db.from('announcements').delete().eq('id', id);
+    if(r&&r.error) throw r.error;
+    loadAdminAnnouncements();
+  } catch(e){ alert('Could not delete: '+(e.message||'failed')); }
 }
 
 var _annImageData = null;
@@ -5772,6 +5838,7 @@ function onAnnImagePick(e){
   rd.onload = function(){ _annImageData = rd.result; if(prevEl) prevEl.src = rd.result; if(prev) prev.style.display='block'; if(errEl) errEl.style.display='none'; };
   rd.readAsDataURL(f);
 }
+var _editingAnnId = null;
 async function postAnnouncement() {
   var title = document.getElementById('ann-title').value.trim();
   var message = document.getElementById('ann-message').value.trim();
@@ -5781,27 +5848,22 @@ async function postAnnouncement() {
   errEl.style.display = 'none'; sucEl.style.display = 'none';
   if(!title) { errEl.textContent = 'Please enter a title'; errEl.style.display = 'block'; return; }
   if(!message) { errEl.textContent = 'Please enter a message'; errEl.style.display = 'block'; return; }
+  var nowIso = new Date().toISOString();
   try {
-    var result = await db.from('announcements').insert([{
-      title: title,
-      message: message,
-      target: target,
-      image_url: _annImageData || null,
-      admin_id: currentUser ? currentUser.id : null,
-      created_at: new Date().toISOString()
-    }]);
+    var result;
+    if(_editingAnnId){
+      result = await db.from('announcements').update({ title:title, message:message, target:target, image_url:_annImageData||null, active:true, updated_at:nowIso }).eq('id', _editingAnnId);
+    } else {
+      result = await db.from('announcements').insert([{ title:title, message:message, target:target, image_url:_annImageData||null, active:true, admin_id:(currentUser?currentUser.id:null), created_at:nowIso, updated_at:nowIso }]);
+    }
     if(result.error) {
       errEl.textContent = 'DB Error: ' + result.error.message;
       errEl.style.display = 'block';
       return;
     }
-    sucEl.textContent = 'Announcement posted successfully!';
+    sucEl.textContent = _editingAnnId ? 'Announcement updated!' : 'Announcement posted successfully!';
     sucEl.style.display = 'block';
-    document.getElementById('ann-title').value = '';
-    document.getElementById('ann-message').value = '';
-    var fimg=document.getElementById('ann-image'); if(fimg) fimg.value='';
-    _annImageData=null;
-    var prev=document.getElementById('ann-img-preview'); if(prev) prev.style.display='none';
+    cancelAnnEdit();
     loadAdminAnnouncements();
   } catch(e) {
     console.error('postAnnouncement error:', e);
@@ -5811,25 +5873,29 @@ async function postAnnouncement() {
 }
 
 // ── ANNOUNCEMENT POPUP ON DASHBOARD ──
+function annKey(a){ return String(a.id)+'::'+String(a.updated_at||a.created_at||a.id); }
 async function checkAndShowAnnouncement() {
   if(!db) return false;
   try {
-    var res = await db.from('announcements').select('*').order('created_at',{ascending:false}).limit(1);
-    if(res.error) return false;
-    if(!res.data || !res.data.length) return false;
-    var ann = res.data[0];
-    var lastSeen = localStorage.getItem('last_ann_seen');
-    if(lastSeen === String(ann.id)) return false;
+    var res = await db.from('announcements').select('*').order('created_at',{ascending:false}).limit(20);
+    if(res.error || !res.data || !res.data.length) return false;
+    var actives = res.data.filter(function(a){ return a.active!==false; });
+    if(!actives.length) return false;
+    actives.sort(function(x,y){ return new Date(y.updated_at||y.created_at) - new Date(x.updated_at||x.created_at); });
+    var ann = actives[0];
     if(ann.target === 'premium' && !isPremiumUser()) return false;
+    var lastSeen = localStorage.getItem('last_ann_seen');
+    if(lastSeen === annKey(ann)) return false;
     showAnnouncementPopup(ann);
     return true;
   } catch(e) { return false; }
 }
 
-var _annCurrentId = null;
+var _annCurrentKey = null;
+var _pendingCampaignAfterAnn = false;
 function showAnnouncementPopup(ann) {
   if(!ann) return;
-  _annCurrentId = ann.id;
+  _annCurrentKey = annKey(ann);
   var img=document.getElementById('ann-pop-img');
   if(img){ if(ann.image_url){ img.src=ann.image_url; img.style.display='block'; } else { img.style.display='none'; img.removeAttribute('src'); } }
   var t=document.getElementById('ann-pop-title'); if(t) t.textContent=ann.title||'';
@@ -5838,7 +5904,8 @@ function showAnnouncementPopup(ann) {
 }
 function closeAnnouncementPopup() {
   var p=document.getElementById('announcement-popup'); if(p) p.style.display='none';
-  if(_annCurrentId!=null){ try{ localStorage.setItem('last_ann_seen', String(_annCurrentId)); }catch(e){} }
+  if(_annCurrentKey){ try{ localStorage.setItem('last_ann_seen', _annCurrentKey); }catch(e){} }
+  if(_pendingCampaignAfterAnn){ _pendingCampaignAfterAnn=false; checkCampaignBanner(); }
 }
 
 
