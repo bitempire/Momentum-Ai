@@ -818,18 +818,30 @@ html[data-theme="light"] .theme-switch .knob { left: 22px; }
 .sig-card-dir.buy { background: rgba(0,200,122,0.12); color: var(--green); border: 1px solid rgba(0,200,122,0.2); }
 .sig-card-dir.sell { background: rgba(255,30,60,0.1); color: var(--red); border: 1px solid rgba(255,30,60,0.2); }
 .sig-card-levels {
-  display: grid;
-  grid-template-columns: 1.4fr 1fr 1fr;
+  display: flex;
+  flex-direction: column;
   gap: 6px;
   margin-bottom: 12px;
 }
+.sig-level-row2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+.sig-level-wide {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.sig-level-wide .sig-level-lbl { margin-bottom: 0; }
 .sig-level {
   background: var(--bg3);
   border-radius: 8px;
   padding: 8px 9px;
 }
 .sig-level-lbl { font-size: 8px; color: var(--text3); letter-spacing: 0.6px; text-transform: uppercase; margin-bottom: 4px; }
-.sig-level-val { font-size: 13px; font-weight: 700; color: var(--text); }
+.sig-level-val { font-size: 13px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .sig-level-val.sl { color: var(--red); }
 .sig-level-val.tp { color: var(--green); }
 .sig-card-footer {
@@ -2573,7 +2585,7 @@ html[data-theme="light"] .theme-switch .knob { left: 22px; }
       <!-- ── ANNOUNCEMENTS TAB ── -->
       <div id="atab-content-announce" style="display:none;">
         <div class="section-card" style="margin-bottom:12px;">
-          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">POST ANNOUNCEMENT <span style="color:var(--green);">&middot; v10 entry-zone</span></div>
+          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">POST ANNOUNCEMENT <span style="color:var(--green);">&middot; v12 entry-fullrow</span></div>
           <div class="auth-field">
             <label class="auth-label">Title</label>
             <input id="ann-title" class="auth-input" type="text" placeholder="Announcement title">
@@ -4852,19 +4864,18 @@ async function loadSignalsFeed() {
       var levels = document.createElement('div');
       levels.className = 'sig-card-levels';
       var _entryZone = fmtPrice(sig.pair, sig.entry_from) + ' – ' + fmtPrice(sig.pair, sig.entry_to);
-      [['Entry Zone', _entryZone, ''], ['Stop Loss', fmtPrice(sig.pair, sig.sl), ' sl'], ['Take Profit', fmtPrice(sig.pair, sig.tp1), ' tp']].forEach(function(lev) {
-        var lbox = document.createElement('div');
-        lbox.className = 'sig-level';
-        var llbl = document.createElement('div');
-        llbl.className = 'sig-level-lbl';
-        llbl.textContent = lev[0];
-        var lval = document.createElement('div');
-        lval.className = 'sig-level-val' + lev[2];
-        lval.textContent = lev[1] || '--';
-        lbox.appendChild(llbl);
-        lbox.appendChild(lval);
-        levels.appendChild(lbox);
-      });
+      function _mkLevel(lbl, val, cls){
+        var lbox=document.createElement('div'); lbox.className='sig-level';
+        var llbl=document.createElement('div'); llbl.className='sig-level-lbl'; llbl.textContent=lbl;
+        var lval=document.createElement('div'); lval.className='sig-level-val'+cls; lval.textContent=(val||'--');
+        lbox.appendChild(llbl); lbox.appendChild(lval); return lbox;
+      }
+      var _ezTile=_mkLevel('Entry Zone', _entryZone, ''); _ezTile.className='sig-level sig-level-wide';
+      levels.appendChild(_ezTile);
+      var _row2=document.createElement('div'); _row2.className='sig-level-row2';
+      _row2.appendChild(_mkLevel('Stop Loss', fmtPrice(sig.pair, sig.sl), ' sl'));
+      _row2.appendChild(_mkLevel('Take Profit', fmtPrice(sig.pair, sig.tp1), ' tp'));
+      levels.appendChild(_row2);
 
       // Footer row
       var footer = document.createElement('div');
@@ -6100,6 +6111,11 @@ function fmtPrice(pair,val){
   var n=parseFloat(val); if(isNaN(n)) return val;
   var d=mktDecimals(pair);
   return n.toLocaleString('en',{minimumFractionDigits:d,maximumFractionDigits:d});
+}
+function fmtZone(pair,val){
+  var s=fmtPrice(pair,val);
+  if(typeof s==='string' && s.indexOf('.')>-1){ s=s.replace(/0+$/,'').replace(/\.$/,''); }
+  return s;
 }
 function drawSpark(canvas){
   if(!canvas) return;
