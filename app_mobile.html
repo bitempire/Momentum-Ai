@@ -819,16 +819,16 @@ html[data-theme="light"] .theme-switch .knob { left: 22px; }
 .sig-card-dir.sell { background: rgba(255,30,60,0.1); color: var(--red); border: 1px solid rgba(255,30,60,0.2); }
 .sig-card-levels {
   display: grid;
-  grid-template-columns: repeat(4,1fr);
+  grid-template-columns: 1.4fr 1fr 1fr;
   gap: 6px;
   margin-bottom: 12px;
 }
 .sig-level {
   background: var(--bg3);
   border-radius: 8px;
-  padding: 8px 7px;
+  padding: 8px 9px;
 }
-.sig-level-lbl { font-size: 9px; color: var(--text3); letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 3px; }
+.sig-level-lbl { font-size: 8px; color: var(--text3); letter-spacing: 0.6px; text-transform: uppercase; margin-bottom: 4px; }
 .sig-level-val { font-size: 13px; font-weight: 700; color: var(--text); }
 .sig-level-val.sl { color: var(--red); }
 .sig-level-val.tp { color: var(--green); }
@@ -2573,7 +2573,7 @@ html[data-theme="light"] .theme-switch .knob { left: 22px; }
       <!-- ── ANNOUNCEMENTS TAB ── -->
       <div id="atab-content-announce" style="display:none;">
         <div class="section-card" style="margin-bottom:12px;">
-          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">POST ANNOUNCEMENT <span style="color:var(--green);">&middot; v9 hero-icons</span></div>
+          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">POST ANNOUNCEMENT <span style="color:var(--green);">&middot; v10 entry-zone</span></div>
           <div class="auth-field">
             <label class="auth-label">Title</label>
             <input id="ann-title" class="auth-input" type="text" placeholder="Announcement title">
@@ -4851,7 +4851,8 @@ async function loadSignalsFeed() {
       // Levels row
       var levels = document.createElement('div');
       levels.className = 'sig-card-levels';
-      [['Entry From', sig.entry_from, ''], ['Entry To', sig.entry_to, ''], ['Stop Loss', sig.sl, ' sl'], ['Take Profit', sig.tp1, ' tp']].forEach(function(lev) {
+      var _entryZone = fmtPrice(sig.pair, sig.entry_from) + ' – ' + fmtPrice(sig.pair, sig.entry_to);
+      [['Entry Zone', _entryZone, ''], ['Stop Loss', fmtPrice(sig.pair, sig.sl), ' sl'], ['Take Profit', fmtPrice(sig.pair, sig.tp1), ' tp']].forEach(function(lev) {
         var lbox = document.createElement('div');
         lbox.className = 'sig-level';
         var llbl = document.createElement('div');
