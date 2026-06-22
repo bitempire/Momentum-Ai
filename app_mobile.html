@@ -4500,8 +4500,7 @@ async function checkCampaignBanner(){
   if(!currentUser) return;
   var role=currentUser.role;
   if(role==='admin'||role==='analyst'||role==='sub_admin') return;
-  var funded = activeAccount && activeAccount.balance!=null && activeAccount.balance!=='' && parseFloat(activeAccount.balance)>=100;
-  if(funded) return;
+  if(isPremiumUser()) return;
   try{ if(sessionStorage.getItem('momentum_campaign_dismissed')==='1') return; }catch(e){}
   try {
     var res=await db.from('promo_codes').select('*').eq('is_campaign', true);
