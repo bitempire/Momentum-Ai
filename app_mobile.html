@@ -1580,10 +1580,8 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
           <option value="USDJPY">USDJPY</option>
           <option value="US30">US30</option>
         </select>
-        <select id="filter-direction" class="auth-input" style="flex:1;min-width:80px;padding:9px 12px;font-size:12px;" onchange="applySignalFilters()">
-          <option value="">Buy & Sell</option>
-          <option value="BUY">Buy Only</option>
-          <option value="SELL">Sell Only</option>
+        <select id="filter-analyst" class="auth-input" style="flex:1;min-width:90px;padding:9px 12px;font-size:12px;" onchange="applySignalFilters()">
+          <option value="">All Analysts</option>
         </select>
         <select id="filter-timeframe" class="auth-input" style="flex:1;min-width:80px;padding:9px 12px;font-size:12px;" onchange="applySignalFilters()">
           <option value="">Timeframe</option>
@@ -2594,7 +2592,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <!-- ── ANNOUNCEMENTS TAB ── -->
       <div id="atab-content-announce" style="display:none;">
         <div class="section-card" style="margin-bottom:12px;">
-          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">POST ANNOUNCEMENT <span style="color:var(--green);">&middot; v17 logo-tight</span></div>
+          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">POST ANNOUNCEMENT <span style="color:var(--green);">&middot; v18 analyst-filter</span></div>
           <div class="auth-field">
             <label class="auth-label">Title</label>
             <input id="ann-title" class="auth-input" type="text" placeholder="Announcement title">
@@ -4841,6 +4839,7 @@ async function loadSignalsFeed() {
       card.setAttribute('data-pair', sig.pair.toLowerCase());
       card.setAttribute('data-dir', sig.direction);
       card.setAttribute('data-tf', sig.timeframe||'');
+      card.setAttribute('data-analyst', (sig.analyst_name||'').toLowerCase());
 
       // Top row
       var top = document.createElement('div');
@@ -4916,6 +4915,29 @@ async function loadSignalsFeed() {
       card.appendChild(footer);
       container.appendChild(card);
     });
+    // Populate analyst filter dropdown from loaded signals
+    try {
+      var _aSel = document.getElementById('filter-analyst');
+      if(_aSel){
+        var _cur = _aSel.value;
+        var _seen = {}, _names = [];
+        res.data.forEach(function(s){
+          var n = (s.analyst_name||'').trim();
+          if(n && !_seen[n.toLowerCase()]){ _seen[n.toLowerCase()] = 1; _names.push(n); }
+        });
+        _names.sort(function(a,b){ return a.toLowerCase().localeCompare(b.toLowerCase()); });
+        _aSel.innerHTML = '';
+        var _optAll = document.createElement('option');
+        _optAll.value = ''; _optAll.textContent = 'All Analysts';
+        _aSel.appendChild(_optAll);
+        _names.forEach(function(n){
+          var o = document.createElement('option');
+          o.value = n.toLowerCase(); o.textContent = n;
+          _aSel.appendChild(o);
+        });
+        _aSel.value = _cur; // preserve current selection across reloads
+      }
+    } catch(e){}
   } catch(e) { container.innerHTML = '<div class="empty-state">Error loading signals</div>'; }
 }
 
@@ -5392,15 +5414,16 @@ function timeAgo(dateStr) {
 }
 function applySignalFilters() {
   var symbol = document.getElementById('filter-symbol').value.toLowerCase();
-  var direction = document.getElementById('filter-direction').value.toUpperCase();
+  var analystEl = document.getElementById('filter-analyst');
+  var analyst = (analystEl ? analystEl.value : '').toLowerCase();
   var timeframe = document.getElementById('filter-timeframe').value;
   document.querySelectorAll('.sig-card').forEach(function(card) {
     var pair = (card.dataset.pair || '').toLowerCase();
-    var dir = (card.dataset.dir || '').toUpperCase();
+    var an = (card.dataset.analyst || '').toLowerCase();
     var tf = (card.dataset.tf || '');
     var show = true;
     if(symbol && pair.indexOf(symbol) === -1) show = false;
-    if(direction && dir !== direction) show = false;
+    if(analyst && an !== analyst) show = false;
     if(timeframe && tf !== timeframe) show = false;
     card.style.display = show ? '' : 'none';
   });
