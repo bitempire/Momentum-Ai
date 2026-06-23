@@ -967,6 +967,55 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
   transition: all 0.2s;
 }
 .chart-tf.active { background: var(--grad); color: #fff; border-color: transparent; }
+.chart-tf { flex-shrink: 0; white-space: nowrap; }
+.chart-tf-row::-webkit-scrollbar { display: none; }
+.chart-type-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 9px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.chart-type-btn > i:first-child { font-size: 16px; color: var(--text); }
+.chart-type-menu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 200;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 152px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 5px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+.chart-type-menu.open { display: flex; }
+.chart-type-menu button {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  padding: 9px 11px;
+  background: transparent;
+  border: none;
+  border-radius: 7px;
+  color: var(--text2);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+}
+.chart-type-menu button i { font-size: 16px; }
+.chart-type-menu button:hover { background: var(--surface); }
+.chart-type-menu button.active { background: var(--surface); color: var(--text); }
+.chart-type-menu button.active i { color: var(--red); }
 .chart-container {
   width: 100%;
   height: 320px;
@@ -1653,15 +1702,28 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         <button class="chart-pair-btn" onclick="quickSymbol('GBPUSD',this)">GBPUSD</button>
         <button class="chart-pair-btn" onclick="quickSymbol('US30',this)">US30</button>
       </div>
-      <div class="chart-tf-row">
-        <button class="chart-tf" onclick="switchTF('1',this)">1m</button>
-        <button class="chart-tf" onclick="switchTF('5',this)">5m</button>
-        <button class="chart-tf" onclick="switchTF('15',this)">15m</button>
-        <button class="chart-tf active" onclick="switchTF('60',this)">1H</button>
-        <button class="chart-tf" onclick="switchTF('240',this)">4H</button>
-        <button class="chart-tf" onclick="switchTF('D',this)">1D</button>
-        <button class="chart-tf" onclick="switchTF('W',this)">1W</button>
-        <button class="chart-tf" onclick="switchTF('M',this)">1M</button>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;">
+        <div class="chart-tf-row" style="flex:1;min-width:0;overflow-x:auto;margin-bottom:0;-webkit-overflow-scrolling:touch;">
+          <button class="chart-tf" onclick="switchTF('1',this)">1m</button>
+          <button class="chart-tf" onclick="switchTF('5',this)">5m</button>
+          <button class="chart-tf" onclick="switchTF('15',this)">15m</button>
+          <button class="chart-tf active" onclick="switchTF('60',this)">1H</button>
+          <button class="chart-tf" onclick="switchTF('240',this)">4H</button>
+          <button class="chart-tf" onclick="switchTF('D',this)">1D</button>
+          <button class="chart-tf" onclick="switchTF('W',this)">1W</button>
+          <button class="chart-tf" onclick="switchTF('M',this)">1M</button>
+        </div>
+        <div style="position:relative;flex-shrink:0;">
+          <button id="chart-type-btn" class="chart-type-btn" onclick="toggleChartTypeMenu(event)" aria-label="Chart type">
+            <i class="ti ti-chart-candle" id="chart-type-icon"></i>
+            <i class="ti ti-chevron-down" style="font-size:12px;color:var(--text3);"></i>
+          </button>
+          <div id="chart-type-menu" class="chart-type-menu">
+            <button class="active" onclick="setChartType('1',this)"><i class="ti ti-chart-candle"></i><span>Candlestick</span></button>
+            <button onclick="setChartType('8',this)"><i class="ti ti-chart-candle"></i><span>Heikin Ashi</span></button>
+            <button onclick="setChartType('2',this)"><i class="ti ti-chart-line"></i><span>Line</span></button>
+          </div>
+        </div>
       </div>
       <div id="mob-tv-container" style="width:100%;min-height:320px;border-radius:10px;overflow:hidden;"></div>
 
@@ -2620,7 +2682,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <!-- ── ANNOUNCEMENTS TAB ── -->
       <div id="atab-content-announce" style="display:none;">
         <div class="section-card" style="margin-bottom:12px;">
-          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">POST ANNOUNCEMENT <span style="color:var(--green);">&middot; v19 nav-island</span></div>
+          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">POST ANNOUNCEMENT <span style="color:var(--green);">&middot; v20 chart-type</span></div>
           <div class="auth-field">
             <label class="auth-label">Title</label>
             <input id="ann-title" class="auth-input" type="text" placeholder="Announcement title">
@@ -5228,6 +5290,7 @@ function armedCountdown(id, btn, origText){
 var tvWidget = null;
 var currentPair = 'XAUUSD';
 var currentTF = '60';
+var currentChartStyle = '1';
 function initTVChart() {
   var container = document.getElementById('mob-tv-container');
   if(!container) return;
@@ -5250,7 +5313,7 @@ function initTVChart() {
     'symbol=' + sym +
     '&interval=' + tf +
     '&theme=' + (document.documentElement.getAttribute('data-theme')==='light'?'light':'dark') +
-    '&style=2' +
+    '&style=' + (currentChartStyle||'1') +
     '&disabled_features=' + encodeURIComponent('["create_volume_indicator_by_default"]') +
     '&overrides=' + encodeURIComponent('{"mainSeriesProperties.lineStyle.color":"#FF1E3C"}') +
     '&locale=en' +
@@ -5288,6 +5351,28 @@ function switchTF(tf, btn) {
   btn.classList.add('active');
   initTVChart();
 }
+function toggleChartTypeMenu(e) {
+  if(e) e.stopPropagation();
+  var menu = document.getElementById('chart-type-menu');
+  if(menu) menu.classList.toggle('open');
+}
+function setChartType(style, btn) {
+  currentChartStyle = style;
+  var icon = document.getElementById('chart-type-icon');
+  if(icon) icon.className = 'ti ' + (style === '2' ? 'ti-chart-line' : 'ti-chart-candle');
+  document.querySelectorAll('#chart-type-menu button').forEach(function(b) { b.classList.remove('active'); });
+  if(btn) btn.classList.add('active');
+  var menu = document.getElementById('chart-type-menu');
+  if(menu) menu.classList.remove('open');
+  initTVChart();
+}
+document.addEventListener('click', function(ev) {
+  var menu = document.getElementById('chart-type-menu');
+  var btn = document.getElementById('chart-type-btn');
+  if(menu && menu.classList.contains('open') && !menu.contains(ev.target) && btn && !btn.contains(ev.target)) {
+    menu.classList.remove('open');
+  }
+});
 
 // ── SPARKLINES ──
 function drawSparklines() {
