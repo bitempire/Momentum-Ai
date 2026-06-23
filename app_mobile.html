@@ -1943,62 +1943,61 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 
     <!-- ── TAB: MORE ── -->
     <div id="tab-more" class="app-tab" style="display:none;">
-      <div class="section-title" style="margin-bottom:14px;">More <span>Options</span></div>
-      <div class="more-menu-item" onclick="showSubScreen('sub-profile')">
-        <div class="more-menu-icon"><i class="ti ti-user-circle"></i></div>
-        <div class="more-menu-text"><div class="more-menu-label">My Profile</div><div class="more-menu-sub">Account details & MT5 info</div></div>
-        <i class="ti ti-chevron-right more-menu-arrow"></i>
-      </div>
-      <div class="more-menu-item" onclick="showSubScreen('sub-trade-settings')">
-        <div class="more-menu-icon"><i class="ti ti-adjustments-alt"></i></div>
-        <div class="more-menu-text"><div class="more-menu-label">Trade Settings <i class="ti ti-crown" style="font-size:12px;color:var(--gold);margin-left:4px;"></i></div><div class="more-menu-sub">Smart Tool, Auto Trade configuration</div></div>
-        <i class="ti ti-chevron-right more-menu-arrow"></i>
-      </div>
-      <div class="more-menu-item" onclick="showSubScreen('sub-news')">
-        <div class="more-menu-icon"><i class="ti ti-calendar-event"></i></div>
-        <div class="more-menu-text"><div class="more-menu-label">News Calendar</div><div class="more-menu-sub">Economic events & alerts</div></div>
-        <i class="ti ti-chevron-right more-menu-arrow"></i>
-      </div>
-      <div class="more-menu-item" onclick="showSubScreen('sub-scanner')">
-        <div class="more-menu-icon"><i class="ti ti-radar"></i></div>
-        <div class="more-menu-text"><div class="more-menu-label">MAI Scanner <i class="ti ti-crown" style="font-size:12px;color:var(--gold);margin-left:4px;"></i></div><div class="more-menu-sub">AI-powered market scanner</div></div>
-        <i class="ti ti-chevron-right more-menu-arrow"></i>
-      </div>
-      <div class="more-menu-item" onclick="showSubScreen('sub-leaderboard')">
-        <div class="more-menu-icon"><i class="ti ti-trophy"></i></div>
-        <div class="more-menu-text"><div class="more-menu-label">Leaderboard <i class="ti ti-crown" style="font-size:12px;color:var(--gold);margin-left:4px;"></i></div><div class="more-menu-sub">Top performing traders</div></div>
-        <i class="ti ti-chevron-right more-menu-arrow"></i>
-      </div>
-      <div class="more-menu-item" onclick="showSubScreen('sub-fund')">
-        <div class="more-menu-icon"><i class="ti ti-chart-pie"></i></div>
-        <div class="more-menu-text"><div class="more-menu-label">Fund Management</div><div class="more-menu-sub">View and follow trading funds</div></div>
-        <i class="ti ti-chevron-right more-menu-arrow"></i>
+
+      <!-- Header chip -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <div style="display:flex;align-items:center;gap:11px;">
+          <span id="more-avatar" style="width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#3a2226,#1a1015);border:1px solid rgba(255,30,60,0.45);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:var(--red);">--</span>
+          <div><div id="more-name" style="font-size:15px;color:var(--text);font-weight:700;">Trader</div><div id="more-tier-text" style="font-size:11px;color:var(--red);">Member</div></div>
+        </div>
+        <span style="width:40px;height:40px;border-radius:50%;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;"><i class="ti ti-bell" style="font-size:19px;color:var(--text2);"></i></span>
       </div>
 
-      <div class="more-menu-item" onclick="showSubScreen('sub-academy')">
-        <div class="more-menu-icon"><i class="ti ti-school"></i></div>
-        <div class="more-menu-text"><div class="more-menu-label">Trading Academy</div><div class="more-menu-sub">Learn to trade professionally</div></div>
-        <i class="ti ti-chevron-right more-menu-arrow"></i>
+      <!-- Member / balance card -->
+      <div style="position:relative;overflow:hidden;background:linear-gradient(150deg,#211318,#101015);border:1px solid rgba(255,30,60,0.18);border-radius:22px;padding:18px;margin-bottom:18px;">
+        <div style="position:absolute;top:-40px;right:-30px;width:130px;height:130px;border-radius:50%;background:radial-gradient(circle,rgba(255,30,60,0.2),transparent 70%);"></div>
+        <div style="position:relative;display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+          <div style="display:flex;align-items:center;gap:7px;"><span style="width:20px;height:20px;border-radius:6px;background:var(--red);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;">M</span><span style="font-size:10px;letter-spacing:2px;color:#b9b9c0;font-weight:600;">MOMENTUM AI</span></div>
+          <span id="more-tier-badge" style="display:flex;align-items:center;gap:4px;font-size:9px;letter-spacing:.5px;color:#3A2A05;background:var(--gold);padding:4px 9px;border-radius:7px;font-weight:700;"><i class="ti ti-crown" style="font-size:10px;"></i> PREMIUM</span>
+        </div>
+        <div style="position:relative;font-size:12px;color:#9a9aa6;margin-bottom:3px;">Total Balance</div>
+        <div style="position:relative;display:flex;align-items:baseline;gap:9px;margin-bottom:16px;"><span id="more-balance" style="font-size:28px;color:#fff;font-weight:800;letter-spacing:-.5px;">$0.00</span><span id="more-balance-change" style="font-size:11px;color:var(--green);font-weight:600;"></span></div>
+        <div style="position:relative;display:flex;justify-content:space-between;gap:6px;">
+          <div onclick="showSubScreen('sub-scanner')" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;"><span style="width:46px;height:46px;border-radius:14px;background:#2a1a1e;border:1px solid rgba(255,30,60,0.2);display:flex;align-items:center;justify-content:center;"><i class="ti ti-radar-2" style="font-size:20px;color:#FF5066;"></i></span><span style="font-size:10px;color:#b9b9c0;text-align:center;line-height:1.2;">MAI Scanner</span></div>
+          <div onclick="showSubScreen('sub-fund')" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;"><span style="width:46px;height:46px;border-radius:14px;background:#2a1a1e;border:1px solid rgba(255,30,60,0.2);display:flex;align-items:center;justify-content:center;"><i class="ti ti-chart-pie" style="font-size:20px;color:#FF5066;"></i></span><span style="font-size:10px;color:#b9b9c0;text-align:center;line-height:1.2;">Fund Mgmt</span></div>
+          <div onclick="showSubScreen('sub-trade-settings')" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;"><span style="width:46px;height:46px;border-radius:14px;background:#2a1a1e;border:1px solid rgba(255,30,60,0.2);display:flex;align-items:center;justify-content:center;"><i class="ti ti-robot" style="font-size:20px;color:#FF5066;"></i></span><span style="font-size:10px;color:#b9b9c0;text-align:center;line-height:1.2;">MAI Tools</span></div>
+          <div onclick="showSubScreen('sub-profile')" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;"><span style="width:46px;height:46px;border-radius:14px;background:#2a1a1e;border:1px solid rgba(255,30,60,0.2);display:flex;align-items:center;justify-content:center;"><i class="ti ti-user" style="font-size:20px;color:#FF5066;"></i></span><span style="font-size:10px;color:#b9b9c0;text-align:center;line-height:1.2;">Profile</span></div>
+        </div>
       </div>
-      <div class="more-menu-item" onclick="showSubScreen('sub-support')">
-        <div class="more-menu-icon"><i class="ti ti-headset"></i></div>
-        <div class="more-menu-text"><div class="more-menu-label">Customer Support</div><div class="more-menu-sub">Get help from our team</div></div>
-        <i class="ti ti-chevron-right more-menu-arrow"></i>
+
+      <!-- Leaderboard -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <span style="font-size:14px;color:var(--text);font-weight:700;">Leaderboard</span>
+        <span onclick="showSubScreen('sub-leaderboard')" style="font-size:11px;color:var(--red);cursor:pointer;">View all</span>
       </div>
-      <div class="more-menu-item" onclick="showSubScreen('sub-followus')">
-        <div class="more-menu-icon"><i class="ti ti-share"></i></div>
-        <div class="more-menu-text"><div class="more-menu-label">Follow Us</div><div class="more-menu-sub">Connect on social media</div></div>
-        <i class="ti ti-chevron-right more-menu-arrow"></i>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:14px;margin-bottom:18px;">
+        <div style="display:flex;gap:5px;background:var(--bg3);border-radius:12px;padding:4px;margin-bottom:15px;">
+          <div id="more-leader-tab-profit" onclick="switchLeaderTab('profit')" style="flex:1;text-align:center;font-size:12px;font-weight:700;color:#fff;background:var(--red);border-radius:9px;padding:8px 0;cursor:pointer;transition:all .2s;">Top Profit</div>
+          <div id="more-leader-tab-volume" onclick="switchLeaderTab('volume')" style="flex:1;text-align:center;font-size:12px;font-weight:700;color:var(--text3);background:transparent;border-radius:9px;padding:8px 0;cursor:pointer;transition:all .2s;">Top Volume</div>
+        </div>
+        <div id="more-leader-body"></div>
       </div>
-      <div class="more-menu-item" id="admin-menu-item" style="display:none;" onclick="openAdminPanel()">
-        <div class="more-menu-icon"><i class="ti ti-shield-lock"></i></div>
-        <div class="more-menu-text"><div class="more-menu-label">Admin Panel</div><div class="more-menu-sub">Manage users & signals</div></div>
-        <i class="ti ti-chevron-right more-menu-arrow"></i>
+
+      <!-- More services -->
+      <div style="font-size:14px;color:var(--text);font-weight:700;margin-bottom:10px;">More services</div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:4px 14px;margin-bottom:18px;">
+        <div onclick="showSubScreen('sub-academy')" style="display:flex;align-items:center;gap:13px;padding:13px 0;border-bottom:1px solid var(--border);cursor:pointer;"><span style="width:38px;height:38px;border-radius:11px;background:rgba(255,30,60,0.12);display:flex;align-items:center;justify-content:center;"><i class="ti ti-school" style="font-size:19px;color:var(--red);"></i></span><div style="flex:1;font-size:14px;color:var(--text);font-weight:600;">Trading Academy</div><i class="ti ti-chevron-right" style="font-size:17px;color:var(--text3);"></i></div>
+        <div onclick="showSubScreen('sub-news')" style="display:flex;align-items:center;gap:13px;padding:13px 0;border-bottom:1px solid var(--border);cursor:pointer;"><span style="width:38px;height:38px;border-radius:11px;background:rgba(255,30,60,0.12);display:flex;align-items:center;justify-content:center;"><i class="ti ti-calendar" style="font-size:19px;color:var(--red);"></i></span><div style="flex:1;font-size:14px;color:var(--text);font-weight:600;">News Calendar</div><i class="ti ti-chevron-right" style="font-size:17px;color:var(--text3);"></i></div>
+        <div onclick="comingSoonToast('Notifications')" style="display:flex;align-items:center;gap:13px;padding:13px 0;cursor:pointer;"><span style="width:38px;height:38px;border-radius:11px;background:var(--bg3);display:flex;align-items:center;justify-content:center;"><i class="ti ti-bell" style="font-size:19px;color:var(--text3);"></i></span><div style="flex:1;font-size:14px;color:var(--text);font-weight:600;">Notification</div><span style="font-size:9px;font-weight:700;letter-spacing:.5px;color:var(--text3);background:var(--bg3);padding:3px 8px;border-radius:6px;">SOON</span></div>
       </div>
-      <div class="divider-line"></div>
-      <div class="more-menu-item danger" onclick="handleLogout()">
-        <div class="more-menu-icon"><i class="ti ti-logout"></i></div>
-        <div class="more-menu-text"><div class="more-menu-label">Sign Out</div></div>
+
+      <!-- Others -->
+      <div style="font-size:14px;color:var(--text);font-weight:700;margin-bottom:10px;">Others</div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:4px 14px;">
+        <div onclick="showSubScreen('sub-support')" style="display:flex;align-items:center;gap:13px;padding:13px 0;border-bottom:1px solid var(--border);cursor:pointer;"><span style="width:38px;height:38px;border-radius:11px;background:rgba(255,30,60,0.12);display:flex;align-items:center;justify-content:center;"><i class="ti ti-headset" style="font-size:19px;color:var(--red);"></i></span><div style="flex:1;font-size:14px;color:var(--text);font-weight:600;">Customer Support</div><i class="ti ti-chevron-right" style="font-size:17px;color:var(--text3);"></i></div>
+        <div onclick="showSubScreen('sub-followus')" style="display:flex;align-items:center;gap:13px;padding:13px 0;border-bottom:1px solid var(--border);cursor:pointer;"><span style="width:38px;height:38px;border-radius:11px;background:rgba(255,30,60,0.12);display:flex;align-items:center;justify-content:center;"><i class="ti ti-share" style="font-size:19px;color:var(--red);"></i></span><div style="flex:1;font-size:14px;color:var(--text);font-weight:600;">Follow Us</div><i class="ti ti-chevron-right" style="font-size:17px;color:var(--text3);"></i></div>
+        <div id="admin-menu-item" style="display:none;align-items:center;gap:13px;padding:13px 0;border-bottom:1px solid var(--border);cursor:pointer;" onclick="openAdminPanel()"><span style="width:38px;height:38px;border-radius:11px;background:rgba(255,30,60,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ti ti-shield-lock" style="font-size:19px;color:var(--red);"></i></span><div style="flex:1;font-size:14px;color:var(--text);font-weight:600;">Admin Panel</div><i class="ti ti-chevron-right" style="font-size:17px;color:var(--text3);"></i></div>
+        <div onclick="handleLogout()" style="display:flex;align-items:center;gap:13px;padding:13px 0;cursor:pointer;"><span style="width:38px;height:38px;border-radius:11px;background:rgba(255,30,60,0.18);display:flex;align-items:center;justify-content:center;"><i class="ti ti-logout" style="font-size:19px;color:var(--red);"></i></span><div style="flex:1;font-size:14px;color:var(--red);font-weight:600;">Sign Out</div></div>
       </div>
     </div>
 
@@ -2682,7 +2681,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <!-- ── ANNOUNCEMENTS TAB ── -->
       <div id="atab-content-announce" style="display:none;">
         <div class="section-card" style="margin-bottom:12px;">
-          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">POST ANNOUNCEMENT <span style="color:var(--green);">&middot; v20 chart-type</span></div>
+          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">POST ANNOUNCEMENT <span style="color:var(--green);">&middot; v21 more-tab</span></div>
           <div class="auth-field">
             <label class="auth-label">Title</label>
             <input id="ann-title" class="auth-input" type="text" placeholder="Announcement title">
@@ -4842,6 +4841,7 @@ function switchTab(tab) {
   if(tab==='charts') initTVChart();
   if(tab==='journal') { loadJournalData(); refreshActiveBalance(); }
   if(tab==='signals') loadSignalsFeed();
+  if(tab==='more') loadMoreTab();
   if(tab==='more'&&currentUser&&currentUser.role==='admin') loadAdminUsers();
 }
 
@@ -6405,6 +6405,7 @@ function checkDataFreshness(){
 // Shows the ACTIVE account's real balance (connector fills mt5_accounts.balance).
 function loadAccountStats() {
   renderChartEquityStrip();
+  if(document.getElementById('more-balance')) updateMoreBalance();
   if(!activeAccount) return;
   var bEl = document.getElementById('journal-balance');
   if(bEl && activeAccount.balance!=null && activeAccount.balance!=='') {
@@ -6432,6 +6433,101 @@ function renderChartEquityStrip() {
   if(eqC > balC)      eqEl.style.color = 'var(--green)';
   else if(eqC < balC) eqEl.style.color = 'var(--red)';
   else                eqEl.style.color = 'var(--text)';
+}
+
+// ── MORE TAB (member card + leaderboard) ──
+var _moreLeader = { profit: null, volume: null };
+function initialsFrom(name){
+  var parts = (name||'').trim().split(/\s+/);
+  if(!parts[0]) return '–';
+  if(parts.length === 1) return parts[0].substring(0,2).toUpperCase();
+  return (parts[0][0] + parts[parts.length-1][0]).toUpperCase();
+}
+function updateMoreBalance(){
+  var bEl = document.getElementById('more-balance');
+  if(!bEl) return;
+  var chEl = document.getElementById('more-balance-change');
+  if(!activeAccount || activeAccount.balance==null || activeAccount.balance===''){
+    bEl.textContent = '$0.00';
+    if(chEl) chEl.textContent = '';
+    return;
+  }
+  var bal = parseFloat(activeAccount.balance)||0;
+  bEl.textContent = '$'+bal.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2});
+  if(chEl){
+    if(activeAccount.equity!=null && activeAccount.equity!==''){
+      var eq = parseFloat(activeAccount.equity)||0, diff = eq-bal, dc = Math.round(diff*100);
+      if(dc !== 0){
+        chEl.textContent = (diff>0?'+ ':'- ')+'$'+Math.abs(diff).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2})+' floating';
+        chEl.style.color = diff>0 ? 'var(--green)' : 'var(--red)';
+      } else { chEl.textContent = ''; }
+    } else { chEl.textContent = ''; }
+  }
+}
+function renderMoreLeader(which){
+  var body = document.getElementById('more-leader-body');
+  if(!body) return;
+  var d = _moreLeader ? _moreLeader[which] : null;
+  if(!d || d.rank==null){
+    body.innerHTML =
+      '<div style="display:flex;align-items:center;gap:13px;">'+
+        '<span style="width:50px;height:50px;border-radius:15px;background:rgba(255,30,60,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ti ti-trophy" style="font-size:25px;color:#FF4D63;"></i></span>'+
+        '<div style="flex:1;"><div style="font-size:14px;color:var(--text);font-weight:700;">Not ranked yet</div><div style="font-size:11px;color:var(--text3);margin-top:2px;line-height:1.4;">Rankings open when the monthly challenge starts. Keep trading to claim your spot.</div></div>'+
+      '</div>'+
+      '<div style="height:8px;border-radius:99px;background:rgba(255,255,255,0.1);overflow:hidden;margin-top:12px;"><div style="height:100%;width:0%;border-radius:99px;background:var(--red);"></div></div>';
+    return;
+  }
+  var color = which==='profit' ? '#FF4D63' : '#5AA0E8';
+  var pct = Math.max(4, Math.min(100, Math.round((d.total - d.rank + 1)/d.total*100)));
+  var pctLabel = Math.max(1, Math.round(d.rank/d.total*100));
+  body.innerHTML =
+    '<div style="display:flex;align-items:center;gap:13px;margin-bottom:14px;">'+
+      '<span style="width:50px;height:50px;border-radius:15px;background:rgba(255,30,60,0.14);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ti ti-trophy" style="font-size:25px;color:'+color+';"></i></span>'+
+      '<div style="flex:1;"><div style="display:flex;align-items:baseline;gap:8px;"><span style="font-size:26px;color:var(--text);font-weight:800;line-height:1;">#'+d.rank+'</span><span style="font-size:12px;color:var(--text3);">of '+d.total+' traders</span></div>'+
+      '<div style="margin-top:5px;"><span style="font-size:9px;font-weight:700;letter-spacing:.5px;color:#fff;background:var(--red);padding:2px 7px;border-radius:5px;">TOP '+pctLabel+'%</span></div></div>'+
+    '</div>'+
+    '<div style="height:8px;border-radius:99px;background:rgba(255,255,255,0.1);overflow:hidden;"><div style="height:100%;width:'+pct+'%;border-radius:99px;background:'+color+';"></div></div>';
+}
+function switchLeaderTab(which){
+  var p = document.getElementById('more-leader-tab-profit');
+  var v = document.getElementById('more-leader-tab-volume');
+  if(p && v){
+    if(which === 'volume'){
+      v.style.background='var(--red)'; v.style.color='#fff';
+      p.style.background='transparent'; p.style.color='var(--text3)';
+    } else {
+      p.style.background='var(--red)'; p.style.color='#fff';
+      v.style.background='transparent'; v.style.color='var(--text3)';
+    }
+  }
+  renderMoreLeader(which);
+}
+function comingSoonToast(label){
+  var t = document.createElement('div');
+  t.textContent = (label||'This feature')+' — coming soon';
+  t.style.cssText = 'position:fixed;left:50%;bottom:110px;transform:translateX(-50%);background:var(--bg2);color:var(--text);border:1px solid var(--border);padding:10px 16px;border-radius:12px;font-size:12px;font-weight:600;z-index:200000;box-shadow:0 10px 30px rgba(0,0,0,0.45);';
+  document.body.appendChild(t);
+  setTimeout(function(){ t.style.transition='opacity .3s'; t.style.opacity='0'; setTimeout(function(){ t.remove(); }, 300); }, 1600);
+}
+function loadMoreTab(){
+  var nm = (currentUser && (currentUser.name || currentUser.username)) || 'Trader';
+  var nmEl = document.getElementById('more-name'); if(nmEl) nmEl.textContent = nm;
+  var av = document.getElementById('more-avatar'); if(av) av.textContent = initialsFrom(nm);
+  var prem = (typeof isPremiumUser === 'function') ? isPremiumUser() : false;
+  var tierText = document.getElementById('more-tier-text');
+  if(tierText){ tierText.textContent = prem ? 'Premium Member' : 'Basic Member'; }
+  var badge = document.getElementById('more-tier-badge');
+  if(badge){
+    if(prem){
+      badge.style.background='var(--gold)'; badge.style.color='#3A2A05';
+      badge.innerHTML='<i class="ti ti-crown" style="font-size:10px;"></i> PREMIUM';
+    } else {
+      badge.style.background='linear-gradient(135deg,#EFF1F3,#BFC5CD 55%,#9AA1AA)'; badge.style.color='#2a2d33';
+      badge.innerHTML='<i class="ti ti-bolt" style="font-size:10px;"></i> BASIC';
+    }
+  }
+  updateMoreBalance();
+  switchLeaderTab('profit');
 }
 async function refreshActiveBalance() {
   if(!db || !activeAccount || !activeAccount.id) return;
