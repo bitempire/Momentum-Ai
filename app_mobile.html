@@ -2675,7 +2675,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <!-- ── ANNOUNCEMENTS TAB ── -->
       <div id="atab-content-announce" style="display:none;">
         <div class="section-card" style="margin-bottom:12px;">
-          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">POST ANNOUNCEMENT <span style="color:var(--green);">&middot; v26 acct-edit</span></div>
+          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">POST ANNOUNCEMENT <span style="color:var(--green);">&middot; v27 edit-sheet</span></div>
           <div class="auth-field">
             <label class="auth-label">Title</label>
             <input id="ann-title" class="auth-input" type="text" placeholder="Announcement title">
@@ -7595,28 +7595,51 @@ function toggleMT5Pw() {
 
 var _editingAcctId = null;
 function editAccount(acctId, mt5id){
-  _editingAcctId = acctId;
-  var idEl=document.getElementById('profile-mt5-id');
-  var pwEl=document.getElementById('profile-mt5-pw');
-  var agree=document.getElementById('mt5-agree-check');
-  var errEl=document.getElementById('mt5-connect-error');
-  var sucEl=document.getElementById('mt5-connect-success');
-  if(errEl){ errEl.style.display='none'; }
-  if(idEl){ idEl.value=mt5id; idEl.disabled=true; }
-  if(pwEl){ pwEl.value=''; }
-  if(agree){ agree.checked=true; }
-  var btn=document.querySelector('button.red-btn[onclick="handleMT5Connect()"]');
-  if(btn){ btn.textContent='UPDATE & RETRY'; btn.disabled=false; btn.style.opacity=''; }
-  if(sucEl){ sucEl.style.display='block'; sucEl.style.color='var(--text2)'; sucEl.textContent='Re-enter the MT5 password for '+mt5id+', then tap Update & Retry.'; }
-  try{ if(idEl) idEl.scrollIntoView({behavior:'smooth',block:'center'}); }catch(e){}
-  try{ if(pwEl) pwEl.focus(); }catch(e){}
+  var ex=document.getElementById('acct-edit-sheet'); if(ex) ex.remove();
+  var overlay=document.createElement('div');
+  overlay.id='acct-edit-sheet';
+  overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:99999;display:flex;align-items:flex-end;';
+  overlay.addEventListener('click',function(e){ if(e.target===overlay) overlay.remove(); });
+  var sheet=document.createElement('div');
+  sheet.style.cssText='background:#0E0E12;border-radius:24px 24px 0 0;padding:20px 18px calc(24px + env(safe-area-inset-bottom));width:100%;box-sizing:border-box;';
+  sheet.innerHTML=
+    '<div style="width:36px;height:4px;background:rgba(255,255,255,0.15);border-radius:2px;margin:0 auto 16px;"></div>'+
+    '<div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:4px;">Update MT5 password</div>'+
+    '<div style="font-size:12px;color:#9a9aa6;margin-bottom:16px;">Account '+mt5id+' &middot; we\'ll re-check the login after you save.</div>'+
+    '<label style="font-size:11px;color:#9a9aa6;display:block;margin-bottom:6px;">New MT5 password</label>'+
+    '<input id="acct-edit-pw" type="password" placeholder="Master password" style="width:100%;padding:13px;background:#16161D;border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:#fff;font-size:14px;font-family:Sora,sans-serif;margin-bottom:8px;box-sizing:border-box;">'+
+    '<div id="acct-edit-err" style="display:none;color:var(--red);font-size:12px;margin-bottom:8px;"></div>'+
+    '<button id="acct-edit-save" style="width:100%;display:flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,#FF1E3C,#C40024);border:none;border-radius:14px;padding:14px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;margin-top:8px;"><i class="ti ti-refresh" style="font-size:18px;"></i>Update &amp; Retry</button>';
+  overlay.appendChild(sheet);
+  document.body.appendChild(overlay);
+  try{ document.getElementById('acct-edit-pw').focus(); }catch(e){}
+  document.getElementById('acct-edit-save').addEventListener('click',function(){ submitAccountEdit(acctId, mt5id); });
 }
-function exitEditMode(){
-  _editingAcctId=null;
-  var idEl=document.getElementById('profile-mt5-id'); if(idEl){ idEl.disabled=false; idEl.value=''; }
-  var pwEl=document.getElementById('profile-mt5-pw'); if(pwEl){ pwEl.value=''; }
-  var agree=document.getElementById('mt5-agree-check'); if(agree){ agree.checked=false; }
-  var btn=document.querySelector('button.red-btn[onclick="handleMT5Connect()"]'); if(btn){ btn.textContent='REQUEST ACCOUNT'; }
+async function submitAccountEdit(acctId, mt5id){
+  var pwEl=document.getElementById('acct-edit-pw');
+  var errEl=document.getElementById('acct-edit-err');
+  var btn=document.getElementById('acct-edit-save');
+  var pw=pwEl?pwEl.value:'';
+  if(!pw){ if(errEl){ errEl.textContent='Please enter your MT5 password'; errEl.style.display='block'; } return; }
+  if(btn){ btn.disabled=true; btn.style.opacity='0.6'; btn.textContent='Updating...'; }
+  var encrypted=btoa(unescape(encodeURIComponent(pw+'_mmai_'+mt5id)));
+  try{
+    var ru=await db.from('mt5_accounts').update({ mt5_credential:encrypted, connection_status:'pending', mt5_connected:false, status_reason:null, connection_requested_at:new Date().toISOString() }).eq('id',acctId);
+    if(ru.error) throw ru.error;
+    var ov=document.getElementById('acct-edit-sheet'); if(ov) ov.remove();
+    renderProfileAccounts();
+    showAcctToast('Updated! Re-checking '+mt5id+' now \u2014 it will show Pending, then Connected if the login works.');
+  }catch(e){
+    if(errEl){ errEl.textContent='Error: '+(e.message||'update failed'); errEl.style.display='block'; }
+    if(btn){ btn.disabled=false; btn.style.opacity=''; btn.innerHTML='<i class="ti ti-refresh" style="font-size:18px;"></i>Update &amp; Retry'; }
+  }
+}
+function showAcctToast(msg){
+  var t=document.createElement('div');
+  t.textContent=msg;
+  t.style.cssText='position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--bg2);color:var(--text);border:1px solid var(--border);padding:12px 16px;border-radius:12px;font-size:12px;font-weight:600;z-index:200000;box-shadow:0 10px 30px rgba(0,0,0,0.45);max-width:88%;text-align:center;line-height:1.5;';
+  document.body.appendChild(t);
+  setTimeout(function(){ t.style.transition='opacity .3s'; t.style.opacity='0'; setTimeout(function(){ t.remove(); },300); }, 3400);
 }
 async function handleMT5Connect() {
   var mt5Id   = document.getElementById('profile-mt5-id').value.trim();
