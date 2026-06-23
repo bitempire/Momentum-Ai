@@ -1945,29 +1945,23 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
     <div id="tab-more" class="app-tab" style="display:none;">
 
       <!-- Header chip -->
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-        <div style="display:flex;align-items:center;gap:11px;">
-          <span id="more-avatar" style="width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#3a2226,#1a1015);border:1px solid rgba(255,30,60,0.45);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:var(--red);">--</span>
-          <div><div id="more-name" style="font-size:15px;color:var(--text);font-weight:700;">Trader</div><div id="more-tier-text" style="font-size:11px;color:var(--red);">Member</div></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <span id="more-avatar" style="width:48px;height:48px;border-radius:15px;background:linear-gradient(135deg,#3a2226,#1a1015);border:1px solid rgba(255,30,60,0.45);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:var(--red);">--</span>
+          <div>
+            <div id="more-name" style="font-size:16px;color:var(--text);font-weight:700;margin-bottom:5px;">Trader</div>
+            <span id="more-tier-badge" style="display:inline-flex;align-items:center;gap:4px;font-size:9px;letter-spacing:.5px;color:#3A2A05;background:var(--gold);padding:3px 8px;border-radius:6px;font-weight:700;"><i class="ti ti-crown" style="font-size:10px;"></i> PREMIUM</span>
+          </div>
         </div>
         <span style="width:40px;height:40px;border-radius:50%;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;"><i class="ti ti-bell" style="font-size:19px;color:var(--text2);"></i></span>
       </div>
 
-      <!-- Member / balance card -->
-      <div style="position:relative;overflow:hidden;background:linear-gradient(150deg,#211318,#101015);border:1px solid rgba(255,30,60,0.18);border-radius:22px;padding:18px;margin-bottom:18px;">
-        <div style="position:absolute;top:-40px;right:-30px;width:130px;height:130px;border-radius:50%;background:radial-gradient(circle,rgba(255,30,60,0.2),transparent 70%);"></div>
-        <div style="position:relative;display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
-          <div style="display:flex;align-items:center;gap:7px;"><span style="width:20px;height:20px;border-radius:6px;background:var(--red);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;">M</span><span style="font-size:10px;letter-spacing:2px;color:#b9b9c0;font-weight:600;">MOMENTUM AI</span></div>
-          <span id="more-tier-badge" style="display:flex;align-items:center;gap:4px;font-size:9px;letter-spacing:.5px;color:#3A2A05;background:var(--gold);padding:4px 9px;border-radius:7px;font-weight:700;"><i class="ti ti-crown" style="font-size:10px;"></i> PREMIUM</span>
-        </div>
-        <div style="position:relative;font-size:12px;color:#9a9aa6;margin-bottom:3px;">Total Balance</div>
-        <div style="position:relative;display:flex;align-items:baseline;gap:9px;margin-bottom:16px;"><span id="more-balance" style="font-size:28px;color:#fff;font-weight:800;letter-spacing:-.5px;">$0.00</span><span id="more-balance-change" style="font-size:11px;color:var(--green);font-weight:600;"></span></div>
-        <div style="position:relative;display:flex;justify-content:space-between;gap:6px;">
-          <div onclick="showSubScreen('sub-scanner')" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;"><span style="width:46px;height:46px;border-radius:14px;background:#2a1a1e;border:1px solid rgba(255,30,60,0.2);display:flex;align-items:center;justify-content:center;"><i class="ti ti-radar-2" style="font-size:20px;color:#FF5066;"></i></span><span style="font-size:10px;color:#b9b9c0;text-align:center;line-height:1.2;">MAI Scanner</span></div>
-          <div onclick="showSubScreen('sub-fund')" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;"><span style="width:46px;height:46px;border-radius:14px;background:#2a1a1e;border:1px solid rgba(255,30,60,0.2);display:flex;align-items:center;justify-content:center;"><i class="ti ti-chart-pie" style="font-size:20px;color:#FF5066;"></i></span><span style="font-size:10px;color:#b9b9c0;text-align:center;line-height:1.2;">Fund Mgmt</span></div>
-          <div onclick="showSubScreen('sub-trade-settings')" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;"><span style="width:46px;height:46px;border-radius:14px;background:#2a1a1e;border:1px solid rgba(255,30,60,0.2);display:flex;align-items:center;justify-content:center;"><i class="ti ti-robot" style="font-size:20px;color:#FF5066;"></i></span><span style="font-size:10px;color:#b9b9c0;text-align:center;line-height:1.2;">MAI Tools</span></div>
-          <div onclick="showSubScreen('sub-profile')" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;"><span style="width:46px;height:46px;border-radius:14px;background:#2a1a1e;border:1px solid rgba(255,30,60,0.2);display:flex;align-items:center;justify-content:center;"><i class="ti ti-user" style="font-size:20px;color:#FF5066;"></i></span><span style="font-size:10px;color:#b9b9c0;text-align:center;line-height:1.2;">Profile</span></div>
-        </div>
+      <!-- Quick actions — floating glassy-red tiles -->
+      <div style="display:flex;justify-content:space-between;gap:9px;margin-bottom:18px;">
+        <div onclick="showSubScreen('sub-scanner')" style="flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:9px;border-radius:18px;padding:14px 3px;background:linear-gradient(160deg,rgba(255,45,74,0.28),rgba(255,30,60,0.08));border:1px solid rgba(255,80,100,0.4);box-shadow:0 10px 22px rgba(255,30,60,0.28),inset 0 1px 0 rgba(255,255,255,0.2);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);cursor:pointer;"><i class="ti ti-radar-2" style="font-size:24px;color:#fff;"></i><span style="font-size:10px;color:#fff;white-space:nowrap;">MAI Scanner</span></div>
+        <div onclick="showSubScreen('sub-fund')" style="flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:9px;border-radius:18px;padding:14px 3px;background:linear-gradient(160deg,rgba(255,45,74,0.28),rgba(255,30,60,0.08));border:1px solid rgba(255,80,100,0.4);box-shadow:0 10px 22px rgba(255,30,60,0.28),inset 0 1px 0 rgba(255,255,255,0.2);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);cursor:pointer;"><i class="ti ti-chart-pie" style="font-size:24px;color:#fff;"></i><span style="font-size:10px;color:#fff;white-space:nowrap;">Fund Mgmt</span></div>
+        <div onclick="showSubScreen('sub-trade-settings')" style="flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:9px;border-radius:18px;padding:14px 3px;background:linear-gradient(160deg,rgba(255,45,74,0.28),rgba(255,30,60,0.08));border:1px solid rgba(255,80,100,0.4);box-shadow:0 10px 22px rgba(255,30,60,0.28),inset 0 1px 0 rgba(255,255,255,0.2);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);cursor:pointer;"><i class="ti ti-robot" style="font-size:24px;color:#fff;"></i><span style="font-size:10px;color:#fff;white-space:nowrap;">MAI Tools</span></div>
+        <div onclick="showSubScreen('sub-profile')" style="flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:9px;border-radius:18px;padding:14px 3px;background:linear-gradient(160deg,rgba(255,45,74,0.28),rgba(255,30,60,0.08));border:1px solid rgba(255,80,100,0.4);box-shadow:0 10px 22px rgba(255,30,60,0.28),inset 0 1px 0 rgba(255,255,255,0.2);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);cursor:pointer;"><i class="ti ti-user" style="font-size:24px;color:#fff;"></i><span style="font-size:10px;color:#fff;white-space:nowrap;">Profile</span></div>
       </div>
 
       <!-- Leaderboard -->
@@ -2681,7 +2675,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <!-- ── ANNOUNCEMENTS TAB ── -->
       <div id="atab-content-announce" style="display:none;">
         <div class="section-card" style="margin-bottom:12px;">
-          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">POST ANNOUNCEMENT <span style="color:var(--green);">&middot; v21 more-tab</span></div>
+          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">POST ANNOUNCEMENT <span style="color:var(--green);">&middot; v22 more-actions</span></div>
           <div class="auth-field">
             <label class="auth-label">Title</label>
             <input id="ann-title" class="auth-input" type="text" placeholder="Announcement title">
