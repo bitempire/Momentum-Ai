@@ -2675,7 +2675,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <!-- ── ANNOUNCEMENTS TAB ── -->
       <div id="atab-content-announce" style="display:none;">
         <div class="section-card" style="margin-bottom:12px;">
-          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">POST ANNOUNCEMENT <span style="color:var(--green);">&middot; v27 edit-sheet</span></div>
+          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">POST ANNOUNCEMENT <span style="color:var(--green);">&middot; v28 dup-delete</span></div>
           <div class="auth-field">
             <label class="auth-label">Title</label>
             <input id="ann-title" class="auth-input" type="text" placeholder="Announcement title">
@@ -7641,6 +7641,41 @@ function showAcctToast(msg){
   document.body.appendChild(t);
   setTimeout(function(){ t.style.transition='opacity .3s'; t.style.opacity='0'; setTimeout(function(){ t.remove(); },300); }, 3400);
 }
+function confirmDeleteAccount(acctId, mt5id){
+  var ex=document.getElementById('acct-del-sheet'); if(ex) ex.remove();
+  var overlay=document.createElement('div');
+  overlay.id='acct-del-sheet';
+  overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:99999;display:flex;align-items:flex-end;';
+  overlay.addEventListener('click',function(e){ if(e.target===overlay) overlay.remove(); });
+  var sheet=document.createElement('div');
+  sheet.style.cssText='background:#0E0E12;border-radius:24px 24px 0 0;padding:20px 18px calc(24px + env(safe-area-inset-bottom));width:100%;box-sizing:border-box;';
+  sheet.innerHTML=
+    '<div style="width:36px;height:4px;background:rgba(255,255,255,0.15);border-radius:2px;margin:0 auto 16px;"></div>'+
+    '<div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:4px;">Remove account?</div>'+
+    '<div style="font-size:12px;color:#9a9aa6;margin-bottom:18px;line-height:1.5;">Account '+mt5id+' will be removed from your list and the EA will stop trading it. You can add it again later.</div>'+
+    '<div id="acct-del-err" style="display:none;color:var(--red);font-size:12px;margin-bottom:10px;"></div>'+
+    '<button id="acct-del-go" style="width:100%;background:linear-gradient(135deg,#FF1E3C,#C40024);border:none;border-radius:14px;padding:14px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;margin-bottom:10px;">Remove account</button>'+
+    '<button id="acct-del-cancel" style="width:100%;background:transparent;border:1px solid rgba(255,255,255,0.15);border-radius:14px;padding:13px;color:#cfcfd6;font-size:14px;font-weight:600;cursor:pointer;font-family:Sora,sans-serif;">Cancel</button>';
+  overlay.appendChild(sheet);
+  document.body.appendChild(overlay);
+  document.getElementById('acct-del-cancel').addEventListener('click',function(){ overlay.remove(); });
+  document.getElementById('acct-del-go').addEventListener('click',function(){ doDeleteAccount(acctId, mt5id); });
+}
+async function doDeleteAccount(acctId, mt5id){
+  var btn=document.getElementById('acct-del-go');
+  var errEl=document.getElementById('acct-del-err');
+  if(btn){ btn.disabled=true; btn.style.opacity='0.6'; btn.textContent='Removing...'; }
+  try{
+    var r=await db.from('mt5_accounts').delete().eq('id', acctId);
+    if(r && r.error) throw r.error;
+    var ov=document.getElementById('acct-del-sheet'); if(ov) ov.remove();
+    renderProfileAccounts();
+    showAcctToast('Account '+mt5id+' removed.');
+  }catch(e){
+    if(errEl){ errEl.textContent='Error: '+(e.message||'could not remove account'); errEl.style.display='block'; }
+    if(btn){ btn.disabled=false; btn.style.opacity=''; btn.textContent='Remove account'; }
+  }
+}
 async function handleMT5Connect() {
   var mt5Id   = document.getElementById('profile-mt5-id').value.trim();
   var mt5Pw   = document.getElementById('profile-mt5-pw').value;
@@ -7656,27 +7691,10 @@ async function handleMT5Connect() {
 
   var encrypted = btoa(unescape(encodeURIComponent(mt5Pw + '_mmai_' + mt5Id)));
 
-  if(_editingAcctId){
-    try{
-      var ru = await db.from('mt5_accounts').update({
-        mt5_credential: encrypted,
-        connection_status: 'pending',
-        mt5_connected: false,
-        status_reason: null,
-        connection_requested_at: new Date().toISOString()
-      }).eq('id', _editingAcctId);
-      if(ru.error) throw ru.error;
-      exitEditMode();
-      renderProfileAccounts();
-      sucEl.style.color='';
-      sucEl.textContent = "Updated! We're re-checking your login now — this account will show Pending, then Connected if it works.";
-      sucEl.style.display = 'block';
-    }catch(e){
-      errEl.textContent = 'Error: ' + (e.message || 'Failed to update');
-      errEl.style.display = 'block';
-    }
-    return;
-  }
+  if(window._mt5Submitting) { return; }
+  window._mt5Submitting = true;
+  var _sbtn = document.querySelector('button.red-btn[onclick="handleMT5Connect()"]');
+  if(_sbtn){ _sbtn.disabled = true; _sbtn.style.opacity = '0.6'; }
 
   try {
     var existing = [];
@@ -7708,6 +7726,9 @@ async function handleMT5Connect() {
   } catch(e) {
     errEl.textContent = 'Error: ' + (e.message || 'Failed to submit request');
     errEl.style.display = 'block';
+  } finally {
+    window._mt5Submitting = false;
+    if(_sbtn){ _sbtn.disabled = false; _sbtn.style.opacity = ''; }
   }
 }
 
@@ -7775,6 +7796,7 @@ async function renderProfileAccounts() {
         editBtn+
         '<div style="display:flex;align-items:center;gap:7px;"><span style="font-size:10px;color:var(--text3);font-weight:600;">Auto</span>'+
           '<div class="toggle'+(a.allow_auto_trade?' on':'')+'" onclick="toggleAccountAuto(\''+a.id+'\',this)"></div></div>'+
+        '<button onclick="confirmDeleteAccount(\''+a.id+'\',\''+safeMt5+'\')" style="display:inline-flex;align-items:center;gap:4px;background:transparent;border:none;color:var(--text3);font-size:10px;font-weight:600;cursor:pointer;font-family:Sora,sans-serif;padding:2px 0;"><i class="ti ti-trash" style="font-size:13px;"></i>Remove</button>'+
       '</div>'+
     '</div>';
   });
