@@ -2675,7 +2675,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <!-- ── ANNOUNCEMENTS TAB ── -->
       <div id="atab-content-announce" style="display:none;">
         <div class="section-card" style="margin-bottom:12px;">
-          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">POST ANNOUNCEMENT <span style="color:var(--green);">&middot; v24 glassy-red</span></div>
+          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">POST ANNOUNCEMENT <span style="color:var(--green);">&middot; v25 avatar-picker</span></div>
           <div class="auth-field">
             <label class="auth-label">Title</label>
             <input id="ann-title" class="auth-input" type="text" placeholder="Announcement title">
@@ -2903,10 +2903,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <!-- Avatar with picker -->
       <div style="text-align:center;margin-bottom:20px;">
         <div style="position:relative;display:inline-block;margin-bottom:10px;">
-          <div style="width:80px;height:80px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;" id="profile-avatar-big">
-            <span id="profile-avatar-emoji" style="font-size:36px;line-height:1;display:flex;align-items:center;justify-content:center;">👤</span>
-            <span id="profile-avatar-initials" style="display:none;font-size:28px;font-weight:800;color:#fff;">AD</span>
-          </div>
+          <div style="width:80px;height:80px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;color:#fff;" id="profile-avatar-big"></div>
           <!-- Edit button -->
           <button onclick="showAvatarPicker()" style="position:absolute;bottom:0;right:0;width:26px;height:26px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;cursor:pointer;border:2px solid var(--bg);padding:0;">
             <i class="ti ti-pencil" style="font-size:12px;color:#fff;"></i>
@@ -3871,128 +3868,161 @@ function activateAutoTrading() {
 }
 
 
-// ── AVATAR PICKER ──
-var AVATARS = ['👤','🧑‍💼','👨‍💻','👩‍💻','🧑‍🚀','🦸','🐯','🦁','🐺','🦊','🐻','🐼','😎','🤩','💪','🔥'];
-var COLORS = [
-  'linear-gradient(135deg,#FF1E3C,#C40024)',
-  'linear-gradient(135deg,#4D9EFF,#1A5FBF)',
-  'linear-gradient(135deg,#9B59B6,#6C3483)',
-  'linear-gradient(135deg,#00c87a,#0E8A4F)',
-  'linear-gradient(135deg,#FFB020,#E67E22)',
-  'linear-gradient(135deg,#FF6B5E,#C0392B)'
-];
+// ── AVATAR SYSTEM (icon or initials + colour) ──
+var AV_ICON_MAP = { rocket:'ti-rocket', flame:'ti-flame', diamond:'ti-diamond', crown:'ti-crown', robot:'ti-robot' };
+var AV_ICON_ORDER = ['rocket','flame','diamond','crown','robot'];
+var AV_COLORS = ['#FF1E3C','#FF6B35','#F0B232','#34C759','#00C2A8','#3B82F6','#6366F1','#8B5CF6','#EC4899','#F43F5E','#64748B','#111827'];
+var AV_DEFAULT = { icon:'initials', color:'#FF1E3C' };
+
+function _avNameInitials() {
+  var name = (currentUser && (currentUser.name || currentUser.username)) || 'Trader';
+  return name.split(' ').map(function(n){ return n[0]; }).join('').toUpperCase().substring(0,2);
+}
+function getAvatarCfg() {
+  var icon = AV_DEFAULT.icon, color = AV_DEFAULT.color;
+  if(currentUser && currentUser.avatar_icon) icon = currentUser.avatar_icon;
+  if(currentUser && currentUser.avatar_color) color = currentUser.avatar_color;
+  if(currentUser && !currentUser.avatar_icon) {
+    try {
+      var raw = localStorage.getItem('mai_avatar_'+currentUser.id);
+      if(raw){ var o = JSON.parse(raw); if(o.icon) icon = o.icon; if(o.color) color = o.color; }
+    } catch(e) {}
+  }
+  return { icon:icon, color:color };
+}
+function _avInner(cfg, iconSize, initialsSize) {
+  if(cfg.icon && cfg.icon !== 'initials' && AV_ICON_MAP[cfg.icon]) {
+    return '<i class="ti '+AV_ICON_MAP[cfg.icon]+'" style="font-size:'+iconSize+'px;color:#fff;line-height:1;"></i>';
+  }
+  return '<span style="font-size:'+initialsSize+'px;font-weight:800;color:#fff;line-height:1;letter-spacing:.5px;">'+_avNameInitials()+'</span>';
+}
+function paintAvatar(el, cfg, iconSize, initialsSize) {
+  if(!el) return;
+  el.style.background = cfg.color;
+  el.style.display = 'flex';
+  el.style.alignItems = 'center';
+  el.style.justifyContent = 'center';
+  el.innerHTML = _avInner(cfg, iconSize, initialsSize);
+}
+function applyAvatarEverywhere() {
+  var cfg = getAvatarCfg();
+  paintAvatar(document.getElementById('header-avatar'), cfg, 17, 12);
+  paintAvatar(document.getElementById('more-avatar'), cfg, 24, 17);
+  paintAvatar(document.getElementById('profile-avatar-big'), cfg, 38, 28);
+}
+function saveAvatar(cfg) {
+  if(currentUser) {
+    currentUser.avatar_icon = cfg.icon;
+    currentUser.avatar_color = cfg.color;
+    try { sessionStorage.setItem('mob_user', JSON.stringify(currentUser)); } catch(e) {}
+    try { localStorage.setItem('mai_avatar_'+currentUser.id, JSON.stringify(cfg)); } catch(e) {}
+    try { db.from('users').update({ avatar_icon:cfg.icon, avatar_color:cfg.color }).eq('id', currentUser.id).then(function(){}, function(){}); } catch(e) {}
+  }
+  applyAvatarEverywhere();
+}
+// kept name so existing call sites (enterApp, showSubScreen) still work
+function loadSavedProfilePhoto() { applyAvatarEverywhere(); }
 
 function showAvatarPicker() {
   var existing = document.getElementById('avatar-picker-overlay');
   if(existing) existing.remove();
-  
+  var cur = getAvatarCfg();
+  var work = { icon:cur.icon, color:cur.color };
+
   var overlay = document.createElement('div');
   overlay.id = 'avatar-picker-overlay';
   overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:99999;display:flex;align-items:flex-end;';
-  
+  overlay.addEventListener('click', function(e){ if(e.target===overlay) overlay.remove(); });
+
   var sheet = document.createElement('div');
-  sheet.style.cssText = 'background:#0d0b14;border-radius:20px 20px 0 0;padding:20px;width:100%;max-height:70vh;overflow-y:auto;';
-  
-  // Header
+  sheet.style.cssText = 'background:#0E0E12;border-radius:24px 24px 0 0;padding:20px 18px calc(24px + env(safe-area-inset-bottom));width:100%;max-height:82vh;overflow-y:auto;';
+
   var hdr = document.createElement('div');
-  hdr.style.cssText = 'display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;';
-  hdr.innerHTML = '<div style="font-size:13px;font-weight:800;color:#f4f7fa;">Choose Avatar</div>';
-  var closeBtn = document.createElement('button');
-  closeBtn.innerHTML = '&times;';
-  closeBtn.style.cssText = 'background:transparent;border:none;color:rgba(244,247,250,0.5);font-size:24px;cursor:pointer;line-height:1;';
-  closeBtn.addEventListener('click', function() { overlay.remove(); });
-  hdr.appendChild(closeBtn);
+  hdr.style.cssText = 'display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;';
+  hdr.innerHTML = '<div style="font-size:15px;font-weight:700;color:#fff;">Edit avatar</div>';
+  var x = document.createElement('button');
+  x.innerHTML = '&times;';
+  x.style.cssText = 'background:transparent;border:none;color:rgba(255,255,255,0.5);font-size:26px;line-height:1;cursor:pointer;';
+  x.addEventListener('click', function(){ overlay.remove(); });
+  hdr.appendChild(x);
   sheet.appendChild(hdr);
-  
-  // Emoji grid
-  var grid = document.createElement('div');
-  grid.style.cssText = 'display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:16px;';
-  AVATARS.forEach(function(emoji) {
-    var cell = document.createElement('div');
-    cell.style.cssText = 'width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.06);border:2px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;';
-    cell.textContent = emoji;
-    cell.addEventListener('click', function() {
-      selectAvatar(emoji);
-      // Highlight selected
-      grid.querySelectorAll('div').forEach(function(d) { d.style.borderColor = 'rgba(255,255,255,0.08)'; });
-      cell.style.borderColor = '#FF1E3C';
-    });
-    grid.appendChild(cell);
+
+  var prevWrap = document.createElement('div');
+  prevWrap.style.cssText = 'display:flex;flex-direction:column;align-items:center;margin-bottom:20px;';
+  var prev = document.createElement('div');
+  prev.style.cssText = 'width:96px;height:96px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(0,0,0,0.45);';
+  var prevHint = document.createElement('div');
+  prevHint.textContent = 'Live preview';
+  prevHint.style.cssText = 'font-size:12px;color:#7d7d88;margin-top:10px;';
+  prevWrap.appendChild(prev); prevWrap.appendChild(prevHint);
+  sheet.appendChild(prevWrap);
+  function renderPreview(){ paintAvatar(prev, work, 44, 34); }
+
+  var il = document.createElement('div');
+  il.textContent = 'Choose icon';
+  il.style.cssText = 'font-size:12px;color:#9a9aa6;margin-bottom:10px;';
+  sheet.appendChild(il);
+
+  var iconRow = document.createElement('div');
+  iconRow.style.cssText = 'display:flex;justify-content:space-between;gap:8px;margin-bottom:22px;';
+  var iconKeys = ['initials'].concat(AV_ICON_ORDER);
+  iconKeys.forEach(function(key){
+    var cell = document.createElement('span');
+    cell.setAttribute('data-icon', key);
+    cell.style.cssText = 'position:relative;flex:1;aspect-ratio:1;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;background:#16161D;border:1px solid rgba(255,255,255,0.07);';
+    if(key==='initials') cell.innerHTML = '<span style="font-size:15px;font-weight:700;color:#cfcfd6;">'+_avNameInitials()+'</span>';
+    else cell.innerHTML = '<i class="ti '+AV_ICON_MAP[key]+'" style="font-size:22px;color:#cfcfd6;"></i>';
+    cell.addEventListener('click', function(){ work.icon = key; renderPreview(); highlightIcons(); });
+    iconRow.appendChild(cell);
   });
-  sheet.appendChild(grid);
-  
-  // Color label
-  var colorLbl = document.createElement('div');
-  colorLbl.style.cssText = 'font-size:10px;color:rgba(244,247,250,0.3);letter-spacing:.5px;margin-bottom:8px;';
-  colorLbl.textContent = 'AVATAR COLOUR';
-  sheet.appendChild(colorLbl);
-  
-  // Color row
-  var colorRow = document.createElement('div');
-  colorRow.style.cssText = 'display:flex;gap:10px;margin-bottom:20px;';
-  COLORS.forEach(function(grad) {
-    var dot = document.createElement('div');
-    dot.style.cssText = 'width:32px;height:32px;border-radius:50%;background:'+grad+';cursor:pointer;border:2px solid transparent;flex-shrink:0;';
-    dot.addEventListener('click', function() {
-      setAvatarColor(grad);
-      colorRow.querySelectorAll('div').forEach(function(d) { d.style.borderColor = 'transparent'; });
-      dot.style.borderColor = '#fff';
+  sheet.appendChild(iconRow);
+  function highlightIcons(){
+    Array.prototype.forEach.call(iconRow.children, function(c){
+      var sel = c.getAttribute('data-icon') === work.icon;
+      c.style.border = sel ? '2px solid #FF1E3C' : '1px solid rgba(255,255,255,0.07)';
+      c.style.background = sel ? '#241016' : '#16161D';
+      var glyph = c.querySelector('i,span'); if(glyph) glyph.style.color = sel ? '#fff' : '#cfcfd6';
+      var chk = c.querySelector('.av-chk');
+      if(sel && !chk){ var b=document.createElement('span'); b.className='av-chk'; b.style.cssText='position:absolute;top:-3px;right:-3px;width:18px;height:18px;border-radius:50%;background:#FF1E3C;border:2px solid #0E0E12;display:flex;align-items:center;justify-content:center;'; b.innerHTML='<i class="ti ti-check" style="font-size:10px;color:#fff;"></i>'; c.appendChild(b); }
+      else if(!sel && chk){ chk.remove(); }
     });
-    colorRow.appendChild(dot);
+  }
+
+  var cl = document.createElement('div');
+  cl.textContent = 'Background colour';
+  cl.style.cssText = 'font-size:12px;color:#9a9aa6;margin-bottom:10px;';
+  sheet.appendChild(cl);
+  var colorGrid = document.createElement('div');
+  colorGrid.style.cssText = 'display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:24px;';
+  AV_COLORS.forEach(function(hex){
+    var dot = document.createElement('span');
+    dot.setAttribute('data-color', hex);
+    dot.style.cssText = 'position:relative;aspect-ratio:1;border-radius:50%;cursor:pointer;background:'+hex+';'+(hex==='#111827'?'border:1px solid rgba(255,255,255,0.12);':'');
+    dot.addEventListener('click', function(){ work.color = hex; renderPreview(); highlightColors(); });
+    colorGrid.appendChild(dot);
   });
-  sheet.appendChild(colorRow);
-  
-  // Done button
-  var doneBtn = document.createElement('button');
-  doneBtn.textContent = 'Done';
-  doneBtn.style.cssText = 'width:100%;padding:13px;background:linear-gradient(135deg,#FF1E3C,#C40024);border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;';
-  doneBtn.addEventListener('click', function() { overlay.remove(); });
-  sheet.appendChild(doneBtn);
-  
+  sheet.appendChild(colorGrid);
+  function highlightColors(){
+    Array.prototype.forEach.call(colorGrid.children, function(d){
+      var hex = d.getAttribute('data-color');
+      var sel = hex === work.color;
+      d.style.boxShadow = sel ? '0 0 0 2px #0E0E12,0 0 0 4px '+hex : 'none';
+      d.style.alignItems = 'center'; d.style.justifyContent = 'center';
+      var chk = d.querySelector('.av-chk');
+      if(sel && !chk){ var b=document.createElement('i'); b.className='ti ti-check av-chk'; b.style.cssText='font-size:14px;color:#fff;'; d.appendChild(b); }
+      else if(!sel && chk){ chk.remove(); }
+    });
+  }
+
+  var save = document.createElement('button');
+  save.innerHTML = '<i class="ti ti-check" style="font-size:18px;"></i><span style="font-size:14px;font-weight:700;">Save avatar</span>';
+  save.style.cssText = 'width:100%;display:flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,#FF1E3C,#C40024);border:none;border-radius:14px;padding:14px;color:#fff;cursor:pointer;font-family:Sora,sans-serif;box-shadow:0 8px 20px rgba(255,30,60,0.35);';
+  save.addEventListener('click', function(){ saveAvatar(work); overlay.remove(); });
+  sheet.appendChild(save);
+
   overlay.appendChild(sheet);
   document.body.appendChild(overlay);
-}
-
-function selectAvatar(emoji) {
-  // Update the profile avatar immediately
-  var emojiEl = document.getElementById('profile-avatar-emoji');
-  var initialsEl = document.getElementById('profile-avatar-initials');
-  if(emojiEl) {
-    emojiEl.textContent = emoji;
-    emojiEl.style.display = 'flex';
-    emojiEl.style.alignItems = 'center';
-    emojiEl.style.justifyContent = 'center';
-    emojiEl.style.fontSize = '36px';
-    emojiEl.style.lineHeight = '1';
-  }
-  if(initialsEl) initialsEl.style.display = 'none';
-  try { localStorage.setItem('profile_avatar_emoji', emoji); } catch(e) {}
-}
-
-function setAvatarColor(gradient) {
-  var avatarBig = document.getElementById('profile-avatar-big');
-  if(avatarBig) avatarBig.style.background = gradient;
-  try { localStorage.setItem('profile_avatar_color', gradient); } catch(e) {}
-}
-
-function loadSavedProfilePhoto() {
-  var savedEmoji = localStorage.getItem('profile_avatar_emoji');
-  var savedColor = localStorage.getItem('profile_avatar_color');
-  var emojiEl = document.getElementById('profile-avatar-emoji');
-  var initialsEl = document.getElementById('profile-avatar-initials');
-  var avatarBig = document.getElementById('profile-avatar-big');
-  if(savedEmoji) {
-    if(emojiEl) {
-      emojiEl.textContent = savedEmoji;
-      emojiEl.style.display = 'flex';
-      emojiEl.style.alignItems = 'center';
-      emojiEl.style.justifyContent = 'center';
-      emojiEl.style.fontSize = '36px';
-      emojiEl.style.lineHeight = '1';
-    }
-    if(initialsEl) initialsEl.style.display = 'none';
-  }
-  if(savedColor && avatarBig) avatarBig.style.background = savedColor;
+  renderPreview(); highlightIcons(); highlightColors();
 }
 
 
@@ -4330,6 +4360,7 @@ function enterApp(user) {
     if(profBroker) profBroker.textContent = user.broker || 'AFTT Markets';
     if(profStatus) profStatus.textContent = user.status || 'Active';
   }
+  if(typeof applyAvatarEverywhere==='function') applyAvatarEverywhere();
   showScreen('screen-app');
   setTimeout(function() { 
     switchTab('dashboard');
@@ -5810,6 +5841,7 @@ function loadProfileData() {
   // Update header avatar
   var headerAv = document.getElementById('header-avatar');
   if(headerAv) headerAv.textContent = initials;
+  if(typeof applyAvatarEverywhere==='function') applyAvatarEverywhere();
   
   // Update display name and role
   var nameDisplay = document.getElementById('profile-name-display');
@@ -6507,6 +6539,7 @@ function loadMoreTab(){
   var nm = (currentUser && (currentUser.name || currentUser.username)) || 'Trader';
   var nmEl = document.getElementById('more-name'); if(nmEl) nmEl.textContent = nm;
   var av = document.getElementById('more-avatar'); if(av) av.textContent = initialsFrom(nm);
+  if(typeof applyAvatarEverywhere==='function') applyAvatarEverywhere();
   var prem = (typeof isPremiumUser === 'function') ? isPremiumUser() : false;
   var tierText = document.getElementById('more-tier-text');
   if(tierText){ tierText.textContent = prem ? 'Premium Member' : 'Basic Member'; }
