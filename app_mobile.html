@@ -2675,7 +2675,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <!-- ── ANNOUNCEMENTS TAB ── -->
       <div id="atab-content-announce" style="display:none;">
         <div class="section-card" style="margin-bottom:12px;">
-          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">POST ANNOUNCEMENT <span style="color:var(--green);">&middot; v34 img-fit</span></div>
+          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">POST ANNOUNCEMENT <span style="color:var(--green);">&middot; v35 fresh-sync</span></div>
           <div class="auth-field">
             <label class="auth-label">Title</label>
             <input id="ann-title" class="auth-input" type="text" placeholder="Announcement title">
@@ -4335,6 +4335,23 @@ function routeUser(user) {
 }
 
 // ── ENTER APP ──
+var _lastUserRefresh=0;
+async function refreshCurrentUser(force){
+  try{
+    if(!currentUser||!currentUser.id) return;
+    var now=Date.now();
+    if(!force && now-_lastUserRefresh<8000) return;
+    _lastUserRefresh=now;
+    var res=await db.from('users').select('*').eq('id',currentUser.id).limit(1);
+    if(res.error) return;
+    var row=Array.isArray(res.data)?res.data[0]:(res.data&&res.data.id?res.data:null);
+    if(!row||!row.id) return;
+    var changed = force || row.status!==currentUser.status || row.role!==currentUser.role || row.is_premium!==currentUser.is_premium || row.premium_until!==currentUser.premium_until;
+    currentUser=row;
+    try{ sessionStorage.setItem('mob_user',JSON.stringify(currentUser)); }catch(e){}
+    if(changed) routeUser(currentUser);
+  }catch(e){}
+}
 function enterApp(user) {
   _priceLoaded = false;
   if(user) {
@@ -5601,8 +5618,9 @@ function showSocialToast(msg){
 // ── INIT ──
 document.addEventListener('DOMContentLoaded', function() {
   var saved = sessionStorage.getItem('mob_user');
-  if(saved) { try { currentUser=JSON.parse(saved); routeUser(currentUser); } catch(e) { showScreen('screen-auth'); } }
+  if(saved) { try { currentUser=JSON.parse(saved); routeUser(currentUser); refreshCurrentUser(true); } catch(e) { showScreen('screen-auth'); } }
   else { showScreen('screen-auth'); }
+  document.addEventListener('visibilitychange', function(){ if(document.visibilityState==='visible') refreshCurrentUser(false); });
 });
 
 // Close trade popup on overlay click
