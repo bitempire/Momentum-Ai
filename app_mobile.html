@@ -2675,7 +2675,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <!-- ── ANNOUNCEMENTS TAB ── -->
       <div id="atab-content-announce" style="display:none;">
         <div class="section-card" style="margin-bottom:12px;">
-          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">POST ANNOUNCEMENT <span style="color:var(--green);">&middot; v29 grid-tiles</span></div>
+          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">POST ANNOUNCEMENT <span style="color:var(--green);">&middot; v30 academy-book</span></div>
           <div class="auth-field">
             <label class="auth-label">Title</label>
             <input id="ann-title" class="auth-input" type="text" placeholder="Announcement title">
@@ -7044,13 +7044,14 @@ function academySnippet(content){
   var txt=secs.map(function(s){return (s.h?s.h+' ':'')+(s.d||'');}).join(' ').trim();
   return txt.substring(0,80)+(txt.length>80?'...':'');
 }
-function addAcademySection(h,d){
+function addAcademySection(t,h,d){
   var wrap=document.getElementById('academy-sections');if(!wrap)return;
   var block=document.createElement('div');
   block.className='academy-section-block';
-  block.style.cssText='border:1px solid var(--border);border-radius:9px;padding:10px;margin-bottom:10px;background:var(--bg3);';
-  block.innerHTML='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;"><span style="font-size:10px;color:var(--text3);">Sub-header <span style="color:var(--red);">(red, optional)</span></span><button type="button" class="acad-sec-remove" style="background:transparent;border:none;color:var(--text3);font-size:18px;cursor:pointer;line-height:1;padding:0 4px;">&times;</button></div><input class="acad-sec-h auth-input" type="text" placeholder="Sub-header (optional)" style="margin-bottom:8px;"><span style="font-size:10px;color:var(--text3);display:block;margin-bottom:6px;">Detail (white)</span><textarea class="acad-sec-d auth-input" rows="3" style="resize:vertical;" placeholder="Detail text..."></textarea>';
+  block.style.cssText='border:1px solid var(--border);border-radius:9px;padding:12px;margin-bottom:10px;background:var(--bg3);';
+  block.innerHTML='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;"><span style="font-size:10px;color:var(--text3);font-weight:700;letter-spacing:0.5px;">SECTION</span><button type="button" class="acad-sec-remove" style="background:transparent;border:none;color:var(--text3);font-size:18px;cursor:pointer;line-height:1;padding:0 4px;">&times;</button></div><span style="font-size:10px;color:var(--text3);display:block;margin-bottom:5px;">Title <span style="color:var(--text);">(bold)</span></span><input class="acad-sec-t auth-input" type="text" placeholder="Section title" style="margin-bottom:9px;"><span style="font-size:10px;color:var(--text3);display:block;margin-bottom:5px;">Sub-header <span style="color:var(--red);">(red, optional)</span></span><input class="acad-sec-h auth-input" type="text" placeholder="Sub-header (optional)" style="margin-bottom:9px;"><span style="font-size:10px;color:var(--text3);display:block;margin-bottom:5px;">Detail (white)</span><textarea class="acad-sec-d auth-input" rows="7" style="resize:vertical;min-height:150px;" placeholder="Detail text..."></textarea>';
   wrap.appendChild(block);
+  if(t) block.querySelector('.acad-sec-t').value=t;
   if(h) block.querySelector('.acad-sec-h').value=h;
   if(d) block.querySelector('.acad-sec-d').value=d;
   block.querySelector('.acad-sec-remove').addEventListener('click',function(){ block.remove(); if(!wrap.children.length) addAcademySection(); });
@@ -7059,9 +7060,11 @@ function gatherAcademySections(){
   var blocks=document.querySelectorAll('#academy-sections .academy-section-block');
   var out=[];
   blocks.forEach(function(bl){
+    var te=bl.querySelector('.acad-sec-t');
+    var t=te?te.value.trim():'';
     var h=bl.querySelector('.acad-sec-h').value.trim();
     var d=bl.querySelector('.acad-sec-d').value.trim();
-    if(h||d) out.push({h:h,d:d});
+    if(t||h||d) out.push({t:t,h:h,d:d});
   });
   return out;
 }
@@ -7085,7 +7088,7 @@ function editAcademyLesson(ls){
   var wrap=document.getElementById('academy-sections'); if(wrap) wrap.innerHTML='';
   var secs=academyParseSections(ls.content);
   if(!secs.length) secs=[{h:'',d:''}];
-  secs.forEach(function(s){ addAcademySection(s.h||'', s.d||''); });
+  secs.forEach(function(s){ addAcademySection(s.t||'', s.h||'', s.d||''); });
   var pb=document.getElementById('academy-publish-btn'); if(pb) pb.textContent='UPDATE LESSON';
   var ce=document.getElementById('academy-cancel-edit'); if(ce) ce.style.display='block';
   var form=document.getElementById('atab-content-academy'); if(form && form.scrollIntoView) form.scrollIntoView({behavior:'smooth'});
@@ -7166,6 +7169,58 @@ function openAcademyCategory(cat){
     lv.appendChild(card);
   });
 }
+function buildAcademyBook(secs){
+  var wrap=document.createElement('div');
+  wrap.style.cssText='background:#08080C;border:1px solid rgba(255,255,255,0.07);border-radius:22px;padding:14px;';
+  var multi=secs.length>1;
+  wrap.innerHTML=
+    '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">'
+    +'<span style="font-size:11px;color:var(--text3);font-weight:600;">Section</span>'
+    +'<span class="bk-count" style="font-size:11px;color:var(--text3);">1 / '+secs.length+'</span></div>'
+    +'<div class="bk-stage" style="perspective:1400px;height:330px;position:relative;">'
+    +'<div class="bk-page" style="position:absolute;inset:0;transform-style:preserve-3d;transition:transform .42s ease;transform-origin:left center;border-radius:18px;overflow:hidden;background:linear-gradient(160deg,#15131A,#0A0A10);border:1px solid rgba(255,255,255,0.08);box-sizing:border-box;display:flex;flex-direction:column;padding:18px;">'
+    +'<div class="bk-head"></div>'
+    +'<div class="bk-body" style="flex:1;overflow-y:auto;font-size:13.5px;line-height:1.75;color:#c6c6ce;white-space:pre-wrap;-webkit-overflow-scrolling:touch;"></div>'
+    +'</div></div>'
+    +(multi?('<div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;">'
+      +'<button class="bk-prev" style="width:40px;height:40px;border-radius:12px;background:#16161E;border:1px solid rgba(255,255,255,0.1);color:#cfcfd6;display:flex;align-items:center;justify-content:center;cursor:pointer;"><i class="ti ti-chevron-left" style="font-size:19px;"></i></button>'
+      +'<div class="bk-dots" style="display:flex;gap:7px;"></div>'
+      +'<button class="bk-next" style="width:40px;height:40px;border-radius:12px;background:linear-gradient(160deg,#FF2D46,#B00018);border:none;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 12px rgba(176,0,24,0.4);"><i class="ti ti-chevron-right" style="font-size:19px;"></i></button>'
+      +'</div><div style="text-align:center;margin-top:9px;font-size:10.5px;color:#6a6a76;">swipe or tap the arrows to turn the page</div>'):'');
+  var i=0;
+  var page=wrap.querySelector('.bk-page');
+  var head=wrap.querySelector('.bk-head');
+  var body=wrap.querySelector('.bk-body');
+  var count=wrap.querySelector('.bk-count');
+  var dots=wrap.querySelector('.bk-dots');
+  function esc(x){var e=document.createElement('div');e.textContent=x||'';return e.innerHTML;}
+  function renderHead(s){
+    var pill='<div style="display:inline-flex;align-items:center;gap:7px;background:rgba(255,40,70,0.14);border:1px solid rgba(255,90,110,0.35);border-radius:30px;padding:5px 12px 5px 6px;margin-bottom:13px;box-shadow:inset 0 1px 0 rgba(255,255,255,0.15);">'
+      +'<span style="width:22px;height:22px;border-radius:50%;background:linear-gradient(160deg,#FF2D46,#B00018);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0;">'+(i+1)+'</span>'
+      +(s.h?'<span style="font-size:10.5px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:#FF8090;">'+esc(s.h)+'</span>':'')+'</div>';
+    var title=s.t?'<div style="font-size:20px;font-weight:700;color:#fff;line-height:1.2;margin-bottom:13px;letter-spacing:-0.2px;">'+esc(s.t)+'</div>':'';
+    head.innerHTML=pill+title;
+  }
+  function renderDots(){if(!dots)return;var h='';for(var d=0;d<secs.length;d++){h+='<span style="width:6px;height:6px;border-radius:50%;background:'+(d===i?'#FF3B54':'rgba(255,255,255,0.2)')+';"></span>';}dots.innerHTML=h;}
+  function render(){var s=secs[i]||{};renderHead(s);body.textContent=s.d||'';body.scrollTop=0;if(count)count.textContent=(i+1)+' / '+secs.length;renderDots();}
+  function flip(dir){
+    if(secs.length<2)return;
+    page.style.transform='rotateY('+(dir>0?'-88deg':'88deg')+')';
+    setTimeout(function(){
+      i=(i+dir+secs.length)%secs.length;render();
+      page.style.transition='none';page.style.transform='rotateY('+(dir>0?'88deg':'-88deg')+')';
+      requestAnimationFrame(function(){requestAnimationFrame(function(){page.style.transition='transform .42s ease';page.style.transform='rotateY(0deg)';});});
+    },210);
+  }
+  var nb=wrap.querySelector('.bk-next'),pb=wrap.querySelector('.bk-prev');
+  if(nb)nb.addEventListener('click',function(){flip(1);});
+  if(pb)pb.addEventListener('click',function(){flip(-1);});
+  var sx=null;var stage=wrap.querySelector('.bk-stage');
+  stage.addEventListener('touchstart',function(e){sx=e.touches[0].clientX;},{passive:true});
+  stage.addEventListener('touchend',function(e){if(sx===null)return;var dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)>40)flip(dx<0?1:-1);sx=null;});
+  render();
+  return wrap;
+}
 function openAcademyLesson(ls,lv){
   if(lv)lv.style.display='none';
   var content=document.getElementById('academy-content');
@@ -7178,10 +7233,7 @@ function openAcademyLesson(ls,lv){
   head.innerHTML='<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;"><div style="flex:1;font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);">'+ls.title+'</div><div style="font-size:9px;padding:3px 8px;border-radius:5px;color:'+(lc[ls.level]||'var(--text3)')+';background:rgba(255,255,255,0.06);">'+(ls.level||'beginner').toUpperCase()+'</div></div>'+(ls.video_url?'<div style="margin-bottom:14px;background:var(--bg3);border-radius:10px;overflow:hidden;"><a href="'+ls.video_url+'" target="_blank" style="display:flex;align-items:center;gap:10px;padding:13px;text-decoration:none;"><div style="width:40px;height:40px;border-radius:8px;background:rgba(255,30,60,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ti ti-player-play" style="color:var(--red);font-size:18px;"></i></div><div><div style="font-size:13px;font-weight:700;color:var(--text);">Watch Video</div><div style="font-size:11px;color:var(--text3);">Tap to open</div></div></a></div>':'');
   dv.appendChild(head);
   var secs=academyParseSections(ls.content);
-  secs.forEach(function(s){
-    if(s.h){ var hh=document.createElement('div');hh.style.cssText='font-family:Orbitron,sans-serif;font-size:13px;font-weight:800;color:var(--red);margin:16px 0 6px;';hh.textContent=s.h;dv.appendChild(hh); }
-    if(s.d){ var dd=document.createElement('div');dd.style.cssText='font-size:13px;color:var(--text2);line-height:1.9;white-space:pre-wrap;margin-bottom:6px;';dd.textContent=s.d;dv.appendChild(dd); }
-  });
+  dv.appendChild(buildAcademyBook(secs));
   var doneStyleA='width:100%;margin-top:22px;padding:13px;border:none;border-radius:12px;font-family:Orbitron,sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;cursor:pointer;';
   var doneDone='background:rgba(0,200,122,0.15);color:var(--green);';
   var doneTodo='background:linear-gradient(135deg,#FF1E3C,#C40024);color:#fff;box-shadow:0 6px 20px rgba(255,30,60,0.3);';
