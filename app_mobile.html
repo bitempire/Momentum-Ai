@@ -2675,7 +2675,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <!-- ── ANNOUNCEMENTS TAB ── -->
       <div id="atab-content-announce" style="display:none;">
         <div class="section-card" style="margin-bottom:12px;">
-          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">POST ANNOUNCEMENT <span style="color:var(--green);">&middot; v33 book-taller</span></div>
+          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">POST ANNOUNCEMENT <span style="color:var(--green);">&middot; v34 img-fit</span></div>
           <div class="auth-field">
             <label class="auth-label">Title</label>
             <input id="ann-title" class="auth-input" type="text" placeholder="Announcement title">
@@ -7237,7 +7237,7 @@ function buildAcademyBook(secs){
     head.innerHTML=pill+title;
   }
   function renderDots(){if(!dots)return;var n=secs.length;var MAX=7;function dot(active,size){return '<span style="width:'+size+'px;height:'+size+'px;border-radius:50%;flex-shrink:0;background:'+(active?'#FF3B54':'rgba(255,255,255,0.2)')+';"></span>';}var h='';if(n<=MAX){for(var d=0;d<n;d++){h+=dot(d===i,6);}}else{var half=Math.floor(MAX/2);var start=Math.min(Math.max(i-half,0),n-MAX);for(var k=0;k<MAX;k++){var idx=start+k;var edge=((k===0&&start>0)||(k===MAX-1&&start+MAX<n));h+=dot(idx===i,edge?4:6);}}dots.innerHTML=h;}
-  function render(){var s=secs[i]||{};renderHead(s);var html='';if(s.img){html+='<div style="border-radius:12px;overflow:hidden;margin-bottom:13px;border:1px solid rgba(255,255,255,0.08);"><img src="'+esc(s.img)+'" alt="" style="width:100%;display:block;"></div>';}html+='<div style="white-space:pre-wrap;">'+esc(s.d||'')+'</div>';body.innerHTML=html;body.scrollTop=0;if(count)count.textContent=(i+1)+' / '+secs.length;renderDots();}
+  function render(){var s=secs[i]||{};renderHead(s);var html='';if(s.img){html+='<div style="border-radius:12px;overflow:hidden;margin-bottom:13px;border:1px solid rgba(255,255,255,0.08);background:#0a0a0e;display:flex;align-items:center;justify-content:center;"><img src="'+esc(s.img)+'" alt="" style="width:100%;height:auto;max-height:300px;object-fit:contain;display:block;"></div>';}html+='<div style="white-space:pre-wrap;">'+esc(s.d||'')+'</div>';body.innerHTML=html;body.scrollTop=0;if(count)count.textContent=(i+1)+' / '+secs.length;renderDots();}
   function flip(dir){
     if(secs.length<2)return;
     page.style.transform='rotateY('+(dir>0?'-88deg':'88deg')+')';
