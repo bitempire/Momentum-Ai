@@ -2675,7 +2675,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <!-- ── ANNOUNCEMENTS TAB ── -->
       <div id="atab-content-announce" style="display:none;">
         <div class="section-card" style="margin-bottom:12px;">
-          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">POST ANNOUNCEMENT <span style="color:var(--green);">&middot; v30 academy-book</span></div>
+          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">POST ANNOUNCEMENT <span style="color:var(--green);">&middot; v31 book-dots</span></div>
           <div class="auth-field">
             <label class="auth-label">Title</label>
             <input id="ann-title" class="auth-input" type="text" placeholder="Announcement title">
@@ -7201,7 +7201,7 @@ function buildAcademyBook(secs){
     var title=s.t?'<div style="font-size:20px;font-weight:700;color:#fff;line-height:1.2;margin-bottom:13px;letter-spacing:-0.2px;">'+esc(s.t)+'</div>':'';
     head.innerHTML=pill+title;
   }
-  function renderDots(){if(!dots)return;var h='';for(var d=0;d<secs.length;d++){h+='<span style="width:6px;height:6px;border-radius:50%;background:'+(d===i?'#FF3B54':'rgba(255,255,255,0.2)')+';"></span>';}dots.innerHTML=h;}
+  function renderDots(){if(!dots)return;var n=secs.length;var MAX=7;function dot(active,size){return '<span style="width:'+size+'px;height:'+size+'px;border-radius:50%;flex-shrink:0;background:'+(active?'#FF3B54':'rgba(255,255,255,0.2)')+';"></span>';}var h='';if(n<=MAX){for(var d=0;d<n;d++){h+=dot(d===i,6);}}else{var half=Math.floor(MAX/2);var start=Math.min(Math.max(i-half,0),n-MAX);for(var k=0;k<MAX;k++){var idx=start+k;var edge=((k===0&&start>0)||(k===MAX-1&&start+MAX<n));h+=dot(idx===i,edge?4:6);}}dots.innerHTML=h;}
   function render(){var s=secs[i]||{};renderHead(s);body.textContent=s.d||'';body.scrollTop=0;if(count)count.textContent=(i+1)+' / '+secs.length;renderDots();}
   function flip(dir){
     if(secs.length<2)return;
