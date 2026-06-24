@@ -2675,7 +2675,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <!-- ── ANNOUNCEMENTS TAB ── -->
       <div id="atab-content-announce" style="display:none;">
         <div class="section-card" style="margin-bottom:12px;">
-          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">POST ANNOUNCEMENT <span style="color:var(--green);">&middot; v31 book-dots</span></div>
+          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">POST ANNOUNCEMENT <span style="color:var(--green);">&middot; v32 academy-img</span></div>
           <div class="auth-field">
             <label class="auth-label">Title</label>
             <input id="ann-title" class="auth-input" type="text" placeholder="Announcement title">
@@ -7044,16 +7044,49 @@ function academySnippet(content){
   var txt=secs.map(function(s){return (s.h?s.h+' ':'')+(s.d||'');}).join(' ').trim();
   return txt.substring(0,80)+(txt.length>80?'...':'');
 }
-function addAcademySection(t,h,d){
+async function uploadAcademyImage(file){
+  var ext=((file.name||'img').split('.').pop()||'png').toLowerCase().replace(/[^a-z0-9]/g,'')||'png';
+  var path='sections/'+Date.now()+'_'+Math.random().toString(36).slice(2,8)+'.'+ext;
+  var res=await fetch(SUPABASE_URL+'/storage/v1/object/academy/'+path,{
+    method:'POST',
+    headers:{'apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY,'Content-Type':file.type||'image/png','x-upsert':'true'},
+    body:file
+  });
+  if(!res.ok){ var t=''; try{t=await res.text();}catch(e){} throw new Error((res.status||'')+' '+(t||'upload failed')); }
+  return SUPABASE_URL+'/storage/v1/object/public/academy/'+path;
+}
+function addAcademySection(t,h,d,img){
   var wrap=document.getElementById('academy-sections');if(!wrap)return;
   var block=document.createElement('div');
   block.className='academy-section-block';
   block.style.cssText='border:1px solid var(--border);border-radius:9px;padding:12px;margin-bottom:10px;background:var(--bg3);';
-  block.innerHTML='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;"><span style="font-size:10px;color:var(--text3);font-weight:700;letter-spacing:0.5px;">SECTION</span><button type="button" class="acad-sec-remove" style="background:transparent;border:none;color:var(--text3);font-size:18px;cursor:pointer;line-height:1;padding:0 4px;">&times;</button></div><span style="font-size:10px;color:var(--text3);display:block;margin-bottom:5px;">Title <span style="color:var(--text);">(bold)</span></span><input class="acad-sec-t auth-input" type="text" placeholder="Section title" style="margin-bottom:9px;"><span style="font-size:10px;color:var(--text3);display:block;margin-bottom:5px;">Sub-header <span style="color:var(--red);">(red, optional)</span></span><input class="acad-sec-h auth-input" type="text" placeholder="Sub-header (optional)" style="margin-bottom:9px;"><span style="font-size:10px;color:var(--text3);display:block;margin-bottom:5px;">Detail (white)</span><textarea class="acad-sec-d auth-input" rows="7" style="resize:vertical;min-height:150px;" placeholder="Detail text..."></textarea>';
+  block.innerHTML='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;"><span style="font-size:10px;color:var(--text3);font-weight:700;letter-spacing:0.5px;">SECTION</span><button type="button" class="acad-sec-remove" style="background:transparent;border:none;color:var(--text3);font-size:18px;cursor:pointer;line-height:1;padding:0 4px;">&times;</button></div><span style="font-size:10px;color:var(--text3);display:block;margin-bottom:5px;">Title <span style="color:var(--text);">(bold)</span></span><input class="acad-sec-t auth-input" type="text" placeholder="Section title" style="margin-bottom:9px;"><span style="font-size:10px;color:var(--text3);display:block;margin-bottom:5px;">Sub-header <span style="color:var(--red);">(red, optional)</span></span><input class="acad-sec-h auth-input" type="text" placeholder="Sub-header (optional)" style="margin-bottom:9px;"><span style="font-size:10px;color:var(--text3);display:block;margin-bottom:5px;">Detail (white)</span><textarea class="acad-sec-d auth-input" rows="7" style="resize:vertical;min-height:150px;" placeholder="Detail text..."></textarea><span style="font-size:10px;color:var(--text3);display:block;margin:9px 0 5px;">Image <span style="color:var(--text3);">(optional)</span></span><input type="file" accept="image/*" class="acad-sec-file" style="display:none;"><input type="hidden" class="acad-sec-img"><div class="acad-sec-imgwrap"></div>';
   wrap.appendChild(block);
   if(t) block.querySelector('.acad-sec-t').value=t;
   if(h) block.querySelector('.acad-sec-h').value=h;
   if(d) block.querySelector('.acad-sec-d').value=d;
+  var fileInput=block.querySelector('.acad-sec-file');
+  var imgInput=block.querySelector('.acad-sec-img');
+  var imgWrap=block.querySelector('.acad-sec-imgwrap');
+  function renderImg(){
+    var url=imgInput.value;
+    if(url){
+      imgWrap.innerHTML='<div style="position:relative;border-radius:10px;overflow:hidden;border:1px solid var(--border);"><img src="'+url+'" style="width:100%;display:block;max-height:170px;object-fit:cover;"><button type="button" class="acad-sec-imgdel" style="position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:8px;background:rgba(0,0,0,0.6);border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;"><i class="ti ti-trash" style="font-size:15px;"></i></button></div>';
+      imgWrap.querySelector('.acad-sec-imgdel').addEventListener('click',function(){ imgInput.value=''; renderImg(); });
+    } else {
+      imgWrap.innerHTML='<div class="acad-sec-uploadbtn" style="display:flex;align-items:center;gap:10px;background:var(--surface);border:1px dashed rgba(255,255,255,0.18);border-radius:9px;padding:13px;cursor:pointer;"><div style="width:38px;height:38px;border-radius:9px;background:rgba(255,30,60,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ti ti-photo-up" style="font-size:19px;color:var(--red);"></i></div><div style="flex:1;"><div style="font-size:12px;color:var(--text);font-weight:600;">Tap to upload image</div><div style="font-size:10px;color:var(--text3);">PNG or JPG</div></div></div>';
+      imgWrap.querySelector('.acad-sec-uploadbtn').addEventListener('click',function(){ fileInput.click(); });
+    }
+  }
+  fileInput.addEventListener('change',async function(){
+    var f=fileInput.files&&fileInput.files[0]; if(!f){return;}
+    imgWrap.innerHTML='<div style="padding:13px;font-size:12px;color:var(--text3);">Uploading...</div>';
+    try{ var url=await uploadAcademyImage(f); imgInput.value=url; renderImg(); }
+    catch(e){ imgWrap.innerHTML='<div style="padding:13px;font-size:12px;color:var(--red);">Upload failed: '+(e.message||'error')+'</div>'; setTimeout(renderImg,3000); }
+    fileInput.value='';
+  });
+  if(img) imgInput.value=img;
+  renderImg();
   block.querySelector('.acad-sec-remove').addEventListener('click',function(){ block.remove(); if(!wrap.children.length) addAcademySection(); });
 }
 function gatherAcademySections(){
@@ -7064,7 +7097,9 @@ function gatherAcademySections(){
     var t=te?te.value.trim():'';
     var h=bl.querySelector('.acad-sec-h').value.trim();
     var d=bl.querySelector('.acad-sec-d').value.trim();
-    if(t||h||d) out.push({t:t,h:h,d:d});
+    var ie=bl.querySelector('.acad-sec-img');
+    var img=ie?ie.value.trim():'';
+    if(t||h||d||img) out.push({t:t,h:h,d:d,img:img});
   });
   return out;
 }
@@ -7088,7 +7123,7 @@ function editAcademyLesson(ls){
   var wrap=document.getElementById('academy-sections'); if(wrap) wrap.innerHTML='';
   var secs=academyParseSections(ls.content);
   if(!secs.length) secs=[{h:'',d:''}];
-  secs.forEach(function(s){ addAcademySection(s.t||'', s.h||'', s.d||''); });
+  secs.forEach(function(s){ addAcademySection(s.t||'', s.h||'', s.d||'', s.img||''); });
   var pb=document.getElementById('academy-publish-btn'); if(pb) pb.textContent='UPDATE LESSON';
   var ce=document.getElementById('academy-cancel-edit'); if(ce) ce.style.display='block';
   var form=document.getElementById('atab-content-academy'); if(form && form.scrollIntoView) form.scrollIntoView({behavior:'smooth'});
@@ -7202,7 +7237,7 @@ function buildAcademyBook(secs){
     head.innerHTML=pill+title;
   }
   function renderDots(){if(!dots)return;var n=secs.length;var MAX=7;function dot(active,size){return '<span style="width:'+size+'px;height:'+size+'px;border-radius:50%;flex-shrink:0;background:'+(active?'#FF3B54':'rgba(255,255,255,0.2)')+';"></span>';}var h='';if(n<=MAX){for(var d=0;d<n;d++){h+=dot(d===i,6);}}else{var half=Math.floor(MAX/2);var start=Math.min(Math.max(i-half,0),n-MAX);for(var k=0;k<MAX;k++){var idx=start+k;var edge=((k===0&&start>0)||(k===MAX-1&&start+MAX<n));h+=dot(idx===i,edge?4:6);}}dots.innerHTML=h;}
-  function render(){var s=secs[i]||{};renderHead(s);body.textContent=s.d||'';body.scrollTop=0;if(count)count.textContent=(i+1)+' / '+secs.length;renderDots();}
+  function render(){var s=secs[i]||{};renderHead(s);var html='';if(s.img){html+='<div style="border-radius:12px;overflow:hidden;margin-bottom:13px;border:1px solid rgba(255,255,255,0.08);"><img src="'+esc(s.img)+'" alt="" style="width:100%;display:block;"></div>';}html+='<div style="white-space:pre-wrap;">'+esc(s.d||'')+'</div>';body.innerHTML=html;body.scrollTop=0;if(count)count.textContent=(i+1)+' / '+secs.length;renderDots();}
   function flip(dir){
     if(secs.length<2)return;
     page.style.transform='rotateY('+(dir>0?'-88deg':'88deg')+')';
