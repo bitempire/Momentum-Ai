@@ -1982,7 +1982,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:4px 14px;margin-bottom:18px;">
         <div onclick="showSubScreen('sub-academy')" style="display:flex;align-items:center;gap:13px;padding:13px 0;border-bottom:1px solid var(--border);cursor:pointer;"><span style="width:38px;height:38px;border-radius:11px;background:rgba(255,30,60,0.12);display:flex;align-items:center;justify-content:center;"><i class="ti ti-school" style="font-size:19px;color:var(--red);"></i></span><div style="flex:1;font-size:14px;color:var(--text);font-weight:600;">Trading Academy</div><i class="ti ti-chevron-right" style="font-size:17px;color:var(--text3);"></i></div>
         <div onclick="showSubScreen('sub-news')" style="display:flex;align-items:center;gap:13px;padding:13px 0;border-bottom:1px solid var(--border);cursor:pointer;"><span style="width:38px;height:38px;border-radius:11px;background:rgba(255,30,60,0.12);display:flex;align-items:center;justify-content:center;"><i class="ti ti-calendar" style="font-size:19px;color:var(--red);"></i></span><div style="flex:1;font-size:14px;color:var(--text);font-weight:600;">News Calendar</div><i class="ti ti-chevron-right" style="font-size:17px;color:var(--text3);"></i></div>
-        <div onclick="showSubScreen('sub-ai-analyst')" style="display:flex;align-items:center;gap:13px;padding:13px 0;cursor:pointer;"><span style="width:38px;height:38px;border-radius:11px;background:rgba(255,30,60,0.12);display:flex;align-items:center;justify-content:center;"><i class="ti ti-sparkles" style="font-size:19px;color:var(--red);"></i></span><div style="flex:1;font-size:14px;color:var(--text);font-weight:600;">AI Chart Analyst</div><span style="font-size:9px;font-weight:700;letter-spacing:.5px;color:#fff;background:linear-gradient(135deg,#FF1E3C,#C40024);padding:3px 8px;border-radius:6px;">PREMIUM</span></div>
+        <div onclick="showSubScreen('sub-ai-analyst'); setTimeout(aiDrawCandles,60);" style="display:flex;align-items:center;gap:13px;padding:13px 0;cursor:pointer;"><span style="width:38px;height:38px;border-radius:11px;background:rgba(255,30,60,0.12);display:flex;align-items:center;justify-content:center;"><i class="ti ti-sparkles" style="font-size:19px;color:var(--red);"></i></span><div style="flex:1;font-size:14px;color:var(--text);font-weight:600;">AI Chart Analyst</div><span style="font-size:9px;font-weight:700;letter-spacing:.5px;color:#fff;background:linear-gradient(135deg,#FF1E3C,#C40024);padding:3px 8px;border-radius:6px;">PREMIUM</span></div>
       </div>
 
       <!-- Others -->
@@ -2024,7 +2024,16 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
   <!-- SUB SCREENS (slide in from right) -->
 
   <!-- Smart Tool Settings -->
-  <!-- AI CHART ANALYST (investor demo — hardcoded UI) -->
+  <!-- AI CHART ANALYST (investor demo — hardcoded, interactive) -->
+  <style>
+  @keyframes aiGrad{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+  @keyframes aiShine{0%{transform:translateX(-130%)}60%,100%{transform:translateX(260%)}}
+  .ai-grad-btn{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;border:none;border-radius:14px;padding:15px;color:#fff;font-size:14px;font-weight:700;font-family:Sora,sans-serif;cursor:pointer;background:linear-gradient(90deg,#7B5CFF,#FF2D81,#FF1E3C,#7B5CFF);background-size:300% 100%;animation:aiGrad 5s ease infinite;box-shadow:0 6px 20px rgba(150,60,200,0.4);}
+  .ai-grad-btn .ai-shine{position:absolute;top:0;left:0;width:40%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.4),transparent);animation:aiShine 3.2s ease-in-out infinite;pointer-events:none;}
+  .ai-grad-btn > i,.ai-grad-btn > span.t{position:relative;}
+  .ai-chip{font-size:12px;font-weight:600;padding:9px 14px;border-radius:22px;background:var(--surface);border:1px solid var(--border);color:var(--text2);cursor:pointer;}
+  .ai-chip.on{background:linear-gradient(135deg,#FF1E3C,#C40024);color:#fff;border-color:transparent;}
+  </style>
   <div id="sub-ai-analyst" class="sub-screen">
     <div class="sub-header">
       <button class="sub-back" onclick="hideSubScreen('sub-ai-analyst')"><i class="ti ti-arrow-left"></i></button>
@@ -2032,92 +2041,84 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
     </div>
     <div class="sub-content">
 
-      <!-- Credit balance -->
-      <div style="display:flex;align-items:center;gap:12px;background:linear-gradient(160deg,#15131A,#0A0A10);border:1px solid rgba(255,90,110,0.25);border-radius:16px;padding:14px 16px;margin-bottom:16px;">
-        <span style="width:40px;height:40px;border-radius:12px;background:linear-gradient(160deg,#FF2D46,#B00018);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 12px rgba(176,0,24,0.4);"><i class="ti ti-bolt" style="font-size:20px;color:#fff;"></i></span>
-        <div style="flex:1;">
-          <div style="font-size:11px;color:var(--text3);font-weight:600;">AI Credits</div>
-          <div style="font-size:18px;color:#fff;font-weight:800;line-height:1.1;">820 <span style="font-size:11px;color:var(--text3);font-weight:600;">/ 1,000</span></div>
-        </div>
+      <!-- credits -->
+      <div style="display:flex;align-items:center;gap:12px;background:linear-gradient(160deg,#15131A,#0A0A10);border:1px solid rgba(255,90,110,0.22);border-radius:15px;padding:12px 15px;margin-bottom:14px;">
+        <span style="width:38px;height:38px;border-radius:11px;background:linear-gradient(160deg,#FF2D46,#B00018);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ti ti-bolt" style="font-size:19px;color:#fff;"></i></span>
+        <div style="flex:1;"><div style="font-size:11px;color:var(--text3);font-weight:600;">AI Credits</div><div style="font-size:17px;color:#fff;font-weight:800;line-height:1.1;">820 <span style="font-size:11px;color:var(--text3);font-weight:600;">/ 1,000</span></div></div>
         <button onclick="comingSoonToast('Top up credits')" style="background:rgba(255,30,60,0.14);border:1px solid rgba(255,90,110,0.4);color:#FF8090;font-size:12px;font-weight:700;padding:8px 14px;border-radius:10px;cursor:pointer;font-family:Sora,sans-serif;">Top Up</button>
       </div>
 
-      <!-- Upload chart -->
-      <div style="font-size:12px;color:var(--text3);font-weight:700;letter-spacing:.5px;margin-bottom:8px;">1 · YOUR CHART</div>
-      <div style="position:relative;border-radius:14px;overflow:hidden;border:1px solid var(--border);margin-bottom:8px;">
-        <div style="height:150px;background:linear-gradient(135deg,#13131c,#0c0c14);display:flex;align-items:center;justify-content:center;position:relative;">
-          <svg viewBox="0 0 320 150" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%;opacity:0.9;">
-            <polyline points="0,95 25,88 50,100 75,80 100,90 125,65 150,72 175,55 200,60 225,42 250,50 275,35 300,44 320,30" fill="none" stroke="#00C87A" stroke-width="2"/>
-            <rect x="0" y="30" width="320" height="40" fill="rgba(255,30,60,0.10)"/>
-            <line x1="0" y1="30" x2="320" y2="30" stroke="#FF1E3C" stroke-width="1" stroke-dasharray="4 3"/>
-            <line x1="0" y1="70" x2="320" y2="70" stroke="#FF1E3C" stroke-width="1" stroke-dasharray="4 3"/>
-          </svg>
-          <div style="position:absolute;bottom:8px;left:10px;font-size:10px;color:var(--text3);background:rgba(0,0,0,0.5);padding:2px 7px;border-radius:6px;">XAUUSD · 15M</div>
+      <!-- chart -->
+      <div style="border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,0.08);background:#0c0c14;margin-bottom:12px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;border-bottom:1px solid rgba(255,255,255,0.06);">
+          <div style="display:flex;align-items:center;gap:7px;"><span style="font-size:12px;font-weight:700;color:#fff;">XAUUSD</span><span style="width:5px;height:5px;border-radius:50%;background:#00C87A;box-shadow:0 0 6px #00C87A;"></span><span style="font-size:10px;color:var(--text3);">TradingView</span></div>
+          <div style="display:flex;gap:3px;">
+            <span style="font-size:9.5px;color:var(--text3);padding:3px 6px;border-radius:5px;">5m</span>
+            <span style="font-size:9.5px;color:#fff;font-weight:700;padding:3px 6px;border-radius:5px;background:rgba(255,30,60,0.2);border:1px solid rgba(255,30,60,0.4);">15m</span>
+            <span style="font-size:9.5px;color:var(--text3);padding:3px 6px;border-radius:5px;">1H</span>
+            <span style="font-size:9.5px;color:var(--text3);padding:3px 6px;border-radius:5px;">4H</span>
+          </div>
         </div>
-        <button onclick="comingSoonToast('Change chart')" style="position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.55);border:none;color:#fff;font-size:11px;font-weight:600;padding:6px 10px;border-radius:8px;cursor:pointer;font-family:Sora,sans-serif;"><i class="ti ti-photo" style="font-size:12px;"></i> Change</button>
-      </div>
-      <div style="display:flex;gap:8px;margin-bottom:18px;">
-        <button onclick="comingSoonToast('Upload screenshot')" style="flex:1;background:var(--surface);border:1px dashed rgba(255,255,255,0.18);color:var(--text2);font-size:12px;font-weight:600;padding:11px;border-radius:11px;cursor:pointer;font-family:Sora,sans-serif;"><i class="ti ti-upload" style="font-size:14px;"></i> Upload screenshot</button>
-        <button onclick="comingSoonToast('Use in-app chart')" style="flex:1;background:var(--surface);border:1px solid var(--border);color:var(--text2);font-size:12px;font-weight:600;padding:11px;border-radius:11px;cursor:pointer;font-family:Sora,sans-serif;"><i class="ti ti-chart-candle" style="font-size:14px;"></i> In-app chart</button>
+        <svg id="ai-tvc" viewBox="0 0 344 150" style="width:100%;display:block;height:150px;"></svg>
       </div>
 
-      <!-- TA style picker -->
-      <div style="font-size:12px;color:var(--text3);font-weight:700;letter-spacing:.5px;margin-bottom:8px;">2 · ANALYSIS STYLE</div>
-      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;">
-        <span style="font-size:12px;font-weight:600;padding:8px 13px;border-radius:20px;background:linear-gradient(135deg,#FF1E3C,#C40024);color:#fff;">Supply &amp; Demand</span>
-        <span style="font-size:12px;font-weight:600;padding:8px 13px;border-radius:20px;background:var(--surface);border:1px solid var(--border);color:var(--text2);">Fibonacci</span>
-        <span style="font-size:12px;font-weight:600;padding:8px 13px;border-radius:20px;background:var(--surface);border:1px solid var(--border);color:var(--text2);">Trendline</span>
-        <span style="font-size:12px;font-weight:600;padding:8px 13px;border-radius:20px;background:var(--surface);border:1px solid var(--border);color:var(--text2);">S &amp; R</span>
-        <span style="font-size:12px;font-weight:600;padding:8px 13px;border-radius:20px;background:var(--surface);border:1px solid var(--border);color:var(--text2);">Chart Pattern</span>
-        <span style="font-size:12px;font-weight:600;padding:8px 13px;border-radius:20px;background:var(--surface);border:1px solid var(--border);color:var(--text2);">Auto</span>
-      </div>
+      <!-- capture button (opens style picker) -->
+      <button class="ai-grad-btn" onclick="aiOpenStyle()"><span class="ai-shine"></span><i class="ti ti-sparkles" style="font-size:17px;"></i> <span class="t">Capture &amp; Analyze</span></button>
+      <div style="text-align:center;font-size:10px;color:var(--text3);margin:7px 0 18px;">Captures your live chart + timeframe &middot; ~60 credits</div>
 
-      <button onclick="comingSoonToast('Run analysis')" style="width:100%;background:linear-gradient(135deg,#FF1E3C,#C40024);border:none;color:#fff;font-size:14px;font-weight:700;padding:14px;border-radius:13px;cursor:pointer;font-family:Sora,sans-serif;margin-bottom:8px;box-shadow:0 6px 16px rgba(196,0,32,0.35);">Analyze Chart &nbsp;·&nbsp; 60 credits</button>
-      <div style="text-align:center;font-size:10.5px;color:var(--text3);margin-bottom:20px;">Each analysis uses ~60 credits</div>
+      <!-- empty hint -->
+      <div id="ai-empty" style="text-align:center;color:var(--text3);font-size:12px;line-height:1.6;padding:10px 0 4px;">Tap <span style="color:#FF8090;font-weight:600;">Capture &amp; Analyze</span> to get your AI zone, signal &amp; reasoning.</div>
 
-      <!-- Result card -->
-      <div style="font-size:12px;color:var(--text3);font-weight:700;letter-spacing:.5px;margin-bottom:8px;">AI ANALYSIS</div>
-      <div style="background:linear-gradient(160deg,#15131A,#0A0A10);border:1px solid rgba(255,255,255,0.08);border-radius:18px;padding:18px;margin-bottom:18px;">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
-          <span style="font-size:11px;font-weight:800;letter-spacing:.5px;color:#fff;background:linear-gradient(135deg,#FF1E3C,#C40024);padding:5px 12px;border-radius:20px;">SELL BIAS</span>
-          <span style="font-size:11px;color:var(--text3);">XAUUSD · 15M · Supply &amp; Demand</span>
+      <!-- result (revealed after Generate) -->
+      <div id="ai-result" style="display:none;">
+        <div style="font-size:11px;font-weight:800;letter-spacing:.5px;color:#FF1E3C;margin-bottom:9px;">AI ANALYSIS</div>
+        <div style="background:linear-gradient(160deg,#16131c,#0b0b12);border:1px solid rgba(255,90,110,0.18);border-radius:16px;padding:15px;margin-bottom:16px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+            <span style="font-size:10.5px;font-weight:800;letter-spacing:.4px;color:#fff;background:linear-gradient(135deg,#FF1E3C,#C40024);padding:5px 11px;border-radius:14px;">SELL &middot; 78%</span>
+            <span id="ai-style-label" style="font-size:10px;color:var(--text3);">XAUUSD &middot; 15M &middot; Supply &amp; Demand</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
+            <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:9px 11px;"><div style="font-size:9px;color:var(--text3);font-weight:600;">SELL ZONE</div><div style="font-size:13px;color:#fff;font-weight:700;">4,082–4,088</div></div>
+            <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:9px 11px;"><div style="font-size:9px;color:var(--text3);font-weight:600;">STOP</div><div style="font-size:13px;color:#FF6B7E;font-weight:700;">4,095</div></div>
+            <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:9px 11px;"><div style="font-size:9px;color:var(--text3);font-weight:600;">TP 1</div><div style="font-size:13px;color:#00C87A;font-weight:700;">4,068</div></div>
+            <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:9px 11px;"><div style="font-size:9px;color:var(--text3);font-weight:600;">TP 2</div><div style="font-size:13px;color:#00C87A;font-weight:700;">4,052</div></div>
+          </div>
+          <div style="font-size:12px;color:#b6b6c0;line-height:1.6;margin-bottom:11px;">Price tapped a 15M supply zone at 4,082–4,088 with an unmitigated imbalance and fading momentum near the prior swing high. A rejection favours a move toward 4,068, with 4,052 as the extended target.</div>
+          <div style="font-size:9.5px;color:#FFB020;background:rgba(255,176,32,0.08);border:1px solid rgba(255,176,32,0.22);border-radius:8px;padding:7px 9px;line-height:1.4;"><i class="ti ti-alert-triangle" style="font-size:11px;"></i> AI-generated educational analysis. Not financial advice. Trade at your own risk.</div>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
-          <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:11px;padding:10px;"><div style="font-size:10px;color:var(--text3);font-weight:600;margin-bottom:3px;">SELL ZONE</div><div style="font-size:14px;color:#fff;font-weight:700;">4,082 – 4,088</div></div>
-          <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:11px;padding:10px;"><div style="font-size:10px;color:var(--text3);font-weight:600;margin-bottom:3px;">STOP LOSS</div><div style="font-size:14px;color:#FF6B7E;font-weight:700;">4,095</div></div>
-          <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:11px;padding:10px;"><div style="font-size:10px;color:var(--text3);font-weight:600;margin-bottom:3px;">TARGET 1</div><div style="font-size:14px;color:#00C87A;font-weight:700;">4,068</div></div>
-          <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:11px;padding:10px;"><div style="font-size:10px;color:var(--text3);font-weight:600;margin-bottom:3px;">TARGET 2</div><div style="font-size:14px;color:#00C87A;font-weight:700;">4,052</div></div>
+
+        <div style="font-size:11px;font-weight:800;letter-spacing:.5px;color:#FF1E3C;margin-bottom:9px;">ASK ABOUT THIS ANALYSIS</div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:13px;margin-bottom:11px;">
+          <div style="display:flex;justify-content:flex-end;margin-bottom:10px;"><div style="max-width:80%;background:linear-gradient(135deg,#FF1E3C,#C40024);color:#fff;font-size:12px;line-height:1.45;padding:9px 12px;border-radius:13px 13px 4px 13px;">Why is the stop at 4,095?</div></div>
+          <div style="display:flex;gap:7px;margin-bottom:13px;"><span style="width:25px;height:25px;border-radius:8px;background:linear-gradient(135deg,#7B5CFF,#FF2D81);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ti ti-sparkles" style="font-size:12px;color:#fff;"></i></span><div style="max-width:80%;background:var(--bg3);color:#c6c6ce;font-size:12px;line-height:1.55;padding:9px 12px;border-radius:13px 13px 13px 4px;">It sits just above the supply zone's high. A close above it breaks the zone and invalidates the sell idea — so it's the logical stop. Higher would only widen risk.</div></div>
+          <div style="display:flex;justify-content:flex-end;margin-bottom:10px;"><div style="max-width:80%;background:linear-gradient(135deg,#FF1E3C,#C40024);color:#fff;font-size:12px;line-height:1.45;padding:9px 12px;border-radius:13px 13px 4px 13px;">Write me a poem about cats?</div></div>
+          <div style="display:flex;gap:7px;"><span style="width:25px;height:25px;border-radius:8px;background:linear-gradient(135deg,#7B5CFF,#FF2D81);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ti ti-sparkles" style="font-size:12px;color:#fff;"></i></span><div style="max-width:80%;background:var(--bg3);color:#c6c6ce;font-size:12px;line-height:1.55;padding:9px 12px;border-radius:13px 13px 13px 4px;">I can only help with questions about this XAUUSD chart analysis. Ask me about the zone, signal, or reasoning above.</div></div>
         </div>
-        <div style="margin-bottom:12px;">
-          <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-bottom:5px;"><span>Confidence</span><span style="color:#fff;font-weight:700;">78%</span></div>
-          <div style="height:6px;border-radius:4px;background:rgba(255,255,255,0.08);overflow:hidden;"><div style="width:78%;height:100%;background:linear-gradient(90deg,#FF1E3C,#FF8090);"></div></div>
+        <div style="display:flex;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:6px 6px 6px 14px;margin-bottom:8px;">
+          <input type="text" placeholder="Ask about this analysis..." style="flex:1;background:transparent;border:none;outline:none;color:var(--text);font-size:13px;font-family:Sora,sans-serif;">
+          <button onclick="comingSoonToast('Send message')" style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#FF1E3C,#C40024);border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ti ti-send" style="font-size:16px;"></i></button>
         </div>
-        <div style="font-size:10px;color:var(--text3);font-weight:700;letter-spacing:.5px;margin-bottom:7px;">REASONING</div>
-        <div style="font-size:12.5px;color:#c6c6ce;line-height:1.7;">Price tapped into a clear 15M supply zone at 4,082–4,088 where the last bearish move originated, leaving an unmitigated imbalance. Momentum is fading near resistance and the zone aligns with the prior swing high. A rejection here favours a move down toward the 4,068 demand level, with 4,052 as the extended target if selling pressure continues.</div>
-        <div style="margin-top:14px;padding:10px 12px;background:rgba(255,176,32,0.08);border:1px solid rgba(255,176,32,0.25);border-radius:10px;font-size:10.5px;color:#FFB020;line-height:1.5;"><i class="ti ti-alert-triangle" style="font-size:12px;"></i> AI-generated educational analysis. Not financial advice. Trade at your own risk.</div>
+        <div style="text-align:center;font-size:10px;color:var(--text3);margin-bottom:10px;">Each reply uses ~10 credits &middot; related questions only</div>
       </div>
 
-      <!-- Chat -->
-      <div style="font-size:12px;color:var(--text3);font-weight:700;letter-spacing:.5px;margin-bottom:8px;">ASK ABOUT THIS ANALYSIS</div>
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:14px;margin-bottom:12px;">
+    </div>
+  </div>
 
-        <!-- user msg -->
-        <div style="display:flex;justify-content:flex-end;margin-bottom:12px;"><div style="max-width:80%;background:linear-gradient(135deg,#FF1E3C,#C40024);color:#fff;font-size:12.5px;line-height:1.5;padding:10px 13px;border-radius:14px 14px 4px 14px;">Why is the stop at 4,095 and not higher?</div></div>
-        <!-- ai msg -->
-        <div style="display:flex;gap:8px;margin-bottom:14px;"><span style="width:26px;height:26px;border-radius:8px;background:linear-gradient(160deg,#FF2D46,#B00018);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ti ti-sparkles" style="font-size:13px;color:#fff;"></i></span><div style="max-width:80%;background:var(--bg3);color:#c6c6ce;font-size:12.5px;line-height:1.6;padding:10px 13px;border-radius:14px 14px 14px 4px;">4,095 sits just above the supply zone's high. If price closes above it, the zone is considered broken and the sell idea is invalid — so it's the logical invalidation point. Placing it higher would only widen your risk without adding protection.</div></div>
-
-        <!-- off-topic user msg -->
-        <div style="display:flex;justify-content:flex-end;margin-bottom:12px;"><div style="max-width:80%;background:linear-gradient(135deg,#FF1E3C,#C40024);color:#fff;font-size:12.5px;line-height:1.5;padding:10px 13px;border-radius:14px 14px 4px 14px;">Can you write me a poem about cats?</div></div>
-        <!-- ai declines (shows guardrail) -->
-        <div style="display:flex;gap:8px;"><span style="width:26px;height:26px;border-radius:8px;background:linear-gradient(160deg,#FF2D46,#B00018);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ti ti-sparkles" style="font-size:13px;color:#fff;"></i></span><div style="max-width:80%;background:var(--bg3);color:#c6c6ce;font-size:12.5px;line-height:1.6;padding:10px 13px;border-radius:14px 14px 14px 4px;">I can only help with questions about this XAUUSD chart analysis. Ask me anything about the zone, signal, or reasoning above.</div></div>
-
+  <!-- style picker bottom sheet -->
+  <div id="ai-style-sheet" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.82);z-index:99999;align-items:flex-end;justify-content:center;" onclick="if(event.target===this)aiCloseStyle()">
+    <div style="background:#0E0E12;border-radius:24px 24px 0 0;padding:20px 18px calc(22px + env(safe-area-inset-bottom));width:100%;max-width:480px;box-sizing:border-box;">
+      <div style="width:36px;height:4px;background:rgba(255,255,255,0.15);border-radius:2px;margin:0 auto 16px;"></div>
+      <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:4px;">Choose analysis style</div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:16px;">The AI will read your chart using this method.</div>
+      <div style="display:flex;flex-wrap:wrap;gap:9px;margin-bottom:20px;">
+        <span class="ai-chip on" onclick="aiPickStyle(this,'Supply &amp; Demand')">Supply &amp; Demand</span>
+        <span class="ai-chip" onclick="aiPickStyle(this,'Fibonacci')">Fibonacci</span>
+        <span class="ai-chip" onclick="aiPickStyle(this,'Trendline')">Trendline</span>
+        <span class="ai-chip" onclick="aiPickStyle(this,'S &amp; R')">S &amp; R</span>
+        <span class="ai-chip" onclick="aiPickStyle(this,'Chart Pattern')">Chart Pattern</span>
+        <span class="ai-chip" onclick="aiPickStyle(this,'Auto')">Auto</span>
       </div>
-      <div style="display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:6px 6px 6px 14px;margin-bottom:8px;">
-        <input type="text" placeholder="Ask about this analysis..." style="flex:1;background:transparent;border:none;outline:none;color:var(--text);font-size:13px;font-family:Sora,sans-serif;">
-        <button onclick="comingSoonToast('Send message')" style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#FF1E3C,#C40024);border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ti ti-send" style="font-size:16px;"></i></button>
-      </div>
-      <div style="text-align:center;font-size:10.5px;color:var(--text3);margin-bottom:10px;">Each reply uses ~10 credits · related questions only</div>
-
+      <button class="ai-grad-btn" onclick="aiGenerate()"><span class="ai-shine"></span><i class="ti ti-sparkles" style="font-size:17px;"></i> <span class="t">Generate Analysis &middot; 60 credits</span></button>
     </div>
   </div>
 
@@ -2772,7 +2773,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <!-- ── ANNOUNCEMENTS TAB ── -->
       <div id="atab-content-announce" style="display:none;">
         <div class="section-card" style="margin-bottom:12px;">
-          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">POST ANNOUNCEMENT <span style="color:var(--green);">&middot; v37 ai-analyst-demo</span></div>
+          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">POST ANNOUNCEMENT <span style="color:var(--green);">&middot; v38 ai-analyst-v2</span></div>
           <div class="auth-field">
             <label class="auth-label">Title</label>
             <input id="ann-title" class="auth-input" type="text" placeholder="Announcement title">
@@ -6644,6 +6645,28 @@ function switchLeaderTab(which){
   }
   renderMoreLeader(which);
 }
+var _aiStyle='Supply & Demand';
+function aiDrawCandles(){
+  var svg=document.getElementById('ai-tvc'); if(!svg || svg.dataset.drawn) return; svg.dataset.drawn='1';
+  var W=344,H=150,n=22,pad=7; var ns="http://www.w3.org/2000/svg";
+  var seed=7; function rnd(){seed=(seed*9301+49297)%233280;return seed/233280;}
+  var price=78, candles=[];
+  for(var i=0;i<n;i++){ var open=price; var drift=(i<n-4)?(rnd()*7-2.6):(rnd()*5-3.6); var close=open+drift; var high=Math.max(open,close)+rnd()*3; var low=Math.min(open,close)-rnd()*3; candles.push({o:open,c:close,h:high,l:low}); price=close; }
+  var vals=[]; candles.forEach(function(d){vals.push(d.h,d.l);}); var mn=Math.min.apply(null,vals)-3, mx=Math.max.apply(null,vals)+3;
+  function y(v){return H-pad-((v-mn)/(mx-mn))*(H-pad*2);}
+  var cw=(W-pad*2)/n;
+  var zt=y(mx-4), zb=y(mx-13);
+  var band=document.createElementNS(ns,'rect'); band.setAttribute('x',0); band.setAttribute('y',zt); band.setAttribute('width',W); band.setAttribute('height',Math.max(0,zb-zt)); band.setAttribute('fill','rgba(255,30,60,0.10)'); svg.appendChild(band);
+  [zt,zb].forEach(function(yy){ var l=document.createElementNS(ns,'line'); l.setAttribute('x1',0); l.setAttribute('x2',W); l.setAttribute('y1',yy); l.setAttribute('y2',yy); l.setAttribute('stroke','#FF1E3C'); l.setAttribute('stroke-width','1'); l.setAttribute('stroke-dasharray','4 3'); l.setAttribute('opacity','0.7'); svg.appendChild(l); });
+  candles.forEach(function(d,i){ var x=pad+i*cw+cw/2; var up=d.c>=d.o; var col=up?'#00C87A':'#FF3B57';
+    var wick=document.createElementNS(ns,'line'); wick.setAttribute('x1',x); wick.setAttribute('x2',x); wick.setAttribute('y1',y(d.h)); wick.setAttribute('y2',y(d.l)); wick.setAttribute('stroke',col); wick.setAttribute('stroke-width','1'); svg.appendChild(wick);
+    var bt=y(Math.max(d.o,d.c)), bb=y(Math.min(d.o,d.c)); var r=document.createElementNS(ns,'rect'); r.setAttribute('x',x-cw*0.3); r.setAttribute('y',bt); r.setAttribute('width',cw*0.6); r.setAttribute('height',Math.max(1,bb-bt)); r.setAttribute('fill',col); r.setAttribute('rx','1'); svg.appendChild(r);
+  });
+}
+function aiOpenStyle(){ var s=document.getElementById('ai-style-sheet'); if(s) s.style.display='flex'; }
+function aiCloseStyle(){ var s=document.getElementById('ai-style-sheet'); if(s) s.style.display='none'; }
+function aiPickStyle(el,name){ _aiStyle=name; var chips=document.querySelectorAll('#ai-style-sheet .ai-chip'); for(var i=0;i<chips.length;i++) chips[i].classList.remove('on'); el.classList.add('on'); }
+function aiGenerate(){ aiCloseStyle(); var lbl=document.getElementById('ai-style-label'); if(lbl) lbl.textContent='XAUUSD \u00b7 15M \u00b7 '+_aiStyle; var em=document.getElementById('ai-empty'); if(em) em.style.display='none'; var res=document.getElementById('ai-result'); if(res){ res.style.display='block'; setTimeout(function(){ res.scrollIntoView({behavior:'smooth',block:'start'}); },60); } }
 function comingSoonToast(label){
   var t = document.createElement('div');
   t.textContent = (label||'This feature')+' — coming soon';
