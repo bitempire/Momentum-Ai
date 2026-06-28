@@ -1982,7 +1982,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:4px 14px;margin-bottom:18px;">
         <div onclick="showSubScreen('sub-academy')" style="display:flex;align-items:center;gap:13px;padding:13px 0;border-bottom:1px solid var(--border);cursor:pointer;"><span style="width:38px;height:38px;border-radius:11px;background:rgba(255,30,60,0.12);display:flex;align-items:center;justify-content:center;"><i class="ti ti-school" style="font-size:19px;color:var(--red);"></i></span><div style="flex:1;font-size:14px;color:var(--text);font-weight:600;">Trading Academy</div><i class="ti ti-chevron-right" style="font-size:17px;color:var(--text3);"></i></div>
         <div onclick="showSubScreen('sub-news')" style="display:flex;align-items:center;gap:13px;padding:13px 0;border-bottom:1px solid var(--border);cursor:pointer;"><span style="width:38px;height:38px;border-radius:11px;background:rgba(255,30,60,0.12);display:flex;align-items:center;justify-content:center;"><i class="ti ti-calendar" style="font-size:19px;color:var(--red);"></i></span><div style="flex:1;font-size:14px;color:var(--text);font-weight:600;">News Calendar</div><i class="ti ti-chevron-right" style="font-size:17px;color:var(--text3);"></i></div>
-        <div onclick="showSubScreen('sub-ai-analyst'); setTimeout(aiDrawCandles,60);" style="display:flex;align-items:center;gap:13px;padding:13px 0;cursor:pointer;"><span style="width:38px;height:38px;border-radius:11px;background:rgba(255,30,60,0.12);display:flex;align-items:center;justify-content:center;"><i class="ti ti-sparkles" style="font-size:19px;color:var(--red);"></i></span><div style="flex:1;font-size:14px;color:var(--text);font-weight:600;">AI Chart Analyst</div><span style="font-size:9px;font-weight:700;letter-spacing:.5px;color:#fff;background:linear-gradient(135deg,#FF1E3C,#C40024);padding:3px 8px;border-radius:6px;">PREMIUM</span></div>
+        <div onclick="showSubScreen('sub-ai-analyst'); setTimeout(aiLoadTVChart,80);" style="display:flex;align-items:center;gap:13px;padding:13px 0;cursor:pointer;"><span style="width:38px;height:38px;border-radius:11px;background:rgba(255,30,60,0.12);display:flex;align-items:center;justify-content:center;"><i class="ti ti-sparkles" style="font-size:19px;color:var(--red);"></i></span><div style="flex:1;font-size:14px;color:var(--text);font-weight:600;">AI Chart Analyst</div><span style="font-size:9px;font-weight:700;letter-spacing:.5px;color:#fff;background:linear-gradient(135deg,#FF1E3C,#C40024);padding:3px 8px;border-radius:6px;">PREMIUM</span></div>
       </div>
 
       <!-- Others -->
@@ -2033,6 +2033,8 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
   .ai-grad-btn > i,.ai-grad-btn > span.t{position:relative;}
   .ai-chip{font-size:12px;font-weight:600;padding:9px 14px;border-radius:22px;background:var(--surface);border:1px solid var(--border);color:var(--text2);cursor:pointer;}
   .ai-chip.on{background:linear-gradient(135deg,#FF1E3C,#C40024);color:#fff;border-color:transparent;}
+  .ai-tf{font-size:9.5px;color:var(--text3);font-weight:600;padding:3px 7px;border-radius:5px;cursor:pointer;}
+  .ai-tf.on{color:#fff;background:rgba(255,30,60,0.2);border:1px solid rgba(255,30,60,0.4);}
   </style>
   <div id="sub-ai-analyst" class="sub-screen">
     <div class="sub-header">
@@ -2053,13 +2055,13 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;border-bottom:1px solid rgba(255,255,255,0.06);">
           <div style="display:flex;align-items:center;gap:7px;"><span style="font-size:12px;font-weight:700;color:#fff;">XAUUSD</span><span style="width:5px;height:5px;border-radius:50%;background:#00C87A;box-shadow:0 0 6px #00C87A;"></span><span style="font-size:10px;color:var(--text3);">TradingView</span></div>
           <div style="display:flex;gap:3px;">
-            <span style="font-size:9.5px;color:var(--text3);padding:3px 6px;border-radius:5px;">5m</span>
-            <span style="font-size:9.5px;color:#fff;font-weight:700;padding:3px 6px;border-radius:5px;background:rgba(255,30,60,0.2);border:1px solid rgba(255,30,60,0.4);">15m</span>
-            <span style="font-size:9.5px;color:var(--text3);padding:3px 6px;border-radius:5px;">1H</span>
-            <span style="font-size:9.5px;color:var(--text3);padding:3px 6px;border-radius:5px;">4H</span>
+            <span class="ai-tf" onclick="aiSetTF(this,'5')">5m</span>
+            <span class="ai-tf on" onclick="aiSetTF(this,'15')">15m</span>
+            <span class="ai-tf" onclick="aiSetTF(this,'60')">1H</span>
+            <span class="ai-tf" onclick="aiSetTF(this,'240')">4H</span>
           </div>
         </div>
-        <svg id="ai-tvc" viewBox="0 0 344 150" style="width:100%;display:block;height:150px;"></svg>
+        <div id="ai-tv-container" style="width:100%;height:210px;background:#0c0c14;"></div>
       </div>
 
       <!-- capture button (opens style picker) -->
@@ -2773,7 +2775,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <!-- ── ANNOUNCEMENTS TAB ── -->
       <div id="atab-content-announce" style="display:none;">
         <div class="section-card" style="margin-bottom:12px;">
-          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">POST ANNOUNCEMENT <span style="color:var(--green);">&middot; v38 ai-analyst-v2</span></div>
+          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">POST ANNOUNCEMENT <span style="color:var(--green);">&middot; v39 ai-real-chart</span></div>
           <div class="auth-field">
             <label class="auth-label">Title</label>
             <input id="ann-title" class="auth-input" type="text" placeholder="Announcement title">
@@ -6646,23 +6648,20 @@ function switchLeaderTab(which){
   renderMoreLeader(which);
 }
 var _aiStyle='Supply & Demand';
-function aiDrawCandles(){
-  var svg=document.getElementById('ai-tvc'); if(!svg || svg.dataset.drawn) return; svg.dataset.drawn='1';
-  var W=344,H=150,n=22,pad=7; var ns="http://www.w3.org/2000/svg";
-  var seed=7; function rnd(){seed=(seed*9301+49297)%233280;return seed/233280;}
-  var price=78, candles=[];
-  for(var i=0;i<n;i++){ var open=price; var drift=(i<n-4)?(rnd()*7-2.6):(rnd()*5-3.6); var close=open+drift; var high=Math.max(open,close)+rnd()*3; var low=Math.min(open,close)-rnd()*3; candles.push({o:open,c:close,h:high,l:low}); price=close; }
-  var vals=[]; candles.forEach(function(d){vals.push(d.h,d.l);}); var mn=Math.min.apply(null,vals)-3, mx=Math.max.apply(null,vals)+3;
-  function y(v){return H-pad-((v-mn)/(mx-mn))*(H-pad*2);}
-  var cw=(W-pad*2)/n;
-  var zt=y(mx-4), zb=y(mx-13);
-  var band=document.createElementNS(ns,'rect'); band.setAttribute('x',0); band.setAttribute('y',zt); band.setAttribute('width',W); band.setAttribute('height',Math.max(0,zb-zt)); band.setAttribute('fill','rgba(255,30,60,0.10)'); svg.appendChild(band);
-  [zt,zb].forEach(function(yy){ var l=document.createElementNS(ns,'line'); l.setAttribute('x1',0); l.setAttribute('x2',W); l.setAttribute('y1',yy); l.setAttribute('y2',yy); l.setAttribute('stroke','#FF1E3C'); l.setAttribute('stroke-width','1'); l.setAttribute('stroke-dasharray','4 3'); l.setAttribute('opacity','0.7'); svg.appendChild(l); });
-  candles.forEach(function(d,i){ var x=pad+i*cw+cw/2; var up=d.c>=d.o; var col=up?'#00C87A':'#FF3B57';
-    var wick=document.createElementNS(ns,'line'); wick.setAttribute('x1',x); wick.setAttribute('x2',x); wick.setAttribute('y1',y(d.h)); wick.setAttribute('y2',y(d.l)); wick.setAttribute('stroke',col); wick.setAttribute('stroke-width','1'); svg.appendChild(wick);
-    var bt=y(Math.max(d.o,d.c)), bb=y(Math.min(d.o,d.c)); var r=document.createElementNS(ns,'rect'); r.setAttribute('x',x-cw*0.3); r.setAttribute('y',bt); r.setAttribute('width',cw*0.6); r.setAttribute('height',Math.max(1,bb-bt)); r.setAttribute('fill',col); r.setAttribute('rx','1'); svg.appendChild(r);
-  });
+var _aiTF='15';
+function aiLoadTVChart(){
+  var c=document.getElementById('ai-tv-container'); if(!c) return;
+  var theme=(document.documentElement.getAttribute('data-theme')==='light'?'light':'dark');
+  var ov='{"mainSeriesProperties.candleStyle.upColor":"#00C87A","mainSeriesProperties.candleStyle.downColor":"#FF3B57","mainSeriesProperties.candleStyle.borderUpColor":"#00C87A","mainSeriesProperties.candleStyle.borderDownColor":"#FF3B57","mainSeriesProperties.candleStyle.wickUpColor":"#00C87A","mainSeriesProperties.candleStyle.wickDownColor":"#FF3B57"}';
+  var src='https://s.tradingview.com/widgetembed/?symbol='+encodeURIComponent('OANDA:XAUUSD')+
+    '&interval='+_aiTF+
+    '&theme='+theme+
+    '&style=1'+
+    '&overrides='+encodeURIComponent(ov)+
+    '&locale=en&hide_top_toolbar=1&hide_legend=1&hide_side_toolbar=1&allow_symbol_change=0&save_image=0&calendar=0&hotlist=0&details=0&withdateranges=0&timezone=Asia%2FKuala_Lumpur';
+  c.innerHTML='<iframe src="'+src+'" frameborder="0" scrolling="no" allowtransparency="true" allowfullscreen="true" style="width:100%;height:210px;border:none;display:block;"></iframe>';
 }
+function aiSetTF(el,tf){ _aiTF=tf; var p=el.parentNode; var t=p.querySelectorAll('.ai-tf'); for(var i=0;i<t.length;i++) t[i].classList.remove('on'); el.classList.add('on'); aiLoadTVChart(); }
 function aiOpenStyle(){ var s=document.getElementById('ai-style-sheet'); if(s) s.style.display='flex'; }
 function aiCloseStyle(){ var s=document.getElementById('ai-style-sheet'); if(s) s.style.display='none'; }
 function aiPickStyle(el,name){ _aiStyle=name; var chips=document.querySelectorAll('#ai-style-sheet .ai-chip'); for(var i=0;i<chips.length;i++) chips[i].classList.remove('on'); el.classList.add('on'); }
