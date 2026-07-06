@@ -1959,7 +1959,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <!-- Quick actions — G2 red grid tiles (2x2, icon left) -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:18px;">
         <div onclick="showSubScreen('sub-scanner')" style="position:relative;overflow:hidden;display:flex;align-items:center;gap:10px;background:linear-gradient(180deg,#FF2D46,#B00018);border-radius:14px;padding:13px;box-shadow:0 4px 12px rgba(176,0,24,0.3);cursor:pointer;"><div style="position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.13) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.13) 1px,transparent 1px);background-size:14px 14px;opacity:0.5;"></div><i class="ti ti-sparkles" style="position:relative;font-size:20px;color:#fff;flex-shrink:0;"></i><span style="position:relative;font-size:12px;color:#fff;font-weight:600;white-space:nowrap;">MAI Scanner</span></div>
-        <div onclick="showSubScreen('sub-fund')" style="position:relative;overflow:hidden;display:flex;align-items:center;gap:10px;background:linear-gradient(180deg,#FF2D46,#B00018);border-radius:14px;padding:13px;box-shadow:0 4px 12px rgba(176,0,24,0.3);cursor:pointer;"><div style="position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.13) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.13) 1px,transparent 1px);background-size:14px 14px;opacity:0.5;"></div><i class="ti ti-user-star" style="position:relative;font-size:20px;color:#fff;flex-shrink:0;"></i><span style="position:relative;font-size:12px;color:#fff;font-weight:600;white-space:nowrap;">MAI Manager</span></div>
+        <div onclick="showSubScreen('sub-fund'); setTimeout(mamInit,20);" style="position:relative;overflow:hidden;display:flex;align-items:center;gap:10px;background:linear-gradient(180deg,#FF2D46,#B00018);border-radius:14px;padding:13px;box-shadow:0 4px 12px rgba(176,0,24,0.3);cursor:pointer;"><div style="position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.13) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.13) 1px,transparent 1px);background-size:14px 14px;opacity:0.5;"></div><i class="ti ti-user-star" style="position:relative;font-size:20px;color:#fff;flex-shrink:0;"></i><span style="position:relative;font-size:12px;color:#fff;font-weight:600;white-space:nowrap;">MAI Manager</span></div>
         <div onclick="showSubScreen('sub-trade-settings')" style="position:relative;overflow:hidden;display:flex;align-items:center;gap:10px;background:linear-gradient(180deg,#FF2D46,#B00018);border-radius:14px;padding:13px;box-shadow:0 4px 12px rgba(176,0,24,0.3);cursor:pointer;"><div style="position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.13) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.13) 1px,transparent 1px);background-size:14px 14px;opacity:0.5;"></div><i class="ti ti-settings-bolt" style="position:relative;font-size:20px;color:#fff;flex-shrink:0;"></i><span style="position:relative;font-size:12px;color:#fff;font-weight:600;white-space:nowrap;">MAI Smart Tools</span></div>
         <div onclick="showSubScreen('sub-profile')" style="position:relative;overflow:hidden;display:flex;align-items:center;gap:10px;background:linear-gradient(180deg,#FF2D46,#B00018);border-radius:14px;padding:13px;box-shadow:0 4px 12px rgba(176,0,24,0.3);cursor:pointer;"><div style="position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.13) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.13) 1px,transparent 1px);background-size:14px 14px;opacity:0.5;"></div><i class="ti ti-user-circle" style="position:relative;font-size:20px;color:#fff;flex-shrink:0;"></i><span style="position:relative;font-size:12px;color:#fff;font-weight:600;white-space:nowrap;">My Account</span></div>
       </div>
@@ -2525,184 +2525,41 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
   </div>
 
   <!-- Fund Management -->
+  <!-- ===== MAI MANAGER (PAMM/MAM marketplace) ===== -->
+  <style>
+  .mam-fchip{font-size:11.5px;font-weight:600;padding:7px 13px;border-radius:18px;white-space:nowrap;background:#15131c;border:1px solid rgba(255,255,255,0.1);color:#c6c6ce;cursor:pointer;}
+  .mam-fchip.on{background:linear-gradient(135deg,#FF1E3C,#C40024);color:#fff;border-color:transparent;}
+  .mam-amt{flex:1;text-align:center;font-size:12px;font-weight:700;padding:9px 0;border-radius:10px;color:#c6c6ce;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);cursor:pointer;}
+  .mam-amt.on{background:linear-gradient(135deg,#FF1E3C,#C40024);color:#fff;border-color:transparent;}
+  .mam-k{font-size:8px;color:#8A8A96;font-weight:600;letter-spacing:.3px;}
+  .mam-tb{font-size:9px;font-weight:700;color:#fff;padding:2px 7px;border-radius:8px;}
+  </style>
   <div id="sub-fund" class="sub-screen">
     <div class="sub-header">
       <button class="sub-back" onclick="hideSubScreen('sub-fund')"><i class="ti ti-arrow-left"></i></button>
-      <div class="sub-title">FUND MANAGEMENT</div>
+      <div class="sub-title">MAI MANAGER</div>
     </div>
     <div class="sub-content">
-      <!-- Red Banner - Top 3 Performers -->
-      <div style="background:linear-gradient(135deg,#C40024,#FF1E3C);border-radius:14px;padding:14px;margin-bottom:12px;position:relative;overflow:hidden;">
-        <div style="position:absolute;top:-20px;right:-20px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,0.07);"></div>
-        <div style="font-size:9px;font-weight:700;color:rgba(255,255,255,0.7);letter-spacing:2px;margin-bottom:6px;">TOP PERFORMING FUNDS</div>
-        <div style="display:flex;justify-content:space-around;align-items:flex-end;">
-          <div style="text-align:center;">
-            <div style="font-size:18px;margin-bottom:3px;">🥈</div>
-            <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.9);">M. Alpha</div>
-            <div style="font-size:14px;font-weight:800;color:#fff;">+38.2%</div>
-          </div>
-          <div style="text-align:center;">
-            <div style="font-size:24px;margin-bottom:3px;">🥇</div>
-            <div style="font-size:11px;font-weight:700;color:#fff;">M. Genesis</div>
-            <div style="font-size:16px;font-weight:800;color:#fff;">+24.5%</div>
-          </div>
-          <div style="text-align:center;">
-            <div style="font-size:18px;margin-bottom:3px;">🥉</div>
-            <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.9);">M. Prime</div>
-            <div style="font-size:14px;font-weight:800;color:#fff;">+19.8%</div>
-          </div>
-        </div>
+      <div style="font-size:12px;color:var(--text3);line-height:1.6;margin-bottom:14px;">Invest with verified fund managers. Browse performance, view the statement, then invest in the portfolio you trust.</div>
+      <div style="display:flex;gap:7px;margin-bottom:12px;overflow-x:auto;">
+        <span class="mam-fchip on" onclick="mamFilter(this,'all')">All</span>
+        <span class="mam-fchip" onclick="mamFilter(this,'ai')">AI</span>
+        <span class="mam-fchip" onclick="mamFilter(this,'semi')">Semi-Auto</span>
+        <span class="mam-fchip" onclick="mamFilter(this,'manual')">Manual</span>
       </div>
-      <!-- Stats row -->
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;">
-        <div class="section-card" style="padding:10px;text-align:center;">
-          <div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:3px;">Total AUM</div>
-          <div style="font-family:'Orbitron',sans-serif;font-size:13px;font-weight:800;color:var(--text);">$4.8M</div>
-        </div>
-        <div class="section-card" style="padding:10px;text-align:center;">
-          <div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:3px;">Avg Return</div>
-          <div style="font-family:'Orbitron',sans-serif;font-size:13px;font-weight:800;color:var(--green);">+24.1%</div>
-        </div>
-        <div class="section-card" style="padding:10px;text-align:center;">
-          <div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:3px;">Followers</div>
-          <div style="font-family:'Orbitron',sans-serif;font-size:13px;font-weight:800;color:var(--text);">342</div>
-        </div>
-      </div>
-      <div class="section-card" style="margin-bottom:10px;">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
-          <div style="width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,#FF1E3C,#C40024);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-            <i class="ti ti-trending-up" style="color:#fff;font-size:20px;"></i>
-          </div>
-          <div style="flex:1;">
-            <div style="font-size:15px;font-weight:800;color:var(--text);">Momentum Genesis</div>
-            <div style="font-size:11px;color:var(--text3);">Conservative · Low Risk</div>
-          </div>
-          <div style="text-align:right;">
-            <div style="font-size:16px;font-weight:800;color:var(--green);">+24.5%</div>
-            <div style="font-size:10px;color:var(--text3);">This month</div>
-          </div>
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-bottom:10px;">
-          <div style="text-align:center;"><div style="font-size:11px;font-weight:700;color:var(--text);">94%</div><div style="font-size:8px;color:var(--text3);">Win Rate</div></div>
-          <div style="text-align:center;"><div style="font-size:11px;font-weight:700;color:var(--text);">2.4</div><div style="font-size:8px;color:var(--text3);">Profit F.</div></div>
-          <div style="text-align:center;"><div style="font-size:11px;font-weight:700;color:var(--red);">8.4%</div><div style="font-size:8px;color:var(--text3);">Max DD</div></div>
-          <div style="text-align:center;"><div style="font-size:11px;font-weight:700;color:var(--text);">87</div><div style="font-size:8px;color:var(--text3);">Followers</div></div>
-          <div style="text-align:center;"><div style="font-size:11px;font-weight:700;color:var(--text);">$1.8M</div><div style="font-size:8px;color:var(--text3);">AUM</div></div>
-        </div>
-        <div style="display:flex;gap:8px;">
-          <button onclick="showSubScreen('sub-fund-detail')" style="flex:1;padding:9px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:12px;font-weight:700;cursor:pointer;">View Details</button>
-          <button onclick="showSubScreen('sub-fund-follow')" style="flex:1;padding:9px;background:var(--grad);border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;">Follow Fund</button>
-        </div>
-      </div>
-      <div class="section-card" style="margin-bottom:10px;">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
-          <div style="width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,#4D9EFF,#1A5FBF);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-            <i class="ti ti-rocket" style="color:#fff;font-size:20px;"></i>
-          </div>
-          <div style="flex:1;">
-            <div style="font-size:15px;font-weight:800;color:var(--text);">Momentum Alpha</div>
-            <div style="font-size:11px;color:var(--text3);">Aggressive · High Risk</div>
-          </div>
-          <div style="text-align:right;">
-            <div style="font-size:16px;font-weight:800;color:var(--green);">+38.2%</div>
-            <div style="font-size:10px;color:var(--text3);">This month</div>
-          </div>
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-bottom:10px;">
-          <div style="text-align:center;"><div style="font-size:11px;font-weight:700;color:var(--text);">88%</div><div style="font-size:8px;color:var(--text3);">Win Rate</div></div>
-          <div style="text-align:center;"><div style="font-size:11px;font-weight:700;color:var(--text);">3.1</div><div style="font-size:8px;color:var(--text3);">Profit F.</div></div>
-          <div style="text-align:center;"><div style="font-size:11px;font-weight:700;color:var(--red);">14.2%</div><div style="font-size:8px;color:var(--text3);">Max DD</div></div>
-          <div style="text-align:center;"><div style="font-size:11px;font-weight:700;color:var(--text);">55</div><div style="font-size:8px;color:var(--text3);">Followers</div></div>
-          <div style="text-align:center;"><div style="font-size:11px;font-weight:700;color:var(--text);">$1.2M</div><div style="font-size:8px;color:var(--text3);">AUM</div></div>
-        </div>
-        <div style="display:flex;gap:8px;">
-          <button onclick="showSubScreen('sub-fund-detail')" style="flex:1;padding:9px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:12px;font-weight:700;cursor:pointer;">View Details</button>
-          <button onclick="showSubScreen('sub-fund-follow')" style="flex:1;padding:9px;background:var(--grad);border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;">Follow Fund</button>
-        </div>
-      </div>
-      <div class="section-card" style="margin-bottom:10px;">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
-          <div style="width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,#9B59B6,#6C3483);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-            <i class="ti ti-chart-pie" style="color:#fff;font-size:20px;"></i>
-          </div>
-          <div style="flex:1;">
-            <div style="font-size:15px;font-weight:800;color:var(--text);">Momentum Prime</div>
-            <div style="font-size:11px;color:var(--text3);">Moderate · Medium Risk</div>
-          </div>
-          <div style="text-align:right;">
-            <div style="font-size:16px;font-weight:800;color:var(--green);">+19.8%</div>
-            <div style="font-size:10px;color:var(--text3);">This month</div>
-          </div>
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-bottom:10px;">
-          <div style="text-align:center;"><div style="font-size:11px;font-weight:700;color:var(--text);">91%</div><div style="font-size:8px;color:var(--text3);">Win Rate</div></div>
-          <div style="text-align:center;"><div style="font-size:11px;font-weight:700;color:var(--text);">2.1</div><div style="font-size:8px;color:var(--text3);">Profit F.</div></div>
-          <div style="text-align:center;"><div style="font-size:11px;font-weight:700;color:var(--red);">10.5%</div><div style="font-size:8px;color:var(--text3);">Max DD</div></div>
-          <div style="text-align:center;"><div style="font-size:11px;font-weight:700;color:var(--text);">68</div><div style="font-size:8px;color:var(--text3);">Followers</div></div>
-          <div style="text-align:center;"><div style="font-size:11px;font-weight:700;color:var(--text);">$0.9M</div><div style="font-size:8px;color:var(--text3);">AUM</div></div>
-        </div>
-        <div style="display:flex;gap:8px;">
-          <button onclick="showSubScreen('sub-fund-detail')" style="flex:1;padding:9px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:12px;font-weight:700;cursor:pointer;">View Details</button>
-          <button onclick="showSubScreen('sub-fund-follow')" style="flex:1;padding:9px;background:var(--grad);border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;">Follow Fund</button>
-        </div>
-      </div>
-      <div class="section-card" style="margin-bottom:10px;">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
-          <div style="width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,#FFB020,#E67E22);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-            <i class="ti ti-bolt" style="color:#fff;font-size:20px;"></i>
-          </div>
-          <div style="flex:1;">
-            <div style="font-size:15px;font-weight:800;color:var(--text);">Momentum Edge</div>
-            <div style="font-size:11px;color:var(--text3);">Scalping · Medium Risk</div>
-          </div>
-          <div style="text-align:right;">
-            <div style="font-size:16px;font-weight:800;color:var(--green);">+15.3%</div>
-            <div style="font-size:10px;color:var(--text3);">This month</div>
-          </div>
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-bottom:10px;">
-          <div style="text-align:center;"><div style="font-size:11px;font-weight:700;color:var(--text);">86%</div><div style="font-size:8px;color:var(--text3);">Win Rate</div></div>
-          <div style="text-align:center;"><div style="font-size:11px;font-weight:700;color:var(--text);">1.9</div><div style="font-size:8px;color:var(--text3);">Profit F.</div></div>
-          <div style="text-align:center;"><div style="font-size:11px;font-weight:700;color:var(--red);">12.1%</div><div style="font-size:8px;color:var(--text3);">Max DD</div></div>
-          <div style="text-align:center;"><div style="font-size:11px;font-weight:700;color:var(--text);">42</div><div style="font-size:8px;color:var(--text3);">Followers</div></div>
-          <div style="text-align:center;"><div style="font-size:11px;font-weight:700;color:var(--text);">$0.5M</div><div style="font-size:8px;color:var(--text3);">AUM</div></div>
-        </div>
-        <div style="display:flex;gap:8px;">
-          <button onclick="showSubScreen('sub-fund-detail')" style="flex:1;padding:9px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:12px;font-weight:700;cursor:pointer;">View Details</button>
-          <button onclick="showSubScreen('sub-fund-follow')" style="flex:1;padding:9px;background:var(--grad);border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;">Follow Fund</button>
-        </div>
-      </div>
-      <div class="section-card" style="margin-bottom:10px;">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
-          <div style="width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,#00c87a,#0E8A4F);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-            <i class="ti ti-plant" style="color:#fff;font-size:20px;"></i>
-          </div>
-          <div style="flex:1;">
-            <div style="font-size:15px;font-weight:800;color:var(--text);">Momentum Yield</div>
-            <div style="font-size:11px;color:var(--text3);">Long Term · Low Risk</div>
-          </div>
-          <div style="text-align:right;">
-            <div style="font-size:16px;font-weight:800;color:var(--green);">+11.2%</div>
-            <div style="font-size:10px;color:var(--text3);">This month</div>
-          </div>
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-bottom:10px;">
-          <div style="text-align:center;"><div style="font-size:11px;font-weight:700;color:var(--text);">89%</div><div style="font-size:8px;color:var(--text3);">Win Rate</div></div>
-          <div style="text-align:center;"><div style="font-size:11px;font-weight:700;color:var(--text);">1.7</div><div style="font-size:8px;color:var(--text3);">Profit F.</div></div>
-          <div style="text-align:center;"><div style="font-size:11px;font-weight:700;color:var(--red);">6.8%</div><div style="font-size:8px;color:var(--text3);">Max DD</div></div>
-          <div style="text-align:center;"><div style="font-size:11px;font-weight:700;color:var(--text);">90</div><div style="font-size:8px;color:var(--text3);">Followers</div></div>
-          <div style="text-align:center;"><div style="font-size:11px;font-weight:700;color:var(--text);">$0.4M</div><div style="font-size:8px;color:var(--text3);">AUM</div></div>
-        </div>
-        <div style="display:flex;gap:8px;">
-          <button onclick="showSubScreen('sub-fund-detail')" style="flex:1;padding:9px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:12px;font-weight:700;cursor:pointer;">View Details</button>
-          <button onclick="showSubScreen('sub-fund-follow')" style="flex:1;padding:9px;background:var(--grad);border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;">Follow Fund</button>
-        </div>
-      </div>
-      <!-- Disclaimer -->
-      <div style="margin-top:6px;padding:12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;">
-        <div style="font-size:9px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px;">Disclaimer</div>
-        <div style="font-size:10px;color:var(--text3);line-height:1.7;">Past performance does not guarantee future results. All trading involves risk and you may lose some or all of your invested capital. The fund performance figures shown are based on historical data and are provided for informational purposes only. Please ensure you fully understand the risks before participating. Momentum AI and AFTT Markets are not responsible for any losses incurred.</div>
-      </div>
+      <div id="mam-count" style="font-size:10.5px;color:var(--text3);margin-bottom:12px;">10 managers</div>
+      <div id="mam-list"></div>
+    </div>
+  </div>
+
+  <!-- ===== MAI MANAGER DETAIL (once-view) ===== -->
+  <div id="sub-mam-detail" class="sub-screen">
+    <div class="sub-header">
+      <button class="sub-back" onclick="hideSubScreen('sub-mam-detail')"><i class="ti ti-arrow-left"></i></button>
+      <div class="sub-title">PORTFOLIO</div>
+    </div>
+    <div class="sub-content">
+      <div id="mam-detail-body"></div>
     </div>
   </div>
 
@@ -2849,7 +2706,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <!-- ── ANNOUNCEMENTS TAB ── -->
       <div id="atab-content-announce" style="display:none;">
         <div class="section-card" style="margin-bottom:12px;">
-          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">POST ANNOUNCEMENT <span style="color:var(--green);">&middot; v42 ai-chat-tab</span></div>
+          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">POST ANNOUNCEMENT <span style="color:var(--green);">&middot; v43 mai-manager</span></div>
           <div class="auth-field">
             <label class="auth-label">Title</label>
             <input id="ann-title" class="auth-input" type="text" placeholder="Announcement title">
@@ -6759,6 +6616,55 @@ function aiChatSend(txt){ var body=document.getElementById('ai-chat-body'); if(!
   body.scrollTop=body.scrollHeight;
   setTimeout(function(){ body.insertAdjacentHTML('beforeend', _aiBubbleAI(_aiReplyFor(t))); body.scrollTop=body.scrollHeight; }, 550);
 }
+// ===== MAI MANAGER (PAMM/MAM) demo — hardcoded =====
+var _mamFilter='all', _mamCur=0;
+var MAM_MANAGERS=[
+ {n:'Momentum Alpha',ini:'A',t:'ai',style:'Supply & Demand',risk:'Low-Med',avg:3.0,age:24,dd:12,win:71,inv:320,aum:1200000,since:'Jan 2024',instr:'XAUUSD, EURUSD, GBPUSD',acct:'MAM Master',min:'$500',fee:'25%',lock:'30d',login:'554\u2022\u2022\u2022\u202232',rating:5,seed:7},
+ {n:'SteadyGrowth FX',ini:'S',t:'semi',style:'Trend Following',risk:'Low',avg:1.8,age:30,dd:5,win:76,inv:540,aum:2800000,since:'Mar 2023',instr:'EURUSD, USDJPY',acct:'MAM Master',min:'$300',fee:'20%',lock:'30d',login:'554\u2022\u2022\u2022\u202218',rating:5,seed:13},
+ {n:'GoldMaster Pro',ini:'G',t:'manual',style:'Price Action',risk:'High',avg:4.6,age:22,dd:34,win:63,inv:180,aum:900000,since:'Feb 2024',instr:'XAUUSD',acct:'PAMM',min:'$1,000',fee:'30%',lock:'60d',login:'554\u2022\u2022\u2022\u202241',rating:4,seed:29},
+ {n:'Quantum Edge AI',ini:'Q',t:'ai',style:'Momentum',risk:'Medium',avg:3.4,age:18,dd:16,win:69,inv:260,aum:1500000,since:'Jun 2024',instr:'Indices, FX',acct:'MAM Master',min:'$500',fee:'25%',lock:'30d',login:'554\u2022\u2022\u2022\u202255',rating:4,seed:5},
+ {n:'BlueChip Managed',ini:'B',t:'semi',style:'Swing',risk:'Low',avg:1.5,age:36,dd:6,win:74,inv:720,aum:4100000,since:'Jan 2022',instr:'Majors',acct:'PAMM',min:'$1,000',fee:'20%',lock:'30d',login:'554\u2022\u2022\u2022\u202263',rating:5,seed:21},
+ {n:'Apex Scalper',ini:'A',t:'manual',style:'Scalping',risk:'High',avg:5.0,age:14,dd:38,win:58,inv:95,aum:450000,since:'Apr 2024',instr:'XAUUSD, US30',acct:'PAMM',min:'$500',fee:'30%',lock:'30d',login:'554\u2022\u2022\u2022\u202277',rating:3,seed:33},
+ {n:'Neural FX',ini:'N',t:'ai',style:'Mean Reversion',risk:'Medium',avg:2.8,age:20,dd:14,win:70,inv:300,aum:1100000,since:'May 2024',instr:'FX Basket',acct:'MAM Master',min:'$500',fee:'25%',lock:'30d',login:'554\u2022\u2022\u2022\u202288',rating:4,seed:11},
+ {n:'Horizon Wealth',ini:'H',t:'semi',style:'Trend',risk:'Low-Med',avg:2.2,age:28,dd:9,win:72,inv:410,aum:2200000,since:'Aug 2023',instr:'Gold, FX',acct:'MAM Master',min:'$500',fee:'22%',lock:'30d',login:'554\u2022\u2022\u2022\u202290',rating:4,seed:17},
+ {n:'TitanTrade',ini:'T',t:'manual',style:'Breakout',risk:'Medium',avg:3.6,age:26,dd:22,win:66,inv:210,aum:1300000,since:'Oct 2023',instr:'XAUUSD, Oil',acct:'PAMM',min:'$750',fee:'28%',lock:'45d',login:'554\u2022\u2022\u2022\u202202',rating:4,seed:23},
+ {n:'Velocity AI',ini:'V',t:'ai',style:'Momentum',risk:'Med-High',avg:4.0,age:16,dd:24,win:67,inv:150,aum:780000,since:'Sep 2024',instr:'Indices',acct:'MAM Master',min:'$500',fee:'27%',lock:'30d',login:'554\u2022\u2022\u2022\u202214',rating:4,seed:9}
+];
+var MAM_MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function mamFmtM(n){if(n>=1e6)return '$'+(n/1e6).toFixed(1)+'M';if(n>=1e3)return '$'+Math.round(n/1e3)+'K';return '$'+n;}
+function mamMoney(n){return '$'+Math.round(n).toLocaleString('en-US');}
+function mamType(t){if(t==='ai')return{l:'AI',lc:'AI',bg:'linear-gradient(135deg,#7B5CFF,#FF2D81)',av:'linear-gradient(135deg,#7B5CFF,#FF2D81,#FF1E3C)'};if(t==='semi')return{l:'SEMI-AUTO',lc:'Semi-Auto',bg:'#C77E23',av:'linear-gradient(135deg,#2E8B8B,#1a5555)'};return{l:'MANUAL',lc:'Manual',bg:'#3556C4',av:'linear-gradient(135deg,#4A6BFF,#2440AA)'};}
+function mamStars(n){var s='';for(var i=0;i<5;i++)s+=(i<n?'\u2605':'\u2606');return '<span style="color:#E4C878;">'+s+'</span>';}
+function mamStat(v,k,col){return '<div style="background:#16121c;padding:8px;text-align:center;"><div style="font-size:13px;font-weight:800;color:'+col+';">'+v+'</div><div class="mam-k">'+k+'</div></div>';}
+function mamDetRow(k,v,first){return '<div style="display:flex;justify-content:space-between;padding:6px 0;'+(first?'':'border-top:1px solid rgba(255,255,255,0.05);')+'"><span style="font-size:11px;color:#8A8A96;">'+k+'</span><span style="font-size:11.5px;color:#e8eaed;text-align:right;max-width:62%;">'+v+'</span></div>';}
+function mamGenMonths(avg,seed){var s=seed||1;function r(){s=(s*9301+49297)%233280;return s/233280;}var o=[];for(var i=0;i<12;i++){var v=avg*(0.45+r()*1.25);if(i===2||i===8){v=-(0.2+r()*Math.max(0.5,avg*0.35));}o.push(Math.round(v*10)/10);}return o;}
+function mamEquity(months,W,H,pad){var vals=[100];for(var i=0;i<months.length;i++)vals.push(vals[vals.length-1]*(1+months[i]/100));var mn=Math.min.apply(null,vals),mx=Math.max.apply(null,vals);function X(i){return (i*(W/(vals.length-1))).toFixed(1);}function Y(v){return (H-pad-((v-mn)/((mx-mn)||1))*(H-pad*2)).toFixed(1);}var line='M'+X(0)+','+Y(vals[0]);var area='M'+X(0)+','+H+' L'+X(0)+','+Y(vals[0]);for(var i=1;i<vals.length;i++){line+=' L'+X(i)+','+Y(vals[i]);area+=' L'+X(i)+','+Y(vals[i]);}area+=' L'+X(vals.length-1)+','+H+' Z';return{line:line,area:area};}
+function mamBars(months){var W=320,H=80,base=H/2,n=months.length,bw=(W-n*4)/n,mx=1;for(var i=0;i<n;i++)mx=Math.max(mx,Math.abs(months[i]));var s='';for(var i=0;i<n;i++){var v=months[i];var h=Math.abs(v)/mx*(H/2-6);var col=v>=0?'#00C87A':'#FF1E3C';var x=(i*(bw+4)+2).toFixed(1);var yy=(v>=0?base-h:base).toFixed(1);s+='<rect x="'+x+'" y="'+yy+'" width="'+bw.toFixed(1)+'" height="'+h.toFixed(1)+'" rx="2" fill="'+col+'"/>';}s+='<line x1="0" y1="'+base+'" x2="'+W+'" y2="'+base+'" stroke="rgba(255,255,255,0.12)"/>';return s;}
+function mamTable(months,aum){var s='';for(var i=11;i>=6;i--){var p=months[i];var prof=Math.round(p/100*aum);var col=p>=0?'#00C87A':'#FF6B7E';var sign=p>=0?'+':'\u2212';s+='<div style="display:flex;padding:9px 14px;border-top:1px solid rgba(255,255,255,0.05);"><span style="flex:1;font-size:12px;color:#e8eaed;">'+MAM_MN[i]+'</span><span style="width:88px;text-align:right;font-size:12px;font-weight:700;color:'+col+';">'+sign+'$'+Math.abs(prof).toLocaleString('en-US')+'</span><span style="width:48px;text-align:right;font-size:11px;color:'+col+';">'+(p>=0?'+':'')+p+'%</span></div>';}return s;}
+function renderMAMList(filter){filter=filter||'all';_mamFilter=filter;var list=document.getElementById('mam-list');if(!list)return;var html='',count=0;for(var i=0;i<MAM_MANAGERS.length;i++){var m=MAM_MANAGERS[i];if(filter!=='all'&&m.t!==filter)continue;count++;if(!m._months)m._months=mamGenMonths(m.avg,m.seed);var eq=mamEquity(m._months,300,40,4);var ti=mamType(m.t);var tg=Math.round((Math.pow(1+m.avg/100,m.age)-1)*100);html+='<div onclick="openManager('+i+')" style="background:linear-gradient(160deg,#16121c,#0f0b12);border:1px solid rgba(255,255,255,0.09);border-radius:16px;padding:14px;margin-bottom:11px;cursor:pointer;">'+
+'<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;"><span style="width:38px;height:38px;border-radius:11px;background:'+ti.av+';display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:15px;flex-shrink:0;">'+m.ini+'</span><div style="flex:1;min-width:0;"><div style="display:flex;align-items:center;gap:5px;"><span style="font-size:14px;font-weight:700;color:#fff;">'+m.n+'</span><i class="ti ti-rosette-discount-check-filled" style="font-size:13px;color:#3B9EFF;"></i></div><div style="font-size:9.5px;color:#8A8A96;">'+ti.lc+' Strategy · '+mamStars(m.rating)+'</div></div><span class="mam-tb" style="background:'+ti.bg+';align-self:flex-start;">'+ti.l+'</span></div>'+
+'<svg viewBox="0 0 300 40" style="width:100%;height:40px;margin-bottom:12px;"><defs><linearGradient id="sl'+i+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="rgba(0,200,122,0.28)"/><stop offset="1" stop-color="rgba(0,200,122,0)"/></linearGradient></defs><path d="'+eq.area+'" fill="url(#sl'+i+')"/><path d="'+eq.line+'" fill="none" stroke="#00C87A" stroke-width="2"/></svg>'+
+'<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:1px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.06);border-radius:10px;overflow:hidden;margin-bottom:12px;">'+mamStat('+'+tg+'%','TOTAL','#00C87A')+mamStat('+'+m.avg+'%','MONTHLY','#fff')+mamStat(m.dd+'%','MAX DD','#FFB020')+mamStat(m.win+'%','WIN','#fff')+'</div>'+
+'<div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-size:10.5px;color:#8A8A96;">'+m.inv+' investors · '+mamFmtM(m.aum)+' managed</span><span style="font-size:11px;color:#FF6B7E;font-weight:600;">Tap to view \u203a</span></div>'+
+'</div>';}
+list.innerHTML=html;var c=document.getElementById('mam-count');if(c)c.textContent=count+' manager'+(count===1?'':'s');}
+function mamFilter(el,type){var chips=el.parentNode.querySelectorAll('.mam-fchip');for(var i=0;i<chips.length;i++)chips[i].classList.remove('on');el.classList.add('on');renderMAMList(type);}
+function mamInit(){renderMAMList(_mamFilter||'all');}
+function openManager(i){_mamCur=i;var m=MAM_MANAGERS[i];var body=document.getElementById('mam-detail-body');if(!body)return;if(!m._months)m._months=mamGenMonths(m.avg,m.seed);body.innerHTML=buildMamDetail(m,i);mamCalc(5000);showSubScreen('sub-mam-detail');var sc=document.querySelector('#sub-mam-detail .sub-content');if(sc)sc.scrollTop=0;}
+function buildMamDetail(m,i){var months=m._months;var eq=mamEquity(months,320,90,6);var ti=mamType(m.t);var tg=Math.round((Math.pow(1+m.avg/100,m.age)-1)*100);var best=Math.max.apply(null,months),worst=Math.min.apply(null,months);var green=0;for(var j=0;j<months.length;j++){if(months[j]>=0)green++;}
+return ''+
+'<div style="display:flex;align-items:center;gap:11px;margin-bottom:14px;"><span style="width:46px;height:46px;border-radius:13px;background:'+ti.av+';display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:18px;">'+m.ini+'</span><div style="flex:1;"><div style="display:flex;align-items:center;gap:5px;"><span style="font-size:16px;font-weight:700;color:#fff;">'+m.n+'</span><i class="ti ti-rosette-discount-check-filled" style="font-size:15px;color:#3B9EFF;"></i></div><div style="font-size:10px;color:#8A8A96;">'+ti.lc+' Strategy · '+mamStars(m.rating)+' · since '+m.since+'</div></div></div>'+
+'<div style="border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:12px;margin-bottom:14px;background:#15131c;"><div style="display:flex;justify-content:space-between;font-size:10px;color:#8A8A96;margin-bottom:6px;"><span>EQUITY CURVE</span><span style="color:#00C87A;font-weight:700;">+'+tg+'% all-time</span></div><svg viewBox="0 0 320 90" style="width:100%;height:90px;"><defs><linearGradient id="deq" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="rgba(0,200,122,0.30)"/><stop offset="1" stop-color="rgba(0,200,122,0)"/></linearGradient></defs><path d="'+eq.area+'" fill="url(#deq)"/><path d="'+eq.line+'" fill="none" stroke="#00C87A" stroke-width="2"/></svg></div>'+
+'<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:1px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.06);border-radius:10px;overflow:hidden;margin-bottom:16px;">'+mamStat('+'+m.avg+'%','MONTHLY','#fff')+mamStat(m.dd+'%','MAX DD','#FFB020')+mamStat(m.win+'%','WIN','#fff')+mamStat(m.age+'mo','AGE','#fff')+'</div>'+
+'<div style="background:#15131c;border:1px solid rgba(255,255,255,0.08);border-radius:15px;overflow:hidden;margin-bottom:16px;"><div style="display:flex;align-items:center;justify-content:space-between;padding:13px 14px 6px;"><span style="font-size:13px;font-weight:700;color:#fff;">Monthly Profit / Loss</span><span style="font-size:11px;color:#c6c6ce;background:rgba(255,255,255,0.05);padding:5px 11px;border-radius:9px;">2025</span></div><div style="padding:6px 12px 4px;"><svg viewBox="0 0 320 80" style="width:100%;height:80px;">'+mamBars(months)+'</svg></div><div style="display:flex;padding:7px 14px;background:rgba(255,255,255,0.02);border-top:1px solid rgba(255,255,255,0.06);border-bottom:1px solid rgba(255,255,255,0.06);"><span class="mam-k" style="flex:1;">MONTH</span><span class="mam-k" style="width:88px;text-align:right;">PROFIT</span><span class="mam-k" style="width:48px;text-align:right;">%</span></div>'+mamTable(months,m.aum)+'<div style="display:flex;padding:9px 14px;border-top:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);"><div style="flex:1;"><div class="mam-k">BEST</div><div style="font-size:12px;font-weight:800;color:#00C87A;">+'+best+'%</div></div><div style="flex:1;"><div class="mam-k">WORST</div><div style="font-size:12px;font-weight:800;color:#FF6B7E;">'+worst+'%</div></div><div style="flex:1;"><div class="mam-k">GREEN MO</div><div style="font-size:12px;font-weight:800;color:#fff;">'+green+'/12</div></div></div></div>'+
+'<div style="background:#15131c;border:1px solid rgba(255,255,255,0.08);border-radius:15px;padding:14px;margin-bottom:16px;"><div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:9px;">Manager Details</div>'+mamDetRow('Strategy',ti.lc+' · '+m.style,true)+mamDetRow('Instruments',m.instr)+mamDetRow('Managed since',m.since)+mamDetRow('Account type',m.acct)+mamDetRow('Risk level',m.risk)+mamDetRow('Min · Fee · Lock',m.min+' · '+m.fee+' · '+m.lock)+'</div>'+
+'<div style="background:linear-gradient(160deg,#1c1018,#0f0b12);border:1px solid rgba(255,30,60,0.3);border-radius:15px;padding:14px;margin-bottom:16px;"><div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;"><i class="ti ti-key" style="font-size:16px;color:#FF1E3C;"></i><span style="font-size:13px;font-weight:700;color:#fff;">Investor Access</span><span style="flex:1;"></span><span style="font-size:9px;color:#8A8A96;">read-only</span></div><div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.06);"><span style="font-size:11px;color:#8A8A96;">Server</span><span style="font-size:11.5px;color:#e8eaed;">AsiaFutureTrading-Server</span></div><div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.06);"><span style="font-size:11px;color:#8A8A96;">Login</span><span style="font-size:11.5px;color:#e8eaed;font-family:monospace;">'+m.login+'</span></div><div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0 12px;"><span style="font-size:11px;color:#8A8A96;">Investor password</span><span style="font-size:11.5px;color:#e8eaed;font-family:monospace;"><span id="mam-pw">\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022</span> <span onclick="mamRevealPw()" style="color:#FF6B7E;font-family:Sora,sans-serif;font-weight:600;cursor:pointer;">Reveal</span> <span onclick="comingSoonToast(\'Copied\')" style="color:#FF6B7E;font-family:Sora,sans-serif;font-weight:600;cursor:pointer;">Copy</span></span></div><div style="display:flex;gap:8px;"><button onclick="comingSoonToast(\'Download statement\')" style="flex:1;background:rgba(255,30,60,0.12);border:1px solid rgba(255,30,60,0.35);color:#FF8090;font-size:11px;font-weight:600;padding:9px;border-radius:9px;cursor:pointer;font-family:Sora,sans-serif;"><i class="ti ti-download" style="font-size:13px;"></i> Statement</button><button onclick="comingSoonToast(\'Open in MT5\')" style="flex:1;background:rgba(255,30,60,0.12);border:1px solid rgba(255,30,60,0.35);color:#FF8090;font-size:11px;font-weight:600;padding:9px;border-radius:9px;cursor:pointer;font-family:Sora,sans-serif;"><i class="ti ti-external-link" style="font-size:13px;"></i> Open in MT5</button></div></div>'+
+'<div style="background:#15131c;border:1px solid rgba(255,255,255,0.08);border-radius:15px;padding:14px;margin-bottom:16px;"><div style="display:flex;align-items:center;gap:7px;margin-bottom:4px;"><i class="ti ti-calculator" style="font-size:16px;color:#FFB020;"></i><span style="font-size:13px;font-weight:700;color:#fff;">Compounding Calculator</span></div><div style="font-size:10.5px;color:#8A8A96;margin-bottom:12px;">Based on +'+m.avg+'% avg monthly, profits reinvested</div><div class="mam-k" style="margin-bottom:7px;">IF YOU INVEST</div><div style="display:flex;gap:7px;margin-bottom:15px;"><span class="mam-amt" data-amt="1000" onclick="mamCalc(1000)">$1k</span><span class="mam-amt on" data-amt="5000" onclick="mamCalc(5000)">$5k</span><span class="mam-amt" data-amt="10000" onclick="mamCalc(10000)">$10k</span><span class="mam-amt" data-amt="50000" onclick="mamCalc(50000)">$50k</span></div><div id="mam-calc-out"></div><div style="margin-top:12px;padding:9px 11px;background:rgba(255,176,32,0.08);border:1px solid rgba(255,176,32,0.22);border-radius:9px;font-size:9.5px;color:#FFB020;line-height:1.5;"><i class="ti ti-alert-triangle" style="font-size:11px;"></i> Hypothetical projection assuming the average return continues and profits are reinvested. Not a guarantee. Fees may reduce returns.</div></div>'+
+'<button onclick="comingSoonToast(\'Invest\')" style="width:100%;background:linear-gradient(135deg,#FF1E3C,#C40024);border:none;color:#fff;font-size:14px;font-weight:700;padding:15px;border-radius:13px;box-shadow:0 6px 16px rgba(196,0,32,0.35);cursor:pointer;font-family:Sora,sans-serif;margin-bottom:8px;">Invest in this portfolio</button>';
+}
+function mamCalcRow(label,val,amount){var profit=val-amount;var pct=Math.round((val/amount-1)*100);return '<div style="display:flex;align-items:center;padding:11px 2px;border-top:1px solid rgba(255,255,255,0.05);"><span style="flex:1;font-size:12.5px;color:#e8eaed;font-weight:600;">'+label+'</span><span style="width:86px;text-align:right;font-size:13px;color:#fff;font-weight:700;">'+mamMoney(val)+'</span><span style="width:96px;text-align:right;font-size:12px;color:#00C87A;font-weight:700;">+'+mamMoney(profit)+'<br><span style="font-size:9.5px;">+'+pct+'%</span></span></div>';}
+function mamCalc(amount){var m=MAM_MANAGERS[_mamCur];if(!m)return;var r=m.avg/100;function proj(n){return amount*Math.pow(1+r,n);}var out=document.getElementById('mam-calc-out');if(out){out.innerHTML='<div style="display:flex;padding:7px 2px;border-bottom:1px solid rgba(255,255,255,0.08);"><span class="mam-k" style="flex:1;">PERIOD</span><span class="mam-k" style="width:86px;text-align:right;">VALUE</span><span class="mam-k" style="width:96px;text-align:right;">PROFIT</span></div>'+mamCalcRow('1 Year',proj(12),amount)+mamCalcRow('3 Years',proj(36),amount)+mamCalcRow('5 Years',proj(60),amount);}var chips=document.querySelectorAll('#sub-mam-detail .mam-amt');for(var i=0;i<chips.length;i++){chips[i].classList.toggle('on',parseInt(chips[i].getAttribute('data-amt'),10)===amount);}}
+function mamRevealPw(){var e=document.getElementById('mam-pw');if(e)e.textContent='Inv'+(_mamCur+1)+'x9K!';}
 function comingSoonToast(label){
   var t = document.createElement('div');
   t.textContent = (label||'This feature')+' — coming soon';
