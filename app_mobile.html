@@ -4573,8 +4573,10 @@ function enterApp(user) {
   loadAFTPrices();
   refreshActiveBalance();
   loadLivePositions();
+  loadPastSignals();
   loadEASettings();
   if(!window._aftPricePoll) window._aftPricePoll = setInterval(function(){ refreshActiveBalance(); loadLivePositions(); checkDataFreshness(); }, 4000);
+  if(!window._pastSigPoll)  window._pastSigPoll  = setInterval(function(){ loadPastSignals(); }, 30000);
   if(!window._pricePoll) window._pricePoll = setInterval(function(){ loadAFTPrices(); }, 2000);
   window._lastDataUpdate = Date.now();
 }
@@ -5294,7 +5296,7 @@ async function executeTrade(method) {
   var dir = (currentSignal.direction||'').toString().toUpperCase();
   var side = (dir==='SELL'||dir==='SHORT') ? 'SELL' : 'BUY';
   var sym = (currentSignal.pair||'').toString().toUpperCase().replace('/','');
-  var tradeSymMap = { 'BTCUSD':'BTCUSDT', 'DXY':'USDX', 'USOIL':'WTI' };
+  var tradeSymMap = { 'BTCUSD':'BITCOIN', 'BTCUSDT':'BITCOIN', 'DXY':'USDX', 'USOIL':'WTI' };
   if(tradeSymMap[sym]) sym = tradeSymMap[sym];
   var btn = mtTradeBtn(method);
   var origText = btn ? btn.textContent : '';
@@ -6609,6 +6611,76 @@ async function loadLivePositions(){
     box.innerHTML = html;
     if(totalEl){ totalEl.textContent=(total>=0?'+':'')+'$'+total.toFixed(2); totalEl.style.color=(total>=0?'var(--green)':'var(--red)'); }
   }catch(e){ console.warn('loadLivePositions:', e.message); }
+}
+
+// ── PAST SIGNALS ─────────────────────────────────────────────────────────────
+// Reads v_past_signals: ONE row per SIGNAL (basket), not per deal. The view
+// groups deal-level closed_trades rows by basket_id, so a TP-ladder that closed
+// in three parts shows as one row with summed lots and summed profit.
+var DISPLAY_SYM_MAP = { 'BITCOIN':'BTCUSD', 'BTCUSDT':'BTCUSD', 'USDX':'DXY', 'WTI':'USOIL' };
+function displaySymbol(s){
+  var k = (s||'').toString().toUpperCase();
+  return DISPLAY_SYM_MAP[k] || k;
+}
+function signalTimeAgo(iso){
+  if(!iso) return '';
+  var then = new Date(iso).getTime();
+  if(isNaN(then)) return '';
+  var mins = Math.floor((Date.now() - then) / 60000);
+  if(mins < 1)  return 'just now';
+  if(mins < 60) return mins + 'm ago';
+  var hrs = Math.floor(mins / 60);
+  if(hrs < 24)  return hrs + 'h ago';
+  var days = Math.floor(hrs / 24);
+  if(days < 7)  return days + 'd ago';
+  var d = new Date(iso);
+  return d.getDate() + ' ' + ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()];
+}
+function signalArrowSvg(up, color){
+  var p = up ? 'M3 12L8 5l3 4 3-5' : 'M3 5l5 7 3-4 3 5';
+  return '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="'+color+'" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="'+p+'"/></svg>';
+}
+async function loadPastSignals(){
+  if(!db) return;
+  var box = document.getElementById('mob-past-signals');
+  if(!box) return;
+  var mt5 = (activeAccount && activeAccount.mt5_id) ? String(activeAccount.mt5_id) : null;
+  if(!mt5){
+    box.innerHTML = '<div style="text-align:center;font-size:12px;color:var(--text3);padding:16px 0;">Connect your MT5 account</div>';
+    return;
+  }
+  try{
+    var res = await db.from('v_past_signals').select('*').eq('mt5_id', mt5).order('closed_at',{ascending:false}).limit(10);
+    if(res.error) throw res.error;
+    var rows = res.data || [];
+    if(!rows.length){
+      box.innerHTML = '<div style="text-align:center;font-size:12px;color:var(--text3);padding:16px 0;">No past signals yet</div>';
+      return;
+    }
+    var html = '';
+    rows.forEach(function(r){
+      var side   = (r.side||'').toString().toUpperCase();
+      var isBuy  = (side !== 'SELL');
+      var tint   = isBuy ? 'var(--green)' : 'var(--red)';
+      var bg     = isBuy ? 'rgba(0,200,122,0.12)' : 'rgba(255,30,60,0.10)';
+      var profit = parseFloat(r.profit || 0);
+      var pColor = profit >= 0 ? 'var(--green)' : 'var(--red)';
+      var lot    = (r.lot != null) ? parseFloat(r.lot).toFixed(2) : '\u2014';
+      var sym    = displaySymbol(r.symbol);
+      html += '<div class="trade-item">'+
+        '<div class="trade-icon" style="background:'+bg+';display:flex;align-items:center;justify-content:center;">'+signalArrowSvg(isBuy, tint)+'</div>'+
+        '<div class="trade-info">'+
+          '<div class="trade-pair">'+sym+' <span style="font-size:10px;color:'+tint+';font-weight:700;">'+(isBuy?'BUY':'SELL')+'</span></div>'+
+          '<div class="trade-meta">'+lot+' lot \u00b7 '+signalTimeAgo(r.closed_at)+'</div>'+
+        '</div>'+
+        '<div><div class="trade-pnl" style="color:'+pColor+';font-weight:800;">'+(profit>=0?'+':'')+'$'+profit.toFixed(2)+'</div></div>'+
+      '</div>';
+    });
+    box.innerHTML = html;
+  }catch(e){
+    console.warn('loadPastSignals:', e.message);
+    box.innerHTML = '<div style="text-align:center;font-size:12px;color:var(--text3);padding:16px 0;">Could not load past signals</div>';
+  }
 }
 // Data freshness indicator
 function checkDataFreshness(){
