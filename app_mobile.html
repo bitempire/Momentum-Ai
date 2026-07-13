@@ -1499,18 +1499,6 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 .stn-tp-ind{font-size:11px;color:var(--text2);margin-top:8px}
 .stn-tp-ind b{color:var(--text)} .stn-tp-ind .r{color:var(--green)}
 .stn-save-note{font-size:11px;color:#c9bcff;background:rgba(123,92,255,.1);border:1px solid rgba(123,92,255,.3);border-radius:10px;padding:11px 12px;margin-top:18px;line-height:1.5}
-.stn-verpop{position:fixed;inset:0;background:rgba(4,4,6,.72);z-index:9999;display:flex;align-items:center;justify-content:center;padding:24px}
-.stn-verpop .card{width:100%;max-width:340px;background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:20px}
-.stn-verpop .vt{font-family:'Orbitron',sans-serif;font-weight:700;font-size:15px;margin-bottom:4px;color:var(--text)}
-.stn-verpop .vd{font-size:12px;color:var(--text2);margin-bottom:16px;line-height:1.5}
-.stn-vopt{border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px;cursor:pointer;display:flex;align-items:center;gap:12px}
-.stn-vopt.new{border-color:rgba(123,92,255,.4);background:linear-gradient(155deg,rgba(123,92,255,.12),var(--surface))}
-.stn-vopt .vico{width:38px;height:38px;border-radius:11px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--text);flex-shrink:0}
-.stn-vopt.new .vico{background:linear-gradient(135deg,#7B5CFF,#FF2D81);color:#fff}
-.stn-vopt .vn{font-size:14px;font-weight:700;color:var(--text)}
-.stn-vopt .vs{font-size:11px;color:var(--text2);margin-top:2px}
-.stn-vopt .vbadge{margin-left:auto;font-size:9px;font-weight:700;letter-spacing:.5px;color:#c9bcff;background:rgba(123,92,255,.2);padding:3px 7px;border-radius:6px}
-.stn-verpop .vcancel{text-align:center;font-size:12px;color:var(--text2);padding:10px;margin-top:2px;cursor:pointer}
 .stn-sheet-ov{position:fixed;inset:0;background:rgba(4,4,6,.72);z-index:9999;display:flex;align-items:flex-end}
 .stn-sheet{width:100%;background:var(--bg2);border-top:1px solid var(--border);border-radius:22px 22px 0 0;padding:18px 16px 30px;max-height:80vh;overflow-y:auto}
 .stn-sheet .cap{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
@@ -2279,123 +2267,6 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
     </div>
   </div>
 
-  <div id="sub-smart-tool" class="sub-screen">
-    <div class="sub-header">
-      <button class="sub-back" onclick="goBackSubScreen('sub-smart-tool')"><i class="ti ti-arrow-left"></i></button>
-      <div class="sub-title">SMART TOOL</div>
-    </div>
-    <div class="sub-content">
-
-      <!-- Lot Size & Risk -->
-      <div class="section-card">
-        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Lot Size <span>& Risk</span></div>
-        <div class="ea-toggle-row">
-          <div><div class="ea-toggle-label">Auto Risk Mode</div><div class="ea-toggle-sub">Calculate lot size from % of balance</div></div>
-          <div class="toggle on" id="ea-auto-risk" onclick="this.classList.toggle('on')"></div>
-        </div>
-        <div class="ea-input-row" style="margin-top:12px;">
-          <label class="ea-input-label">Risk Per Trade (%)</label>
-          <input class="ea-input" id="ea-risk-pct" type="number" value="1.0" step="0.1" min="0.1" max="10">
-        </div>
-        <div class="ea-input-row">
-          <label class="ea-input-label">Max Total Lots</label>
-          <input class="ea-input" id="ea-max-lots" type="number" value="0.50" step="0.01">
-        </div>
-      </div>
-      <!-- Entry & DCA -->
-      <div class="section-card">
-        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Entry <span>& DCA</span></div>
-        <div class="ea-toggle-row">
-          <div><div class="ea-toggle-label">Enable DCA</div><div class="ea-toggle-sub">Auto add positions on drawdown</div></div>
-          <div class="toggle" id="ea-dca" onclick="this.classList.toggle('on')"></div>
-        </div>
-        <div class="ea-input-row" style="margin-top:12px;">
-          <label class="ea-input-label">Points Between Each Position</label>
-          <input class="ea-input" id="ea-dca-points" type="number" value="10">
-        </div>
-        <div class="ea-input-row">
-          <label class="ea-input-label">Max Positions Per Signal</label>
-          <input class="ea-input" id="ea-dca-max" type="number" value="4" min="1" max="10">
-        </div>
-      </div>
-      <!-- Stop Loss Behaviour -->
-      <div class="section-card">
-        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Stop Loss <span>Behaviour</span></div>
-        <div class="ea-input-row">
-          <label class="ea-input-label">When Price Hits SL</label>
-          <select class="ea-input" id="ea-sl-behaviour">
-            <option>Close Immediately</option>
-            <option>Wait for Candle Close</option>
-            <option>Scale Out 50%</option>
-          </select>
-        </div>
-        <div class="ea-toggle-row">
-          <div><div class="ea-toggle-label">SL from Signal</div><div class="ea-toggle-sub">Auto-filled from each signal</div></div>
-          <div class="toggle on" id="ea-sl-signal" onclick="this.classList.toggle('on')"></div>
-        </div>
-      </div>
-      <!-- Take Profit -->
-      <div class="section-card">
-        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Take <span>Profit</span></div>
-        <div class="ea-toggle-row">
-          <div><div class="ea-toggle-label">Partial Close at TP</div><div class="ea-toggle-sub">Close part of position when TP hit</div></div>
-          <div class="toggle on" id="ea-partial-close" onclick="this.classList.toggle('on')"></div>
-        </div>
-        <div class="ea-input-row" style="margin-top:12px;">
-          <label class="ea-input-label">Close % at TP</label>
-          <select class="ea-input" id="ea-partial-pct">
-            <option>25%</option>
-            <option>50%</option>
-            <option selected>75%</option>
-            <option>100%</option>
-          </select>
-        </div>
-      </div>
-      <!-- Breakeven SL -->
-      <div class="section-card">
-        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Breakeven <span>SL</span></div>
-        <div class="ea-toggle-row">
-          <div><div class="ea-toggle-label">Move SL to Breakeven</div><div class="ea-toggle-sub">After partial close at TP</div></div>
-          <div class="toggle on" id="ea-breakeven" onclick="this.classList.toggle('on')"></div>
-        </div>
-        <div class="ea-input-row" style="margin-top:12px;">
-          <label class="ea-input-label">Breakeven Buffer (pts)</label>
-          <input class="ea-input" id="ea-be-buffer" type="number" value="3">
-        </div>
-        <div class="ea-input-row">
-          <label class="ea-input-label">Activate When</label>
-          <select class="ea-input" id="ea-be-when">
-            <option>After TP partial close</option>
-            <option>After X pips profit</option>
-            <option>Immediately at entry</option>
-          </select>
-        </div>
-      </div>
-      <!-- Trailing Stop -->
-      <div class="section-card">
-        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Trailing <span>Stop</span></div>
-        <div class="ea-toggle-row">
-          <div><div class="ea-toggle-label">Enable Trailing Stop</div><div class="ea-toggle-sub">SL follows price to lock profit</div></div>
-          <div class="toggle on" id="ea-trailing" onclick="this.classList.toggle('on')"></div>
-        </div>
-        <div class="ea-input-row" style="margin-top:12px;">
-          <label class="ea-input-label">Trail Step Size (pts)</label>
-          <input class="ea-input" id="ea-trail-step" type="number" value="5">
-        </div>
-        <div class="ea-input-row">
-          <label class="ea-input-label">Start Trailing When</label>
-          <select class="ea-input" id="ea-trail-when">
-            <option>After breakeven set</option>
-            <option>After X pips profit</option>
-            <option>Immediately</option>
-          </select>
-        </div>
-      </div>
-      <button class="red-btn" onclick="saveEASettings()">SAVE SETTINGS</button>
-    </div>
-  </div>
-
-  <!-- Smart Tool Settings — NEW (Direction A) · PREVIEW -->
   <div id="sub-smart-tool-new" class="sub-screen">
     <div class="sub-header">
       <button class="sub-back" onclick="goBackSubScreen('sub-smart-tool-new')"><i class="ti ti-arrow-left"></i></button>
@@ -4792,7 +4663,7 @@ function handleLogout() {
 // ── TABS ──
 // ── PREMIUM GATE ──
 var BROKER_DEPOSIT_URL = 'https://client.afttmarkets.com/funds/deposit';
-var _premiumScreens = ['sub-scanner','sub-leaderboard','sub-smart-tool','sub-smart-tool-new','sub-auto-trade'];
+var _premiumScreens = ['sub-scanner','sub-leaderboard','sub-smart-tool-new','sub-auto-trade'];
 var _premiumTabs = ['journal'];
 function isPremiumUser(){
   var a=(typeof activeAccount!=='undefined'&&activeAccount)?activeAccount:null;
@@ -5102,7 +4973,6 @@ function showSubScreen(id) {
   if(id==='sub-profile') { loadProfileMT5(); }
   if(id==='sub-trade-settings'||id==='sub-ea') { setAutoApproveUI(tradeConsentAll()); }
   if(id==='sub-auto-trade') { loadAutoTradeSettings(); }
-  if(id==='sub-smart-tool') { loadEASettings(); }
   if(id==='sub-smart-tool-new') { loadSmartToolNew(); }
 }
 function hideSubScreen(id) {
@@ -8429,52 +8299,6 @@ async function saveAutoTradeSetting() {
   } catch(e) {}
 }
 
-function getEASettingsFromUI() {
-  function tog(id){ var el=document.getElementById(id); return el?el.classList.contains('on'):false; }
-  function inp(id){ var el=document.getElementById(id); return el?el.value:''; }
-  return {
-    auto_approve:      tog('ea-auto-approve'),
-    auto_risk:         tog('ea-auto-risk'),
-    risk_pct:          parseFloat(inp('ea-risk-pct'))||1.0,
-    max_lots:          parseFloat(inp('ea-max-lots'))||0.50,
-    dca_enabled:       tog('ea-dca'),
-    dca_points:        parseFloat(inp('ea-dca-points'))||10,
-    dca_max_pos:       parseInt(inp('ea-dca-max'))||4,
-    sl_behaviour:      inp('ea-sl-behaviour'),
-    sl_from_signal:    tog('ea-sl-signal'),
-    partial_close:     tog('ea-partial-close'),
-    partial_pct:       inp('ea-partial-pct'),
-    breakeven:         tog('ea-breakeven'),
-    breakeven_buffer:  parseFloat(inp('ea-be-buffer'))||3,
-    breakeven_when:    inp('ea-be-when'),
-    trailing:          tog('ea-trailing'),
-    trail_step:        parseFloat(inp('ea-trail-step'))||5,
-    trail_when:        inp('ea-trail-when'),
-    saved_at:          new Date().toISOString()
-  };
-}
-function applyEASettingsToUI(s) {
-  if(!s) return;
-  function setTog(id,val){ var el=document.getElementById(id); if(el){ if(val) el.classList.add('on'); else el.classList.remove('on'); } }
-  function setInp(id,val){ var el=document.getElementById(id); if(el) el.value=val; }
-  setTog('ea-auto-approve', s.auto_approve);
-  setTog('ea-auto-risk',    s.auto_risk);
-  setInp('ea-risk-pct',     s.risk_pct);
-  setInp('ea-max-lots',     s.max_lots);
-  setTog('ea-dca',          s.dca_enabled);
-  setInp('ea-dca-points',   s.dca_points);
-  setInp('ea-dca-max',      s.dca_max_pos);
-  setInp('ea-sl-behaviour', s.sl_behaviour);
-  setTog('ea-sl-signal',    s.sl_from_signal);
-  setTog('ea-partial-close',s.partial_close);
-  setInp('ea-partial-pct',  s.partial_pct);
-  setTog('ea-breakeven',    s.breakeven);
-  setInp('ea-be-buffer',    s.breakeven_buffer);
-  setInp('ea-be-when',      s.breakeven_when);
-  setTog('ea-trailing',     s.trailing);
-  setInp('ea-trail-step',   s.trail_step);
-  setInp('ea-trail-when',   s.trail_when);
-}
 async function loadEASettings() {
   if(!activeAccount || !db) return;
   try {
@@ -8483,63 +8307,21 @@ async function loadEASettings() {
     if(d && d.ea_settings) {
       var s = typeof d.ea_settings==='string' ? JSON.parse(d.ea_settings) : d.ea_settings;
       window._eaSettings = s;
-      applyEASettingsToUI(s);
+      /* legacy DOM writer removed 13 Jul 2026 */
     } else {
       window._eaSettings = {};
     }
   } catch(e) {}
 }
-async function saveEASettings() {
-  if(!currentUser || !db) return;
-  var settings = getEASettingsFromUI();
-  window._eaSettings = settings;
-  try {
-    if(!activeAccount) throw new Error('No active account');
-    var r = await db.from('mt5_accounts').update({ ea_settings: JSON.stringify(settings) }).eq('id', activeAccount.id);
-    if(r && r.error) throw r.error;
-    activeAccount.ea_settings = JSON.stringify(settings);
-    var btn = document.querySelector('#sub-smart-tool .red-btn');
-    if(btn) {
-      var orig = btn.textContent;
-      btn.textContent = '✓ SAVED';
-      btn.style.background = 'var(--green)';
-      setTimeout(function(){ btn.textContent = orig; btn.style.background = ''; }, 2000);
-    }
-  } catch(e) { alert('Save failed: ' + (e.message || 'Unknown error')); }
-}
-
 // ══════════════════════════════════════════════════
 // SMART TOOL — version chooser + NEW (Direction A) preview
 // ══════════════════════════════════════════════════
 function openSmartTool(parent){
+  // 13 Jul 2026: Classic Smart Tool and the version picker are GONE.
+  // There is ONE Smart Tool now and it opens directly.
   window._stParent = parent || 'plain';
-  var ov = document.createElement('div');
-  ov.className = 'stn-verpop';
-  ov.id = 'stn-verpop';
-  ov.innerHTML =
-    '<div class="card">'+
-      '<div class="vt">Smart Tool</div>'+
-      '<div class="vd">Choose which version to open. Classic is your current tool with your saved settings. The new one is a preview of the redesign.</div>'+
-      '<div class="stn-vopt" onclick="stnPick(\'classic\')">'+
-        '<div class="vico"><i class="ti ti-bolt"></i></div>'+
-        '<div><div class="vn">Classic Smart Tool</div><div class="vs">Your current settings, unchanged</div></div>'+
-      '</div>'+
-      '<div class="stn-vopt new" onclick="stnPick(\'new\')">'+
-        '<div class="vico"><i class="ti ti-sparkles"></i></div>'+
-        '<div><div class="vn">New Smart Tool</div><div class="vs">Redesigned layout</div></div>'+
-        '<div class="vbadge">PREVIEW</div>'+
-      '</div>'+
-      '<div class="vcancel" onclick="stnCloseVer()">Cancel</div>'+
-    '</div>';
-  ov.addEventListener('click', function(e){ if(e.target===ov) stnCloseVer(); });
-  document.body.appendChild(ov);
-}
-function stnCloseVer(){ var el=document.getElementById('stn-verpop'); if(el) el.remove(); }
-function stnPick(which){
-  var p = window._stParent;
-  stnCloseVer();
-  var id = which==='new' ? 'sub-smart-tool-new' : 'sub-smart-tool';
-  if(p && p!=='plain'){ showSubScreenFrom(id, p); } else { showSubScreen(id); }
+  if(parent && parent!=='plain'){ showSubScreenFrom('sub-smart-tool-new', parent); }
+  else { showSubScreen('sub-smart-tool-new'); }
 }
 function stnSeg(el){
   var seg = el.parentNode;
