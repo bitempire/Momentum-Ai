@@ -1470,6 +1470,53 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 .stn-bar i{display:block;height:100%;border-radius:6px;background:linear-gradient(90deg,#00c87a,#00a865)}
 .stn-status{display:flex;align-items:center;gap:6px;margin-top:10px;font-size:11.5px;font-weight:600;color:var(--green)}
 .stn-status i{font-size:14px}
+.stn-rr,.stn-exp{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);margin-top:11px;padding-top:11px;font-size:11.5px;color:var(--text2)}
+.stn-rr b{color:var(--red);font-weight:600}
+.stn-rr u{color:var(--green);font-weight:600;text-decoration:none}
+.stn-rr .ratio{font-family:'Orbitron',sans-serif;font-size:10px;font-weight:600;letter-spacing:.5px;padding:3px 7px;border-radius:5px}
+.stn-rr .ratio.bad{color:var(--red);background:rgba(255,30,60,.12);border:1px solid rgba(255,30,60,.25)}
+.stn-rr .ratio.ok{color:var(--amber);background:rgba(255,176,32,.12);border:1px solid rgba(255,176,32,.25)}
+.stn-rr .ratio.good{color:var(--green);background:rgba(0,200,122,.12);border:1px solid rgba(0,200,122,.25)}
+.stn-exp .v{font-weight:600;color:var(--amber)}
+.stn-basis{margin-top:11px;padding-top:9px;border-top:1px solid var(--border);font-size:10px;color:var(--text3);line-height:1.5}
+.stn-basis i{font-size:12px;vertical-align:-1px}
+.stn-mtable .tr{display:grid;grid-template-columns:22px 1fr 72px 52px 30px;gap:6px;padding:11px 12px;align-items:center;font-size:12px;border-top:1px solid rgba(255,255,255,.04)}
+.stn-mtable .th{display:grid;grid-template-columns:22px 1fr 72px 52px 30px;gap:6px;padding:9px 12px;font-size:9px;letter-spacing:.1em;color:var(--text3);text-transform:uppercase;background:rgba(255,255,255,.02)}
+.stn-mtable .tr .ly{color:var(--red);font-weight:700}
+.stn-mtable .tr .mut{color:var(--text2);text-align:right}
+.stn-mtable .tr .val{color:var(--green);font-weight:700;text-align:right}
+.stn-mtable .tr .ed{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.09);padding:4px 8px;border-radius:6px;cursor:pointer;color:var(--text)}
+.stn-mtable .tr .val.ed{text-align:center}
+.stn-mtable .tr .del{text-align:right;color:var(--text3);cursor:pointer}
+.stn-mtable .tr .del i{font-size:14px}
+.stn-mtable .tr.dead{opacity:.45}
+.stn-mtable .tr.bad{background:rgba(255,30,60,.07);border-left:2px solid var(--red)}
+.stn-mtable .tr .bad{color:var(--red)}
+.stn-addrow{padding:10px 12px;display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11.5px;border-top:1px solid rgba(255,255,255,.05);cursor:pointer}
+.stn-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}
+.stn-stats .s{background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:10px 12px}
+.stn-stats .s .k{font-size:9px;letter-spacing:.1em;color:var(--text3);text-transform:uppercase}
+.stn-stats .s .v{font-family:'Orbitron',sans-serif;font-size:15px;font-weight:700;color:var(--text);margin-top:3px}
+.stn-tplfrom{font-size:11px;color:var(--text2);margin-top:9px;display:flex;align-items:center;gap:6px}
+.stn-tplfrom .dot{width:5px;height:5px;border-radius:50%;background:var(--green);display:inline-block}
+.stn-tplfrom b{color:var(--text);font-weight:600}
+.stn-warn{margin-top:10px}
+.stn-warn .wl{display:flex;gap:6px;align-items:flex-start;background:rgba(255,176,32,.08);border:1px solid rgba(255,176,32,.22);border-radius:9px;padding:9px 11px;margin-bottom:6px;font-size:11px;color:var(--amber);line-height:1.5}
+.stn-warn .wl i{font-size:13px;flex-shrink:0;margin-top:1px}
+.stn-tpl-sheet{position:fixed;inset:0;background:rgba(4,4,6,.72);z-index:9999;display:flex;align-items:flex-end}
+.stn-tpl-sheet .sheet{width:100%;background:var(--bg2);border-top-left-radius:22px;border-top-right-radius:22px;padding:14px 16px 26px;max-height:76vh;overflow-y:auto}
+.stn-tpl-sheet .grab{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px}
+.stn-tpl-sheet .hd{font-family:'Orbitron',sans-serif;font-weight:700;font-size:14px;color:var(--text);margin-bottom:14px}
+.stn-tabs{display:flex;gap:8px;margin-bottom:14px}
+.stn-tabs .tb{flex:1;text-align:center;font-size:12px;padding:10px;border-radius:10px;background:var(--surface);color:var(--text2);cursor:pointer;font-weight:600}
+.stn-tabs .tb.on{background:var(--grad);color:#fff}
+.stn-tpl-sheet .tpl{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:13px 14px;margin-bottom:8px;cursor:pointer}
+.stn-tpl-sheet .tpl.on{border-color:rgba(255,30,60,.5);background:linear-gradient(160deg,rgba(196,0,32,.14),var(--bg2) 62%)}
+.stn-tpl-sheet .tpl.empty{opacity:.45;cursor:default;border-style:dashed}
+.stn-tpl-sheet .tpl .n{font-size:13px;color:var(--text);font-weight:600;display:flex;align-items:center;gap:6px}
+.stn-tpl-sheet .tpl .s{font-size:11px;color:var(--text2);margin-top:3px}
+.stn-tpl-sheet .tpl .lock{color:var(--text3);font-size:11px}
+
 .stn-mtable{background:var(--bg3);border:1px solid var(--border);border-radius:13px;overflow:hidden;margin-top:4px}
 .stn-mtable .th,.stn-mtable .tr{display:grid;align-items:center;padding:11px 14px}
 .stn-mtable.dca .th,.stn-mtable.dca .tr{grid-template-columns:30px 1fr 1fr 1fr}
@@ -2274,61 +2321,82 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <div class="stn-tpl-top" onclick="stnOpenTemplates()"><i class="ti ti-folder"></i>Templates</div>
     </div>
     <div class="sub-content">
-      <div class="stn-preview-tag"><i class="ti ti-sparkles"></i> NEW VERSION &middot; PREVIEW</div>
-      <div class="stn-scr-sub">Auto-trade rules for this account</div>
+      <div class="stn-scr-sub" id="stn-scr-sub">Auto-trade rules for this account</div>
 
-      <!-- Loss budget meter -->
       <div class="stn-meter">
         <div class="cap"><span class="k">Loss Budget</span><span class="v" id="stn-budget-cap">% of balance</span></div>
-        <div class="big" id="stn-budget-big">$0 <small>/ $0 budget</small></div>
+        <div class="big" id="stn-budget-big">$0 <small>/ $0 used</small></div>
         <div class="stn-bar"><i id="stn-bar-fill" style="width:0%"></i></div>
         <div class="stn-status" id="stn-status"><i class="ti ti-check"></i> Within budget</div>
+        <div class="stn-rr" id="stn-rr"></div>
+        <div class="stn-exp" id="stn-exp"></div>
+        <div class="stn-basis" id="stn-basis"></div>
       </div>
 
       <div class="stn-eyebrow">Risk</div>
-      <div class="stn-row"><div><div class="stn-lbl">Auto Risk Mode</div><div class="stn-hint">Sizes lots from your budget</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
-      <div class="stn-row"><div><div class="stn-lbl">Risk per trade</div><div class="stn-hint" id="stn-risk-hint">Loss budget</div></div><div class="stn-field pct" id="stn-risk-field">1.0%</div></div>
+      <div class="stn-row">
+        <div><div class="stn-lbl">Risk per trade</div><div class="stn-hint" id="stn-risk-hint">Loss budget</div></div>
+        <div class="stn-field pct" id="stn-risk-field" onclick="stnEditNum('risk','Risk per trade (%)',0.1,100,0.1)">1.0%</div>
+      </div>
 
       <div class="stn-eyebrow">Entries &middot; DCA</div>
-      <div class="stn-tbl-cap"><div class="t">Ladder</div><div class="stn-pencil"><i class="ti ti-pencil"></i></div></div>
+      <div class="stn-tbl-cap"><div class="t">Ladder</div></div>
       <div class="stn-mtable dca">
-        <div class="th"><span>#</span><span>Points</span><span>Price</span><span>Lot</span></div>
-        <div id="stn-dca-body">
-          <div class="tr"><span class="ly">1</span><span class="mut">entry</span><span class="mut">market</span><span class="val">0.10</span></div>
-        </div>
+        <div class="th"><span>#</span><span>Depth</span><span>Price</span><span>Lot</span></div>
+        <div id="stn-dca-body"></div>
+        <div class="stn-addrow" onclick="stnAddLayer()"><i class="ti ti-plus"></i> Add layer</div>
       </div>
-      <div class="stn-summary">
-        <div class="box"><div class="k">Total lots</div><div class="n val" id="stn-total-lots">0.10</div></div>
-        <div class="box"><div class="k">Avg entry</div><div class="n">auto</div></div>
-        <div class="box"><div class="k">Max loss</div><div class="n" id="stn-maxloss">$0</div></div>
+      <div class="stn-stats">
+        <div class="s"><div class="k">Total lots</div><div class="v" id="stn-total-lots">0.00</div></div>
+        <div class="s"><div class="k">Avg entry</div><div class="v" id="stn-avg-entry">-</div></div>
       </div>
-      <div class="stn-tpl-active"><span class="dot"></span>Loaded from template: <b>Safe</b></div>
+      <div class="stn-tplfrom" id="stn-tplfrom"></div>
+      <div class="stn-warn" id="stn-warn"></div>
 
       <div class="stn-eyebrow">Stop Loss</div>
-      <div class="stn-seg" style="margin-bottom:12px"><div class="opt" onclick="stnSeg(this)">Close now</div><div class="opt on" onclick="stnSeg(this)">Wait candle close</div></div>
-      <div class="stn-row"><div class="stn-lbl">SL from signal</div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+      <div class="stn-row">
+        <div><div class="stn-lbl">SL from signal</div><div class="stn-hint">the analyst sets your risk</div></div>
+        <div class="toggle on" id="stn-sl-signal" onclick="this.classList.toggle('on');stnSync()"></div>
+      </div>
 
       <div class="stn-eyebrow">Take Profit</div>
-      <div class="stn-tbl-cap"><div class="t">Levels</div><div class="stn-pencil"><i class="ti ti-pencil"></i></div></div>
-      <div class="stn-mtable tp">
-        <div class="th"><span>Lvl</span><span>Points</span><span>Close %</span></div>
-        <div id="stn-tp-body">
-          <div class="tr"><span class="ly">1</span><span class="mut">+140</span><span class="val">50%</span></div>
-        </div>
+      <div class="stn-row">
+        <div><div class="stn-lbl">Measure from</div><div class="stn-hint" id="stn-mf-hint">-</div></div>
+        <div class="stn-field" id="stn-mf-field" onclick="stnPickMeasureFrom()">Average entry</div>
       </div>
-      <div class="stn-pctbar"><div class="closed" id="stn-pct-closed" style="width:80%"></div><div class="run" id="stn-pct-run" style="width:20%"></div></div>
-      <div class="stn-tp-ind" id="stn-tp-ind"><b>80%</b> closed &middot; <span class="r">20% runs</span> with trailing</div>
+      <div class="stn-mtable tp">
+        <div class="th"><span>Lvl</span><span>Distance</span><span>Price</span><span>Close</span></div>
+        <div id="stn-tp-body"></div>
+        <div class="stn-addrow" onclick="stnAddTp()"><i class="ti ti-plus"></i> Add level</div>
+      </div>
+      <div class="stn-pctbar"><div class="closed" id="stn-pct-closed" style="width:0%"></div><div class="run" id="stn-pct-run" style="width:0%"></div></div>
+      <div class="stn-tp-ind" id="stn-tp-ind"></div>
 
       <div class="stn-eyebrow">Breakeven</div>
-      <div class="stn-row"><div><div class="stn-lbl">Move SL to entry</div><div class="stn-hint">after price moves +X points</div></div><div class="stn-field">+120</div></div>
+      <div class="stn-row">
+        <div><div class="stn-lbl">Move SL to entry</div><div class="stn-hint" id="stn-be-hint">-</div></div>
+        <div class="stn-field" id="stn-be-field" onclick="stnEditNum('be_trigger','Breakeven at % of the way to target',0,100,1)">20%</div>
+      </div>
+      <div class="stn-row">
+        <div><div class="stn-lbl">Buffer above entry</div><div class="stn-hint">covers swap and commission</div></div>
+        <div class="stn-field" id="stn-bebuf-field" onclick="stnEditNum('be_buffer','Buffer, % of the way to target',0,50,1)">2%</div>
+      </div>
 
       <div class="stn-eyebrow">Trailing Stop</div>
-      <div class="stn-row"><div class="stn-lbl">Enable trailing</div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
-      <div class="stn-row"><div class="stn-lbl">Activate after</div><div class="stn-field">+150</div></div>
-      <div class="stn-row"><div class="stn-lbl">Trail step</div><div class="stn-field">50</div></div>
+      <div class="stn-row">
+        <div class="stn-lbl">Enable trailing</div>
+        <div class="toggle on" id="stn-tr-on" onclick="this.classList.toggle('on');stnSync()"></div>
+      </div>
+      <div class="stn-row">
+        <div><div class="stn-lbl">Activate after</div><div class="stn-hint" id="stn-tra-hint">-</div></div>
+        <div class="stn-field" id="stn-tra-field" onclick="stnEditNum('tr_arm','Trailing arms at % of the way to target',0,100,1)">40%</div>
+      </div>
+      <div class="stn-row">
+        <div><div class="stn-lbl">Trail step</div><div class="stn-hint" id="stn-trs-hint">-</div></div>
+        <div class="stn-field" id="stn-trs-field" onclick="stnEditNum('tr_step','Trail step, % of the way to target',1,100,1)">15%</div>
+      </div>
 
-      <div class="stn-save-note"><i class="ti ti-info-circle"></i> Preview mode &mdash; this is the new design only. Saving turns on after wiring is finished. Your current Smart Tool settings are untouched.</div>
-      <button class="red-btn" style="margin-top:14px;" onclick="stnPreviewSave()">SAVE SMART TOOLS</button>
+      <button class="red-btn" style="margin-top:16px;" onclick="stnSave()">SAVE SMART TOOLS</button>
     </div>
   </div>
 
@@ -8323,88 +8391,483 @@ function openSmartTool(parent){
   if(parent && parent!=='plain'){ showSubScreenFrom('sub-smart-tool-new', parent); }
   else { showSubScreen('sub-smart-tool-new'); }
 }
-function stnSeg(el){
-  var seg = el.parentNode;
-  var opts = seg.querySelectorAll('.opt');
-  for(var i=0;i<opts.length;i++) opts[i].classList.remove('on');
-  el.classList.add('on');
+// ══════════════════════════════════════════════════════════════════════════
+// SMART TOOL - RATIO TEMPLATE EDITOR
+// Rebuilt 13 Jul 2026 per SMART_TOOLS_CONTRACT.md v2.
+//
+// A template stores RATIOS, never points:
+//   room_pct   = how deep into the signal's zone   (100 = the zone floor)
+//   reach_pct  = how far toward the signal's TP
+//
+// Resolved against the LIVE SIGNAL into MT5 points at trade time.
+// ONE template works on gold, BTC, FX and anything added later. No presets.
+//
+// MONEY BUG 24 IS UNREPRESENTABLE HERE: room_pct is clamped to 100, and 100%
+// IS the zone floor. A DCA layer CANNOT land below the zone.
+// ══════════════════════════════════════════════════════════════════════════
+
+// Per-symbol facts. From the BROKER, never invented.
+// Confirmed against Asia Future Trading, 13 Jul 2026.
+var STN_SPECS = {
+  'XAUUSD':  { point:0.01,    vpp:1.00, min_stop:10,    spread:50 },
+  'BITCOIN': { point:0.01,    vpp:0.01, min_stop:20000, spread:0  },
+  'EURUSD':  { point:0.00001, vpp:1.00, min_stop:1,     spread:0  }
+};
+function stnSpec(sym){ return STN_SPECS[sym] || { point:0.01, vpp:1.00, min_stop:10, spread:0 }; }
+
+var STN_DEFAULT = {
+  version:3, name:'My Setup',
+  risk:{ risk_pct:1.0 },
+  dca:{ enabled:true, layers:[ {room_pct:0,lots:0.01}, {room_pct:50,lots:0.01}, {room_pct:100,lots:0.01} ] },
+  stop_loss:{ from_signal:true },
+  take_profit:{ enabled:true, measure_from:'average', levels:[ {reach_pct:50,close_pct:50}, {reach_pct:90,close_pct:50} ] },
+  breakeven:{ enabled:true, trigger_reach_pct:20, buffer_reach_pct:2 },
+  trailing:{ enabled:true, arm_reach_pct:40, step_reach_pct:15 }
+};
+
+var _stnTpl = null;      // the working template (ratios)
+var _stnSig = null;      // the signal we price against
+var _stnFrom = null;     // which stored template this came from
+var _stnTpls = [];       // all templates available to this user
+
+function stnMoney(n){ var s = (Math.abs(n)>=100) ? Math.round(n).toLocaleString() : Math.abs(n).toFixed(2); return (n<0?'-$':'$')+s; }
+function stnPts(sym, priceDist){ return Math.round(Math.abs(priceDist)/stnSpec(sym).point); }
+function stnPrice(sym, pts){ return pts*stnSpec(sym).point; }
+function stnCash(sym, pts, lots){ return pts*stnSpec(sym).vpp*lots; }
+
+// ─────────────────────────────────────────────────────────────────────────
+// THE RESOLVER. ratios + signal + fill -> points, prices, dollars.
+// ─────────────────────────────────────────────────────────────────────────
+function stnResolve(t, sig, fill){
+  var sym=sig.symbol, sp=stnSpec(sym), buy=(sig.side||'BUY').toUpperCase()==='BUY';
+  var zLo=Math.min(sig.entry_from,sig.entry_to), zHi=Math.max(sig.entry_from,sig.entry_to);
+  var floor = buy ? zLo : zHi;
+
+  var roomP = buy ? (fill-floor) : (floor-fill);  if(roomP<0) roomP=0;
+  var reachP= buy ? (sig.tp-fill) : (fill-sig.tp); if(reachP<0) reachP=0;
+  var room = stnPts(sym,roomP), reach = stnPts(sym,reachP);
+
+  var o = { symbol:sym, buy:buy, fill:fill, sl:sig.sl, room:room, reach:reach,
+            roomPrice:roomP, reachPrice:reachP, layers:[], tps:[], warn:[] };
+
+  var lots=0, wsum=0, last=fill;
+  var LS = (t.dca && t.dca.enabled && t.dca.layers) ? t.dca.layers : [{room_pct:0,lots:0.01}];
+
+  for(var i=0;i<LS.length;i++){
+    var pct = Math.max(0, Math.min(100, LS[i].room_pct));       // <- the clamp. bug 24 dies here.
+    var off = (i===0) ? 0 : Math.round(room*pct/100);
+    var px  = buy ? (fill - stnPrice(sym,off)) : (fill + stnPrice(sym,off));
+    var fits = true, why='';
+    if(i>0){
+      if(room===0){ fits=false; why='no room below your fill'; }
+      else if(off===0){ fits=false; why='lands on your entry'; }
+      else if(sp.spread>0 && off < sp.spread*2){
+        o.warn.push('Layer '+(i+1)+' is only '+off+' pts below entry. The spread is '+sp.spread+
+                    ' pts. It will fill on a quote flicker, not a real move.');
+      }
+    }
+    if(fits){ lots+=LS[i].lots; wsum+=px*LS[i].lots; last=px; }
+    o.layers.push({ n:i+1, pct:pct, off:off, px:px, lots:LS[i].lots, fits:fits, why:why });
+  }
+
+  var fit = o.layers.filter(function(l){return l.fits;}).length;
+  if(fit < o.layers.length) o.warn.push('Only '+fit+' of '+o.layers.length+' layers fit inside the zone. The rest will not fire.');
+
+  o.lots = +lots.toFixed(2);
+  o.avg  = lots>0 ? +(wsum/lots).toFixed(5) : fill;
+  o.last = last;
+
+  // WORST CASE: every layer fills, basket rides to the hard SL. Plus the spread.
+  // A worst case that ignores the spread is not conservative.
+  var worst=0;
+  for(var j=0;j<o.layers.length;j++){
+    var L=o.layers[j]; if(!L.fits) continue;
+    worst += stnCash(sym, stnPts(sym, L.px - sig.sl), L.lots);
+  }
+  if(sp.spread>0) worst += stnCash(sym, sp.spread, lots);
+  o.worst = +worst.toFixed(2);
+
+  // TAKE PROFIT. close % is OF WHAT REMAINS (engine: MoneyEngine.mqh:852).
+  var tp=t.take_profit||{}, mf=tp.measure_from||'average';
+  var base = mf==='last' ? o.last : o.avg;
+  var open=o.lots, profit=0;
+  var LV=(tp.enabled&&tp.levels)?tp.levels:[];
+  for(var k=0;k<LV.length;k++){
+    var off2, tpx;
+    if(mf==='signal'){ tpx=sig.tp; off2=stnPts(sym,tpx-o.avg); }
+    else { off2=Math.round(reach*LV[k].reach_pct/100); tpx = buy ? base+stnPrice(sym,off2) : base-stnPrice(sym,off2); }
+    var cl = +(open*LV[k].close_pct/100).toFixed(2);
+    var losing = buy ? (tpx<=o.avg) : (tpx>=o.avg);
+    var gain = buy ? stnPts(sym,tpx-o.avg) : stnPts(sym,o.avg-tpx);
+    var pl = stnCash(sym,gain,cl) * (losing?-1:1);
+    if(sp.spread>0) pl -= stnCash(sym,sp.spread,cl);
+    open = +(open-cl).toFixed(2); profit += pl;
+    o.tps.push({ n:k+1, pct:LV[k].reach_pct, off:off2, px:tpx, close:LV[k].close_pct,
+                 lots:cl, remains:open, pl:+pl.toFixed(2), losing:losing });
+    if(losing) o.warn.push('TP'+(k+1)+' at '+tpx.toFixed(2)+' is below your average entry of '+
+                           o.avg.toFixed(2)+'. This take profit LOSES money.');
+  }
+  o.profit = +profit.toFixed(2);
+  o.trailLots = open;
+  o.trailPct  = o.lots>0 ? Math.round(open/o.lots*100) : 0;
+  o.closedPct = 100 - o.trailPct;
+
+  var be=t.breakeven||{};
+  if(be.enabled){
+    o.be = { trig:Math.round(reach*be.trigger_reach_pct/100), buf:Math.round(reach*be.buffer_reach_pct/100) };
+    o.be.at = buy ? fill+stnPrice(sym,o.be.trig) : fill-stnPrice(sym,o.be.trig);
+    o.be.sl = buy ? fill+stnPrice(sym,o.be.buf)  : fill-stnPrice(sym,o.be.buf);
+  }
+  var tr=t.trailing||{};
+  if(tr.enabled){
+    o.tr = { arm:Math.round(reach*tr.arm_reach_pct/100), step:Math.round(reach*tr.step_reach_pct/100) };
+    if(o.tr.step < sp.min_stop)
+      o.warn.push('Trail step ('+o.tr.step+' pts) is below '+sym+"'s minimum stop of "+sp.min_stop+
+                  ' pts. The broker will REJECT every trailing move.');
+    else if(sp.spread>0 && o.tr.step < sp.spread*3)
+      o.warn.push('Trail step ('+o.tr.step+' pts) is under 3x the spread. A spread widening will stop you out with no price move.');
+    if(o.be && (o.tr.arm - o.tr.step) <= o.be.buf)
+      o.warn.push('The first trailing stop would land at or below your breakeven stop. The engine never loosens a stop, so TRAILING WOULD DO NOTHING. Widen the arm, or tighten the step.');
+  }
+  return o;
 }
+
+// ─────────────────────────────────────────────────────────────────────────
+// RENDER
+// ─────────────────────────────────────────────────────────────────────────
+function stnRender(){
+  var t=_stnTpl; if(!t) return;
+  var $=function(id){ return document.getElementById(id); };
+  var bal = (activeAccount && activeAccount.balance!=null) ? parseFloat(activeAccount.balance) : 0;
+  if(isNaN(bal)) bal=0;
+  var risk = parseFloat(t.risk.risk_pct)||1.0;
+  var budget = bal*(risk/100);
+
+  if($('stn-risk-field')) $('stn-risk-field').textContent = risk.toFixed(1)+'%';
+  if($('stn-risk-hint'))  $('stn-risk-hint').textContent  = '= '+stnMoney(budget)+' loss budget';
+  if($('stn-budget-cap')) $('stn-budget-cap').textContent = risk.toFixed(1)+'% of '+stnMoney(bal);
+
+  // no signal -> ratios only, no prices. Be honest about it.
+  if(!_stnSig){
+    if($('stn-budget-big')) $('stn-budget-big').innerHTML = stnMoney(budget)+' <small>budget</small>';
+    if($('stn-bar-fill'))   $('stn-bar-fill').style.width = '0%';
+    if($('stn-status'))     $('stn-status').innerHTML = '<i class="ti ti-info-circle"></i> No live signal to price against';
+    if($('stn-rr'))    $('stn-rr').innerHTML='';
+    if($('stn-exp'))   $('stn-exp').innerHTML='';
+    if($('stn-basis')) $('stn-basis').innerHTML='';
+    stnRenderRatiosOnly();
+    return;
+  }
+
+  var fill = (_stnSig.entry_from + _stnSig.entry_to)/2;   // mid-zone, for pricing the preview
+  var r = stnResolve(t, _stnSig, fill);
+  var sp = stnSpec(r.symbol);
+
+  // ---- budget card
+  var over = r.worst > budget;
+  var pct  = budget>0 ? Math.min(100, r.worst/budget*100) : 0;
+  if($('stn-budget-big')) $('stn-budget-big').innerHTML = stnMoney(r.worst)+' <small>/ '+stnMoney(budget)+' used</small>';
+  var bar=$('stn-bar-fill');
+  if(bar){ bar.style.width=pct+'%'; bar.style.background = over ? 'linear-gradient(90deg,#FF1E3C,#C40024)' : 'linear-gradient(90deg,#00c87a,#00a865)'; }
+  var st=$('stn-status');
+  if(st){
+    if(over){ st.style.color='var(--red)'; st.innerHTML='<i class="ti ti-alert-triangle"></i> Over budget by '+stnMoney(r.worst-budget)+' &middot; reduce lots or layers'; }
+    else    { st.style.color='var(--green)'; st.innerHTML='<i class="ti ti-check"></i> Within budget &middot; '+stnMoney(budget-r.worst)+' room left'; }
+  }
+  var rr = r.worst>0 ? (r.profit/r.worst) : 0;
+  var cls = rr>=1.5 ? 'good' : (rr>=1 ? 'ok' : 'bad');
+  if($('stn-rr')) $('stn-rr').innerHTML =
+    '<span>Risk <b>'+stnMoney(r.worst)+'</b> &rarr; win <u>~'+stnMoney(r.profit)+'</u> est. at TP</span>'+
+    '<span class="ratio '+cls+'">1 : '+rr.toFixed(1)+'</span>';
+  if($('stn-exp')) $('stn-exp').innerHTML =
+    '<span>If this fills</span><span class="v">'+stnMoney(r.worst)+' at risk &middot; '+
+    (bal>0?Math.round(r.worst/bal*100):0)+'% of account</span>';
+  if($('stn-basis')) $('stn-basis').innerHTML =
+    '<i class="ti ti-info-circle"></i> Priced against the latest '+r.symbol+' signal (zone '+
+    _stnSig.entry_from+'-'+_stnSig.entry_to+', SL '+_stnSig.sl+'). Every signal is different.';
+
+  // ---- ladder
+  var h='';
+  for(var i=0;i<r.layers.length;i++){
+    var L=r.layers[i];
+    var depth = i===0 ? '<span class="mut">entry</span>'
+              : '<span class="ed" onclick="stnEditLayer('+i+')">'+L.pct+'%'+(L.pct>=100?' &middot; floor':' into zone')+'</span>';
+    var px = i===0 ? '<span class="mut">market</span>'
+           : (L.fits ? L.px.toFixed(2) : '<span class="bad">'+(L.why||'outside zone')+'</span>');
+    h += '<div class="tr'+(L.fits?'':' dead')+'"><span class="ly">'+L.n+'</span>'+depth+
+         '<span class="mut">'+px+'</span>'+
+         '<span class="val ed" onclick="stnEditLot('+i+')">'+L.lots.toFixed(2)+'</span>'+
+         (i>0?'<span class="del" onclick="stnDelLayer('+i+')"><i class="ti ti-trash"></i></span>':'<span></span>')+
+         '</div>';
+  }
+  if($('stn-dca-body'))   $('stn-dca-body').innerHTML=h;
+  if($('stn-total-lots')) $('stn-total-lots').textContent=r.lots.toFixed(2);
+  if($('stn-avg-entry'))  $('stn-avg-entry').textContent=r.avg.toFixed(2);
+  if($('stn-tplfrom'))    $('stn-tplfrom').innerHTML = _stnFrom ? '<span class="dot"></span> Loaded from template: <b>'+_stnFrom+'</b>' : '';
+
+  // ---- take profit
+  var mfLabel = {average:'Average entry', last:'Last DCA entry', signal:"Signal's TP"}[t.take_profit.measure_from]||'Average entry';
+  if($('stn-mf-field')) $('stn-mf-field').innerHTML = mfLabel+' <i class="ti ti-chevron-down"></i>';
+  if($('stn-mf-hint'))  $('stn-mf-hint').textContent = 'from '+r.avg.toFixed(2)+' on this signal';
+  var th='';
+  for(var k=0;k<r.tps.length;k++){
+    var T=r.tps[k];
+    th += '<div class="tr'+(T.losing?' bad':'')+'"><span class="ly">'+T.n+'</span>'+
+          '<span class="ed" onclick="stnEditTp('+k+')">'+T.pct+'% to target</span>'+
+          '<span class="mut">'+T.px.toFixed(2)+'</span>'+
+          '<span class="val ed" onclick="stnEditClose('+k+')">'+T.close+'%</span>'+
+          '<span class="del" onclick="stnDelTp('+k+')"><i class="ti ti-trash"></i></span></div>';
+  }
+  if($('stn-tp-body')) $('stn-tp-body').innerHTML=th;
+  if($('stn-pct-closed')) $('stn-pct-closed').style.width=r.closedPct+'%';
+  if($('stn-pct-run'))    $('stn-pct-run').style.width=r.trailPct+'%';
+  if($('stn-tp-ind')) $('stn-tp-ind').innerHTML = r.trailPct>0
+    ? '<b>'+r.closedPct+'%</b> closed &middot; <span class="r">'+r.trailPct+'% runs</span> with trailing'
+    : '<b>100%</b> closed &middot; nothing left to trail';
+
+  // ---- BE / trail
+  if($('stn-be-field'))    $('stn-be-field').textContent = t.breakeven.trigger_reach_pct+'%';
+  if($('stn-bebuf-field')) $('stn-bebuf-field').textContent = t.breakeven.buffer_reach_pct+'%';
+  if($('stn-be-hint'))     $('stn-be-hint').textContent = r.be ? ('at '+r.be.at.toFixed(2)+' on this signal') : '-';
+  if($('stn-tra-field'))   $('stn-tra-field').textContent = t.trailing.arm_reach_pct+'%';
+  if($('stn-trs-field'))   $('stn-trs-field').textContent = t.trailing.step_reach_pct+'%';
+  if($('stn-tra-hint'))    $('stn-tra-hint').textContent = r.tr ? (r.tr.arm+' pts on this signal') : '-';
+  if($('stn-trs-hint'))    $('stn-trs-hint').textContent = r.tr ? (r.tr.step+' pts &middot; spread is '+sp.spread) : '-';
+
+  // ---- warnings
+  var w=$('stn-warn');
+  if(w) w.innerHTML = r.warn.length
+    ? r.warn.map(function(x){ return '<div class="wl"><i class="ti ti-alert-triangle"></i><span>'+x+'</span></div>'; }).join('')
+    : '';
+}
+
+function stnRenderRatiosOnly(){
+  var t=_stnTpl, $=function(id){return document.getElementById(id);};
+  var h='';
+  for(var i=0;i<t.dca.layers.length;i++){
+    var L=t.dca.layers[i];
+    h += '<div class="tr"><span class="ly">'+(i+1)+'</span>'+
+         (i===0?'<span class="mut">entry</span>':'<span class="ed" onclick="stnEditLayer('+i+')">'+L.room_pct+'% into zone</span>')+
+         '<span class="mut">-</span><span class="val ed" onclick="stnEditLot('+i+')">'+L.lots.toFixed(2)+'</span>'+
+         (i>0?'<span class="del" onclick="stnDelLayer('+i+')"><i class="ti ti-trash"></i></span>':'<span></span>')+'</div>';
+  }
+  if($('stn-dca-body')) $('stn-dca-body').innerHTML=h;
+  var th='';
+  for(var k=0;k<t.take_profit.levels.length;k++){
+    var T=t.take_profit.levels[k];
+    th += '<div class="tr"><span class="ly">'+(k+1)+'</span>'+
+          '<span class="ed" onclick="stnEditTp('+k+')">'+T.reach_pct+'% to target</span>'+
+          '<span class="mut">-</span><span class="val ed" onclick="stnEditClose('+k+')">'+T.close_pct+'%</span>'+
+          '<span class="del" onclick="stnDelTp('+k+')"><i class="ti ti-trash"></i></span></div>';
+  }
+  if($('stn-tp-body')) $('stn-tp-body').innerHTML=th;
+  if($('stn-be-field'))    $('stn-be-field').textContent    = t.breakeven.trigger_reach_pct+'%';
+  if($('stn-bebuf-field')) $('stn-bebuf-field').textContent = t.breakeven.buffer_reach_pct+'%';
+  if($('stn-tra-field'))   $('stn-tra-field').textContent   = t.trailing.arm_reach_pct+'%';
+  if($('stn-trs-field'))   $('stn-trs-field').textContent   = t.trailing.step_reach_pct+'%';
+  if($('stn-warn'))        $('stn-warn').innerHTML = '';
+  if($('stn-tplfrom'))     $('stn-tplfrom').innerHTML = _stnFrom ? '<span class="dot"></span> Loaded from template: <b>'+_stnFrom+'</b>' : '';
+}
+
+function stnSync(){
+  var $=function(id){return document.getElementById(id);};
+  if($('stn-sl-signal')) _stnTpl.stop_loss.from_signal = $('stn-sl-signal').classList.contains('on');
+  if($('stn-tr-on'))     _stnTpl.trailing.enabled      = $('stn-tr-on').classList.contains('on');
+  stnRender();
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// EDITS
+// ─────────────────────────────────────────────────────────────────────────
+function stnAsk(title, cur, min, max, step){
+  var v = prompt(title+'\n('+min+' to '+max+')', cur);
+  if(v===null) return null;
+  v = parseFloat(v);
+  if(isNaN(v)) return null;
+  return Math.max(min, Math.min(max, v));
+}
+function stnEditNum(what, title, min, max, step){
+  var t=_stnTpl, cur;
+  if(what==='risk')       cur=t.risk.risk_pct;
+  if(what==='be_trigger') cur=t.breakeven.trigger_reach_pct;
+  if(what==='be_buffer')  cur=t.breakeven.buffer_reach_pct;
+  if(what==='tr_arm')     cur=t.trailing.arm_reach_pct;
+  if(what==='tr_step')    cur=t.trailing.step_reach_pct;
+  var v=stnAsk(title,cur,min,max,step); if(v===null) return;
+  if(what==='risk')       t.risk.risk_pct=v;
+  if(what==='be_trigger') t.breakeven.trigger_reach_pct=v;
+  if(what==='be_buffer')  t.breakeven.buffer_reach_pct=v;
+  if(what==='tr_arm')     t.trailing.arm_reach_pct=v;
+  if(what==='tr_step')    t.trailing.step_reach_pct=v;
+  stnRender();
+}
+function stnEditLayer(i){
+  var v=stnAsk('How deep into the zone?\n100% is the zone floor. Nothing can go past it.',
+               _stnTpl.dca.layers[i].room_pct, 1, 100, 1);
+  if(v===null) return; _stnTpl.dca.layers[i].room_pct=v; stnRender();
+}
+function stnEditLot(i){
+  var v=stnAsk('Lot size for layer '+(i+1), _stnTpl.dca.layers[i].lots, 0.01, 100, 0.01);
+  if(v===null) return; _stnTpl.dca.layers[i].lots=+v.toFixed(2); stnRender();
+}
+function stnAddLayer(){
+  var L=_stnTpl.dca.layers, lastPct=L.length?L[L.length-1].room_pct:0;
+  var next=Math.min(100, lastPct+25);
+  L.push({ room_pct:next, lots:L.length?L[L.length-1].lots:0.01 });
+  _stnTpl.dca.enabled=true; stnRender();
+}
+function stnDelLayer(i){ if(_stnTpl.dca.layers.length<=1) return; _stnTpl.dca.layers.splice(i,1); stnRender(); }
+function stnEditTp(k){
+  var v=stnAsk('How far toward the target?\n100% is the signal\'s take profit.',
+               _stnTpl.take_profit.levels[k].reach_pct, 1, 200, 1);
+  if(v===null) return; _stnTpl.take_profit.levels[k].reach_pct=v; stnRender();
+}
+function stnEditClose(k){
+  var v=stnAsk('Close what % of the REMAINING basket?\n(50 then 50 leaves 25% running)',
+               _stnTpl.take_profit.levels[k].close_pct, 1, 100, 1);
+  if(v===null) return; _stnTpl.take_profit.levels[k].close_pct=v; stnRender();
+}
+function stnAddTp(){
+  var L=_stnTpl.take_profit.levels, lastPct=L.length?L[L.length-1].reach_pct:40;
+  L.push({ reach_pct:Math.min(150,lastPct+30), close_pct:50 });
+  _stnTpl.take_profit.enabled=true; stnRender();
+}
+function stnDelTp(k){ _stnTpl.take_profit.levels.splice(k,1); stnRender(); }
+function stnPickMeasureFrom(){
+  var cur=_stnTpl.take_profit.measure_from;
+  var v=prompt('Measure take profit from:\n\n1 = Average entry  (recommended - your number always means what it says)\n2 = Last DCA entry (for martingale lots ONLY - can close at a LOSS with equal lots)\n3 = Signal TP      (follow the analyst)',
+               cur==='last'?'2':cur==='signal'?'3':'1');
+  if(v===null) return;
+  _stnTpl.take_profit.measure_from = v==='2'?'last' : v==='3'?'signal' : 'average';
+  stnRender();
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// LOAD / SAVE
+// ─────────────────────────────────────────────────────────────────────────
 async function loadSmartToolNew(){
-  try {
-    var s = window._eaSettings;
-    if((!s || !Object.keys(s).length) && activeAccount && db){
-      var r = await db.from('mt5_accounts').select('ea_settings').eq('id', activeAccount.id).single();
-      var d = r && r.data ? (Array.isArray(r.data)?r.data[0]:r.data) : null;
-      if(d && d.ea_settings){ s = typeof d.ea_settings==='string'?JSON.parse(d.ea_settings):d.ea_settings; window._eaSettings = s; }
+  try{
+    _stnTpl = JSON.parse(JSON.stringify(STN_DEFAULT));
+    _stnFrom = null; _stnSig = null; _stnTpls = [];
+
+    if(db){
+      var r = await db.from('smart_templates').select('*').order('kind').order('slot');
+      if(r && r.data) _stnTpls = r.data;
     }
-    s = s || {};
-    function money(n){ return '$'+Math.round(n).toLocaleString(); }
-    var risk = parseFloat(s.risk_pct); if(isNaN(risk)) risk = 1.0;
-    var bal = (activeAccount && activeAccount.balance!=null) ? parseFloat(activeAccount.balance) : 0; if(isNaN(bal)) bal = 0;
-    var budget = bal * (risk/100);
-    var rf = document.getElementById('stn-risk-field'); if(rf) rf.textContent = risk.toFixed(1)+'%';
-    var cap = document.getElementById('stn-budget-cap'); if(cap) cap.textContent = risk.toFixed(1)+'% of '+money(bal);
-    var rh = document.getElementById('stn-risk-hint'); if(rh) rh.textContent = '= '+money(budget)+' loss budget';
-    var layers = s.dca_enabled ? (parseInt(s.dca_max_pos)||3) : 1; if(layers<1) layers=1; if(layers>8) layers=8;
-    var step = parseFloat(s.dca_points)||100;
-    var lot = 0.10;
-    var body='';
-    for(var i=0;i<layers;i++){
-      var pts = i===0 ? 'entry' : ('+'+(step*i));
-      var prc = i===0 ? 'market' : 'auto';
-      body += '<div class="tr"><span class="ly">'+(i+1)+'</span><span class="mut">'+pts+'</span><span class="mut">'+prc+'</span><span class="val">'+lot.toFixed(2)+'</span></div>';
+    // whatever this account is set to trade with
+    if(activeAccount && activeAccount.smart_template_id){
+      var hit = _stnTpls.filter(function(x){ return x.id===activeAccount.smart_template_id; })[0];
+      if(hit){ _stnTpl = JSON.parse(JSON.stringify(hit.settings)); _stnFrom = hit.name; }
     }
-    var dcaBody = document.getElementById('stn-dca-body'); if(dcaBody) dcaBody.innerHTML = body;
-    var totalLots = layers*lot;
-    var tl = document.getElementById('stn-total-lots'); if(tl) tl.textContent = totalLots.toFixed(2);
-    var used = budget>0 ? budget*0.85 : 0;
-    var big = document.getElementById('stn-budget-big'); if(big) big.innerHTML = money(used)+' <small>/ '+money(budget)+' used</small>';
-    var bar = document.getElementById('stn-bar-fill'); if(bar) bar.style.width = (budget>0?85:0)+'%';
-    var ml = document.getElementById('stn-maxloss'); if(ml) ml.textContent = money(used);
-    var st = document.getElementById('stn-status'); if(st) st.innerHTML = '<i class="ti ti-check"></i> Within budget &middot; '+money(budget-used)+' room left';
-    var pcn = parseInt(String(s.partial_pct||'50').replace('%',''))||50; if(pcn<0)pcn=0; if(pcn>100)pcn=100;
-    var tpBody = document.getElementById('stn-tp-body');
-    if(tpBody) tpBody.innerHTML = '<div class="tr"><span class="ly">1</span><span class="mut">+140</span><span class="val">'+pcn+'%</span></div>';
-    var run = 100-pcn;
-    var pc = document.getElementById('stn-pct-closed'); if(pc) pc.style.width = pcn+'%';
-    var pr = document.getElementById('stn-pct-run'); if(pr) pr.style.width = run+'%';
-    var ind = document.getElementById('stn-tp-ind');
-    if(ind){
-      if(run>0) ind.innerHTML = '<b>'+pcn+'%</b> closed &middot; <span class="r">'+run+'% runs</span> with trailing';
-      else ind.innerHTML = '<b>100%</b> closed &middot; nothing left to trail';
+    // latest signal, purely to price the preview
+    if(db){
+      var s = await db.from('signals').select('*').order('created_at',{ascending:false}).limit(1);
+      var d = s && s.data && s.data[0];
+      if(d && d.entry_from!=null && d.entry_to!=null && d.sl!=null){
+        _stnSig = { symbol:d.symbol, side:d.side||'BUY',
+                    entry_from:parseFloat(d.entry_from), entry_to:parseFloat(d.entry_to),
+                    sl:parseFloat(d.sl), tp:parseFloat(d.tp1!=null?d.tp1:d.take_profit) };
+        if(isNaN(_stnSig.tp)) _stnSig=null;
+      }
     }
-  } catch(e){}
+    var $=function(id){return document.getElementById(id);};
+    if($('stn-sl-signal')) $('stn-sl-signal').classList.toggle('on', !!_stnTpl.stop_loss.from_signal);
+    if($('stn-tr-on'))     $('stn-tr-on').classList.toggle('on', !!_stnTpl.trailing.enabled);
+    stnRender();
+  }catch(e){ console.error('loadSmartToolNew', e); }
 }
+
+async function stnSave(){
+  if(!_stnTpl || !db || !currentUser){ alert('Not signed in.'); return; }
+  var name = prompt('Save as. Name your template:', _stnFrom || _stnTpl.name || 'My Setup');
+  if(!name) return;
+
+  var mine = _stnTpls.filter(function(x){ return x.kind==='user'; });
+  var slot = null;
+  var existing = mine.filter(function(x){ return x.name===name; })[0];
+  if(existing) slot = existing.slot;
+  else {
+    for(var i=1;i<=5;i++){ if(!mine.some(function(x){return x.slot===i;})){ slot=i; break; } }
+    if(slot===null){ alert('All 5 template slots are full. Delete one first.'); return; }
+  }
+
+  _stnTpl.name = name;
+  try{
+    var row = { kind:'user', user_id:currentUser.id, slot:slot, name:name, settings:_stnTpl, updated_at:new Date().toISOString() };
+    var r = existing
+      ? await db.from('smart_templates').update(row).eq('id', existing.id).select()
+      : await db.from('smart_templates').insert([row]).select();
+    if(r.error) throw r.error;
+    var saved = r.data && r.data[0];
+    if(saved && activeAccount){
+      await db.from('mt5_accounts').update({ smart_template_id: saved.id }).eq('id', activeAccount.id);
+      activeAccount.smart_template_id = saved.id;
+    }
+    _stnFrom = name;
+    var b=document.querySelector('#sub-smart-tool-new .red-btn');
+    if(b){ var o=b.textContent; b.textContent='SAVED'; b.style.background='var(--green)';
+           setTimeout(function(){ b.textContent=o; b.style.background=''; },1800); }
+    await loadSmartToolNew();
+  }catch(e){ alert('Save failed: '+(e.message||e)); }
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// TEMPLATES SHEET. My / MAI tabs live IN HERE, not on the main screen.
+// ─────────────────────────────────────────────────────────────────────────
+var _stnTab='user';
 function stnOpenTemplates(){
-  var ov = document.createElement('div');
-  ov.className='stn-sheet-ov'; ov.id='stn-tpl-sheet';
-  ov.innerHTML =
-    '<div class="stn-sheet">'+
-      '<div class="cap"><div class="t">My Templates</div><div class="x" onclick="stnCloseTemplates()">&times;</div></div>'+
-      '<div class="note">Tap a template to load it. Tap an empty slot to save your current setup. (Preview &mdash; saving turns on after wiring.)</div>'+
-      '<div class="stn-slot active"><div><div class="nm">Safe</div><div class="meta">3 layers &middot; 1.0% risk &middot; max loss $85</div></div><div class="chk"><i class="ti ti-check"></i></div></div>'+
-      '<div class="stn-slot"><div><div class="nm">Scalp</div><div class="meta">2 layers &middot; 0.5% risk &middot; max loss $40</div></div></div>'+
-      '<div class="stn-slot"><div><div class="nm">Aggro</div><div class="meta">5 layers &middot; 2.0% risk &middot; max loss $190</div></div></div>'+
-      '<div class="stn-slot empty"><div><div class="nm">Empty slot 4</div><div class="meta">Save a setup here</div></div></div>'+
-      '<div class="stn-slot empty"><div><div class="nm">Empty slot 5</div><div class="meta">Save a setup here</div></div></div>'+
-    '</div>';
+  var ov=document.createElement('div'); ov.className='stn-tpl-sheet'; ov.id='stn-tpl-sheet';
+  ov.innerHTML='<div class="sheet"><div class="grab"></div><div class="hd">Templates</div><div id="stn-tpl-body"></div></div>';
   ov.addEventListener('click', function(e){ if(e.target===ov) stnCloseTemplates(); });
   document.body.appendChild(ov);
+  stnTplTab(_stnTab);
 }
 function stnCloseTemplates(){ var el=document.getElementById('stn-tpl-sheet'); if(el) el.remove(); }
-function stnPreviewSave(){
-  alert('This is a preview of the new Smart Tool. Saving turns on after we finish wiring. Your current settings are unchanged.');
+function stnTplTab(which){
+  _stnTab=which;
+  var b=document.getElementById('stn-tpl-body'); if(!b) return;
+  var h='<div class="stn-tabs">'+
+        '<div class="tb'+(which==='user'?' on':'')+'" onclick="stnTplTab(\'user\')">My Templates</div>'+
+        '<div class="tb'+(which==='mai'?' on':'')+'" onclick="stnTplTab(\'mai\')">MAI Templates</div></div>';
+  var list=_stnTpls.filter(function(x){ return x.kind===which; });
+  if(which==='user'){
+    for(var i=1;i<=5;i++){
+      var t=list.filter(function(x){return x.slot===i;})[0];
+      if(t){
+        var L=(t.settings.dca&&t.settings.dca.layers)?t.settings.dca.layers.length:1;
+        h+='<div class="tpl'+(_stnFrom===t.name?' on':'')+'" onclick="stnUseTpl(\''+t.id+'\')">'+
+           '<div class="n">'+t.name+'</div><div class="s">'+L+' layers &middot; '+t.settings.risk.risk_pct+'% risk</div></div>';
+      } else {
+        h+='<div class="tpl empty"><div class="n">Empty slot '+i+'</div><div class="s">Save a setup here</div></div>';
+      }
+    }
+  } else {
+    if(!list.length) h+='<div class="tpl empty"><div class="n">No MAI templates yet</div></div>';
+    for(var j=0;j<list.length;j++){
+      var m=list[j];
+      var ML=(m.settings.dca&&m.settings.dca.layers)?m.settings.dca.layers.length:1;
+      h+='<div class="tpl'+(_stnFrom===m.name?' on':'')+'" onclick="stnUseTpl(\''+m.id+'\')">'+
+         '<div class="n">'+m.name+' <span class="lock"><i class="ti ti-lock"></i></span></div>'+
+         '<div class="s">'+ML+' layers &middot; '+m.settings.risk.risk_pct+'% risk &middot; read only</div></div>';
+    }
+  }
+  b.innerHTML=h;
 }
-
-// ══════════════════════════════════════════════════
-// ADMIN MT5 TAB
-// ══════════════════════════════════════════════════
-
-
-// ═══════════════════════════════════════════════════
-// MAI SCANNER
-// ═══════════════════════════════════════════════════
-window._lastScanData = null;
+async function stnUseTpl(id){
+  var t=_stnTpls.filter(function(x){ return x.id===id; })[0];
+  if(!t) return;
+  _stnTpl=JSON.parse(JSON.stringify(t.settings));
+  _stnFrom=t.name;
+  if(db && activeAccount){
+    try{ await db.from('mt5_accounts').update({ smart_template_id:t.id }).eq('id', activeAccount.id);
+         activeAccount.smart_template_id=t.id; }catch(e){}
+  }
+  var $=function(x){return document.getElementById(x);};
+  if($('stn-sl-signal')) $('stn-sl-signal').classList.toggle('on', !!_stnTpl.stop_loss.from_signal);
+  if($('stn-tr-on'))     $('stn-tr-on').classList.toggle('on', !!_stnTpl.trailing.enabled);
+  stnCloseTemplates();
+  stnRender();
+}
 
 function updateSentimentGauge(pct, direction) {
   var fill = document.getElementById('sent-gauge-fill');
