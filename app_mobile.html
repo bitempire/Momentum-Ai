@@ -8931,19 +8931,13 @@ async function runMAIScanner() {
     var closes = [], highs = [], lows = [], volumes = [];
     var price = 0, prevPrice = 0, chgPct = 0;
 
-    // First try: get current price from our live_prices table
+    // 16 Jul 2026: DO NOT seed price from live_prices - that table can be stale
+    // (it was frozen at a June-23 price, making the scanner read 3-week-old data
+    // and disagree with the server-side scanner-verdict function). The price now
+    // comes from TwelveData's latest close below, EXACTLY like scanner-verdict,
+    // so the app and the Edge Function always agree. live_prices is not consulted.
+    // (map kept for reference / other callers)
     var liveSymMap = {'GC=F':'XAUUSD','BTC-USD':'BTCUSD','DX-Y.NYB':'DXY','CL=F':'USOIL'};
-    var liveKey = liveSymMap[sym];
-    if(liveKey) {
-      try {
-        var lpRes = await db.from('live_prices').select('bid,ask,change_pct').eq('symbol',liveKey).single();
-        var lp = lpRes && lpRes.data ? (Array.isArray(lpRes.data)?lpRes.data[0]:lpRes.data) : null;
-        if(lp && lp.bid) {
-          price = parseFloat(lp.bid);
-          chgPct = parseFloat(lp.change_pct||0).toFixed(2);
-        }
-      } catch(e) {}
-    }
 
     // Fetch OHLC history from TwelveData via the app's rate-limit-safe queue (respects timeframe)
     var tdSymMap = {'GC=F':'XAU/USD','BTC-USD':'BTC/USD','EURUSD=X':'EUR/USD','GBPJPY=X':'GBP/JPY','GBPUSD=X':'GBP/USD','^IXIC':'QQQ','^DJI':'DIA','DX-Y.NYB':'UUP','CL=F':'USO'};
@@ -8971,7 +8965,7 @@ async function runMAIScanner() {
       } catch(te) {}
     }
 
-    // Use latest close if we dont have a live price
+    // Price comes from TwelveData latest close (same source as scanner-verdict fn)
     if(!price && closes.length) {
       price = closes[closes.length-1];
       prevPrice = closes.length>1 ? closes[closes.length-2] : price;
