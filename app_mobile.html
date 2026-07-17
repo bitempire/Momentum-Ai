@@ -6396,16 +6396,48 @@ async function tdFetch(url) {
   });
 }
 
-// 16 Jul 2026: mmLivePrice - the ONE fresh price source for the whole app.
-// The old connector that filled the live_prices table died on 23 June, leaving
-// every price in the app frozen 3 weeks stale (gold stuck at 4106 while the
-// market was at ~4030). This reads the latest close from TwelveData - the same
-// fresh source scanner-verdict uses - so the app never shows a dead price again.
-// Returns a Number, or null if unavailable (callers must handle null, e.g. the
-// zone gate blocks the trade rather than trusting a missing price).
-var _mmPriceCache = {};   // {sym: {price, at}} - 20s micro-cache to avoid hammering the API
+// 17 Jul 2026: mmLivePrice - the ONE fresh price source for the whole app.
+// PRIMARY source is now AFT's own broker price, published to the live_quotes
+// table by the bridge EA (MMAI_Bridge) every ~3s. We use it ONLY when the row is
+// fresh (updated_at within 15s); if the publisher stops, the row ages out and we
+// fall back to TwelveData automatically. This is the permanent fix for the dead-
+// feed freeze of 23 June: the app shows the broker's real price when it is live,
+// and can always tell when it is not, instead of trusting a table that silently
+// froze at 4106 for three weeks. TwelveData stays as the fallback (the same fresh
+// source scanner-verdict uses). Returns a Number, or null if both are unavailable
+// (callers must handle null, e.g. the zone gate blocks the trade on a null price).
+var _mmPriceCache = {};   // {sym: {price, at}} - 20s micro-cache for the TwelveData fallback only
 async function mmLivePrice(appSymbol) {
   var sym = (appSymbol||'').toString().toUpperCase().replace('/','');
+
+  // 1) PREFER live_quotes (AFT's real broker bid/ask). Broker-native names, so map
+  //    the app symbol to what the publisher stores (BTCUSD -> BITCOIN, USOIL -> WTI).
+  //    DXY is intentionally absent: the publisher does not quote it, so it falls
+  //    straight through to TwelveData below.
+  var qMap = {'XAUUSD':'XAUUSD','BTCUSD':'BITCOIN','BITCOIN':'BITCOIN','EURUSD':'EURUSD',
+              'GBPJPY':'GBPJPY','GBPUSD':'GBPUSD','USOIL':'WTI','WTI':'WTI',
+              'NAS100':'NAS100','US30':'US30'};
+  var qSym = qMap[sym];
+  if(qSym) {
+    try {
+      var qr = await db.from('live_quotes').select('symbol,bid,ask,updated_at').eq('symbol', qSym).limit(1);
+      var row = qr && qr.data && qr.data[0];
+      if(row && row.bid!=null && row.ask!=null && row.updated_at) {
+        // Parse the server timestamp robustly (iOS Safari is strict): force a 'T'
+        // separator and a 2-digit-minute offset so Date.parse cannot silently fail.
+        var ts = String(row.updated_at).replace(' ','T').replace(/([+-]\d\d)$/, '$1:00');
+        var age = Date.now() - Date.parse(ts);   // ms since the EA published this row
+        // 15s window. Publisher writes every ~3s, so a live row is far under this.
+        // If it is stale (publisher/EA down), age climbs past 15s and we fall back.
+        if(!isNaN(age) && age >= 0 && age < 15000) {
+          var mid = (parseFloat(row.bid) + parseFloat(row.ask)) / 2;
+          if(!isNaN(mid) && mid > 0) return mid;
+        }
+      }
+    } catch(e) { /* fall through to TwelveData */ }
+  }
+
+  // 2) FALLBACK: TwelveData latest price (unchanged). Used when no fresh AFT quote.
   var tdMap = {'XAUUSD':'XAU/USD','BTCUSD':'BTC/USD','BITCOIN':'BTC/USD','EURUSD':'EUR/USD',
                'GBPJPY':'GBP/JPY','GBPUSD':'GBP/USD','DXY':'UUP','USOIL':'USO','WTI':'USO',
                'NAS100':'QQQ','US30':'DIA'};
