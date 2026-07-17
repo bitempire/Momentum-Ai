@@ -5303,9 +5303,9 @@ async function executeTrade(method) {
       var _pairKey = (currentSignal.pair||'').toString().toUpperCase().replace('/','');
       var _live = null;
       try{
-        var _zr = await db.from('live_prices').select('bid').eq('symbol',_pairKey).single();
-        var _zrow = (_zr && _zr.data) ? (Array.isArray(_zr.data)?_zr.data[0]:_zr.data) : null;
-        if(_zrow && _zrow.bid!=null) _live = parseFloat(_zrow.bid);
+        // 16 Jul 2026: fresh price (TwelveData), NOT the dead live_prices table.
+        // A stale zone gate would check the entry zone against a 3-week-old price.
+        _live = await mmLivePrice(_pairKey);
       }catch(e){}
       // Tag 2: live price unavailable - cannot verify the zone
       if(_live===null || isNaN(_live)){
@@ -6395,6 +6395,33 @@ async function tdFetch(url) {
     _processTdQueue();
   });
 }
+
+// 16 Jul 2026: mmLivePrice - the ONE fresh price source for the whole app.
+// The old connector that filled the live_prices table died on 23 June, leaving
+// every price in the app frozen 3 weeks stale (gold stuck at 4106 while the
+// market was at ~4030). This reads the latest close from TwelveData - the same
+// fresh source scanner-verdict uses - so the app never shows a dead price again.
+// Returns a Number, or null if unavailable (callers must handle null, e.g. the
+// zone gate blocks the trade rather than trusting a missing price).
+var _mmPriceCache = {};   // {sym: {price, at}} - 20s micro-cache to avoid hammering the API
+async function mmLivePrice(appSymbol) {
+  var sym = (appSymbol||'').toString().toUpperCase().replace('/','');
+  var tdMap = {'XAUUSD':'XAU/USD','BTCUSD':'BTC/USD','BITCOIN':'BTC/USD','EURUSD':'EUR/USD',
+               'GBPJPY':'GBP/JPY','GBPUSD':'GBP/USD','DXY':'UUP','USOIL':'USO','WTI':'USO',
+               'NAS100':'QQQ','US30':'DIA'};
+  var tdSym = tdMap[sym];
+  if(!tdSym) return null;
+  var c = _mmPriceCache[sym];
+  if(c && (Date.now()-c.at) < 20000) return c.price;   // fresh enough
+  try {
+    var url = 'https://api.twelvedata.com/price?symbol='+encodeURIComponent(tdSym)+'&apikey='+TWELVE_DATA_KEY;
+    var d = await tdFetch(url);
+    var px = d && d.price!=null ? parseFloat(d.price) : null;
+    if(px!=null && !isNaN(px)){ _mmPriceCache[sym] = {price:px, at:Date.now()}; return px; }
+  } catch(e){}
+  return null;
+}
+
 function _processTdQueue() {
   if(!_tdCallQueue.length) return;
   var wait = Math.max(0, _tdMinGapMs - (Date.now() - _tdLastCallMs));
@@ -6474,38 +6501,13 @@ async function loadLivePrices() {
   loadAFTPrices();
 }
 
-// Reads real AFT prices from Supabase live_prices (connector fills this).
-// If the table is empty, does nothing — the source above stays as fallback.
+// 16 Jul 2026: RETIRED. This used to overwrite the Market Overview cards with
+// prices from the live_prices table, which froze on 23 June (gold stuck at 4106).
+// The loadLivePrices() function above already fills the same cards from fresh
+// TwelveData quotes, so this now does nothing rather than clobber them with stale
+// data. Kept as a no-op so its callers don't break.
 async function loadAFTPrices() {
-  if(!db) return false;
-  try {
-    var res = await db.from('live_prices').select('*');
-    var rows = (res && res.data) ? res.data : [];
-    if(!rows.length) return false;
-    var applied = false;
-    rows.forEach(function(r){
-      var sym = r.symbol;
-      var pEl = document.getElementById('price-'+sym);
-      if(!pEl) return;
-      var price = parseFloat(r.last!=null?r.last:(r.bid!=null?r.bid:r.ask));
-      if(isNaN(price)) return;
-      var chg = (r.change_pct!=null)?parseFloat(r.change_pct):0;
-      var isUp = chg>=0;
-      pEl.textContent = fmtPrice(sym, price);
-      var cEl = document.getElementById('change-'+sym);
-      if(cEl){ cEl.textContent=(isUp?'▲ +':'▼ ')+Math.abs(chg).toFixed(2)+'%'; cEl.className='mkt-change '+(isUp?'up':'dn'); }
-      var sEl = document.getElementById('sym-'+sym);
-      if(sEl&&sEl.parentElement){
-        var card=sEl.parentElement;
-        card.className='mkt-card '+(isUp?'up':'dn');
-        var spark=card.querySelector('.mkt-spark');
-        if(spark){ spark.dataset.trend=isUp?'up':'dn'; spark.dataset.color=isUp?'#00c87a':'#FF1E3C'; drawSpark(spark); }
-      }
-      applied = true;
-    });
-    if(applied) window._lastDataUpdate = Date.now();
-    return applied;
-  } catch(e) { console.warn('loadAFTPrices:', e.message); return false; }
+  return false;
 }
 
 // Reads real open positions from Supabase (data worker fills this).
@@ -9073,12 +9075,14 @@ async function runMAIScanner() {
     document.getElementById('tech-momentum').textContent = techMom;
     document.getElementById('tech-momentum').style.color = techMom==='Strong'?'#00C87A':techMom==='Moderate'?'#FFB020':'#FF1E3C';
 
-    // 3. GET DXY from live_prices for sentiment
+    // 3. DXY for sentiment - fresh from TwelveData, not the dead live_prices table.
+    // (DXY bullish = gold bearish; we approximate via UUP's short move. If the
+    //  fetch fails, default neutral rather than trusting a stale table.)
     var dxyBull = false;
     try {
-      var dxyRes = await db.from('live_prices').select('bid,change_pct').eq('symbol','DXY').single();
-      var dxy = dxyRes && dxyRes.data ? (Array.isArray(dxyRes.data)?dxyRes.data[0]:dxyRes.data) : null;
-      if(dxy) dxyBull = parseFloat(dxy.change_pct||0) > 0;
+      var dxyUrl = 'https://api.twelvedata.com/quote?symbol=UUP&apikey='+TWELVE_DATA_KEY;
+      var dxyQ = await tdFetch(dxyUrl);
+      if(dxyQ && dxyQ.percent_change!=null) dxyBull = parseFloat(dxyQ.percent_change) > 0;
     } catch(e) {}
 
     // 4. CALL CLAUDE AI for full analysis
