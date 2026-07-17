@@ -6516,6 +6516,7 @@ async function loadLivePrices() {
       var td = TWELVE_SYMBOLS[app], q = data[td];
       if(!q||q.status==='error') return;
       var price = parseFloat(q.close), open = parseFloat(q.open);
+      _mktOpen[app] = open;
       var chg = ((price-open)/open*100).toFixed(2), isUp = price>=open;
       var pEl=document.getElementById('price-'+app);
       var cEl=document.getElementById('change-'+app);
@@ -6538,8 +6539,52 @@ async function loadLivePrices() {
 // The loadLivePrices() function above already fills the same cards from fresh
 // TwelveData quotes, so this now does nothing rather than clobber them with stale
 // data. Kept as a no-op so its callers don't break.
+// 17 Jul 2026: LIVE Market Overview. live_quotes is our OWN Supabase table (the
+// bridge EA publishes AFT's real price every ~3s) and is NOT rate-limited like
+// TwelveData, so the existing 2s _pricePoll can now drive a genuinely live ticker.
+// Fills the same cards loadLivePrices() seeded, using the broker's real mid price.
+// DXY is not published to live_quotes, so its card keeps its TwelveData value. A
+// stale (>15s) or missing row leaves the last shown number untouched - it never
+// blanks a card and never shows a frozen price as if it were live.
+var _mktOpen = {};      // daily open per card, from the once-loaded TwelveData quote
+var _aftBusy = false;   // overlap guard so a slow read never stacks on the 2s poll
 async function loadAFTPrices() {
-  return false;
+  if(_aftBusy) return false;
+  if(typeof document!=='undefined' && document.hidden) return false;   // idle when backgrounded
+  var cardMap = {'XAUUSD':'XAUUSD','BTCUSD':'BITCOIN','USOIL':'WTI'};   // app card -> broker symbol
+  _aftBusy = true;
+  try {
+    var url = SUPABASE_URL+'/rest/v1/live_quotes?select=symbol,bid,ask,updated_at&symbol=in.(XAUUSD,BITCOIN,WTI)';
+    var r = await fetch(url,{headers:{'apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY}});
+    if(!r.ok){ _aftBusy=false; return false; }
+    var rows = await r.json();
+    if(!Array.isArray(rows)){ _aftBusy=false; return false; }
+    var byBroker = {};
+    rows.forEach(function(x){ byBroker[x.symbol] = x; });
+    Object.keys(cardMap).forEach(function(app){
+      var row = byBroker[cardMap[app]];
+      if(!row || row.bid==null || row.ask==null || !row.updated_at) return;
+      // Robust timestamp parse (iOS Safari is strict): force 'T' + 2-digit offset.
+      var ts = String(row.updated_at).replace(' ','T').replace(/([+-]\d\d)$/,'$1:00');
+      var age = Date.now() - Date.parse(ts);
+      if(isNaN(age) || age < 0 || age >= 15000) return;   // stale/missing: leave last value
+      var mid = (parseFloat(row.bid) + parseFloat(row.ask)) / 2;
+      if(isNaN(mid) || mid <= 0) return;
+      var pEl = document.getElementById('price-'+app);
+      if(pEl) pEl.textContent = fmtPrice(app, mid);
+      var open = _mktOpen[app];
+      if(open!=null && !isNaN(open) && open>0){
+        var isUp = mid >= open;
+        var chg = ((mid-open)/open*100).toFixed(2);
+        var cEl = document.getElementById('change-'+app);
+        if(cEl){ cEl.textContent = (isUp?'▲ +':'▼ ')+chg+'%'; cEl.className='mkt-change '+(isUp?'up':'dn'); }
+        var sEl = document.getElementById('sym-'+app);
+        if(sEl && sEl.parentElement){ sEl.parentElement.className = 'mkt-card '+(isUp?'up':'dn'); }
+      }
+    });
+  } catch(e) { /* leave last values on any error */ }
+  _aftBusy = false;
+  return true;
 }
 
 // Reads real open positions from Supabase (data worker fills this).
