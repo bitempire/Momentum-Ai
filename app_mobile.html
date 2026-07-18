@@ -7766,6 +7766,23 @@ function openAcademyLesson(ls,lv){
 // ANALYST SIGNALS MANAGEMENT
 // ═══════════════════════════════════════════════════
 var _analystAllSignals=[];
+// The three filter buttons have called filterAnalystSignals since the screen was
+// written, but it was never defined - every tap threw ReferenceError and the list
+// just sat there. The filter is held in state and applied inside the renderer, so
+// editing or deleting a signal does not silently drop you back to "All".
+var _analystFilter='all';
+function filterAnalystSignals(mode, btn){
+  _analystFilter = mode || 'all';
+  var bs=document.getElementsByClassName('analyst-sig-filter');
+  for(var i=0;i<bs.length;i++){
+    var on=(bs[i]===btn);
+    if(on) bs[i].classList.add('active'); else bs[i].classList.remove('active');
+    bs[i].style.background  = on ? 'rgba(255,30,60,0.12)' : 'var(--surface)';
+    bs[i].style.borderColor = on ? 'rgba(255,30,60,0.3)'  : 'var(--border)';
+    bs[i].style.color       = on ? 'var(--red)'           : 'var(--text2)';
+  }
+  renderAnalystSignals(_analystAllSignals);
+}
 async function loadAnalystSignals(){
   var container=document.getElementById('analyst-signals-list');if(!container)return;
   container.innerHTML='<div class="empty-state" style="padding:24px;"><i class="ti ti-loader"></i>Loading...</div>';
@@ -7777,7 +7794,18 @@ async function loadAnalystSignals(){
 }
 function renderAnalystSignals(sigs){
   var container=document.getElementById('analyst-signals-list');if(!container)return;
-  if(!sigs||!sigs.length){container.innerHTML='<div class="empty-state" style="padding:24px;"><i class="ti ti-broadcast"></i>No signals yet</div>';return;}
+  var total=(sigs||[]).length;
+  // Anything not 'active' counts as inactive, so a status we have not seen yet
+  // still lands somewhere rather than vanishing from both filters.
+  sigs=(sigs||[]).filter(function(s){
+    if(_analystFilter==='active') return s.status==='active';
+    if(_analystFilter==='closed') return s.status!=='active';
+    return true;
+  });
+  if(!sigs.length){
+    var msg = total ? 'No '+(_analystFilter==='active'?'active':'inactive')+' signals'
+                    : 'No signals yet';
+    container.innerHTML='<div class="empty-state" style="padding:24px;"><i class="ti ti-broadcast"></i>'+msg+'</div>';return;}
   container.innerHTML='';
   sigs.forEach(function(sig){
     var dir=(sig.direction||'BUY').toLowerCase(),isAct=sig.status==='active';
