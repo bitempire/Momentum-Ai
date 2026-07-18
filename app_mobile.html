@@ -8970,8 +8970,17 @@ async function stnUseTpl(id){
   _stnTpl=JSON.parse(JSON.stringify(t.settings));
   _stnFrom=t.name;
   if(db && activeAccount){
-    try{ await db.from('mt5_accounts').update({ smart_template_id:t.id }).eq('id', activeAccount.id);
-         activeAccount.smart_template_id=t.id; }catch(e){}
+    // 18 Jul 2026: this used to be try/catch with an EMPTY catch, and the db client
+    // returns errors in the result rather than throwing - so a REJECTED update was
+    // indistinguishable from a successful one. The UI showed the template selected
+    // while smart_template_id stayed NULL, and the trade then had no ladder.
+    // Check the result, and tell the user if it did not persist.
+    var _r = await db.from('mt5_accounts').update({ smart_template_id:t.id }).eq('id', activeAccount.id);
+    if(_r && _r.error){
+      alert('Could not save template selection: '+_r.error.message);
+      return;
+    }
+    activeAccount.smart_template_id=t.id;
   }
   var $=function(x){return document.getElementById(x);};
   if($('stn-sl-signal')) $('stn-sl-signal').classList.toggle('on', !!_stnTpl.stop_loss.from_signal);
