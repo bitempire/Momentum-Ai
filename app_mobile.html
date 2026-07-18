@@ -7999,6 +7999,15 @@ function closeExecutePopup() {
 // 18 Jul 2026: resetExecOptions() and selectExecOption() removed. They drove the
 // old Instant/Custom radio UI, which the template picker replaced. Nothing called
 // them, and they referenced element ids that no longer exist in the DOM.
+function tradeConsentAll(){
+  return !!(currentUser && (currentUser.trade_consent_all === true || currentUser.trade_consent_all === 'true'));
+}
+async function setTradeConsentAll(val){
+  if(!currentUser) return;
+  currentUser.trade_consent_all = val;
+  sessionStorage.setItem('mob_user', JSON.stringify(currentUser));
+  try{ await db.from('users').update({ trade_consent_all: val }).eq('id', currentUser.id); }catch(e){}
+}
 function requestTradeConsent(){
   if(tradeConsentAll()){ executeTrade('smart'); return; }
   openTradeConsentSheet();
@@ -8442,19 +8451,38 @@ async function updateAutoTradeStatusInPopup() {
     }
   } catch(e) {}
 }
-function updateSmartToolSummary() {
+// 18 Jul 2026: this described window._eaSettings - the RETIRED flat model
+// (dca_points / partial_pct / trail_step). It told the user their trade would do
+// something different from what the engine actually executes, which on a money
+// screen is worse than showing nothing. Now it describes the REAL ratio template
+// the account is set to trade.
+async function updateSmartToolSummary() {
   var el = document.getElementById('smart-tool-summary');
   if(!el) return;
-  var ea = window._eaSettings || {};
-  var parts = [];
-  if(ea.auto_risk) parts.push('Risk '+( ea.risk_pct||1)+'% per trade');
-  if(ea.partial_close) parts.push('Partial close '+( ea.partial_pct||'75%')+' at TP');
-  if(ea.breakeven) parts.push('Breakeven SL');
-  if(ea.trailing) parts.push('Trailing '+( ea.trail_step||5)+' pts');
-  if(ea.dca_enabled) parts.push('DCA enabled');
-  el.textContent = parts.length ? parts.join(' · ') : 'No settings saved yet — tap Adjust below';
+  if(!activeAccount || !activeAccount.smart_template_id){
+    el.textContent = 'No template selected - choose one when you execute.';
+    return;
+  }
+  try {
+    var r = await db.from('smart_templates').select('name,settings')
+                    .eq('id', activeAccount.smart_template_id).limit(1);
+    var row = r && r.data && r.data[0];
+    if(!row){ el.textContent = 'Template not found - choose one when you execute.'; return; }
+    var s = (typeof row.settings==='string') ? JSON.parse(row.settings) : (row.settings||{});
+    var parts = [];
+    parts.push(row.name || 'Template');
+    var nL = (s.dca && s.dca.enabled && s.dca.layers) ? s.dca.layers.length : 1;
+    parts.push(nL + (nL===1 ? ' entry' : ' layers'));
+    if(s.take_profit && s.take_profit.enabled && s.take_profit.levels && s.take_profit.levels.length)
+      parts.push(s.take_profit.levels.length + ' TP');
+    if(s.breakeven && s.breakeven.enabled) parts.push('breakeven');
+    if(s.trailing && s.trailing.enabled)   parts.push('trailing');
+    if(s.risk && s.risk.risk_pct!=null)    parts.push('risk ' + s.risk.risk_pct + '%');
+    el.textContent = parts.join(' \u00b7 ');
+  } catch(e) {
+    el.textContent = 'Could not load template.';
+  }
 }
-
 // AUTO TRADING (legacy - kept for compatibility)
 async function loadAnalystOptions() {
   var sel = document.getElementById('ea-auto-analyst');
