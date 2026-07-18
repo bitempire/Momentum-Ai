@@ -7991,6 +7991,11 @@ async function confirmExecution() {
   requestTradeConsent();
 }
 
+function closeExecutePopup() {
+  var popup = document.getElementById('execute-choice-popup');
+  if(popup) popup.style.display = 'none';
+}
+
 // 18 Jul 2026: resetExecOptions() and selectExecOption() removed. They drove the
 // old Instant/Custom radio UI, which the template picker replaced. Nothing called
 // them, and they referenced element ids that no longer exist in the DOM.
