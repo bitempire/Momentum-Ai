@@ -8557,6 +8557,18 @@ var STN_SPECS = {
 };
 function stnSpec(sym){ return STN_SPECS[sym] || { point:0.01, vpp:1.00, min_stop:10, spread:0 }; }
 
+// The EA does NOT use the raw broker floor. MMAI_RequiredStopDistance returns
+// broker_floor x MMAI_STOPS_BUFFER (1.5), read live per symbol at runtime, and
+// refuses any stop closer than that. On BITCOIN the raw floor is 20000 pts
+// ($200) but the EA requires 30000 ($300) - a signal with a $290 stop was
+// accepted here and then refused at execution (observed live, 18 Jul 2026).
+//
+// min_stop above stays the RAW broker number, as its comment promises. Anything
+// comparing against a PLACEABLE distance must call stnMinStop(), which applies
+// the same 1.5x the EA does. Keep STN_STOPS_BUFFER equal to MMAI_STOPS_BUFFER.
+var STN_STOPS_BUFFER = 1.5;
+function stnMinStop(sym){ return Math.ceil(stnSpec(sym).min_stop * STN_STOPS_BUFFER); }
+
 var STN_DEFAULT = {
   version:3, name:'My Setup',
   risk:{ risk_pct:1.0 },
@@ -8663,9 +8675,11 @@ function stnResolve(t, sig, fill){
   var tr=t.trailing||{};
   if(tr.enabled){
     o.tr = { arm:Math.round(reach*tr.arm_reach_pct/100), step:Math.round(reach*tr.step_reach_pct/100) };
-    if(o.tr.step < sp.min_stop)
-      o.warn.push('Trail step ('+o.tr.step+' pts) is below '+sym+"'s minimum stop of "+sp.min_stop+
-                  ' pts. The broker will REJECT every trailing move.');
+    var needStop = stnMinStop(sym);
+    if(o.tr.step < needStop)
+      o.warn.push('Trail step ('+o.tr.step+' pts) is below the '+needStop+
+                  ' pts the EA requires on '+sym+' (broker floor '+sp.min_stop+
+                  ' x1.5). Trailing will be DISABLED on this basket.');
     else if(sp.spread>0 && o.tr.step < sp.spread*3)
       o.warn.push('Trail step ('+o.tr.step+' pts) is under 3x the spread. A spread widening will stop you out with no price move.');
     if(o.be && (o.tr.arm - o.tr.step) <= o.be.buf)
