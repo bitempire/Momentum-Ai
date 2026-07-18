@@ -1560,7 +1560,29 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 
 .stn-mtable{background:var(--bg3);border:1px solid var(--border);border-radius:13px;overflow:hidden;margin-top:4px}
 .stn-mtable .th,.stn-mtable .tr{display:grid;align-items:center;padding:11px 14px}
-.stn-mtable.tp .th,.stn-mtable.tp .tr{grid-template-columns:38px 1fr 1fr}
+.stn-mtable.tp .th,.stn-mtable.tp .tr,.stn-mtable.tp .tot{grid-template-columns:26px repeat(4,1fr);gap:6px}
+.stn-mtable.tp.edit .th,.stn-mtable.tp.edit .tr{grid-template-columns:26px repeat(3,1fr) 28px}
+.stn-mtable.tp .th{font-size:11px;font-weight:400;letter-spacing:.12em;color:#5A5865;text-transform:uppercase;background:transparent;border-bottom:1px solid rgba(255,30,60,.25)}
+.stn-mtable.tp .th span{text-align:right}
+.stn-mtable.tp .th span:first-child{text-align:left}
+.stn-mtable.tp .th .unit{cursor:pointer}
+.stn-mtable.tp .th .unit i{color:var(--red);font-size:11px;vertical-align:-2px;letter-spacing:0}
+.stn-mtable.tp .tr{font-size:12.5px}
+.stn-mtable.tp .tr .c{text-align:right;font-variant-numeric:tabular-nums}
+.stn-mtable.tp .tr .idx{text-align:left;color:var(--red);font-size:11px;font-weight:600}
+.stn-mtable.tp .tr .px{color:var(--text)}
+.stn-mtable.tp .tr .cp{color:#FF6B7E}
+.stn-mtable.tp .tr .vl{color:var(--green);font-weight:700;cursor:pointer}
+.stn-mtable.tp .tr .dm{color:var(--text3)}
+.stn-mtable.tp .tr .cw{position:relative}
+.stn-mtable.tp .tr input.cin{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.10);border-radius:6px;padding:5px 7px;color:var(--text);font-size:12.5px;text-align:right;font-variant-numeric:tabular-nums;outline:none;-moz-appearance:textfield}
+.stn-mtable.tp .tr input.cin::-webkit-outer-spin-button,.stn-mtable.tp .tr input.cin::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.stn-mtable.tp .tr input.cin:focus{border-color:rgba(255,30,60,.55)}
+.stn-mtable.tp .tr .cw .lv{display:block;font-size:10px;line-height:1.3;color:var(--text3);text-align:right;margin-top:3px;letter-spacing:0}
+.stn-mtable.tp .tot{display:grid;align-items:center;padding:12px 14px;border-top:1px solid rgba(255,30,60,.25);background:rgba(255,255,255,.02);font-size:12.5px}
+.stn-mtable.tp .tot .k{text-align:right;font-size:11px;letter-spacing:.12em;color:#5A5865}
+.stn-mtable.tp .tot .g{text-align:right;color:var(--green);font-weight:700;font-variant-numeric:tabular-nums}
+.stn-mtable.tp .tot .v{text-align:right;color:var(--text);font-weight:700;font-variant-numeric:tabular-nums}
 .stn-mtable .th{color:var(--text3);font-weight:600;font-size:9.5px;letter-spacing:.6px;text-transform:uppercase;border-bottom:1px solid var(--border)}
 .stn-mtable .tr{border-bottom:1px solid rgba(255,255,255,.04);font-size:13px}
 .stn-mtable .tr:last-child{border-bottom:none}
@@ -2410,10 +2432,13 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         <div><div class="stn-lbl">Measure from</div><div class="stn-hint" id="stn-mf-hint">-</div></div>
         <div class="stn-field" id="stn-mf-field" onclick="stnPickMeasureFrom()">Average entry</div>
       </div>
-      <div class="stn-mtable tp">
-        <div class="th"><span>Lvl</span><span>Distance</span><span>Price</span><span>Close</span></div>
+      <div class="stn-tbl-cap"><div class="t">Levels</div>
+        <div class="stn-pen" id="stn-tp-pen" onclick="stnToggleEdit()"><i class="ti ti-pencil"></i></div></div>
+      <div class="stn-mtable tp" id="stn-tp-tbl">
+        <div class="th"><span>#</span><span class="unit" id="stn-tp-unit-h" onclick="stnUnitSheet()">Reach <i class="ti ti-chevron-down"></i></span><span>Price</span><span id="stn-tp-h4">Close</span><span id="stn-tp-h5">Lots</span></div>
         <div id="stn-tp-body"></div>
-        <div class="stn-addrow" onclick="stnAddTp()"><i class="ti ti-plus"></i> Add level</div>
+        <div class="stn-addrow" id="stn-tp-addrow" onclick="stnAddTp()" style="display:none"><i class="ti ti-plus"></i> Add level</div>
+        <div class="tot" id="stn-tp-tot"></div>
       </div>
       <div class="stn-pctbar"><div class="closed" id="stn-pct-closed" style="width:0%"></div><div class="run" id="stn-pct-run" style="width:0%"></div></div>
       <div class="stn-tp-ind" id="stn-tp-ind"></div>
@@ -8742,9 +8767,45 @@ function stnDepthCommit(el,i){
   stnRender();
 }
 function stnLotCommit(el,i){
+
   var v=parseFloat(el.value);
+
   if(!(v>0)){ stnRender(); return; }
+
   _stnTpl.dca.layers[i].lots=Math.round(v*100)/100;
+
+  stnRender();
+
+}
+
+
+
+// ---- REACH ENTRY. Same idea as depth, measured against the anchor reach
+// instead of the zone. reach_pct 100 IS the analyst's signal TP, so 100 is the
+// natural target rather than a hard ceiling - the contract allows up to 200.
+var _stnReachPts=0;
+function stnReachLive(el,k){
+  var lb=document.getElementById('stn-rl-'+k); if(!lb) return;
+  var v=parseFloat(el.value); if(isNaN(v)) v=0;
+  if(!_stnReachPts){ lb.textContent=''; return; }
+  var pct=Math.round(stnUnitToPts(v)/_stnReachPts*100);
+  if(pct<0) pct=0; if(pct>200) pct=200;
+  lb.innerHTML = pct===100 ? '= 100% &middot; signal TP'
+               : (pct>100 ? '= '+pct+'% <span class="cl">past the signal TP</span>' : '= '+pct+'%');
+}
+function stnReachCommit(el,k){
+  var v=parseFloat(el.value); if(isNaN(v)){ stnRender(); return; }
+  var pct = _stnReachPts ? Math.round(stnUnitToPts(v)/_stnReachPts*100) : Math.round(v);
+  if(pct>200) pct=200; if(pct<1) pct=1;
+  var prev = k>0 ? (_stnTpl.take_profit.levels[k-1].reach_pct||0) : 0;
+  if(pct<=prev) pct=Math.min(200, prev+1);
+  _stnTpl.take_profit.levels[k].reach_pct=pct;
+  stnRender();
+}
+function stnCloseCommit(el,k){
+  var v=Math.round(parseFloat(el.value));
+  if(isNaN(v)||v<1) v=1; if(v>100) v=100;
+  _stnTpl.take_profit.levels[k].close_pct=v;
   stnRender();
 }
 // Chrome shared by both render paths so the two can never drift apart.
@@ -8757,6 +8818,19 @@ function stnLadderChrome(){
   if(a) a.style.display=_stnEdit?'flex':'none';
   var eb=document.getElementById('stn-editbar');
   if(eb) eb.className='stn-editbar'+(_stnEdit?' on':'');
+  // Take profit shares the mode, the unit and the pencil - two tables that
+  // looked different was most of what made this panel feel unfinished.
+  var tt=document.getElementById('stn-tp-tbl'), tp2=document.getElementById('stn-tp-pen'),
+      ta=document.getElementById('stn-tp-addrow'), tu=document.getElementById('stn-tp-unit-h'),
+      t4=document.getElementById('stn-tp-h4'), t5=document.getElementById('stn-tp-h5');
+  if(tt) tt.className='stn-mtable tp'+(_stnEdit?' edit':'');
+  if(tp2) tp2.className='stn-pen'+(_stnEdit?' on':'');
+  if(ta) ta.style.display=_stnEdit?'flex':'none';
+  if(tu) tu.innerHTML=_stnEdit ? 'Reach to target'
+        : STN_UNITS[_stnUnit].h.replace('Distance','Reach')+' <i class="ti ti-chevron-down"></i>';
+  if(tu) tu.style.cursor=_stnEdit?'default':'pointer';
+  if(t4) t4.textContent='Close';
+  if(t5) t5.textContent=_stnEdit?'':'Lots';
   if(uh) uh.innerHTML=_stnEdit ? 'Depth into zone'
         : STN_UNITS[_stnUnit].h+' <i class="ti ti-chevron-down"></i>';
   if(uh) uh.style.cursor=_stnEdit?'default':'pointer';
@@ -8919,7 +8993,7 @@ function stnRender(){
 
   // ---- ladder
   // The depth inputs convert against this signal's geometry, so stash it.
-  _stnRoomPts=r.room; _stnSymCur=r.symbol;
+  _stnRoomPts=r.room; _stnSymCur=r.symbol; _stnReachPts=r.reach;
   var h='';
   for(var i=0;i<r.layers.length;i++){
     var L=r.layers[i];
@@ -8963,13 +9037,25 @@ function stnRender(){
   var th='';
   for(var k=0;k<r.tps.length;k++){
     var T=r.tps[k];
-    th += '<div class="tr'+(T.losing?' bad':'')+'"><span class="ly">'+T.n+'</span>'+
-          '<span class="ed" onclick="stnEditTp('+k+')">'+T.pct+'% to target</span>'+
-          '<span class="mut">'+T.px.toFixed(2)+'</span>'+
-          '<span class="val ed" onclick="stnEditClose('+k+')">'+T.close+'%</span>'+
-          '<span class="del" onclick="stnDelTp('+k+')"><i class="ti ti-trash"></i></span></div>';
+    var reach = _stnEdit
+      ? '<span class="c cw"><input class="cin" type="number" inputmode="decimal" step="any" value="'+
+        stnPtsToUnit(T.off)+'" oninput="stnReachLive(this,'+k+')" onchange="stnReachCommit(this,'+k+')">'+
+        '<span class="lv" id="stn-rl-'+k+'">= '+T.pct+'%'+(T.pct===100?' &middot; signal TP':'')+'</span></span>'
+      : '<span class="c px">'+stnUnitVal(r.symbol,T.off)+'</span>';
+    var closec = _stnEdit
+      ? '<span class="c"><input class="cin" type="number" inputmode="numeric" step="1" min="1" max="100" value="'+
+        T.close+'" onchange="stnCloseCommit(this,'+k+')"></span>'
+      : '<span class="c cp">'+T.close+'%</span>';
+    var tptail = _stnEdit
+      ? '<span class="del" onclick="stnDelTp('+k+')"><i class="ti ti-trash"></i></span>'
+      : '<span class="c vl">'+T.lots.toFixed(2)+'</span>';
+    th += '<div class="tr'+(T.losing?' bad':'')+'"><span class="idx">'+T.n+'</span>'+reach+
+          '<span class="c px">'+T.px.toFixed(stnDp(r.symbol))+'</span>'+closec+tptail+'</div>';
   }
   if($('stn-tp-body')) $('stn-tp-body').innerHTML=th;
+  if($('stn-tp-tot'))  $('stn-tp-tot').innerHTML='<span></span><span class="k">Total</span><span></span>'+
+      (_stnEdit ? '<span class="v">'+r.closedPct+'%</span><span></span>'
+                : '<span class="g">est. '+stnMoney(r.profit)+'</span><span class="v">'+(r.lots-r.trailLots).toFixed(2)+'</span>');
   if($('stn-pct-closed')) $('stn-pct-closed').style.width=r.closedPct+'%';
   if($('stn-pct-run'))    $('stn-pct-run').style.width=r.trailPct+'%';
   if($('stn-tp-ind')) $('stn-tp-ind').innerHTML = r.trailPct>0
@@ -8995,7 +9081,7 @@ function stnRender(){
 function stnRenderRatiosOnly(){
   var t=_stnTpl, $=function(id){return document.getElementById(id);};
   // No signal, so there is nothing to convert against - depth is typed as a %.
-  _stnRoomPts=0; _stnSymCur='';
+  _stnRoomPts=0; _stnSymCur=''; _stnReachPts=0;
   var h='', _stnRatioLots=0;
   for(var i=0;i<t.dca.layers.length;i++){
     var L=t.dca.layers[i];
@@ -9023,12 +9109,22 @@ function stnRenderRatiosOnly(){
   var th='';
   for(var k=0;k<t.take_profit.levels.length;k++){
     var T=t.take_profit.levels[k];
-    th += '<div class="tr"><span class="ly">'+(k+1)+'</span>'+
-          '<span class="ed" onclick="stnEditTp('+k+')">'+T.reach_pct+'% to target</span>'+
-          '<span class="mut">-</span><span class="val ed" onclick="stnEditClose('+k+')">'+T.close_pct+'%</span>'+
-          '<span class="del" onclick="stnDelTp('+k+')"><i class="ti ti-trash"></i></span></div>';
+    var r0 = _stnEdit
+      ? '<span class="c cw"><input class="cin" type="number" inputmode="numeric" step="1" min="1" max="200" value="'+
+        T.reach_pct+'" onchange="stnReachCommit(this,'+k+')"><span class="lv">% to target</span></span>'
+      : '<span class="c px">'+T.reach_pct+'%</span>';
+    th += '<div class="tr"><span class="idx">'+(k+1)+'</span>'+r0+
+          '<span class="c dm">&mdash;</span>'+
+          (_stnEdit
+            ? '<span class="c"><input class="cin" type="number" inputmode="numeric" step="1" min="1" max="100" value="'+
+              T.close_pct+'" onchange="stnCloseCommit(this,'+k+')"></span>'+
+              '<span class="del" onclick="stnDelTp('+k+')"><i class="ti ti-trash"></i></span>'
+            : '<span class="c cp">'+T.close_pct+'%</span><span class="c dm">&mdash;</span>')+
+          '</div>';
   }
   if($('stn-tp-body')) $('stn-tp-body').innerHTML=th;
+  if($('stn-tp-tot'))  $('stn-tp-tot').innerHTML='<span></span><span class="k">Total</span><span></span>'+
+      '<span class="c dm">&mdash;</span><span class="c dm">&mdash;</span>';
   if($('stn-be-field'))    $('stn-be-field').textContent    = t.breakeven.trigger_reach_pct+'%';
   if($('stn-bebuf-field')) $('stn-bebuf-field').textContent = t.breakeven.buffer_reach_pct+'%';
   if($('stn-tra-field'))   $('stn-tra-field').textContent   = t.trailing.arm_reach_pct+'%';
