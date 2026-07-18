@@ -6523,18 +6523,31 @@ async function mmLivePrice(appSymbol) {
   var qSym = qMap[sym];
   if(qSym) {
     try {
-      var qr = await db.from('live_quotes').select('symbol,bid,ask,updated_at').eq('symbol', qSym).limit(1);
-      var row = qr && qr.data && qr.data[0];
-      if(row && row.bid!=null && row.ask!=null && row.updated_at) {
-        // Parse the server timestamp robustly (iOS Safari is strict): force a 'T'
-        // separator and a 2-digit-minute offset so Date.parse cannot silently fail.
-        var ts = String(row.updated_at).replace(' ','T').replace(/([+-]\d\d)$/, '$1:00');
-        var age = Date.now() - Date.parse(ts);   // ms since the EA published this row
-        // 15s window. Publisher writes every ~3s, so a live row is far under this.
-        // If it is stale (publisher/EA down), age climbs past 15s and we fall back.
-        if(!isNaN(age) && age >= 0 && age < 15000) {
-          var mid = (parseFloat(row.bid) + parseFloat(row.ask)) / 2;
+      // FRESHNESS IS DECIDED BY THE DATABASE, NOT THIS DEVICE.
+      // This used to be Date.now() - Date.parse(updated_at), which trusts the
+      // device clock. A phone running 60s slow reading a 90s-old quote computes
+      // an age of 30s and accepts it, and the zone gate then prices a trade
+      // against a stale number. mmai_live_quotes computes `fresh` against now()
+      // on the server, which is the same clock the bridge publishes with.
+      var qr = await db.rpc('mmai_live_quotes', { p_symbols:[qSym], p_max_age_ms:15000 });
+      if(qr && !qr.error) {
+        var row = qr.data && qr.data[0];
+        if(row && row.fresh && row.mid!=null) {
+          var mid = parseFloat(row.mid);
           if(!isNaN(mid) && mid > 0) return mid;
+        }
+      } else {
+        // The RPC is not deployed yet. Fall back to the old device-clock check
+        // rather than losing broker prices entirely - degraded, not broken.
+        var q2 = await db.from('live_quotes').select('symbol,bid,ask,updated_at').eq('symbol', qSym).limit(1);
+        var r2 = q2 && q2.data && q2.data[0];
+        if(r2 && r2.bid!=null && r2.ask!=null && r2.updated_at) {
+          var ts = String(r2.updated_at).replace(' ','T').replace(/([+-]\d\d)$/, '$1:00');
+          var age = Date.now() - Date.parse(ts);
+          if(!isNaN(age) && age >= 0 && age < 15000) {
+            var m2 = (parseFloat(r2.bid) + parseFloat(r2.ask)) / 2;
+            if(!isNaN(m2) && m2 > 0) return m2;
+          }
         }
       }
     } catch(e) { /* fall through to TwelveData */ }
@@ -6657,21 +6670,38 @@ async function loadAFTPrices() {
   var cardMap = {'XAUUSD':'XAUUSD','BTCUSD':'BITCOIN','USOIL':'WTI'};   // app card -> broker symbol
   _aftBusy = true;
   try {
-    var url = SUPABASE_URL+'/rest/v1/live_quotes?select=symbol,bid,ask,updated_at&symbol=in.(XAUUSD,BITCOIN,WTI)';
-    var r = await fetch(url,{headers:{'apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY}});
-    if(!r.ok){ _aftBusy=false; return false; }
-    var rows = await r.json();
-    if(!Array.isArray(rows)){ _aftBusy=false; return false; }
+    // Server-decided freshness, same reason as mmLivePrice. Falls back to the
+    // plain table read if the RPC is not deployed yet.
+    var hdr = {'apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY,'Content-Type':'application/json'};
+    var rows = null, srvFresh = true;
+    var r = await fetch(SUPABASE_URL+'/rest/v1/rpc/mmai_live_quotes',
+              {method:'POST',headers:hdr,
+               body:JSON.stringify({p_symbols:['XAUUSD','BITCOIN','WTI'],p_max_age_ms:15000})});
+    if(r.ok){ rows = await r.json(); }
+    if(!Array.isArray(rows)){
+      srvFresh = false;
+      var r0 = await fetch(SUPABASE_URL+'/rest/v1/live_quotes?select=symbol,bid,ask,updated_at&symbol=in.(XAUUSD,BITCOIN,WTI)',
+                {headers:{'apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY}});
+      if(!r0.ok){ _aftBusy=false; return false; }
+      rows = await r0.json();
+      if(!Array.isArray(rows)){ _aftBusy=false; return false; }
+    }
     var byBroker = {};
     rows.forEach(function(x){ byBroker[x.symbol] = x; });
     Object.keys(cardMap).forEach(function(app){
       var row = byBroker[cardMap[app]];
-      if(!row || row.bid==null || row.ask==null || !row.updated_at) return;
-      // Robust timestamp parse (iOS Safari is strict): force 'T' + 2-digit offset.
-      var ts = String(row.updated_at).replace(' ','T').replace(/([+-]\d\d)$/,'$1:00');
-      var age = Date.now() - Date.parse(ts);
-      if(isNaN(age) || age < 0 || age >= 15000) return;   // stale/missing: leave last value
-      var mid = (parseFloat(row.bid) + parseFloat(row.ask)) / 2;
+      if(!row) return;
+      var mid;
+      if(srvFresh){
+        if(!row.fresh || row.mid==null) return;           // server says stale: leave last value
+        mid = parseFloat(row.mid);
+      } else {
+        if(row.bid==null || row.ask==null || !row.updated_at) return;
+        var ts = String(row.updated_at).replace(' ','T').replace(/([+-]\d\d)$/,'$1:00');
+        var age = Date.now() - Date.parse(ts);
+        if(isNaN(age) || age < 0 || age >= 15000) return;
+        mid = (parseFloat(row.bid) + parseFloat(row.ask)) / 2;
+      }
       if(isNaN(mid) || mid <= 0) return;
       var pEl = document.getElementById('price-'+app);
       if(pEl) pEl.textContent = fmtPrice(app, mid);
