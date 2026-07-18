@@ -8555,7 +8555,23 @@ var STN_SPECS = {
   'BITCOIN': { point:0.01,    vpp:0.01, min_stop:20000, spread:0  },
   'EURUSD':  { point:0.00001, vpp:1.00, min_stop:1,     spread:0  }
 };
-function stnSpec(sym){ return STN_SPECS[sym] || { point:0.01, vpp:1.00, min_stop:10, spread:0 }; }
+// STN_SPECS is keyed by the BROKER symbol. Signals store the APP symbol
+// ('BTCUSD'), which executeTrade translates via tradeSymMap. The smart tool
+// never did, so stnSpec('BTCUSD') missed and fell through to the default
+// vpp 1.00 - correct for gold and FX, 100x WRONG for BTC (real vpp 0.01).
+// Observed live 18 Jul 2026: a 0.01-lot BTC basket priced at $500 risk when
+// the EA's own gate computed $4.90. Same translation, one place.
+var STN_SYM_MAP = { 'BTCUSD':'BITCOIN', 'BTCUSDT':'BITCOIN', 'DXY':'USDX', 'USOIL':'WTI' };
+function stnBrokerSym(sym){ return STN_SYM_MAP[sym] || sym; }
+function stnSpec(sym){
+  var b = stnBrokerSym(sym);
+  if(STN_SPECS[b]) return STN_SPECS[b];
+  // Never fail silently on a money figure. The default suits gold and FX; on
+  // anything with a different contract size it will misprice.
+  console.warn('stnSpec: no broker spec for "'+sym+'" (-> "'+b+'"). '+
+               'Using the gold/FX default - dollar figures may be wrong.');
+  return { point:0.01, vpp:1.00, min_stop:10, spread:0 };
+}
 
 // The EA does NOT use the raw broker floor. MMAI_RequiredStopDistance returns
 // broker_floor x MMAI_STOPS_BUFFER (1.5), read live per symbol at runtime, and
@@ -8920,7 +8936,11 @@ async function loadSmartToolNew(){
       var s = await db.from('signals').select('*').order('created_at',{ascending:false}).limit(1);
       var d = s && s.data && s.data[0];
       if(d && d.entry_from!=null && d.entry_to!=null && d.sl!=null){
-        _stnSig = { symbol:d.symbol, side:d.side||'BUY',
+        // The signals table columns are `pair` and `direction`, NOT `symbol`
+        // and `side`. Reading the wrong names gave symbol=undefined, which is
+        // why the panel read "the latest undefined signal" and why stnSpec
+        // fell through to the wrong contract size.
+        _stnSig = { symbol:d.pair, side:(d.direction||'BUY').toString().toUpperCase(),
                     entry_from:parseFloat(d.entry_from), entry_to:parseFloat(d.entry_to),
                     sl:parseFloat(d.sl), tp:parseFloat(d.tp1!=null?d.tp1:d.take_profit) };
         if(isNaN(_stnSig.tp)) _stnSig=null;
