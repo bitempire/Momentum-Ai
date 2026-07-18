@@ -1493,6 +1493,35 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 .stn-mtable .tr small{display:block;font-size:9px;line-height:1.3;color:var(--text3);font-weight:400;margin-top:2px;letter-spacing:0}
 .stn-mtable .tr.bad{background:rgba(255,30,60,.07);border-left:2px solid var(--red)}
 .stn-mtable .tr .bad{color:var(--red)}
+/* ---- LADDER, Senior 6 18 Jul 2026. 5 balanced columns, uniform header, red used for meaning. ---- */
+.stn-mtable.dca .th,.stn-mtable.dca .tr,.stn-mtable.dca .tot{grid-template-columns:26px repeat(4,1fr);gap:6px}
+.stn-mtable.dca.edit .th,.stn-mtable.dca.edit .tr{grid-template-columns:26px repeat(3,1fr) 28px}
+.stn-mtable.dca .th{font-size:11px;font-weight:400;letter-spacing:.12em;color:#5A5865;text-transform:uppercase;background:transparent;border-bottom:1px solid rgba(255,30,60,.25)}
+.stn-mtable.dca .th span{text-align:right}
+.stn-mtable.dca .th span:first-child{text-align:left}
+.stn-mtable.dca .th .unit{cursor:pointer}
+.stn-mtable.dca .th .unit i{color:var(--red);font-size:11px;vertical-align:-2px;letter-spacing:0}
+.stn-mtable.dca .tr{font-size:12.5px}
+.stn-mtable.dca .tr .c{text-align:right;font-variant-numeric:tabular-nums}
+.stn-mtable.dca .tr .idx{text-align:left;color:var(--red);font-size:11px;font-weight:600}
+.stn-mtable.dca .tr .px{color:var(--text)}
+.stn-mtable.dca .tr .rk{color:#FF6B7E}
+.stn-mtable.dca .tr .vl{color:var(--green);font-weight:700;cursor:pointer}
+.stn-mtable.dca .tr .dm{color:var(--text3)}
+.stn-mtable.dca .tr.floor{background:rgba(255,30,60,.05)}
+.stn-mtable.dca .tot{display:grid;align-items:center;padding:12px 14px;border-top:1px solid rgba(255,30,60,.25);background:rgba(255,255,255,.02);font-size:12.5px}
+.stn-mtable.dca .tot .k{text-align:right;font-size:11px;letter-spacing:.12em;color:#5A5865}
+.stn-mtable.dca .tot .r{text-align:right;color:var(--red);font-weight:700;font-variant-numeric:tabular-nums}
+.stn-mtable.dca .tot .v{text-align:right;color:var(--green);font-weight:700;font-variant-numeric:tabular-nums}
+.stn-pen{width:28px;height:28px;border:1px solid rgba(255,30,60,.30);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--red);cursor:pointer;flex:none}
+.stn-pen.on{background:rgba(255,30,60,.14)}
+.stn-usheet{display:none;margin-top:8px;border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--bg3)}
+.stn-usheet .uh{padding:10px 14px 6px;font-size:11px;letter-spacing:.12em;color:#5A5865;text-transform:uppercase}
+.stn-usheet .uo{padding:11px 14px;border-top:1px solid var(--border);cursor:pointer}
+.stn-usheet .uo.on{background:rgba(255,30,60,.08)}
+.stn-usheet .uo .n{font-size:13px;font-weight:600;color:var(--text)}
+.stn-usheet .uo.on .n{color:var(--red)}
+.stn-usheet .uo .d{font-size:11px;color:var(--text2);margin-top:3px;line-height:1.5}
 .stn-addrow{padding:10px 12px;display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11.5px;border-top:1px solid rgba(255,255,255,.05);cursor:pointer}
 .stn-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}
 .stn-stats .s{background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:10px 12px}
@@ -1520,7 +1549,6 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 
 .stn-mtable{background:var(--bg3);border:1px solid var(--border);border-radius:13px;overflow:hidden;margin-top:4px}
 .stn-mtable .th,.stn-mtable .tr{display:grid;align-items:center;padding:11px 14px}
-.stn-mtable.dca .th,.stn-mtable.dca .tr{grid-template-columns:30px 1fr 1fr 1fr}
 .stn-mtable.tp .th,.stn-mtable.tp .tr{grid-template-columns:38px 1fr 1fr}
 .stn-mtable .th{color:var(--text3);font-weight:600;font-size:9.5px;letter-spacing:.6px;text-transform:uppercase;border-bottom:1px solid var(--border)}
 .stn-mtable .tr{border-bottom:1px solid rgba(255,255,255,.04);font-size:13px}
@@ -2341,12 +2369,15 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       </div>
 
       <div class="stn-eyebrow">Entries &middot; DCA</div>
-      <div class="stn-tbl-cap"><div class="t">Ladder</div></div>
-      <div class="stn-mtable dca">
-        <div class="th"><span>#</span><span>Away</span><span>Price / Risk</span><span>Lot</span></div>
+      <div class="stn-tbl-cap"><div class="t">Ladder</div>
+        <div class="stn-pen" id="stn-pen" onclick="stnToggleEdit()"><i class="ti ti-pencil"></i></div></div>
+      <div class="stn-mtable dca" id="stn-dca-tbl">
+        <div class="th"><span>#</span><span class="unit" id="stn-unit-h" onclick="stnUnitSheet()">Distance <i class="ti ti-chevron-down"></i></span><span>Price</span><span id="stn-h4">Risk</span><span id="stn-h5">Vol</span></div>
         <div id="stn-dca-body"></div>
-        <div class="stn-addrow" onclick="stnAddLayer()"><i class="ti ti-plus"></i> Add layer</div>
+        <div class="stn-addrow" id="stn-addrow" onclick="stnAddLayer()" style="display:none"><i class="ti ti-plus"></i> Add layer</div>
+        <div class="tot" id="stn-dca-tot"></div>
       </div>
+      <div class="stn-usheet" id="stn-usheet"></div>
       <div class="stn-stats">
         <div class="s"><div class="k">Total lots</div><div class="v" id="stn-total-lots">0.00</div></div>
         <div class="s"><div class="k">Avg entry</div><div class="v" id="stn-avg-entry">-</div></div>
@@ -8612,6 +8643,55 @@ function stnCash(sym, pts, lots){ return pts*stnSpec(sym).vpp*lots; }
 // already shows that. No minus signs anywhere in the ladder.
 function stnDp(sym){ var p=stnSpec(sym).point; return Math.max(0, Math.round(-Math.log(p)/Math.LN10)); }
 function stnDist(sym, pts){ return Math.abs(stnPrice(sym, pts)).toFixed(stnDp(sym)); }
+// DISPLAY UNITS. The template always stores PERCENTAGES; this only changes what
+// the ladder SHOWS. 0 price, 1 MT5 points, 2 pips. Nothing here reaches the EA.
+// Offsets arriving here are already in MT5 points (stnResolve), so price = off x
+// point and pips = off / 10. Never relabel without converting - that is the bug
+// that cost a day when 'points' meant two different things on the two sides.
+var STN_UNITS=[{n:'Price', h:'Distance',        d:"Movement on the chart, in the symbol's own price. What TradingView shows."},
+               {n:'Points',h:'Distance (pts)',  d:'MT5 points. Matches the EA log and the budget gate exactly.'},
+               {n:'Pips',  h:'Distance (pips)', d:'Ten MT5 points. Familiar on FX, not used by the engine.'}];
+var _stnUnit=0, _stnEdit=false;
+try{ var _su=localStorage.getItem('stn_unit'); if(_su!==null) _stnUnit=Math.max(0,Math.min(2,parseInt(_su)||0)); }catch(e){}
+function stnUnitVal(sym, pts){
+  if(_stnUnit===1) return Math.round(Math.abs(pts)).toLocaleString();
+  if(_stnUnit===2) return Math.round(Math.abs(pts)/10).toLocaleString();
+  return Math.abs(stnPrice(sym, pts)).toFixed(stnDp(sym));
+}
+function stnUnitSheet(){
+  var s=document.getElementById('stn-usheet'); if(!s) return;
+  if(s.style.display==='block'){ s.style.display='none'; return; }
+  var h='<div class="uh">Show distance as</div>';
+  for(var i=0;i<STN_UNITS.length;i++){ var u=STN_UNITS[i];
+    h+='<div class="uo'+(i===_stnUnit?' on':'')+'" onclick="stnSetUnit('+i+')">'+
+       '<div class="n">'+u.n+(i===_stnUnit?' <i class="ti ti-check"></i>':'')+'</div>'+
+       '<div class="d">'+u.d+'</div></div>'; }
+  s.innerHTML=h; s.style.display='block';
+}
+function stnSetUnit(i){
+  _stnUnit=i; try{ localStorage.setItem('stn_unit',i); }catch(e){}
+  var s=document.getElementById('stn-usheet'); if(s) s.style.display='none';
+  stnRender();
+}
+function stnToggleEdit(){
+  _stnEdit=!_stnEdit;
+  var s=document.getElementById('stn-usheet'); if(s) s.style.display='none';
+  stnRender();
+}
+// Chrome shared by both render paths so the two can never drift apart.
+function stnLadderChrome(){
+  var t=document.getElementById('stn-dca-tbl'), p=document.getElementById('stn-pen'),
+      a=document.getElementById('stn-addrow'), uh=document.getElementById('stn-unit-h'),
+      h4=document.getElementById('stn-h4'), h5=document.getElementById('stn-h5');
+  if(t) t.className='stn-mtable dca'+(_stnEdit?' edit':'');
+  if(p) p.className='stn-pen'+(_stnEdit?' on':'');
+  if(a) a.style.display=_stnEdit?'flex':'none';
+  if(uh) uh.innerHTML=_stnEdit ? 'Depth into zone'
+        : STN_UNITS[_stnUnit].h+' <i class="ti ti-chevron-down"></i>';
+  if(uh) uh.style.cursor=_stnEdit?'default':'pointer';
+  if(h4) h4.textContent=_stnEdit?'Vol':'Risk';
+  if(h5) h5.textContent=_stnEdit?'':'Vol';
+}
 
 // ─────────────────────────────────────────────────────────────────────────
 // THE RESOLVER. ratios + signal + fill -> points, prices, dollars.
@@ -8770,23 +8850,32 @@ function stnRender(){
   var h='';
   for(var i=0;i<r.layers.length;i++){
     var L=r.layers[i];
-    // Distance from the FIRST entry, in price. The % stays as the small line
-    // because the percentage is what the template stores and sends to the EA.
-    var depth = i===0 ? '<span class="mut">entry</span>'
-              : '<span class="ed" onclick="stnEditLayer('+i+')">'+stnDist(r.symbol,L.off)+
-                '<small>'+L.pct+'%'+(L.pct>=100?' &middot; floor':'')+'</small></span>';
     // Per-layer risk to the hard SL - the same arithmetic the EA budget gate runs.
+    // If this ever disagrees with the [GATE] lines in the Experts log, one of the
+    // two is wrong and it is worth stopping to find out which.
     var lrisk = L.fits ? stnCash(r.symbol, stnPts(r.symbol, L.px - r.sl), L.lots) : 0;
-    var px = i===0 ? 'market<small>'+stnMoney(lrisk)+'</small>'
-           : (L.fits ? L.px.toFixed(stnDp(r.symbol))+'<small>'+stnMoney(lrisk)+'</small>'
-                     : '<span class="bad">'+(L.why||'outside zone')+'</span>');
-    h += '<div class="tr'+(L.fits?'':' dead')+'"><span class="ly">'+L.n+'</span>'+depth+
-         '<span class="mut">'+px+'</span>'+
-         '<span class="val ed" onclick="stnEditLot('+i+')">'+L.lots.toFixed(2)+'</span>'+
-         (i>0?'<span class="del" onclick="stnDelLayer('+i+')"><i class="ti ti-trash"></i></span>':'<span></span>')+
-         '</div>';
+    var isFloor = (L.pct>=100 && L.fits);
+    // Resting view shows the DISTANCE in the chosen unit. Edit mode shows the
+    // PERCENTAGE, because that is what is actually stored and sent to the EA.
+    var dist = i===0 ? '<span class="c dm">market</span>'
+             : (_stnEdit
+                 ? '<span class="c ed" onclick="stnEditLayer('+i+')">'+L.pct+'%</span>'
+                 : '<span class="c px">'+stnUnitVal(r.symbol,L.off)+'</span>');
+    var price = L.fits ? '<span class="c px">'+L.px.toFixed(stnDp(r.symbol))+'</span>'
+                       : '<span class="c bad">'+(L.why||'outside zone')+'</span>';
+    var tail = _stnEdit
+      ? '<span class="c vl" onclick="stnEditLot('+i+')">'+L.lots.toFixed(2)+'</span>'+
+        (i>0?'<span class="del" onclick="stnDelLayer('+i+')"><i class="ti ti-trash"></i></span>':'<span></span>')
+      : '<span class="c rk">'+stnMoney(lrisk)+'</span>'+
+        '<span class="c vl" onclick="stnEditLot('+i+')">'+L.lots.toFixed(2)+'</span>';
+    h += '<div class="tr'+(L.fits?'':' dead')+(isFloor?' floor':'')+'">'+
+         '<span class="idx">'+L.n+'</span>'+dist+price+tail+'</div>';
   }
   if($('stn-dca-body'))   $('stn-dca-body').innerHTML=h;
+  if($('stn-dca-tot'))    $('stn-dca-tot').innerHTML='<span></span><span class="k">Total</span><span></span>'+
+      (_stnEdit ? '<span class="v">'+r.lots.toFixed(2)+'</span><span></span>'
+                : '<span class="r">'+stnMoney(r.worst)+'</span><span class="v">'+r.lots.toFixed(2)+'</span>');
+  stnLadderChrome();
   if($('stn-total-lots')) $('stn-total-lots').textContent=r.lots.toFixed(2);
   if($('stn-avg-entry'))  $('stn-avg-entry').textContent=r.avg.toFixed(2);
   if($('stn-tplfrom'))    $('stn-tplfrom').innerHTML = _stnFrom ? '<span class="dot"></span> Loaded from template: <b>'+_stnFrom+'</b>' : '';
@@ -8829,15 +8918,25 @@ function stnRender(){
 
 function stnRenderRatiosOnly(){
   var t=_stnTpl, $=function(id){return document.getElementById(id);};
-  var h='';
+  var h='', _stnRatioLots=0;
   for(var i=0;i<t.dca.layers.length;i++){
     var L=t.dca.layers[i];
-    h += '<div class="tr"><span class="ly">'+(i+1)+'</span>'+
-         (i===0?'<span class="mut">entry</span>':'<span class="ed" onclick="stnEditLayer('+i+')">'+L.room_pct+'% into zone</span>')+
-         '<span class="mut">-</span><span class="val ed" onclick="stnEditLot('+i+')">'+L.lots.toFixed(2)+'</span>'+
-         (i>0?'<span class="del" onclick="stnDelLayer('+i+')"><i class="ti ti-trash"></i></span>':'<span></span>')+'</div>';
+    // No signal loaded, so there is no fill to resolve against. Show the ratios
+    // themselves rather than inventing a price or a distance.
+    _stnRatioLots += L.lots;
+    h += '<div class="tr"><span class="idx">'+(i+1)+'</span>'+
+         (i===0?'<span class="c dm">entry</span>':'<span class="c ed" onclick="stnEditLayer('+i+')">'+L.room_pct+'%</span>')+
+         '<span class="c dm">&mdash;</span>'+
+         (_stnEdit
+           ? '<span class="c vl" onclick="stnEditLot('+i+')">'+L.lots.toFixed(2)+'</span>'+
+             (i>0?'<span class="del" onclick="stnDelLayer('+i+')"><i class="ti ti-trash"></i></span>':'<span></span>')
+           : '<span class="c dm">&mdash;</span><span class="c vl" onclick="stnEditLot('+i+')">'+L.lots.toFixed(2)+'</span>')+
+         '</div>';
   }
   if($('stn-dca-body')) $('stn-dca-body').innerHTML=h;
+  if($('stn-dca-tot'))  $('stn-dca-tot').innerHTML='<span></span><span class="k">Total</span><span></span>'+
+      '<span class="c dm">&mdash;</span><span class="v">'+_stnRatioLots.toFixed(2)+'</span>';
+  stnLadderChrome();
   var th='';
   for(var k=0;k<t.take_profit.levels.length;k++){
     var T=t.take_profit.levels[k];
