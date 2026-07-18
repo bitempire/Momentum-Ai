@@ -1490,6 +1490,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 .stn-mtable .tr .del{text-align:right;color:var(--text3);cursor:pointer}
 .stn-mtable .tr .del i{font-size:14px}
 .stn-mtable .tr.dead{opacity:.45}
+.stn-mtable .tr small{display:block;font-size:9px;line-height:1.3;color:var(--text3);font-weight:400;margin-top:2px;letter-spacing:0}
 .stn-mtable .tr.bad{background:rgba(255,30,60,.07);border-left:2px solid var(--red)}
 .stn-mtable .tr .bad{color:var(--red)}
 .stn-addrow{padding:10px 12px;display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11.5px;border-top:1px solid rgba(255,255,255,.05);cursor:pointer}
@@ -2342,7 +2343,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <div class="stn-eyebrow">Entries &middot; DCA</div>
       <div class="stn-tbl-cap"><div class="t">Ladder</div></div>
       <div class="stn-mtable dca">
-        <div class="th"><span>#</span><span>Depth</span><span>Price</span><span>Lot</span></div>
+        <div class="th"><span>#</span><span>Away</span><span>Price / Risk</span><span>Lot</span></div>
         <div id="stn-dca-body"></div>
         <div class="stn-addrow" onclick="stnAddLayer()"><i class="ti ti-plus"></i> Add layer</div>
       </div>
@@ -8604,6 +8605,13 @@ function stnMoney(n){ var s = (Math.abs(n)>=100) ? Math.round(n).toLocaleString(
 function stnPts(sym, priceDist){ return Math.round(Math.abs(priceDist)/stnSpec(sym).point); }
 function stnPrice(sym, pts){ return pts*stnSpec(sym).point; }
 function stnCash(sym, pts, lots){ return pts*stnSpec(sym).vpp*lots; }
+// Distance shown the way a chart shows it: PRICE, never MT5 points.
+// 50,000 points is $500 on BTC and $5 on gold - both have point 0.01 - so the
+// point number is unreadable without knowing the contract size. Price is not.
+// ALWAYS ABSOLUTE: a sell ladder sits ABOVE the fill and the price column
+// already shows that. No minus signs anywhere in the ladder.
+function stnDp(sym){ var p=stnSpec(sym).point; return Math.max(0, Math.round(-Math.log(p)/Math.LN10)); }
+function stnDist(sym, pts){ return Math.abs(stnPrice(sym, pts)).toFixed(stnDp(sym)); }
 
 // ─────────────────────────────────────────────────────────────────────────
 // THE RESOLVER. ratios + signal + fill -> points, prices, dollars.
@@ -8762,10 +8770,16 @@ function stnRender(){
   var h='';
   for(var i=0;i<r.layers.length;i++){
     var L=r.layers[i];
+    // Distance from the FIRST entry, in price. The % stays as the small line
+    // because the percentage is what the template stores and sends to the EA.
     var depth = i===0 ? '<span class="mut">entry</span>'
-              : '<span class="ed" onclick="stnEditLayer('+i+')">'+L.pct+'%'+(L.pct>=100?' &middot; floor':' into zone')+'</span>';
-    var px = i===0 ? '<span class="mut">market</span>'
-           : (L.fits ? L.px.toFixed(2) : '<span class="bad">'+(L.why||'outside zone')+'</span>');
+              : '<span class="ed" onclick="stnEditLayer('+i+')">'+stnDist(r.symbol,L.off)+
+                '<small>'+L.pct+'%'+(L.pct>=100?' &middot; floor':'')+'</small></span>';
+    // Per-layer risk to the hard SL - the same arithmetic the EA budget gate runs.
+    var lrisk = L.fits ? stnCash(r.symbol, stnPts(r.symbol, L.px - r.sl), L.lots) : 0;
+    var px = i===0 ? 'market<small>'+stnMoney(lrisk)+'</small>'
+           : (L.fits ? L.px.toFixed(stnDp(r.symbol))+'<small>'+stnMoney(lrisk)+'</small>'
+                     : '<span class="bad">'+(L.why||'outside zone')+'</span>');
     h += '<div class="tr'+(L.fits?'':' dead')+'"><span class="ly">'+L.n+'</span>'+depth+
          '<span class="mut">'+px+'</span>'+
          '<span class="val ed" onclick="stnEditLot('+i+')">'+L.lots.toFixed(2)+'</span>'+
