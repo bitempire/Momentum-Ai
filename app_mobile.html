@@ -5261,6 +5261,33 @@ async function executeTrade(method) {
   if(!volume || isNaN(volume) || volume<=0) volume = 0.01;
 
   // Build smart tool settings to attach to command
+  // 18 Jul 2026: SMART TEMPLATE WIRE CONTRACT (Option A).
+  // The command must carry the REAL ratio template the user is trading, copied in
+  // full - not a template id. If it carried an id and an admin edited that template
+  // while this basket was live, the running trade's rules would change underneath
+  // it. A copy means the trade executes the ladder that existed when it was placed.
+  // Ratios are sent EXACTLY as stored: the EA resolves them to points against the
+  // real fill, because only the EA knows the true fill price. No app-side resolution.
+  var tplPayload = null;
+  if(method==='smart' && activeAccount && activeAccount.smart_template_id && db) {
+    try {
+      var _tr = await db.from('smart_templates').select('settings')
+                        .eq('id', activeAccount.smart_template_id).limit(1);
+      var _trow = _tr && _tr.data && _tr.data[0];
+      if(_trow && _trow.settings) {
+        tplPayload = (typeof _trow.settings === 'string')
+                       ? JSON.parse(_trow.settings) : _trow.settings;
+      }
+    } catch(e) { tplPayload = null; }
+    // No template resolved -> send NO template. The EA then runs single-entry.
+    // Never invent a default ladder: a guessed ladder is a guessed money instruction.
+    if(!tplPayload) {
+      alert('No Smart Tool template is set for this account. Open Smart Tools and choose one before trading.');
+      if(btn){ btn.textContent=origText; btn.disabled=false; }
+      return;
+    }
+  }
+
   var smartSettings = null;
   if(method==='smart') {
     var ea = window._eaSettings || {};
@@ -5345,6 +5372,11 @@ async function executeTrade(method) {
     if(_hasZone){ cmd.entry_from = _zFrom; cmd.entry_to = _zTo; }
     if(_armed){ cmd.status = 'armed'; cmd.armed_at = new Date().toISOString(); }
     if(smartSettings) cmd.smart_settings = JSON.stringify(smartSettings);
+    // The ratio template the engine actually executes (contract section 3).
+    // entry_from / entry_to above ARE the zone the contract calls zone_from/zone_to.
+    // take_profit stays the ANALYST's TP - it is signal_tp, the anchor for
+    // reach_pct 100, NOT a ladder rung.
+    if(tplPayload) cmd.template = tplPayload;
     // Scanner verification for auto trades
     if(method === 'auto' && activeAccount && activeAccount.auto_entry_confirm === 'scanner') {
       var scanOk = await verifyScannerBeforeTrade(sym, side);
