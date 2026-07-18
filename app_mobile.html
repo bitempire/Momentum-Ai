@@ -7911,91 +7911,89 @@ function showNoMT5Warning(state) {
   document.body.appendChild(popup);
 }
 
-function openExecuteChoicePopup() {
+// 18 Jul 2026: the execute popup now picks a TEMPLATE, not an execution style.
+// The ladder a trade runs is the only meaningful choice at execute time, and the
+// old 'Custom Execute' branch navigated away and silently abandoned the trade.
+var _execTpls = [];
+async function openExecuteChoicePopup() {
   _execSelectedOption = '';
-  // Reset radio buttons
-  resetExecOptions();
-  // Disable confirm button
   var btn = document.getElementById('exec-confirm-btn');
   if(btn) { btn.style.opacity='0.4'; btn.style.pointerEvents='none'; }
-  // Set pair info
   if(currentSignal) {
     var lbl = document.getElementById('execute-popup-pair');
-    if(lbl) lbl.textContent = (currentSignal.pair||'--') + ' · ' + (currentSignal.direction||'BUY') + ' · ' + (currentSignal.timeframe||'H4');
+    if(lbl) lbl.textContent = (currentSignal.pair||'--') + ' \u00b7 ' + (currentSignal.direction||'BUY') + ' \u00b7 ' + (currentSignal.timeframe||'H4');
   }
   var popup = document.getElementById('execute-choice-popup');
   if(popup) popup.style.display = 'flex';
-}
-
-function closeExecutePopup() {
-  var popup = document.getElementById('execute-choice-popup');
-  if(popup) popup.style.display = 'none';
-}
-
-function resetExecOptions() {
-  // Reset instant
-  var oi = document.getElementById('exec-opt-instant');
-  var ri = document.getElementById('radio-instant');
-  var di = document.getElementById('radio-instant-dot');
-  if(oi) oi.style.borderColor = 'var(--border)';
-  if(ri) ri.style.borderColor = 'var(--border)';
-  if(di) di.style.background = 'transparent';
-  // Reset custom
-  var oc = document.getElementById('exec-opt-custom');
-  var rc = document.getElementById('radio-custom');
-  var dc = document.getElementById('radio-custom-dot');
-  if(oc) oc.style.borderColor = 'var(--border)';
-  if(rc) rc.style.borderColor = 'var(--border)';
-  if(dc) dc.style.background = 'transparent';
-}
-
-function selectExecOption(option) {
-  resetExecOptions();
-  _execSelectedOption = option;
-  if(option === 'instant') {
-    var oi = document.getElementById('exec-opt-instant');
-    var ri = document.getElementById('radio-instant');
-    var di = document.getElementById('radio-instant-dot');
-    if(oi) oi.style.borderColor = 'var(--green)';
-    if(ri) ri.style.borderColor = 'var(--green)';
-    if(di) di.style.background = 'var(--green)';
-  } else {
-    var oc = document.getElementById('exec-opt-custom');
-    var rc = document.getElementById('radio-custom');
-    var dc = document.getElementById('radio-custom-dot');
-    if(oc) oc.style.borderColor = '#4D9EFF';
-    if(rc) rc.style.borderColor = '#4D9EFF';
-    if(dc) dc.style.background = '#4D9EFF';
+  var list = document.getElementById('exec-tpl-list');
+  if(list) list.innerHTML = '<div style="font-size:12px;color:var(--text3);padding:14px;text-align:center;">Loading templates...</div>';
+  _execTpls = [];
+  try {
+    var r = await db.from('smart_templates').select('*').order('kind').order('slot');
+    if(r && r.data) _execTpls = r.data;
+  } catch(e) {}
+  if(!list) return;
+  if(!_execTpls.length){
+    list.innerHTML = '<div style="font-size:12px;color:var(--text3);padding:14px;text-align:center;line-height:1.6;">No templates yet.<br>Create one in Smart Tools first.</div>';
+    return;
   }
-  // Enable confirm button
+  var cur = activeAccount ? activeAccount.smart_template_id : null;
+  var html = '';
+  for(var i=0;i<_execTpls.length;i++){
+    var t = _execTpls[i];
+    var s = t.settings || {};
+    var nL = (s.dca && s.dca.layers) ? s.dca.layers.length : 1;
+    var nT = (s.take_profit && s.take_profit.levels) ? s.take_profit.levels.length : 0;
+    var rk = (s.risk && s.risk.risk_pct!=null) ? s.risk.risk_pct : '-';
+    var isCur = (cur && t.id===cur);
+    html += '<div id="etpl-'+t.id+'" onclick="selectExecTpl(\''+t.id+'\')" style="padding:13px;background:var(--bg3);border:2px solid '+(isCur?'var(--red)':'var(--border)')+';border-radius:12px;cursor:pointer;margin-bottom:9px;">'
+          + '<div style="display:flex;align-items:center;gap:10px;">'
+          +   '<div class="etpl-dot" style="width:18px;height:18px;border-radius:50%;border:2px solid '+(isCur?'var(--red)':'var(--border)')+';display:flex;align-items:center;justify-content:center;flex-shrink:0;">'
+          +     '<div style="width:9px;height:9px;border-radius:50%;background:'+(isCur?'var(--red)':'transparent')+';"></div></div>'
+          +   '<div style="flex:1;min-width:0;">'
+          +     '<div style="font-size:13px;font-weight:800;color:var(--text);">'+(t.name||'Template')+(t.kind==='mai'?' <span style="font-size:9px;font-weight:700;color:var(--gold);">MAI</span>':'')+'</div>'
+          +     '<div style="font-size:11px;color:var(--text3);margin-top:2px;">'+nL+' layer'+(nL!==1?'s':'')+' \u00b7 '+nT+' TP \u00b7 risk '+rk+'%</div>'
+          +   '</div></div></div>';
+  }
+  list.innerHTML = html;
+  // If the account already has one set, it is pre-selected and ready to confirm.
+  if(cur && _execTpls.filter(function(x){return x.id===cur;}).length){
+    _execSelectedOption = cur;
+    if(btn){ btn.style.opacity='1'; btn.style.pointerEvents='auto'; }
+  }
+}
+
+function selectExecTpl(id){
+  _execSelectedOption = id;
+  for(var i=0;i<_execTpls.length;i++){
+    var el = document.getElementById('etpl-'+_execTpls[i].id);
+    if(!el) continue;
+    var on = (_execTpls[i].id===id);
+    el.style.borderColor = on ? 'var(--red)' : 'var(--border)';
+    var dot = el.querySelector('.etpl-dot');
+    if(dot){ dot.style.borderColor = on ? 'var(--red)' : 'var(--border)';
+             dot.firstChild.style.background = on ? 'var(--red)' : 'transparent'; }
+  }
   var btn = document.getElementById('exec-confirm-btn');
-  if(btn) { btn.style.opacity='1'; btn.style.pointerEvents='auto'; }
+  if(btn){ btn.style.opacity='1'; btn.style.pointerEvents='auto'; }
 }
 
-function confirmExecution() {
+async function confirmExecution() {
   if(!_execSelectedOption) return;
-  closeExecutePopup();
-  if(_execSelectedOption === 'instant') {
-    requestTradeConsent();
-  } else {
-    // Navigate to Smart Tool settings
-    closeTradePopup();
-    switchTab('more');
-    setTimeout(function(){
-      openSmartTool('plain');
-    }, 400);
+  // Persist the chosen template on the account BEFORE trading, because
+  // executeTrade reads activeAccount.smart_template_id to build the command.
+  if(activeAccount && _execSelectedOption !== activeAccount.smart_template_id){
+    var r = await db.from('mt5_accounts').update({ smart_template_id:_execSelectedOption }).eq('id', activeAccount.id);
+    if(r && r.error){ alert('Could not set template: '+r.error.message); return; }
+    activeAccount.smart_template_id = _execSelectedOption;
   }
+  closeExecutePopup();
+  requestTradeConsent();
 }
 
-function tradeConsentAll(){
-  return !!(currentUser && (currentUser.trade_consent_all === true || currentUser.trade_consent_all === 'true'));
-}
-async function setTradeConsentAll(val){
-  if(!currentUser) return;
-  currentUser.trade_consent_all = val;
-  sessionStorage.setItem('mob_user', JSON.stringify(currentUser));
-  try{ await db.from('users').update({ trade_consent_all: val }).eq('id', currentUser.id); }catch(e){}
-}
+// 18 Jul 2026: resetExecOptions() and selectExecOption() removed. They drove the
+// old Instant/Custom radio UI, which the template picker replaced. Nothing called
+// them, and they referenced element ids that no longer exist in the DOM.
 function requestTradeConsent(){
   if(tradeConsentAll()){ executeTrade('smart'); return; }
   openTradeConsentSheet();
@@ -9955,42 +9953,23 @@ function showMT5ConnNotice(kind, reason) {
 </script>
 
   <!-- Execute Choice Popup -->
+  <!-- 18 Jul 2026: was Instant/Custom Execute. "Custom" navigated AWAY and
+       abandoned the trade, and neither option let the user choose a template.
+       Now that ratio templates exist, the choice that matters is WHICH ladder
+       to trade. This picks a template, sets it on the account, then trades. -->
   <div id="execute-choice-popup" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);z-index:9200;align-items:flex-end;">
-    <div style="width:100%;background:var(--bg2);border-radius:20px 20px 0 0;border-top:1px solid var(--border);padding:20px 18px 36px;">
+    <div style="width:100%;background:var(--bg2);border-radius:20px 20px 0 0;border-top:1px solid var(--border);padding:20px 18px 36px;max-height:88vh;overflow-y:auto;">
       <div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px;"></div>
-      <div style="font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);margin-bottom:4px;">EXECUTE TRADE</div>
-      <div id="execute-popup-pair" style="font-size:12px;color:var(--text3);margin-bottom:20px;">XAUUSD · BUY · H4</div>
-
-      <!-- Option 1: Instant Execute -->
-      <div id="exec-opt-instant" onclick="selectExecOption('instant')" style="padding:14px;background:var(--bg3);border:2px solid var(--border);border-radius:12px;cursor:pointer;margin-bottom:10px;transition:all .2s;">
-        <div style="display:flex;align-items:center;gap:12px;">
-          <div style="width:20px;height:20px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;" id="radio-instant">
-            <div style="width:10px;height:10px;border-radius:50%;background:transparent;" id="radio-instant-dot"></div>
-          </div>
-          <div>
-            <div style="font-size:13px;font-weight:800;color:var(--text);letter-spacing:.3px;">INSTANT EXECUTE</div>
-            <div style="font-size:11px;color:var(--text3);margin-top:2px;">Default parameters apply · Lot 0.01 · SL/TP auto from signal</div>
-          </div>
-        </div>
+      <div style="font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);margin-bottom:4px;">CHOOSE TEMPLATE</div>
+      <div id="execute-popup-pair" style="font-size:12px;color:var(--text3);margin-bottom:18px;">--</div>
+      <div id="exec-tpl-list" style="margin-bottom:18px;">
+        <div style="font-size:12px;color:var(--text3);padding:14px;text-align:center;">Loading templates...</div>
       </div>
-
-      <!-- Option 2: Custom Execute -->
-      <div id="exec-opt-custom" onclick="selectExecOption('custom')" style="padding:14px;background:var(--bg3);border:2px solid var(--border);border-radius:12px;cursor:pointer;margin-bottom:20px;transition:all .2s;">
-        <div style="display:flex;align-items:center;gap:12px;">
-          <div style="width:20px;height:20px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;" id="radio-custom">
-            <div style="width:10px;height:10px;border-radius:50%;background:transparent;" id="radio-custom-dot"></div>
-          </div>
-          <div>
-            <div style="font-size:13px;font-weight:800;color:var(--text);letter-spacing:.3px;">CUSTOM EXECUTE</div>
-            <div style="font-size:11px;color:var(--text3);margin-top:2px;">Configure before sending · Use your saved settings</div>
-          </div>
-        </div>
-      </div>
-
-      <button id="exec-confirm-btn" onclick="confirmExecution()" style="width:100%;padding:14px;background:var(--grad);border:none;border-radius:12px;color:#fff;font-family:Orbitron,sans-serif;font-size:13px;font-weight:800;letter-spacing:1px;cursor:pointer;opacity:0.4;pointer-events:none;margin-bottom:10px;">CONFIRM</button>
+      <button id="exec-confirm-btn" onclick="confirmExecution()" style="width:100%;padding:14px;background:var(--grad);border:none;border-radius:12px;color:#fff;font-family:Orbitron,sans-serif;font-size:13px;font-weight:800;letter-spacing:1px;cursor:pointer;opacity:0.4;pointer-events:none;margin-bottom:10px;">CONFIRM &amp; TRADE</button>
       <button onclick="closeExecutePopup()" style="width:100%;padding:12px;background:transparent;border:1px solid var(--border);border-radius:12px;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;">Cancel</button>
     </div>
   </div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 
   <!-- MAI Report Popup -->
