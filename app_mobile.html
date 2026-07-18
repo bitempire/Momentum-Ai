@@ -4588,6 +4588,8 @@ function enterApp(user) {
   if(!window._aftPricePoll) window._aftPricePoll = setInterval(function(){ refreshActiveBalance(); loadLivePositions(); checkDataFreshness(); }, 4000);
   if(!window._pastSigPoll)  window._pastSigPoll  = setInterval(function(){ loadPastSignals(); }, 30000);
   if(!window._pricePoll) window._pricePoll = setInterval(function(){ loadAFTPrices(); }, 2000);
+  // Baseline only, so the banner does not flash before the first poll lands.
+  // loadAFTPrices refreshes this every time quotes actually arrive.
   window._lastDataUpdate = Date.now();
 }
 
@@ -6715,6 +6717,10 @@ async function loadAFTPrices() {
         if(sEl && sEl.parentElement){ sEl.parentElement.className = 'mkt-card '+(isUp?'up':'dn'); }
       }
     });
+    // Quotes came back. THIS is what 'data connection ok' means - the marker
+    // used to be set once at startup and never again, so the banner appeared
+    // 60s after every page load and could not clear until a manual refresh.
+    window._lastDataUpdate = Date.now();
   } catch(e) { /* leave last values on any error */ }
   _aftBusy = false;
   return true;
@@ -6837,11 +6843,17 @@ function checkDataFreshness(){
   var banner = document.getElementById('data-stale-banner');
   if(!banner) return;
   var last = window._lastDataUpdate || 0;
-  var stale = last > 0 && (Date.now() - last) > 60000;
+  // 60s with no successful quote poll. The poll runs every 2s, so this needs
+  // about 30 consecutive failures - it will not fire on one dropped request.
+  var ageMs = Date.now() - last;
+  var stale = last > 0 && ageMs > 60000;
+  banner.style.display = stale ? 'flex' : 'none';
   if(stale){
-    banner.style.display='flex';
-  } else {
-    banner.style.display='none';
+    // Say how long, so it is a status rather than a permanent decoration.
+    var secs = Math.floor(ageMs/1000);
+    var txt  = secs >= 120 ? Math.floor(secs/60)+' min' : secs+'s';
+    banner.innerHTML = '<i class="ti ti-wifi-off" style="font-size:13px;"></i> '+
+                       'Data connection lost \u2014 no prices for '+txt;
   }
 }
 
