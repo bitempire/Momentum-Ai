@@ -6310,7 +6310,9 @@ async function loadAdminTemplates(){
   var mai=document.getElementById('adm-tpl-list'), cnt=document.getElementById('adm-tpl-count');
   if(!mai||!db) return;
   try{
-    var r=await db.from('smart_templates').select('*').order('kind').order('slot');
+    // Presets only. Never fetch user templates here: at a thousand users that
+    // is five thousand rows the admin cannot act on anyway.
+    var r=await db.from('smart_templates').select('*').eq('kind','mai').order('slot');
     if(r.error) throw r.error;
     // MAI presets ONLY. User templates are deliberately not listed: a thousand
     // users at five slots each is five thousand rows an admin can do nothing
@@ -8304,7 +8306,14 @@ async function openExecuteChoicePopup() {
   if(list) list.innerHTML = '<div style="font-size:12px;color:var(--text3);padding:14px;text-align:center;">Loading templates...</div>';
   _execTpls = [];
   try {
-    var r = await db.from('smart_templates').select('*').order('kind').order('slot');
+    var r = await db.from('smart_templates').select('*')
+                    // MULTI-TENANT FIX 19 Jul 2026. This used to select every row.
+                    // kind 'user' rows belong to individual accounts, so every user
+                    // was being shown every other user's personal templates, and the
+                    // 5 slots collided because two users could both hold slot 1.
+                    // MAI presets are shared by design; personal ones are not.
+                    .or('kind.eq.mai,user_id.eq.'+(currentUser?currentUser.id:'00000000-0000-0000-0000-000000000000'))
+                    .order('kind').order('slot');
     if(r && r.data) _execTpls = r.data;
   } catch(e) {}
   if(!list) return;
@@ -9570,7 +9579,14 @@ async function loadSmartToolNew(){
     _stnSig = null; _stnTpls = [];
 
     if(db){
-      var r = await db.from('smart_templates').select('*').order('kind').order('slot');
+      var r = await db.from('smart_templates').select('*')
+                      // MULTI-TENANT FIX 19 Jul 2026. This used to select every row.
+                      // kind 'user' rows belong to individual accounts, so every user
+                      // was being shown every other user's personal templates, and the
+                      // 5 slots collided because two users could both hold slot 1.
+                      // MAI presets are shared by design; personal ones are not.
+                      .or('kind.eq.mai,user_id.eq.'+(currentUser?currentUser.id:'00000000-0000-0000-0000-000000000000'))
+                      .order('kind').order('slot');
       if(r && r.data) _stnTpls = r.data;
     }
     // whatever this account is set to trade with (not in publish mode - the
@@ -9765,9 +9781,14 @@ function stnCloseTemplates(){ var el=document.getElementById('stn-tpl-sheet'); i
 function stnTplTab(which){
   _stnTab=which;
   var b=document.getElementById('stn-tpl-body'); if(!b) return;
-  var h='<div class="stn-tabs">'+
-        '<div class="tb'+(which==='user'?' on':'')+'" onclick="stnTplTab(\'user\')">My Templates</div>'+
-        '<div class="tb'+(which==='mai'?' on':'')+'" onclick="stnTplTab(\'mai\')">MAI Templates</div></div>';
+  // Publishing a preset is not a moment to browse personal templates - the admin
+  // is authoring the shared set, so only that set is shown.
+  if(_stnPublishMode) which = 'mai';
+  var h = _stnPublishMode
+        ? '<div class="stn-tabs"><div class="tb on">MAI Templates</div></div>'
+        : '<div class="stn-tabs">'+
+          '<div class="tb'+(which==='user'?' on':'')+'" onclick="stnTplTab(\'user\')">My Templates</div>'+
+          '<div class="tb'+(which==='mai'?' on':'')+'" onclick="stnTplTab(\'mai\')">MAI Templates</div></div>';
   var list=_stnTpls.filter(function(x){ return x.kind===which; });
   if(which==='user'){
     for(var i=1;i<=5;i++){
