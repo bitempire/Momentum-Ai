@@ -8305,15 +8305,7 @@ async function openExecuteChoicePopup() {
   if(list) list.innerHTML = '<div style="font-size:12px;color:var(--text3);padding:14px;text-align:center;">Loading templates...</div>';
   _execTpls = [];
   try {
-    var r = await db.from('smart_templates').select('*')
-                    // MULTI-TENANT FIX 19 Jul 2026. This used to select every row.
-                    // kind 'user' rows belong to individual accounts, so every user
-                    // was being shown every other user's personal templates, and the
-                    // 5 slots collided because two users could both hold slot 1.
-                    // MAI presets are shared by design; personal ones are not.
-                    .or('kind.eq.mai,user_id.eq.'+(currentUser?currentUser.id:'00000000-0000-0000-0000-000000000000'))
-                    .order('kind').order('slot');
-    if(r && r.data) _execTpls = r.data;
+    _execTpls = await stnLoadVisibleTemplates();
   } catch(e) {}
   if(!list) return;
   if(!_execTpls.length){
@@ -9570,6 +9562,30 @@ function stnPickMeasureFrom(){
 // ─────────────────────────────────────────────────────────────────────────
 // LOAD / SAVE
 // ─────────────────────────────────────────────────────────────────────────
+// Templates visible to the CURRENT user: every MAI preset, plus that user's own
+// personal templates. Two plain queries rather than one .or() filter - a single
+// malformed filter returns an empty list with no error surfaced, and the whole
+// templates sheet then reads "No MAI templates yet" for reasons nobody can see.
+// Both queries are tiny, and any failure is logged instead of swallowed.
+async function stnLoadVisibleTemplates(){
+  var out=[];
+  if(!db) return out;
+  try{
+    var m = await db.from('smart_templates').select('*').eq('kind','mai').order('name');
+    if(m.error) console.error('smart_templates mai:', m.error);
+    else if(m.data) out = out.concat(m.data);
+  }catch(e){ console.error('smart_templates mai threw:', e); }
+
+  if(currentUser && currentUser.id){
+    try{
+      var u = await db.from('smart_templates').select('*')
+                      .eq('kind','user').eq('user_id', currentUser.id).order('slot');
+      if(u.error) console.error('smart_templates user:', u.error);
+      else if(u.data) out = out.concat(u.data);
+    }catch(e){ console.error('smart_templates user threw:', e); }
+  }
+  return out;
+}
 async function loadSmartToolNew(){
   try{
     // In publish mode the admin panel already put the template it wants edited
@@ -9578,15 +9594,7 @@ async function loadSmartToolNew(){
     _stnSig = null; _stnTpls = [];
 
     if(db){
-      var r = await db.from('smart_templates').select('*')
-                      // MULTI-TENANT FIX 19 Jul 2026. This used to select every row.
-                      // kind 'user' rows belong to individual accounts, so every user
-                      // was being shown every other user's personal templates, and the
-                      // 5 slots collided because two users could both hold slot 1.
-                      // MAI presets are shared by design; personal ones are not.
-                      .or('kind.eq.mai,user_id.eq.'+(currentUser?currentUser.id:'00000000-0000-0000-0000-000000000000'))
-                      .order('kind').order('slot');
-      if(r && r.data) _stnTpls = r.data;
+      _stnTpls = await stnLoadVisibleTemplates();
     }
     // whatever this account is set to trade with (not in publish mode - the
     // admin is authoring a shared preset, not choosing what to trade)
