@@ -2471,7 +2471,10 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         <div class="stn-field" id="stn-trs-field" onclick="stnEditNum('tr_step','Trail step, % of the way to target',1,100,1)">15%</div>
       </div>
 
-      <button class="red-btn" style="margin-top:16px;" onclick="stnSave()">SAVE SMART TOOLS</button>
+      <div id="stn-ro-note" style="display:none;margin-top:16px;padding:12px 13px;border:1px solid rgba(255,30,60,0.3);border-radius:10px;background:rgba(255,30,60,0.06);font-size:11px;color:var(--text2);line-height:1.6;">
+        <i class="ti ti-lock" style="color:var(--red);"></i> <b style="color:var(--text);">MAI template &middot; view only</b><br>
+        Provided by MomentumAI. Selecting it is enough &mdash; your trades will use it. To change anything, build your own under My Templates.</div>
+      <button class="red-btn" id="stn-save-btn" style="margin-top:16px;" onclick="stnSave()">SAVE SMART TOOLS</button>
     </div>
   </div>
 
@@ -9020,7 +9023,7 @@ function stnSetUnit(i){
 // type, but a snapshot is held so Cancel truly reverts. Leaving without Apply
 // discards, which is what a Save button implies.
 var _stnEditBackup=null, _stnRoomPts=0, _stnSymCur='';
-function stnEditStart(){
+function stnEditStart(){ if(stnLocked()) return;
   try{ _stnEditBackup=JSON.stringify(_stnTpl); }catch(e){ _stnEditBackup=null; }
   _stnEdit=true;
   var s=document.getElementById('stn-usheet'); if(s) s.style.display='none';
@@ -9031,7 +9034,7 @@ function stnEditCancel(){
   if(_stnEditBackup){ try{ _stnTpl=JSON.parse(_stnEditBackup); }catch(e){} }
   _stnEditBackup=null; _stnEdit=false; stnRender();
 }
-function stnToggleEdit(){ if(_stnEdit) stnEditCancel(); else stnEditStart(); }
+function stnToggleEdit(){ if(stnLocked()) return; if(_stnEdit) stnEditCancel(); else stnEditStart(); }
 
 // ---- DEPTH ENTRY. You type in whatever unit the header is set to; the template
 // still stores a PERCENTAGE, so the field shows the conversion live as you type.
@@ -9057,7 +9060,7 @@ function stnDepthLive(el,i){
   lb.innerHTML = over ? '= 100% <span class="cl">clamped to floor</span>'
                : (pct>=100 ? '= 100% &middot; zone floor' : '= '+pct+'%');
 }
-function stnDepthCommit(el,i){
+function stnDepthCommit(el,i){ if(stnLocked()) return;
   var v=parseFloat(el.value); if(isNaN(v)){ stnRender(); return; }
   var pct;
   if(_stnRoomPts){ pct=Math.round(stnUnitToPts(v)/_stnRoomPts*100); }
@@ -9070,7 +9073,7 @@ function stnDepthCommit(el,i){
   _stnTpl.dca.layers[i].room_pct=pct;
   stnRender();
 }
-function stnLotCommit(el,i){
+function stnLotCommit(el,i){ if(stnLocked()) return;
 
   var v=parseFloat(el.value);
 
@@ -9097,7 +9100,7 @@ function stnReachLive(el,k){
   lb.innerHTML = pct===100 ? '= 100% &middot; signal TP'
                : (pct>100 ? '= '+pct+'% <span class="cl">past the signal TP</span>' : '= '+pct+'%');
 }
-function stnReachCommit(el,k){
+function stnReachCommit(el,k){ if(stnLocked()) return;
   var v=parseFloat(el.value); if(isNaN(v)){ stnRender(); return; }
   var pct = _stnReachPts ? Math.round(stnUnitToPts(v)/_stnReachPts*100) : Math.round(v);
   if(pct>200) pct=200; if(pct<1) pct=1;
@@ -9106,7 +9109,7 @@ function stnReachCommit(el,k){
   _stnTpl.take_profit.levels[k].reach_pct=pct;
   stnRender();
 }
-function stnCloseCommit(el,k){
+function stnCloseCommit(el,k){ if(stnLocked()) return;
   var v=Math.round(parseFloat(el.value));
   if(isNaN(v)||v<1) v=1; if(v>100) v=100;
   _stnTpl.take_profit.levels[k].close_pct=v;
@@ -9117,8 +9120,14 @@ function stnLadderChrome(){
   var t=document.getElementById('stn-dca-tbl'), p=document.getElementById('stn-pen'),
       a=document.getElementById('stn-addrow'), uh=document.getElementById('stn-unit-h'),
       h4=document.getElementById('stn-h4'), h5=document.getElementById('stn-h5');
+  // Locked templates hide their editing affordances entirely rather than
+  // offering controls that then refuse. The pencils are the only way into
+  // edit mode, so hiding them is enough alongside the stnLocked() guards.
+  var ro=document.getElementById('stn-ro-note'), sb=document.getElementById('stn-save-btn');
+  if(ro) ro.style.display=_stnReadOnly?'block':'none';
+  if(sb) sb.style.display=_stnReadOnly?'none':'block';
   if(t) t.className='stn-mtable dca'+(_stnEdit?' edit':'');
-  if(p) p.className='stn-pen'+(_stnEdit?' on':'');
+  if(p){ p.className='stn-pen'+(_stnEdit?' on':''); p.style.display=_stnReadOnly?'none':'flex'; }
   if(a) a.style.display=_stnEdit?'flex':'none';
   var eb=document.getElementById('stn-editbar');
   if(eb) eb.className='stn-editbar'+(_stnEdit?' on':'');
@@ -9128,7 +9137,7 @@ function stnLadderChrome(){
       ta=document.getElementById('stn-tp-addrow'), tu=document.getElementById('stn-tp-unit-h'),
       t4=document.getElementById('stn-tp-h4'), t5=document.getElementById('stn-tp-h5');
   if(tt) tt.className='stn-mtable tp'+(_stnEdit?' edit':'');
-  if(tp2) tp2.className='stn-pen'+(_stnEdit?' on':'');
+  if(tp2){ tp2.className='stn-pen'+(_stnEdit?' on':''); tp2.style.display=_stnReadOnly?'none':'flex'; }
   if(ta) ta.style.display=_stnEdit?'flex':'none';
   if(tu) tu.innerHTML=_stnEdit ? 'Reach to target'
         : STN_UNITS[_stnUnit].h.replace('Distance','Reach')+' <i class="ti ti-chevron-down"></i>';
@@ -9470,7 +9479,7 @@ function stnRenderRatiosOnly(){
   if($('stn-tplfrom'))     $('stn-tplfrom').innerHTML = _stnFrom ? '<span class="dot"></span> Loaded from template: <b>'+_stnFrom+'</b>' : '';
 }
 
-function stnSync(){
+function stnSync(){ if(stnLocked()) return;
   var $=function(id){return document.getElementById(id);};
   if($('stn-sl-signal')) _stnTpl.stop_loss.from_signal = $('stn-sl-signal').classList.contains('on');
   if($('stn-tr-on'))     _stnTpl.trailing.enabled      = $('stn-tr-on').classList.contains('on');
@@ -9491,7 +9500,7 @@ function stnAsk(title, cur, min, max, step){
 // Both fields are kept populated so a template can be read by an older EA
 // without losing its v3 meaning: arm_reach_pct always holds the fill-relative
 // value, arm_offset_reach_pct the breakeven-relative one.
-function stnToggleArmFrom(){
+function stnToggleArmFrom(){ if(stnLocked()) return;
   var tr=_stnTpl.trailing;
   if(tr.arm_from==='breakeven'){
     tr.arm_from='fill';
@@ -9501,7 +9510,7 @@ function stnToggleArmFrom(){
   }
   stnRender();
 }
-function stnEditNum(what, title, min, max, step){
+function stnEditNum(what, title, min, max, step){ if(stnLocked()) return;
   var t=_stnTpl, cur;
   if(what==='risk')       cur=t.risk.risk_pct;
   if(what==='be_trigger') cur=t.breakeven.trigger_reach_pct;
@@ -9518,39 +9527,39 @@ function stnEditNum(what, title, min, max, step){
   if(what==='tr_step')    t.trailing.step_reach_pct=v;
   stnRender();
 }
-function stnEditLayer(i){
+function stnEditLayer(i){ if(stnLocked()) return;
   var v=stnAsk('How deep into the zone?\n100% is the zone floor. Nothing can go past it.',
                _stnTpl.dca.layers[i].room_pct, 1, 100, 1);
   if(v===null) return; _stnTpl.dca.layers[i].room_pct=v; stnRender();
 }
-function stnEditLot(i){
+function stnEditLot(i){ if(stnLocked()) return;
   var v=stnAsk('Lot size for layer '+(i+1), _stnTpl.dca.layers[i].lots, 0.01, 100, 0.01);
   if(v===null) return; _stnTpl.dca.layers[i].lots=+v.toFixed(2); stnRender();
 }
-function stnAddLayer(){
+function stnAddLayer(){ if(stnLocked()) return;
   var L=_stnTpl.dca.layers, lastPct=L.length?L[L.length-1].room_pct:0;
   var next=Math.min(100, lastPct+25);
   L.push({ room_pct:next, lots:L.length?L[L.length-1].lots:0.01 });
   _stnTpl.dca.enabled=true; stnRender();
 }
-function stnDelLayer(i){ if(_stnTpl.dca.layers.length<=1) return; _stnTpl.dca.layers.splice(i,1); stnRender(); }
-function stnEditTp(k){
+function stnDelLayer(i){ if(stnLocked()) return; if(_stnTpl.dca.layers.length<=1) return; _stnTpl.dca.layers.splice(i,1); stnRender(); }
+function stnEditTp(k){ if(stnLocked()) return;
   var v=stnAsk('How far toward the target?\n100% is the signal\'s take profit.',
                _stnTpl.take_profit.levels[k].reach_pct, 1, 200, 1);
   if(v===null) return; _stnTpl.take_profit.levels[k].reach_pct=v; stnRender();
 }
-function stnEditClose(k){
+function stnEditClose(k){ if(stnLocked()) return;
   var v=stnAsk('Close what % of the REMAINING basket?\n(50 then 50 leaves 25% running)',
                _stnTpl.take_profit.levels[k].close_pct, 1, 100, 1);
   if(v===null) return; _stnTpl.take_profit.levels[k].close_pct=v; stnRender();
 }
-function stnAddTp(){
+function stnAddTp(){ if(stnLocked()) return;
   var L=_stnTpl.take_profit.levels, lastPct=L.length?L[L.length-1].reach_pct:40;
   L.push({ reach_pct:Math.min(150,lastPct+30), close_pct:50 });
   _stnTpl.take_profit.enabled=true; stnRender();
 }
-function stnDelTp(k){ _stnTpl.take_profit.levels.splice(k,1); stnRender(); }
-function stnPickMeasureFrom(){
+function stnDelTp(k){ if(stnLocked()) return; _stnTpl.take_profit.levels.splice(k,1); stnRender(); }
+function stnPickMeasureFrom(){ if(stnLocked()) return;
   var cur=_stnTpl.take_profit.measure_from;
   var v=prompt('Measure take profit from:\n\n1 = Average entry  (recommended - your number always means what it says)\n2 = Last DCA entry (for martingale lots ONLY - can close at a LOSS with equal lots)\n3 = Signal TP      (follow the analyst)',
                cur==='last'?'2':cur==='signal'?'3':'1');
@@ -9591,6 +9600,7 @@ async function loadSmartToolNew(){
     // In publish mode the admin panel already put the template it wants edited
     // into _stnTpl. Resetting here would silently discard it.
     if(!_stnPublishMode){ _stnTpl = JSON.parse(JSON.stringify(STN_DEFAULT)); _stnFrom = null; }
+    _stnReadOnly = false;
     _stnSig = null; _stnTpls = [];
 
     if(db){
@@ -9600,7 +9610,8 @@ async function loadSmartToolNew(){
     // admin is authoring a shared preset, not choosing what to trade)
     if(!_stnPublishMode && activeAccount && activeAccount.smart_template_id){
       var hit = _stnTpls.filter(function(x){ return x.id===activeAccount.smart_template_id; })[0];
-      if(hit){ _stnTpl = JSON.parse(JSON.stringify(hit.settings)); _stnFrom = hit.name; }
+      if(hit){ _stnTpl = JSON.parse(JSON.stringify(hit.settings)); _stnFrom = hit.name;
+               _stnReadOnly = (hit.kind==='mai'); }
     }
     // latest signal, purely to price the preview
     if(db){
@@ -9694,7 +9705,7 @@ function stnValidateTemplate(t){
   return {errors:e, warns:w};
 }
 
-async function stnSave(){
+async function stnSave(){ if(stnLocked()) return;
   if(!_stnTpl || !db || !currentUser){ alert('Not signed in.'); return; }
 
   var v = stnValidateTemplate(_stnTpl);
@@ -9827,11 +9838,27 @@ function stnTplTab(which){
   }
   b.innerHTML=h;
 }
+// READ-ONLY MODE. A MAI preset is MomentumAI's, not the user's: they can select
+// it and trade it, but not change it. Selecting one used to load it as an
+// editable working copy, so pressing Save wrote a personal DUPLICATE into one of
+// their five slots - which is how "TEST DELETE ME" ended up in both lists.
+//
+// Publishing admins are exempt: that is the whole point of the Template tab.
+var _stnReadOnly = false;
+function stnLocked(){
+  if(!_stnReadOnly) return false;
+  alert('This is a MAI template.\n\nIt is provided by MomentumAI and cannot be edited. '+
+        'Select it to trade with it, or build your own under My Templates.');
+  return true;
+}
+
 async function stnUseTpl(id){
   var t=_stnTpls.filter(function(x){ return x.id===id; })[0];
   if(!t) return;
   _stnTpl=JSON.parse(JSON.stringify(t.settings));
   _stnFrom=t.name;
+  _stnReadOnly = (t.kind==='mai') && !_stnPublishMode;
+  _stnEdit = false;   // never leave the ladder in edit mode on a locked template
   if(db && activeAccount){
     // 18 Jul 2026: this used to be try/catch with an EMPTY catch, and the db client
     // returns errors in the result rather than throwing - so a REJECTED update was
