@@ -3044,6 +3044,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
           <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;">MAI PRESETS</div>
           <div style="font-size:11px;color:var(--text3);" id="adm-tpl-count">-</div>
         </div>
+        <button onclick="admNewTpl()" style="width:100%;padding:11px;margin-bottom:12px;border-radius:9px;background:rgba(255,30,60,0.12);border:1px solid rgba(255,30,60,0.3);color:var(--red);font-size:12px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;"><i class="ti ti-plus"></i> New MAI preset</button>
         <div style="font-size:11px;color:var(--text2);line-height:1.6;margin-bottom:12px;">
           Presets every user can pick when they trade. Editing one does NOT change a
           basket that is already running: the trade command carries its own copy of
@@ -3051,15 +3052,9 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         </div>
         <div id="adm-tpl-list"><div class="empty-state" style="padding:16px;"><i class="ti ti-loader"></i> Loading...</div></div>
         <div style="font-size:11px;color:var(--text3);line-height:1.6;margin-top:12px;">
-          Authoring happens in Smart Tools, where the ladder can be priced against a
-          real signal before you publish. Build it there, press Save, and choose
-          "MAI preset" when asked.
+          New and Edit open the Smart Tools editor, where the ladder is priced against
+          a real signal as you build it. Saving there publishes straight back here.
         </div>
-      </div>
-
-      <div class="section-card">
-        <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">USER TEMPLATES</div>
-        <div id="adm-tpl-user"><div class="empty-state" style="padding:16px;"><i class="ti ti-loader"></i> Loading...</div></div>
       </div>
     </div>
 
@@ -6291,30 +6286,51 @@ function admTplCard(row, canDelete){
         ' <span style="font-size:11px;color:var(--text3);font-weight:400;">slot '+(row.slot||'-')+
         ' \u00b7 v'+(s.version||'?')+'</span></div>'+
       '<div style="display:flex;align-items:center;gap:10px;">'+badge+
-        (canDelete?'<i class="ti ti-trash" style="font-size:15px;color:var(--red);cursor:pointer;" onclick="admDeleteTpl(\''+row.id+'\',\''+(row.name||'').replace(/\x27/g,"")+'\')"></i>':'')+
+        (canDelete?'<i class="ti ti-pencil" style="font-size:15px;color:var(--text2);cursor:pointer;margin-right:4px;" onclick="admEditTpl(\''+row.id+'\')"></i>'+
+                   '<i class="ti ti-trash" style="font-size:15px;color:var(--red);cursor:pointer;" onclick="admDeleteTpl(\''+row.id+'\',\''+(row.name||'').replace(/\x27/g,"")+'\')"></i>':'')+
       '</div></div>'+
     '<div style="font-size:11px;color:var(--text2);margin-top:5px;line-height:1.5;">'+admTplSummary(s)+'</div>'+
     notes+'</div>';
 }
 async function loadAdminTemplates(){
-  var mai=document.getElementById('adm-tpl-list'), usr=document.getElementById('adm-tpl-user'),
-      cnt=document.getElementById('adm-tpl-count');
+  var mai=document.getElementById('adm-tpl-list'), cnt=document.getElementById('adm-tpl-count');
   if(!mai||!db) return;
   try{
     var r=await db.from('smart_templates').select('*').order('kind').order('slot');
     if(r.error) throw r.error;
-    var rows=r.data||[];
-    var m=rows.filter(function(x){return x.kind==='mai';});
-    var u=rows.filter(function(x){return x.kind!=='mai';});
+    // MAI presets ONLY. User templates are deliberately not listed: a thousand
+    // users at five slots each is five thousand rows an admin can do nothing
+    // about, and it would bury the presets that actually matter.
+    var m=(r.data||[]).filter(function(x){return x.kind==='mai';});
+    _admTpls=m;
     if(cnt) cnt.textContent=m.length+' of 8 slots used';
     mai.innerHTML = m.length ? m.map(function(x){return admTplCard(x,true);}).join('')
       : '<div class="empty-state" style="padding:16px;"><i class="ti ti-layout-grid"></i>No MAI presets yet</div>';
-    usr.innerHTML = u.length ? u.map(function(x){return admTplCard(x,false);}).join('')
-      : '<div class="empty-state" style="padding:16px;"><i class="ti ti-user"></i>No user templates yet</div>';
   }catch(e){
     mai.innerHTML='<div class="empty-state" style="padding:16px;">Error: '+(e.message||e)+'</div>';
   }
 }
+// PUBLISH MODE. New and Edit hand off to the Smart Tools editor rather than
+// duplicating it here. One editor means one place a ladder can be wrong, and it
+// is the only screen that prices a template against a live signal while you
+// build it. The flag makes Save publish as a MAI preset without asking.
+var _admTpls=[], _stnPublishMode=false, _stnPublishId=null;
+function admNewTpl(){
+  if(_admTpls.length>=8){ alert('All 8 MAI preset slots are full. Delete one first.'); return; }
+  _stnPublishMode=true; _stnPublishId=null;
+  _stnTpl=JSON.parse(JSON.stringify(STN_DEFAULT));
+  _stnTpl.name='New preset'; _stnFrom=null;
+  openSmartTool('plain');
+}
+function admEditTpl(id){
+  var row=_admTpls.filter(function(x){return x.id===id;})[0];
+  if(!row){ alert('Template not found. Reload the tab.'); return; }
+  _stnPublishMode=true; _stnPublishId=id;
+  _stnTpl=JSON.parse(JSON.stringify(row.settings||STN_DEFAULT));
+  _stnFrom=row.name;
+  openSmartTool('plain');
+}
+
 async function admDeleteTpl(id, name){
   // An account pointing at a deleted template falls back to single-entry rather
   // than to some other ladder, so this cannot silently change what someone trades.
@@ -9530,15 +9546,18 @@ function stnPickMeasureFrom(){
 // ─────────────────────────────────────────────────────────────────────────
 async function loadSmartToolNew(){
   try{
-    _stnTpl = JSON.parse(JSON.stringify(STN_DEFAULT));
-    _stnFrom = null; _stnSig = null; _stnTpls = [];
+    // In publish mode the admin panel already put the template it wants edited
+    // into _stnTpl. Resetting here would silently discard it.
+    if(!_stnPublishMode){ _stnTpl = JSON.parse(JSON.stringify(STN_DEFAULT)); _stnFrom = null; }
+    _stnSig = null; _stnTpls = [];
 
     if(db){
       var r = await db.from('smart_templates').select('*').order('kind').order('slot');
       if(r && r.data) _stnTpls = r.data;
     }
-    // whatever this account is set to trade with
-    if(activeAccount && activeAccount.smart_template_id){
+    // whatever this account is set to trade with (not in publish mode - the
+    // admin is authoring a shared preset, not choosing what to trade)
+    if(!_stnPublishMode && activeAccount && activeAccount.smart_template_id){
       var hit = _stnTpls.filter(function(x){ return x.id===activeAccount.smart_template_id; })[0];
       if(hit){ _stnTpl = JSON.parse(JSON.stringify(hit.settings)); _stnFrom = hit.name; }
     }
@@ -9653,7 +9672,9 @@ async function stnSave(){
   // Admins get the choice here; everyone else saves a personal template.
   var isAdmin = !!(currentUser && currentUser.role === 'admin');
   var asMai = false;
-  if(isAdmin){
+  if(_stnPublishMode){
+    asMai = true;                       // came from the admin Template tab
+  } else if(isAdmin){
     asMai = confirm('Save "'+name+'" as a MAI preset?\n\n'+
                     'OK      = MAI preset, visible to EVERY user\n'+
                     'Cancel  = personal template, only yours');
@@ -9662,7 +9683,10 @@ async function stnSave(){
   var kind = asMai ? 'mai' : 'user';
   var pool = _stnTpls.filter(function(x){ return x.kind===kind; });
   var slot = null;
-  var existing = pool.filter(function(x){ return x.name===name; })[0];
+  // Editing an existing preset is identified by id, not by name, so renaming
+  // one updates it rather than quietly creating a second.
+  var existing = _stnPublishId ? pool.filter(function(x){ return x.id===_stnPublishId; })[0]
+                               : pool.filter(function(x){ return x.name===name; })[0];
   if(existing) slot = existing.slot;
   else {
     var maxSlots = asMai ? 8 : 5;
@@ -9694,6 +9718,13 @@ async function stnSave(){
       activeAccount.smart_template_id = saved.id;
     }
     _stnFrom = name;
+    if(_stnPublishMode){
+      _stnPublishMode=false; _stnPublishId=null;
+      alert('Published. "'+name+'" is now available to every user.');
+      goBackSubScreen('sub-smart-tool-new');
+      loadAdminTemplates();
+      return;
+    }
     var b=document.querySelector('#sub-smart-tool-new .red-btn');
     if(b){ var o=b.textContent; b.textContent='SAVED'; b.style.background='var(--green)';
            setTimeout(function(){ b.textContent=o; b.style.background=''; },1800); }
