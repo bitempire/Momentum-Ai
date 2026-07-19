@@ -10292,19 +10292,47 @@ Respond ONLY with valid JSON (no markdown):
 }
 
 
+// 19 Jul 2026 (Senior 8): THE TRADE GATE NOW CALLS scanner-verdict.
+//
+// It used to drive the on-screen scanner: write a Yahoo symbol into the
+// scan-symbol dropdown, run runMAIScanner(), and read whatever it left behind
+// in window._lastScanData. That made a trade decision depend on a DOM element
+// and on the browser reaching TwelveData and Claude by itself, and it meant the
+// human path and the auto path were gated by two different implementations that
+// could disagree. One brain now, server-side, cached, for both.
+//
+// TIMEFRAME IS FIXED AT H1 ON PURPOSE. It is not read from the scanner
+// dropdown any more. The auto producer has no dropdown to read, and a gate that
+// answers differently depending on what a user last selected on another screen
+// is not a gate. Both paths ask the same question.
+//
+// FAILURE BLOCKS. Every path out of here that is not an explicit agreement
+// returns false, which blocks the trade. That is the locked ruling: NEUTRAL,
+// unmapped, no data and network failure all block.
 async function verifyScannerBeforeTrade(symbol, analystDirection) {
   try {
-    var symMap = {'XAUUSD':'GC=F','BTCUSD':'BTC-USD','EURUSD':'EURUSD=X','GBPJPY':'GBPJPY=X','GBPUSD':'GBPUSD=X','NAS100':'^IXIC','US30':'^DJI','DXY':'DX-Y.NYB','USOIL':'CL=F'};
-    var yhSym = symMap[symbol] || symbol;
-    document.getElementById('scan-symbol').value = yhSym;
-    await runMAIScanner();
-    if(!window._lastScanData) return false;
-    var scanDir = window._lastScanData.direction.toUpperCase();
-    var sigDir = analystDirection.toUpperCase();
-    if((sigDir==='BUY'||sigDir==='BULLISH') && scanDir==='BULLISH') return true;
+    var appSym = (symbol||'').toString().toUpperCase().replace('/','');
+    var r = await fetch(SUPABASE_URL + '/functions/v1/scanner-verdict', {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json',
+                 'apikey': SUPABASE_ANON_KEY,
+                 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY },
+      body: JSON.stringify({ symbol: appSym, timeframe: 'H1' })
+    });
+    var v = await r.json();
+    if(!v || !v.direction) return false;
+
+    // Kept so the scanner card and anything else reading it still works.
+    window._lastScanData = { symbol: appSym, direction: v.direction,
+                             confidence: v.confidence, source: v.source,
+                             timestamp: Date.now() };
+
+    var scanDir = String(v.direction).toUpperCase();
+    var sigDir  = String(analystDirection||'').toUpperCase();
+    if((sigDir==='BUY' ||sigDir==='BULLISH') && scanDir==='BULLISH') return true;
     if((sigDir==='SELL'||sigDir==='BEARISH') && scanDir==='BEARISH') return true;
     return false;
-  } catch(e) { return false; }
+  } catch(e) { console.warn('verifyScannerBeforeTrade:', e); return false; }
 }
 
 async function loadAdminMT5() {
