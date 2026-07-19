@@ -5668,6 +5668,99 @@ function drawSparklines() {
   });
 }
 
+// ── SIGNAL VALIDATION AT AUTHORING ──────────────────────────────────────
+// Catch a signal the broker will refuse BEFORE it is published, not after a
+// user taps trade. On 18 Jul a BTCUSD signal with a 290.28 stop was accepted
+// here and then refused by the executor, which requires broker_floor x 1.5
+// (300 on BITCOIN). The user saw "trade failed" with no idea why.
+//
+// The fill price is not known at authoring, so every distance is checked at
+// BOTH edges of the entry zone:
+//   best case  - the edge that gives the LARGEST distance. If even this fails,
+//                no fill anywhere in the zone can work. That is an ERROR.
+//   worst case - the edge that gives the SMALLEST distance. If only this fails,
+//                shallow fills work and deep DCA layers get refused. WARNING.
+//
+// Unknown symbols skip the floor checks rather than blocking, because STN_SPECS
+// only carries the instruments we have confirmed with the broker.
+function stnValidateSignal(v){
+  var out={errors:[],warns:[]};
+  var ef=parseFloat(v.ef), et=parseFloat(v.et), sl=parseFloat(v.sl), tp=parseFloat(v.tp1);
+  var buy=(String(v.dir||'BUY').toUpperCase()==='BUY');
+  if([ef,et,sl,tp].some(isNaN)){ out.errors.push('Entry zone, stop loss and take profit must all be numbers.'); return out; }
+
+  var lo=Math.min(ef,et), hi=Math.max(ef,et);
+
+  // ---- direction sanity. These are not style rules; a signal that fails one
+  // of these cannot be traded at all. ----
+  if(buy){
+    if(sl>=lo) out.errors.push('On a BUY the stop loss must sit BELOW the entry zone. '+
+                               'It is at '+sl+' and the zone starts at '+lo+'.');
+    if(tp<=hi) out.errors.push('On a BUY the take profit must sit ABOVE the entry zone. '+
+                               'It is at '+tp+' and the zone reaches '+hi+'.');
+  } else {
+    if(sl<=hi) out.errors.push('On a SELL the stop loss must sit ABOVE the entry zone. '+
+                               'It is at '+sl+' and the zone reaches '+hi+'.');
+    if(tp>=lo) out.errors.push('On a SELL the take profit must sit BELOW the entry zone. '+
+                               'It is at '+tp+' and the zone starts at '+lo+'.');
+  }
+  if(out.errors.length) return out;
+
+  // ---- broker stop floor. Same rule the EA applies: floor x 1.5. ----
+  var sym=stnBrokerSym(v.pair);
+  if(!STN_SPECS[sym]) return out;              // unknown instrument, do not guess
+  var needPts=stnMinStop(v.pair), need=stnPrice(v.pair, needPts), dp=stnDp(v.pair);
+  var f=function(n){ return n.toFixed(dp); };
+
+  var slBest  = buy ? (hi-sl) : (sl-lo);
+  var slWorst = buy ? (lo-sl) : (sl-hi);
+  var tpBest  = buy ? (tp-lo) : (hi-tp);
+  var tpWorst = buy ? (tp-hi) : (lo-tp);
+
+  if(slBest < need)
+    out.errors.push('Stop is too close for '+v.pair+'. The broker needs at least '+f(need)+
+                    ' from the fill, and the widest this zone gives is '+f(slBest)+
+                    '. No entry in this zone can be protected \u2014 widen the stop.');
+  else if(slWorst < need)
+    out.warns.push('Deep entries will be refused. At the far edge of the zone the stop is only '+
+                   f(slWorst)+' away and '+v.pair+' needs '+f(need)+
+                   '. Fills near the top are fine; deeper DCA layers will be rejected.');
+
+  if(tpBest < need)
+    out.errors.push('Take profit is too close for '+v.pair+'. The broker needs at least '+f(need)+
+                    ' from the fill, and the widest this zone gives is '+f(tpBest)+'.');
+  else if(tpWorst < need)
+    out.warns.push('Take profit is tight. At the near edge of the zone it is only '+f(tpWorst)+
+                   ' away and '+v.pair+' needs '+f(need)+'. Some fills will be refused.');
+
+  return out;
+}
+// Warnings need one acknowledgement. The key is the values themselves, so
+// changing any field re-arms it rather than letting a stale OK carry through.
+var _sigWarnKey=null;
+function stnSignalGate(v, errEl){
+  var r=stnValidateSignal(v);
+  if(r.errors.length){
+    errEl.style.color='var(--red)';
+    errEl.innerHTML=r.errors.join('<br>');
+    errEl.style.display='block';
+    return false;
+  }
+  if(r.warns.length){
+    var key=[v.pair,v.dir,v.ef,v.et,v.sl,v.tp1].join('|');
+    if(_sigWarnKey!==key){
+      _sigWarnKey=key;
+      errEl.style.color='var(--amber)';
+      errEl.innerHTML=r.warns.join('<br>')+'<br><b>Press again to post anyway.</b>';
+      errEl.style.display='block';
+      return false;
+    }
+  }
+  _sigWarnKey=null;
+  errEl.style.color='var(--red)';
+  return true;
+}
+
 // ── ANALYST ──
 function setDirection(dir) {
   document.getElementById('sig-direction').value = dir.toUpperCase();
@@ -5689,7 +5782,8 @@ async function handlePostSignal() {
       str=document.getElementById('sig-strength').value, com=document.getElementById('sig-commentary').value.trim();
   var errEl=document.getElementById('analyst-error'), sucEl=document.getElementById('analyst-success');
   errEl.style.display='none'; sucEl.style.display='none';
-  if(!pair||!ef||!et||!sl||!tp1) { errEl.textContent='Please fill all required fields'; errEl.style.display='block'; return; }
+  if(!pair||!ef||!et||!sl||!tp1) { errEl.style.color='var(--red)'; errEl.textContent='Please fill all required fields'; errEl.style.display='block'; return; }
+  if(!stnSignalGate({pair:pair,dir:dir,ef:ef,et:et,sl:sl,tp1:tp1}, errEl)) return;
   try {
     var res = await db.from('signals').insert([{pair,direction:dir,entry_from:parseFloat(ef),entry_to:parseFloat(et),sl:parseFloat(sl),tp1:parseFloat(tp1),tp2:tp2?parseFloat(tp2):null,timeframe:tf,strength:parseInt(str),commentary:com,analyst_id:currentUser?currentUser.id:null,analyst_name:currentUser?(currentUser.name||currentUser.username):'Analyst',status:'active',created_at:new Date().toISOString()}]);
     if(res.error) throw res.error;
@@ -7889,7 +7983,8 @@ function setEditDirection(dir){
 async function handleUpdateSignal(){
   var id=document.getElementById('edit-sig-id').value,pair=document.getElementById('edit-sig-pair').value,dir=document.getElementById('edit-sig-direction').value,ef=document.getElementById('edit-sig-entry-from').value,et=document.getElementById('edit-sig-entry-to').value,sl=document.getElementById('edit-sig-sl').value,tp1=document.getElementById('edit-sig-tp1').value,tp2=document.getElementById('edit-sig-tp2').value,tf=document.getElementById('edit-sig-timeframe').value,str=document.getElementById('edit-sig-strength').value,com=document.getElementById('edit-sig-commentary').value;
   var errEl=document.getElementById('edit-sig-error'),sucEl=document.getElementById('edit-sig-success');errEl.style.display='none';sucEl.style.display='none';
-  if(!pair||!ef||!et||!sl||!tp1){errEl.textContent='Fill all required fields';errEl.style.display='block';return;}
+  if(!pair||!ef||!et||!sl||!tp1){errEl.style.color='var(--red)';errEl.textContent='Fill all required fields';errEl.style.display='block';return;}
+  if(!stnSignalGate({pair:pair,dir:dir,ef:ef,et:et,sl:sl,tp1:tp1}, errEl)) return;
   try{
     var r=await db.from('signals').update({pair:pair,direction:dir,entry_from:parseFloat(ef),entry_to:parseFloat(et),sl:parseFloat(sl),tp1:parseFloat(tp1),tp2:tp2?parseFloat(tp2):null,timeframe:tf,strength:parseInt(str),commentary:com,updated_at:new Date().toISOString()}).eq('id',id);
     if(r.error)throw r.error;
