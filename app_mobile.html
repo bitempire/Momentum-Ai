@@ -9063,7 +9063,18 @@ function stnResolve(t, sig, fill){
   for(var k=0;k<LV.length;k++){
     var off2, tpx;
     if(mf==='signal'){ tpx=sig.tp; off2=stnPts(sym,tpx-o.avg); }
-    else { off2=Math.round(reach*LV[k].reach_pct/100); tpx = buy ? base+stnPrice(sym,off2) : base-stnPrice(sym,off2); }
+    else {
+      // TP reach is measured from the BASE, not the fill (wire contract
+      // invariant 3, engine section 14): reach_pct 100 IS the analyst's TP in
+      // every measure-from mode. This used to reuse `reach`, which is the
+      // ANCHOR reach (signal_tp - fill), while applying the offset from the
+      // average - so once DCA moved the average away from the fill, every TP
+      // price in the preview drifted and 100% no longer landed on the target.
+      // BE and trailing below correctly stay on the anchor reach.
+      var reachBase = stnPts(sym, buy ? (sig.tp-base) : (base-sig.tp));
+      off2 = Math.round(reachBase*LV[k].reach_pct/100);
+      tpx  = buy ? base+stnPrice(sym,off2) : base-stnPrice(sym,off2);
+    }
     var cl = +(open*LV[k].close_pct/100).toFixed(2);
     var losing = buy ? (tpx<=o.avg) : (tpx>=o.avg);
     var gain = buy ? stnPts(sym,tpx-o.avg) : stnPts(sym,o.avg-tpx);
@@ -9083,6 +9094,14 @@ function stnResolve(t, sig, fill){
   var be=t.breakeven||{};
   if(be.enabled){
     o.be = { trig:Math.round(reach*be.trigger_reach_pct/100), buf:Math.round(reach*be.buffer_reach_pct/100) };
+    // The engine disables BE the same way it disables trailing when the gap
+    // cannot clear the broker floor. Only trailing was warned about, so a
+    // basket could show breakeven ON and then silently run without it.
+    var beGap = o.be.trig - o.be.buf, needBE = stnMinStop(sym);
+    if(beGap < needBE)
+      o.warn.push('Breakeven gap ('+beGap+' pts, trigger minus buffer) is below the '+
+                  needBE+' pts the EA requires on '+sym+
+                  '. Breakeven will be DISABLED on this basket.');
     o.be.at = buy ? fill+stnPrice(sym,o.be.trig) : fill-stnPrice(sym,o.be.trig);
     o.be.sl = buy ? fill+stnPrice(sym,o.be.buf)  : fill-stnPrice(sym,o.be.buf);
   }
@@ -9234,7 +9253,7 @@ function stnRender(){
   if($('stn-tra-field'))   $('stn-tra-field').textContent = t.trailing.arm_reach_pct+'%';
   if($('stn-trs-field'))   $('stn-trs-field').textContent = t.trailing.step_reach_pct+'%';
   if($('stn-tra-hint'))    $('stn-tra-hint').textContent = r.tr ? (r.tr.arm+' pts on this signal') : '-';
-  if($('stn-trs-hint'))    $('stn-trs-hint').textContent = r.tr ? (r.tr.step+' pts &middot; spread is '+sp.spread) : '-';
+  if($('stn-trs-hint'))    $('stn-trs-hint').textContent = r.tr ? (r.tr.step+' pts \u00b7 spread is '+sp.spread) : '-';
 
   // ---- warnings
   var w=$('stn-warn');
