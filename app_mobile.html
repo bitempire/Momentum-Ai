@@ -9820,8 +9820,12 @@ function stnTplTab(which){
       var t=list.filter(function(x){return x.slot===i;})[0];
       if(t){
         var L=(t.settings.dca&&t.settings.dca.layers)?t.settings.dca.layers.length:1;
-        h+='<div class="tpl'+(_stnFrom===t.name?' on':'')+'" onclick="stnUseTpl(\''+t.id+'\')">'+
-           '<div class="n">'+t.name+'</div><div class="s">'+L+' layers &middot; '+t.settings.risk.risk_pct+'% risk</div></div>';
+        // The trash stops the click bubbling to stnUseTpl, or deleting would also
+        // select the template on the way out.
+        h+='<div class="tpl'+(_stnFrom===t.name?' on':'')+'" onclick="stnUseTpl(\''+t.id+'\')" style="position:relative;">'+
+           '<div class="n">'+t.name+'</div><div class="s">'+L+' layers &middot; '+t.settings.risk.risk_pct+'% risk</div>'+
+           '<i class="ti ti-trash" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:15px;color:var(--red);padding:6px;" '+
+           'onclick="event.stopPropagation();stnDelTemplate(\''+t.id+'\',\''+String(t.name).replace(/\x27/g,'')+'\')"></i></div>';
       } else {
         h+='<div class="tpl empty"><div class="n">Empty slot '+i+'</div><div class="s">Save a setup here</div></div>';
       }
@@ -9850,6 +9854,31 @@ function stnLocked(){
   alert('This is a MAI template.\n\nIt is provided by MomentumAI and cannot be edited. '+
         'Select it to trade with it, or build your own under My Templates.');
   return true;
+}
+
+// Delete a PERSONAL template. MAI presets are not deletable here - they belong
+// to MomentumAI and only the admin Template tab removes them.
+async function stnDelTemplate(id, name){
+  var t=_stnTpls.filter(function(x){ return x.id===id; })[0];
+  if(!t) return;
+  if(t.kind!=='user'){ alert('MAI templates cannot be deleted here.'); return; }
+  if(!confirm('Delete your template "'+name+'"?\n\nThis frees the slot. It cannot be undone.')) return;
+  try{
+    var r=await db.from('smart_templates').delete().eq('id',id);
+    if(r && r.error){ alert('Delete failed: '+r.error.message); return; }
+
+    // If the account was set to trade with it, clear the pointer. Leaving a
+    // dangling smart_template_id means the next trade looks up a row that is
+    // gone and silently falls back to single entry with no explanation.
+    if(activeAccount && activeAccount.smart_template_id===id){
+      var u=await db.from('mt5_accounts').update({ smart_template_id:null }).eq('id', activeAccount.id);
+      if(u && u.error) alert('Template deleted, but clearing the account selection failed: '+u.error.message);
+      else activeAccount.smart_template_id=null;
+      _stnFrom=null; _stnReadOnly=false;
+    }
+    _stnTpls = await stnLoadVisibleTemplates();
+    stnTplTab('user');
+  }catch(e){ alert('Delete failed: '+(e.message||e)); }
 }
 
 async function stnUseTpl(id){
