@@ -5127,6 +5127,11 @@ function showSubScreenFrom(id, parentId) {
   showSubScreen(id);
 }
 function goBackSubScreen(id) {
+  // Abandoning the editor cancels publish mode. Without this, a later personal
+  // save would still be flagged as a preset and go out to every user.
+  if(id === 'sub-smart-tool-new' && typeof _stnPublishMode !== 'undefined' && _stnPublishMode){
+    _stnPublishMode = false; _stnPublishId = null;
+  }
   hideSubScreen(id);
   var parent = _subScreenParent[id] || null;
   delete _subScreenParent[id];
@@ -6329,7 +6334,11 @@ function admNewTpl(){
   _stnPublishMode=true; _stnPublishId=null;
   _stnTpl=JSON.parse(JSON.stringify(STN_DEFAULT));
   _stnTpl.name='New preset'; _stnFrom=null;
-  openSmartTool('plain');
+  // Hand off FROM the admin screen, not with 'plain'. openSmartTool('plain')
+  // calls showSubScreen, which does not hide the caller - the admin panel stayed
+  // on top and the editor opened invisibly underneath it. Passing the parent
+  // hides it and makes Back return here.
+  openSmartTool('sub-admin');
 }
 function admEditTpl(id){
   var row=_admTpls.filter(function(x){return x.id===id;})[0];
@@ -6337,7 +6346,7 @@ function admEditTpl(id){
   _stnPublishMode=true; _stnPublishId=id;
   _stnTpl=JSON.parse(JSON.stringify(row.settings||STN_DEFAULT));
   _stnFrom=row.name;
-  openSmartTool('plain');
+  openSmartTool('sub-admin');
 }
 
 async function admDeleteTpl(id, name){
