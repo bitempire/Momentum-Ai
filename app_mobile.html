@@ -2786,6 +2786,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <button class="admin-tab-btn" data-tab="funds" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Fund Man</button>
       <button class="admin-tab-btn" data-tab="announce" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Announce</button>
       <button class="admin-tab-btn" data-tab="signals" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Signals</button>
+      <button class="admin-tab-btn" data-tab="templates" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Template</button>
       <button class="admin-tab-btn" data-tab="mt5" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">MT5</button>
       <button class="admin-tab-btn" data-tab="analyst" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Administrator</button>
       <button class="admin-tab-btn" data-tab="academy" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Academy</button>
@@ -3034,6 +3035,31 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
           <button onclick="loadAdminPromos()" style="background:transparent;border:none;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;">↻ Refresh</button>
         </div>
         <div id="admin-promo-list"><div class="empty-state" style="padding:16px;"><i class="ti ti-loader"></i> Loading...</div></div>
+      </div>
+    </div>
+
+    <div id="atab-content-templates" style="display:none;">
+      <div class="section-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;">MAI PRESETS</div>
+          <div style="font-size:11px;color:var(--text3);" id="adm-tpl-count">-</div>
+        </div>
+        <div style="font-size:11px;color:var(--text2);line-height:1.6;margin-bottom:12px;">
+          Presets every user can pick when they trade. Editing one does NOT change a
+          basket that is already running: the trade command carries its own copy of
+          the rules. Only new trades use the edited version.
+        </div>
+        <div id="adm-tpl-list"><div class="empty-state" style="padding:16px;"><i class="ti ti-loader"></i> Loading...</div></div>
+        <div style="font-size:11px;color:var(--text3);line-height:1.6;margin-top:12px;">
+          Authoring happens in Smart Tools, where the ladder can be priced against a
+          real signal before you publish. Build it there, press Save, and choose
+          "MAI preset" when asked.
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">USER TEMPLATES</div>
+        <div id="adm-tpl-user"><div class="empty-state" style="padding:16px;"><i class="ti ti-loader"></i> Loading...</div></div>
       </div>
     </div>
 
@@ -6226,8 +6252,82 @@ function loadProfileData() {
 // ══════════════════════════════════
 
 // ── ADMIN TAB SWITCHER ──
+// ── ADMIN: TEMPLATES ─────────────────────────────────────────────────────
+// Read-only oversight plus delete. Authoring stays in Smart Tools, because that
+// is the only place a ladder can be priced against a real signal before it goes
+// out. Two authoring surfaces would mean two places a template can be wrong.
+//
+// Every stored preset is re-validated here against the same section-2 rules the
+// save path enforces. A template seeded straight into the database, or written
+// before those rules existed, shows its problems here rather than at trade time.
+function admTplSummary(t){
+  var s=t||{}, dca=s.dca||{}, L=dca.layers||[], tp=s.take_profit||{}, LV=tp.levels||[];
+  var lots=0; for(var i=0;i<L.length;i++) lots+=(L[i].lots||0);
+  var bits=[];
+  bits.push((dca.enabled&&L.length>1) ? (L.length+' entries') : 'single entry');
+  bits.push(lots.toFixed(2)+' lots');
+  bits.push(tp.enabled ? (LV.length+' target'+(LV.length===1?'':'s')+' from '+(tp.measure_from||'average')) : 'no targets');
+  bits.push((s.breakeven||{}).enabled ? 'breakeven' : 'no breakeven');
+  bits.push((s.trailing||{}).enabled
+    ? ('trailing from '+(((s.trailing||{}).arm_from==='breakeven')?'breakeven':'the fill'))
+    : 'no trailing');
+  bits.push('risk '+(((s.risk||{}).risk_pct)!=null?s.risk.risk_pct:'?')+'%');
+  return bits.join(' \u00b7 ');
+}
+function admTplCard(row, canDelete){
+  var s=row.settings||{};
+  var v=stnValidateTemplate(s);
+  var badge = v.errors.length
+      ? '<span style="color:var(--red);font-size:11px;font-weight:700;">'+v.errors.length+' problem'+(v.errors.length===1?'':'s')+'</span>'
+      : (v.warns.length
+         ? '<span style="color:var(--amber);font-size:11px;font-weight:700;">'+v.warns.length+' warning'+(v.warns.length===1?'':'s')+'</span>'
+         : '<span style="color:var(--green);font-size:11px;font-weight:700;">ok</span>');
+  var notes='';
+  for(var i=0;i<v.errors.length;i++) notes+='<div style="font-size:11px;color:var(--red);margin-top:4px;line-height:1.5;">'+v.errors[i]+'</div>';
+  for(var j=0;j<v.warns.length;j++)  notes+='<div style="font-size:11px;color:var(--amber);margin-top:4px;line-height:1.5;">'+v.warns[j]+'</div>';
+  return '<div style="padding:12px 0;border-top:1px solid var(--border);">'+
+    '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">'+
+      '<div style="font-size:13px;font-weight:700;color:var(--text);">'+(row.name||'(unnamed)')+
+        ' <span style="font-size:11px;color:var(--text3);font-weight:400;">slot '+(row.slot||'-')+
+        ' \u00b7 v'+(s.version||'?')+'</span></div>'+
+      '<div style="display:flex;align-items:center;gap:10px;">'+badge+
+        (canDelete?'<i class="ti ti-trash" style="font-size:15px;color:var(--red);cursor:pointer;" onclick="admDeleteTpl(\''+row.id+'\',\''+(row.name||'').replace(/\x27/g,"")+'\')"></i>':'')+
+      '</div></div>'+
+    '<div style="font-size:11px;color:var(--text2);margin-top:5px;line-height:1.5;">'+admTplSummary(s)+'</div>'+
+    notes+'</div>';
+}
+async function loadAdminTemplates(){
+  var mai=document.getElementById('adm-tpl-list'), usr=document.getElementById('adm-tpl-user'),
+      cnt=document.getElementById('adm-tpl-count');
+  if(!mai||!db) return;
+  try{
+    var r=await db.from('smart_templates').select('*').order('kind').order('slot');
+    if(r.error) throw r.error;
+    var rows=r.data||[];
+    var m=rows.filter(function(x){return x.kind==='mai';});
+    var u=rows.filter(function(x){return x.kind!=='mai';});
+    if(cnt) cnt.textContent=m.length+' of 8 slots used';
+    mai.innerHTML = m.length ? m.map(function(x){return admTplCard(x,true);}).join('')
+      : '<div class="empty-state" style="padding:16px;"><i class="ti ti-layout-grid"></i>No MAI presets yet</div>';
+    usr.innerHTML = u.length ? u.map(function(x){return admTplCard(x,false);}).join('')
+      : '<div class="empty-state" style="padding:16px;"><i class="ti ti-user"></i>No user templates yet</div>';
+  }catch(e){
+    mai.innerHTML='<div class="empty-state" style="padding:16px;">Error: '+(e.message||e)+'</div>';
+  }
+}
+async function admDeleteTpl(id, name){
+  // An account pointing at a deleted template falls back to single-entry rather
+  // than to some other ladder, so this cannot silently change what someone trades.
+  if(!confirm('Delete the MAI preset "'+name+'"?\n\nUsers who selected it will fall back to single entry until they pick another.')) return;
+  try{
+    var r=await db.from('smart_templates').delete().eq('id',id);
+    if(r.error) throw r.error;
+    loadAdminTemplates();
+  }catch(e){ alert('Delete failed: '+(e.message||e)); }
+}
+
 function switchAdminTab(tab) {
-  var tabs = ['dashboard','users','tickets','funds','announce','signals','mt5','analyst','academy','promo'];
+  var tabs = ['dashboard','users','tickets','funds','announce','signals','templates','mt5','analyst','academy','promo'];
   tabs.forEach(function(t) {
     // Support both old id-based and new data-tab-based buttons
     var btn = document.getElementById('atab-' + t) ||
@@ -6248,6 +6348,7 @@ function switchAdminTab(tab) {
   if(tab === 'signals') loadAdminSignals();
   if(tab === 'mt5') loadAdminMT5();
   if(tab === 'analyst') { loadAdminAnalysts(); loadAdminSubAdmins(); }
+  if(tab === 'templates') loadAdminTemplates();
   if(tab === 'academy') loadAdminAcademy();
   if(tab === 'promo') loadAdminPromos();
   if(tab === 'announce') loadAdminAnnouncements();
@@ -9546,24 +9647,49 @@ async function stnSave(){
   var name = prompt('Save as. Name your template:', _stnFrom || _stnTpl.name || 'My Setup');
   if(!name) return;
 
-  var mine = _stnTpls.filter(function(x){ return x.kind==='user'; });
+  // MAI presets are the templates every user sees. Until now nothing in the app
+  // could write one - kind 'mai' was read in the templates sheet and never
+  // produced, so the four presets had been seeded straight into the database.
+  // Admins get the choice here; everyone else saves a personal template.
+  var isAdmin = !!(currentUser && currentUser.role === 'admin');
+  var asMai = false;
+  if(isAdmin){
+    asMai = confirm('Save "'+name+'" as a MAI preset?\n\n'+
+                    'OK      = MAI preset, visible to EVERY user\n'+
+                    'Cancel  = personal template, only yours');
+  }
+
+  var kind = asMai ? 'mai' : 'user';
+  var pool = _stnTpls.filter(function(x){ return x.kind===kind; });
   var slot = null;
-  var existing = mine.filter(function(x){ return x.name===name; })[0];
+  var existing = pool.filter(function(x){ return x.name===name; })[0];
   if(existing) slot = existing.slot;
   else {
-    for(var i=1;i<=5;i++){ if(!mine.some(function(x){return x.slot===i;})){ slot=i; break; } }
-    if(slot===null){ alert('All 5 template slots are full. Delete one first.'); return; }
+    var maxSlots = asMai ? 8 : 5;
+    for(var i=1;i<=maxSlots;i++){ if(!pool.some(function(x){return x.slot===i;})){ slot=i; break; } }
+    if(slot===null){ alert('All '+maxSlots+' '+(asMai?'MAI preset':'template')+' slots are full. Delete one first.'); return; }
   }
+  if(asMai && !existing &&
+     !confirm('This publishes a NEW preset to every user.\n\nSlot '+slot+', named "'+name+'".\n\nGo ahead?')) return;
+  if(asMai && existing &&
+     !confirm('This OVERWRITES the existing MAI preset "'+name+'".\n\n'+
+              'Baskets already running keep the rules they were opened with - the\n'+
+              'command carries a copy. Only new trades use the edited version.\n\nGo ahead?')) return;
 
   _stnTpl.name = name;
   try{
-    var row = { kind:'user', user_id:currentUser.id, slot:slot, name:name, settings:_stnTpl, updated_at:new Date().toISOString() };
+    // A MAI preset belongs to nobody, so user_id is null and it is visible to all.
+    var row = { kind:kind, user_id:(asMai ? null : currentUser.id), slot:slot,
+                name:name, settings:_stnTpl, updated_at:new Date().toISOString() };
     var r = existing
       ? await db.from('smart_templates').update(row).eq('id', existing.id).select()
       : await db.from('smart_templates').insert([row]).select();
     if(r.error) throw r.error;
     var saved = r.data && r.data[0];
-    if(saved && activeAccount){
+    // Publishing a preset is not the same as choosing it to trade with. Only a
+    // personal save switches this account over; a MAI publish leaves the admin's
+    // own account pointing wherever it already pointed.
+    if(saved && activeAccount && !asMai){
       await db.from('mt5_accounts').update({ smart_template_id: saved.id }).eq('id', activeAccount.id);
       activeAccount.smart_template_id = saved.id;
     }
