@@ -2459,8 +2459,12 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         <div class="toggle on" id="stn-tr-on" onclick="this.classList.toggle('on');stnSync()"></div>
       </div>
       <div class="stn-row">
+        <div><div class="stn-lbl">Measure arm from</div><div class="stn-hint" id="stn-trf-hint">-</div></div>
+        <div class="stn-field" id="stn-trf-field" onclick="stnToggleArmFrom()">The fill</div>
+      </div>
+      <div class="stn-row">
         <div><div class="stn-lbl">Activate after</div><div class="stn-hint" id="stn-tra-hint">-</div></div>
-        <div class="stn-field" id="stn-tra-field" onclick="stnEditNum('tr_arm','Trailing arms at % of the way to target',0,100,1)">40%</div>
+        <div class="stn-field" id="stn-tra-field" onclick="stnEditNum('tr_arm','Trailing arms at % of the way to target',0,200,1)">40%</div>
       </div>
       <div class="stn-row">
         <div><div class="stn-lbl">Trail step</div><div class="stn-hint" id="stn-trs-hint">-</div></div>
@@ -9107,7 +9111,14 @@ function stnResolve(t, sig, fill){
   }
   var tr=t.trailing||{};
   if(tr.enabled){
-    o.tr = { arm:Math.round(reach*tr.arm_reach_pct/100), step:Math.round(reach*tr.step_reach_pct/100) };
+    // v4: when arm_from is breakeven, the arm is measured from the BE point
+    // (anchor + buffer), matching MoneyEngine.mqh. buffer resolves whether or
+    // not breakeven is enabled, because the BE POINT is a price, not a feature.
+    var _armPct = (tr.arm_from==='breakeven') ? (tr.arm_offset_reach_pct||0) : (tr.arm_reach_pct||0);
+    var _buf    = (tr.arm_from==='breakeven')
+                    ? Math.round(reach*((t.breakeven||{}).buffer_reach_pct||0)/100) : 0;
+    o.tr = { arm:Math.round(reach*_armPct/100)+_buf, step:Math.round(reach*tr.step_reach_pct/100),
+             armFromBe:(tr.arm_from==='breakeven') };
     var needStop = stnMinStop(sym);
     if(o.tr.step < needStop)
       o.warn.push('Trail step ('+o.tr.step+' pts) is below the '+needStop+
@@ -9250,7 +9261,12 @@ function stnRender(){
   if($('stn-be-field'))    $('stn-be-field').textContent = t.breakeven.trigger_reach_pct+'%';
   if($('stn-bebuf-field')) $('stn-bebuf-field').textContent = t.breakeven.buffer_reach_pct+'%';
   if($('stn-be-hint'))     $('stn-be-hint').textContent = r.be ? ('at '+r.be.at.toFixed(2)+' on this signal') : '-';
-  if($('stn-tra-field'))   $('stn-tra-field').textContent = t.trailing.arm_reach_pct+'%';
+  var _af = (t.trailing.arm_from==='breakeven');
+  if($('stn-tra-field'))   $('stn-tra-field').textContent = (_af ? (t.trailing.arm_offset_reach_pct||0) : t.trailing.arm_reach_pct)+'%';
+  if($('stn-trf-field'))   $('stn-trf-field').textContent = _af ? 'Breakeven point' : 'The fill';
+  if($('stn-trf-hint'))    $('stn-trf-hint').textContent  = _af
+      ? 'arms this far past where breakeven would sit'
+      : 'arms this far past your entry';
   if($('stn-trs-field'))   $('stn-trs-field').textContent = t.trailing.step_reach_pct+'%';
   if($('stn-tra-hint'))    $('stn-tra-hint').textContent = r.tr ? (r.tr.arm+' pts on this signal') : '-';
   if($('stn-trs-hint'))    $('stn-trs-hint').textContent = r.tr ? (r.tr.step+' pts \u00b7 spread is '+sp.spread) : '-';
@@ -9311,7 +9327,9 @@ function stnRenderRatiosOnly(){
       '<span class="c dm">&mdash;</span><span class="c dm">&mdash;</span>';
   if($('stn-be-field'))    $('stn-be-field').textContent    = t.breakeven.trigger_reach_pct+'%';
   if($('stn-bebuf-field')) $('stn-bebuf-field').textContent = t.breakeven.buffer_reach_pct+'%';
-  if($('stn-tra-field'))   $('stn-tra-field').textContent   = t.trailing.arm_reach_pct+'%';
+  var _af2 = (t.trailing.arm_from==='breakeven');
+  if($('stn-tra-field'))   $('stn-tra-field').textContent   = (_af2 ? (t.trailing.arm_offset_reach_pct||0) : t.trailing.arm_reach_pct)+'%';
+  if($('stn-trf-field'))   $('stn-trf-field').textContent   = _af2 ? 'Breakeven point' : 'The fill';
   if($('stn-trs-field'))   $('stn-trs-field').textContent   = t.trailing.step_reach_pct+'%';
   if($('stn-warn'))        $('stn-warn').innerHTML = '';
   if($('stn-tplfrom'))     $('stn-tplfrom').innerHTML = _stnFrom ? '<span class="dot"></span> Loaded from template: <b>'+_stnFrom+'</b>' : '';
@@ -9334,18 +9352,34 @@ function stnAsk(title, cur, min, max, step){
   if(isNaN(v)) return null;
   return Math.max(min, Math.min(max, v));
 }
+// TEMPLATE v4. Switches what the trailing arm distance is measured FROM.
+// Both fields are kept populated so a template can be read by an older EA
+// without losing its v3 meaning: arm_reach_pct always holds the fill-relative
+// value, arm_offset_reach_pct the breakeven-relative one.
+function stnToggleArmFrom(){
+  var tr=_stnTpl.trailing;
+  if(tr.arm_from==='breakeven'){
+    tr.arm_from='fill';
+  } else {
+    tr.arm_from='breakeven';
+    if(tr.arm_offset_reach_pct==null) tr.arm_offset_reach_pct=tr.arm_reach_pct||40;
+  }
+  stnRender();
+}
 function stnEditNum(what, title, min, max, step){
   var t=_stnTpl, cur;
   if(what==='risk')       cur=t.risk.risk_pct;
   if(what==='be_trigger') cur=t.breakeven.trigger_reach_pct;
   if(what==='be_buffer')  cur=t.breakeven.buffer_reach_pct;
-  if(what==='tr_arm')     cur=t.trailing.arm_reach_pct;
+  if(what==='tr_arm')     cur=(t.trailing.arm_from==='breakeven')
+                              ? (t.trailing.arm_offset_reach_pct||0) : t.trailing.arm_reach_pct;
   if(what==='tr_step')    cur=t.trailing.step_reach_pct;
   var v=stnAsk(title,cur,min,max,step); if(v===null) return;
   if(what==='risk')       t.risk.risk_pct=v;
   if(what==='be_trigger') t.breakeven.trigger_reach_pct=v;
   if(what==='be_buffer')  t.breakeven.buffer_reach_pct=v;
-  if(what==='tr_arm')     t.trailing.arm_reach_pct=v;
+  if(what==='tr_arm'){ if(t.trailing.arm_from==='breakeven') t.trailing.arm_offset_reach_pct=v;
+                       else t.trailing.arm_reach_pct=v; }
   if(what==='tr_step')    t.trailing.step_reach_pct=v;
   stnRender();
 }
@@ -9429,8 +9463,86 @@ async function loadSmartToolNew(){
   }catch(e){ console.error('loadSmartToolNew', e); }
 }
 
+// ── TEMPLATE VALIDATION (wire contract section 2) ────────────────────────
+// Every rule here is a money bug the engine already guards. Catching it at
+// authoring is far better than at trade time, where the user just sees
+// "trade failed". stnSave previously wrote whatever was on screen unchecked.
+function stnValidateTemplate(t){
+  var e=[], w=[];
+  var dca=t.dca||{}, L=dca.layers||[];
+
+  if(!(t.risk && t.risk.risk_pct>0)) e.push('Risk per trade must be above 0%.');
+
+  if(!L.length) e.push('The ladder needs at least one entry.');
+  else {
+    // Layer 0 IS the market entry. If it is not at the fill, every offset below
+    // it is measured from the wrong place.
+    if(L[0].room_pct!==0) e.push('Entry 1 must sit at 0% - it is the market entry.');
+    for(var i=0;i<L.length;i++){
+      // 100% IS the zone floor. Past it the engine clamps, so a bigger number
+      // here would be a lie about what actually executes.
+      if(L[i].room_pct>100) e.push('Entry '+(i+1)+' is at '+L[i].room_pct+'%. 100% is the zone floor; nothing can go past it.');
+      if(L[i].room_pct<0)   e.push('Entry '+(i+1)+' cannot be negative.');
+      if(i>0 && L[i].room_pct<=L[i-1].room_pct)
+        e.push('Entry '+(i+1)+' must sit deeper than entry '+i+'.');
+      // The budget gate BLOCKS THE WHOLE ENTRY if any single layer is under the
+      // instrument minimum. It does not quietly drop that layer.
+      if(!(L[i].lots>=0.01)) e.push('Entry '+(i+1)+' lot is below the 0.01 minimum.');
+    }
+  }
+
+  var tp=t.take_profit||{}, LV=tp.levels||[];
+  if(tp.enabled && !LV.length) e.push('Take profit is on but has no levels.');
+  for(var k=0;k<LV.length;k++){
+    if(!(LV[k].reach_pct>0))  e.push('Level '+(k+1)+' target must be above 0%.');
+    if(LV[k].reach_pct>200)   e.push('Level '+(k+1)+' target is above 200%, the contract maximum.');
+    if(!(LV[k].close_pct>0 && LV[k].close_pct<=100)) e.push('Level '+(k+1)+' close must be 1-100%.');
+    if(k>0 && LV[k].reach_pct<=LV[k-1].reach_pct)
+      e.push('Level '+(k+1)+' must be further out than level '+k+'.');
+  }
+  // close_pct is of WHAT REMAINS, not of the original basket. Say it plainly,
+  // because 50 then 50 reads like "all of it" and leaves a quarter running.
+  if(LV.length>1){
+    var left=100; for(var q=0;q<LV.length;q++) left=left*(1-LV[q].close_pct/100);
+    if(left>0.5) w.push('Each close % is of what is still open, not the original basket. '+
+                        'These levels leave '+Math.round(left)+'% running on the trail.');
+  }
+  // Measured from the last entry, a TP can sit BELOW the average and close at a
+  // loss. Only sound when lots grow with depth.
+  if(tp.measure_from==='last' && L.length>1){
+    var grows=true; for(var g=1;g<L.length;g++) if(L[g].lots<=L[g-1].lots) grows=false;
+    if(!grows) w.push('Targets are measured from the LAST entry while your lots are equal. '+
+                      'A target can then sit below your average and close at a loss.');
+  }
+
+  var tr=t.trailing||{}, be=t.breakeven||{};
+  if(tr.enabled){
+    if(!(tr.step_reach_pct>0)) e.push('Trail step must be above 0%.');
+    var armPct=(tr.arm_from==='breakeven')?(tr.arm_offset_reach_pct||0):(tr.arm_reach_pct||0);
+    var first=armPct + (tr.arm_from==='breakeven' ? (be.buffer_reach_pct||0) : 0) - (tr.step_reach_pct||0);
+    // Inert only if breakeven has already raised the stop above where the first
+    // trail would land. Without breakeven the stop is still at the hard SL.
+    if(be.enabled && first<=(be.buffer_reach_pct||0))
+      w.push('The first trailing stop would land at or below your breakeven stop. '+
+             'The engine never loosens a stop, so trailing would do nothing.');
+    // Symbol-dependent, so guidance rather than a rule - the engine is the judge.
+    if(tr.step_reach_pct<10)
+      w.push('A trail step this small may be inside the broker minimum on some '+
+             'instruments. The engine will widen it and say so in the log.');
+  }
+  return {errors:e, warns:w};
+}
+
 async function stnSave(){
   if(!_stnTpl || !db || !currentUser){ alert('Not signed in.'); return; }
+
+  var v = stnValidateTemplate(_stnTpl);
+  if(v.errors.length){ alert('Cannot save:\n\n\u2022 '+v.errors.join('\n\u2022 ')); return; }
+  if(v.warns.length && !confirm('Worth checking:\n\n\u2022 '+v.warns.join('\n\u2022 ')+'\n\nSave anyway?')) return;
+
+  // Schema version follows the fields actually used. v4 only when the trailing
+  // arm is measured from breakeven; anything else stays v3 so older EAs read it.
+  _stnTpl.version = (_stnTpl.trailing && _stnTpl.trailing.arm_from==='breakeven') ? 4 : 3;
   var name = prompt('Save as. Name your template:', _stnFrom || _stnTpl.name || 'My Setup');
   if(!name) return;
 
