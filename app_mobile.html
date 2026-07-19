@@ -4841,7 +4841,16 @@ function isPremiumUser(){
   if(a.balance!=null && parseFloat(a.balance) >= 100) return true;
   return false;
 }
-function premiumGate(){ if(isPremiumUser()) return true; showDepositPopup(); return false; }
+// Admins are never gated. They administer the product, including the premium
+// screens, and an admin who deposited nothing was being shown the paywall when
+// the Template tab handed them to the Smart Tools editor to publish a preset.
+// The gate is a paywall for customers, not an access control.
+function premiumGate(){
+  if(currentUser && currentUser.role === 'admin') return true;
+  if(isPremiumUser()) return true;
+  showDepositPopup();
+  return false;
+}
 function openDepositPage(){ try{ window.open(BROKER_DEPOSIT_URL,'_blank'); }catch(e){} }
 function showDepositPopup(){ var m=document.getElementById('deposit-popup'); if(m) m.style.display='flex'; var pm=document.getElementById('promo-msg'); if(pm){ pm.style.display='none'; pm.textContent=''; } checkPromoAvailable(); }
 function closeDepositPopup(){ var m=document.getElementById('deposit-popup'); if(m) m.style.display='none'; }
