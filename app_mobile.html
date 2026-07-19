@@ -6768,7 +6768,12 @@ async function mmLivePrice(appSymbol) {
       // an age of 30s and accepts it, and the zone gate then prices a trade
       // against a stale number. mmai_live_quotes computes `fresh` against now()
       // on the server, which is the same clock the bridge publishes with.
-      var qr = await db.rpc('mmai_live_quotes', { p_symbols:[qSym], p_max_age_ms:15000 });
+      // 19 Jul 2026 (Senior 8): 60000, not 15000. The bridge only publishes a symbol
+      // whose last tick is recent, so on a quiet market it pushes far slower than its
+      // 3s cadence and the broker quote reads stale. Every stale read fell through to
+      // TwelveData below, which is what burns the free-tier credits and returns 429.
+      // The auto producer already made this exact change for the same reason.
+      var qr = await db.rpc('mmai_live_quotes', { p_symbols:[qSym], p_max_age_ms:60000 });
       if(qr && !qr.error) {
         var row = qr.data && qr.data[0];
         if(row && row.fresh && row.mid!=null) {
@@ -6783,7 +6788,7 @@ async function mmLivePrice(appSymbol) {
         if(r2 && r2.bid!=null && r2.ask!=null && r2.updated_at) {
           var ts = String(r2.updated_at).replace(' ','T').replace(/([+-]\d\d)$/, '$1:00');
           var age = Date.now() - Date.parse(ts);
-          if(!isNaN(age) && age >= 0 && age < 15000) {
+          if(!isNaN(age) && age >= 0 && age < 60000) {   // 60s, matching the RPC call above
             var m2 = (parseFloat(r2.bid) + parseFloat(r2.ask)) / 2;
             if(!isNaN(m2) && m2 > 0) return m2;
           }
@@ -6862,6 +6867,16 @@ var TWELVE_SYMBOLS = {'XAUUSD':'XAU/USD','DXY':'DXY','BTCUSD':'BTC/USD','USOIL':
 
 async function loadLivePrices() {
   if(!TWELVE_DATA_KEY) return;
+  // 19 Jul 2026 (Senior 8): THROTTLE, one call per minute for the whole app.
+  // This makes ONE /quote request covering FOUR symbols, which costs FOUR credits on
+  // a plan that allows eight per minute. It was called unguarded from the pull-to-
+  // refresh handler, so two pulls on the dashboard inside a minute spent the whole
+  // budget and the next request came back 429. The other two call sites guard with
+  // _priceLoaded; that one did not. Throttling here covers every caller.
+  // The cards stay live via loadAFTPrices() from the broker feed every 2s anyway;
+  // TwelveData only seeds them and supplies the daily open for the % change.
+  if((Date.now() - (window._lastLivePricesAt||0)) < 60000) { loadAFTPrices(); return; }
+  window._lastLivePricesAt = Date.now();
   try {
     var syms = Object.values(TWELVE_SYMBOLS).join(',');
     var url  = 'https://api.twelvedata.com/quote?symbol='+encodeURIComponent(syms)+'&apikey='+TWELVE_DATA_KEY;
