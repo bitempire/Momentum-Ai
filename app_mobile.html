@@ -6297,8 +6297,7 @@ function admTplCard(row, canDelete){
   return '<div style="padding:12px 0;border-top:1px solid var(--border);">'+
     '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">'+
       '<div style="font-size:13px;font-weight:700;color:var(--text);">'+(row.name||'(unnamed)')+
-        ' <span style="font-size:11px;color:var(--text3);font-weight:400;">slot '+(row.slot||'-')+
-        ' \u00b7 v'+(s.version||'?')+'</span></div>'+
+        ' <span style="font-size:11px;color:var(--text3);font-weight:400;">v'+(s.version||'?')+'</span></div>'+
       '<div style="display:flex;align-items:center;gap:10px;">'+badge+
         (canDelete?'<i class="ti ti-pencil" style="font-size:15px;color:var(--text2);cursor:pointer;margin-right:4px;" onclick="admEditTpl(\''+row.id+'\')"></i>'+
                    '<i class="ti ti-trash" style="font-size:15px;color:var(--red);cursor:pointer;" onclick="admDeleteTpl(\''+row.id+'\',\''+(row.name||'').replace(/\x27/g,"")+'\')"></i>':'')+
@@ -6319,7 +6318,7 @@ async function loadAdminTemplates(){
     // about, and it would bury the presets that actually matter.
     var m=(r.data||[]).filter(function(x){return x.kind==='mai';});
     _admTpls=m;
-    if(cnt) cnt.textContent=m.length+' of 8 slots used';
+    if(cnt) cnt.textContent=m.length+' preset'+(m.length===1?'':'s');
     mai.innerHTML = m.length ? m.map(function(x){return admTplCard(x,true);}).join('')
       : '<div class="empty-state" style="padding:16px;"><i class="ti ti-layout-grid"></i>No MAI presets yet</div>';
   }catch(e){
@@ -6332,7 +6331,7 @@ async function loadAdminTemplates(){
 // build it. The flag makes Save publish as a MAI preset without asking.
 var _admTpls=[], _stnPublishMode=false, _stnPublishId=null;
 function admNewTpl(){
-  if(_admTpls.length>=8){ alert('All 8 MAI preset slots are full. Delete one first.'); return; }
+  // No slot cap: MAI presets are not slotted, they are keyed by name.
   _stnPublishMode=true; _stnPublishId=null;
   _stnTpl=JSON.parse(JSON.stringify(STN_DEFAULT));
   _stnTpl.name='New preset'; _stnFrom=null;
@@ -9716,19 +9715,26 @@ async function stnSave(){
 
   var kind = asMai ? 'mai' : 'user';
   var pool = _stnTpls.filter(function(x){ return x.kind===kind; });
-  var slot = null;
-  // Editing an existing preset is identified by id, not by name, so renaming
-  // one updates it rather than quietly creating a second.
+  // Editing an existing row is identified by id, not by name, so renaming one
+  // updates it rather than quietly creating a second.
   var existing = _stnPublishId ? pool.filter(function(x){ return x.id===_stnPublishId; })[0]
                                : pool.filter(function(x){ return x.name===name; })[0];
-  if(existing) slot = existing.slot;
-  else {
-    var maxSlots = asMai ? 8 : 5;
-    for(var i=1;i<=maxSlots;i++){ if(!pool.some(function(x){return x.slot===i;})){ slot=i; break; } }
-    if(slot===null){ alert('All '+maxSlots+' '+(asMai?'MAI preset':'template')+' slots are full. Delete one first.'); return; }
+
+  // SLOTS ARE A USER-TEMPLATE CONCEPT ONLY.
+  // The table has a check constraint (mai_tpl_has_no_owner) that requires a MAI
+  // preset to carry NULL user_id AND NULL slot - every seeded preset matches that
+  // shape. Writing slot 1 on a preset fails the constraint. Presets are identified
+  // by name; only personal templates are slotted, five per account.
+  var slot = null;
+  if(!asMai){
+    if(existing) slot = existing.slot;
+    else {
+      for(var i=1;i<=5;i++){ if(!pool.some(function(x){return x.slot===i;})){ slot=i; break; } }
+      if(slot===null){ alert('All 5 template slots are full. Delete one first.'); return; }
+    }
   }
   if(asMai && !existing &&
-     !confirm('This publishes a NEW preset to every user.\n\nSlot '+slot+', named "'+name+'".\n\nGo ahead?')) return;
+     !confirm('This publishes a NEW preset to every user.\n\nNamed "'+name+'".\n\nGo ahead?')) return;
   if(asMai && existing &&
      !confirm('This OVERWRITES the existing MAI preset "'+name+'".\n\n'+
               'Baskets already running keep the rules they were opened with - the\n'+
