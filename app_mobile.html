@@ -10413,11 +10413,17 @@ async function loadAdminMT5() {
             '<div style="font-size:12px;font-weight:700;color:var(--text);">' + (user.mt5_server||'--') + '</div>' +
           '</div>' +
         '</div>' +
-        '<div style="background:var(--surface);border-radius:7px;padding:8px;margin-bottom:10px;">' +
-          '<div style="font-size:9px;color:var(--text3);margin-bottom:3px;">MT5 PASSWORD</div>' +
-          '<div style="display:flex;align-items:center;justify-content:space-between;">' +
-            '<div id="mt5pw-' + user.id + '" style="font-size:12px;font-weight:700;color:var(--text);font-family:monospace;">●●●●●●●●</div>' +
-            (user.mt5_credential ? '<button id="revbtn-' + user.id + '" style="font-size:10px;font-weight:700;padding:4px 10px;background:rgba(77,158,255,0.1);border:1px solid rgba(77,158,255,0.2);border-radius:6px;color:#4D9EFF;cursor:pointer;">Reveal</button>' : '<div style="font-size:11px;color:var(--text3);">Not set</div>') +
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;">' +
+          '<div style="background:var(--surface);border-radius:7px;padding:8px;">' +
+            '<div style="font-size:9px;color:var(--text3);margin-bottom:3px;">MT5 PASSWORD</div>' +
+            '<div style="display:flex;align-items:center;justify-content:space-between;">' +
+              '<div id="mt5pw-' + user.id + '" style="font-size:12px;font-weight:700;color:var(--text);font-family:monospace;">●●●●●●●●</div>' +
+              (user.mt5_credential ? '<button id="revbtn-' + user.id + '" style="font-size:10px;font-weight:700;padding:4px 10px;background:rgba(77,158,255,0.1);border:1px solid rgba(77,158,255,0.2);border-radius:6px;color:#4D9EFF;cursor:pointer;">Reveal</button>' : '<div style="font-size:11px;color:var(--text3);">Not set</div>') +
+            '</div>' +
+          '</div>' +
+          '<div style="background:var(--surface);border-radius:7px;padding:8px;">' +
+            '<div style="font-size:9px;color:var(--text3);margin-bottom:3px;">VPS</div>' +
+            '<div style="font-size:12px;font-weight:700;color:' + ((acct.worker_group||user.worker_group) ? 'var(--text)' : 'var(--text3)') + ';">' + (acct.worker_group || user.worker_group || 'Unassigned') + '</div>' +
           '</div>' +
         '</div>' +
         reasonLine;
@@ -10451,6 +10457,7 @@ async function loadAdminMT5() {
       });
       card.appendChild(actRow);
 
+      // Premium toggle + Delete share one row, side by side.
       var pRow = document.createElement('div');
       pRow.style.cssText = 'display:flex;gap:6px;margin-top:6px;';
       if(_prem){
@@ -10466,17 +10473,13 @@ async function loadAdminMT5() {
         bMkP.addEventListener('click', function(){ mt5SetPremium(acct.id); });
         pRow.appendChild(bMkP);
       }
-      card.appendChild(pRow);
-
       // C-cleanup (Senior 8, 22 Jul 2026): Delete button with an open-position guard.
-      var dRow = document.createElement('div');
-      dRow.style.cssText = 'display:flex;gap:6px;margin-top:6px;';
       var delBtn = document.createElement('button');
       delBtn.textContent = 'Delete Account';
       delBtn.style.cssText = mt5BtnStyle('red');
       delBtn.addEventListener('click', function(){ mt5DeleteAccount(acct); });
-      dRow.appendChild(delBtn);
-      card.appendChild(dRow);
+      pRow.appendChild(delBtn);
+      card.appendChild(pRow);
 
       if(acct.mt5_credential) {
         var revBtn = card.querySelector('#revbtn-' + acct.id);
