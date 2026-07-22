@@ -10625,6 +10625,12 @@ async function mt5DeleteAccount(acct){
   if(!window.confirm('Delete MT5 account ' + label + ' permanently?\n\nThis removes the account row and its stored credential. The fleet clone, if any, will stop being managed. This cannot be undone.')) return;
   // 3. Delete.
   try {
+    // 3a. Clear any users.active_account_id pointing at this account FIRST.
+    //     Otherwise the delete below hits users_active_account_id_fkey and fails.
+    //     Runs only after the open-position guard and the admin confirm above.
+    var clr = await db.from('users').update({ active_account_id: null }).eq('active_account_id', acct.id);
+    if(clr && clr.error) throw clr.error;
+    // 3b. Now the account row can be removed without a foreign-key violation.
     var r = await db.from('mt5_accounts').delete().eq('id', acct.id);
     if(r.error) throw r.error;
     if(typeof loadAdminMT5 === 'function') loadAdminMT5();
