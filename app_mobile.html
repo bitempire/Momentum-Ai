@@ -4749,6 +4749,7 @@ function toggleAvatarDropdown(e) {
       '</div></div>'+
     '<div class="avtr-item" onclick="closeHeaderDropdowns();showSubScreen(\'sub-profile\');"><i class="ti ti-user"></i>Profile</div>'+
     '<div class="avtr-item" onclick="closeHeaderDropdowns();showSubScreen(\'sub-support\');"><i class="ti ti-headset"></i>Customer Support</div>'+
+    '<div class="avtr-item" onclick="openLangPicker()"><i class="ti ti-language"></i>Language<span id="mm-lang-label" style="margin-left:auto;font-size:12px;color:var(--text3);">'+mmLangName(mmGetLang())+'</span></div>'+
     '<div class="avtr-toggle" onclick="toggleTheme(event)">'+
       '<span class="avtr-toggle-left"><i class="ti ti-'+(isLight?'sun':'moon-stars')+'" id="theme-toggle-icon"></i><span id="theme-toggle-label">'+(isLight?'Light Mode':'Dark Mode')+'</span></span>'+
       '<span class="theme-switch"><span class="knob"></span></span>'+
@@ -4827,6 +4828,56 @@ function initTheme() {
   applyTheme(saved);
 }
 initTheme();
+
+// ── LANGUAGE ──────────────────────────────────────────────────────────────
+// Placement + switcher only (E1 scaffolding, 22 Jul 2026). Selecting a language
+// records the choice and marks the document lang; it does NOT translate the UI
+// yet - the string dictionary is built next. When it lands, fill mmApplyLang()
+// and every visible string reads from the dictionary keyed by mmGetLang().
+// English is the default and the fallback.
+var MMLANGS = [
+  { code:'en',    native:'English',    en:'English' },
+  { code:'zh-TW', native:'\u7e41\u9ad4\u4e2d\u6587', en:'Chinese (Taiwan)' },
+  { code:'ko',    native:'\ud55c\uad6d\uc5b4', en:'Korean' },
+  { code:'ta',    native:'\u0ba4\u0bae\u0bbf\u0bb4\u0bcd', en:'Tamil' },
+  { code:'hi',    native:'\u0939\u093f\u0928\u094d\u0926\u0940', en:'Hindi' },
+  { code:'th',    native:'\u0e44\u0e17\u0e22', en:'Thai' },
+  { code:'vi',    native:'Ti\u1ebfng Vi\u1ec7t', en:'Vietnamese' },
+  { code:'km',    native:'\u1797\u17b6\u179f\u17b6\u1781\u17d2\u1798\u17c2\u179a', en:'Khmer' },
+  { code:'fil',   native:'Filipino',   en:'Filipino' },
+  { code:'es',    native:'Espa\u00f1ol', en:'Spanish' }
+];
+function mmGetLang(){ try{ return localStorage.getItem('momentum_lang') || 'en'; }catch(e){ return 'en'; } }
+function mmLangName(code){ for(var i=0;i<MMLANGS.length;i++){ if(MMLANGS[i].code===code) return MMLANGS[i].native; } return 'English'; }
+function openLangPicker(){
+  if(typeof closeHeaderDropdowns==='function') closeHeaderDropdowns();
+  var ex=document.getElementById('mm-lang-sheet'); if(ex) ex.remove();
+  var cur=mmGetLang();
+  var popup=document.createElement('div');
+  popup.id='mm-lang-sheet';
+  popup.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);z-index:9500;display:flex;align-items:flex-end;';
+  var sheet=document.createElement('div');
+  sheet.style.cssText='width:100%;max-height:82vh;overflow-y:auto;background:var(--bg2);border-radius:20px 20px 0 0;border-top:1px solid var(--border);padding:18px 16px 34px;';
+  var h='<div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px;"></div>'+
+        '<div style="font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);text-align:center;margin-bottom:16px;">Language</div>';
+  for(var i=0;i<MMLANGS.length;i++){ var L=MMLANGS[i]; var on=(L.code===cur);
+    h+='<div onclick="mmSetLang(\''+L.code+'\')" style="display:flex;align-items:center;justify-content:space-between;padding:13px 14px;margin-bottom:8px;background:var(--bg3);border:1px solid '+(on?'var(--red)':'var(--border)')+';border-radius:12px;cursor:pointer;">'+
+       '<span style="font-size:14px;color:var(--text);font-weight:'+(on?'700':'500')+';">'+L.native+'<span style="font-size:11px;color:var(--text3);margin-left:8px;">'+L.en+'</span></span>'+
+       (on?'<i class="ti ti-check" style="color:var(--red);"></i>':'')+'</div>';
+  }
+  sheet.innerHTML=h;
+  popup.appendChild(sheet); document.body.appendChild(popup);
+  popup.addEventListener('click',function(e){ if(e.target===popup) popup.remove(); });
+}
+function mmSetLang(code){
+  try{ localStorage.setItem('momentum_lang', code); }catch(e){}
+  try{ document.documentElement.setAttribute('lang', code); }catch(e){}
+  var s=document.getElementById('mm-lang-sheet'); if(s) s.remove();
+  var lbl=document.getElementById('mm-lang-label'); if(lbl) lbl.textContent=mmLangName(code);
+  // Hook for the translation build: apply the dictionary + re-render here.
+  if(typeof mmApplyLang==='function') mmApplyLang(code);
+}
+try{ document.documentElement.setAttribute('lang', mmGetLang()); }catch(e){}
 
 // ── LOGOUT ──
 function handleLogout() {
