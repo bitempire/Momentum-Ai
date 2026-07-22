@@ -8626,7 +8626,22 @@ async function handleMT5Connect() {
     var existing = [];
     try { var ex = await db.from('mt5_accounts').select('*').eq('user_id', currentUser.id); existing = (ex&&ex.data)?ex.data:[]; } catch(ee) {}
     if(existing.length >= 5) { errEl.textContent = 'You have reached the maximum of 5 accounts.'; errEl.style.display='block'; return; }
-    if(existing.some(function(a){ return (a.mt5_id||'')===mt5Id; })) { errEl.textContent = 'This MT5 account is already added.'; errEl.style.display='block'; return; }
+    // UNIQUENESS GUARD (22 Jul 2026): one broker login = one account, across ALL
+    // users - not just this user's own list. Closes the hole where the same MT5
+    // login was connected on two different rows (dup 554503734, handoff). NOTE:
+    // a DB unique index on mt5_accounts.mt5_id is the belt-and-braces server-side
+    // fix and also closes the simultaneous-connect race; this catches the common
+    // case client-side until then.
+    var claimed = [];
+    try { var cl = await db.from('mt5_accounts').select('id,user_id').eq('mt5_id', mt5Id); claimed = (cl&&cl.data)?cl.data:[]; } catch(ee) {}
+    if(claimed.length){
+      var mine = claimed.some(function(a){ return a.user_id===currentUser.id; });
+      errEl.textContent = mine
+        ? 'This MT5 account is already added to your profile.'
+        : 'This MT5 login is already connected to another account. If it is yours, contact support.';
+      errEl.style.display='block';
+      return;
+    }
 
     var r = await db.from('mt5_accounts').insert({
       user_id: currentUser.id,
