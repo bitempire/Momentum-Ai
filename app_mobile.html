@@ -5538,7 +5538,11 @@ async function pollTradeCommand(id, btn, origText){
       var row = (r && r.data) ? (Array.isArray(r.data)?r.data[0]:r.data) : null;
       if(row && row.status==='failed'){
         clearInterval(timer); resetBtn();
-        if(note){ note.style.display='flex'; note.style.background='rgba(255,60,60,0.12)'; note.style.color='#d33'; note.innerHTML='<i class="ti ti-alert-circle"></i>Trade failed: '+(row.result||'unknown error'); }
+        var _dry = (row.result||'').toLowerCase().indexOf('dry run')>=0 || (row.result||'').toLowerCase().indexOf('not armed')>=0;
+        if(note){ note.style.display='flex';
+          if(_dry){ note.style.background='rgba(230,160,30,0.12)'; note.style.color='#c9821a'; note.innerHTML='<i class="ti ti-flask"></i>Simulated only \u2014 this account is not armed for live trading yet, so no order was sent. Contact support to activate live trading.'; }
+          else    { note.style.background='rgba(255,60,60,0.12)'; note.style.color='#d33'; note.innerHTML='<i class="ti ti-alert-circle"></i>Trade failed: '+(row.result||'unknown error'); }
+        }
       }
       else if(row && (row.status==='filled'||row.status==='executed')){
         clearInterval(timer); resetBtn();
@@ -5588,7 +5592,7 @@ function armedCountdown(id, btn, origText){
       var row=(r&&r.data)?(Array.isArray(r.data)?r.data[0]:r.data):null;
       if(!row) return;
       if(row.status==='filled'||row.status==='executed'){ clearAll(); show('<i class="ti ti-circle-check"></i>Price hit the zone \u2014 trade filled on MT5!','rgba(40,200,120,0.12)','#1a9d5a'); }
-      else if(row.status==='failed'){ clearAll(); show('<i class="ti ti-alert-circle"></i>Trade failed: '+(row.result||'unknown error'),'rgba(255,60,60,0.12)','#d33'); }
+      else if(row.status==='failed'){ clearAll(); var _d=(row.result||'').toLowerCase(); if(_d.indexOf('dry run')>=0||_d.indexOf('not armed')>=0){ show('<i class="ti ti-flask"></i>Simulated only \u2014 account not armed for live trading, no order sent. Contact support to go live.','rgba(230,160,30,0.12)','#c9821a'); } else { show('<i class="ti ti-alert-circle"></i>Trade failed: '+(row.result||'unknown error'),'rgba(255,60,60,0.12)','#d33'); } }
       else if(row.status==='cancelled'){ clearAll(); show('<i class="ti ti-circle-x"></i>Armed order cancelled.','rgba(255,60,60,0.10)','#d33'); }
       else if(row.status==='expired'){ clearAll(); show('<i class="ti ti-circle-x"></i>Entry zone not reached \u2014 order expired.','rgba(150,150,150,0.15)','#777'); }
     }catch(e){}
@@ -10420,7 +10424,7 @@ async function loadAdminMT5() {
 
       var acts = [];
       if(state === 'pending') {
-        acts.push(['✓ Activate','green',function(){ mt5Activate(acct.id); }]);
+        acts.push(['✓ Activate','green',function(){ mt5ActivateWithNode(acct.id); }]);
         acts.push(['✕ Reject','red',function(){ openMT5ReasonSheet('rejected', acct.id); }]);
       } else if(state === 'connected') {
         acts.push(['Edit','blue',function(){ openMT5EditSheet(acct); }]);
@@ -10548,6 +10552,33 @@ async function applyMT5Transition(acctId, core, extra, noticeKind, reason){
 }
 
 function mt5Activate(id){ applyMT5Transition(id, { connection_status:'connected', mt5_connected:true }, { connected_at:new Date().toISOString() }, 'connected', null); }
+
+// C4 (Senior 8, 22 Jul 2026): activation also PLACES the account on a VPS node.
+// The launcher only ever touches accounts whose worker_group matches a node id,
+// so without this an approved account connects in the app but no clone is ever
+// built for it. We ask the admin which node and refuse to overfill one.
+// NODE_CAPS is the SAFE per-box ceiling measured on the hardware. Keep it in
+// step with fleet_config.json node.max_accounts. VPS-1 is proven to 3 at 2.3s.
+var NODE_CAPS = { 'VPS-1': 3 };
+async function mt5ActivateWithNode(id){
+  if(!db) return;
+  var nodes = Object.keys(NODE_CAPS);
+  var node = window.prompt('Place this account on which node?\n\nAvailable: ' + nodes.join(', '), nodes[0]);
+  if(!node) return;
+  node = node.trim();
+  if(NODE_CAPS[node] === undefined){ alert('Unknown node "' + node + '". Known nodes: ' + nodes.join(', ')); return; }
+  // Capacity guard: count how many accounts already sit on this node.
+  try {
+    var used = await db.from('mt5_accounts').select('id', { count:'exact', head:true }).eq('worker_group', node);
+    var n = (used && typeof used.count === 'number') ? used.count : 0;
+    if(n >= NODE_CAPS[node]){
+      alert(node + ' is full (' + n + '/' + NODE_CAPS[node] + ' slots used). Free a slot or use another node before activating.');
+      return;
+    }
+  } catch(e){ /* if the count fails, fall through - the launcher's own cap guard still protects the box */ }
+  // Same transition as before, plus worker_group so the launcher adopts it.
+  applyMT5Transition(id, { connection_status:'connected', mt5_connected:true }, { connected_at:new Date().toISOString(), worker_group:node }, 'connected', null);
+}
 function mt5Resume(id){ applyMT5Transition(id, { connection_status:'connected', mt5_connected:true }, { connected_at:new Date().toISOString() }, 'resumed', null); }
 function mt5Reallow(id){ applyMT5Transition(id, { connection_status:'disconnected', mt5_connected:false }, {}, 'reopened', null); }
 function mt5Reject(id, reason){ applyMT5Transition(id, { connection_status:'rejected', mt5_connected:false }, { rejection_reason:reason }, 'rejected', reason); }
