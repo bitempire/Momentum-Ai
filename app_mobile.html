@@ -1515,6 +1515,8 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 .stn-mtable.dca .tot .v{text-align:right;color:var(--green);font-weight:700;font-variant-numeric:tabular-nums}
 .stn-pen{width:28px;height:28px;border:1px solid rgba(255,30,60,.30);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--red);cursor:pointer;flex:none}
 .stn-pen.on{background:rgba(255,30,60,.14)}
+.stn-mult{min-width:36px;height:28px;padding:0 10px;border:1px solid rgba(255,30,60,.30);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--red);cursor:pointer;font-size:12px;font-weight:700;flex:none;letter-spacing:.3px}
+.stn-mult.big{background:rgba(255,30,60,.14)}
 .stn-usheet{display:none;margin-top:8px;border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--bg3)}
 .stn-usheet .uh{padding:10px 14px 6px;font-size:11px;letter-spacing:.12em;color:#5A5865;text-transform:uppercase}
 .stn-usheet .uo{padding:11px 14px;border-top:1px solid var(--border);cursor:pointer}
@@ -2403,7 +2405,11 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 
       <div class="stn-eyebrow">Entries &middot; DCA</div>
       <div class="stn-tbl-cap"><div class="t">Ladder</div>
-        <div class="stn-pen" id="stn-pen" onclick="stnToggleEdit()"><i class="ti ti-pencil"></i></div></div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div class="stn-mult" id="stn-mult" onclick="stnMultSheet()">&times;1</div>
+          <div class="stn-pen" id="stn-pen" onclick="stnToggleEdit()"><i class="ti ti-pencil"></i></div>
+        </div></div>
+      <div class="stn-usheet" id="stn-msheet"></div>
       <div class="stn-mtable dca" id="stn-dca-tbl">
         <div class="th"><span>#</span><span class="unit" id="stn-unit-h" onclick="stnUnitSheet()">Distance <i class="ti ti-chevron-down"></i></span><span>Price</span><span id="stn-h4">Risk</span><span id="stn-h5">Vol</span></div>
         <div id="stn-dca-body"></div>
@@ -5470,6 +5476,24 @@ async function executeTrade(method) {
     // === END ENTRY ZONE GATE ===
     if(currentUser && !_armed) {
       await db.from('trades').insert([{user_id:currentUser.id,signal_id:currentSignal.id,method,volume,pair:currentSignal.pair,direction:currentSignal.direction,entry:currentSignal.entry_to,sl:currentSignal.sl,tp:currentSignal.tp1,status:'executed',executed_at:new Date().toISOString()}]);
+    }
+    // Apply the per-account lot multiplier to BOTH the entry volume and every
+    // ladder layer, so the REAL fired trade scales exactly like the preview.
+    // Smart method only: manual uses the volume the user typed; auto is produced
+    // server-side and does not pass through here (so it does not yet honour this).
+    if(method==='smart'){
+      var _lotM = stnLotMult();
+      if(_lotM && _lotM!==1){
+        volume = +((parseFloat(volume)||0.01)*_lotM).toFixed(2);
+        if(volume<0.01) volume=0.01;
+        if(tplPayload && tplPayload.dca && Array.isArray(tplPayload.dca.layers)){
+          tplPayload.dca.layers = tplPayload.dca.layers.map(function(L){
+            var c=Object.assign({},L);
+            c.lots=+(((parseFloat(L.lots)||0)*_lotM)).toFixed(2);
+            return c;
+          });
+        }
+      }
     }
     var cmd = {
       account_id:   activeAccount.id,
@@ -9038,6 +9062,59 @@ function stnSetUnit(i){
   var s=document.getElementById('stn-usheet'); if(s) s.style.display='none';
   stnRender();
 }
+// ---- LOT MULTIPLIER. A per-account scale on top of the template's base ladder.
+// The template stays the SHAPE (0.01-per-layer base); the multiplier sizes it to
+// this account. Stored in mt5_accounts.mm_settings.lot_multiplier so it survives
+// reload and - crucially - is applied to the REAL fired command in executeTrade,
+// not just this preview. Default 1 = today's behaviour, unchanged.
+function stnLotMult(){
+  try{
+    var s=activeAccount&&activeAccount.mm_settings;
+    if(typeof s==='string') s=JSON.parse(s);
+    var m=parseFloat(s&&s.lot_multiplier);
+    return (isNaN(m)||m<=0)?1:m;
+  }catch(e){ return 1; }
+}
+var STN_MULTS=[1,2,3,4,5,10];
+function stnMultSheet(){
+  var s=document.getElementById('stn-msheet'); if(!s) return;
+  if(s.style.display==='block'){ s.style.display='none'; return; }
+  var cur=stnLotMult();
+  var h='<div class="uh">Lot multiplier &middot; scales every ladder layer</div>';
+  for(var i=0;i<STN_MULTS.length;i++){ var m=STN_MULTS[i];
+    h+='<div class="uo'+(m===cur?' on':'')+'" onclick="stnSetLotMult('+m+')">'+
+       '<div class="n">&times;'+m+(m===cur?' <i class="ti ti-check"></i>':'')+'</div>'+
+       '<div class="d">'+(m===1?'base ladder, no scaling':'every layer &times; '+m)+'</div></div>'; }
+  h+='<div class="uo" style="align-items:center;"><div class="n">Custom</div>'+
+     '<div class="d" style="display:flex;gap:6px;align-items:center;">'+
+     '<input id="stn-mult-custom" type="number" inputmode="decimal" step="0.1" min="0.1" placeholder="e.g. 7" '+
+     'style="width:72px;padding:6px 8px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;">'+
+     '<button onclick="stnSetLotMultCustom()" style="padding:6px 12px;background:var(--grad);border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;">Set</button>'+
+     '</div></div>';
+  s.innerHTML=h; s.style.display='block';
+}
+function stnSetLotMultCustom(){
+  var el=document.getElementById('stn-mult-custom'); if(!el) return;
+  var m=parseFloat(el.value);
+  if(isNaN(m)||m<=0){ alert('Enter a multiplier greater than 0 (e.g. 7).'); return; }
+  stnSetLotMult(m);
+}
+async function stnSetLotMult(m){
+  m=parseFloat(m); if(isNaN(m)||m<=0) return;
+  var s=document.getElementById('stn-msheet'); if(s) s.style.display='none';
+  if(!activeAccount){ alert('No active account selected.'); return; }
+  try{
+    var cur=activeAccount.mm_settings;
+    if(typeof cur==='string'){ try{ cur=JSON.parse(cur); }catch(e){ cur={}; } }
+    if(!cur||typeof cur!=='object') cur={};
+    cur.lot_multiplier=m;
+    var r=await db.from('mt5_accounts').update({ mm_settings:cur }).eq('id', activeAccount.id);
+    if(r&&r.error) throw r.error;
+    activeAccount.mm_settings=cur;
+    (window._userAccounts||[]).forEach(function(a){ if(a.id===activeAccount.id) a.mm_settings=cur; });
+    stnRender();
+  }catch(e){ alert('Could not save multiplier: '+(e.message||'error')); }
+}
 // ---- EDIT MODE. Changes apply to _stnTpl live so the preview updates as you
 // type, but a snapshot is held so Cancel truly reverts. Leaving without Apply
 // discards, which is what a Save button implies.
@@ -9187,6 +9264,11 @@ function stnResolve(t, sig, fill){
 
   var lots=0, wsum=0, last=fill;
   var LS = (t.dca && t.dca.enabled && t.dca.layers) ? t.dca.layers : [{room_pct:0,lots:0.01}];
+  // Per-account lot multiplier: the template holds the base ladder shape; this
+  // scales every layer to the account's size. Applied here so the preview,
+  // total lots, worst-case and budget gate ALL reflect it, and mirrored in
+  // executeTrade so the real fired command matches. Default 1 = no change.
+  var M = stnLotMult();
 
   for(var i=0;i<LS.length;i++){
     var pct = Math.max(0, Math.min(100, LS[i].room_pct));       // <- the clamp. bug 24 dies here.
@@ -9201,8 +9283,9 @@ function stnResolve(t, sig, fill){
                     ' pts. It will fill on a quote flicker, not a real move.');
       }
     }
-    if(fits){ lots+=LS[i].lots; wsum+=px*LS[i].lots; last=px; }
-    o.layers.push({ n:i+1, pct:pct, off:off, px:px, lots:LS[i].lots, fits:fits, why:why });
+    var _lm = +((parseFloat(LS[i].lots)||0)*M).toFixed(2);   // scaled layer lots
+    if(fits){ lots+=_lm; wsum+=px*_lm; last=px; }
+    o.layers.push({ n:i+1, pct:pct, off:off, px:px, lots:_lm, fits:fits, why:why });
   }
 
   var fit = o.layers.filter(function(l){return l.fits;}).length;
@@ -9386,6 +9469,9 @@ function stnRender(){
   stnLadderChrome();
   if($('stn-total-lots')) $('stn-total-lots').textContent=r.lots.toFixed(2);
   if($('stn-avg-entry'))  $('stn-avg-entry').textContent=r.avg.toFixed(2);
+  var _mnow=stnLotMult();
+  var _mchip=$('stn-mult');
+  if(_mchip){ _mchip.innerHTML='&times;'+_mnow; if(_mnow!==1) _mchip.classList.add('big'); else _mchip.classList.remove('big'); }
   if($('stn-tplfrom'))    $('stn-tplfrom').innerHTML = _stnFrom ? '<span class="dot"></span> Loaded from template: <b>'+_stnFrom+'</b>' : '';
 
   // ---- take profit
