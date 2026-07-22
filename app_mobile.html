@@ -10468,6 +10468,16 @@ async function loadAdminMT5() {
       }
       card.appendChild(pRow);
 
+      // C-cleanup (Senior 8, 22 Jul 2026): Delete button with an open-position guard.
+      var dRow = document.createElement('div');
+      dRow.style.cssText = 'display:flex;gap:6px;margin-top:6px;';
+      var delBtn = document.createElement('button');
+      delBtn.textContent = 'Delete Account';
+      delBtn.style.cssText = mt5BtnStyle('red');
+      delBtn.addEventListener('click', function(){ mt5DeleteAccount(acct); });
+      dRow.appendChild(delBtn);
+      card.appendChild(dRow);
+
       if(acct.mt5_credential) {
         var revBtn = card.querySelector('#revbtn-' + acct.id);
         var pwEl   = card.querySelector('#mt5pw-' + acct.id);
@@ -10584,6 +10594,44 @@ function mt5Reallow(id){ applyMT5Transition(id, { connection_status:'disconnecte
 function mt5Reject(id, reason){ applyMT5Transition(id, { connection_status:'rejected', mt5_connected:false }, { rejection_reason:reason }, 'rejected', reason); }
 function mt5Suspend(id, reason){ applyMT5Transition(id, { connection_status:'suspended', mt5_connected:false }, {}, 'suspended', reason); }
 function mt5Disconnect(id, reason){ applyMT5Transition(id, { connection_status:'disconnected', mt5_connected:false }, { connected_at:null }, 'disconnected', reason); }
+
+// C-cleanup (Senior 8, 22 Jul 2026): permanently remove an MT5 account row.
+// SAFETY: before deleting, check public.positions for OPEN trades on this login.
+// A delete while a basket is live would orphan real money at the broker with no
+// engine and no record in the app, so we HARD BLOCK that case and tell the admin
+// to close the positions first. A second confirm covers the ordinary case.
+async function mt5DeleteAccount(acct){
+  if(!db || !acct) return;
+  var label = (acct.mt5_id || acct.label || acct.id);
+  // 1. Open-position guard.
+  if(acct.mt5_id){
+    try {
+      var pr = await db.from('positions').select('symbol,side,volume,profit').eq('mt5_id', acct.mt5_id);
+      var open = (pr && pr.data) ? pr.data : [];
+      if(open.length){
+        var lines = open.map(function(o){
+          var pnl = (parseFloat(o.profit)||0).toFixed(2);
+          return '\u2022 ' + (o.side||'').toUpperCase() + ' ' + o.volume + ' ' + o.symbol + '  (P/L ' + pnl + ')';
+        }).join('\n');
+        alert('CANNOT DELETE ' + label + '\n\nThis account has ' + open.length + ' OPEN position(s):\n\n' + lines + '\n\nClose these in MT5 first. Deleting now would leave real trades running with no app record and no engine managing them.');
+        return;
+      }
+    } catch(e){
+      // If the positions check itself fails, do NOT assume it is safe. Warn and stop.
+      if(!window.confirm('Could not verify open positions for ' + label + ' (' + (e.message||'error') + ').\n\nDeleting blind could orphan a live trade. Continue ONLY if you are certain this account has no open positions?')) return;
+    }
+  }
+  // 2. Ordinary confirmation.
+  if(!window.confirm('Delete MT5 account ' + label + ' permanently?\n\nThis removes the account row and its stored credential. The fleet clone, if any, will stop being managed. This cannot be undone.')) return;
+  // 3. Delete.
+  try {
+    var r = await db.from('mt5_accounts').delete().eq('id', acct.id);
+    if(r.error) throw r.error;
+    if(typeof loadAdminMT5 === 'function') loadAdminMT5();
+  } catch(e){
+    alert('Delete failed: ' + (e.message || 'unknown error'));
+  }
+}
 
 function openMT5ReasonSheet(actionKind, userId){
   var ex = document.getElementById('mt5-reason-sheet'); if(ex) ex.remove();
