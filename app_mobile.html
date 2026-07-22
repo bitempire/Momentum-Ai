@@ -2430,7 +2430,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <div class="stn-eyebrow">Stop Loss</div>
       <div class="stn-row">
         <div><div class="stn-lbl">SL from signal</div><div class="stn-hint">the analyst sets your risk</div></div>
-        <div class="toggle on" id="stn-sl-signal" onclick="this.classList.toggle('on');stnSync()"></div>
+        <div class="toggle on" id="stn-sl-signal" onclick="stnToggleField(this)"></div>
       </div>
 
       <div class="stn-eyebrow">Take Profit</div>
@@ -2462,7 +2462,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <div class="stn-eyebrow">Trailing Stop</div>
       <div class="stn-row">
         <div class="stn-lbl">Enable trailing</div>
-        <div class="toggle on" id="stn-tr-on" onclick="this.classList.toggle('on');stnSync()"></div>
+        <div class="toggle on" id="stn-tr-on" onclick="stnToggleField(this)"></div>
       </div>
       <div class="stn-row">
         <div><div class="stn-lbl">Measure arm from</div><div class="stn-hint" id="stn-trf-hint">-</div></div>
@@ -2479,7 +2479,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 
       <div id="stn-ro-note" style="display:none;margin-top:16px;padding:12px 13px;border:1px solid rgba(255,30,60,0.3);border-radius:10px;background:rgba(255,30,60,0.06);font-size:11px;color:var(--text2);line-height:1.6;">
         <i class="ti ti-lock" style="color:var(--red);"></i> <b style="color:var(--text);">MAI template &middot; view only</b><br>
-        Provided by MomentumAI. Selecting it is enough &mdash; your trades will use it. To change anything, build your own under My Templates.</div>
+        Provided by MomentumAI. Selecting it is enough &mdash; your trades will use it. Templates are managed by MomentumAI &mdash; ask your admin if you need a different one.</div>
       <button class="red-btn" id="stn-save-btn" style="margin-top:16px;" onclick="stnSave()">SAVE SMART TOOLS</button>
     </div>
   </div>
@@ -9590,6 +9590,11 @@ function stnSync(){ if(stnLocked()) return;
   if($('stn-tr-on'))     _stnTpl.trailing.enabled      = $('stn-tr-on').classList.contains('on');
   stnRender();
 }
+// Flip a switch ONLY when the template is editable. On a locked MAI template the
+// switch must not even move: stnSync already refuses to write it, but flipping
+// first left the switch out of sync with the real state until the next render.
+// The lot multiplier is deliberately NOT gated this way - it stays editable.
+function stnToggleField(el){ if(stnLocked()) return; el.classList.toggle('on'); stnSync(); }
 
 // ─────────────────────────────────────────────────────────────────────────
 // EDITS
@@ -9736,6 +9741,10 @@ async function loadSmartToolNew(){
     var $=function(id){return document.getElementById(id);};
     if($('stn-sl-signal')) $('stn-sl-signal').classList.toggle('on', !!_stnTpl.stop_loss.from_signal);
     if($('stn-tr-on'))     $('stn-tr-on').classList.toggle('on', !!_stnTpl.trailing.enabled);
+    // Templates are MomentumAI-provided. The SAVE button only appears when an admin
+    // is authoring a preset (publish mode). Everyone else selects-and-trades only.
+    var _sv=$('stn-save-btn');
+    if(_sv) _sv.style.display = _stnPublishMode ? '' : 'none';
     stnRender();
   }catch(e){ console.error('loadSmartToolNew', e); }
 }
@@ -9811,6 +9820,15 @@ function stnValidateTemplate(t){
 }
 
 async function stnSave(){ if(stnLocked()) return;
+  // Templates are MomentumAI-provided. Only an admin authoring a preset (publish
+  // mode) may write one - there are no personal templates. Everyone else selects.
+  // NOTE: this is a CLIENT-SIDE guard. True enforcement needs an RLS policy on
+  // smart_templates (role = 'admin'); until Phase D, the service_role key is public.
+  var _isAdmin = !!(currentUser && currentUser.role === 'admin');
+  if(!_stnPublishMode || !_isAdmin){
+    alert('Templates are provided by MomentumAI.\n\nSelect one from the Templates list to trade with it.');
+    return;
+  }
   if(!_stnTpl || !db || !currentUser){ alert('Not signed in.'); return; }
 
   var v = stnValidateTemplate(_stnTpl);
@@ -9911,39 +9929,18 @@ function stnCloseTemplates(){ var el=document.getElementById('stn-tpl-sheet'); i
 function stnTplTab(which){
   _stnTab=which;
   var b=document.getElementById('stn-tpl-body'); if(!b) return;
-  // Publishing a preset is not a moment to browse personal templates - the admin
-  // is authoring the shared set, so only that set is shown.
-  if(_stnPublishMode) which = 'mai';
-  var h = _stnPublishMode
-        ? '<div class="stn-tabs"><div class="tb on">MAI Templates</div></div>'
-        : '<div class="stn-tabs">'+
-          '<div class="tb'+(which==='user'?' on':'')+'" onclick="stnTplTab(\'user\')">My Templates</div>'+
-          '<div class="tb'+(which==='mai'?' on':'')+'" onclick="stnTplTab(\'mai\')">MAI Templates</div></div>';
-  var list=_stnTpls.filter(function(x){ return x.kind===which; });
-  if(which==='user'){
-    for(var i=1;i<=5;i++){
-      var t=list.filter(function(x){return x.slot===i;})[0];
-      if(t){
-        var L=(t.settings.dca&&t.settings.dca.layers)?t.settings.dca.layers.length:1;
-        // The trash stops the click bubbling to stnUseTpl, or deleting would also
-        // select the template on the way out.
-        h+='<div class="tpl'+(_stnFrom===t.name?' on':'')+'" onclick="stnUseTpl(\''+t.id+'\')" style="position:relative;">'+
-           '<div class="n">'+t.name+'</div><div class="s">'+L+' layers &middot; '+t.settings.risk.risk_pct+'% risk</div>'+
-           '<i class="ti ti-trash" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:15px;color:var(--red);padding:6px;" '+
-           'onclick="event.stopPropagation();stnDelTemplate(\''+t.id+'\',\''+String(t.name).replace(/\x27/g,'')+'\')"></i></div>';
-      } else {
-        h+='<div class="tpl empty"><div class="n">Empty slot '+i+'</div><div class="s">Save a setup here</div></div>';
-      }
-    }
-  } else {
-    if(!list.length) h+='<div class="tpl empty"><div class="n">No MAI templates yet</div></div>';
-    for(var j=0;j<list.length;j++){
-      var m=list[j];
-      var ML=(m.settings.dca&&m.settings.dca.layers)?m.settings.dca.layers.length:1;
-      h+='<div class="tpl'+(_stnFrom===m.name?' on':'')+'" onclick="stnUseTpl(\''+m.id+'\')">'+
-         '<div class="n">'+m.name+' <span class="lock"><i class="ti ti-lock"></i></span></div>'+
-         '<div class="s">'+ML+' layers &middot; '+m.settings.risk.risk_pct+'% risk &middot; read only</div></div>';
-    }
+  // Templates are MomentumAI-provided ONLY. Users SELECT; they do not build.
+  // Admins author the shared set via the admin Template tab (publish mode).
+  // The old "My Templates" personal-slot tab was removed 22 Jul 2026.
+  var h = '<div class="stn-tabs"><div class="tb on">MAI Templates</div></div>';
+  var list=_stnTpls.filter(function(x){ return x.kind==='mai'; });
+  if(!list.length) h+='<div class="tpl empty"><div class="n">No templates yet</div><div class="s">MomentumAI has not published one</div></div>';
+  for(var j=0;j<list.length;j++){
+    var m=list[j];
+    var ML=(m.settings.dca&&m.settings.dca.layers)?m.settings.dca.layers.length:1;
+    h+='<div class="tpl'+(_stnFrom===m.name?' on':'')+'" onclick="stnUseTpl(\''+m.id+'\')">'+
+       '<div class="n">'+m.name+' <span class="lock"><i class="ti ti-lock"></i></span></div>'+
+       '<div class="s">'+ML+' layers &middot; '+m.settings.risk.risk_pct+'% risk &middot; read only</div></div>';
   }
   b.innerHTML=h;
 }
@@ -9956,8 +9953,8 @@ function stnTplTab(which){
 var _stnReadOnly = false;
 function stnLocked(){
   if(!_stnReadOnly) return false;
-  alert('This is a MAI template.\n\nIt is provided by MomentumAI and cannot be edited. '+
-        'Select it to trade with it, or build your own under My Templates.');
+  alert('This is a MomentumAI template.\n\nIt is provided by MomentumAI and cannot be edited. '+
+        'Select it to trade with it. Ask your admin if you need a different template.');
   return true;
 }
 
