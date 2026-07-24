@@ -1639,27 +1639,27 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
     </div>
     <!-- Tabs -->
     <div class="auth-tabs">
-      <button class="auth-tab active" id="tab-signin" onclick="switchAuthTab('signin')">Sign In</button>
-      <button class="auth-tab" id="tab-register" onclick="switchAuthTab('register')">Register</button>
+      <button class="auth-tab active" id="tab-signin" onclick="switchAuthTab('signin')" data-i18n="auth.signIn">Sign In</button>
+      <button class="auth-tab" id="tab-register" onclick="switchAuthTab('register')" data-i18n="auth.register">Register</button>
     </div>
     <!-- Sign In Form -->
     <div id="form-signin">
-      <div class="auth-title">Welcome Back</div>
+      <div class="auth-title" data-i18n="dash.welcome">Welcome Back</div>
       <div class="auth-sub">Sign in to your trading account</div>
       <div id="signin-error" class="error-msg"></div>
       <div class="auth-field">
-        <label class="auth-label">Username</label>
+        <label class="auth-label" data-i18n="auth.username">Username</label>
         <input id="input-username" class="auth-input" type="text" placeholder="Enter your username" autocomplete="username">
       </div>
       <div class="auth-field">
-        <label class="auth-label">Password</label>
+        <label class="auth-label" data-i18n="auth.password">Password</label>
         <div style="position:relative;">
         <input id="input-password" class="auth-input" type="password" placeholder="••••••••" autocomplete="current-password" style="padding-right:44px;">
         <button type="button" onclick="toggleLoginPw()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:18px;padding:0;line-height:1;"><i class="ti ti-eye" id="login-pw-eye"></i></button>
       </div>
       </div>
       <div class="auth-forgot"><a>Forgot Password?</a></div>
-      <button class="auth-btn" id="btn-signin" onclick="handleLogin()">ACCESS SYSTEM</button>
+      <button class="auth-btn" id="btn-signin" onclick="handleLogin()" data-i18n="auth.access">ACCESS SYSTEM</button>
       <div class="auth-divider"><span>or</span></div>
       <button class="auth-google-btn" onclick="window.open('https://momentum-ai-ruddy.vercel.app','_blank')" style="gap:8px;">
         <i class="ti ti-world"></i> Visit Our Website
@@ -1672,40 +1672,40 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
     </div>
     <!-- Register Form -->
     <div id="form-register" style="display:none;">
-      <div class="auth-title">Get Started</div>
+      <div class="auth-title" data-i18n="auth.getStarted">Get Started</div>
       <div class="auth-sub">Register your Momentum AI Account</div>
       <div id="reg-error" class="error-msg"></div>
       <div id="reg-success" class="success-msg"></div>
       <div class="auth-field">
-        <label class="auth-label">MT5 Account ID</label>
+        <label class="auth-label" data-i18n="prof.mt5id">MT5 Account ID</label>
         <input id="reg-mt5" class="auth-input" type="text" placeholder="Your Asia Future Trading MT5 ID">
       </div>
       <div class="auth-field">
-        <label class="auth-label">Full Name</label>
+        <label class="auth-label" data-i18n="prof.fullName">Full Name</label>
         <input id="reg-name" class="auth-input" type="text" placeholder="Ahmad Hisham">
       </div>
       <div class="auth-field">
-        <label class="auth-label">Email Address</label>
+        <label class="auth-label" data-i18n="auth.emailAddr">Email Address</label>
         <input id="reg-email" class="auth-input" type="email" placeholder="your@email.com">
       </div>
       <div class="auth-field">
-        <label class="auth-label">Username</label>
+        <label class="auth-label" data-i18n="auth.username">Username</label>
         <input id="reg-username" class="auth-input" type="text" placeholder="Choose a username">
       </div>
       <div class="auth-field">
-        <label class="auth-label">Password</label>
+        <label class="auth-label" data-i18n="auth.password">Password</label>
         <div style="position:relative;">
         <input id="reg-password" class="auth-input" type="password" placeholder="Create a strong password" style="padding-right:44px;">
         <button type="button" onclick="toggleRegPw()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:18px;padding:0;line-height:1;"><i class="ti ti-eye" id="reg-pw-eye"></i></button>
         </div>
       </div>
       <div class="auth-field">
-        <label class="auth-label">Server</label>
+        <label class="auth-label" data-i18n="auth.server">Server</label>
         <select id="reg-broker" class="auth-input">
           <option value="AsiaFutureTrading-Server">AsiaFutureTrading-Server</option>
         </select>
       </div>
-      <button class="auth-btn" id="btn-register" onclick="handleRegister()">CREATE ACCOUNT</button>
+      <button class="auth-btn" id="btn-register" onclick="handleRegister()" data-i18n="auth.createAcct">CREATE ACCOUNT</button>
       <button class="ghost-btn" onclick="window.open('https://www.afttmarkets.com','_blank')">Create Account with AFT →</button>
       <div class="auth-switch" style="margin-top:12px;">Have an account? <span onclick="switchAuthTab('signin')">Sign In →</span></div>
     </div>
@@ -1777,14 +1777,14 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
           <div class="dash-welcome-grid"></div>
           <span class="dash-welcome-badge basic" id="dash-tier-badge"><i class="ti ti-bolt" style="font-size:11px;" aria-hidden="true"></i>BASIC</span>
           <div class="dash-welcome-content">
-            <div class="dash-welcome-label">Welcome Back</div>
+            <div class="dash-welcome-label" data-i18n="dash.welcome">Welcome Back</div>
             <div class="dash-welcome-name" id="mob-username">Trader</div>
-            <div class="dash-welcome-sub">Let's accelerate your wealth today</div>
+            <div class="dash-welcome-sub" data-i18n="dash.sub">Let's accelerate your wealth today</div>
           </div>
         </div>
       </div>
       <!-- Market Overview -->
-      <div class="section-title" style="margin-bottom:10px;">Market <span>Overview</span></div>
+      <div class="section-title" style="margin-bottom:10px;">Market <span data-i18n="dash.overview">Overview</span></div>
       <div class="market-grid">
         <div class="mkt-card dn">
           <div class="mkt-sym" id="sym-XAUUSD">XAUUSD</div>
@@ -1813,21 +1813,21 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       </div>
       <!-- Recent Signals -->
       <div class="section-card">
-        <div class="section-title">Recent <span>Signals</span></div>
+        <div class="section-title">Recent <span data-i18n="dash.signalsWord">Signals</span></div>
         <div id="mob-dash-signals">
           <div class="empty-state"><i class="ti ti-broadcast"></i>Loading signals...</div>
         </div>
-        <button class="ghost-btn" style="margin-top:12px;" onclick="switchTab('signals')">View All Signals →</button>
+        <button class="ghost-btn" style="margin-top:12px;" onclick="switchTab('signals')" data-i18n="dash.viewAll">View All Signals →</button>
       </div>
     </div>
 
     <!-- ── TAB: SIGNALS ── -->
     <div id="tab-signals" class="app-tab" style="display:none;">
-      <div class="section-title" style="margin-bottom:12px;">Live <span>Signals</span></div>
+      <div class="section-title" style="margin-bottom:12px;">Live <span data-i18n="dash.signalsWord">Signals</span></div>
       <!-- Signal Filters - Dropdowns -->
       <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
         <select id="filter-symbol" class="auth-input" style="flex:1;min-width:100px;padding:9px 12px;font-size:12px;" onchange="applySignalFilters()">
-          <option value="">All Symbols</option>
+          <option value="" data-i18n="sig.allSymbols">All Symbols</option>
           <option value="XAUUSD">XAUUSD</option>
           <option value="NAS100">NAS100</option>
           <option value="BTCUSD">BTCUSD</option>
@@ -1838,10 +1838,10 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
           <option value="US30">US30</option>
         </select>
         <select id="filter-analyst" class="auth-input" style="flex:1;min-width:90px;padding:9px 12px;font-size:12px;" onchange="applySignalFilters()">
-          <option value="">All Analysts</option>
+          <option value="" data-i18n="sig.allAnalysts">All Analysts</option>
         </select>
         <select id="filter-timeframe" class="auth-input" style="flex:1;min-width:80px;padding:9px 12px;font-size:12px;" onchange="applySignalFilters()">
-          <option value="">Timeframe</option>
+          <option value="" data-i18n="sig.timeframe">Timeframe</option>
           <option value="M1">M1</option>
           <option value="M5">M5</option>
           <option value="M15">M15</option>
@@ -1860,7 +1860,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 
     <!-- ── TAB: CHARTS ── -->
     <div id="tab-charts" class="app-tab" style="display:none;">
-      <div class="section-title" style="margin-bottom:12px;"><span>Live</span> Charts</div>
+      <div class="section-title" style="margin-bottom:12px;"><span data-i18n="sig.liveWord">Live</span> Charts</div>
       <!-- Chart Symbol Search -->
       <div style="display:flex;gap:8px;margin-bottom:12px;align-items:center;">
         <div style="flex:1;position:relative;">
@@ -1910,11 +1910,11 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <!-- LIVE BALANCE / EQUITY STRIP -->
       <div style="display:flex;gap:8px;margin-top:12px;">
         <div style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px 12px;">
-          <div style="font-size:11px;color:var(--text2);margin-bottom:4px;">Balance</div>
+          <div style="font-size:11px;color:var(--text2);margin-bottom:4px;" data-i18n="chart.balance">Balance</div>
           <div id="mob-chart-balance" style="font-size:17px;font-weight:800;color:var(--text3);">—</div>
         </div>
         <div style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px 12px;">
-          <div style="font-size:11px;color:var(--text2);margin-bottom:4px;">Equity</div>
+          <div style="font-size:11px;color:var(--text2);margin-bottom:4px;" data-i18n="chart.equity">Equity</div>
           <div id="mob-chart-equity" style="font-size:17px;font-weight:800;color:var(--text3);">—</div>
         </div>
       </div>
@@ -1922,26 +1922,26 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <!-- LIVE RUNNING POSITIONS -->
       <div class="section-card" style="margin-top:12px;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-          <div class="section-title" style="font-size:12px;margin-bottom:0;">Live <span>Positions</span></div>
+          <div class="section-title" style="font-size:12px;margin-bottom:0;">Live <span data-i18n="chart.positionsWord">Positions</span></div>
           <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--green);font-weight:700;">
             <div style="width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite;"></div>
             MT5 LIVE
           </div>
         </div>
         <div id="mob-live-positions">
-          <div style="text-align:center;font-size:12px;color:var(--text3);padding:16px 0;">Loading positions...</div>
+          <div style="text-align:center;font-size:12px;color:var(--text3);padding:16px 0;" data-i18n="chart.loadingPos">Loading positions...</div>
         </div>
         <div style="display:flex;justify-content:space-between;padding:10px 0 0;border-top:1px solid var(--border);margin-top:10px;">
-          <div style="font-size:11px;color:var(--text2);">Total P&L (Open)</div>
+          <div style="font-size:11px;color:var(--text2);" data-i18n="chart.totalPnl">Total P&L (Open)</div>
           <div style="font-size:13px;font-weight:800;color:var(--text3);" id="mob-positions-total">$0.00</div>
         </div>
       </div>
 
       <!-- PAST SIGNAL HISTORY -->
       <div class="section-card" style="margin-top:12px;">
-        <div class="section-title" style="font-size:12px;margin-bottom:12px;">Past <span>Signals</span></div>
+        <div class="section-title" style="font-size:12px;margin-bottom:12px;">Past <span data-i18n="dash.signalsWord">Signals</span></div>
         <div id="mob-past-signals">
-          <div style="text-align:center;font-size:12px;color:var(--text3);padding:16px 0;">No past signals yet</div>
+          <div style="text-align:center;font-size:12px;color:var(--text3);padding:16px 0;" data-i18n="chart.noPast">No past signals yet</div>
         </div>
       </div>
     </div>
@@ -2151,27 +2151,27 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       </div>
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:14px;margin-bottom:18px;">
         <div style="display:flex;gap:5px;background:var(--bg3);border-radius:12px;padding:4px;margin-bottom:15px;">
-          <div id="more-leader-tab-profit" onclick="switchLeaderTab('profit')" style="flex:1;text-align:center;font-size:12px;font-weight:700;color:#fff;background:var(--red);border-radius:9px;padding:8px 0;cursor:pointer;transition:all .2s;">Top Profit</div>
-          <div id="more-leader-tab-volume" onclick="switchLeaderTab('volume')" style="flex:1;text-align:center;font-size:12px;font-weight:700;color:var(--text3);background:transparent;border-radius:9px;padding:8px 0;cursor:pointer;transition:all .2s;">Top Volume</div>
+          <div id="more-leader-tab-profit" onclick="switchLeaderTab('profit')" style="flex:1;text-align:center;font-size:12px;font-weight:700;color:#fff;background:var(--red);border-radius:9px;padding:8px 0;cursor:pointer;transition:all .2s;" data-i18n="more.topProfit">Top Profit</div>
+          <div id="more-leader-tab-volume" onclick="switchLeaderTab('volume')" style="flex:1;text-align:center;font-size:12px;font-weight:700;color:var(--text3);background:transparent;border-radius:9px;padding:8px 0;cursor:pointer;transition:all .2s;" data-i18n="more.topVolume">Top Volume</div>
         </div>
         <div id="more-leader-body"></div>
       </div>
 
       <!-- More services -->
-      <div style="font-size:14px;color:var(--text);font-weight:700;margin-bottom:10px;">More services</div>
+      <div style="font-size:14px;color:var(--text);font-weight:700;margin-bottom:10px;" data-i18n="more.services">More services</div>
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:4px 14px;margin-bottom:18px;">
-        <div onclick="showSubScreen('sub-academy')" style="display:flex;align-items:center;gap:13px;padding:13px 0;border-bottom:1px solid var(--border);cursor:pointer;"><span style="width:38px;height:38px;border-radius:11px;background:rgba(255,30,60,0.12);display:flex;align-items:center;justify-content:center;"><i class="ti ti-school" style="font-size:19px;color:var(--red);"></i></span><div style="flex:1;font-size:14px;color:var(--text);font-weight:600;">Trading Academy</div><i class="ti ti-chevron-right" style="font-size:17px;color:var(--text3);"></i></div>
-        <div onclick="showSubScreen('sub-news')" style="display:flex;align-items:center;gap:13px;padding:13px 0;border-bottom:1px solid var(--border);cursor:pointer;"><span style="width:38px;height:38px;border-radius:11px;background:rgba(255,30,60,0.12);display:flex;align-items:center;justify-content:center;"><i class="ti ti-calendar" style="font-size:19px;color:var(--red);"></i></span><div style="flex:1;font-size:14px;color:var(--text);font-weight:600;">News Calendar</div><i class="ti ti-chevron-right" style="font-size:17px;color:var(--text3);"></i></div>
-        <div onclick="showSubScreen('sub-ai-analyst'); setTimeout(aiLoadTVChart,80);" style="display:flex;align-items:center;gap:13px;padding:13px 0;cursor:pointer;"><span style="width:38px;height:38px;border-radius:11px;background:rgba(255,30,60,0.12);display:flex;align-items:center;justify-content:center;"><i class="ti ti-sparkles" style="font-size:19px;color:var(--red);"></i></span><div style="flex:1;font-size:14px;color:var(--text);font-weight:600;">AI Chart Analyst</div><span style="font-size:9px;font-weight:700;letter-spacing:.5px;color:#fff;background:linear-gradient(135deg,#FF1E3C,#C40024);padding:3px 8px;border-radius:6px;">PREMIUM</span></div>
+        <div onclick="showSubScreen('sub-academy')" style="display:flex;align-items:center;gap:13px;padding:13px 0;border-bottom:1px solid var(--border);cursor:pointer;"><span style="width:38px;height:38px;border-radius:11px;background:rgba(255,30,60,0.12);display:flex;align-items:center;justify-content:center;"><i class="ti ti-school" style="font-size:19px;color:var(--red);"></i></span><div style="flex:1;font-size:14px;color:var(--text);font-weight:600;" data-i18n="more.academy">Trading Academy</div><i class="ti ti-chevron-right" style="font-size:17px;color:var(--text3);"></i></div>
+        <div onclick="showSubScreen('sub-news')" style="display:flex;align-items:center;gap:13px;padding:13px 0;border-bottom:1px solid var(--border);cursor:pointer;"><span style="width:38px;height:38px;border-radius:11px;background:rgba(255,30,60,0.12);display:flex;align-items:center;justify-content:center;"><i class="ti ti-calendar" style="font-size:19px;color:var(--red);"></i></span><div style="flex:1;font-size:14px;color:var(--text);font-weight:600;" data-i18n="more.news">News Calendar</div><i class="ti ti-chevron-right" style="font-size:17px;color:var(--text3);"></i></div>
+        <div onclick="showSubScreen('sub-ai-analyst'); setTimeout(aiLoadTVChart,80);" style="display:flex;align-items:center;gap:13px;padding:13px 0;cursor:pointer;"><span style="width:38px;height:38px;border-radius:11px;background:rgba(255,30,60,0.12);display:flex;align-items:center;justify-content:center;"><i class="ti ti-sparkles" style="font-size:19px;color:var(--red);"></i></span><div style="flex:1;font-size:14px;color:var(--text);font-weight:600;" data-i18n="more.aiAnalyst">AI Chart Analyst</div><span style="font-size:9px;font-weight:700;letter-spacing:.5px;color:#fff;background:linear-gradient(135deg,#FF1E3C,#C40024);padding:3px 8px;border-radius:6px;">PREMIUM</span></div>
       </div>
 
       <!-- Others -->
-      <div style="font-size:14px;color:var(--text);font-weight:700;margin-bottom:10px;">Others</div>
+      <div style="font-size:14px;color:var(--text);font-weight:700;margin-bottom:10px;" data-i18n="more.others">Others</div>
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:4px 14px;">
-        <div onclick="showSubScreen('sub-support')" style="display:flex;align-items:center;gap:13px;padding:13px 0;border-bottom:1px solid var(--border);cursor:pointer;"><span style="width:38px;height:38px;border-radius:11px;background:rgba(255,30,60,0.12);display:flex;align-items:center;justify-content:center;"><i class="ti ti-headset" style="font-size:19px;color:var(--red);"></i></span><div style="flex:1;font-size:14px;color:var(--text);font-weight:600;">Customer Support</div><i class="ti ti-chevron-right" style="font-size:17px;color:var(--text3);"></i></div>
-        <div onclick="showSubScreen('sub-followus')" style="display:flex;align-items:center;gap:13px;padding:13px 0;border-bottom:1px solid var(--border);cursor:pointer;"><span style="width:38px;height:38px;border-radius:11px;background:rgba(255,30,60,0.12);display:flex;align-items:center;justify-content:center;"><i class="ti ti-share" style="font-size:19px;color:var(--red);"></i></span><div style="flex:1;font-size:14px;color:var(--text);font-weight:600;">Follow Us</div><i class="ti ti-chevron-right" style="font-size:17px;color:var(--text3);"></i></div>
-        <div id="admin-menu-item" style="display:none;align-items:center;gap:13px;padding:13px 0;border-bottom:1px solid var(--border);cursor:pointer;" onclick="openAdminPanel()"><span style="width:38px;height:38px;border-radius:11px;background:rgba(255,30,60,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ti ti-shield-lock" style="font-size:19px;color:var(--red);"></i></span><div style="flex:1;font-size:14px;color:var(--text);font-weight:600;">Admin Panel</div><i class="ti ti-chevron-right" style="font-size:17px;color:var(--text3);"></i></div>
-        <div onclick="handleLogout()" style="display:flex;align-items:center;gap:13px;padding:13px 0;cursor:pointer;"><span style="width:38px;height:38px;border-radius:11px;background:rgba(255,30,60,0.18);display:flex;align-items:center;justify-content:center;"><i class="ti ti-logout" style="font-size:19px;color:var(--red);"></i></span><div style="flex:1;font-size:14px;color:var(--red);font-weight:600;">Sign Out</div></div>
+        <div onclick="showSubScreen('sub-support')" style="display:flex;align-items:center;gap:13px;padding:13px 0;border-bottom:1px solid var(--border);cursor:pointer;"><span style="width:38px;height:38px;border-radius:11px;background:rgba(255,30,60,0.12);display:flex;align-items:center;justify-content:center;"><i class="ti ti-headset" style="font-size:19px;color:var(--red);"></i></span><div style="flex:1;font-size:14px;color:var(--text);font-weight:600;" data-i18n="more.support">Customer Support</div><i class="ti ti-chevron-right" style="font-size:17px;color:var(--text3);"></i></div>
+        <div onclick="showSubScreen('sub-followus')" style="display:flex;align-items:center;gap:13px;padding:13px 0;border-bottom:1px solid var(--border);cursor:pointer;"><span style="width:38px;height:38px;border-radius:11px;background:rgba(255,30,60,0.12);display:flex;align-items:center;justify-content:center;"><i class="ti ti-share" style="font-size:19px;color:var(--red);"></i></span><div style="flex:1;font-size:14px;color:var(--text);font-weight:600;" data-i18n="more.followUs">Follow Us</div><i class="ti ti-chevron-right" style="font-size:17px;color:var(--text3);"></i></div>
+        <div id="admin-menu-item" style="display:none;align-items:center;gap:13px;padding:13px 0;border-bottom:1px solid var(--border);cursor:pointer;" onclick="openAdminPanel()"><span style="width:38px;height:38px;border-radius:11px;background:rgba(255,30,60,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ti ti-shield-lock" style="font-size:19px;color:var(--red);"></i></span><div style="flex:1;font-size:14px;color:var(--text);font-weight:600;" data-i18n="more.admin">Admin Panel</div><i class="ti ti-chevron-right" style="font-size:17px;color:var(--text3);"></i></div>
+        <div onclick="handleLogout()" style="display:flex;align-items:center;gap:13px;padding:13px 0;cursor:pointer;"><span style="width:38px;height:38px;border-radius:11px;background:rgba(255,30,60,0.18);display:flex;align-items:center;justify-content:center;"><i class="ti ti-logout" style="font-size:19px;color:var(--red);"></i></span><div style="flex:1;font-size:14px;color:var(--red);font-weight:600;" data-i18n="more.signOut">Sign Out</div></div>
       </div>
     </div>
 
@@ -2385,7 +2385,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <div class="stn-tpl-top" onclick="stnOpenTemplates()"><i class="ti ti-folder"></i>Templates</div>
     </div>
     <div class="sub-content">
-      <div class="stn-scr-sub" id="stn-scr-sub">Auto-trade rules for this account</div>
+      <div class="stn-scr-sub" id="stn-scr-sub" data-i18n="st.autoRules">Auto-trade rules for this account</div>
 
       <div class="stn-meter">
         <div class="cap"><span class="k">Loss Budget</span><span class="v" id="stn-budget-cap">% of balance</span></div>
@@ -2399,12 +2399,12 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 
       <div class="stn-eyebrow">Risk</div>
       <div class="stn-row">
-        <div><div class="stn-lbl">Risk per trade</div><div class="stn-hint" id="stn-risk-hint">Loss budget</div></div>
+        <div><div class="stn-lbl" data-i18n="st.riskPer">Risk per trade</div><div class="stn-hint" id="stn-risk-hint">Loss budget</div></div>
         <div class="stn-field pct" id="stn-risk-field" onclick="stnEditNum('risk','Risk per trade (%)',0.1,100,0.1)">1.0%</div>
       </div>
 
       <div class="stn-eyebrow">Entries &middot; DCA</div>
-      <div class="stn-tbl-cap"><div class="t">Ladder</div>
+      <div class="stn-tbl-cap"><div class="t" data-i18n="st.ladder">Ladder</div>
         <div style="display:flex;align-items:center;gap:8px;">
           <div class="stn-mult" id="stn-mult" onclick="stnMultSheet()">&times;1</div>
           <div class="stn-pen" id="stn-pen" onclick="stnToggleEdit()"><i class="ti ti-pencil"></i></div>
@@ -2417,28 +2417,28 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         <div class="tot" id="stn-dca-tot"></div>
       </div>
       <div class="stn-editbar" id="stn-editbar">
-        <button class="cn" onclick="stnEditCancel()">Cancel</button>
+        <button class="cn" onclick="stnEditCancel()" data-i18n="common.cancel">Cancel</button>
         <button class="ap" onclick="stnEditApply()">Apply</button></div>
       <div class="stn-usheet" id="stn-usheet"></div>
       <div class="stn-stats">
-        <div class="s"><div class="k">Total lots</div><div class="v" id="stn-total-lots">0.00</div></div>
-        <div class="s"><div class="k">Avg entry</div><div class="v" id="stn-avg-entry">-</div></div>
+        <div class="s"><div class="k" data-i18n="st.totalLots">Total lots</div><div class="v" id="stn-total-lots">0.00</div></div>
+        <div class="s"><div class="k" data-i18n="st.avgEntry">Avg entry</div><div class="v" id="stn-avg-entry">-</div></div>
       </div>
       <div class="stn-tplfrom" id="stn-tplfrom"></div>
       <div class="stn-warn" id="stn-warn"></div>
 
-      <div class="stn-eyebrow">Stop Loss</div>
+      <div class="stn-eyebrow" data-i18n="sig.stopLoss">Stop Loss</div>
       <div class="stn-row">
-        <div><div class="stn-lbl">SL from signal</div><div class="stn-hint">the analyst sets your risk</div></div>
+        <div><div class="stn-lbl" data-i18n="st.slFrom">SL from signal</div><div class="stn-hint" data-i18n="st.slFromSub">the analyst sets your risk</div></div>
         <div class="toggle on" id="stn-sl-signal" onclick="stnToggleField(this)"></div>
       </div>
 
-      <div class="stn-eyebrow">Take Profit</div>
+      <div class="stn-eyebrow" data-i18n="sig.takeProfit">Take Profit</div>
       <div class="stn-row">
-        <div><div class="stn-lbl">Measure from</div><div class="stn-hint" id="stn-mf-hint">-</div></div>
+        <div><div class="stn-lbl" data-i18n="st.measureFrom">Measure from</div><div class="stn-hint" id="stn-mf-hint">-</div></div>
         <div class="stn-field" id="stn-mf-field" onclick="stnPickMeasureFrom()">Average entry</div>
       </div>
-      <div class="stn-tbl-cap"><div class="t">Levels</div>
+      <div class="stn-tbl-cap"><div class="t" data-i18n="st.levels">Levels</div>
         <div class="stn-pen" id="stn-tp-pen" onclick="stnToggleEdit()"><i class="ti ti-pencil"></i></div></div>
       <div class="stn-mtable tp" id="stn-tp-tbl">
         <div class="th"><span>#</span><span class="unit" id="stn-tp-unit-h" onclick="stnUnitSheet()">Reach <i class="ti ti-chevron-down"></i></span><span>Price</span><span id="stn-tp-h4">Close</span><span id="stn-tp-h5">Lots</span></div>
@@ -2451,36 +2451,36 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 
       <div class="stn-eyebrow">Breakeven</div>
       <div class="stn-row">
-        <div><div class="stn-lbl">Move SL to entry</div><div class="stn-hint" id="stn-be-hint">-</div></div>
+        <div><div class="stn-lbl" data-i18n="st.moveSl">Move SL to entry</div><div class="stn-hint" id="stn-be-hint">-</div></div>
         <div class="stn-field" id="stn-be-field" onclick="stnEditNum('be_trigger','Breakeven at % of the way to target',0,100,1)">20%</div>
       </div>
       <div class="stn-row">
-        <div><div class="stn-lbl">Buffer above entry</div><div class="stn-hint">covers swap and commission</div></div>
+        <div><div class="stn-lbl" data-i18n="st.buffer">Buffer above entry</div><div class="stn-hint" data-i18n="st.bufferSub">covers swap and commission</div></div>
         <div class="stn-field" id="stn-bebuf-field" onclick="stnEditNum('be_buffer','Buffer, % of the way to target',0,50,1)">2%</div>
       </div>
 
       <div class="stn-eyebrow">Trailing Stop</div>
       <div class="stn-row">
-        <div class="stn-lbl">Enable trailing</div>
+        <div class="stn-lbl" data-i18n="st.enableTrail">Enable trailing</div>
         <div class="toggle on" id="stn-tr-on" onclick="stnToggleField(this)"></div>
       </div>
       <div class="stn-row">
-        <div><div class="stn-lbl">Measure arm from</div><div class="stn-hint" id="stn-trf-hint">-</div></div>
+        <div><div class="stn-lbl" data-i18n="st.armFrom">Measure arm from</div><div class="stn-hint" id="stn-trf-hint">-</div></div>
         <div class="stn-field" id="stn-trf-field" onclick="stnToggleArmFrom()">The fill</div>
       </div>
       <div class="stn-row">
-        <div><div class="stn-lbl">Activate after</div><div class="stn-hint" id="stn-tra-hint">-</div></div>
+        <div><div class="stn-lbl" data-i18n="st.activate">Activate after</div><div class="stn-hint" id="stn-tra-hint">-</div></div>
         <div class="stn-field" id="stn-tra-field" onclick="stnEditNum('tr_arm','Trailing arms at % of the way to target',0,200,1)">40%</div>
       </div>
       <div class="stn-row">
-        <div><div class="stn-lbl">Trail step</div><div class="stn-hint" id="stn-trs-hint">-</div></div>
+        <div><div class="stn-lbl" data-i18n="st.trailStep">Trail step</div><div class="stn-hint" id="stn-trs-hint">-</div></div>
         <div class="stn-field" id="stn-trs-field" onclick="stnEditNum('tr_step','Trail step, % of the way to target',1,100,1)">15%</div>
       </div>
 
       <div id="stn-ro-note" style="display:none;margin-top:16px;padding:12px 13px;border:1px solid rgba(255,30,60,0.3);border-radius:10px;background:rgba(255,30,60,0.06);font-size:11px;color:var(--text2);line-height:1.6;">
         <i class="ti ti-lock" style="color:var(--red);"></i> <b style="color:var(--text);">MAI template &middot; view only</b><br>
         Provided by MomentumAI. Selecting it is enough &mdash; your trades will use it. Templates are managed by MomentumAI &mdash; ask your admin if you need a different one.</div>
-      <button class="red-btn" id="stn-save-btn" style="margin-top:16px;" onclick="stnSave()">SAVE SMART TOOLS</button>
+      <button class="red-btn" id="stn-save-btn" style="margin-top:16px;" onclick="stnSave()" data-i18n="st.save">SAVE SMART TOOLS</button>
     </div>
   </div>
 
@@ -2522,7 +2522,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <div class="section-card" style="margin-bottom:10px;">
         <div style="display:flex;align-items:center;justify-content:space-between;">
           <div style="flex:1;padding-right:12px;">
-            <div style="font-size:13px;font-weight:700;color:var(--text);">Enable Auto Trade</div>
+            <div style="font-size:13px;font-weight:700;color:var(--text);" data-i18n="at.enable">Enable Auto Trade</div>
             <div style="font-size:11px;color:var(--text3);margin-top:2px;line-height:1.5;">Automatically place trades when your followed analysts post signals.</div>
           </div>
           <div class="toggle" id="at-enable" onclick="toggleAutoTradeEnable(this)"></div>
@@ -2530,7 +2530,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       </div>
       <!-- Follow Analysts -->
       <div class="section-card" style="margin-bottom:10px;" id="at-analysts-section">
-        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Follow <span>Analysts</span></div>
+        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Follow <span data-i18n="at.analystsWord">Analysts</span></div>
         <div style="font-size:11px;color:var(--text3);margin-bottom:10px;">Select one or more analysts to follow. A trade will be placed automatically when they post an active signal.</div>
         <div id="at-analyst-list" style="display:flex;flex-direction:column;gap:8px;">
           <div style="font-size:12px;color:var(--text3);padding:12px;text-align:center;">Loading analysts...</div>
@@ -2550,7 +2550,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <div class="section-card" style="margin-bottom:10px;">
         <div style="display:flex;align-items:center;justify-content:space-between;">
           <div style="flex:1;padding-right:12px;">
-            <div style="font-size:13px;font-weight:700;color:var(--text);">Use Smart Tool Settings</div>
+            <div style="font-size:13px;font-weight:700;color:var(--text);" data-i18n="at.useSmart">Use Smart Tool Settings</div>
             <div style="font-size:11px;color:var(--text3);margin-top:2px;">Apply your AI risk settings to all auto trades.</div>
           </div>
           <div class="toggle on" id="at-use-smart"></div>
@@ -2558,17 +2558,17 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       </div>
       <!-- Entry Confirmation -->
       <div class="section-card" style="margin-bottom:10px;">
-        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Entry <span>Confirmation</span></div>
+        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Entry <span data-i18n="at.confirmWord">Confirmation</span></div>
         <label style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg3);border-radius:8px;cursor:pointer;border:1px solid var(--border);margin-bottom:8px;">
           <input type="radio" name="at-entry-confirm" value="instant" id="at-instant" checked style="accent-color:var(--red);width:16px;height:16px;">
-          <div><div style="font-size:13px;font-weight:700;color:var(--text);">Instant Execution</div><div style="font-size:11px;color:var(--text3);">Signal posted — trade executes immediately</div></div>
+          <div><div style="font-size:13px;font-weight:700;color:var(--text);" data-i18n="at.instant">Instant Execution</div><div style="font-size:11px;color:var(--text3);">Signal posted — trade executes immediately</div></div>
         </label>
         <label style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg3);border-radius:8px;cursor:pointer;border:1px solid var(--border);">
           <input type="radio" name="at-entry-confirm" value="scanner" id="at-scanner" style="accent-color:var(--red);width:16px;height:16px;">
-          <div><div style="font-size:13px;font-weight:700;color:var(--text);">Check MAI Scanner First</div><div style="font-size:11px;color:var(--text3);">Signal — AI checks direction — execute if confirmed</div></div>
+          <div><div style="font-size:13px;font-weight:700;color:var(--text);" data-i18n="at.scannerFirst">Check MAI Scanner First</div><div style="font-size:11px;color:var(--text3);">Signal — AI checks direction — execute if confirmed</div></div>
         </label>
       </div>
-      <button class="red-btn" onclick="saveAutoTradeSettings()">SAVE AUTO TRADE</button>
+      <button class="red-btn" onclick="saveAutoTradeSettings()" data-i18n="at.save">SAVE AUTO TRADE</button>
     </div>
   </div>
 
@@ -2712,10 +2712,10 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
     <div class="sub-content">
       <div style="font-size:12px;color:var(--text3);line-height:1.6;margin-bottom:14px;">Invest with verified fund managers. Browse performance, view the statement, then invest in the portfolio you trust.</div>
       <div style="display:flex;gap:7px;margin-bottom:12px;overflow-x:auto;">
-        <span class="mam-fchip on" onclick="mamFilter(this,'all')">All</span>
+        <span class="mam-fchip on" onclick="mamFilter(this,'all')" data-i18n="mam.all">All</span>
         <span class="mam-fchip" onclick="mamFilter(this,'ai')">AI</span>
-        <span class="mam-fchip" onclick="mamFilter(this,'semi')">Semi-Auto</span>
-        <span class="mam-fchip" onclick="mamFilter(this,'manual')">Manual</span>
+        <span class="mam-fchip" onclick="mamFilter(this,'semi')" data-i18n="mam.semi">Semi-Auto</span>
+        <span class="mam-fchip" onclick="mamFilter(this,'manual')" data-i18n="mam.manual">Manual</span>
       </div>
       <div id="mam-count" style="font-size:10.5px;color:var(--text3);margin-bottom:12px;">10 managers</div>
       <div id="mam-list"></div>
@@ -2743,11 +2743,11 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <div class="section-card">
         <div class="section-title" style="font-size:13px;margin-bottom:14px;">Follow <span>Application</span></div>
         <div class="auth-field">
-          <label class="auth-label">Full Name</label>
+          <label class="auth-label" data-i18n="prof.fullName">Full Name</label>
           <input id="follow-name" class="auth-input" type="text" placeholder="Your full name">
         </div>
         <div class="auth-field">
-          <label class="auth-label">MT5 Account ID</label>
+          <label class="auth-label" data-i18n="prof.mt5id">MT5 Account ID</label>
           <input id="follow-mt5" class="auth-input" type="text" placeholder="Your AFTT MT5 account ID">
         </div>
         <div class="auth-field">
@@ -2794,12 +2794,12 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <button class="admin-tab-btn" data-tab="tickets" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Support</button>
       <button class="admin-tab-btn" data-tab="funds" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Fund Man</button>
       <button class="admin-tab-btn" data-tab="announce" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Announce</button>
-      <button class="admin-tab-btn" data-tab="signals" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Signals</button>
+      <button class="admin-tab-btn" data-tab="signals" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;" data-i18n="dash.signalsWord">Signals</button>
       <button class="admin-tab-btn" data-tab="templates" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Template</button>
       <button class="admin-tab-btn" data-tab="mt5" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">MT5</button>
       <button class="admin-tab-btn" data-tab="analyst" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Administrator</button>
       <button class="admin-tab-btn" data-tab="academy" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Academy</button>
-      <button class="admin-tab-btn" data-tab="promo" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;display:none;">Promo</button>
+      <button class="admin-tab-btn" data-tab="promo" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;display:none;" data-i18n="prof.promoWord">Promo</button>
     </div>
     <div class="sub-content">
 
@@ -2883,7 +2883,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
             <input id="ann-title" class="auth-input" type="text" placeholder="Announcement title">
           </div>
           <div class="auth-field">
-            <label class="auth-label">Message</label>
+            <label class="auth-label" data-i18n="sup.message">Message</label>
             <textarea id="ann-message" class="auth-input" rows="4" placeholder="Write your announcement..." style="resize:vertical;"></textarea>
           </div>
           <div class="auth-field">
@@ -2916,7 +2916,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
           <div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.5px;">ALL SIGNALS</div>
           <select id="signal-status-filter" class="auth-input" style="font-size:11px;padding:6px 10px;width:auto;" onchange="loadAdminSignals()">
-            <option value="all">All</option>
+            <option value="all" data-i18n="mam.all">All</option>
             <option value="active">Active</option>
             <option value="closed">Closed</option>
           </select>
@@ -2931,15 +2931,15 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         <div class="section-card">
           <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">ADD ANALYST</div>
           <div class="auth-field">
-            <label class="auth-label">Full Name</label>
+            <label class="auth-label" data-i18n="prof.fullName">Full Name</label>
             <input id="mob-analyst-name" class="auth-input" type="text" placeholder="Analyst name">
           </div>
           <div class="auth-field">
-            <label class="auth-label">Username</label>
+            <label class="auth-label" data-i18n="auth.username">Username</label>
             <input id="mob-analyst-username" class="auth-input" type="text" placeholder="analyst_username">
           </div>
           <div class="auth-field">
-            <label class="auth-label">Password</label>
+            <label class="auth-label" data-i18n="auth.password">Password</label>
             <input id="mob-analyst-password" class="auth-input" type="password" placeholder="Set password">
           </div>
           <div id="mob-analyst-error" class="error-msg"></div>
@@ -2959,9 +2959,9 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         <!-- SUB-ADMIN SECTION -->
         <div class="section-card" style="margin-top:20px;">
           <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:14px;">CREATE SUB ADMIN</div>
-          <div class="auth-field"><label class="auth-label">Full Name</label><input id="mob-subadmin-name" class="auth-input" type="text" placeholder="Sub-admin full name"></div>
-          <div class="auth-field"><label class="auth-label">Username</label><input id="mob-subadmin-username" class="auth-input" type="text" placeholder="username"></div>
-          <div class="auth-field"><label class="auth-label">Password</label><input id="mob-subadmin-password" class="auth-input" type="password" placeholder="Set password"></div>
+          <div class="auth-field"><label class="auth-label" data-i18n="prof.fullName">Full Name</label><input id="mob-subadmin-name" class="auth-input" type="text" placeholder="Sub-admin full name"></div>
+          <div class="auth-field"><label class="auth-label" data-i18n="auth.username">Username</label><input id="mob-subadmin-username" class="auth-input" type="text" placeholder="username"></div>
+          <div class="auth-field"><label class="auth-label" data-i18n="auth.password">Password</label><input id="mob-subadmin-password" class="auth-input" type="password" placeholder="Set password"></div>
           <div class="auth-field">
             <label class="auth-label">Panel Access</label>
             <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px 12px;">
@@ -3001,7 +3001,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
           <button onclick="loadAdminMT5()" style="background:transparent;border:none;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;">↻ Refresh</button>
         </div>
         <div id="admin-mt5-plan-filter" style="display:flex;gap:6px;margin-bottom:12px;">
-          <button onclick="setAdminMt5Plan('all',this)" style="flex:1;font-size:11px;font-weight:700;padding:7px;background:rgba(240,178,50,0.12);border:1px solid rgba(240,178,50,0.3);border-radius:8px;color:var(--gold);cursor:pointer;font-family:Sora,sans-serif;">All</button>
+          <button onclick="setAdminMt5Plan('all',this)" style="flex:1;font-size:11px;font-weight:700;padding:7px;background:rgba(240,178,50,0.12);border:1px solid rgba(240,178,50,0.3);border-radius:8px;color:var(--gold);cursor:pointer;font-family:Sora,sans-serif;" data-i18n="mam.all">All</button>
           <button onclick="setAdminMt5Plan('basic',this)" style="flex:1;font-size:11px;font-weight:700;padding:7px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--text3);cursor:pointer;font-family:Sora,sans-serif;">Basic</button>
           <button onclick="setAdminMt5Plan('premium',this)" style="flex:1;font-size:11px;font-weight:700;padding:7px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--text3);cursor:pointer;font-family:Sora,sans-serif;">Premium</button>
         </div>
@@ -3011,7 +3011,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
     <div id="atab-content-promo" style="display:none;">
       <div class="section-card" style="margin-bottom:12px;">
         <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:14px;">CREATE PROMO CODE</div>
-        <div class="auth-field"><label class="auth-label">Code</label>
+        <div class="auth-field"><label class="auth-label" data-i18n="prof.codeWord">Code</label>
           <input id="promo-f-code" class="auth-input" placeholder="e.g. RAYA2026" style="text-transform:uppercase;" />
         </div>
         <div class="auth-field"><label class="auth-label">Access days</label>
@@ -3072,11 +3072,11 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:14px;">PUBLISH ACADEMY CONTENT</div>
         <div class="auth-field"><label class="auth-label">Category</label>
           <select id="academy-category" class="auth-input">
-            <option value="basics">Trading Basics</option>
-            <option value="technical">Technical Analysis</option>
+            <option value="basics" data-i18n="ac.basics">Trading Basics</option>
+            <option value="technical" data-i18n="ac.technical">Technical Analysis</option>
             <option value="fundamental">Fundamental Analysis</option>
-            <option value="risk">Risk Management</option>
-            <option value="psychology">Trading Psychology</option>
+            <option value="risk" data-i18n="ac.risk">Risk Management</option>
+            <option value="psychology" data-i18n="ac.psych">Trading Psychology</option>
             <option value="strategy">Strategies</option>
             <option value="mt5">MT5 Platform Guide</option>
             <option value="app_tutorial">MAI App Tutorial</option>
@@ -3140,22 +3140,22 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 
       <!-- Personal Info -->
       <div class="section-card" style="margin-bottom:12px;">
-        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Personal <span>Info</span></div>
+        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Personal <span data-i18n="prof.infoWord">Info</span></div>
         <div style="display:flex;flex-direction:column;gap:10px;">
           <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">
-            <span style="font-size:12px;color:var(--text3);">Full Name</span>
+            <span style="font-size:12px;color:var(--text3);" data-i18n="prof.fullName">Full Name</span>
             <span style="font-size:12px;font-weight:700;color:var(--text);" id="profile-name-val">--</span>
           </div>
           <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">
-            <span style="font-size:12px;color:var(--text3);">Username</span>
+            <span style="font-size:12px;color:var(--text3);" data-i18n="auth.username">Username</span>
             <span style="font-size:12px;font-weight:700;color:var(--text);" id="profile-username">--</span>
           </div>
           <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">
-            <span style="font-size:12px;color:var(--text3);">Email</span>
+            <span style="font-size:12px;color:var(--text3);" data-i18n="prof.email">Email</span>
             <span style="font-size:12px;font-weight:700;color:var(--text);" id="profile-email">--</span>
           </div>
           <div style="display:flex;justify-content:space-between;padding:10px 0;">
-            <span style="font-size:12px;color:var(--text3);">Phone</span>
+            <span style="font-size:12px;color:var(--text3);" data-i18n="prof.phone">Phone</span>
             <span style="font-size:12px;font-weight:700;color:var(--text);" id="profile-phone">Not set</span>
           </div>
         </div>
@@ -3163,22 +3163,22 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 
       <!-- Trading Account -->
       <div class="section-card" style="margin-bottom:12px;">
-        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Trading <span>Account</span></div>
+        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Trading <span data-i18n="prof.accountWord">Account</span></div>
         <div style="display:flex;flex-direction:column;gap:10px;">
           <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">
-            <span style="font-size:12px;color:var(--text3);">MT5 Account ID</span>
+            <span style="font-size:12px;color:var(--text3);" data-i18n="prof.mt5id">MT5 Account ID</span>
             <span style="font-size:12px;font-weight:700;color:var(--text);" id="profile-mt5">--</span>
           </div>
           <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">
-            <span style="font-size:12px;color:var(--text3);">Broker</span>
+            <span style="font-size:12px;color:var(--text3);" data-i18n="prof.broker">Broker</span>
             <span style="font-size:12px;font-weight:700;color:var(--text);" id="profile-broker">AFTT Markets</span>
           </div>
           <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">
-            <span style="font-size:12px;color:var(--text3);">Plan</span>
+            <span style="font-size:12px;color:var(--text3);" data-i18n="prof.plan">Plan</span>
             <span id="profile-plan" style="font-size:12px;font-weight:700;padding:3px 10px;background:rgba(59,130,246,0.13);color:var(--blue);border-radius:5px;font-family:'Orbitron',sans-serif;font-size:10px;">BASIC</span>
           </div>
           <div style="display:flex;justify-content:space-between;padding:10px 0;">
-            <span style="font-size:12px;color:var(--text3);">Status</span>
+            <span style="font-size:12px;color:var(--text3);" data-i18n="prof.status">Status</span>
             <span style="font-size:12px;font-weight:700;padding:3px 10px;background:rgba(0,200,122,0.1);color:var(--green);border-radius:5px;" id="profile-status">Active</span>
           </div>
         </div>
@@ -3186,7 +3186,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 
       <!-- Promo Code -->
       <div class="section-card" style="margin-bottom:12px;">
-        <div class="section-title" style="font-size:13px;margin-bottom:6px;">Promo <span>Code</span></div>
+        <div class="section-title" style="font-size:13px;margin-bottom:6px;">Promo <span data-i18n="prof.codeWord">Code</span></div>
         <div style="font-size:11px;color:var(--text3);line-height:1.5;margin-bottom:12px;">Have a code? Redeem it to unlock Premium. One promo per MT5 account.</div>
         <div style="display:flex;gap:8px;">
           <input id="profile-promo-input" type="text" placeholder="No active promo" disabled style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-size:13px;text-transform:uppercase;opacity:0.45;cursor:not-allowed;" />
@@ -3197,30 +3197,30 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 
       <!-- Security -->
       <div class="section-card" style="margin-bottom:12px;">
-        <div class="section-title" style="font-size:13px;margin-bottom:12px;"><span>Security</span></div>
+        <div class="section-title" style="font-size:13px;margin-bottom:12px;"><span data-i18n="prof.security">Security</span></div>
         <div id="change-pw-form" style="display:none;margin-bottom:12px;">
           <div class="auth-field">
-            <label class="auth-label">Current Password</label>
+            <label class="auth-label" data-i18n="prof.curPw">Current Password</label>
             <input id="sec-old-pw" class="auth-input" type="password" placeholder="Current password">
           </div>
           <div class="auth-field">
-            <label class="auth-label">New Password</label>
+            <label class="auth-label" data-i18n="prof.newPw">New Password</label>
             <input id="sec-new-pw" class="auth-input" type="password" placeholder="New password">
           </div>
           <div class="auth-field">
-            <label class="auth-label">Confirm New Password</label>
+            <label class="auth-label" data-i18n="prof.confirmPw">Confirm New Password</label>
             <input id="sec-confirm-pw" class="auth-input" type="password" placeholder="Confirm new password">
           </div>
           <div id="pw-error" class="error-msg"></div>
           <div id="pw-success" class="success-msg"></div>
           <div style="display:flex;gap:8px;">
-            <button onclick="handleChangePassword()" style="flex:1;padding:11px;background:var(--grad);border:none;border-radius:10px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;">Update Password</button>
-            <button onclick="document.getElementById('change-pw-form').style.display='none'" style="padding:11px 16px;background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--text2);font-size:12px;cursor:pointer;font-family:'Sora',sans-serif;">Cancel</button>
+            <button onclick="handleChangePassword()" style="flex:1;padding:11px;background:var(--grad);border:none;border-radius:10px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;" data-i18n="prof.updatePw">Update Password</button>
+            <button onclick="document.getElementById('change-pw-form').style.display='none'" style="padding:11px 16px;background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--text2);font-size:12px;cursor:pointer;font-family:'Sora',sans-serif;" data-i18n="common.cancel">Cancel</button>
           </div>
         </div>
         <div class="more-menu-item" style="border:none;padding:10px 0;" onclick="document.getElementById('change-pw-form').style.display=document.getElementById('change-pw-form').style.display==='none'?'block':'none'">
           <div class="more-menu-icon" style="width:36px;height:36px;"><i class="ti ti-lock" style="font-size:17px;"></i></div>
-          <div class="more-menu-text"><div class="more-menu-label" style="font-size:13px;">Change Password</div></div>
+          <div class="more-menu-text"><div class="more-menu-label" style="font-size:13px;" data-i18n="prof.changePw">Change Password</div></div>
           <i class="ti ti-chevron-right more-menu-arrow"></i>
         </div>
         <div class="more-menu-item" style="border:none;padding:10px 0;opacity:0.5;">
@@ -3232,13 +3232,13 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 
       <!-- Preferences -->
       <div class="section-card" style="margin-bottom:12px;">
-        <div class="section-title" style="font-size:13px;margin-bottom:12px;"><span>Preferences</span></div>
+        <div class="section-title" style="font-size:13px;margin-bottom:12px;"><span data-i18n="prof.prefs">Preferences</span></div>
         <div class="ea-toggle-row">
-          <div><div class="ea-toggle-label">Push Notifications</div><div class="ea-toggle-sub">Signal alerts and updates</div></div>
+          <div><div class="ea-toggle-label" data-i18n="prof.notifications">Push Notifications</div><div class="ea-toggle-sub" data-i18n="prof.notifSub">Signal alerts and updates</div></div>
           <div class="toggle on" onclick="this.classList.toggle('on')"></div>
         </div>
         <div class="ea-toggle-row" style="border-bottom:none;">
-          <div><div class="ea-toggle-label">Language</div><div class="ea-toggle-sub">English / Bahasa Malaysia</div></div>
+          <div><div class="ea-toggle-label" data-i18n="common.language">Language</div><div class="ea-toggle-sub">English / Bahasa Malaysia</div></div>
           <select style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:6px 10px;color:var(--text);font-size:12px;font-family:'Sora',sans-serif;">
             <option>English</option>
             <option>Bahasa Malaysia</option>
@@ -3251,29 +3251,29 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <!-- MT5 Connection -->
       <div class="section-card" id="mt5-connect-section" style="margin-bottom:14px;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-          <div style="font-family:Orbitron,sans-serif;font-size:12px;font-weight:800;color:var(--text);">ADD MT5 ACCOUNT</div>
+          <div style="font-family:Orbitron,sans-serif;font-size:12px;font-weight:800;color:var(--text);" data-i18n="prof.addMt5">ADD MT5 ACCOUNT</div>
           <div id="mt5-status-badge" style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:5px;background:rgba(255,176,32,0.12);color:var(--amber);">NOT CONNECTED</div>
         </div>
         <div class="auth-field">
-          <label class="auth-label">MT5 Account ID</label>
+          <label class="auth-label" data-i18n="prof.mt5id">MT5 Account ID</label>
           <input id="profile-mt5-id" class="auth-input" type="text" placeholder="e.g. 12345678">
         </div>
         <div class="auth-field">
-          <label class="auth-label">MT5 Master Password</label>
+          <label class="auth-label" data-i18n="prof.mt5pw">MT5 Master Password</label>
           <div style="position:relative;">
             <input id="profile-mt5-pw" class="auth-input" type="password" placeholder="Master password" style="padding-right:44px;">
             <button type="button" onclick="toggleMT5Pw()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:18px;padding:0;"><i class="ti ti-eye" id="mt5-pw-eye"></i></button>
           </div>
         </div>
         <div class="auth-field">
-          <label class="auth-label">Broker Server</label>
+          <label class="auth-label" data-i18n="prof.brokerServer">Broker Server</label>
           <div style="padding:12px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;font-size:13px;color:var(--text2);font-weight:600;">AsiaFutureTrading-Server</div>
         </div>
         <!-- Permission Toggle -->
         <div style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:var(--bg3);border-radius:10px;margin-bottom:14px;border:1px solid var(--border);">
           <div>
-            <div style="font-size:13px;font-weight:700;color:var(--text);">Allow Automated Trading</div>
-            <div style="font-size:11px;color:var(--text3);margin-top:2px;">EA will execute signals automatically</div>
+            <div style="font-size:13px;font-weight:700;color:var(--text);" data-i18n="prof.allowAuto">Allow Automated Trading</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px;" data-i18n="prof.allowAutoSub">EA will execute signals automatically</div>
           </div>
           <div class="toggle" id="mt5-auto-toggle" onclick="this.classList.toggle('on')"></div>
         </div>
@@ -3298,19 +3298,19 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         <div id="mt5-status-banner" style="display:none;"></div>
         <div id="mt5-connect-error" class="error-msg"></div>
         <div id="mt5-connect-success" class="success-msg"></div>
-        <button class="red-btn" onclick="handleMT5Connect()">CONNECT MT5</button>
+        <button class="red-btn" onclick="handleMT5Connect()" data-i18n="prof.connectBtn">CONNECT MT5</button>
       </div>
 
       <!-- Connected Accounts List -->
       <div class="section-card" style="margin-bottom:14px;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-          <div style="font-family:Orbitron,sans-serif;font-size:12px;font-weight:800;color:var(--text);">CONNECTED ACCOUNTS</div>
+          <div style="font-family:Orbitron,sans-serif;font-size:12px;font-weight:800;color:var(--text);" data-i18n="prof.connAccts">CONNECTED ACCOUNTS</div>
           <div id="pacct-count" style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:5px;background:rgba(255,255,255,0.06);color:var(--text2);">0/5</div>
         </div>
         <div id="profile-accounts-list"></div>
       </div>
 
-      <button onclick="handleLogout()" style="width:100%;padding:13px;background:transparent;border:1px solid rgba(255,30,60,0.3);border-radius:12px;color:var(--red);font-size:13px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;">Sign Out</button>
+      <button onclick="handleLogout()" style="width:100%;padding:13px;background:transparent;border:1px solid rgba(255,30,60,0.3);border-radius:12px;color:var(--red);font-size:13px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;" data-i18n="more.signOut">Sign Out</button>
     </div>
   </div>
 
@@ -3325,82 +3325,82 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 
       <div class="more-menu-item" onclick="openSocial('instagram')" style="margin-bottom:8px;">
         <div class="more-menu-icon" style="background:rgba(228,64,95,0.12);border-color:rgba(228,64,95,0.2);"><i class="ti ti-brand-instagram" style="color:#E4405F;"></i></div>
-        <div class="more-menu-text"><div class="more-menu-label">Instagram</div><div class="more-menu-sub">Photos & reels</div></div>
+        <div class="more-menu-text"><div class="more-menu-label">Instagram</div><div class="more-menu-sub" data-i18n="fu.igSub">Photos & reels</div></div>
         <i class="ti ti-external-link more-menu-arrow"></i>
       </div>
 
       <div class="more-menu-item" onclick="openSocial('threads')" style="margin-bottom:8px;">
         <div class="more-menu-icon" style="background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.12);"><i class="ti ti-brand-threads" style="color:var(--text);"></i></div>
-        <div class="more-menu-text"><div class="more-menu-label">Threads</div><div class="more-menu-sub">Join the conversation</div></div>
+        <div class="more-menu-text"><div class="more-menu-label">Threads</div><div class="more-menu-sub" data-i18n="fu.thSub">Join the conversation</div></div>
         <i class="ti ti-external-link more-menu-arrow"></i>
       </div>
 
       <div class="more-menu-item" onclick="openSocial('facebook')" style="margin-bottom:8px;">
         <div class="more-menu-icon" style="background:rgba(24,119,242,0.12);border-color:rgba(24,119,242,0.2);"><i class="ti ti-brand-facebook" style="color:#1877F2;"></i></div>
-        <div class="more-menu-text"><div class="more-menu-label">Facebook</div><div class="more-menu-sub">Like our page</div></div>
+        <div class="more-menu-text"><div class="more-menu-label">Facebook</div><div class="more-menu-sub" data-i18n="fu.fbSub">Like our page</div></div>
         <i class="ti ti-external-link more-menu-arrow"></i>
       </div>
 
       <div class="more-menu-item" onclick="openSocial('tiktok')" style="margin-bottom:8px;">
         <div class="more-menu-icon" style="background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.12);"><i class="ti ti-brand-tiktok" style="color:var(--text);"></i></div>
-        <div class="more-menu-text"><div class="more-menu-label">TikTok</div><div class="more-menu-sub">Short videos</div></div>
+        <div class="more-menu-text"><div class="more-menu-label">TikTok</div><div class="more-menu-sub" data-i18n="fu.ttSub">Short videos</div></div>
         <i class="ti ti-external-link more-menu-arrow"></i>
       </div>
 
       <div class="more-menu-item" onclick="openSocial('youtube')" style="margin-bottom:8px;">
         <div class="more-menu-icon" style="background:rgba(255,0,0,0.1);border-color:rgba(255,0,0,0.2);"><i class="ti ti-brand-youtube" style="color:#FF0000;"></i></div>
-        <div class="more-menu-text"><div class="more-menu-label">YouTube</div><div class="more-menu-sub">Tutorials & live</div></div>
+        <div class="more-menu-text"><div class="more-menu-label">YouTube</div><div class="more-menu-sub" data-i18n="fu.ytSub">Tutorials & live</div></div>
         <i class="ti ti-external-link more-menu-arrow"></i>
       </div>
 
       <div class="more-menu-item" onclick="openSocial('twitter')" style="margin-bottom:8px;">
         <div class="more-menu-icon" style="background:rgba(29,161,242,0.12);border-color:rgba(29,161,242,0.2);"><i class="ti ti-brand-twitter" style="color:#1DA1F2;"></i></div>
-        <div class="more-menu-text"><div class="more-menu-label">Twitter</div><div class="more-menu-sub">Latest updates</div></div>
+        <div class="more-menu-text"><div class="more-menu-label">Twitter</div><div class="more-menu-sub" data-i18n="fu.twSub">Latest updates</div></div>
         <i class="ti ti-external-link more-menu-arrow"></i>
       </div>
 
       <div class="more-menu-item" onclick="openSocial('x')" style="margin-bottom:8px;">
         <div class="more-menu-icon" style="background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.12);"><i class="ti ti-brand-x" style="color:var(--text);"></i></div>
-        <div class="more-menu-text"><div class="more-menu-label">X</div><div class="more-menu-sub">Latest updates</div></div>
+        <div class="more-menu-text"><div class="more-menu-label">X</div><div class="more-menu-sub" data-i18n="fu.twSub">Latest updates</div></div>
         <i class="ti ti-external-link more-menu-arrow"></i>
       </div>
 
       <div class="more-menu-item" onclick="openSocial('telegram')" style="margin-bottom:8px;">
         <div class="more-menu-icon" style="background:rgba(0,136,204,0.15);border-color:rgba(0,136,204,0.2);"><i class="ti ti-brand-telegram" style="color:#0088CC;"></i></div>
-        <div class="more-menu-text"><div class="more-menu-label">Telegram</div><div class="more-menu-sub">Join our channel</div></div>
+        <div class="more-menu-text"><div class="more-menu-label" data-i18n="sup.telegram">Telegram</div><div class="more-menu-sub" data-i18n="fu.tgSub">Join our channel</div></div>
         <i class="ti ti-external-link more-menu-arrow"></i>
       </div>
 
       <div class="more-menu-item" onclick="openSocial('linkedin')" style="margin-bottom:8px;">
         <div class="more-menu-icon" style="background:rgba(10,102,194,0.12);border-color:rgba(10,102,194,0.2);"><i class="ti ti-brand-linkedin" style="color:#0A66C2;"></i></div>
-        <div class="more-menu-text"><div class="more-menu-label">LinkedIn</div><div class="more-menu-sub">Company updates</div></div>
+        <div class="more-menu-text"><div class="more-menu-label">LinkedIn</div><div class="more-menu-sub" data-i18n="fu.liSub">Company updates</div></div>
         <i class="ti ti-external-link more-menu-arrow"></i>
       </div>
 
       <div style="height:1px;background:var(--border);margin:18px 0 14px;"></div>
-      <div style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.5px;margin-bottom:12px;">BROKER PARTNER</div>
+      <div style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.5px;margin-bottom:12px;" data-i18n="fu.partner">BROKER PARTNER</div>
 
       <div class="more-menu-item" onclick="openSocial('partner_website')" style="margin-bottom:8px;">
         <div class="more-menu-icon" style="background:rgba(77,158,255,0.12);border-color:rgba(77,158,255,0.2);"><i class="ti ti-world" style="color:#4D9EFF;"></i></div>
-        <div class="more-menu-text"><div class="more-menu-label">Website</div><div class="more-menu-sub">Visit our broker partner</div></div>
+        <div class="more-menu-text"><div class="more-menu-label" data-i18n="fu.website">Website</div><div class="more-menu-sub" data-i18n="fu.visitPartner">Visit our broker partner</div></div>
         <i class="ti ti-external-link more-menu-arrow"></i>
       </div>
 
       <div class="more-menu-item" onclick="openSocial('partner_instagram')" style="margin-bottom:8px;">
         <div class="more-menu-icon" style="background:rgba(228,64,95,0.12);border-color:rgba(228,64,95,0.2);"><i class="ti ti-brand-instagram" style="color:#E4405F;"></i></div>
-        <div class="more-menu-text"><div class="more-menu-label">Instagram</div><div class="more-menu-sub">Partner page</div></div>
+        <div class="more-menu-text"><div class="more-menu-label">Instagram</div><div class="more-menu-sub" data-i18n="fu.partnerPage">Partner page</div></div>
         <i class="ti ti-external-link more-menu-arrow"></i>
       </div>
 
       <div class="more-menu-item" onclick="openSocial('partner_facebook')" style="margin-bottom:8px;">
         <div class="more-menu-icon" style="background:rgba(24,119,242,0.12);border-color:rgba(24,119,242,0.2);"><i class="ti ti-brand-facebook" style="color:#1877F2;"></i></div>
-        <div class="more-menu-text"><div class="more-menu-label">Facebook</div><div class="more-menu-sub">Partner page</div></div>
+        <div class="more-menu-text"><div class="more-menu-label">Facebook</div><div class="more-menu-sub" data-i18n="fu.partnerPage">Partner page</div></div>
         <i class="ti ti-external-link more-menu-arrow"></i>
       </div>
 
       <div class="more-menu-item" onclick="openSocial('partner_linkedin')" style="margin-bottom:8px;">
         <div class="more-menu-icon" style="background:rgba(10,102,194,0.12);border-color:rgba(10,102,194,0.2);"><i class="ti ti-brand-linkedin" style="color:#0A66C2;"></i></div>
-        <div class="more-menu-text"><div class="more-menu-label">LinkedIn</div><div class="more-menu-sub">Partner page</div></div>
+        <div class="more-menu-text"><div class="more-menu-label">LinkedIn</div><div class="more-menu-sub" data-i18n="fu.partnerPage">Partner page</div></div>
         <i class="ti ti-external-link more-menu-arrow"></i>
       </div>
 
@@ -3418,7 +3418,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <div class="more-menu-item" onclick="window.open('https://t.me/momentumai','_blank')" style="margin-bottom:8px;">
         <div class="more-menu-icon" style="background:rgba(0,136,204,0.15);border-color:rgba(0,136,204,0.2);"><i class="ti ti-brand-telegram" style="color:#0088CC;"></i></div>
         <div class="more-menu-text">
-          <div class="more-menu-label">Telegram</div>
+          <div class="more-menu-label" data-i18n="sup.telegram">Telegram</div>
           <div class="more-menu-sub">1PM – 1AM · @momentumai</div>
         </div>
         <i class="ti ti-chevron-right more-menu-arrow"></i>
@@ -3426,7 +3426,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <div class="more-menu-item" onclick="window.open('https://wa.me/601234567890','_blank')" style="margin-bottom:14px;">
         <div class="more-menu-icon" style="background:rgba(37,211,102,0.12);border-color:rgba(37,211,102,0.2);"><i class="ti ti-brand-whatsapp" style="color:#25D366;"></i></div>
         <div class="more-menu-text">
-          <div class="more-menu-label">WhatsApp</div>
+          <div class="more-menu-label" data-i18n="sup.whatsapp">WhatsApp</div>
           <div class="more-menu-sub">1PM – 1AM · Response within 1 hour</div>
         </div>
         <i class="ti ti-chevron-right more-menu-arrow"></i>
@@ -3440,25 +3440,25 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <div class="section-card">
         <div class="section-title" style="font-size:13px;margin-bottom:12px;">Submit a <span>Ticket</span></div>
         <div class="auth-field">
-          <label class="auth-label">Subject</label>
+          <label class="auth-label" data-i18n="sup.subject">Subject</label>
           <select id="support-subject" class="auth-input">
-            <option value="">Select subject</option>
-            <option>Login Issue</option>
+            <option value="" data-i18n="sup.selectSubject">Select subject</option>
+            <option data-i18n="sup.login">Login Issue</option>
             <option>Signal Not Showing</option>
             <option>Trade Execution Problem</option>
             <option>Account Verification</option>
             <option>Fund Management Query</option>
-            <option>Technical Issue</option>
-            <option>Other</option>
+            <option data-i18n="sup.tech">Technical Issue</option>
+            <option data-i18n="sup.other">Other</option>
           </select>
         </div>
         <div class="auth-field">
-          <label class="auth-label">Message</label>
+          <label class="auth-label" data-i18n="sup.message">Message</label>
           <textarea id="support-message" class="auth-input" rows="4" placeholder="Describe your issue in detail..." style="resize:vertical;"></textarea>
         </div>
         <div id="support-error" class="error-msg"></div>
         <div id="support-success" class="success-msg"></div>
-        <button class="red-btn" onclick="handleSupportTicket()">SUBMIT TICKET</button>
+        <button class="red-btn" onclick="handleSupportTicket()" data-i18n="sup.submit">SUBMIT TICKET</button>
       </div>
       <!-- My Tickets -->
       <div class="section-card" style="margin-top:12px;">
@@ -3485,7 +3485,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
         <div>
           <div style="font-family:'Orbitron',sans-serif;font-size:16px;font-weight:800;color:var(--text);" id="scan-pair-label">XAUUSD <span style="color:var(--red);">H4</span></div>
-          <div style="font-size:10px;color:var(--text3);" id="scan-last-time">Select pair and scan</div>
+          <div style="font-size:10px;color:var(--text3);" id="scan-last-time" data-i18n="sc.selectPair">Select pair and scan</div>
         </div>
         <div style="text-align:right;">
           <div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:800;color:var(--text);" id="scan-price">—</div>
@@ -3522,7 +3522,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 
         <!-- SENTIMENT -->
         <div class="section-card" style="margin-bottom:10px;padding:12px;">
-          <div style="font-size:10px;font-weight:800;color:var(--red);letter-spacing:1px;margin-bottom:10px;">SENTIMENT ANALYSIS</div>
+          <div style="font-size:10px;font-weight:800;color:var(--red);letter-spacing:1px;margin-bottom:10px;" data-i18n="sc.sentiment">SENTIMENT ANALYSIS</div>
           <div style="display:flex;align-items:center;gap:10px;background:rgba(255,30,60,0.03);border:0.5px solid rgba(255,30,60,0.12);border-radius:10px;padding:10px;margin-bottom:10px;">
             <div style="flex-shrink:0;text-align:center;">
               <svg id="sent-gauge-svg" width="80" height="55" viewBox="0 0 80 55" role="img" aria-label="Sentiment confidence gauge">
@@ -3563,25 +3563,25 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 
         <!-- TECHNICAL -->
         <div class="section-card" style="margin-bottom:10px;padding:12px;">
-          <div style="font-size:10px;font-weight:800;color:var(--red);letter-spacing:1px;margin-bottom:10px;">TECHNICAL ANALYSIS</div>
+          <div style="font-size:10px;font-weight:800;color:var(--red);letter-spacing:1px;margin-bottom:10px;" data-i18n="sc.technical">TECHNICAL ANALYSIS</div>
           <div id="tech-indicators"></div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px;">
             <div style="background:rgba(0,200,122,0.06);border:0.5px solid rgba(0,200,122,0.15);border-radius:8px;padding:7px;">
-              <div style="font-size:9px;color:var(--text3);margin-bottom:2px;">KEY SUPPORT</div>
+              <div style="font-size:9px;color:var(--text3);margin-bottom:2px;" data-i18n="sc.support">KEY SUPPORT</div>
               <div id="tech-support" style="font-size:12px;font-weight:700;color:var(--green);">—</div>
             </div>
             <div style="background:rgba(255,30,60,0.04);border:0.5px solid rgba(255,30,60,0.12);border-radius:8px;padding:7px;">
-              <div style="font-size:9px;color:var(--text3);margin-bottom:2px;">KEY RESISTANCE</div>
+              <div style="font-size:9px;color:var(--text3);margin-bottom:2px;" data-i18n="sc.resistance">KEY RESISTANCE</div>
               <div id="tech-resistance" style="font-size:12px;font-weight:700;color:var(--red);">—</div>
             </div>
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px;">
             <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:8px;padding:7px;text-align:center;">
-              <div style="font-size:9px;color:var(--text3);margin-bottom:2px;">DIRECTION</div>
+              <div style="font-size:9px;color:var(--text3);margin-bottom:2px;" data-i18n="sc.direction">DIRECTION</div>
               <div id="tech-direction" style="font-size:13px;font-weight:800;color:var(--text3);">—</div>
             </div>
             <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:8px;padding:7px;text-align:center;">
-              <div style="font-size:9px;color:var(--text3);margin-bottom:2px;">MOMENTUM</div>
+              <div style="font-size:9px;color:var(--text3);margin-bottom:2px;" data-i18n="sc.momentum">MOMENTUM</div>
               <div id="tech-momentum" style="font-size:13px;font-weight:800;color:var(--text3);">—</div>
             </div>
           </div>
@@ -3591,7 +3591,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 
         <!-- FUNDAMENTAL -->
         <div class="section-card" style="margin-bottom:10px;padding:12px;">
-          <div style="font-size:10px;font-weight:800;color:var(--red);letter-spacing:1px;margin-bottom:8px;">FUNDAMENTAL ANALYSIS</div>
+          <div style="font-size:10px;font-weight:800;color:var(--red);letter-spacing:1px;margin-bottom:8px;" data-i18n="sc.fundamental">FUNDAMENTAL ANALYSIS</div>
           <div style="font-size:9px;color:var(--text3);letter-spacing:.5px;margin-bottom:6px;">UPCOMING HIGH IMPACT NEWS</div>
           <div id="fund-news"></div>
           <div id="fund-verdict-box" style="margin-top:8px;padding:7px;border-left:2px solid var(--amber);border-radius:0 6px 6px 0;font-size:11px;color:var(--text3);line-height:1.5;background:rgba(255,176,32,0.04);"></div>
@@ -3599,29 +3599,29 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 
         <!-- OVERALL VERDICT -->
         <div style="background:rgba(255,30,60,0.04);border:0.5px solid rgba(255,30,60,0.2);border-radius:12px;padding:12px;margin-bottom:10px;">
-          <div style="font-size:10px;font-weight:800;color:var(--red);letter-spacing:1px;margin-bottom:8px;">OVERALL AI VERDICT</div>
+          <div style="font-size:10px;font-weight:800;color:var(--red);letter-spacing:1px;margin-bottom:8px;" data-i18n="sc.verdict">OVERALL AI VERDICT</div>
           <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;margin-bottom:8px;">
             <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:8px;padding:7px;text-align:center;">
-              <div style="font-size:9px;color:var(--text3);margin-bottom:2px;">DIRECTION</div>
+              <div style="font-size:9px;color:var(--text3);margin-bottom:2px;" data-i18n="sc.direction">DIRECTION</div>
               <div id="verdict-direction" style="font-size:12px;font-weight:800;color:var(--text3);">—</div>
             </div>
             <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:8px;padding:7px;text-align:center;">
-              <div style="font-size:9px;color:var(--text3);margin-bottom:2px;">MOMENTUM</div>
+              <div style="font-size:9px;color:var(--text3);margin-bottom:2px;" data-i18n="sc.momentum">MOMENTUM</div>
               <div id="verdict-momentum" style="font-size:12px;font-weight:800;color:var(--text3);">—</div>
             </div>
             <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:8px;padding:7px;text-align:center;">
-              <div style="font-size:9px;color:var(--text3);margin-bottom:2px;">CONFIDENCE</div>
+              <div style="font-size:9px;color:var(--text3);margin-bottom:2px;" data-i18n="sc.confidence">CONFIDENCE</div>
               <div id="verdict-confidence" style="font-size:12px;font-weight:800;color:var(--text3);">—</div>
             </div>
             <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:8px;padding:7px;text-align:center;">
-              <div style="font-size:9px;color:var(--text3);margin-bottom:2px;">RISK</div>
+              <div style="font-size:9px;color:var(--text3);margin-bottom:2px;" data-i18n="sc.risk">RISK</div>
               <div id="verdict-risk" style="font-size:12px;font-weight:800;color:var(--text3);">—</div>
             </div>
           </div>
           <div style="height:4px;background:#1e1e1e;border-radius:2px;overflow:hidden;margin-bottom:8px;">
             <div id="verdict-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#FF1E3C,#FFB020,#00C87A);border-radius:2px;transition:width 1s;"></div>
           </div>
-          <div style="font-size:9px;color:var(--text3);letter-spacing:.5px;margin-bottom:5px;">FINAL AI SUMMARY</div>
+          <div style="font-size:9px;color:var(--text3);letter-spacing:.5px;margin-bottom:5px;" data-i18n="sc.summary">FINAL AI SUMMARY</div>
           <div id="verdict-summary" style="font-size:11px;color:var(--text3);line-height:1.7;">Run a scan to see the AI verdict.</div>
         </div>
 
@@ -3640,12 +3640,12 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
     <div class="sub-content" id="academy-content">
       <!-- Category list view -->
       <div id="academy-categories">
-        <div style="font-size:12px;color:var(--text3);margin-bottom:14px;">Select a category to start learning</div>
+        <div style="font-size:12px;color:var(--text3);margin-bottom:14px;" data-i18n="ac.select">Select a category to start learning</div>
 
         <div class="more-menu-item" style="margin-bottom:8px;" onclick="openAcademyCategory('basics')">
           <div class="more-menu-icon" style="background:rgba(255,176,32,0.12);border-color:rgba(255,176,32,0.2);"><i class="ti ti-book" style="color:var(--amber);"></i></div>
           <div class="more-menu-text">
-            <div class="more-menu-label">Trading Basics</div>
+            <div class="more-menu-label" data-i18n="ac.basics">Trading Basics</div>
             <div class="more-menu-sub">5 lessons · Beginner</div>
           </div>
           <div style="display:flex;align-items:center;gap:6px;">
@@ -3657,7 +3657,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         <div class="more-menu-item" style="margin-bottom:8px;" onclick="openAcademyCategory('technical')">
           <div class="more-menu-icon" style="background:rgba(77,158,255,0.12);border-color:rgba(77,158,255,0.2);"><i class="ti ti-chart-line" style="color:#4D9EFF;"></i></div>
           <div class="more-menu-text">
-            <div class="more-menu-label">Technical Analysis</div>
+            <div class="more-menu-label" data-i18n="ac.technical">Technical Analysis</div>
             <div class="more-menu-sub">8 lessons · Intermediate</div>
           </div>
           <div style="display:flex;align-items:center;gap:6px;">
@@ -3669,7 +3669,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         <div class="more-menu-item" style="margin-bottom:8px;" onclick="openAcademyCategory('risk')">
           <div class="more-menu-icon" style="background:rgba(255,30,60,0.1);border-color:rgba(255,30,60,0.2);"><i class="ti ti-shield" style="color:var(--red);"></i></div>
           <div class="more-menu-text">
-            <div class="more-menu-label">Risk Management</div>
+            <div class="more-menu-label" data-i18n="ac.risk">Risk Management</div>
             <div class="more-menu-sub">4 lessons · Essential</div>
           </div>
           <div style="display:flex;align-items:center;gap:6px;">
@@ -3693,7 +3693,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         <div class="more-menu-item" style="margin-bottom:8px;" onclick="openAcademyCategory('psychology')">
           <div class="more-menu-icon" style="background:rgba(0,200,122,0.1);border-color:rgba(0,200,122,0.2);"><i class="ti ti-brain" style="color:var(--green);"></i></div>
           <div class="more-menu-text">
-            <div class="more-menu-label">Trading Psychology</div>
+            <div class="more-menu-label" data-i18n="ac.psych">Trading Psychology</div>
             <div class="more-menu-sub">5 lessons · Important</div>
           </div>
           <div style="display:flex;align-items:center;gap:6px;">
@@ -3705,7 +3705,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         <div class="more-menu-item" onclick="openAcademyCategory('advanced')">
           <div class="more-menu-icon" style="background:rgba(255,30,60,0.1);border-color:rgba(255,30,60,0.2);"><i class="ti ti-trending-up" style="color:var(--red);"></i></div>
           <div class="more-menu-text">
-            <div class="more-menu-label">Advanced Strategies</div>
+            <div class="more-menu-label" data-i18n="ac.advanced">Advanced Strategies</div>
             <div class="more-menu-sub">7 lessons · Expert</div>
           </div>
           <div style="display:flex;align-items:center;gap:6px;">
@@ -3720,7 +3720,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         <button onclick="showAcademyCategories()" style="display:flex;align-items:center;gap:6px;background:transparent;border:none;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;padding:0;margin-bottom:14px;font-family:'Sora',sans-serif;">
           <i class="ti ti-arrow-left" style="font-size:16px;"></i> Back to Categories
         </button>
-        <div style="font-size:15px;font-weight:800;color:var(--text);margin-bottom:14px;" id="academy-category-title">Technical Analysis</div>
+        <div style="font-size:15px;font-weight:800;color:var(--text);margin-bottom:14px;" id="academy-category-title" data-i18n="ac.technical">Technical Analysis</div>
         <div id="academy-lessons-list" style="display:flex;flex-direction:column;gap:8px;"></div>
       </div>
 
@@ -3747,8 +3747,8 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
     <div class="popup-sub" id="popup-sub">Entry: -- · SL: -- · TP: --</div>
     <!-- Trade tabs -->
     <div style="display:flex;gap:6px;margin-bottom:14px;">
-      <button class="trade-tab-btn active" id="trade-tab-smart" onclick="switchTradeTab('smart')" style="flex:1;padding:9px;background:rgba(255,30,60,0.12);border:1px solid rgba(255,30,60,0.3);border-radius:8px;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;">Smart Tool</button>
-      <button class="trade-tab-btn" id="trade-tab-manual" onclick="switchTradeTab('manual')" style="flex:1;padding:9px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:11px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;">Manual</button>
+      <button class="trade-tab-btn active" id="trade-tab-smart" onclick="switchTradeTab('smart')" style="flex:1;padding:9px;background:rgba(255,30,60,0.12);border:1px solid rgba(255,30,60,0.3);border-radius:8px;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;" data-i18n="more.smartTool">Smart Tool</button>
+      <button class="trade-tab-btn" id="trade-tab-manual" onclick="switchTradeTab('manual')" style="flex:1;padding:9px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:11px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;" data-i18n="mam.manual">Manual</button>
       <button class="trade-tab-btn" id="trade-tab-auto" onclick="switchTradeTab('auto')" style="flex:1;padding:9px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:11px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;">Auto</button>
     </div>
 
@@ -3759,9 +3759,9 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         <div id="smart-tool-summary" style="color:var(--text3);">Loading your settings...</div>
       </div>
       <div class="trade-levels-row">
-        <div class="trade-level-box"><div class="trade-level-lbl">Entry</div><div class="trade-level-val" id="popup-entry">--</div></div>
-        <div class="trade-level-box"><div class="trade-level-lbl">Stop Loss</div><div class="trade-level-val sl" id="popup-sl">--</div></div>
-        <div class="trade-level-box"><div class="trade-level-lbl">Take Profit</div><div class="trade-level-val tp" id="popup-tp">--</div></div>
+        <div class="trade-level-box"><div class="trade-level-lbl" data-i18n="at.entryWord">Entry</div><div class="trade-level-val" id="popup-entry">--</div></div>
+        <div class="trade-level-box"><div class="trade-level-lbl" data-i18n="sig.stopLoss">Stop Loss</div><div class="trade-level-val sl" id="popup-sl">--</div></div>
+        <div class="trade-level-box"><div class="trade-level-lbl" data-i18n="sig.takeProfit">Take Profit</div><div class="trade-level-val tp" id="popup-tp">--</div></div>
       </div>
       <button class="trade-execute-btn" onclick="checkMT5ThenExecute()">EXECUTE WITH SMART TOOL</button>
       <button onclick="closeTradePopup();openSmartTool('more')" style="width:100%;margin-top:8px;padding:10px;background:transparent;border:1px solid var(--border);border-radius:10px;color:var(--text2);font-size:12px;cursor:pointer;font-family:'Sora',sans-serif;">⚙️ Adjust Smart Tool Settings</button>
@@ -3770,9 +3770,9 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
     <!-- MANUAL TAB -->
     <div id="trade-content-manual" style="display:none;">
       <div class="trade-levels-row">
-        <div class="trade-level-box"><div class="trade-level-lbl">Entry</div><div class="trade-level-val" id="popup-entry-m">--</div></div>
-        <div class="trade-level-box"><div class="trade-level-lbl">Stop Loss</div><div class="trade-level-val sl" id="popup-sl-m">--</div></div>
-        <div class="trade-level-box"><div class="trade-level-lbl">Take Profit</div><div class="trade-level-val tp" id="popup-tp-m">--</div></div>
+        <div class="trade-level-box"><div class="trade-level-lbl" data-i18n="at.entryWord">Entry</div><div class="trade-level-val" id="popup-entry-m">--</div></div>
+        <div class="trade-level-box"><div class="trade-level-lbl" data-i18n="sig.stopLoss">Stop Loss</div><div class="trade-level-val sl" id="popup-sl-m">--</div></div>
+        <div class="trade-level-box"><div class="trade-level-lbl" data-i18n="sig.takeProfit">Take Profit</div><div class="trade-level-val tp" id="popup-tp-m">--</div></div>
       </div>
       <label class="trade-vol-label">Volume (Lot Size)</label>
       <input class="trade-vol-input" id="trade-volume" type="number" value="0.01" step="0.01" min="0.01">
@@ -3783,7 +3783,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
     <div id="trade-content-auto" style="display:none;">
       <div id="auto-trade-status-box" style="padding:16px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;text-align:center;margin-bottom:12px;">
         <div style="font-size:28px;margin-bottom:8px;">🤖</div>
-        <div id="auto-trade-status-text" style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">Auto Trade</div>
+        <div id="auto-trade-status-text" style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;" data-i18n="more.autoTrade">Auto Trade</div>
         <div id="auto-trade-status-sub" style="font-size:11px;color:var(--text3);line-height:1.6;">Loading...</div>
       </div>
       <div style="display:flex;gap:8px;">
@@ -3795,7 +3795,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
     <div class="trade-note" id="trade-success-note" style="display:none;">
       <i class="ti ti-info-circle"></i>Trade sent to MT5. Monitor and manage in your MetaTrader 5 terminal.
     </div>
-    <button class="ghost-btn" onclick="closeTradePopup()">Cancel</button>
+    <button class="ghost-btn" onclick="closeTradePopup()" data-i18n="common.cancel">Cancel</button>
   </div>
 </div>
 
@@ -3815,7 +3815,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <div class="app-header-name">ANALYST</div>
     </div>
     <div class="app-header-right">
-      <button style="background:transparent;border:1px solid var(--border);border-radius:8px;padding:6px 12px;font-size:12px;color:var(--text2);cursor:pointer;" onclick="handleLogout()">Sign Out</button>
+      <button style="background:transparent;border:1px solid var(--border);border-radius:8px;padding:6px 12px;font-size:12px;color:var(--text2);cursor:pointer;" onclick="handleLogout()" data-i18n="more.signOut">Sign Out</button>
     </div>
   </div>
   <div class="app-content">
@@ -3858,7 +3858,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       </div>
       <div class="form-row">
         <div class="auth-field">
-          <label class="auth-label">Stop Loss</label>
+          <label class="auth-label" data-i18n="sig.stopLoss">Stop Loss</label>
           <input id="sig-sl" class="auth-input" type="number" step="any" placeholder="2295.00">
         </div>
         <div class="auth-field">
@@ -3872,7 +3872,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
           <input id="sig-tp2" class="auth-input" type="number" step="any" placeholder="2360.00">
         </div>
         <div class="auth-field">
-          <label class="auth-label">Timeframe</label>
+          <label class="auth-label" data-i18n="sig.timeframe">Timeframe</label>
           <select id="sig-timeframe" class="auth-input">
             <option value="M1">M1</option>
             <option value="M5">M5</option>
@@ -3897,10 +3897,10 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
     </div>
     <button class="red-btn" onclick="handlePostSignal()">POST SIGNAL LIVE</button>
     <!-- My Signals Section -->
-    <div class="section-title" style="margin-top:20px;margin-bottom:14px;">My <span>Signals</span></div>
+    <div class="section-title" style="margin-top:20px;margin-bottom:14px;">My <span data-i18n="dash.signalsWord">Signals</span></div>
     <!-- Filter buttons -->
     <div style="display:flex;gap:8px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px;">
-      <button class="analyst-sig-filter active" onclick="filterAnalystSignals('all',this)" style="padding:7px 14px;border-radius:8px;background:rgba(255,30,60,0.12);border:1px solid rgba(255,30,60,0.3);color:var(--red);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;">All</button>
+      <button class="analyst-sig-filter active" onclick="filterAnalystSignals('all',this)" style="padding:7px 14px;border-radius:8px;background:rgba(255,30,60,0.12);border:1px solid rgba(255,30,60,0.3);color:var(--red);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;" data-i18n="mam.all">All</button>
       <button class="analyst-sig-filter" onclick="filterAnalystSignals('active',this)" style="padding:7px 14px;border-radius:8px;background:var(--surface);border:1px solid var(--border);color:var(--text2);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;">Active</button>
       <button class="analyst-sig-filter" onclick="filterAnalystSignals('closed',this)" style="padding:7px 14px;border-radius:8px;background:var(--surface);border:1px solid var(--border);color:var(--text2);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;">Inactive</button>
     </div>
@@ -3929,19 +3929,19 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         <div class="auth-field"><label class="auth-label">Entry To</label><input id="edit-sig-entry-to" class="auth-input" type="number" step="any"></div>
       </div>
       <div class="form-row">
-        <div class="auth-field"><label class="auth-label">Stop Loss</label><input id="edit-sig-sl" class="auth-input" type="number" step="any"></div>
+        <div class="auth-field"><label class="auth-label" data-i18n="sig.stopLoss">Stop Loss</label><input id="edit-sig-sl" class="auth-input" type="number" step="any"></div>
         <div class="auth-field"><label class="auth-label">Take Profit 1</label><input id="edit-sig-tp1" class="auth-input" type="number" step="any"></div>
       </div>
       <div class="form-row">
         <div class="auth-field"><label class="auth-label">Take Profit 2</label><input id="edit-sig-tp2" class="auth-input" type="number" step="any"></div>
-        <div class="auth-field"><label class="auth-label">Timeframe</label><select id="edit-sig-timeframe" class="auth-input"><option value="M1">M1</option><option value="M5">M5</option><option value="M15">M15</option><option value="M30">M30</option><option value="H1">H1</option><option value="H4" selected>H4</option><option value="D1">D1</option><option value="W1">Weekly</option><option value="MN1">Monthly</option></select></div>
+        <div class="auth-field"><label class="auth-label" data-i18n="sig.timeframe">Timeframe</label><select id="edit-sig-timeframe" class="auth-input"><option value="M1">M1</option><option value="M5">M5</option><option value="M15">M15</option><option value="M30">M30</option><option value="H1">H1</option><option value="H4" selected>H4</option><option value="D1">D1</option><option value="W1">Weekly</option><option value="MN1">Monthly</option></select></div>
       </div>
       <div class="auth-field"><label class="auth-label">Strength: <span id="edit-sig-strength-val">75%</span></label><input id="edit-sig-strength" type="range" min="1" max="100" value="75" style="width:100%;accent-color:var(--red);" oninput="document.getElementById('edit-sig-strength-val').textContent=this.value+'%'"></div>
       <div class="auth-field"><label class="auth-label">Commentary</label><textarea id="edit-sig-commentary" class="auth-input" rows="3" style="resize:vertical;"></textarea></div>
       <div id="edit-sig-error" class="error-msg"></div>
       <div id="edit-sig-success" class="success-msg"></div>
       <button class="red-btn" onclick="handleUpdateSignal()">UPDATE SIGNAL</button>
-      <button class="ghost-btn" style="margin-top:10px;" onclick="closeAnalystEditPopup()">Cancel</button>
+      <button class="ghost-btn" style="margin-top:10px;" onclick="closeAnalystEditPopup()" data-i18n="common.cancel">Cancel</button>
     </div>
   </div>
 </div>
@@ -4892,7 +4892,102 @@ var MM_I18N = {
     'common.cancel':'取消','common.save':'儲存','common.delete':'刪除','common.edit':'編輯',
     'common.close':'關閉','common.confirm':'確認','common.back':'返回','common.loading':'載入中...',
     'common.gotIt':'我知道了','common.language':'語言','common.darkMode':'深色模式','common.lightMode':'淺色模式',
-    'common.profile':'個人資料','common.support':'客戶服務'
+    'common.profile':'個人資料','common.support':'客戶服務',
+    'ac.select':'選擇分類開始學習',
+    'ac.basics':'交易基礎',
+    'ac.technical':'技術分析',
+    'ac.risk':'風險管理',
+    'ac.psych':'交易心理',
+    'ac.advanced':'進階策略',
+    'at.enable':'啟用自動交易',
+    'at.followWord':'跟隨',
+    'at.analystsWord':'分析師',
+    'at.useSmart':'使用智能工具設定',
+    'at.entryWord':'進場',
+    'at.confirmWord':'確認',
+    'at.instant':'即時執行',
+    'at.scannerFirst':'先檢查 MAI 掃描器',
+    'at.save':'儲存自動交易',
+    'auth.createAcct':'建立帳戶',
+    'auth.emailAddr':'電子郵件地址',
+    'auth.server':'伺服器',
+    'chart.positionsWord':'持倉',
+    'chart.loadingPos':'載入持倉中...',
+    'chart.noPast':'尚無歷史訊號',
+    'dash.signalsWord':'訊號',
+    'sig.liveWord':'即時',
+    'fu.igSub':'照片與短片',
+    'fu.thSub':'加入討論',
+    'fu.fbSub':'按讚我們的專頁',
+    'fu.ttSub':'短影音',
+    'fu.ytSub':'教學與直播',
+    'fu.twSub':'最新消息',
+    'fu.tgSub':'加入我們的頻道',
+    'fu.liSub':'公司動態',
+    'fu.partner':'合作交易商',
+    'fu.website':'官方網站',
+    'fu.partnerPage':'合作夥伴專頁',
+    'fu.visitPartner':'瀏覽合作交易商',
+    'mam.all':'全部',
+    'mam.semi':'半自動',
+    'mam.manual':'手動',
+    'more.topProfit':'獲利排行',
+    'more.topVolume':'交易量排行',
+    'prof.infoWord':'資料',
+    'prof.accountWord':'帳戶',
+    'prof.mt5id':'MT5 帳號',
+    'prof.mt5pw':'MT5 主密碼',
+    'prof.brokerServer':'交易商伺服器',
+    'prof.allowAuto':'允許自動交易',
+    'prof.allowAutoSub':'EA 將自動執行訊號',
+    'prof.connectBtn':'連接 MT5',
+    'prof.addMt5':'新增 MT5 帳戶',
+    'prof.connAccts':'已連接帳戶',
+    'prof.curPw':'目前密碼',
+    'prof.newPw':'新密碼',
+    'prof.confirmPw':'確認新密碼',
+    'prof.updatePw':'更新密碼',
+    'prof.notifSub':'訊號提醒與通知',
+    'prof.promoWord':'優惠',
+    'prof.codeWord':'代碼',
+    'sc.sentiment':'市場情緒分析',
+    'sc.technical':'技術分析',
+    'sc.fundamental':'基本面分析',
+    'sc.verdict':'AI 綜合結論',
+    'sc.support':'關鍵支撐',
+    'sc.resistance':'關鍵阻力',
+    'sc.direction':'方向',
+    'sc.momentum':'動能',
+    'sc.confidence':'信心度',
+    'sc.risk':'風險',
+    'sc.summary':'AI 最終摘要',
+    'sc.selectPair':'請選擇商品並掃描',
+    'st.ladder':'加倉階梯',
+    'st.levels':'層級',
+    'st.riskPer':'每筆交易風險',
+    'st.slFrom':'使用訊號止損',
+    'st.slFromSub':'由分析師設定您的風險',
+    'st.measureFrom':'計算基準',
+    'st.moveSl':'移動止損至進場價',
+    'st.buffer':'進場價緩衝',
+    'st.bufferSub':'涵蓋隔夜利息與手續費',
+    'st.enableTrail':'啟用移動止損',
+    'st.armFrom':'啟動基準',
+    'st.activate':'啟動條件',
+    'st.trailStep':'移動幅度',
+    'st.totalLots':'總手數',
+    'st.avgEntry':'平均進場價',
+    'st.autoRules':'此帳戶的自動交易規則',
+    'st.save':'儲存智能工具',
+    'sup.telegram':'Telegram',
+    'sup.whatsapp':'WhatsApp',
+    'sup.subject':'主旨',
+    'sup.message':'訊息',
+    'sup.submit':'送出工單',
+    'sup.selectSubject':'選擇主旨',
+    'sup.login':'登入問題',
+    'sup.tech':'技術問題',
+    'sup.other':'其他'
   }
 };
 
@@ -11256,7 +11351,7 @@ function showMT5ConnNotice(kind, reason) {
         <div style="font-size:12px;color:var(--text3);padding:14px;text-align:center;">Loading templates...</div>
       </div>
       <button id="exec-confirm-btn" onclick="confirmExecution()" style="width:100%;padding:14px;background:var(--grad);border:none;border-radius:12px;color:#fff;font-family:Orbitron,sans-serif;font-size:13px;font-weight:800;letter-spacing:1px;cursor:pointer;opacity:0.4;pointer-events:none;margin-bottom:10px;">CONFIRM &amp; TRADE</button>
-      <button onclick="closeExecutePopup()" style="width:100%;padding:12px;background:transparent;border:1px solid var(--border);border-radius:12px;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;">Cancel</button>
+      <button onclick="closeExecutePopup()" style="width:100%;padding:12px;background:transparent;border:1px solid var(--border);border-radius:12px;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;" data-i18n="common.cancel">Cancel</button>
     </div>
   </div>
 
