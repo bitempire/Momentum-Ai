@@ -1649,7 +1649,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <div id="signin-error" class="error-msg"></div>
       <div class="auth-field">
         <label class="auth-label" data-i18n="auth.username">Username</label>
-        <input id="input-username" class="auth-input" type="text" placeholder="Enter your username" autocomplete="username">
+        <input id="input-username" class="auth-input" type="text"  placeholder="Enter your username" data-i18n-ph="ph.username" autocomplete="username">
       </div>
       <div class="auth-field">
         <label class="auth-label" data-i18n="auth.password">Password</label>
@@ -1678,24 +1678,24 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <div id="reg-success" class="success-msg"></div>
       <div class="auth-field">
         <label class="auth-label" data-i18n="prof.mt5id">MT5 Account ID</label>
-        <input id="reg-mt5" class="auth-input" type="text" placeholder="Your Asia Future Trading MT5 ID">
+        <input id="reg-mt5" class="auth-input" type="text"  placeholder="Your Asia Future Trading MT5 ID" data-i18n-ph="ph.aftId">
       </div>
       <div class="auth-field">
         <label class="auth-label" data-i18n="prof.fullName">Full Name</label>
-        <input id="reg-name" class="auth-input" type="text" placeholder="Ahmad Hisham">
+        <input id="reg-name" class="auth-input" type="text"  placeholder="Ahmad Hisham" data-i18n-ph="ph.name">
       </div>
       <div class="auth-field">
         <label class="auth-label" data-i18n="auth.emailAddr">Email Address</label>
-        <input id="reg-email" class="auth-input" type="email" placeholder="your@email.com">
+        <input id="reg-email" class="auth-input" type="email"  placeholder="your@email.com" data-i18n-ph="ph.email">
       </div>
       <div class="auth-field">
         <label class="auth-label" data-i18n="auth.username">Username</label>
-        <input id="reg-username" class="auth-input" type="text" placeholder="Choose a username">
+        <input id="reg-username" class="auth-input" type="text"  placeholder="Choose a username" data-i18n-ph="ph.chooseUser">
       </div>
       <div class="auth-field">
         <label class="auth-label" data-i18n="auth.password">Password</label>
         <div style="position:relative;">
-        <input id="reg-password" class="auth-input" type="password" placeholder="Create a strong password" style="padding-right:44px;">
+        <input id="reg-password" class="auth-input" type="password"  placeholder="Create a strong password" data-i18n-ph="ph.strongPw" style="padding-right:44px;">
         <button type="button" onclick="toggleRegPw()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:18px;padding:0;line-height:1;"><i class="ti ti-eye" id="reg-pw-eye"></i></button>
         </div>
       </div>
@@ -1846,9 +1846,9 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
           <option value="M5">M5</option>
           <option value="M15">M15</option>
           <option value="M30">M30</option>
-          <option value="H1">H1</option>
-          <option value="H4">H4</option>
-          <option value="D1">D1</option>
+          <option value="H1" data-i18n="sc.h1">H1</option>
+          <option value="H4" data-i18n="sc.h4">H4</option>
+          <option value="D1" data-i18n="sc.d1">D1</option>
           <option value="W1">Weekly</option>
           <option value="MN1">Monthly</option>
         </select>
@@ -1864,13 +1864,13 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <!-- Chart Symbol Search -->
       <div style="display:flex;gap:8px;margin-bottom:12px;align-items:center;">
         <div style="flex:1;position:relative;">
-          <input id="chart-symbol-input" class="auth-input" type="text" placeholder="Search symbol e.g. XAUUSD, NAS100..." 
+          <input id="chart-symbol-input" class="auth-input" type="text"  placeholder="Search symbol e.g. XAUUSD, NAS100..." data-i18n-ph="ph.searchSym" 
             style="padding:10px 14px 10px 36px;font-size:13px;"
             oninput="showChartSuggestions(this.value)"
             onkeydown="if(event.key==='Enter'){searchChartSymbol()}">
           <i class="ti ti-search" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:16px;pointer-events:none;"></i>
         </div>
-        <button onclick="searchChartSymbol()" style="padding:10px 16px;background:var(--grad);border:none;border-radius:10px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;flex-shrink:0;">Go</button>
+        <button onclick="searchChartSymbol()" style="padding:10px 16px;background:var(--grad);border:none;border-radius:10px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;flex-shrink:0;" data-i18n="w.go">Go</button>
       </div>
       <!-- Quick symbols -->
       <div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px;" id="quick-symbols">
@@ -1981,7 +1981,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
               <text x="50" y="16" text-anchor="middle" font-size="7" fill="#333">50</text>
               <text x="92" y="68" text-anchor="middle" font-size="7" fill="#333">100</text>
             </svg>
-            <div style="font-size:9px;color:#555;letter-spacing:.8px;text-transform:uppercase;margin-top:2px;">Performance</div>
+            <div style="font-size:9px;color:#555;letter-spacing:.8px;text-transform:uppercase;margin-top:2px;" data-i18n="j.performance">Performance</div>
             <div id="perf-grade" style="font-size:10px;font-weight:700;color:#555;margin-top:1px;">● Awaiting Data</div>
           </div>
           <!-- Divider -->
@@ -1990,19 +1990,19 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
           <div style="flex:1;padding:6px 0 6px 10px;display:flex;flex-direction:column;justify-content:center;gap:7px;">
             <div style="font-size:12px;font-weight:800;color:var(--text);margin-bottom:2px;">Trader <span style="color:var(--red);">Score</span></div>
             <div style="display:flex;flex-direction:column;gap:3px;">
-              <div style="display:flex;justify-content:space-between;"><span style="font-size:9px;color:#444;letter-spacing:.8px;text-transform:uppercase;">Win Rate</span><span id="ps-winrate" style="font-size:11px;font-weight:700;color:#00C87A;">—</span></div>
+              <div style="display:flex;justify-content:space-between;"><span style="font-size:9px;color:#444;letter-spacing:.8px;text-transform:uppercase;" data-i18n="j.winRate">Win Rate</span><span id="ps-winrate" style="font-size:11px;font-weight:700;color:#00C87A;">—</span></div>
               <div style="height:3px;background:#1e1e1e;border-radius:2px;overflow:hidden;"><div id="pb-winrate" style="height:100%;width:0%;background:#00C87A;border-radius:2px;"></div></div>
             </div>
             <div style="display:flex;flex-direction:column;gap:3px;">
-              <div style="display:flex;justify-content:space-between;"><span style="font-size:9px;color:#444;letter-spacing:.8px;text-transform:uppercase;">Discipline</span><span id="ps-disc" style="font-size:11px;font-weight:700;color:#4D9EFF;">—</span></div>
+              <div style="display:flex;justify-content:space-between;"><span style="font-size:9px;color:#444;letter-spacing:.8px;text-transform:uppercase;" data-i18n="j.discipline">Discipline</span><span id="ps-disc" style="font-size:11px;font-weight:700;color:#4D9EFF;">—</span></div>
               <div style="height:3px;background:#1e1e1e;border-radius:2px;overflow:hidden;"><div id="pb-disc" style="height:100%;width:0%;background:#4D9EFF;border-radius:2px;"></div></div>
             </div>
             <div style="display:flex;flex-direction:column;gap:3px;">
-              <div style="display:flex;justify-content:space-between;"><span style="font-size:9px;color:#444;letter-spacing:.8px;text-transform:uppercase;">Risk Mgmt</span><span id="ps-risk" style="font-size:11px;font-weight:700;color:#FFB020;">—</span></div>
+              <div style="display:flex;justify-content:space-between;"><span style="font-size:9px;color:#444;letter-spacing:.8px;text-transform:uppercase;" data-i18n="j.riskMgmt">Risk Mgmt</span><span id="ps-risk" style="font-size:11px;font-weight:700;color:#FFB020;">—</span></div>
               <div style="height:3px;background:#1e1e1e;border-radius:2px;overflow:hidden;"><div id="pb-risk" style="height:100%;width:0%;background:#FFB020;border-radius:2px;"></div></div>
             </div>
             <div style="display:flex;flex-direction:column;gap:3px;">
-              <div style="display:flex;justify-content:space-between;"><span style="font-size:9px;color:#444;letter-spacing:.8px;text-transform:uppercase;">Psychology</span><span id="ps-psych" style="font-size:11px;font-weight:700;color:#A05AFF;">—</span></div>
+              <div style="display:flex;justify-content:space-between;"><span style="font-size:9px;color:#444;letter-spacing:.8px;text-transform:uppercase;" data-i18n="j.psychology">Psychology</span><span id="ps-psych" style="font-size:11px;font-weight:700;color:#A05AFF;">—</span></div>
               <div style="height:3px;background:#1e1e1e;border-radius:2px;overflow:hidden;"><div id="pb-psych" style="height:100%;width:0%;background:#A05AFF;border-radius:2px;"></div></div>
             </div>
           </div>
@@ -2011,18 +2011,18 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 
       <!-- 6 STAT CARDS -->
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px;">
-        <div class="section-card" style="padding:8px;"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Total Trades</div><div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:800;color:var(--text);" id="j-total">—</div></div>
-        <div class="section-card" style="padding:8px;"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Win Rate</div><div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:800;" id="j-winrate">—</div></div>
-        <div class="section-card" style="padding:8px;"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Net P&L</div><div style="font-family:'Orbitron',sans-serif;font-size:15px;font-weight:800;" id="j-netpnl">—</div></div>
-        <div class="section-card" style="padding:8px;"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Profit Factor</div><div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:800;color:var(--text);" id="j-pf">—</div></div>
-        <div class="section-card" style="padding:8px;"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Max DD</div><div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:800;" id="j-maxdd">—</div></div>
-        <div class="section-card" style="padding:8px;"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Avg R:R</div><div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:800;color:var(--text);" id="j-rr">—</div></div>
+        <div class="section-card" style="padding:8px;"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;" data-i18n="j.totalTrades">Total Trades</div><div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:800;color:var(--text);" id="j-total">—</div></div>
+        <div class="section-card" style="padding:8px;"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;" data-i18n="j.winRate">Win Rate</div><div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:800;" id="j-winrate">—</div></div>
+        <div class="section-card" style="padding:8px;"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;" data-i18n="j.netPnl">Net P&L</div><div style="font-family:'Orbitron',sans-serif;font-size:15px;font-weight:800;" id="j-netpnl">—</div></div>
+        <div class="section-card" style="padding:8px;"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;" data-i18n="j.profitFactor">Profit Factor</div><div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:800;color:var(--text);" id="j-pf">—</div></div>
+        <div class="section-card" style="padding:8px;"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;" data-i18n="j.maxDd">Max DD</div><div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:800;" id="j-maxdd">—</div></div>
+        <div class="section-card" style="padding:8px;"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;" data-i18n="j.avgRr">Avg R:R</div><div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:800;color:var(--text);" id="j-rr">—</div></div>
       </div>
 
       <!-- ACCOUNT GROWTH CHART -->
       <div class="section-card" style="margin-bottom:10px;padding:12px;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-          <div class="section-title" style="font-size:13px;margin-bottom:0;">Account <span>Growth</span></div>
+          <div class="section-title" style="font-size:13px;margin-bottom:0;"><span data-i18n="w.account">Account </span><span data-i18n="w.growth">Growth</span></div>
           <div style="display:flex;gap:4px;">
             <button id="jbtn-7d" onclick="setJournalRange('7d',this)" style="padding:3px 7px;border-radius:4px;font-size:9px;font-weight:700;border:1px solid var(--border);color:var(--text3);background:transparent;cursor:pointer;">7D</button>
             <button id="jbtn-30d" onclick="setJournalRange('30d',this)" style="padding:3px 7px;border-radius:4px;font-size:9px;font-weight:700;border:1px solid var(--red);color:#fff;background:var(--red);cursor:pointer;">30D</button>
@@ -2031,8 +2031,8 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         </div>
         <div style="position:relative;height:90px;"><canvas id="j-growth-chart" role="img" aria-label="Account P&L growth chart">Account growth over time.</canvas></div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px;">
-          <div style="background:rgba(0,200,122,0.06);border:0.5px solid rgba(0,200,122,0.15);border-radius:8px;padding:7px;"><div style="font-size:9px;color:#555;letter-spacing:.5px;text-transform:uppercase;margin-bottom:2px;">Best Trade</div><div id="j-best-trade" style="font-size:12px;font-weight:700;color:#00C87A;">—</div></div>
-          <div style="background:rgba(255,30,60,0.04);border:0.5px solid rgba(255,30,60,0.12);border-radius:8px;padding:7px;"><div style="font-size:9px;color:#555;letter-spacing:.5px;text-transform:uppercase;margin-bottom:2px;">Worst Trade</div><div id="j-worst-trade" style="font-size:12px;font-weight:700;color:#FF1E3C;">—</div></div>
+          <div style="background:rgba(0,200,122,0.06);border:0.5px solid rgba(0,200,122,0.15);border-radius:8px;padding:7px;"><div style="font-size:9px;color:#555;letter-spacing:.5px;text-transform:uppercase;margin-bottom:2px;" data-i18n="j.bestTrade">Best Trade</div><div id="j-best-trade" style="font-size:12px;font-weight:700;color:#00C87A;">—</div></div>
+          <div style="background:rgba(255,30,60,0.04);border:0.5px solid rgba(255,30,60,0.12);border-radius:8px;padding:7px;"><div style="font-size:9px;color:#555;letter-spacing:.5px;text-transform:uppercase;margin-bottom:2px;" data-i18n="j.worstTrade">Worst Trade</div><div id="j-worst-trade" style="font-size:12px;font-weight:700;color:#FF1E3C;">—</div></div>
         </div>
       </div>
 
@@ -2040,31 +2040,31 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <div class="section-card" style="margin-bottom:10px;padding:12px;">
         <div style="display:flex;gap:6px;margin-bottom:10px;">
           <button class="j-tab-btn active" onclick="switchJournalTab('analytics',this)" style="flex:1;padding:7px;background:var(--red);border:1px solid var(--red);border-radius:8px;color:#fff;font-size:11px;font-weight:700;cursor:pointer;">Analytics</button>
-          <button class="j-tab-btn" onclick="switchJournalTab('discipline',this)" style="flex:1;padding:7px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;">Discipline</button>
-          <button class="j-tab-btn" onclick="switchJournalTab('emotions',this)" style="flex:1;padding:7px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;">Emotions</button>
+          <button class="j-tab-btn" onclick="switchJournalTab('discipline',this)" style="flex:1;padding:7px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;" data-i18n="j.discipline">Discipline</button>
+          <button class="j-tab-btn" onclick="switchJournalTab('emotions',this)" style="flex:1;padding:7px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;" data-i18n="j.emotions">Emotions</button>
         </div>
         <!-- ANALYTICS -->
         <div id="jtab-analytics">
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
             <div>
-              <div style="font-size:10px;font-weight:700;color:var(--text3);margin-bottom:6px;letter-spacing:.5px;">TRADING STATS</div>
-              <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid var(--border);"><span style="font-size:11px;color:var(--text3);">Avg Win</span><span id="j-avg-win" style="font-size:12px;font-weight:700;color:#00C87A;">—</span></div>
-              <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid var(--border);"><span style="font-size:11px;color:var(--text3);">Avg Loss</span><span id="j-avg-loss" style="font-size:12px;font-weight:700;color:#FF1E3C;">—</span></div>
-              <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid var(--border);"><span style="font-size:11px;color:var(--text3);">Risk:Reward</span><span id="j-rr2" style="font-size:12px;font-weight:700;color:var(--text);">—</span></div>
-              <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid var(--border);"><span style="font-size:11px;color:var(--text3);">Avg Hold</span><span id="j-hold" style="font-size:12px;font-weight:700;color:var(--text);">—</span></div>
-              <div style="display:flex;justify-content:space-between;padding:5px 0;"><span style="font-size:11px;color:var(--text3);">Win Streak</span><span id="j-streak" style="font-size:12px;font-weight:700;color:#FFB020;">—</span></div>
+              <div style="font-size:10px;font-weight:700;color:var(--text3);margin-bottom:6px;letter-spacing:.5px;" data-i18n="j.stats">TRADING STATS</div>
+              <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid var(--border);"><span style="font-size:11px;color:var(--text3);" data-i18n="j.avgWin">Avg Win</span><span id="j-avg-win" style="font-size:12px;font-weight:700;color:#00C87A;">—</span></div>
+              <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid var(--border);"><span style="font-size:11px;color:var(--text3);" data-i18n="j.avgLoss">Avg Loss</span><span id="j-avg-loss" style="font-size:12px;font-weight:700;color:#FF1E3C;">—</span></div>
+              <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid var(--border);"><span style="font-size:11px;color:var(--text3);" data-i18n="j.riskReward">Risk:Reward</span><span id="j-rr2" style="font-size:12px;font-weight:700;color:var(--text);">—</span></div>
+              <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid var(--border);"><span style="font-size:11px;color:var(--text3);" data-i18n="j.avgHold">Avg Hold</span><span id="j-hold" style="font-size:12px;font-weight:700;color:var(--text);">—</span></div>
+              <div style="display:flex;justify-content:space-between;padding:5px 0;"><span style="font-size:11px;color:var(--text3);" data-i18n="j.winStreak">Win Streak</span><span id="j-streak" style="font-size:12px;font-weight:700;color:#FFB020;">—</span></div>
             </div>
             <div>
-              <div style="font-size:10px;font-weight:700;color:var(--text3);margin-bottom:6px;letter-spacing:.5px;">ASSET MIX</div>
-              <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid var(--border);"><span style="font-size:11px;color:var(--text3);">Gold</span><span id="j-gold-pct" style="font-size:12px;font-weight:700;color:#FFB020;">—</span></div>
-              <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid var(--border);"><span style="font-size:11px;color:var(--text3);">Forex</span><span id="j-forex-pct" style="font-size:12px;font-weight:700;color:#4D9EFF;">—</span></div>
-              <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid var(--border);"><span style="font-size:11px;color:var(--text3);">Crypto</span><span id="j-crypto-pct" style="font-size:12px;font-weight:700;color:#A05AFF;">—</span></div>
-              <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid var(--border);"><span style="font-size:11px;color:var(--text3);">Indices</span><span id="j-idx-pct" style="font-size:12px;font-weight:700;color:#00C87A;">—</span></div>
-              <div style="display:flex;justify-content:space-between;padding:5px 0;"><span style="font-size:11px;color:var(--text3);">Best Session</span><span id="j-best-session" style="font-size:12px;font-weight:700;color:var(--text);">—</span></div>
+              <div style="font-size:10px;font-weight:700;color:var(--text3);margin-bottom:6px;letter-spacing:.5px;" data-i18n="j.assetMix">ASSET MIX</div>
+              <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid var(--border);"><span style="font-size:11px;color:var(--text3);" data-i18n="j.gold">Gold</span><span id="j-gold-pct" style="font-size:12px;font-weight:700;color:#FFB020;">—</span></div>
+              <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid var(--border);"><span style="font-size:11px;color:var(--text3);" data-i18n="j.forex">Forex</span><span id="j-forex-pct" style="font-size:12px;font-weight:700;color:#4D9EFF;">—</span></div>
+              <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid var(--border);"><span style="font-size:11px;color:var(--text3);" data-i18n="j.crypto">Crypto</span><span id="j-crypto-pct" style="font-size:12px;font-weight:700;color:#A05AFF;">—</span></div>
+              <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid var(--border);"><span style="font-size:11px;color:var(--text3);" data-i18n="j.indices">Indices</span><span id="j-idx-pct" style="font-size:12px;font-weight:700;color:#00C87A;">—</span></div>
+              <div style="display:flex;justify-content:space-between;padding:5px 0;"><span style="font-size:11px;color:var(--text3);" data-i18n="j.bestSession">Best Session</span><span id="j-best-session" style="font-size:12px;font-weight:700;color:var(--text);">—</span></div>
             </div>
           </div>
           <div style="margin-top:8px;padding-top:8px;border-top:0.5px solid var(--border);">
-            <div style="font-size:10px;font-weight:700;color:var(--text3);margin-bottom:6px;letter-spacing:.5px;">METHOD BREAKDOWN</div>
+            <div style="font-size:10px;font-weight:700;color:var(--text3);margin-bottom:6px;letter-spacing:.5px;" data-i18n="j.method">METHOD BREAKDOWN</div>
             <div id="j-method-breakdown">
               <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid var(--border);"><div style="display:flex;align-items:center;gap:6px;"><span style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:rgba(77,158,255,.1);color:#4D9EFF;">MANUAL</span><span style="font-size:11px;color:var(--text3);" id="j-m-count">—</span></div><span id="j-m-stats" style="font-size:12px;font-weight:700;color:var(--text3);">—</span></div>
               <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid var(--border);"><div style="display:flex;align-items:center;gap:6px;"><span style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:rgba(255,176,32,.1);color:#FFB020;">TOOLS</span><span style="font-size:11px;color:var(--text3);" id="j-t-count">—</span></div><span id="j-t-stats" style="font-size:12px;font-weight:700;color:var(--text3);">—</span></div>
@@ -2075,27 +2075,27 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         <!-- DISCIPLINE -->
         <div id="jtab-discipline" style="display:none;">
           <div style="display:flex;justify-content:flex-end;margin-bottom:8px;"><span style="font-size:11px;color:var(--text3);">Overall <span id="j-disc-score" style="color:#00C87A;font-weight:700;">—</span></span></div>
-          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;"><div id="jd-sl-dot" style="width:8px;height:8px;border-radius:50%;background:#555;flex-shrink:0;"></div><span style="flex:1;font-size:12px;color:var(--text);">Used Stop Loss</span><span id="jd-sl" style="font-size:12px;font-weight:700;color:var(--text3);">—</span></div>
-          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;"><div id="jd-risk-dot" style="width:8px;height:8px;border-radius:50%;background:#555;flex-shrink:0;"></div><span style="flex:1;font-size:12px;color:var(--text);">Risk Under 2%</span><span id="jd-risk" style="font-size:12px;font-weight:700;color:var(--text3);">—</span></div>
-          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;"><div id="jd-over-dot" style="width:8px;height:8px;border-radius:50%;background:#555;flex-shrink:0;"></div><span style="flex:1;font-size:12px;color:var(--text);">Overleveraged</span><span id="jd-over" style="font-size:12px;font-weight:700;color:var(--text3);">—</span></div>
-          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;"><div id="jd-rev-dot" style="width:8px;height:8px;border-radius:50%;background:#555;flex-shrink:0;"></div><span style="flex:1;font-size:12px;color:var(--text);">No Revenge Trading</span><span id="jd-rev" style="font-size:12px;font-weight:700;color:var(--text3);">—</span></div>
+          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;"><div id="jd-sl-dot" style="width:8px;height:8px;border-radius:50%;background:#555;flex-shrink:0;"></div><span style="flex:1;font-size:12px;color:var(--text);" data-i18n="j.usedSl">Used Stop Loss</span><span id="jd-sl" style="font-size:12px;font-weight:700;color:var(--text3);">—</span></div>
+          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;"><div id="jd-risk-dot" style="width:8px;height:8px;border-radius:50%;background:#555;flex-shrink:0;"></div><span style="flex:1;font-size:12px;color:var(--text);" data-i18n="j.riskUnder">Risk Under 2%</span><span id="jd-risk" style="font-size:12px;font-weight:700;color:var(--text3);">—</span></div>
+          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;"><div id="jd-over-dot" style="width:8px;height:8px;border-radius:50%;background:#555;flex-shrink:0;"></div><span style="flex:1;font-size:12px;color:var(--text);" data-i18n="j.overlev">Overleveraged</span><span id="jd-over" style="font-size:12px;font-weight:700;color:var(--text3);">—</span></div>
+          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;"><div id="jd-rev-dot" style="width:8px;height:8px;border-radius:50%;background:#555;flex-shrink:0;"></div><span style="flex:1;font-size:12px;color:var(--text);" data-i18n="j.noRevenge">No Revenge Trading</span><span id="jd-rev" style="font-size:12px;font-weight:700;color:var(--text3);">—</span></div>
           <div id="j-disc-tip" style="display:none;margin-top:8px;padding:8px;background:rgba(255,176,32,0.06);border:0.5px solid rgba(255,176,32,0.2);border-radius:8px;font-size:11px;color:var(--text3);line-height:1.6;"></div>
         </div>
         <!-- EMOTIONS -->
         <div id="jtab-emotions" style="display:none;">
           <div style="display:flex;justify-content:flex-end;margin-bottom:8px;"><span style="font-size:11px;color:var(--text3);">Emotion Score <span id="j-emo-score" style="color:#4D9EFF;font-weight:700;">—</span></span></div>
-          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;"><span style="font-size:15px;">😊</span><span style="flex:0 0 70px;font-size:12px;color:var(--text);">Calm</span><div style="flex:1;height:4px;background:var(--surface2);border-radius:2px;overflow:hidden;"><div id="je-calm" style="height:100%;width:0%;background:#00C87A;border-radius:2px;"></div></div><span id="je-calm-v" style="font-size:11px;font-weight:700;color:#00C87A;margin-left:6px;min-width:30px;">—</span></div>
-          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;"><span style="font-size:15px;">😎</span><span style="flex:0 0 70px;font-size:12px;color:var(--text);">Confident</span><div style="flex:1;height:4px;background:var(--surface2);border-radius:2px;overflow:hidden;"><div id="je-conf" style="height:100%;width:0%;background:#4D9EFF;border-radius:2px;"></div></div><span id="je-conf-v" style="font-size:11px;font-weight:700;color:#4D9EFF;margin-left:6px;min-width:30px;">—</span></div>
-          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;"><span style="font-size:15px;">😐</span><span style="flex:0 0 70px;font-size:12px;color:var(--text);">Neutral</span><div style="flex:1;height:4px;background:var(--surface2);border-radius:2px;overflow:hidden;"><div id="je-neu" style="height:100%;width:0%;background:#888;border-radius:2px;"></div></div><span id="je-neu-v" style="font-size:11px;font-weight:700;color:#888;margin-left:6px;min-width:30px;">—</span></div>
-          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;"><span style="font-size:15px;">😰</span><span style="flex:0 0 70px;font-size:12px;color:var(--text);">Fear</span><div style="flex:1;height:4px;background:var(--surface2);border-radius:2px;overflow:hidden;"><div id="je-fear" style="height:100%;width:0%;background:#FFB020;border-radius:2px;"></div></div><span id="je-fear-v" style="font-size:11px;font-weight:700;color:#FFB020;margin-left:6px;min-width:30px;">—</span></div>
-          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;"><span style="font-size:15px;">😡</span><span style="flex:0 0 70px;font-size:12px;color:var(--text);">Revenge</span><div style="flex:1;height:4px;background:var(--surface2);border-radius:2px;overflow:hidden;"><div id="je-rev" style="height:100%;width:0%;background:#FF1E3C;border-radius:2px;"></div></div><span id="je-rev-v" style="font-size:11px;font-weight:700;color:#FF1E3C;margin-left:6px;min-width:30px;">—</span></div>
+          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;"><span style="font-size:15px;">😊</span><span style="flex:0 0 70px;font-size:12px;color:var(--text);" data-i18n="j.calm">Calm</span><div style="flex:1;height:4px;background:var(--surface2);border-radius:2px;overflow:hidden;"><div id="je-calm" style="height:100%;width:0%;background:#00C87A;border-radius:2px;"></div></div><span id="je-calm-v" style="font-size:11px;font-weight:700;color:#00C87A;margin-left:6px;min-width:30px;">—</span></div>
+          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;"><span style="font-size:15px;">😎</span><span style="flex:0 0 70px;font-size:12px;color:var(--text);" data-i18n="j.confident">Confident</span><div style="flex:1;height:4px;background:var(--surface2);border-radius:2px;overflow:hidden;"><div id="je-conf" style="height:100%;width:0%;background:#4D9EFF;border-radius:2px;"></div></div><span id="je-conf-v" style="font-size:11px;font-weight:700;color:#4D9EFF;margin-left:6px;min-width:30px;">—</span></div>
+          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;"><span style="font-size:15px;">😐</span><span style="flex:0 0 70px;font-size:12px;color:var(--text);" data-i18n="j.neutral">Neutral</span><div style="flex:1;height:4px;background:var(--surface2);border-radius:2px;overflow:hidden;"><div id="je-neu" style="height:100%;width:0%;background:#888;border-radius:2px;"></div></div><span id="je-neu-v" style="font-size:11px;font-weight:700;color:#888;margin-left:6px;min-width:30px;">—</span></div>
+          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;"><span style="font-size:15px;">😰</span><span style="flex:0 0 70px;font-size:12px;color:var(--text);" data-i18n="j.fear">Fear</span><div style="flex:1;height:4px;background:var(--surface2);border-radius:2px;overflow:hidden;"><div id="je-fear" style="height:100%;width:0%;background:#FFB020;border-radius:2px;"></div></div><span id="je-fear-v" style="font-size:11px;font-weight:700;color:#FFB020;margin-left:6px;min-width:30px;">—</span></div>
+          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;"><span style="font-size:15px;">😡</span><span style="flex:0 0 70px;font-size:12px;color:var(--text);" data-i18n="j.revenge">Revenge</span><div style="flex:1;height:4px;background:var(--surface2);border-radius:2px;overflow:hidden;"><div id="je-rev" style="height:100%;width:0%;background:#FF1E3C;border-radius:2px;"></div></div><span id="je-rev-v" style="font-size:11px;font-weight:700;color:#FF1E3C;margin-left:6px;min-width:30px;">—</span></div>
           <div style="margin-top:8px;text-align:center;font-size:11px;color:var(--text3);">Log your emotion after each trade in Recent Trades</div>
         </div>
       </div>
 
       <!-- AI INSIGHT -->
       <div style="background:rgba(255,30,60,0.04);border:0.5px solid rgba(255,30,60,0.2);border-left:2px solid var(--red);border-radius:10px;padding:12px;margin-bottom:10px;">
-        <div style="display:flex;align-items:center;gap:7px;margin-bottom:6px;"><i class="ti ti-sparkles" style="color:var(--red);font-size:14px;"></i><div style="font-size:11px;font-weight:800;color:var(--red);letter-spacing:.5px;">MOMENTUM AI INSIGHT</div></div>
+        <div style="display:flex;align-items:center;gap:7px;margin-bottom:6px;"><i class="ti ti-sparkles" style="color:var(--red);font-size:14px;"></i><div style="font-size:11px;font-weight:800;color:var(--red);letter-spacing:.5px;" data-i18n="j.insight">MOMENTUM AI INSIGHT</div></div>
         <div id="j-ai-insight" style="font-size:12px;color:var(--text3);line-height:1.7;">Insights appear once you have trade history.</div>
       </div>
 
@@ -2103,20 +2103,20 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <div class="section-card" style="margin-bottom:10px;padding:12px;">
         <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:8px;">Recent <span style="color:var(--red);">Trades</span></div>
         <div style="display:flex;padding-bottom:5px;border-bottom:0.5px solid var(--border);margin-bottom:4px;">
-          <span style="font-size:10px;color:var(--text3);flex:0 0 55px;">DATE</span>
-          <span style="font-size:10px;color:var(--text3);flex:1;">ASSET</span>
-          <span style="font-size:10px;color:var(--text3);text-align:right;">P&L</span>
+          <span style="font-size:10px;color:var(--text3);flex:0 0 55px;" data-i18n="j.date">DATE</span>
+          <span style="font-size:10px;color:var(--text3);flex:1;" data-i18n="j.asset">ASSET</span>
+          <span style="font-size:10px;color:var(--text3);text-align:right;" data-i18n="j.pnl">P&L</span>
         </div>
-        <div id="j-recent-trades"><div style="text-align:center;font-size:12px;color:var(--text3);padding:16px 0;">No trades yet</div></div>
+        <div id="j-recent-trades"><div style="text-align:center;font-size:12px;color:var(--text3);padding:16px 0;" data-i18n="j.noTrades">No trades yet</div></div>
         <div style="text-align:center;margin-top:8px;"><span id="j-view-all" style="display:none;font-size:11px;color:var(--red);cursor:pointer;font-weight:700;">View all trades →</span></div>
       </div>
 
       <!-- BOTTOM 4 CARDS -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
-        <div class="section-card" style="padding:8px;"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Best Pair</div><div id="j-best-pair" style="font-family:'Orbitron',sans-serif;font-size:13px;font-weight:800;color:#FFB020;">—</div><div id="j-best-pair-sub" style="font-size:10px;color:var(--text3);margin-top:2px;">—</div></div>
-        <div class="section-card" style="padding:8px;"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Best Session</div><div id="j-best-session2" style="font-family:'Orbitron',sans-serif;font-size:13px;font-weight:800;color:var(--text);">—</div><div style="font-size:10px;color:var(--text3);margin-top:2px;">By avg profit</div></div>
-        <div class="section-card" style="padding:8px;"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Win Streak</div><div id="j-win-streak" style="font-family:'Orbitron',sans-serif;font-size:13px;font-weight:800;color:#00C87A;">—</div><div style="font-size:10px;color:var(--text3);margin-top:2px;">Current streak</div></div>
-        <div class="section-card" style="padding:8px;"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Monthly Return</div><div id="j-monthly-return" style="font-family:'Orbitron',sans-serif;font-size:13px;font-weight:800;color:#00C87A;">—</div><div id="j-monthly-label" style="font-size:10px;color:var(--text3);margin-top:2px;">This month</div></div>
+        <div class="section-card" style="padding:8px;"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;" data-i18n="j.bestPair">Best Pair</div><div id="j-best-pair" style="font-family:'Orbitron',sans-serif;font-size:13px;font-weight:800;color:#FFB020;">—</div><div id="j-best-pair-sub" style="font-size:10px;color:var(--text3);margin-top:2px;">—</div></div>
+        <div class="section-card" style="padding:8px;"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;" data-i18n="j.bestSession">Best Session</div><div id="j-best-session2" style="font-family:'Orbitron',sans-serif;font-size:13px;font-weight:800;color:var(--text);">—</div><div style="font-size:10px;color:var(--text3);margin-top:2px;" data-i18n="j.byAvg">By avg profit</div></div>
+        <div class="section-card" style="padding:8px;"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;" data-i18n="j.winStreak">Win Streak</div><div id="j-win-streak" style="font-family:'Orbitron',sans-serif;font-size:13px;font-weight:800;color:#00C87A;">—</div><div style="font-size:10px;color:var(--text3);margin-top:2px;" data-i18n="j.curStreak">Current streak</div></div>
+        <div class="section-card" style="padding:8px;"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;" data-i18n="j.monthlyRet">Monthly Return</div><div id="j-monthly-return" style="font-family:'Orbitron',sans-serif;font-size:13px;font-weight:800;color:#00C87A;">—</div><div id="j-monthly-label" style="font-size:10px;color:var(--text3);margin-top:2px;" data-i18n="j.thisMonth">This month</div></div>
       </div>
 
     </div>
@@ -2580,7 +2580,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
     </div>
     <div class="sub-content">
       <div class="section-card">
-        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Today's <span>Events</span></div>
+        <div class="section-title" style="font-size:13px;margin-bottom:12px;"><span data-i18n="w.today">Today's </span><span data-i18n="w.events">Events</span></div>
         <div class="news-item">
           <div class="news-impact high"></div>
           <div class="news-info">
@@ -2627,7 +2627,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
     </div>
     <div class="sub-content">
       <div class="section-card">
-        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Market <span>News</span></div>
+        <div class="section-title" style="font-size:13px;margin-bottom:12px;"><span data-i18n="w.market">Market </span><span data-i18n="w.news">News</span></div>
         <div class="news-item">
           <div class="news-impact high"></div>
           <div class="news-info">
@@ -2741,10 +2741,10 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
     </div>
     <div class="sub-content">
       <div class="section-card">
-        <div class="section-title" style="font-size:13px;margin-bottom:14px;">Follow <span>Application</span></div>
+        <div class="section-title" style="font-size:13px;margin-bottom:14px;"><span data-i18n="w.follow">Follow </span><span data-i18n="w.application">Application</span></div>
         <div class="auth-field">
           <label class="auth-label" data-i18n="prof.fullName">Full Name</label>
-          <input id="follow-name" class="auth-input" type="text" placeholder="Your full name">
+          <input id="follow-name" class="auth-input" type="text"  placeholder="Your full name" data-i18n-ph="ph.fullName">
         </div>
         <div class="auth-field">
           <label class="auth-label" data-i18n="prof.mt5id">MT5 Account ID</label>
@@ -2844,7 +2844,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
             <option value="all">All Users</option>
             <option value="pending">Pending</option>
             <option value="active">Active</option>
-            <option value="premium">Premium</option>
+            <option value="premium" data-i18n="w.premiumWord">Premium</option>
           </select>
         </div>
         <div id="mob-admin-users">
@@ -3002,8 +3002,8 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         </div>
         <div id="admin-mt5-plan-filter" style="display:flex;gap:6px;margin-bottom:12px;">
           <button onclick="setAdminMt5Plan('all',this)" style="flex:1;font-size:11px;font-weight:700;padding:7px;background:rgba(240,178,50,0.12);border:1px solid rgba(240,178,50,0.3);border-radius:8px;color:var(--gold);cursor:pointer;font-family:Sora,sans-serif;" data-i18n="mam.all">All</button>
-          <button onclick="setAdminMt5Plan('basic',this)" style="flex:1;font-size:11px;font-weight:700;padding:7px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--text3);cursor:pointer;font-family:Sora,sans-serif;">Basic</button>
-          <button onclick="setAdminMt5Plan('premium',this)" style="flex:1;font-size:11px;font-weight:700;padding:7px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--text3);cursor:pointer;font-family:Sora,sans-serif;">Premium</button>
+          <button onclick="setAdminMt5Plan('basic',this)" style="flex:1;font-size:11px;font-weight:700;padding:7px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--text3);cursor:pointer;font-family:Sora,sans-serif;" data-i18n="w.basicWord">Basic</button>
+          <button onclick="setAdminMt5Plan('premium',this)" style="flex:1;font-size:11px;font-weight:700;padding:7px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--text3);cursor:pointer;font-family:Sora,sans-serif;" data-i18n="w.premiumWord">Premium</button>
         </div>
         <div id="admin-mt5-list"><div class="empty-state" style="padding:16px;"><i class="ti ti-loader"></i> Loading...</div></div>
       </div>
@@ -3201,15 +3201,15 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         <div id="change-pw-form" style="display:none;margin-bottom:12px;">
           <div class="auth-field">
             <label class="auth-label" data-i18n="prof.curPw">Current Password</label>
-            <input id="sec-old-pw" class="auth-input" type="password" placeholder="Current password">
+            <input id="sec-old-pw" class="auth-input" type="password"  placeholder="Current password" data-i18n-ph="ph.curPw">
           </div>
           <div class="auth-field">
             <label class="auth-label" data-i18n="prof.newPw">New Password</label>
-            <input id="sec-new-pw" class="auth-input" type="password" placeholder="New password">
+            <input id="sec-new-pw" class="auth-input" type="password"  placeholder="New password" data-i18n-ph="ph.newPw">
           </div>
           <div class="auth-field">
             <label class="auth-label" data-i18n="prof.confirmPw">Confirm New Password</label>
-            <input id="sec-confirm-pw" class="auth-input" type="password" placeholder="Confirm new password">
+            <input id="sec-confirm-pw" class="auth-input" type="password"  placeholder="Confirm new password" data-i18n-ph="ph.confirmPw">
           </div>
           <div id="pw-error" class="error-msg"></div>
           <div id="pw-success" class="success-msg"></div>
@@ -3256,12 +3256,12 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         </div>
         <div class="auth-field">
           <label class="auth-label" data-i18n="prof.mt5id">MT5 Account ID</label>
-          <input id="profile-mt5-id" class="auth-input" type="text" placeholder="e.g. 12345678">
+          <input id="profile-mt5-id" class="auth-input" type="text"  placeholder="e.g. 12345678" data-i18n-ph="ph.mt5id">
         </div>
         <div class="auth-field">
           <label class="auth-label" data-i18n="prof.mt5pw">MT5 Master Password</label>
           <div style="position:relative;">
-            <input id="profile-mt5-pw" class="auth-input" type="password" placeholder="Master password" style="padding-right:44px;">
+            <input id="profile-mt5-pw" class="auth-input" type="password"  placeholder="Master password" data-i18n-ph="ph.masterPw" style="padding-right:44px;">
             <button type="button" onclick="toggleMT5Pw()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:18px;padding:0;"><i class="ti ti-eye" id="mt5-pw-eye"></i></button>
           </div>
         </div>
@@ -3438,7 +3438,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       </div>
       <!-- Ticket Form -->
       <div class="section-card">
-        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Submit a <span>Ticket</span></div>
+        <div class="section-title" style="font-size:13px;margin-bottom:12px;"><span data-i18n="w.submitA">Submit a </span><span data-i18n="w.ticket">Ticket</span></div>
         <div class="auth-field">
           <label class="auth-label" data-i18n="sup.subject">Subject</label>
           <select id="support-subject" class="auth-input">
@@ -3462,7 +3462,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       </div>
       <!-- My Tickets -->
       <div class="section-card" style="margin-top:12px;">
-        <div class="section-title" style="font-size:13px;margin-bottom:12px;">My <span>Tickets</span></div>
+        <div class="section-title" style="font-size:13px;margin-bottom:12px;"><span data-i18n="w.my">My </span><span data-i18n="w.tickets">Tickets</span></div>
         <div id="my-tickets">
           <div class="empty-state" style="padding:20px;"><i class="ti ti-ticket"></i>No tickets yet</div>
         </div>
@@ -3484,7 +3484,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <!-- HEADER PRICE -->
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
         <div>
-          <div style="font-family:'Orbitron',sans-serif;font-size:16px;font-weight:800;color:var(--text);" id="scan-pair-label">XAUUSD <span style="color:var(--red);">H4</span></div>
+          <div style="font-family:'Orbitron',sans-serif;font-size:16px;font-weight:800;color:var(--text);" id="scan-pair-label">XAUUSD <span style="color:var(--red);" data-i18n="sc.h4">H4</span></div>
           <div style="font-size:10px;color:var(--text3);" id="scan-last-time" data-i18n="sc.selectPair">Select pair and scan</div>
         </div>
         <div style="text-align:right;">
@@ -3496,7 +3496,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <!-- FILTERS -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px;">
         <select id="scan-symbol" class="auth-input" style="font-size:12px;padding:8px 10px;">
-          <option value="GC=F">XAUUSD (Gold)</option>
+          <option value="GC=F" data-i18n="sc.gold">XAUUSD (Gold)</option>
           <option value="BTC-USD">BTCUSD</option>
           <option value="EURUSD=X">EURUSD</option>
           <option value="GBPJPY=X">GBPJPY</option>
@@ -3507,10 +3507,10 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
           <option value="CL=F">USOIL</option>
         </select>
         <select id="scan-tf" class="auth-input" style="font-size:12px;padding:8px 10px;">
-          <option value="H1">H1</option>
-          <option value="H4" selected>H4</option>
-          <option value="D1">D1</option>
-          <option value="W1">W1</option>
+          <option value="H1" data-i18n="sc.h1">H1</option>
+          <option value="H4" selected data-i18n="sc.h4">H4</option>
+          <option value="D1" data-i18n="sc.d1">D1</option>
+          <option value="W1" data-i18n="sc.w1">W1</option>
         </select>
       </div>
 
@@ -3538,7 +3538,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
               <div id="sent-verdict-label" style="font-size:11px;font-weight:800;color:var(--text3);margin-top:-2px;">—</div>
             </div>
             <div style="flex:1;">
-              <div style="font-size:9px;color:var(--text3);margin-bottom:4px;">BEAR ←——————→ BULL</div>
+              <div style="font-size:9px;color:var(--text3);margin-bottom:4px;" data-i18n="sc.bearBull">BEAR ←——————→ BULL</div>
               <div id="sent-scale-bars" style="display:flex;gap:2px;margin-bottom:4px;">
                 <div style="flex:1;height:5px;background:#1e1e1e;border-radius:2px;"></div>
                 <div style="flex:1;height:5px;background:#1e1e1e;border-radius:2px;"></div>
@@ -3556,7 +3556,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
           </div>
           <div id="sent-factors"></div>
           <div style="display:flex;justify-content:space-between;margin-top:8px;padding-top:8px;border-top:0.5px solid var(--border);">
-            <span style="font-size:10px;color:var(--text3);">SENTIMENT VERDICT</span>
+            <span style="font-size:10px;color:var(--text3);" data-i18n="sc.sentVerdict">SENTIMENT VERDICT</span>
             <span id="sent-verdict" style="font-size:11px;font-weight:800;color:var(--text3);">—</span>
           </div>
         </div>
@@ -3592,7 +3592,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         <!-- FUNDAMENTAL -->
         <div class="section-card" style="margin-bottom:10px;padding:12px;">
           <div style="font-size:10px;font-weight:800;color:var(--red);letter-spacing:1px;margin-bottom:8px;" data-i18n="sc.fundamental">FUNDAMENTAL ANALYSIS</div>
-          <div style="font-size:9px;color:var(--text3);letter-spacing:.5px;margin-bottom:6px;">UPCOMING HIGH IMPACT NEWS</div>
+          <div style="font-size:9px;color:var(--text3);letter-spacing:.5px;margin-bottom:6px;" data-i18n="sc.upcoming">UPCOMING HIGH IMPACT NEWS</div>
           <div id="fund-news"></div>
           <div id="fund-verdict-box" style="margin-top:8px;padding:7px;border-left:2px solid var(--amber);border-radius:0 6px 6px 0;font-size:11px;color:var(--text3);line-height:1.5;background:rgba(255,176,32,0.04);"></div>
         </div>
@@ -3820,7 +3820,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
   </div>
   <div class="app-content">
     <!-- Post Signal Form -->
-    <div class="section-title" style="margin-bottom:14px;">Post <span>Signal</span></div>
+    <div class="section-title" style="margin-bottom:14px;"><span data-i18n="w.post">Post </span><span data-i18n="w.signal">Signal</span></div>
     <div id="analyst-error" class="error-msg"></div>
     <div id="analyst-success" class="success-msg"></div>
     <div class="section-card">
@@ -3878,9 +3878,9 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
             <option value="M5">M5</option>
             <option value="M15">M15</option>
             <option value="M30">M30</option>
-            <option value="H1">H1</option>
-            <option value="H4" selected>H4</option>
-            <option value="D1">D1</option>
+            <option value="H1" data-i18n="sc.h1">H1</option>
+            <option value="H4" selected data-i18n="sc.h4">H4</option>
+            <option value="D1" data-i18n="sc.d1">D1</option>
             <option value="W1">Weekly</option>
             <option value="MN1">Monthly</option>
           </select>
@@ -3934,7 +3934,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       </div>
       <div class="form-row">
         <div class="auth-field"><label class="auth-label">Take Profit 2</label><input id="edit-sig-tp2" class="auth-input" type="number" step="any"></div>
-        <div class="auth-field"><label class="auth-label" data-i18n="sig.timeframe">Timeframe</label><select id="edit-sig-timeframe" class="auth-input"><option value="M1">M1</option><option value="M5">M5</option><option value="M15">M15</option><option value="M30">M30</option><option value="H1">H1</option><option value="H4" selected>H4</option><option value="D1">D1</option><option value="W1">Weekly</option><option value="MN1">Monthly</option></select></div>
+        <div class="auth-field"><label class="auth-label" data-i18n="sig.timeframe">Timeframe</label><select id="edit-sig-timeframe" class="auth-input"><option value="M1">M1</option><option value="M5">M5</option><option value="M15">M15</option><option value="M30">M30</option><option value="H1" data-i18n="sc.h1">H1</option><option value="H4" selected data-i18n="sc.h4">H4</option><option value="D1" data-i18n="sc.d1">D1</option><option value="W1">Weekly</option><option value="MN1">Monthly</option></select></div>
       </div>
       <div class="auth-field"><label class="auth-label">Strength: <span id="edit-sig-strength-val">75%</span></label><input id="edit-sig-strength" type="range" min="1" max="100" value="75" style="width:100%;accent-color:var(--red);" oninput="document.getElementById('edit-sig-strength-val').textContent=this.value+'%'"></div>
       <div class="auth-field"><label class="auth-label">Commentary</label><textarea id="edit-sig-commentary" class="auth-input" rows="3" style="resize:vertical;"></textarea></div>
@@ -4650,8 +4650,8 @@ async function loadActiveAccount() {
 function updateWelcomeBadge(){
   var b=document.getElementById('dash-tier-badge'); if(!b) return;
   var prem = (typeof isPremiumUser==='function') ? isPremiumUser() : false;
-  if(prem){ b.className='dash-welcome-badge premium'; b.innerHTML='<i class="ti ti-crown" style="font-size:11px;" aria-hidden="true"></i>PREMIUM'; }
-  else { b.className='dash-welcome-badge basic'; b.innerHTML='<i class="ti ti-bolt" style="font-size:11px;" aria-hidden="true"></i>BASIC'; }
+  if(prem){ b.className='dash-welcome-badge premium'; b.innerHTML='<i class="ti ti-crown" style="font-size:11px;" aria-hidden="true"></i>'+t('w.premiumBadge','PREMIUM'); }
+  else { b.className='dash-welcome-badge basic'; b.innerHTML='<i class="ti ti-bolt" style="font-size:11px;" aria-hidden="true"></i>'+t('w.basicBadge','BASIC'); }
 }
 
 function renderHeaderSwitcher() {
@@ -4987,7 +4987,135 @@ var MM_I18N = {
     'sup.selectSubject':'選擇主旨',
     'sup.login':'登入問題',
     'sup.tech':'技術問題',
-    'sup.other':'其他'
+    'sup.other':'其他',
+    'w.market':'市場',
+    'w.overview':'總覽',
+    'w.recent':'最新',
+    'w.signals':'訊號',
+    'w.live':'即時',
+    'w.charts':'圖表',
+    'w.positions':'持倉',
+    'w.past':'歷史',
+    'w.account':'帳戶',
+    'w.growth':'成長',
+    'w.trader':'交易者',
+    'w.score':'評分',
+    'w.personal':'個人',
+    'w.info':'資料',
+    'w.trading':'交易',
+    'w.security':'安全',
+    'w.preferences':'偏好設定',
+    'w.promo':'優惠',
+    'w.code':'代碼',
+    'w.connected':'已連接',
+    'w.accounts':'帳戶',
+    'w.submitA':'提交',
+    'w.ticket':'工單',
+    'w.my':'我的',
+    'w.tickets':'工單',
+    'w.follow':'跟隨',
+    'w.application':'申請',
+    'w.today':'今日',
+    'w.events':'事件',
+    'w.news':'新聞',
+    'w.post':'發布',
+    'w.signal':'訊號',
+    'w.analytics':'分析',
+    'w.recentTrades':'最近交易',
+    'w.trades':'交易',
+    'w.auto':'自動',
+    'w.trade':'交易',
+    'w.entry':'進場',
+    'w.confirmation':'確認',
+    'w.analysts':'分析師',
+    'w.premiumWord':'尊榮',
+    'w.basicWord':'基本',
+    'w.premMember':'尊榮會員',
+    'w.basicMember':'基本會員',
+    'w.go':'前往',
+    'j.totalTrades':'總交易數',
+    'j.winRate':'勝率',
+    'j.netPnl':'淨損益',
+    'j.profitFactor':'獲利因子',
+    'j.maxDd':'最大回撤',
+    'j.avgRr':'平均風報比',
+    'j.performance':'績效',
+    'j.bestTrade':'最佳交易',
+    'j.worstTrade':'最差交易',
+    'j.discipline':'紀律',
+    'j.emotions':'情緒',
+    'j.stats':'交易統計',
+    'j.assetMix':'商品分布',
+    'j.method':'執行方式分析',
+    'j.avgWin':'平均獲利',
+    'j.avgLoss':'平均虧損',
+    'j.riskReward':'風險報酬比',
+    'j.avgHold':'平均持倉',
+    'j.winStreak':'連勝',
+    'j.gold':'黃金',
+    'j.forex':'外匯',
+    'j.crypto':'加密貨幣',
+    'j.indices':'指數',
+    'j.bestSession':'最佳時段',
+    'j.usedSl':'使用止損',
+    'j.riskUnder':'風險低於 2%',
+    'j.overlev':'過度槓桿',
+    'j.noRevenge':'無報復性交易',
+    'j.calm':'冷靜',
+    'j.confident':'自信',
+    'j.neutral':'中性',
+    'j.fear':'恐懼',
+    'j.revenge':'報復',
+    'j.bestPair':'最佳商品',
+    'j.monthlyRet':'本月報酬',
+    'j.insight':'MOMENTUM AI 洞察',
+    'j.date':'日期',
+    'j.asset':'商品',
+    'j.pnl':'損益',
+    'j.noTrades':'尚無交易紀錄',
+    'j.riskMgmt':'風險管理',
+    'j.psychology':'交易心理',
+    'j.curStreak':'目前連勝',
+    'j.thisMonth':'本月',
+    'j.byAvg':'依平均獲利',
+    'sc.ready':'就緒',
+    'sc.live':'即時',
+    'sc.gold':'XAUUSD（黃金）',
+    'sc.h1':'H1',
+    'sc.h4':'H4',
+    'sc.d1':'D1',
+    'sc.w1':'W1',
+    'sc.upcoming':'即將發布的高影響力數據',
+    'sc.bearBull':'看空 ←——————→ 看多',
+    'sc.sentVerdict':'情緒結論',
+    'lb.notRanked':'尚未排名',
+    'sig.noSignals':'尚無訊號',
+    'sig.loading':'載入訊號中...',
+    'chart.noOpen':'目前沒有持倉',
+    'chart.connect':'請先連接您的 MT5 帳戶',
+    'ph.searchSym':'搜尋商品，例如 XAUUSD、NAS100...',
+    'ph.username':'請輸入使用者名稱',
+    'ph.fullName':'您的姓名',
+    'ph.mt5id':'例如 12345678',
+    'ph.masterPw':'主密碼',
+    'ph.issue':'請詳細描述您的問題...',
+    'ph.promo':'輸入優惠代碼',
+    'ph.chooseUser':'選擇使用者名稱',
+    'ph.strongPw':'建立高強度密碼',
+    'ph.aftId':'您的 Asia Future Trading MT5 帳號',
+    'ph.email':'your@email.com',
+    'ph.name':'王小明',
+    'ph.curPw':'目前密碼',
+    'ph.newPw':'新密碼',
+    'ph.confirmPw':'確認新密碼',
+    'sig.buy':'買入',
+    'sig.sell':'賣出',
+    'sc.scanning':'掃描中...',
+    'sc.complete':'掃描完成',
+    'sc.failed':'掃描失敗',
+    'sc.initiate':'▶ 開始掃描',
+    'w.premiumBadge':'尊榮',
+    'w.basicBadge':'基本'
   }
 };
 
@@ -5466,10 +5594,10 @@ async function loadSignalsFeed() {
       info.appendChild(timeEl);
       var dirEl = document.createElement('div');
       dirEl.className = 'sig-card-dir ' + dir;
-      dirEl.textContent = sig.direction;
+      dirEl.textContent = (dir==='buy')?t('sig.buy','BUY'):t('sig.sell','SELL');
       var sBadge=document.createElement('div');
       var isAct=sig.status==='active';
-      sBadge.textContent=isAct?'ACTIVE':'INACTIVE';
+      sBadge.textContent=isAct?t('sig.active','ACTIVE'):t('sig.inactive','INACTIVE');
       sBadge.style.cssText='padding:4px 9px;border-radius:6px;font-family:Orbitron,sans-serif;font-size:9px;font-weight:800;letter-spacing:.8px;margin-right:5px;flex-shrink:0;'+(isAct?'background:rgba(0,200,122,0.12);color:#00c87a;border:1px solid rgba(0,200,122,0.25);':'background:rgba(255,176,32,0.12);color:#ffb020;border:1px solid rgba(255,176,32,0.25);');
       top.appendChild(icon);
       top.appendChild(info);
@@ -5510,7 +5638,7 @@ async function loadSignalsFeed() {
       // Trade Now button
       var tradeBtn = document.createElement('button');
       tradeBtn.className = 'sig-trade-btn';
-      tradeBtn.textContent = 'Trade Now';
+      tradeBtn.textContent = t('sig.tradeNow','Trade Now');
       (function(id) {
         tradeBtn.addEventListener('click', function() { openTradePopup(id); });
       })(sig.id);
@@ -5523,6 +5651,7 @@ async function loadSignalsFeed() {
       card.appendChild(footer);
       container.appendChild(card);
     });
+    if(typeof mmApplyLang==='function') mmApplyLang();
     // Populate analyst filter dropdown from loaded signals
     try {
       var _aSel = document.getElementById('filter-analyst');
@@ -5536,7 +5665,7 @@ async function loadSignalsFeed() {
         _names.sort(function(a,b){ return a.toLowerCase().localeCompare(b.toLowerCase()); });
         _aSel.innerHTML = '';
         var _optAll = document.createElement('option');
-        _optAll.value = ''; _optAll.textContent = 'All Analysts';
+        _optAll.value = ''; _optAll.textContent = t('sig.allAnalysts','All Analysts');
         _aSel.appendChild(_optAll);
         _names.forEach(function(n){
           var o = document.createElement('option');
@@ -10310,7 +10439,7 @@ async function runMAIScanner() {
   var symName = document.getElementById('scan-symbol').options[document.getElementById('scan-symbol').selectedIndex].text.split(' ')[0];
   var tfName = document.getElementById('scan-tf').options[document.getElementById('scan-tf').selectedIndex].text;
 
-  btn.textContent = '⟳ SCANNING...';
+  btn.textContent = t('sc.scanning','\u27F3 SCANNING...');
   btn.style.background = '#333';
   if(badge) { badge.innerHTML = '<div style="width:6px;height:6px;border-radius:50%;background:var(--amber);animation:pulse 1s infinite;"></div>SCANNING'; badge.style.color='var(--amber)'; }
 
@@ -10366,7 +10495,7 @@ async function runMAIScanner() {
     // No data guard - never fake it
     if(!closes.length) {
       if(badge){ badge.innerHTML='<div style="width:6px;height:6px;border-radius:50%;background:var(--red);"></div>NO DATA'; badge.style.color='var(--red)'; }
-      btn.textContent='▶ INITIATE SCAN'; btn.style.background='var(--red)';
+      btn.textContent=t('sc.initiate','\u25B6 INITIATE SCAN'); btn.style.background='var(--red)';
       alert('Scanner: market data unavailable right now. Please try again in a moment.');
       return;
     }
@@ -10614,16 +10743,16 @@ Respond ONLY with valid JSON (no markdown):
     // Save for scanner verification in auto trade
     window._lastScanData = {symbol:symName, direction:od, confidence:oc, timestamp:Date.now()};
 
-    btn.textContent = '✓ SCAN COMPLETE';
+    btn.textContent = t('sc.complete','\u2713 SCAN COMPLETE');
     btn.style.background = '#00C87A';
     if(badge) { badge.innerHTML = '<div style="width:6px;height:6px;border-radius:50%;background:#00C87A;"></div>LIVE'; badge.style.color='#00C87A'; }
-    setTimeout(function(){ btn.textContent='▶ INITIATE SCAN'; btn.style.background='var(--red)'; },2000);
+    setTimeout(function(){ btn.textContent=t('sc.initiate','\u25B6 INITIATE SCAN'); btn.style.background='var(--red)'; },2000);
 
   } catch(e) {
-    btn.textContent = '✕ SCAN FAILED';
+    btn.textContent = t('sc.failed','\u2715 SCAN FAILED');
     btn.style.background = '#FF1E3C';
     if(badge) { badge.innerHTML = '<div style="width:6px;height:6px;border-radius:50%;background:var(--red);"></div>ERROR'; badge.style.color='var(--red)'; }
-    setTimeout(function(){ btn.textContent='▶ INITIATE SCAN'; btn.style.background='var(--red)'; },2000);
+    setTimeout(function(){ btn.textContent=t('sc.initiate','\u25B6 INITIATE SCAN'); btn.style.background='var(--red)'; },2000);
     console.warn('Scanner error:', e.message);
   }
 }
@@ -11479,12 +11608,12 @@ function showMT5ConnNotice(kind, reason) {
     <div style="font-size:12px;color:var(--text3);text-align:center;margin:4px 0 18px;">You can upgrade anytime</div>
     <div id="rpm-basic" onclick="pickRegPlan('basic')" style="display:flex;align-items:center;gap:12px;border:1.5px solid var(--green);background:rgba(0,200,122,0.07);border-radius:12px;padding:14px;cursor:pointer;margin-bottom:10px;">
       <div style="width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ti ti-user" style="font-size:20px;color:var(--text);"></i></div>
-      <div style="flex:1;"><div style="font-size:15px;font-weight:700;color:var(--text);">Basic</div><div style="font-size:11px;color:var(--text3);">Free — core features</div></div>
+      <div style="flex:1;"><div style="font-size:15px;font-weight:700;color:var(--text);" data-i18n="w.basicWord">Basic</div><div style="font-size:11px;color:var(--text3);">Free — core features</div></div>
       <i class="ti ti-circle-check rpm-check" style="font-size:20px;color:var(--green);opacity:1;"></i>
     </div>
     <div id="rpm-premium" onclick="pickRegPlan('premium')" style="display:flex;align-items:center;gap:12px;border:1.5px solid var(--border);background:transparent;border-radius:12px;padding:14px;cursor:pointer;">
       <div style="width:38px;height:38px;border-radius:10px;background:rgba(255,176,32,0.13);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ti ti-crown" style="font-size:20px;color:var(--amber);"></i></div>
-      <div style="flex:1;"><div style="font-size:15px;font-weight:700;color:var(--text);">Premium</div><div style="font-size:11px;color:var(--text3);">Full access — all features</div></div>
+      <div style="flex:1;"><div style="font-size:15px;font-weight:700;color:var(--text);" data-i18n="w.premiumWord">Premium</div><div style="font-size:11px;color:var(--text3);">Full access — all features</div></div>
       <i class="ti ti-circle-check rpm-check" style="font-size:20px;color:var(--green);opacity:0;"></i>
     </div>
     <div id="rpm-note" style="display:none;font-size:11px;color:var(--amber);margin-top:12px;line-height:1.5;background:rgba(255,176,32,0.06);border-radius:8px;padding:10px;">Deposit $100 within 24h of connecting your MT5 to keep Premium, otherwise it switches to Basic.</div>
@@ -11512,7 +11641,7 @@ function showMT5ConnNotice(kind, reason) {
     <div style="padding:18px 18px 20px;text-align:center;">
       <div id="campaign-banner-title" style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:4px;">Limited offer</div>
       <div id="campaign-banner-sub" style="font-size:12.5px;color:var(--text3);margin-bottom:14px;">Claim your free premium access</div>
-      <input id="campaign-promo-input" type="text" placeholder="Enter promo code" style="width:100%;box-sizing:border-box;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 12px;color:var(--text);font-size:13px;text-transform:uppercase;text-align:center;letter-spacing:1px;margin-bottom:10px;" />
+      <input id="campaign-promo-input" type="text"  placeholder="Enter promo code" data-i18n-ph="ph.promo" style="width:100%;box-sizing:border-box;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 12px;color:var(--text);font-size:13px;text-transform:uppercase;text-align:center;letter-spacing:1px;margin-bottom:10px;" />
       <div id="campaign-banner-msg" style="display:none;font-size:12px;margin-bottom:10px;line-height:1.4;"></div>
       <button class="auth-btn" id="campaign-claim-btn" onclick="claimCampaign()" style="background:var(--grad);">Claim now</button>
     </div>
@@ -11522,7 +11651,7 @@ function showMT5ConnNotice(kind, reason) {
 <div id="mt5-connect-prompt" style="display:none;position:fixed;inset:0;z-index:100000;background:rgba(0,0,0,0.7);align-items:center;justify-content:center;padding:20px;">
   <div style="background:var(--bg2);border:0.5px solid var(--border);border-radius:18px;max-width:330px;width:100%;padding:24px 20px;text-align:center;position:relative;">
     <div style="width:54px;height:54px;border-radius:14px;background:var(--grad);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;"><i class="ti ti-plug-connected" style="font-size:26px;color:#fff;"></i></div>
-    <div style="font-size:17px;font-weight:700;color:var(--text);margin-bottom:6px;">Connect your MT5 account</div>
+    <div style="font-size:17px;font-weight:700;color:var(--text);margin-bottom:6px;" data-i18n="chart.connect">Connect your MT5 account</div>
     <div style="font-size:12.5px;color:var(--text3);line-height:1.6;margin-bottom:18px;">You need a connected MT5 account before you can claim this promo. Connect now to unlock your premium access.</div>
     <button class="auth-btn" onclick="mt5PromptConnectNow()" style="background:var(--grad);margin-bottom:8px;">Connect now</button>
     <button onclick="mt5PromptLater()" style="width:100%;background:transparent;border:none;color:var(--text3);padding:10px;font-size:13px;cursor:pointer;">Connect later</button>
