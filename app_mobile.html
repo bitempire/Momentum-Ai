@@ -1860,7 +1860,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 
     <!-- ── TAB: CHARTS ── -->
     <div id="tab-charts" class="app-tab" style="display:none;">
-      <div class="section-title" style="margin-bottom:12px;"><span data-i18n="sig.liveWord">Live</span> Charts</div>
+      <div class="section-title" style="margin-bottom:12px;"><span data-i18n="sig.liveWord">Live</span> <span data-i18n="w.charts">Charts</span></div>
       <!-- Chart Symbol Search -->
       <div style="display:flex;gap:8px;margin-bottom:12px;align-items:center;">
         <div style="flex:1;position:relative;">
@@ -2162,7 +2162,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:4px 14px;margin-bottom:18px;">
         <div onclick="showSubScreen('sub-academy')" style="display:flex;align-items:center;gap:13px;padding:13px 0;border-bottom:1px solid var(--border);cursor:pointer;"><span style="width:38px;height:38px;border-radius:11px;background:rgba(255,30,60,0.12);display:flex;align-items:center;justify-content:center;"><i class="ti ti-school" style="font-size:19px;color:var(--red);"></i></span><div style="flex:1;font-size:14px;color:var(--text);font-weight:600;" data-i18n="more.academy">Trading Academy</div><i class="ti ti-chevron-right" style="font-size:17px;color:var(--text3);"></i></div>
         <div onclick="showSubScreen('sub-news')" style="display:flex;align-items:center;gap:13px;padding:13px 0;border-bottom:1px solid var(--border);cursor:pointer;"><span style="width:38px;height:38px;border-radius:11px;background:rgba(255,30,60,0.12);display:flex;align-items:center;justify-content:center;"><i class="ti ti-calendar" style="font-size:19px;color:var(--red);"></i></span><div style="flex:1;font-size:14px;color:var(--text);font-weight:600;" data-i18n="more.news">News Calendar</div><i class="ti ti-chevron-right" style="font-size:17px;color:var(--text3);"></i></div>
-        <div onclick="showSubScreen('sub-ai-analyst'); setTimeout(aiLoadTVChart,80);" style="display:flex;align-items:center;gap:13px;padding:13px 0;cursor:pointer;"><span style="width:38px;height:38px;border-radius:11px;background:rgba(255,30,60,0.12);display:flex;align-items:center;justify-content:center;"><i class="ti ti-sparkles" style="font-size:19px;color:var(--red);"></i></span><div style="flex:1;font-size:14px;color:var(--text);font-weight:600;" data-i18n="more.aiAnalyst">AI Chart Analyst</div><span style="font-size:9px;font-weight:700;letter-spacing:.5px;color:#fff;background:linear-gradient(135deg,#FF1E3C,#C40024);padding:3px 8px;border-radius:6px;">PREMIUM</span></div>
+        <div onclick="showSubScreen('sub-ai-analyst'); setTimeout(aiLoadTVChart,80);" style="display:flex;align-items:center;gap:13px;padding:13px 0;cursor:pointer;"><span style="width:38px;height:38px;border-radius:11px;background:rgba(255,30,60,0.12);display:flex;align-items:center;justify-content:center;"><i class="ti ti-sparkles" style="font-size:19px;color:var(--red);"></i></span><div style="flex:1;font-size:14px;color:var(--text);font-weight:600;" data-i18n="more.aiAnalyst">AI Chart Analyst</div><span style="font-size:9px;font-weight:700;letter-spacing:.5px;color:#fff;background:linear-gradient(135deg,#FF1E3C,#C40024);padding:3px 8px;border-radius:6px;" data-i18n="w.premiumBadge">PREMIUM</span></div>
       </div>
 
       <!-- Others -->
@@ -5121,7 +5121,8 @@ var MM_I18N = {
     't.h':'小時',
     't.d':'天',
     't.ago':'前',
-    't.justNow':'剛剛'
+    't.justNow':'剛剛',
+    'lb.rankDesc':'每月挑戰開始時將開放排名。持續交易以爭取您的名次。'
   }
 };
 
@@ -5191,6 +5192,7 @@ function mmSetLang(code){
   try{ if(typeof updateWelcomeBadge==='function') updateWelcomeBadge(); }catch(e){}
   try{ if(typeof loadDashboardSignals==='function') loadDashboardSignals(); }catch(e){}
   try{ if(typeof loadSignals==='function' && document.getElementById('tab-signals') && document.getElementById('tab-signals').classList.contains('active')) loadSignals(); }catch(e){}
+  try{ if(typeof loadMoreTab==='function' && document.getElementById('tab-more') && document.getElementById('tab-more').classList.contains('active')) loadMoreTab(); }catch(e){}
 }
 try{ document.documentElement.setAttribute('lang', mmGetLang()); }catch(e){}
 // Apply the saved language as soon as the DOM exists. Screens that rebuild
@@ -7599,7 +7601,7 @@ function renderMoreLeader(which){
     body.innerHTML =
       '<div style="display:flex;align-items:center;gap:13px;">'+
         '<span style="width:50px;height:50px;border-radius:15px;background:rgba(255,30,60,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ti ti-trophy" style="font-size:25px;color:#FF4D63;"></i></span>'+
-        '<div style="flex:1;"><div style="font-size:14px;color:var(--text);font-weight:700;">Not ranked yet</div><div style="font-size:11px;color:var(--text3);margin-top:2px;line-height:1.4;">Rankings open when the monthly challenge starts. Keep trading to claim your spot.</div></div>'+
+        '<div style="flex:1;"><div style="font-size:14px;color:var(--text);font-weight:700;">'+t('lb.notRanked','Not ranked yet')+'</div><div style="font-size:11px;color:var(--text3);margin-top:2px;line-height:1.4;">'+t('lb.rankDesc','Rankings open when the monthly challenge starts. Keep trading to claim your spot.')+'</div></div>'+
       '</div>'+
       '<div style="height:8px;border-radius:99px;background:rgba(255,255,255,0.1);overflow:hidden;margin-top:12px;"><div style="height:100%;width:0%;border-radius:99px;background:var(--red);"></div></div>';
     return;
