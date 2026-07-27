@@ -1939,6 +1939,8 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
           <div style="font-size:11px;color:var(--text2);" data-i18n="chart.totalPnl">Total P&L (Open)</div>
           <div style="font-size:13px;font-weight:800;color:var(--text3);" id="mob-positions-total">$0.00</div>
         </div>
+        <div id="mmai-close-note" style="display:none;align-items:center;gap:7px;font-size:11px;font-weight:600;border-radius:8px;padding:8px 10px;margin-top:10px;line-height:1.4;"></div>
+        <button id="mmai-close-all-btn" onclick="mmaiCloseAll()" style="display:none;width:100%;margin-top:10px;background:rgba(255,60,60,0.10);color:#d33;border:1px solid rgba(255,60,60,0.25);border-radius:9px;padding:10px 0;font-size:12px;font-weight:800;font-family:Sora,sans-serif;cursor:pointer;">Close All Positions</button>
       </div>
 
       <!-- PAST SIGNAL HISTORY -->
@@ -7441,6 +7443,7 @@ async function loadLivePositions(){
   var mt5 = (activeAccount && activeAccount.mt5_id) ? activeAccount.mt5_id : null;
   if(!mt5){
     box.innerHTML = '<div style="text-align:center;font-size:12px;color:var(--text3);padding:16px 0;">Connect your MT5 account</div>';
+    mmaiShowCloseAll(false);
     if(totalEl){ totalEl.textContent='—'; totalEl.style.color='var(--text3)'; }
     return;
   }
@@ -7449,6 +7452,7 @@ async function loadLivePositions(){
     var rows = (res && res.data) ? res.data : [];
     if(!rows.length){
       box.innerHTML = '<div style="text-align:center;font-size:12px;color:var(--text3);padding:16px 0;">No open positions</div>';
+      mmaiShowCloseAll(false);
       if(totalEl){ totalEl.textContent='$0.00'; totalEl.style.color='var(--text3)'; }
       return;
     }
@@ -7461,7 +7465,12 @@ async function loadLivePositions(){
       var pColor = win ? 'var(--green)' : 'var(--red)';
       var op = (p.open_price!=null) ? p.open_price : '';
       var vol = (p.volume!=null) ? p.volume : '';
-      html += '<div class="trade-item">'+
+      // CLOSE FEATURE: the ticket is already in the row object (select *),
+      // it just was never rendered. Carry it so a double-tap can name it.
+      var _tk = (p.ticket!=null) ? String(p.ticket) : '';
+      var _lbl = ((p.symbol||'')+' '+side).replace(/'/g,'');
+      html += '<div class="trade-item" data-ticket="'+_tk+'"'+
+        (_tk ? ' onclick="mmaiTapPosition(\''+_tk+'\',\''+_lbl+'\')" style="cursor:pointer;"' : '')+'>'+
         '<div class="trade-icon" style="background:'+(win?'rgba(0,200,122,0.12)':'rgba(255,30,60,0.10)')+';">'+(side==='SELL'?'\uD83D\uDCC9':'\uD83D\uDCC8')+'</div>'+
         '<div class="trade-info">'+
           '<div class="trade-pair">'+p.symbol+' <span style="font-size:10px;color:'+sideColor+';font-weight:700;">'+side+'</span></div>'+
@@ -7471,8 +7480,144 @@ async function loadLivePositions(){
       '</div>';
     });
     box.innerHTML = html;
+    mmaiShowCloseAll(true);
     if(totalEl){ totalEl.textContent=(total>=0?'+':'')+'$'+total.toFixed(2); totalEl.style.color=(total>=0?'var(--green)':'var(--red)'); }
   }catch(e){ console.warn('loadLivePositions:', e.message); }
+}
+
+
+// -- CLOSE POSITIONS (double-tap a row, or Close All) ------------------------
+// Inserts a trade_commands row with action 'close' or 'close_all'. The EA polls
+// these on a PRIORITY lane (mmai_claim_close_command) ahead of its one-basket
+// guard, so a close lands even while a basket is live. Proven live 27 Jul 2026.
+function mmaiShowCloseAll(on){
+  var b = document.getElementById('mmai-close-all-btn');
+  if(b) b.style.display = on ? 'block' : 'none';
+  if(!on) mmaiCloseNoteHide();
+}
+function mmaiCloseNote(html, bg, col){
+  var n = document.getElementById('mmai-close-note');
+  if(!n) return;
+  n.style.display='flex'; n.style.background=bg; n.style.color=col; n.innerHTML=html;
+}
+function mmaiCloseNoteHide(){
+  var n = document.getElementById('mmai-close-note');
+  if(n) n.style.display='none';
+}
+
+// DOUBLE-TAP, not single. A scroll or a stray touch must never close money.
+// First tap only arms; the second within 500ms sends. No confirm dialog,
+// because a deliberate double-tap IS the confirmation.
+function mmaiTapPosition(ticket, label){
+  if(!ticket) return;
+  var now = Date.now();
+  var last = window._mmaiLastTap || {};
+  if(last.ticket === ticket && (now - last.at) < 500){
+    window._mmaiLastTap = {};
+    mmaiInsertClose('close', ticket, label);
+    return;
+  }
+  window._mmaiLastTap = { ticket: ticket, at: now };
+  mmaiCloseNote('<i class="ti ti-hand-click"></i>Tap again to close '+label,
+                'rgba(255,180,0,0.12)', '#c98a00');
+  setTimeout(function(){
+    var l = window._mmaiLastTap || {};
+    if(l.ticket === ticket && (Date.now() - l.at) >= 500) mmaiCloseNoteHide();
+  }, 1800);
+}
+
+// Close All DOES confirm - one fat finger would otherwise flatten the account.
+function mmaiCloseAll(){
+  if(!window.confirm('Close EVERY open position on this account?\n\nThis cannot be undone.')) return;
+  mmaiInsertClose('close_all', null, 'all positions');
+}
+
+async function mmaiInsertClose(action, ticket, label){
+  if(!db || !activeAccount || !activeAccount.mt5_id) return;
+  var btn = document.getElementById('mmai-close-all-btn');
+  try{
+    // STALENESS GUARD. A close command never expires server-side (deliberate -
+    // a close must not silently die like a stale open). The cost is that one
+    // sent to a dead worker sits pending and would fire against a DIFFERENT
+    // basket whenever that worker came back. So refuse to send it at all
+    // unless the EA is currently reporting.
+    var hb = await db.from('mt5_accounts').select('ea_last_seen').eq('mt5_id', activeAccount.mt5_id).single();
+    var seen = (hb && hb.data) ? hb.data.ea_last_seen : null;
+    var ageMs = seen ? (Date.now() - new Date(seen).getTime()) : null;
+    if(ageMs === null || ageMs > 120000){
+      mmaiCloseNote('<i class="ti ti-plug-connected-x"></i>Your MT5 worker is not responding, so nothing was sent. Try again once it reconnects.',
+                    'rgba(255,60,60,0.12)', '#d33');
+      return;
+    }
+
+    var cmd = {
+      account_id: activeAccount.id,
+      mt5_id:     activeAccount.mt5_id,
+      action:     action,
+      status:     'pending'
+    };
+    if(ticket) cmd.position_ticket = String(ticket);
+
+    mmaiCloseNote('<i class="ti ti-loader"></i>Closing '+label+'\u2026', 'rgba(255,180,0,0.12)', '#c98a00');
+    if(btn) btn.disabled = true;
+
+    var ins = await db.from('trade_commands').insert([cmd]).select();
+    if(ins.error) throw new Error(ins.error.message);
+    var row = ins.data ? (Array.isArray(ins.data) ? ins.data[0] : ins.data) : null;
+    if(row && row.id){ mmaiPollClose(row.id, label); }
+    else {
+      mmaiCloseNote('<i class="ti ti-alert-circle"></i>Could not send the close.', 'rgba(255,60,60,0.12)', '#d33');
+      if(btn) btn.disabled = false;
+    }
+  }catch(e){
+    mmaiCloseNote('<i class="ti ti-alert-circle"></i>Could not send the close: '+(e.message||'error'),
+                  'rgba(255,60,60,0.12)', '#d33');
+    if(btn) btn.disabled = false;
+  }
+}
+
+// Own poller rather than pollTradeCommand, which is hard-wired to the Smart
+// Tool's trade-success-note element and its EXECUTE TRADE button.
+function mmaiPollClose(id, label){
+  var btn = document.getElementById('mmai-close-all-btn');
+  var tries = 0;
+  var timer = setInterval(async function(){
+    tries++;
+    try{
+      var r = await db.from('trade_commands').select('status,result').eq('id', id).single();
+      var row = (r && r.data) ? (Array.isArray(r.data) ? r.data[0] : r.data) : null;
+      if(row && (row.status === 'filled' || row.status === 'executed')){
+        clearInterval(timer);
+        if(btn) btn.disabled = false;
+        mmaiCloseNote('<i class="ti ti-circle-check"></i>'+(row.result || 'Closed')+'.',
+                      'rgba(40,200,120,0.12)', '#1a9d5a');
+        loadLivePositions();
+        setTimeout(mmaiCloseNoteHide, 6000);
+        return;
+      }
+      if(row && (row.status === 'failed' || row.status === 'cancelled' || row.status === 'expired')){
+        clearInterval(timer);
+        if(btn) btn.disabled = false;
+        var res = (row.result || '').toLowerCase();
+        var msg;
+        if(res.indexOf('not armed') >= 0)
+          msg = 'This account is not armed for live trading, so nothing was closed. Contact support.';
+        else if(res.indexOf('broker refused') >= 0)
+          msg = 'MT5 refused the close. Check that Algo Trading is switched on for this account.';
+        else
+          msg = 'Close failed: '+(row.result || 'unknown error');
+        mmaiCloseNote('<i class="ti ti-alert-circle"></i>'+msg, 'rgba(255,60,60,0.12)', '#d33');
+        loadLivePositions();
+        return;
+      }
+    }catch(e){}
+    if(tries >= 30){          // 30 x 2000ms = 60s
+      clearInterval(timer);
+      if(btn) btn.disabled = false;
+      mmaiCloseNote('<i class="ti ti-clock"></i>Still waiting on MT5. Check your terminal for the final result.',
+                    'rgba(255,180,0,0.12)', '#c98a00');
+    }
+  }, 2000);
 }
 
 // ── PAST SIGNALS ─────────────────────────────────────────────────────────────
