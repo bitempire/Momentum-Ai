@@ -576,6 +576,7 @@ html[data-theme="light"] .nav-btn.active span:not(.nav-ico-wrap) { color: #fff; 
   flex-shrink: 0;
 }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+@keyframes mmaiFlow { 0%{background-position:0% 50%} 100%{background-position:200% 50%} }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
 /* ═══════════════════════════════════
@@ -1940,7 +1941,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
           <div style="font-size:13px;font-weight:800;color:var(--text3);" id="mob-positions-total">$0.00</div>
         </div>
         <div id="mmai-close-note" style="display:none;align-items:center;gap:7px;font-size:11px;font-weight:600;border-radius:8px;padding:8px 10px;margin-top:10px;line-height:1.4;"></div>
-        <button id="mmai-close-all-btn" onclick="mmaiCloseAll()" style="display:none;width:100%;margin-top:10px;background:rgba(255,60,60,0.10);color:#d33;border:1px solid rgba(255,60,60,0.25);border-radius:9px;padding:10px 0;font-size:12px;font-weight:800;font-family:Sora,sans-serif;cursor:pointer;">Close All Positions</button>
+        <button id="mmai-close-all-btn" onclick="mmaiCloseAll()" style="display:none;width:100%;margin-top:10px;border:none;border-radius:10px;padding:12px 0;font-size:12px;font-weight:800;letter-spacing:0.3px;font-family:Sora,sans-serif;cursor:pointer;background-size:200% 100%;">Close All Positions</button>
       </div>
 
       <!-- PAST SIGNAL HISTORY -->
@@ -7480,7 +7481,7 @@ async function loadLivePositions(){
       '</div>';
     });
     box.innerHTML = html;
-    mmaiShowCloseAll(true);
+    mmaiShowCloseAll(true, total);
     if(totalEl){ totalEl.textContent=(total>=0?'+':'')+'$'+total.toFixed(2); totalEl.style.color=(total>=0?'var(--green)':'var(--red)'); }
   }catch(e){ console.warn('loadLivePositions:', e.message); }
 }
@@ -7490,9 +7491,27 @@ async function loadLivePositions(){
 // Inserts a trade_commands row with action 'close' or 'close_all'. The EA polls
 // these on a PRIORITY lane (mmai_claim_close_command) ahead of its one-basket
 // guard, so a close lands even while a basket is live. Proven live 27 Jul 2026.
-function mmaiShowCloseAll(on){
+function mmaiShowCloseAll(on, pnl){
   var b = document.getElementById('mmai-close-all-btn');
-  if(b) b.style.display = on ? 'block' : 'none';
+  if(b){
+    b.style.display = on ? 'block' : 'none';
+    if(on){
+      // The button's colour tells you what you are about to crystallise.
+      // Red and moving while the open P&L is negative, calm green once it
+      // is not. Driven by the same `total` the P&L line already shows.
+      var loss = (typeof pnl === 'number') && (pnl < 0);
+      if(loss){
+        b.style.color = '#ffffff';
+        b.style.backgroundImage = 'linear-gradient(90deg,#8c1226,#e03050,#ff6b7e,#e03050,#8c1226)';
+        b.style.animation = 'mmaiFlow 3.4s linear infinite';
+      } else {
+        b.style.color = '#062f20';
+        b.style.backgroundImage = 'linear-gradient(90deg,#149c69,#22c98a,#4fe3ab,#22c98a,#149c69)';
+        b.style.animation = 'none';
+        b.style.backgroundPosition = '25% 50%';
+      }
+    }
+  }
   if(!on) mmaiCloseNoteHide();
 }
 function mmaiCloseNote(html, bg, col){
