@@ -10222,7 +10222,13 @@ function stnValidateTemplate(t){
   if(tp.enabled && !LV.length) e.push('Take profit is on but has no levels.');
   for(var k=0;k<LV.length;k++){
     if(!(LV[k].reach_pct>0))  e.push('Level '+(k+1)+' target must be above 0%.');
-    if(LV[k].reach_pct>200)   e.push('Level '+(k+1)+' target is above 200%, the contract maximum.');
+    // The EA writes the SIGNAL TP onto the broker order (seen live as TP=4021.00),
+    // so the broker closes the position at 100% reach. A rung beyond that can
+    // NEVER fire - it is dead, not merely optimistic. This replaces an older 200%
+    // 'contract maximum' check, which could never protect anything.
+    if(LV[k].reach_pct>100)
+      e.push('Level '+(k+1)+' target is beyond 100%, which is the signal take profit. '+
+             'The broker closes the position there, so this level could never fire.');
     if(!(LV[k].close_pct>0 && LV[k].close_pct<=100)) e.push('Level '+(k+1)+' close must be 1-100%.');
     if(k>0 && LV[k].reach_pct<=LV[k-1].reach_pct)
       e.push('Level '+(k+1)+' must be further out than level '+k+'.');
@@ -11099,6 +11105,28 @@ function mt5Activate(id){ applyMT5Transition(id, { connection_status:'connected'
 var NODE_CAPS = { 'VPS-1': 3 };
 async function mt5ActivateWithNode(id){
   if(!db) return;
+  // C5 (27 Jul 2026): ENTITLEMENT GATE. The fleet will happily build, bind and
+  // arm a clone for an account the app then refuses to let trade, because node
+  // placement and the premium gate never consulted each other. A tester would
+  // connect, be activated, get a clone, and then hit a paywall on Smart Tool.
+  // Block here instead of discovering it after the clone exists.
+  try {
+    var _ent = await db.from('mt5_accounts')
+      .select('mt5_id,premium_status,premium_manual,premium_until,balance')
+      .eq('id', id).single();
+    var _erow = (_ent && _ent.data) ? (Array.isArray(_ent.data) ? _ent.data[0] : _ent.data) : null;
+    if(_erow && !isPremiumAcct(_erow)){
+      alert('Account ' + (_erow.mt5_id || '') + ' is BASIC.\n\n'
+          + 'Smart Tool, Scanner, Auto Trade and the Journal are all blocked for a '
+          + 'basic account, so a clone built now could not place a trade.\n\n'
+          + 'Upgrade this account to Premium first, then activate it.');
+      return;
+    }
+  } catch(e){
+    // A lookup failure must not block every activation. Log and continue - the
+    // admin still sees the plan badge on the account row.
+    console.error('entitlement check failed, continuing:', e);
+  }
   var nodes = Object.keys(NODE_CAPS);
   var node = window.prompt('Place this account on which node?\n\nAvailable: ' + nodes.join(', '), nodes[0]);
   if(!node) return;
