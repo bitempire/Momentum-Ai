@@ -582,7 +582,7 @@ html[data-theme="light"] .nav-btn.active span:not(.nav-ico-wrap) { color: #fff; 
 @keyframes mmaiSpinA { to{transform:rotate(360deg)} }
 @keyframes mmaiSpinB { to{transform:rotate(-360deg)} }
 @keyframes mmaiBurst { 0%{transform:scale(.5);opacity:.8} 100%{transform:scale(1.55);opacity:0} }
-.mmai-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:10px;overflow:hidden;}
+@supports ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){#mmai-island{background:rgba(22,22,30,0.55);backdrop-filter:blur(20px) saturate(150%);-webkit-backdrop-filter:blur(20px) saturate(150%);}}
 .mmai-pan{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transition:opacity .3s ease;pointer-events:none;}
 .mmai-kick{font-size:11px;color:#65656f;letter-spacing:1.8px;text-transform:uppercase;}
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -1933,7 +1933,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       </div>
 
       <!-- LIVE RUNNING POSITIONS -->
-      <div class="section-card" style="margin-top:12px;">
+      <div class="section-card" id="mmai-pos-card" style="margin-top:12px;position:relative;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
           <div class="section-title" style="font-size:12px;margin-bottom:0;"><span class="tw" data-i18n="w.live">Live</span> <span data-i18n="chart.positionsWord">Positions</span></div>
           <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--green);font-weight:700;">
@@ -1949,20 +1949,22 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
           <div style="font-size:13px;font-weight:800;color:var(--text3);" id="mob-positions-total">$0.00</div>
         </div>
         <div id="mmai-close-note" style="display:none;align-items:center;gap:7px;font-size:11px;font-weight:600;border-radius:8px;padding:8px 10px;margin-top:10px;line-height:1.4;"></div>
-        <div id="mmai-close-stage" style="display:none;margin-top:10px;perspective:1000px;">
-          <div id="mmai-close-flip" style="position:relative;height:48px;transform:rotateX(0deg);transform-style:preserve-3d;transition:height .55s cubic-bezier(.7,0,.3,1),transform .55s cubic-bezier(.7,0,.3,1);">
-            <div id="mmai-close-all-btn" class="mmai-face" style="display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:800;letter-spacing:0.3px;font-family:Sora,sans-serif;cursor:pointer;background-size:200% 100%;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;">Close All Positions</div>
-            <div class="mmai-face" style="transform:rotateX(180deg);background:#0d0d12;border:1px solid #191922;">
+        <div id="mmai-close-stage" style="display:none;margin-top:10px;">
+          <div id="mmai-close-all-btn" style="height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:800;letter-spacing:0.3px;font-family:Sora,sans-serif;cursor:pointer;background-size:200% 100%;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;">Close All Positions</div>
+        </div>
+        <div id="mmai-scrim" style="display:none;position:absolute;inset:0;z-index:40;background:rgba(6,6,9,0.34);border-radius:inherit;opacity:0;transition:opacity .28s ease;"></div>
+        <div id="mmai-island" style="display:none;position:absolute;left:50%;top:50%;z-index:41;width:46%;height:44px;transform:translate(-50%,-50%) scale(.92);opacity:0;border-radius:22px;overflow:hidden;background:rgba(22,22,30,0.72);border:1px solid rgba(255,255,255,0.10);box-shadow:0 18px 50px rgba(0,0,0,0.55);transition:width .42s cubic-bezier(.5,1.5,.45,1),height .42s cubic-bezier(.5,1.5,.45,1),border-radius .42s ease,opacity .26s ease,transform .42s cubic-bezier(.5,1.5,.45,1);">
               <div class="mmai-pan" id="mmai-p-auth">
-                <div class="mmai-kick" style="margin-bottom:14px;">Authorising</div>
-                <div style="position:relative;width:112px;height:112px;">
+                <div class="mmai-kick" id="mmai-auth-label" style="margin-bottom:12px;">Hold to authorise</div>
+                <div id="mmai-fp" style="position:relative;width:112px;height:112px;cursor:pointer;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;">
                   <svg viewBox="0 0 80 80" style="width:112px;height:112px;transform:rotate(-90deg);"><circle cx="40" cy="40" r="35" fill="none" stroke="#17171f" stroke-width="2"></circle><circle id="mmai-ring" cx="40" cy="40" r="35" fill="none" stroke="#ff4d63" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="220" stroke-dashoffset="220"></circle></svg>
                   <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:60px;height:60px;overflow:hidden;">
-                    <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#ff4d63;font-size:48px;animation:mmaiPulse 1.5s ease-in-out infinite;"><i class="ti ti-fingerprint"></i></div>
-                    <div style="position:absolute;left:-10%;width:120%;height:3px;background:linear-gradient(90deg,transparent,#ff9aa6,transparent);animation:mmaiScan 1.5s linear infinite;"></div>
+                    <div id="mmai-fp-icon" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#3a3a46;font-size:48px;transition:color .25s ease;"><i class="ti ti-fingerprint"></i></div>
+                    <div id="mmai-fp-scan" style="display:none;position:absolute;left:-10%;width:120%;height:3px;background:linear-gradient(90deg,transparent,#ff9aa6,transparent);animation:mmaiScan 1.5s linear infinite;"></div>
                   </div>
                 </div>
-                <div style="font-size:11px;color:#5c5c68;margin-top:13px;">Release to cancel</div>
+                <div id="mmai-auth-hint" style="font-size:11px;color:#5c5c68;margin-top:12px;">Press and hold the sensor</div>
+                <div id="mmai-auth-cancel" style="cursor:pointer;margin-top:12px;font-size:11px;color:#8a8a96;letter-spacing:1px;text-transform:uppercase;padding:6px 18px;border:1px solid #23232c;border-radius:8px;">Cancel</div>
               </div>
               <div class="mmai-pan" id="mmai-p-closing">
                 <div style="position:relative;width:112px;height:112px;">
@@ -1991,8 +1993,6 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
                 <div style="font-size:14px;color:#e9e9ef;margin-top:12px;">Could not close</div>
                 <div id="mmai-fail-sub" style="font-family:ui-monospace,Menlo,monospace;font-size:12px;color:#ff6478;margin-top:4px;text-align:center;padding:0 18px;line-height:1.5;"></div>
               </div>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -7613,17 +7613,46 @@ function mmaiTapPosition(ticket, label){
 var MMAI_HOLD_MS = 1200;          // never more than 3s, by decision
 var _mmaiHold = { timer: null, state: 'idle', reset: null };
 
-function mmaiFlip(toBack){
-  var f = document.getElementById('mmai-close-flip');
-  if(!f) return;
-  f.style.transform = toBack ? 'rotateX(180deg)' : 'rotateX(0deg)';
-  f.style.height    = toBack ? '238px' : '48px';
+// The panel FLOATS over the positions card as a dynamic-island style capsule.
+// It never pushes layout, so the list behind stays exactly where it is. A
+// scrim sits under it: it dims the card slightly and, more importantly, it
+// catches stray taps that would otherwise land on a position row underneath.
+function mmaiIsland(open){
+  var isl = document.getElementById('mmai-island');
+  var scr = document.getElementById('mmai-scrim');
+  if(!isl || !scr) return;
+  if(open){
+    scr.style.display = 'block';
+    isl.style.display = 'block';
+    void isl.getBoundingClientRect();               // let the closed state paint first
+    scr.style.opacity = '1';
+    isl.style.opacity = '1';
+    isl.style.width = '92%';
+    isl.style.height = '212px';
+    isl.style.borderRadius = '26px';
+    isl.style.transform = 'translate(-50%,-50%) scale(1)';
+  } else {
+    scr.style.opacity = '0';
+    isl.style.opacity = '0';
+    isl.style.width = '46%';
+    isl.style.height = '44px';
+    isl.style.borderRadius = '22px';
+    isl.style.transform = 'translate(-50%,-50%) scale(.92)';
+    setTimeout(function(){
+      if(_mmaiHold.state === 'idle'){ scr.style.display = 'none'; isl.style.display = 'none'; }
+    }, 440);
+  }
 }
 
 function mmaiPanel(name){
   ['auth','closing','ok','fail'].forEach(function(k){
     var el = document.getElementById('mmai-p-' + k);
-    if(el) el.style.opacity = (k === name) ? '1' : '0';
+    if(!el) return;
+    var live = (k === name);
+    el.style.opacity = live ? '1' : '0';
+    // Only the visible panel takes taps. Without this the hidden sensor sits
+    // over the button on the back face and swallows the opening tap.
+    el.style.pointerEvents = live ? 'auto' : 'none';
   });
 }
 
@@ -7631,12 +7660,13 @@ function mmaiHoldReset(){
   if(_mmaiHold.timer){ clearTimeout(_mmaiHold.timer); _mmaiHold.timer = null; }
   if(_mmaiHold.reset){ clearTimeout(_mmaiHold.reset); _mmaiHold.reset = null; }
   _mmaiHold.state = 'idle';
-  mmaiFlip(false);
-  setTimeout(function(){ mmaiPanel(''); loadLivePositions(); }, 400);
+  mmaiIsland(false);
+  setTimeout(function(){ mmaiPanel(''); mmaiSensor(false); loadLivePositions(); }, 400);
 }
 
-function mmaiHoldStart(ev){
-  if(ev && ev.preventDefault) ev.preventDefault();
+// TAP opens the scanner. It does NOT arm anything - the panel comes up in a
+// resting state and waits. Two separate deliberate actions.
+function mmaiOpenVault(){
   if(_mmaiHold.state !== 'idle') return;
   if(!db || !activeAccount || !activeAccount.mt5_id) return;
   if(!window._mmaiPosCount) return;
@@ -7645,19 +7675,41 @@ function mmaiHoldStart(ev){
   // and the live counters read zero.
   _mmaiHold.count = window._mmaiPosCount || 0;
   _mmaiHold.pnl   = window._mmaiPosPnl   || 0;
-  _mmaiHold.state = 'auth';
+  _mmaiHold.state = 'rest';
   mmaiCloseNoteHide();
+  mmaiSensor(false);
   mmaiPanel('auth');
-  mmaiFlip(true);
+  mmaiIsland(true);
+}
 
+// Light or dim the sensor and reset the ring. Shared by rest and release.
+function mmaiSensor(on){
+  var icon = document.getElementById('mmai-fp-icon');
+  var scan = document.getElementById('mmai-fp-scan');
+  var lbl  = document.getElementById('mmai-auth-label');
+  var hint = document.getElementById('mmai-auth-hint');
   var ring = document.getElementById('mmai-ring');
+  if(icon){ icon.style.color = on ? '#ff4d63' : '#3a3a46';
+            icon.style.animation = on ? 'mmaiPulse 1.5s ease-in-out infinite' : 'none'; }
+  if(scan) scan.style.display = on ? 'block' : 'none';
+  if(lbl)  lbl.textContent  = on ? 'Authorising' : 'Hold to authorise';
+  if(hint) hint.textContent = on ? 'Release to cancel' : 'Press and hold the sensor';
   if(ring){
     ring.style.transition = 'none';
     ring.style.strokeDashoffset = '220';
     void ring.getBoundingClientRect();          // force reflow so the reset lands
-    ring.style.transition = 'stroke-dashoffset ' + MMAI_HOLD_MS + 'ms linear';
-    ring.style.strokeDashoffset = '0';
+    if(on){
+      ring.style.transition = 'stroke-dashoffset ' + MMAI_HOLD_MS + 'ms linear';
+      ring.style.strokeDashoffset = '0';
+    }
   }
+}
+
+function mmaiHoldStart(ev){
+  if(ev && ev.preventDefault) ev.preventDefault();
+  if(_mmaiHold.state !== 'rest') return;       // only from the open panel
+  _mmaiHold.state = 'auth';
+  mmaiSensor(true);
 
   _mmaiHold.timer = setTimeout(function(){
     _mmaiHold.timer = null;
@@ -7669,9 +7721,13 @@ function mmaiHoldStart(ev){
   }, MMAI_HOLD_MS);
 }
 
+// Releasing early returns to the RESTING panel, not all the way out. You
+// stay where you are and can simply hold again.
 function mmaiHoldEnd(){
   if(_mmaiHold.state !== 'auth') return;       // already committed, ignore
-  mmaiHoldReset();
+  if(_mmaiHold.timer){ clearTimeout(_mmaiHold.timer); _mmaiHold.timer = null; }
+  _mmaiHold.state = 'rest';
+  mmaiSensor(false);
 }
 
 // The vault turning IS the close, so it stays neutral until MT5 answers.
@@ -7692,13 +7748,33 @@ function mmaiVaultResult(ok, text){
 
 function mmaiBindHold(){
   var b = document.getElementById('mmai-close-all-btn');
-  if(!b || b._mmaiBound) return;
-  b._mmaiBound = true;
-  b.addEventListener('pointerdown', mmaiHoldStart);
-  b.addEventListener('pointerup', mmaiHoldEnd);
-  b.addEventListener('pointerleave', mmaiHoldEnd);
-  b.addEventListener('pointercancel', mmaiHoldEnd);
-  b.addEventListener('contextmenu', function(e){ e.preventDefault(); });
+  if(b && !b._mmaiBound){
+    b._mmaiBound = true;
+    b.addEventListener('click', mmaiOpenVault);
+  }
+  var fp = document.getElementById('mmai-fp');
+  if(fp && !fp._mmaiBound){
+    fp._mmaiBound = true;
+    fp.addEventListener('pointerdown', mmaiHoldStart);
+    fp.addEventListener('pointerup', mmaiHoldEnd);
+    fp.addEventListener('pointerleave', mmaiHoldEnd);
+    fp.addEventListener('pointercancel', mmaiHoldEnd);
+    fp.addEventListener('contextmenu', function(e){ e.preventDefault(); });
+  }
+  var sc = document.getElementById('mmai-scrim');
+  if(sc && !sc._mmaiBound){
+    sc._mmaiBound = true;
+    sc.addEventListener('click', function(){
+      if(_mmaiHold.state === 'rest' || _mmaiHold.state === 'auth') mmaiHoldReset();
+    });
+  }
+  var cx = document.getElementById('mmai-auth-cancel');
+  if(cx && !cx._mmaiBound){
+    cx._mmaiBound = true;
+    cx.addEventListener('click', function(){
+      if(_mmaiHold.state === 'rest' || _mmaiHold.state === 'auth') mmaiHoldReset();
+    });
+  }
 }
 
 async function mmaiInsertClose(action, ticket, label){
