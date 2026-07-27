@@ -10163,6 +10163,21 @@ async function loadSmartToolNew(){
       var hit = _stnTpls.filter(function(x){ return x.id===activeAccount.smart_template_id; })[0];
       if(hit){ _stnTpl = JSON.parse(JSON.stringify(hit.settings)); _stnFrom = hit.name;
                _stnReadOnly = (hit.kind==='mai'); }
+      else {
+        // 27 Jul 2026: DANGLING REFERENCE. The account points at a template that
+        // no longer exists or is no longer visible. The old code left STN_DEFAULT
+        // sitting there EDITABLE, so the screen showed a ladder nobody chose and
+        // let it be changed, while the delete warning had promised a fall back to
+        // single entry. Clear the reference and say so instead of inventing one.
+        _stnFrom = null;
+        _stnReadOnly = true;
+        try {
+          var _cl = await db.from('mt5_accounts').update({ smart_template_id:null }).eq('id', activeAccount.id);
+          if(!(_cl && _cl.error)) activeAccount.smart_template_id = null;
+        } catch(e){ console.error('could not clear dangling smart_template_id:', e); }
+        alert('The template this account was set to trade with is no longer available.\n\n'
+            + 'Pick one from the Templates list before you trade.');
+      }
     }
     // latest signal, purely to price the preview
     if(db){
@@ -11102,6 +11117,11 @@ function mt5Activate(id){ applyMT5Transition(id, { connection_status:'connected'
 // built for it. We ask the admin which node and refuse to overfill one.
 // NODE_CAPS is the SAFE per-box ceiling measured on the hardware. Keep it in
 // step with fleet_config.json node.max_accounts. VPS-1 is proven to 3 at 2.3s.
+// 27 Jul 2026: the caps now come from public.vps_nodes (max_accounts,
+// warn_above), which is the SAME row the launcher and watchdog read. A
+// hardcoded map here meant adding VPS-2 needed an app redeploy, and it
+// could silently disagree with the box it was describing. This object is
+// only a fallback for when the query fails, and it is deliberately tight.
 var NODE_CAPS = { 'VPS-1': 3 };
 async function mt5ActivateWithNode(id){
   if(!db) return;
@@ -11127,18 +11147,42 @@ async function mt5ActivateWithNode(id){
     // admin still sees the plan badge on the account row.
     console.error('entitlement check failed, continuing:', e);
   }
-  var nodes = Object.keys(NODE_CAPS);
+  // Node list and limits come from public.vps_nodes, the row the launcher and
+  // watchdog already read. Fall back to NODE_CAPS only if the query fails.
+  var _caps = {}, _warn = {};
+  try {
+    var _nr = await db.from('vps_nodes').select('node_id,max_accounts,warn_above,status');
+    var _rows = (_nr && _nr.data) ? _nr.data : [];
+    for(var _i=0; _i<_rows.length; _i++){
+      var _rw = _rows[_i];
+      if(!_rw || !_rw.node_id) continue;
+      _caps[_rw.node_id] = (_rw.max_accounts != null) ? parseInt(_rw.max_accounts,10) : 0;
+      _warn[_rw.node_id] = (_rw.warn_above  != null) ? parseInt(_rw.warn_above,10)  : 0;
+    }
+  } catch(e){ console.error('vps_nodes lookup failed, using fallback caps:', e); }
+  if(!Object.keys(_caps).length){
+    for(var _k in NODE_CAPS){ _caps[_k] = NODE_CAPS[_k]; _warn[_k] = NODE_CAPS[_k]; }
+  }
+
+  var nodes = Object.keys(_caps);
   var node = window.prompt('Place this account on which node?\n\nAvailable: ' + nodes.join(', '), nodes[0]);
   if(!node) return;
   node = node.trim();
-  if(NODE_CAPS[node] === undefined){ alert('Unknown node "' + node + '". Known nodes: ' + nodes.join(', ')); return; }
-  // Capacity guard: count how many accounts already sit on this node.
+  if(_caps[node] === undefined){ alert('Unknown node "' + node + '". Known nodes: ' + nodes.join(', ')); return; }
+  // Capacity guard: count how many accounts already sit on this node. The HARD
+  // stop is max_accounts, matching the launcher. warn_above is the failover
+  // reserve line - past it the box still runs, but a second node cannot absorb it.
   try {
     var used = await db.from('mt5_accounts').select('id', { count:'exact', head:true }).eq('worker_group', node);
     var n = (used && typeof used.count === 'number') ? used.count : 0;
-    if(n >= NODE_CAPS[node]){
-      alert(node + ' is full (' + n + '/' + NODE_CAPS[node] + ' slots used). Free a slot or use another node before activating.');
+    if(n >= _caps[node]){
+      alert(node + ' is full (' + n + '/' + _caps[node] + ' slots used). Free a slot or use another node before activating.');
       return;
+    }
+    if(_warn[node] && (n + 1) > _warn[node]){
+      if(!confirm(node + ' would hold ' + (n+1) + ' accounts, above its working ceiling of ' + _warn[node] + '.\n\n'
+                + 'It will still run, but you are eating into the failover reserve, so another node could not take these accounts over.\n\n'
+                + 'Place it here anyway?')) return;
     }
   } catch(e){ /* if the count fails, fall through - the launcher's own cap guard still protects the box */ }
   // Same transition as before, plus worker_group so the launcher adopts it.
