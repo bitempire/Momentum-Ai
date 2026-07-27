@@ -5115,7 +5115,13 @@ var MM_I18N = {
     'sc.failed':'掃描失敗',
     'sc.initiate':'▶ 開始掃描',
     'w.premiumBadge':'尊榮',
-    'w.basicBadge':'基本'
+    'w.basicBadge':'基本',
+    't.s':'秒',
+    't.m':'分鐘',
+    't.h':'小時',
+    't.d':'天',
+    't.ago':'前',
+    't.justNow':'剛剛'
   }
 };
 
@@ -5619,11 +5625,11 @@ async function loadSignalsFeed() {
         var lval=document.createElement('div'); lval.className='sig-level-val'+cls; lval.textContent=(val||'--');
         lbox.appendChild(llbl); lbox.appendChild(lval); return lbox;
       }
-      var _ezTile=_mkLevel('Entry Zone', _entryZone, ''); _ezTile.className='sig-level sig-level-wide';
+      var _ezTile=_mkLevel(t('sig.entryZone','Entry Zone'), _entryZone, ''); _ezTile.className='sig-level sig-level-wide';
       levels.appendChild(_ezTile);
       var _row2=document.createElement('div'); _row2.className='sig-level-row2';
-      _row2.appendChild(_mkLevel('Stop Loss', fmtPrice(sig.pair, sig.sl), ' sl'));
-      _row2.appendChild(_mkLevel('Take Profit', fmtPrice(sig.pair, sig.tp1), ' tp'));
+      _row2.appendChild(_mkLevel(t('sig.stopLoss','Stop Loss'), fmtPrice(sig.pair, sig.sl), ' sl'));
+      _row2.appendChild(_mkLevel(t('sig.takeProfit','Take Profit'), fmtPrice(sig.pair, sig.tp1), ' tp'));
       levels.appendChild(_row2);
 
       // Footer row
@@ -6318,12 +6324,26 @@ async function handleAddAnalyst() {
 }
 
 // ── HELPERS ──
+// Relative-time in the active language. English: "4d ago"; Chinese: "4天前".
+// Pattern is number + unit + suffix, which holds for the target languages.
+function mmAgo(n, u){
+  var lang=mmGetLang();
+  if(lang!=='en'){
+    var d=MM_I18N[lang];
+    if(d && d['t.'+u]!=null && d['t.ago']!=null) return n + d['t.'+u] + d['t.ago'];
+  }
+  return n + u + ' ago';
+}
+function mmJustNow(){
+  var lang=mmGetLang(), d=MM_I18N[lang];
+  return (lang!=='en' && d && d['t.justNow']!=null) ? d['t.justNow'] : 'just now';
+}
 function timeAgo(dateStr) {
   var diff=Math.floor((Date.now()-new Date(dateStr))/1000);
-  if(diff<60) return diff+'s ago';
-  if(diff<3600) return Math.floor(diff/60)+'m ago';
-  if(diff<86400) return Math.floor(diff/3600)+'h ago';
-  return Math.floor(diff/86400)+'d ago';
+  if(diff<60) return mmAgo(diff,'s');
+  if(diff<3600) return mmAgo(Math.floor(diff/60),'m');
+  if(diff<86400) return mmAgo(Math.floor(diff/3600),'h');
+  return mmAgo(Math.floor(diff/86400),'d');
 }
 function applySignalFilters() {
   var symbol = document.getElementById('filter-symbol').value.toLowerCase();
@@ -7432,12 +7452,12 @@ function signalTimeAgo(iso){
   var then = new Date(iso).getTime();
   if(isNaN(then)) return '';
   var mins = Math.floor((Date.now() - then) / 60000);
-  if(mins < 1)  return 'just now';
-  if(mins < 60) return mins + 'm ago';
+  if(mins < 1)  return mmJustNow();
+  if(mins < 60) return mmAgo(mins,'m');
   var hrs = Math.floor(mins / 60);
-  if(hrs < 24)  return hrs + 'h ago';
+  if(hrs < 24)  return mmAgo(hrs,'h');
   var days = Math.floor(hrs / 24);
-  if(days < 7)  return days + 'd ago';
+  if(days < 7)  return mmAgo(days,'d');
   var d = new Date(iso);
   return d.getDate() + ' ' + ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()];
 }
