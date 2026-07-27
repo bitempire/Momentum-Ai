@@ -5933,32 +5933,63 @@ function mtTradeBtn(method){
   return null;
 }
 async function pollTradeCommand(id, btn, origText){
+  // Queue-aware polling.
+  // The EA manages ONE BASKET AT A TIME and will not claim a command while a
+  // basket is live, so a healthy worker can legitimately leave a row pending
+  // for a long time. mmai_claim_command only sees rows younger than 1 hour,
+  // and the mmai_reap_commands cron job resolves anything older as 'expired',
+  // so this poll is guaranteed to terminate.
   var tries=0;
+  var startedAt=Date.now();
+  var FAST_TRIES=25;           // 25 x 2000ms = 50s of fast polling
+  var GIVE_UP_MS=61*60*1000;   // server expires the row at 60 min
+  var queuedShown=false;
+  var timer=null;
   var note=document.getElementById('trade-success-note');
   function resetBtn(){ if(btn){ btn.textContent=origText||'EXECUTE TRADE'; btn.disabled=false; } }
-  var timer=setInterval(async function(){
+  function show(html,bg,col){ if(note){ note.style.display='flex'; note.style.background=bg; note.style.color=col; note.innerHTML=html; } }
+  function stop(){ if(timer){ clearInterval(timer); timer=null; } }
+  function start(ms){ stop(); timer=setInterval(tick, ms); }
+  async function tick(){
     tries++;
     try{
       var r=await db.from('trade_commands').select('status,result').eq('id',id).single();
       var row = (r && r.data) ? (Array.isArray(r.data)?r.data[0]:r.data) : null;
       if(row && row.status==='failed'){
-        clearInterval(timer); resetBtn();
+        stop(); resetBtn();
         var _dry = (row.result||'').toLowerCase().indexOf('dry run')>=0 || (row.result||'').toLowerCase().indexOf('not armed')>=0;
-        if(note){ note.style.display='flex';
-          if(_dry){ note.style.background='rgba(230,160,30,0.12)'; note.style.color='#c9821a'; note.innerHTML='<i class="ti ti-flask"></i>Simulated only \u2014 this account is not armed for live trading yet, so no order was sent. Contact support to activate live trading.'; }
-          else    { note.style.background='rgba(255,60,60,0.12)'; note.style.color='#d33'; note.innerHTML='<i class="ti ti-alert-circle"></i>Trade failed: '+(row.result||'unknown error'); }
-        }
+        if(_dry){ show('<i class="ti ti-flask"></i>Simulated only \u2014 this account is not armed for live trading yet, so no order was sent. Contact support to activate live trading.','rgba(230,160,30,0.12)','#c9821a'); }
+        else    { show('<i class="ti ti-alert-circle"></i>Trade failed: '+(row.result||'unknown error'),'rgba(255,60,60,0.12)','#d33'); }
+        return;
       }
-      else if(row && (row.status==='filled'||row.status==='executed')){
-        clearInterval(timer); resetBtn();
-        if(note){ note.style.display='flex'; note.style.background='rgba(40,200,120,0.12)'; note.style.color='#1a9d5a'; note.innerHTML='<i class="ti ti-circle-check"></i>Trade filled on MT5! Manage it in your terminal.'; }
+      if(row && (row.status==='filled'||row.status==='executed')){
+        stop(); resetBtn();
+        show('<i class="ti ti-circle-check"></i>Trade filled on MT5! Manage it in your terminal.','rgba(40,200,120,0.12)','#1a9d5a');
+        return;
+      }
+      if(row && row.status==='expired'){
+        stop(); resetBtn();
+        show('<i class="ti ti-circle-x"></i>Not placed \u2014 another trade was still open. Fire again at the current price.','rgba(150,150,150,0.15)','#777');
+        return;
+      }
+      if(row && row.status==='cancelled'){
+        stop(); resetBtn();
+        show('<i class="ti ti-circle-x"></i>Trade cancelled.','rgba(255,60,60,0.10)','#d33');
+        return;
       }
     }catch(e){}
-    if(tries>=25){
-      clearInterval(timer); resetBtn();
-      if(note){ note.style.display='flex'; note.style.background='rgba(255,180,0,0.12)'; note.style.color='#c98a00'; note.innerHTML='<i class="ti ti-clock"></i>Still pending. Check if the trade worker is running, or view MT5 terminal.'; }
+    if(Date.now()-startedAt >= GIVE_UP_MS){
+      stop(); resetBtn();
+      show('<i class="ti ti-clock"></i>Still waiting. Check the Trading Journal for the final result.','rgba(255,180,0,0.12)','#c98a00');
+      return;
     }
-  }, 2000);
+    if(!queuedShown && tries>=FAST_TRIES){
+      queuedShown=true; resetBtn();
+      show('<i class="ti ti-clock"></i>Queued \u2014 your worker opens one trade at a time, so this will open when your current trade closes. It expires if not placed within an hour.','rgba(255,180,0,0.12)','#c98a00');
+      start(5000);
+    }
+  }
+  start(2000);
 }
 
 // ── ARMED ORDER UI (Step 3): 5-min countdown + Cancel + auto-resolve ──
