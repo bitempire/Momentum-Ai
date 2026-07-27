@@ -7541,11 +7541,27 @@ async function mmaiInsertClose(action, ticket, label){
     // sent to a dead worker sits pending and would fire against a DIFFERENT
     // basket whenever that worker came back. So refuse to send it at all
     // unless the EA is currently reporting.
-    var hb = await db.from('mt5_accounts').select('ea_last_seen').eq('mt5_id', activeAccount.mt5_id).single();
-    var seen = (hb && hb.data) ? hb.data.ea_last_seen : null;
-    var ageMs = seen ? (Date.now() - new Date(seen).getTime()) : null;
-    if(ageMs === null || ageMs > 120000){
-      mmaiCloseNote('<i class="ti ti-plug-connected-x"></i>Your MT5 worker is not responding, so nothing was sent. Try again once it reconnects.',
+    var ageMs = null;
+    try{
+      var hb = await db.from('mt5_accounts').select('ea_last_seen').eq('mt5_id', activeAccount.mt5_id).limit(1);
+      var hrow = (hb && hb.data && hb.data.length) ? hb.data[0] : null;
+      var seen = hrow ? hrow.ea_last_seen : null;
+      if(seen){
+        var t = Date.parse(String(seen).replace(' ', 'T'));
+        if(!isNaN(t)) ageMs = Date.now() - t;
+      }
+    }catch(e){ ageMs = null; }
+
+    // FAIL OPEN on an unknown age, and refuse only on POSITIVE evidence of a
+    // stale worker. This guard exists because a close never expires
+    // server-side, so one queued at a DEAD worker would sit pending and later
+    // fire at a DIFFERENT basket. That is a narrow hazard. Blocking every
+    // close because a timestamp could not be read is a far worse failure, so
+    // the polarity matters. The bridge heartbeats every 30s; 5 minutes is
+    // generous and still catches a genuinely dead worker. A negative age
+    // (device clock behind the server) passes, which is correct.
+    if(ageMs !== null && ageMs > 300000){
+      mmaiCloseNote('<i class="ti ti-plug-connected-x"></i>Your MT5 worker last reported '+Math.round(ageMs/1000)+'s ago, so nothing was sent. Try again once it reconnects.',
                     'rgba(255,60,60,0.12)', '#d33');
       return;
     }
