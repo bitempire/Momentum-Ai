@@ -8428,7 +8428,7 @@ async function generateJournalInsight(winRate, avgWin, avgLoss, revCount, method
   insightEl.textContent = 'Analysing your trades...';
   try {
     var prompt = 'You are a trading coach. Give a 2-sentence personalised insight for a trader with these stats: Win Rate '+winRate+'%, Avg Win $'+avgWin.toFixed(2)+', Avg Loss $'+avgLoss.toFixed(2)+', Revenge trades '+revCount+', Current streak '+streak+', Best pair '+bestPair+', Manual trades '+methods.manual.length+', Smart Tool trades '+methods.smart.length+', Auto trades '+methods.auto.length+'. Be specific, actionable and encouraging. Max 40 words.';
-    var r = await fetch('https://rhtworywcqcxkahlmezg.supabase.co/functions/v1/claude-proxy',{method:'POST',headers:{'Content-Type':'application/json','apikey':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJodHdvcnl3Y3FjeGthaGxtZXpnIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MDQxNzA5OCwiZXhwIjoyMDk1OTkzMDk4fQ.uBENk3aHAX16KuG8UnCXIpuyc5uZT4D37YZfY77lp0A'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:100,messages:[{role:'user',content:prompt}]})});
+    var r = await fetch('https://rhtworywcqcxkahlmezg.supabase.co/functions/v1/claude-proxy',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:100,messages:[{role:'user',content:prompt}]})});
     var d = await r.json();
     var txt = d.content && d.content[0] ? d.content[0].text : null;
     if(txt) insightEl.textContent = txt;
