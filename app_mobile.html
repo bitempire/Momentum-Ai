@@ -3233,7 +3233,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
           <div id="pw-error" class="error-msg"></div>
           <div id="pw-success" class="success-msg"></div>
           <div style="display:flex;gap:8px;">
-            <button onclick="handleChangePassword()" style="flex:1;padding:11px;background:var(--grad);border:none;border-radius:10px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;" data-i18n="prof.updatePw">Update Password</button>
+            <button id="btn-change-pw" onclick="handleChangePassword()" style="flex:1;padding:11px;background:var(--grad);border:none;border-radius:10px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;" data-i18n="prof.updatePw">Update Password</button>
             <button onclick="document.getElementById('change-pw-form').style.display='none'" style="padding:11px 16px;background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--text2);font-size:12px;cursor:pointer;font-family:'Sora',sans-serif;" data-i18n="common.cancel">Cancel</button>
           </div>
         </div>
@@ -4065,6 +4065,17 @@ async function handleChangePassword() {
   if(newPw !== confirmPw) { errEl.textContent = 'New passwords do not match'; errEl.style.display = 'block'; return; }
   if(newPw.length < 6) { errEl.textContent = 'Password must be at least 6 characters'; errEl.style.display = 'block'; return; }
   if(!currentUser) return;
+  // GUARD AGAINST A DOUBLE TAP. Without this the first request succeeds and
+  // changes the password, then the second arrives with an old password that is
+  // no longer valid and fails - showing the success AND the error together.
+  if(window._mmaiPwBusy) return;
+  window._mmaiPwBusy = true;
+  var pwBtn = document.getElementById('btn-change-pw');
+  if(pwBtn){ pwBtn.disabled = true; pwBtn.style.opacity = '0.6'; }
+  var pwDone = function(){
+    window._mmaiPwBusy = false;
+    if(pwBtn){ pwBtn.disabled = false; pwBtn.style.opacity = '1'; }
+  };
   // The old password is verified SERVER-SIDE. The browser cannot check it any
   // more (it never receives a hash) and cannot write the new one either, since
   // user_secrets is RLS-locked to the service key.
@@ -4080,14 +4091,17 @@ async function handleChangePassword() {
       errEl.textContent = (pr.status === 401)
         ? 'Current password is incorrect'
         : ('Could not change password: ' + (pout.error || ('error ' + pr.status)));
-      errEl.style.display = 'block'; return;
+      errEl.style.display = 'block'; pwDone(); return;
     }
+    errEl.style.display = 'none';
     sucEl.textContent = 'Password changed successfully!';
     sucEl.style.display = 'block';
     setTimeout(function() { document.getElementById('change-pw-form').style.display = 'none'; }, 2000);
+    pwDone();
   } catch(e) {
     errEl.textContent = 'Error: ' + (e.message || 'Please try again');
     errEl.style.display = 'block';
+    pwDone();
   }
 }
 
