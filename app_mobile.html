@@ -4082,7 +4082,7 @@ async function handleChangePassword() {
   try {
     var pr = await fetch(SUPABASE_URL + '/functions/v1/auth-set-password', {
       method: 'POST',
-      headers: { 'Content-Type':'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY },
+      headers: { 'Content-Type':'application/json', 'apikey': SUPABASE_ANON_KEY },
       body: JSON.stringify({ username: currentUser.username, oldPassword: oldPw, newPassword: newPw })
     });
     var pout = {};
@@ -4439,7 +4439,12 @@ function markLessonComplete() {
 <script>
 // ── CONFIG ──
 const SUPABASE_URL = 'https://rhtworywcqcxkahlmezg.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJodHdvcnl3Y3FjeGthaGxtZXpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0MTcwOTgsImV4cCI6MjA5NTk5MzA5OH0.FwZ1HxWz0gbkVTkW14SfSDZWNbPVlRe3SHts_lU--ec';
+// 28 Jul 2026 (item B2): this is now the PUBLISHABLE key, not the legacy anon key.
+// Supabase is retiring the legacy JWT anon/service_role keys. The new keys are NOT
+// JWTs, so they must be sent on the apikey header ONLY - the Authorization: Bearer
+// header was removed from every request below. The constant keeps its old name so
+// the eight call sites did not all have to be renamed at once.
+const SUPABASE_ANON_KEY = 'sb_publishable_LHp7PKzMjEuktZfHZL62dg_KxMGwsx-';
 
 // -- TRADING WRITES GO THROUGH AN EDGE FUNCTION ------------------------------
 // The browser can no longer write trade_commands directly. trade-command checks
@@ -4451,7 +4456,7 @@ function mmaiToken(){ try { return sessionStorage.getItem('mob_token') || ''; } 
 async function mmaiTradeCommand(payload){
   var r = await fetch(SUPABASE_URL + '/functions/v1/trade-command', {
     method: 'POST',
-    headers: { 'Content-Type':'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY },
+    headers: { 'Content-Type':'application/json', 'apikey': SUPABASE_ANON_KEY },
     body: JSON.stringify(Object.assign({ token: mmaiToken() }, payload))
   });
   var out = {};
@@ -4478,7 +4483,7 @@ SQ.prototype.delete = function() { this._del = true; return this; };
 SQ.prototype.single = function() { this._limit = 1; return this; };
 SQ.prototype.then = function(res,rej) { return this._run().then(res,rej); };
 SQ.prototype._run = async function() {
-  const h = {'Content-Type':'application/json','apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY,'Prefer':'return=representation'};
+  const h = {'Content-Type':'application/json','apikey':SUPABASE_ANON_KEY,'Prefer':'return=representation'};
   let url = SUPABASE_URL+'/rest/v1/'+this.table, method='GET', body=null;
   const params = [];
   this._filters.forEach(function(f) { params.push(encodeURIComponent(f.c)+'=eq.'+encodeURIComponent(f.v)); });
@@ -4544,7 +4549,7 @@ async function handleLogin() {
     // It also silently upgrades a legacy base64 hash to PBKDF2 on success.
     var lr = await fetch(SUPABASE_URL + '/functions/v1/auth-login', {
       method: 'POST',
-      headers: { 'Content-Type':'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY },
+      headers: { 'Content-Type':'application/json', 'apikey': SUPABASE_ANON_KEY },
       body: JSON.stringify({ username: username, password: password })
     });
     var lout = {};
@@ -7456,7 +7461,7 @@ async function loadAFTPrices() {
   try {
     // Server-decided freshness, same reason as mmLivePrice. Falls back to the
     // plain table read if the RPC is not deployed yet.
-    var hdr = {'apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY,'Content-Type':'application/json'};
+    var hdr = {'apikey':SUPABASE_ANON_KEY,'Content-Type':'application/json'};
     var rows = null, srvFresh = true;
     var r = await fetch(SUPABASE_URL+'/rest/v1/rpc/mmai_live_quotes',
               {method:'POST',headers:hdr,
@@ -7465,7 +7470,7 @@ async function loadAFTPrices() {
     if(!Array.isArray(rows)){
       srvFresh = false;
       var r0 = await fetch(SUPABASE_URL+'/rest/v1/live_quotes?select=symbol,bid,ask,updated_at&symbol=in.(XAUUSD,BITCOIN,WTI)',
-                {headers:{'apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY}});
+                {headers:{'apikey':SUPABASE_ANON_KEY}});
       if(!r0.ok){ _aftBusy=false; return false; }
       rows = await r0.json();
       if(!Array.isArray(rows)){ _aftBusy=false; return false; }
@@ -8721,7 +8726,7 @@ async function uploadAcademyImage(file){
   var path='sections/'+Date.now()+'_'+Math.random().toString(36).slice(2,8)+'.'+ext;
   var res=await fetch(SUPABASE_URL+'/storage/v1/object/academy/'+path,{
     method:'POST',
-    headers:{'apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY,'Content-Type':file.type||'image/png','x-upsert':'true'},
+    headers:{'apikey':SUPABASE_ANON_KEY,'Content-Type':file.type||'image/png','x-upsert':'true'},
     body:file
   });
   if(!res.ok){ var t=''; try{t=await res.text();}catch(e){} throw new Error((res.status||'')+' '+(t||'upload failed')); }
@@ -11311,8 +11316,7 @@ async function verifyScannerBeforeTrade(symbol, analystDirection) {
     var r = await fetch(SUPABASE_URL + '/functions/v1/scanner-verdict', {
       method: 'POST',
       headers: { 'Content-Type':'application/json',
-                 'apikey': SUPABASE_ANON_KEY,
-                 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY },
+                 'apikey': SUPABASE_ANON_KEY },
       body: JSON.stringify({ symbol: appSym, timeframe: 'H1' })
     });
     var v = await r.json();
