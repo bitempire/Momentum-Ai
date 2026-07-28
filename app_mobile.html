@@ -4441,6 +4441,24 @@ function markLessonComplete() {
 const SUPABASE_URL = 'https://rhtworywcqcxkahlmezg.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJodHdvcnl3Y3FjeGthaGxtZXpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0MTcwOTgsImV4cCI6MjA5NTk5MzA5OH0.FwZ1HxWz0gbkVTkW14SfSDZWNbPVlRe3SHts_lU--ec';
 
+// -- TRADING WRITES GO THROUGH AN EDGE FUNCTION ------------------------------
+// The browser can no longer write trade_commands directly. trade-command checks
+// the session token issued at login, confirms the account really belongs to the
+// signed-in user, and overwrites account_id, mt5_id and status with trusted
+// values. A crafted request cannot trade on someone else's account.
+function mmaiToken(){ try { return sessionStorage.getItem('mob_token') || ''; } catch(e){ return ''; } }
+
+async function mmaiTradeCommand(payload){
+  var r = await fetch(SUPABASE_URL + '/functions/v1/trade-command', {
+    method: 'POST',
+    headers: { 'Content-Type':'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY },
+    body: JSON.stringify(Object.assign({ token: mmaiToken() }, payload))
+  });
+  var out = {};
+  try { out = await r.json(); } catch(e){ out = {}; }
+  return { ok: r.ok, status: r.status, data: out };
+}
+
 // ── SUPABASE REST CLIENT ──
 const db = {
   from: function(table) { return new SQ(table); }
@@ -4540,6 +4558,7 @@ async function handleLogin() {
       errEl.style.display='block'; btn.textContent='ACCESS SYSTEM'; btn.disabled=false; return;
     }
     var user = lout.user;
+    try { sessionStorage.setItem('mob_token', lout.token || ''); } catch(e) {}
     currentUser = user;
     sessionStorage.setItem('mob_user', JSON.stringify(user));
     routeUser(user);
@@ -5959,7 +5978,11 @@ async function executeTrade(method) {
         return;
       }
     }
-    var ins = await db.from('trade_commands').insert([cmd]).select();
+    var _tc = await mmaiTradeCommand({ command: cmd });
+    var ins = {
+      data:  (_tc.ok && _tc.data && _tc.data.row) ? [_tc.data.row] : null,
+      error: _tc.ok ? null : { message: (_tc.data && _tc.data.error) || ('error ' + _tc.status) }
+    };
     if(ins.error) throw new Error(ins.error.message);
     // Show PENDING state, not success. Real result comes from pollTradeCommand.
     var note = document.getElementById('trade-success-note');
@@ -6064,13 +6087,13 @@ function armedCountdown(id, btn, origText){
   }
   async function expire(){
     if(done) return; clearAll();
-    try{ await db.from('trade_commands').update({status:'expired'}).eq('id',id); }catch(e){}
+    try{ await mmaiTradeCommand({ updateId:id, status:'expired' }); }catch(e){}
     show('<i class="ti ti-circle-x"></i>Entry zone not reached in 5 min \u2014 order expired.','rgba(150,150,150,0.15)','#777');
   }
   window._armedCancels = window._armedCancels || {};
   window._armedCancels[id] = async function(){
     if(done) return; clearAll();
-    try{ await db.from('trade_commands').update({status:'cancelled'}).eq('id',id); }catch(e){}
+    try{ await mmaiTradeCommand({ updateId:id, status:'cancelled' }); }catch(e){}
     show('<i class="ti ti-circle-x"></i>Armed order cancelled.','rgba(255,60,60,0.10)','#d33');
   };
   tick = setInterval(render, 1000); render();
@@ -7829,7 +7852,11 @@ async function mmaiInsertClose(action, ticket, label){
     mmaiCloseNote('<i class="ti ti-loader"></i>Closing '+label+'\u2026', 'rgba(255,180,0,0.12)', '#c98a00');
     if(btn) btn.disabled = true;
 
-    var ins = await db.from('trade_commands').insert([cmd]).select();
+    var _tc = await mmaiTradeCommand({ command: cmd });
+    var ins = {
+      data:  (_tc.ok && _tc.data && _tc.data.row) ? [_tc.data.row] : null,
+      error: _tc.ok ? null : { message: (_tc.data && _tc.data.error) || ('error ' + _tc.status) }
+    };
     if(ins.error) throw new Error(ins.error.message);
     var row = ins.data ? (Array.isArray(ins.data) ? ins.data[0] : ins.data) : null;
     if(row && row.id){ mmaiPollClose(row.id, label, action === 'close_all'); }
