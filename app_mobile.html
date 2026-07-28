@@ -4065,13 +4065,23 @@ async function handleChangePassword() {
   if(newPw !== confirmPw) { errEl.textContent = 'New passwords do not match'; errEl.style.display = 'block'; return; }
   if(newPw.length < 6) { errEl.textContent = 'Password must be at least 6 characters'; errEl.style.display = 'block'; return; }
   if(!currentUser) return;
-  var oldHash = btoa(unescape(encodeURIComponent(oldPw + '_momentum_salt')));
-  if(oldHash !== currentUser.password_hash) { errEl.textContent = 'Current password is incorrect'; errEl.style.display = 'block'; return; }
-  var newHash = btoa(unescape(encodeURIComponent(newPw + '_momentum_salt')));
+  // The old password is verified SERVER-SIDE. The browser cannot check it any
+  // more (it never receives a hash) and cannot write the new one either, since
+  // user_secrets is RLS-locked to the service key.
   try {
-    await db.from('users').update({password_hash: newHash}).eq('id', currentUser.id);
-    currentUser.password_hash = newHash;
-    sessionStorage.setItem('mob_user', JSON.stringify(currentUser));
+    var pr = await fetch(SUPABASE_URL + '/functions/v1/auth-set-password', {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY },
+      body: JSON.stringify({ username: currentUser.username, oldPassword: oldPw, newPassword: newPw })
+    });
+    var pout = {};
+    try { pout = await pr.json(); } catch(e) { pout = {}; }
+    if(!pr.ok || !pout.ok) {
+      errEl.textContent = (pr.status === 401)
+        ? 'Current password is incorrect'
+        : ('Could not change password: ' + (pout.error || ('error ' + pr.status)));
+      errEl.style.display = 'block'; return;
+    }
     sucEl.textContent = 'Password changed successfully!';
     sucEl.style.display = 'block';
     setTimeout(function() { document.getElementById('change-pw-form').style.display = 'none'; }, 2000);
@@ -4496,12 +4506,26 @@ async function handleLogin() {
   var btn = document.getElementById('btn-signin');
   btn.textContent = 'SIGNING IN...'; btn.disabled = true;
   try {
-    var hash = btoa(unescape(encodeURIComponent(password+'_momentum_salt')));
-    var res = await db.from('users').select('*').eq('username',username).limit(1);
-    if(res.error) { errEl.textContent='Connection error: '+res.error.message; errEl.style.display='block'; btn.textContent='ACCESS SYSTEM'; btn.disabled=false; return; }
-    if(!res.data||!res.data.length) { errEl.textContent='Username not found. Please check your username.'; errEl.style.display='block'; btn.textContent='ACCESS SYSTEM'; btn.disabled=false; return; }
-    var user = res.data[0];
-    if(user.password_hash !== hash) { errEl.textContent='Incorrect password. Please try again.'; errEl.style.display='block'; btn.textContent='ACCESS SYSTEM'; btn.disabled=false; return; }
+    // SERVER-SIDE LOGIN. The browser no longer reads the users table and never
+    // sees a password hash. auth-login verifies against user_secrets, which is
+    // RLS-locked to the service key, and returns the user WITHOUT its secrets.
+    // It also silently upgrades a legacy base64 hash to PBKDF2 on success.
+    var lr = await fetch(SUPABASE_URL + '/functions/v1/auth-login', {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY },
+      body: JSON.stringify({ username: username, password: password })
+    });
+    var lout = {};
+    try { lout = await lr.json(); } catch(e) { lout = {}; }
+    if(!lr.ok || !lout.user) {
+      // One message for a bad username AND a bad password, deliberately. The
+      // old wording confirmed which usernames exist on the system.
+      errEl.textContent = (lr.status === 401)
+        ? 'Incorrect username or password.'
+        : ('Sign-in failed: ' + (lout.error || ('error ' + lr.status)));
+      errEl.style.display='block'; btn.textContent='ACCESS SYSTEM'; btn.disabled=false; return;
+    }
+    var user = lout.user;
     currentUser = user;
     sessionStorage.setItem('mob_user', JSON.stringify(user));
     routeUser(user);
