@@ -4481,6 +4481,54 @@ function mmaiAuthJwt(){
   } catch(e){ return ''; }
 }
 
+// item 30 PHASE 4 PREREQUISITE (29 Jul 2026). Exchanges the refresh token for a
+// new access token.
+//
+// WHY THIS IS NOT OPTIONAL ONCE RLS IS ON. Before RLS, an expired token was
+// harmless - the header was simply dropped and the request fell through to the
+// publishable key, which could read everything. With a restrictive policy live,
+// no token means DENIED, so without this every user's app would stop working
+// about an hour after they logged in.
+//
+// _mmaiRefreshing holds the in-flight promise so that twenty simultaneous
+// queries trigger ONE refresh and all wait on it, rather than twenty racing
+// refreshes that invalidate each other's refresh token.
+var _mmaiRefreshing = null;
+function mmaiRefreshJwt(){
+  if(_mmaiRefreshing) return _mmaiRefreshing;
+  _mmaiRefreshing = (async function(){
+    var rt = '';
+    try { rt = sessionStorage.getItem('mob_jwt_refresh') || ''; } catch(e){}
+    if(!rt) return '';
+    try {
+      var r = await fetch(SUPABASE_URL + '/auth/v1/token?grant_type=refresh_token', {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json', 'apikey': SUPABASE_ANON_KEY },
+        body: JSON.stringify({ refresh_token: rt })
+      });
+      if(!r.ok) return '';
+      var j = await r.json();
+      if(!j || !j.access_token) return '';
+      try {
+        sessionStorage.setItem('mob_jwt', j.access_token);
+        sessionStorage.setItem('mob_jwt_exp', String(j.expires_at || 0));
+        if(j.refresh_token) sessionStorage.setItem('mob_jwt_refresh', j.refresh_token);
+      } catch(e){}
+      return j.access_token;
+    } catch(e){ return ''; }
+  })().then(function(t){ _mmaiRefreshing = null; return t; },
+            function(){ _mmaiRefreshing = null; return ''; });
+  return _mmaiRefreshing;
+}
+
+// The one every request should call. Returns a valid token, refreshing if the
+// stored one has expired, and '' if it cannot get one. Never throws.
+async function mmaiAuthJwtFresh(){
+  var t = mmaiAuthJwt();
+  if(t) return t;
+  try { return await mmaiRefreshJwt(); } catch(e){ return ''; }
+}
+
 async function mmaiTradeCommand(payload){
   var r = await fetch(SUPABASE_URL + '/functions/v1/trade-command', {
     method: 'POST',
@@ -4516,7 +4564,7 @@ SQ.prototype._run = async function() {
   // USER's JWT. These are two different things and both are required - the key
   // says which project, the bearer says which person. Omitted entirely when
   // there is no valid token, which is the pre-Phase-3 behaviour.
-  var _jwt = mmaiAuthJwt();
+  var _jwt = await mmaiAuthJwtFresh();
   if(_jwt) h['Authorization'] = 'Bearer ' + _jwt;
   let url = SUPABASE_URL+'/rest/v1/'+this.table, method='GET', body=null;
   const params = [];
@@ -7503,7 +7551,12 @@ async function loadAFTPrices() {
   try {
     // Server-decided freshness, same reason as mmLivePrice. Falls back to the
     // plain table read if the RPC is not deployed yet.
+    // item 30 Phase 4 prerequisite: this builder is SEPARATE from the generic
+    // REST client, so it needs the user's JWT added independently or it would
+    // be denied once RLS is on.
+    var _j1 = await mmaiAuthJwtFresh();
     var hdr = {'apikey':SUPABASE_ANON_KEY,'Content-Type':'application/json'};
+    if(_j1) hdr['Authorization'] = 'Bearer ' + _j1;
     var rows = null, srvFresh = true;
     var r = await fetch(SUPABASE_URL+'/rest/v1/rpc/mmai_live_quotes',
               {method:'POST',headers:hdr,
@@ -7512,7 +7565,7 @@ async function loadAFTPrices() {
     if(!Array.isArray(rows)){
       srvFresh = false;
       var r0 = await fetch(SUPABASE_URL+'/rest/v1/live_quotes?select=symbol,bid,ask,updated_at&symbol=in.(XAUUSD,BITCOIN,WTI)',
-                {headers:{'apikey':SUPABASE_ANON_KEY}});
+                {headers: _j1 ? {'apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+_j1} : {'apikey':SUPABASE_ANON_KEY}});
       if(!r0.ok){ _aftBusy=false; return false; }
       rows = await r0.json();
       if(!Array.isArray(rows)){ _aftBusy=false; return false; }
@@ -8766,9 +8819,13 @@ function academySnippet(content){
 async function uploadAcademyImage(file){
   var ext=((file.name||'img').split('.').pop()||'png').toLowerCase().replace(/[^a-z0-9]/g,'')||'png';
   var path='sections/'+Date.now()+'_'+Math.random().toString(36).slice(2,8)+'.'+ext;
+  // item 30 Phase 4 prerequisite: storage has its own RLS. Send the user JWT.
+  var _js = await mmaiAuthJwtFresh();
+  var _hs = {'apikey':SUPABASE_ANON_KEY,'Content-Type':file.type||'image/png','x-upsert':'true'};
+  if(_js) _hs['Authorization'] = 'Bearer ' + _js;
   var res=await fetch(SUPABASE_URL+'/storage/v1/object/academy/'+path,{
     method:'POST',
-    headers:{'apikey':SUPABASE_ANON_KEY,'Content-Type':file.type||'image/png','x-upsert':'true'},
+    headers:_hs,
     body:file
   });
   if(!res.ok){ var t=''; try{t=await res.text();}catch(e){} throw new Error((res.status||'')+' '+(t||'upload failed')); }
