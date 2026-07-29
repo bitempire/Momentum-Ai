@@ -4557,9 +4557,19 @@ SQ.prototype.insert = function(d) { this._insert = Array.isArray(d)?d:[d]; retur
 SQ.prototype.update = function(d) { this._update = d; return this; };
 SQ.prototype.delete = function() { this._del = true; return this; };
 SQ.prototype.single = function() { this._limit = 1; return this; };
+// item 30 Phase 4 (29 Jul 2026). Ask PostgREST NOT to return the inserted row.
+//
+// WHY THIS EXISTS. The default is Prefer: return=representation, which makes
+// PostgREST INSERT and then SELECT the new row back. That read-back is governed
+// by the SELECT policy. Registration happens while LOGGED OUT, so the caller is
+// anon and the users SELECT policy correctly refuses it - the insert succeeds
+// and the whole request still fails with a row-level security error.
+// Calling .minimal() drops the read-back, so an insert only has to satisfy the
+// INSERT policy. Use it for any write whose returned row is not actually used.
+SQ.prototype.minimal = function() { this._minimal = true; return this; };
 SQ.prototype.then = function(res,rej) { return this._run().then(res,rej); };
 SQ.prototype._run = async function() {
-  const h = {'Content-Type':'application/json','apikey':SUPABASE_ANON_KEY,'Prefer':'return=representation'};
+  const h = {'Content-Type':'application/json','apikey':SUPABASE_ANON_KEY,'Prefer': this._minimal ? 'return=minimal' : 'return=representation'};
   // item 30 Phase 3. apikey stays the PUBLISHABLE key; Authorization carries the
   // USER's JWT. These are two different things and both are required - the key
   // says which project, the bearer says which person. Omitted entirely when
@@ -4695,7 +4705,7 @@ async function submitRegister() {
   btn.textContent = 'CREATING...'; btn.disabled = true;
   try {
     var hash = btoa(unescape(encodeURIComponent(password+'_momentum_salt')));
-    var res = await db.from('users').insert([{name,email,username,password_hash:hash,mt5_id:mt5,broker:broker||'AFTT Markets',plan_choice:_regPlan,status:'pending',role:'user',created_at:new Date().toISOString()}]);
+    var res = await db.from('users').insert([{name,email,username,password_hash:hash,mt5_id:mt5,broker:broker||'AFTT Markets',plan_choice:_regPlan,status:'pending',role:'user',created_at:new Date().toISOString()}]).minimal();
     if(res.error) { closeRegPlan(); errEl.textContent='Error: '+res.error.message; errEl.style.display='block'; btn.textContent='Continue'; btn.disabled=false; return; }
     closeRegPlan();
     document.getElementById('pending-mt5-val').textContent = mt5;
