@@ -5473,7 +5473,20 @@ async function redeemPromo(code){
     var up = await db.from('mt5_accounts').update({premium_status:'promo', premium_until:until}).eq('id', activeAccount.id);
     if(up && up.error) return {ok:false,msg:'Could not apply: '+(up.error.message||'failed')};
     await db.from('promo_redemptions').insert([{ code:code, user_id:(currentUser?currentUser.id:null), account_id:activeAccount.id, mt5_id:activeAccount.mt5_id||null, claimed_at:new Date().toISOString() }]);
-    await db.from('promo_codes').update({ used_count:(pc.used_count||0)+1 }).eq('id', pc.id);
+    // item 30 Phase 5 (29 Jul 2026). Was a direct UPDATE on promo_codes, which
+    // forced the RLS policy to allow ANY logged-in user to write that table -
+    // and therefore to deactivate codes or raise their limits. The counter now
+    // goes through mmai_promo_increment(), a security-definer function whose
+    // only power is adding one to used_count on an ACTIVE code. promo_codes is
+    // now read-for-all, write-for-admin.
+    try {
+      var _pj = await mmaiAuthJwtFresh();
+      var _ph = {'Content-Type':'application/json','apikey':SUPABASE_ANON_KEY};
+      if(_pj) _ph['Authorization'] = 'Bearer ' + _pj;
+      await fetch(SUPABASE_URL + '/rest/v1/rpc/mmai_promo_increment', {
+        method: 'POST', headers: _ph, body: JSON.stringify({ p_id: pc.id })
+      });
+    } catch(e){ console.warn('promo counter increment failed:', e); }
     await loadActiveAccount();
     return {ok:true,msg:'Premium unlocked for '+days+' days!',days:days};
   } catch(e){ return {ok:false,msg:'Could not apply code: '+(e.message||'failed')}; }
