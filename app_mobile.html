@@ -4453,6 +4453,34 @@ const SUPABASE_ANON_KEY = 'sb_publishable_LHp7PKzMjEuktZfHZL62dg_KxMGwsx-';
 // values. A crafted request cannot trade on someone else's account.
 function mmaiToken(){ try { return sessionStorage.getItem('mob_token') || ''; } catch(e){ return ''; } }
 
+// item 30 PHASE 3 (29 Jul 2026). Returns the user's Supabase Auth JWT, or ''.
+// auth-login issues this alongside the app's own session token. It is sent on
+// database reads so Row Level Security can eventually tell WHO is asking.
+//
+// EXPIRY IS CHECKED HERE ON PURPOSE. A Supabase access token lasts about an
+// hour. PostgREST rejects an EXPIRED bearer token outright, so sending a stale
+// one would break every read sixty minutes after login. Returning '' instead
+// makes the request fall back to the publishable key alone, which is exactly
+// how the app behaved before this change. Fail back to working, never to broken.
+//
+// The 60-second margin covers a request in flight as the token turns over, and
+// a device clock that is slightly ahead of the server.
+//
+// WHEN RLS IS ACTUALLY ENABLED (Phase 4) THIS IS NO LONGER ENOUGH - an expired
+// token will mean "denied" rather than "anonymous", so a refresh path must be
+// added BEFORE any restrictive policy goes live. The refresh_token is already
+// being stored below for that purpose.
+function mmaiAuthJwt(){
+  try {
+    var t = sessionStorage.getItem('mob_jwt') || '';
+    if(!t) return '';
+    var exp = parseInt(sessionStorage.getItem('mob_jwt_exp') || '0', 10);
+    if(!exp || !isFinite(exp)) return '';
+    if((exp - 60) <= Math.floor(Date.now()/1000)) return '';
+    return t;
+  } catch(e){ return ''; }
+}
+
 async function mmaiTradeCommand(payload){
   var r = await fetch(SUPABASE_URL + '/functions/v1/trade-command', {
     method: 'POST',
@@ -4484,6 +4512,12 @@ SQ.prototype.single = function() { this._limit = 1; return this; };
 SQ.prototype.then = function(res,rej) { return this._run().then(res,rej); };
 SQ.prototype._run = async function() {
   const h = {'Content-Type':'application/json','apikey':SUPABASE_ANON_KEY,'Prefer':'return=representation'};
+  // item 30 Phase 3. apikey stays the PUBLISHABLE key; Authorization carries the
+  // USER's JWT. These are two different things and both are required - the key
+  // says which project, the bearer says which person. Omitted entirely when
+  // there is no valid token, which is the pre-Phase-3 behaviour.
+  var _jwt = mmaiAuthJwt();
+  if(_jwt) h['Authorization'] = 'Bearer ' + _jwt;
   let url = SUPABASE_URL+'/rest/v1/'+this.table, method='GET', body=null;
   const params = [];
   this._filters.forEach(function(f) { params.push(encodeURIComponent(f.c)+'=eq.'+encodeURIComponent(f.v)); });
@@ -4564,6 +4598,14 @@ async function handleLogin() {
     }
     var user = lout.user;
     try { sessionStorage.setItem('mob_token', lout.token || ''); } catch(e) {}
+    // item 30 Phase 3: keep the Supabase Auth JWT too. Nothing depends on it
+    // yet - if auth-login could not mint one, mmaiAuthJwt() simply returns ''
+    // and every request behaves exactly as it did before.
+    try {
+      sessionStorage.setItem('mob_jwt', lout.access_token || '');
+      sessionStorage.setItem('mob_jwt_exp', String(lout.expires_at || 0));
+      sessionStorage.setItem('mob_jwt_refresh', lout.refresh_token || '');
+    } catch(e) {}
     currentUser = user;
     sessionStorage.setItem('mob_user', JSON.stringify(user));
     routeUser(user);
