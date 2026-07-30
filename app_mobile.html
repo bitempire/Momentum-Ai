@@ -5448,47 +5448,29 @@ async function redeemPromo(code){
   code = (code||'').trim().toUpperCase();
   if(!code) return {ok:false,msg:'Enter a promo code.'};
   if(!activeAccount || !activeAccount.id) return {ok:false,msg:'Connect your MT5 account first.',needMt5:true};
+  // ITEM 9 (30 Jul 2026). Every check below used to run HERE, in the browser,
+  // and the premium grant was a direct update on mt5_accounts. Anyone could
+  // open the console, skip all of it, and give themselves premium with any
+  // expiry. Row Level Security did not stop it: RLS controls which ROWS you
+  // may touch, not which COLUMNS, and a user owns their own account row.
+  //
+  // The checks now live in the redeem-promo Edge Function, which writes with
+  // the secret key. The mmai_guard_premium trigger reverts the premium columns
+  // for anyone else, so this is the only route left.
+  //
+  // The reply shape is unchanged ({ok, msg, days, needMt5}), so applyPromoCode
+  // and everything downstream needed no edits.
   try {
-    var _claim = await userPromoClaim();
-    if(_claim){
-      var _same = (activeAccount.mt5_id && _claim.mt5_id===activeAccount.mt5_id) || _claim.account_id===activeAccount.id;
-      if(_same) return {ok:false,msg:'You have already used a promo on this account.'};
-      return {ok:false,msg:'You already claimed a promo under MT5 '+(_claim.mt5_id||'another account')+'. Only one claim per user.'};
-    }
-  } catch(e){}
-  try {
-    var res = await db.from('promo_codes').select('*').eq('code', code);
-    var rows = (res && res.data) ? res.data : [];
-    var pc = rows[0];
-    if(!pc || pc.active===false) return {ok:false,msg:'Invalid promo code.'};
-    if(pc.expiry && new Date(pc.expiry) < new Date()) return {ok:false,msg:'This code has expired.'};
-    if(pc.max_uses!=null && pc.max_uses>0 && (pc.used_count||0) >= pc.max_uses) return {ok:false,msg:'This code has reached its limit.'};
-    if(pc.per_user_once!==false){
-      var rr = await db.from('promo_redemptions').select('mt5_id,account_id').eq('code', code);
-      var mine = ((rr&&rr.data)||[]).some(function(r){ return (activeAccount.mt5_id && r.mt5_id===activeAccount.mt5_id) || r.account_id===activeAccount.id; });
-      if(mine) return {ok:false,msg:'You have already used this code.'};
-    }
-    var days = parseInt(pc.access_days,10) || 3;
-    var until = new Date(Date.now() + days*24*60*60*1000).toISOString();
-    var up = await db.from('mt5_accounts').update({premium_status:'promo', premium_until:until}).eq('id', activeAccount.id);
-    if(up && up.error) return {ok:false,msg:'Could not apply: '+(up.error.message||'failed')};
-    await db.from('promo_redemptions').insert([{ code:code, user_id:(currentUser?currentUser.id:null), account_id:activeAccount.id, mt5_id:activeAccount.mt5_id||null, claimed_at:new Date().toISOString() }]);
-    // item 30 Phase 5 (29 Jul 2026). Was a direct UPDATE on promo_codes, which
-    // forced the RLS policy to allow ANY logged-in user to write that table -
-    // and therefore to deactivate codes or raise their limits. The counter now
-    // goes through mmai_promo_increment(), a security-definer function whose
-    // only power is adding one to used_count on an ACTIVE code. promo_codes is
-    // now read-for-all, write-for-admin.
-    try {
-      var _pj = await mmaiAuthJwtFresh();
-      var _ph = {'Content-Type':'application/json','apikey':SUPABASE_ANON_KEY};
-      if(_pj) _ph['Authorization'] = 'Bearer ' + _pj;
-      await fetch(SUPABASE_URL + '/rest/v1/rpc/mmai_promo_increment', {
-        method: 'POST', headers: _ph, body: JSON.stringify({ p_id: pc.id })
-      });
-    } catch(e){ console.warn('promo counter increment failed:', e); }
-    await loadActiveAccount();
-    return {ok:true,msg:'Premium unlocked for '+days+' days!',days:days};
+    var _rp = await fetch(SUPABASE_URL + '/functions/v1/redeem-promo', {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json',
+                 'apikey': SUPABASE_ANON_KEY,
+                 'x-mmai-token': mmaiToken() },
+      body: JSON.stringify({ code: code, account_id: activeAccount.id })
+    });
+    var _rj = await _rp.json();
+    if(_rj && _rj.ok) await loadActiveAccount();
+    return _rj || {ok:false,msg:'Could not apply code.'};
   } catch(e){ return {ok:false,msg:'Could not apply code: '+(e.message||'failed')}; }
 }
 async function applyPromoCode(){
