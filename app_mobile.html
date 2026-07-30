@@ -5506,10 +5506,10 @@ async function accountUsedPromo(){
       var r1 = await db.from('promo_redemptions').select('id').eq('mt5_id', activeAccount.mt5_id);
       if(((r1&&r1.data)||[]).length) return true;
     }
-    if(activeAccount.id){
-      var r2 = await db.from('promo_redemptions').select('id').eq('account_id', activeAccount.id);
-      if(((r2&&r2.data)||[]).length) return true;
-    }
+    // item 21 (30 Jul 2026): the second lookup used promo_redemptions.account_id,
+    // a column that does not exist. PostgREST errored, the catch swallowed it and
+    // this returned false, so an account that HAD claimed looked as though it had
+    // not. mt5_id above is the real key and is enough.
   } catch(e){}
   return false;
 }
@@ -5517,7 +5517,9 @@ async function accountUsedPromo(){
 async function userPromoClaim(){
   if(!db || !currentUser || !currentUser.id) return null;
   try {
-    var r = await db.from('promo_redemptions').select('mt5_id,account_id,code,claimed_at').eq('user_id', currentUser.id).order('claimed_at',{ascending:true});
+    // item 21: was select('mt5_id,account_id,code,claimed_at') ordered by claimed_at.
+    // Neither account_id nor claimed_at exists; the real timestamp is redeemed_at.
+    var r = await db.from('promo_redemptions').select('mt5_id,code,redeemed_at').eq('user_id', currentUser.id).order('redeemed_at',{ascending:true});
     var rows=(r&&r.data)||[];
     return rows.length ? rows[0] : null;
   } catch(e){ return null; }
@@ -5590,8 +5592,9 @@ async function checkCampaignBanner(){
     })[0];
     if(!c) return;
     if(activeAccount && activeAccount.id){
-      var rr=await db.from('promo_redemptions').select('mt5_id,account_id').eq('code', c.code);
-      var claimed=((rr&&rr.data)||[]).some(function(r){ return (activeAccount.mt5_id && r.mt5_id===activeAccount.mt5_id) || r.account_id===activeAccount.id; });
+      // item 21: account_id does not exist on this table. mt5_id is the real key.
+      var rr=await db.from('promo_redemptions').select('mt5_id').eq('code', c.code);
+      var claimed=((rr&&rr.data)||[]).some(function(r){ return !!(activeAccount.mt5_id && r.mt5_id===activeAccount.mt5_id); });
       if(claimed) return;
     }
     _campaignCode=c.code;
