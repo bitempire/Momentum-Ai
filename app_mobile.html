@@ -5939,7 +5939,40 @@ function selectTradeOpt(opt) {
   document.getElementById('trade-smart-form').classList.toggle('show', opt==='smart');
   document.getElementById('trade-success-note').style.display = 'none';
 }
+// ITEM 14 (30 Jul 2026): RE-ENTRY GUARD ON EXECUTE.
+//
+// executeTrade already disables its button, but not until line ~6137, AFTER the
+// zone gate, the scanner-verdict call and the command insert. A second tap
+// inside that async window starts a SECOND run. On 30 Jul one press produced
+// two identical 0.14-lot commands 0.48 seconds apart, and earlier the same day
+// two duplicate SELL commands BOTH FILLED. On a settings form a double submit
+// is untidy; here it is two live baskets from one tap.
+//
+// Written as a WRAPPER rather than a guard inside the function, because
+// executeTrade has many early returns and try/finally covers every one of them
+// without editing each. Same shape as the _mmaiPwBusy guard on change-password.
+//
+// It deliberately does NOT touch btn.disabled - the inner function owns that,
+// setting it true on success and restoring it on failure, and pollTradeCommand
+// restores it when the command resolves. Only opacity is used for feedback, so
+// this cannot leave a dead button after a zone-gate refusal.
+//
+// This is the browser half. The server half lives in trade-command, because a
+// flaky connection retrying, or a second tab, never touches this code at all.
 async function executeTrade(method) {
+  if(window._mmaiExecBusy) return;
+  window._mmaiExecBusy = true;
+  var _xb = (typeof mtTradeBtn === "function") ? mtTradeBtn(method) : null;
+  if(_xb) _xb.style.opacity = "0.6";
+  try {
+    return await executeTradeInner(method);
+  } finally {
+    window._mmaiExecBusy = false;
+    if(_xb) _xb.style.opacity = "1";
+  }
+}
+
+async function executeTradeInner(method) {
   if(!currentSignal) return;
   if(!activeAccount || !activeAccount.mt5_id){ alert('Connect your MT5 account first.'); return; }
   var dir = (currentSignal.direction||'').toString().toUpperCase();
