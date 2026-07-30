@@ -7374,7 +7374,7 @@ function closeAnnouncementPopup() {
 // ═══════════════════════════════════════════════════
 // TWELVE DATA CONFIG
 // ═══════════════════════════════════════════════════
-var TWELVE_DATA_KEY = '9ea2aa62ec4f4a0c82550e9db6509653';
+var TWELVE_DATA_KEY = '9106953ab1fe4dfb8d8782ee33ed6212';
 var _tdLastCallMs = 0;
 var _tdMinGapMs   = 8000;
 var _tdCallQueue  = [];
@@ -11438,7 +11438,8 @@ async function verifyScannerBeforeTrade(symbol, analystDirection) {
     var r = await fetch(SUPABASE_URL + '/functions/v1/scanner-verdict', {
       method: 'POST',
       headers: { 'Content-Type':'application/json',
-                 'apikey': SUPABASE_ANON_KEY },
+                 'apikey': SUPABASE_ANON_KEY,
+                 'x-mmai-token': mmaiToken() },
       body: JSON.stringify({ symbol: appSym, timeframe: 'H1' })
     });
     var v = await r.json();
