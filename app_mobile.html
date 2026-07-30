@@ -6730,7 +6730,7 @@ async function generateMAIReport() {
   try {
     var response = await fetch('https://rhtworywcqcxkahlmezg.supabase.co/functions/v1/claude-proxy', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'x-mmai-token': mmaiToken() },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
         max_tokens: 1000,
@@ -8616,7 +8616,7 @@ async function generateJournalInsight(winRate, avgWin, avgLoss, revCount, method
   insightEl.textContent = 'Analysing your trades...';
   try {
     var prompt = 'You are a trading coach. Give a 2-sentence personalised insight for a trader with these stats: Win Rate '+winRate+'%, Avg Win $'+avgWin.toFixed(2)+', Avg Loss $'+avgLoss.toFixed(2)+', Revenge trades '+revCount+', Current streak '+streak+', Best pair '+bestPair+', Manual trades '+methods.manual.length+', Smart Tool trades '+methods.smart.length+', Auto trades '+methods.auto.length+'. Be specific, actionable and encouraging. Max 40 words.';
-    var r = await fetch('https://rhtworywcqcxkahlmezg.supabase.co/functions/v1/claude-proxy',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:100,messages:[{role:'user',content:prompt}]})});
+    var r = await fetch('https://rhtworywcqcxkahlmezg.supabase.co/functions/v1/claude-proxy',{method:'POST',headers:{'Content-Type':'application/json','x-mmai-token':mmaiToken()},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:100,messages:[{role:'user',content:prompt}]})});
     var d = await r.json();
     var txt = d.content && d.content[0] ? d.content[0].text : null;
     if(txt) insightEl.textContent = txt;
@@ -11307,7 +11307,7 @@ Respond ONLY with valid JSON (no markdown):
     try {
       var aiResp = await fetch('https://rhtworywcqcxkahlmezg.supabase.co/functions/v1/claude-proxy', {
         method: 'POST',
-        headers: {'Content-Type':'application/json'},
+        headers: {'Content-Type':'application/json','x-mmai-token':mmaiToken()},
         body: JSON.stringify({model:'claude-sonnet-4-6', max_tokens:1000, messages:[{role:'user', content:prompt}]})
       });
       var aiData = await aiResp.json();
