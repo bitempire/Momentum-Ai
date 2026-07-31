@@ -4575,7 +4575,35 @@ async function mmaiTradeCommand(payload){
 
 // ── SUPABASE REST CLIENT ──
 const db = {
-  from: function(table) { return new SQ(table); }
+  from: function(table) { return new SQ(table); },
+
+  // 31 Jul 2026: db.rpc DID NOT EXIST. The only caller, mmLivePrice at the
+  // quote-freshness check, sat inside a try/catch, so every call threw
+  // TypeError silently and the zone gate fell through to TwelveData on every
+  // single trade. Once TwelveData rate limited, no price could be read at all
+  // and every trade was refused with 'Live price unavailable'.
+  //
+  // Headers match SQ.prototype._run exactly: apikey is the PUBLISHABLE key and
+  // says which project, Authorization carries the USER's JWT and says which
+  // person. Both are required and the bearer is omitted when there is no token.
+  // Returns {data,error} in the same shape every db.from() call returns.
+  rpc: async function(fn, args) {
+    const h = {'Content-Type':'application/json','apikey':SUPABASE_ANON_KEY};
+    try {
+      var _jwt = await mmaiAuthJwtFresh();
+      if(_jwt) h['Authorization'] = 'Bearer ' + _jwt;
+    } catch(e) {}
+    try {
+      const r = await fetch(SUPABASE_URL+'/rest/v1/rpc/'+fn, {
+        method:'POST', headers:h, body:JSON.stringify(args||{})
+      });
+      const txt = await r.text();
+      let data = null;
+      try { data = txt ? JSON.parse(txt) : null; } catch(e) {}
+      if(!r.ok) return {data:null,error:{message:(data&&data.message)||'HTTP '+r.status}};
+      return {data:data,error:null};
+    } catch(e) { return {data:null,error:{message:e.message||'Network error'}}; }
+  }
 };
 function SQ(table) {
   this.table = table; this._filters = []; this._select = '*';
