@@ -10182,12 +10182,36 @@ function stnSetUnit(i){
 // this account. Stored in mt5_accounts.mm_settings.lot_multiplier so it survives
 // reload and - crucially - is applied to the REAL fired command in executeTrade,
 // not just this preview. Default 1 = today's behaviour, unchanged.
+// AUTO MULTIPLIER (30 Jul 2026). When mm_settings.lot_multiplier_auto is true
+// the multiplier is derived from the balance instead of being set by hand:
+// ONE MULTIPLE PER $10,000, FLOORED, MINIMUM x1.
+//
+// Floored on purpose. Rounding would trade a $20,000 size on a $15,000
+// account. Whole numbers on purpose too: layer one already sits at the 0.01
+// minimum lot, so x1.5 rounds THAT layer up and distorts the ladder's shape
+// rather than scaling it evenly.
+//
+// !! THIS RULE IS DUPLICATED IN auto-producer. If you change it here, change
+// !! it there too, or the same signal will size differently depending on
+// !! whether the user pressed Execute or it fired by itself.
+function stnLotAuto(){
+  try{
+    var s=activeAccount&&activeAccount.mm_settings;
+    if(typeof s==='string') s=JSON.parse(s);
+    return !!(s && s.lot_multiplier_auto===true);
+  }catch(e){ return false; }
+}
 function stnLotMult(){
   try{
     var s=activeAccount&&activeAccount.mm_settings;
     if(typeof s==='string') s=JSON.parse(s);
+    if(s && s.lot_multiplier_auto===true){
+      var bal=parseFloat(activeAccount&&activeAccount.balance);
+      if(isNaN(bal)||bal<=0) return 1;
+      return Math.max(1, Math.floor(bal/10000));
+    }
     var m=parseFloat(s&&s.lot_multiplier);
-    return (isNaN(m)||m<=0)?1:m;
+    return (isNaN(m)||m<=0)?1:Math.max(1, Math.floor(m));
   }catch(e){ return 1; }
 }
 var STN_MULTS=[1,2,3,4,5,10];
@@ -10195,27 +10219,69 @@ function stnMultSheet(){
   var s=document.getElementById('stn-msheet'); if(!s) return;
   if(s.style.display==='block'){ s.style.display='none'; return; }
   var cur=stnLotMult();
+  var auto=stnLotAuto();
+  var bal=parseFloat(activeAccount&&activeAccount.balance); if(isNaN(bal)||bal<0) bal=0;
+  var nextAt=(Math.floor(bal/10000)+1)*10000;
   var h='<div class="uh">Lot multiplier &middot; scales every ladder layer</div>';
+  // The toggle. Auto and manual are mutually exclusive, so picking a number
+  // below turns Auto off rather than silently fighting it.
+  h+='<div class="uo" style="align-items:center;" onclick="stnSetLotAuto('+(auto?'false':'true')+')">'+
+     '<div><div class="n">Auto</div>'+
+     '<div class="d" style="margin-top:2px;">One multiple per $10,000 of balance</div></div>'+
+     '<div style="width:40px;height:23px;border-radius:12px;position:relative;flex:none;background:'+(auto?'#e03050':'#2f2f39')+';">'+
+     '<div style="position:absolute;top:3px;'+(auto?'right:3px;background:#fff;':'left:3px;background:#7a7a84;')+'width:17px;height:17px;border-radius:50%;"></div>'+
+     '</div></div>';
+  if(auto){
+    h+='<div style="background:rgba(224,48,80,.10);border:1px solid rgba(224,48,80,.28);border-radius:10px;padding:11px;margin:10px 0;">'+
+       '<div style="display:flex;align-items:baseline;justify-content:space-between;">'+
+       '<span style="font-size:12px;color:var(--text3);">Currently</span>'+
+       '<span style="font-size:20px;font-weight:700;color:#ff6b7e;">&times;'+cur+'</span></div>'+
+       '<div style="font-size:11px;color:var(--text3);margin-top:5px;">Balance '+stnMoney(bal)+' &middot; next step &times;'+(cur+1)+' at '+stnMoney(nextAt)+'</div>'+
+       '</div>';
+  }
+  h+='<div'+(auto?' style="opacity:.32;pointer-events:none;"':'')+'>';
   for(var i=0;i<STN_MULTS.length;i++){ var m=STN_MULTS[i];
-    h+='<div class="uo'+(m===cur?' on':'')+'" onclick="stnSetLotMult('+m+')">'+
-       '<div class="n">&times;'+m+(m===cur?' <i class="ti ti-check"></i>':'')+'</div>'+
+    h+='<div class="uo'+((!auto&&m===cur)?' on':'')+'" onclick="stnSetLotMult('+m+')">'+
+       '<div class="n">&times;'+m+((!auto&&m===cur)?' <i class="ti ti-check"></i>':'')+'</div>'+
        '<div class="d">'+(m===1?'base ladder, no scaling':'every layer &times; '+m)+'</div></div>'; }
   h+='<div class="uo" style="align-items:center;"><div class="n">Custom</div>'+
      '<div class="d" style="display:flex;gap:6px;align-items:center;">'+
-     '<input id="stn-mult-custom" type="number" inputmode="decimal" step="0.1" min="0.1" placeholder="e.g. 7" '+
+     '<input id="stn-mult-custom" type="number" inputmode="numeric" step="1" min="1" placeholder="e.g. 7" '+
      'style="width:72px;padding:6px 8px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;">'+
      '<button onclick="stnSetLotMultCustom()" style="padding:6px 12px;background:var(--grad);border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;">Set</button>'+
      '</div></div>';
+  h+='</div>';
+  if(auto) h+='<div style="font-size:11px;color:var(--text3);padding:2px 4px 4px;">Turn Auto off to choose your own.</div>';
+  else     h+='<div style="font-size:11px;color:var(--text3);padding:2px 4px 4px;">Whole numbers only.</div>';
   s.innerHTML=h; s.style.display='block';
 }
 function stnSetLotMultCustom(){
   var el=document.getElementById('stn-mult-custom'); if(!el) return;
-  var m=parseFloat(el.value);
-  if(isNaN(m)||m<=0){ alert('Enter a multiplier greater than 0 (e.g. 7).'); return; }
+  var m=parseInt(el.value,10);
+  if(isNaN(m)||m<1){ alert('Enter a whole number of 1 or more (e.g. 7).'); return; }
   stnSetLotMult(m);
 }
+// Turning Auto ON leaves lot_multiplier untouched, so switching back off
+// restores whatever they had chosen before rather than resetting them to x1.
+async function stnSetLotAuto(on){
+  var s=document.getElementById('stn-msheet'); if(s) s.style.display='none';
+  if(!activeAccount){ alert('No active account selected.'); return; }
+  try{
+    var cur=activeAccount.mm_settings;
+    if(typeof cur==='string'){ try{ cur=JSON.parse(cur); }catch(e){ cur={}; } }
+    if(!cur||typeof cur!=='object') cur={};
+    cur.lot_multiplier_auto = !!on;
+    var r=await db.from('mt5_accounts').update({ mm_settings:cur }).eq('id', activeAccount.id);
+    if(r&&r.error) throw r.error;
+    activeAccount.mm_settings=cur;
+    (window._userAccounts||[]).forEach(function(a){ if(a.id===activeAccount.id) a.mm_settings=cur; });
+    stnRender();
+  }catch(e){ alert('Could not save the auto setting: '+(e.message||'error')); }
+}
 async function stnSetLotMult(m){
-  m=parseFloat(m); if(isNaN(m)||m<=0) return;
+  // Whole numbers only, and choosing a number IS the manual choice - so this
+  // turns Auto off rather than saving a value Auto would immediately override.
+  m=parseInt(m,10); if(isNaN(m)||m<1) return;
   var s=document.getElementById('stn-msheet'); if(s) s.style.display='none';
   if(!activeAccount){ alert('No active account selected.'); return; }
   try{
@@ -10223,6 +10289,7 @@ async function stnSetLotMult(m){
     if(typeof cur==='string'){ try{ cur=JSON.parse(cur); }catch(e){ cur={}; } }
     if(!cur||typeof cur!=='object') cur={};
     cur.lot_multiplier=m;
+    cur.lot_multiplier_auto=false;
     var r=await db.from('mt5_accounts').update({ mm_settings:cur }).eq('id', activeAccount.id);
     if(r&&r.error) throw r.error;
     activeAccount.mm_settings=cur;
