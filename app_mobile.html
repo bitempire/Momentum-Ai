@@ -10221,7 +10221,10 @@ function stnMultSheet(){
   var cur=stnLotMult();
   var auto=stnLotAuto();
   var bal=parseFloat(activeAccount&&activeAccount.balance); if(isNaN(bal)||bal<0) bal=0;
-  var nextAt=(Math.floor(bal/10000)+1)*10000;
+  // The next step is where the MULTIPLIER increases, not where the next
+  // $10,000 boundary falls. Below $10,000 those differ: the multiplier is
+  // already x1 at $0, so x2 arrives at $20,000, not $10,000.
+  var nextAt=(cur+1)*10000;
   var h='<div class="uh">Lot multiplier &middot; scales every ladder layer</div>';
   // The toggle. Auto and manual are mutually exclusive, so picking a number
   // below turns Auto off rather than silently fighting it.
