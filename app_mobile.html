@@ -9550,6 +9550,11 @@ function renderExecTplList(){
   // If the account already has one set, it is pre-selected and ready to confirm.
   if(cur && _execTpls.filter(function(x){return x.id===cur;}).length){
     _execSelectedOption = cur;
+    // 31 Jul 2026: btn was never declared in THIS function - it exists only in
+    // openExecuteChoicePopup and selectExecTpl. The ReferenceError thrown here
+    // escaped back through selectExecTpl before it could enable the button, so
+    // CONFIRM & TRADE could never be tapped by anyone.
+    var btn = document.getElementById('exec-confirm-btn');
     if(btn){ btn.style.opacity='1'; btn.style.pointerEvents='auto'; }
   }
 }
