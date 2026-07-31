@@ -9473,7 +9473,7 @@ async function openExecuteChoicePopup() {
           +     '<div style="width:9px;height:9px;border-radius:50%;background:'+(isCur?'var(--red)':'transparent')+';"></div></div>'
           +   '<div style="flex:1;min-width:0;">'
           +     '<div style="font-size:13px;font-weight:800;color:var(--text);">'+(t.name||'Template')+(t.kind==='mai'?' <span style="font-size:9px;font-weight:700;color:var(--gold);">MAI</span>':'')+'</div>'
-          +     '<div style="font-size:11px;color:var(--text3);margin-top:2px;">'+nL+' layer'+(nL!==1?'s':'')+' \u00b7 '+nT+' TP \u00b7 risk '+rk+'%</div>'
+          +     '<div style="font-size:11px;color:var(--text3);margin-top:2px;">'+(s.description?s.description+' \u00b7 ':'')+nL+' layer'+(nL!==1?'s':'')+' \u00b7 '+nT+' TP \u00b7 risk '+rk+'%</div>'
           +   '</div></div></div>';
   }
   list.innerHTML = html;
@@ -10007,6 +10007,10 @@ async function updateSmartToolSummary() {
     var s = (typeof row.settings==='string') ? JSON.parse(row.settings) : (row.settings||{});
     var parts = [];
     parts.push(row.name || 'Template');
+    // settings.description carries the band and risk, e.g. "50 pip | Low 5%".
+    // Added 30 Jul 2026 because smart_templates has no description COLUMN, so it
+    // lives inside the settings JSON. Absent on older templates, hence the guard.
+    if(s.description) parts.push(s.description);
     var nL = (s.dca && s.dca.enabled && s.dca.layers) ? s.dca.layers.length : 1;
     parts.push(nL + (nL===1 ? ' entry' : ' layers'));
     if(s.take_profit && s.take_profit.enabled && s.take_profit.levels && s.take_profit.levels.length)
@@ -11146,7 +11150,7 @@ function stnTplTab(which){
     var ML=(m.settings.dca&&m.settings.dca.layers)?m.settings.dca.layers.length:1;
     h+='<div class="tpl'+(_stnFrom===m.name?' on':'')+'" onclick="stnUseTpl(\''+m.id+'\')">'+
        '<div class="n">'+m.name+' <span class="lock"><i class="ti ti-lock"></i></span></div>'+
-       '<div class="s">'+ML+' layers &middot; '+m.settings.risk.risk_pct+'% risk &middot; read only</div></div>';
+       '<div class="s">'+((m.settings.description)?m.settings.description+' &middot; ':'')+ML+' layers &middot; '+m.settings.risk.risk_pct+'% risk &middot; read only</div></div>';
   }
   b.innerHTML=h;
 }
