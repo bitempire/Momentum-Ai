@@ -6138,7 +6138,13 @@ async function executeTradeInner(method) {
     // entry_from / entry_to above ARE the zone the contract calls zone_from/zone_to.
     // take_profit stays the ANALYST's TP - it is signal_tp, the anchor for
     // reach_pct 100, NOT a ladder rung.
-    if(tplPayload) cmd.template = tplPayload;
+    // The account's safe mode choice overrides whatever the template stored, so
+  // one toggle governs every template rather than each carrying its own.
+  if(tplPayload){
+    if(!tplPayload.safe_mode || typeof tplPayload.safe_mode!=='object') tplPayload.safe_mode={};
+    tplPayload.safe_mode.enabled = stnSafeMode();
+  }
+  if(tplPayload) cmd.template = tplPayload;
     // Scanner verification for auto trades
     if(method === 'auto' && activeAccount && activeAccount.auto_entry_confirm === 'scanner') {
       var scanOk = await verifyScannerBeforeTrade(sym, side);
@@ -9458,23 +9464,87 @@ async function openExecuteChoicePopup() {
     list.innerHTML = '<div style="font-size:12px;color:var(--text3);padding:14px;text-align:center;line-height:1.6;">No templates yet.<br>Create one in Smart Tools first.</div>';
     return;
   }
-  var cur = activeAccount ? activeAccount.smart_template_id : null;
-  var html = '';
-  for(var i=0;i<_execTpls.length;i++){
-    var t = _execTpls[i];
-    var s = t.settings || {};
-    var nL = (s.dca && s.dca.layers) ? s.dca.layers.length : 1;
-    var nT = (s.take_profit && s.take_profit.levels) ? s.take_profit.levels.length : 0;
-    var rk = (s.risk && s.risk.risk_pct!=null) ? s.risk.risk_pct : '-';
-    var isCur = (cur && t.id===cur);
-    html += '<div id="etpl-'+t.id+'" onclick="selectExecTpl(\''+t.id+'\')" style="padding:13px;background:var(--bg3);border:2px solid '+(isCur?'var(--red)':'var(--border)')+';border-radius:12px;cursor:pointer;margin-bottom:9px;">'
-          + '<div style="display:flex;align-items:center;gap:10px;">'
-          +   '<div class="etpl-dot" style="width:18px;height:18px;border-radius:50%;border:2px solid '+(isCur?'var(--red)':'var(--border)')+';display:flex;align-items:center;justify-content:center;flex-shrink:0;">'
-          +     '<div style="width:9px;height:9px;border-radius:50%;background:'+(isCur?'var(--red)':'transparent')+';"></div></div>'
-          +   '<div style="flex:1;min-width:0;">'
-          +     '<div style="font-size:13px;font-weight:800;color:var(--text);">'+(t.name||'Template')+(t.kind==='mai'?' <span style="font-size:9px;font-weight:700;color:var(--gold);">MAI</span>':'')+'</div>'
-          +     '<div style="font-size:11px;color:var(--text3);margin-top:2px;">'+(s.description?s.description+' \u00b7 ':'')+nL+' layer'+(nL!==1?'s':'')+' \u00b7 '+nT+' TP \u00b7 risk '+rk+'%</div>'
-          +   '</div></div></div>';
+  renderExecTplList();
+}
+
+// TEMPLATE PICKER (rewritten 30 Jul 2026).
+//
+// Was an alphabetical list of cards, which scattered the four 5% templates
+// across seventeen rows and made the customer read every line. Now a compact
+// table SORTED BY RANGE THEN RISK, so the four that can trade the signal in
+// front of them sit together.
+//
+// Header and rows share one CSS grid, so the columns line up exactly rather
+// than approximately. Range, layers and risk are centred.
+//
+// The MAI badge was dropped: it repeated on every row and told the customer
+// nothing, since every template they can see is a MAI one.
+//
+// Extracted into its own function because selecting a row now RE-RENDERS -
+// the selected row grows a safe mode block, which cannot be added by poking
+// at the DOM the way the old selectExecTpl did.
+function stnRiskColour(r){
+  r = parseFloat(r); if(isNaN(r)) return '#6a6a74';
+  if(r <= 5)  return '#22c98a';
+  if(r <= 10) return '#d9a441';
+  if(r <= 20) return '#ff8c42';
+  return '#e03050';
+}
+function renderExecTplList(){
+  var list = document.getElementById('exec-tpl-list');
+  if(!list) return;
+  var cur = _execSelectedOption || (activeAccount ? activeAccount.smart_template_id : null);
+
+  // Sort by layer count then risk. Layer count stands in for the range - 4, 8,
+  // 14 and 18 map to the 50, 100, 150 and 200 pip bands - and it comes straight
+  // from the settings, so it cannot drift the way parsing a label would.
+  var rows = _execTpls.slice().sort(function(x,y){
+    var sx=x.settings||{}, sy=y.settings||{};
+    var lx=(sx.dca&&sx.dca.layers)?sx.dca.layers.length:1;
+    var ly=(sy.dca&&sy.dca.layers)?sy.dca.layers.length:1;
+    if(lx!==ly) return lx-ly;
+    var rx=(sx.risk&&sx.risk.risk_pct!=null)?parseFloat(sx.risk.risk_pct):0;
+    var ry=(sy.risk&&sy.risk.risk_pct!=null)?parseFloat(sy.risk.risk_pct):0;
+    return rx-ry;
+  });
+
+  var GRID='display:grid;grid-template-columns:3px 1fr 68px 58px 58px;align-items:center;gap:11px;';
+  var html='<div style="'+GRID+'padding:0 12px 8px;font-size:9px;font-weight:700;letter-spacing:.1em;color:var(--text3);opacity:.7;">'+
+           '<span></span><span>TEMPLATE</span>'+
+           '<span style="text-align:center;">RANGE</span>'+
+           '<span style="text-align:center;">LAYERS</span>'+
+           '<span style="text-align:center;">RISK</span></div>';
+
+  for(var i=0;i<rows.length;i++){
+    var t=rows[i], s=t.settings||{};
+    var nL=(s.dca&&s.dca.layers)?s.dca.layers.length:1;
+    var rk=(s.risk&&s.risk.risk_pct!=null)?s.risk.risk_pct:'-';
+    var col=stnRiskColour(rk);
+    // The range comes off the description, which reads "50 pip - Low 5%".
+    var rng='-';
+    if(s.description){ var p=String(s.description).split('\u00b7'); rng=(p[0]||'').trim()||'-'; }
+    var on=(cur && t.id===cur);
+    html += '<div id="etpl-'+t.id+'" onclick="selectExecTpl(\''+t.id+'\')" '+
+            'style="background:var(--bg3);border:'+(on?'2px':'1px')+' solid '+(on?'var(--red)':'var(--border)')+';'+
+            'border-radius:10px;padding:'+(on?'9px 11px':'10px 12px')+';margin-bottom:6px;cursor:pointer;">'+
+            '<div style="'+GRID+'">'+
+              '<div style="width:3px;height:22px;border-radius:2px;background:'+col+';"></div>'+
+              '<span style="font-size:13px;font-weight:800;color:var(--text);">'+(t.name||'Template')+'</span>'+
+              '<span style="text-align:center;font-size:11px;color:var(--text3);">'+rng+'</span>'+
+              '<span style="text-align:center;font-size:11px;color:var(--text3);">'+nL+'</span>'+
+              '<span style="text-align:center;font-size:11px;font-weight:700;color:'+col+';">'+rk+'%</span>'+
+            '</div>';
+    if(on){
+      var sm=stnSafeMode();
+      html += '<div style="display:flex;align-items:center;gap:10px;margin-top:10px;padding-top:9px;border-top:1px solid var(--border);" '+
+              'onclick="event.stopPropagation();stnSetSafeMode('+(sm?'false':'true')+')">'+
+              '<div style="flex:1;"><div style="font-size:12px;color:var(--text);">Safe mode</div>'+
+              '<div style="font-size:10px;color:var(--text3);margin-top:1px;">Bank the shallow entries early, ride one</div></div>'+
+              '<div style="width:38px;height:22px;border-radius:11px;position:relative;flex:none;background:'+(sm?'#e03050':'#2f2f39')+';">'+
+              '<div style="position:absolute;top:3px;'+(sm?'right:3px;background:#fff;':'left:3px;background:#7a7a84;')+'width:16px;height:16px;border-radius:50%;"></div>'+
+              '</div></div>';
+    }
+    html += '</div>';
   }
   list.innerHTML = html;
   // If the account already has one set, it is pre-selected and ready to confirm.
@@ -9486,17 +9556,42 @@ async function openExecuteChoicePopup() {
 
 function selectExecTpl(id){
   _execSelectedOption = id;
-  for(var i=0;i<_execTpls.length;i++){
-    var el = document.getElementById('etpl-'+_execTpls[i].id);
-    if(!el) continue;
-    var on = (_execTpls[i].id===id);
-    el.style.borderColor = on ? 'var(--red)' : 'var(--border)';
-    var dot = el.querySelector('.etpl-dot');
-    if(dot){ dot.style.borderColor = on ? 'var(--red)' : 'var(--border)';
-             dot.firstChild.style.background = on ? 'var(--red)' : 'transparent'; }
-  }
+  renderExecTplList();
   var btn = document.getElementById('exec-confirm-btn');
   if(btn){ btn.style.opacity='1'; btn.style.pointerEvents='auto'; }
+}
+
+// SAFE MODE (30 Jul 2026). One setting per ACCOUNT, not per template, which is
+// why the switch only appears on the selected row - a switch on all seventeen
+// would show the same value and flip together, reading as if it could differ
+// per template. It cannot.
+//
+// ON  : once the shallow rungs' combined profit clears the threshold they close
+//       together and one runner survives.
+// OFF : no shed, every layer rides to target or stop.
+// Either way breakeven still moves to the FIRST ENTRY, which is the anchor.
+//
+// Defaults to ON when unset, matching every template's stored safe_mode.enabled.
+function stnSafeMode(){
+  try{
+    var s=activeAccount&&activeAccount.mm_settings;
+    if(typeof s==='string') s=JSON.parse(s);
+    return !(s && s.safe_mode===false);
+  }catch(e){ return true; }
+}
+async function stnSetSafeMode(on){
+  if(!activeAccount){ alert('No active account selected.'); return; }
+  try{
+    var cur=activeAccount.mm_settings;
+    if(typeof cur==='string'){ try{ cur=JSON.parse(cur); }catch(e){ cur={}; } }
+    if(!cur||typeof cur!=='object') cur={};
+    cur.safe_mode = !!on;
+    var r=await db.from('mt5_accounts').update({ mm_settings:cur }).eq('id', activeAccount.id);
+    if(r&&r.error) throw r.error;
+    activeAccount.mm_settings=cur;
+    (window._userAccounts||[]).forEach(function(a){ if(a.id===activeAccount.id) a.mm_settings=cur; });
+    renderExecTplList();
+  }catch(e){ alert('Could not save safe mode: '+(e.message||'error')); }
 }
 
 async function confirmExecution() {
