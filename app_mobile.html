@@ -4765,7 +4765,7 @@ async function submitRegister() {
   var btn = document.getElementById('rpm-continue');
   btn.textContent = 'CREATING...'; btn.disabled = true;
   try {
-    var hash = btoa(unescape(encodeURIComponent(password+'_momentum_salt')));
+    var hash = await mmaiHashPassword(password);
     var res = await db.from('users').insert([{name,email,username,password_hash:hash,mt5_id:mt5,broker:broker||'AFTT Markets',plan_choice:_regPlan,status:'pending',role:'user',created_at:new Date().toISOString()}]).minimal();
     if(res.error) { closeRegPlan(); errEl.textContent='Error: '+res.error.message; errEl.style.display='block'; btn.textContent='Continue'; btn.disabled=false; return; }
     closeRegPlan();
@@ -4773,6 +4773,21 @@ async function submitRegister() {
     showScreen('screen-pending');
   } catch(e) { closeRegPlan(); errEl.textContent='Error: '+e.message; errEl.style.display='block'; }
   btn.textContent = 'Continue'; btn.disabled = false;
+}
+
+// 31 Jul 2026 (item 8): browsers used to write btoa(pw+'_momentum_salt'), which
+// decodes back to the password in one step. This computes the SAME PBKDF2 format
+// auth-login verifies - pbkdf2$210000$<16 byte salt b64>$<32 byte hash b64>, SHA-256
+// - so nothing reversible is ever stored again. auth-login already accepts this
+// format, so no server change is needed.
+async function mmaiHashPassword(pw) {
+  var enc = new TextEncoder();
+  var salt = crypto.getRandomValues(new Uint8Array(16));
+  var key = await crypto.subtle.importKey('raw', enc.encode(pw), 'PBKDF2', false, ['deriveBits']);
+  var bits = await crypto.subtle.deriveBits(
+    { name:'PBKDF2', salt: salt, iterations: 210000, hash:'SHA-256' }, key, 256);
+  function b64(u8){ var s=''; for(var i=0;i<u8.length;i++) s+=String.fromCharCode(u8[i]); return btoa(s); }
+  return 'pbkdf2$210000$' + b64(salt) + '$' + b64(new Uint8Array(bits));
 }
 
 // ── ROUTE USER ──
@@ -6627,7 +6642,7 @@ async function handleAddAnalyst() {
   if(!name||!username||!password) { errEl.textContent='Please fill all fields'; errEl.style.display='block'; return; }
   var btn=document.getElementById('btn-add-analyst'); btn.disabled=true;
   try {
-    var hash=btoa(unescape(encodeURIComponent(password+'_momentum_salt')));
+    var hash=await mmaiHashPassword(password);
     var res=await db.from('users').insert([{name,username,password_hash:hash,mt5_id:'ANALYST_'+Date.now(),status:'active',role:'analyst',created_at:new Date().toISOString()}]);
     if(res.error) throw res.error;
     sucEl.textContent='Analyst created! Username: '+username+' / Password: '+password;
@@ -8799,7 +8814,7 @@ async function saveAnalystEdit(id){
   var pairs=checks.length>0?Array.from(checks).map(function(c){return c.value;}).join(','):'all';
   var errEl=document.getElementById('ea-error'),sucEl=document.getElementById('ea-success');errEl.style.display='none';sucEl.style.display='none';
   try{
-    var upd={name:name,status:status};if(pw)upd.password_hash=btoa(unescape(encodeURIComponent(pw+'_momentum_salt')));
+    var upd={name:name,status:status};if(pw)upd.password_hash=await mmaiHashPassword(pw);
     var res=await db.from('users').update(Object.assign({},upd,{trading_pairs:pairs})).eq('id',id);
     if(res.error&&res.error.message&&res.error.message.indexOf('trading_pairs')>-1) res=await db.from('users').update(upd).eq('id',id);
     if(res.error) throw res.error;
@@ -8832,7 +8847,7 @@ async function handleAddSubAdmin(){
   if(!name||!username||!password){errEl.textContent='Please fill all fields';errEl.style.display='block';return;}
   if(!tabs){errEl.textContent='Select at least one tab';errEl.style.display='block';return;}
   if(password.length<6){errEl.textContent='Password min 6 characters';errEl.style.display='block';return;}
-  var hash=btoa(unescape(encodeURIComponent(password+'_momentum_salt')));
+  var hash=await mmaiHashPassword(password);
   try{
     var res=await db.from('users').insert([{name:name,username:username,password_hash:hash,mt5_id:'SUBADMIN_'+Date.now(),status:'active',role:'sub_admin',allowed_tabs:tabs,created_at:new Date().toISOString()}]);
     if(res.error) throw res.error;
@@ -8882,7 +8897,7 @@ async function saveSubAdminEdit(id){
   var errEl=document.getElementById('esa-error'),sucEl=document.getElementById('esa-success');errEl.style.display='none';sucEl.style.display='none';
   if(!tabs){errEl.textContent='Select at least one tab';errEl.style.display='block';return;}
   try{
-    var upd={name:name,status:status,allowed_tabs:tabs};if(pw)upd.password_hash=btoa(unescape(encodeURIComponent(pw+'_momentum_salt')));
+    var upd={name:name,status:status,allowed_tabs:tabs};if(pw)upd.password_hash=await mmaiHashPassword(pw);
     var res=await db.from('users').update(upd).eq('id',id);if(res.error)throw res.error;
     sucEl.textContent='Updated!';sucEl.style.display='block';setTimeout(function(){document.getElementById('edit-subadmin-popup').remove();loadAdminSubAdmins();},1200);
   }catch(e){errEl.textContent='Error: '+(e.message||'failed');errEl.style.display='block';}
