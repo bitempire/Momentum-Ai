@@ -4901,7 +4901,7 @@ async function loadActiveAccount() {
     if(!currentUser || !currentUser.id) { renderHeaderSwitcher(); return; }
     var res = await db.from('mt5_accounts').select('*').eq('user_id', currentUser.id);
     var accts = (res && res.data) ? res.data : [];
-    window._userAccounts = accts;
+    window._userAccounts = accts; if(typeof mmHomeRefresh==='function') mmHomeRefresh();
     var activeId = currentUser.active_account_id;
     activeAccount = accts.filter(function(a){return a.id===activeId;})[0]
                  || accts.filter(function(a){return a.mt5_connected||a.connection_status==='connected';})[0]
@@ -11292,10 +11292,10 @@ async function loadLivePrices() {
       var cEl=document.getElementById('change-'+app);
       var sEl=document.getElementById('sym-'+app);
       if(pEl) pEl.textContent = fmtPrice(app, price);
-      if(cEl) { cEl.textContent=(isUp?'▲ +':'▼ ')+chg+'%'; cEl.className='mkt-change '+(isUp?'up':'dn'); }
+      if(cEl) { cEl.textContent=(isUp?'▲ +':'▼ ')+chg+'%'; cEl.className='mm-mkt-chg '+(isUp?'up':'dn'); }
       if(sEl&&sEl.parentElement) {
         var card=sEl.parentElement;
-        card.className='mkt-card '+(isUp?'up':'dn');
+        card.className='mm-mkt-row';
         var spark=card.querySelector('.mkt-spark');
         if(spark){ spark.dataset.trend=isUp?'up':'dn'; spark.dataset.color=isUp?'#00c87a':'#FF1E3C'; drawSpark(spark); }
       }
@@ -11369,9 +11369,9 @@ async function loadAFTPrices() {
         var isUp = mid >= open;
         var chg = ((mid-open)/open*100).toFixed(2);
         var cEl = document.getElementById('change-'+app);
-        if(cEl){ cEl.textContent = (isUp?'▲ +':'▼ ')+chg+'%'; cEl.className='mkt-change '+(isUp?'up':'dn'); }
+        if(cEl){ cEl.textContent = (isUp?'▲ +':'▼ ')+chg+'%'; cEl.className='mm-mkt-chg '+(isUp?'up':'dn'); }
         var sEl = document.getElementById('sym-'+app);
-        if(sEl && sEl.parentElement){ sEl.parentElement.className = 'mkt-card '+(isUp?'up':'dn'); }
+        if(sEl && sEl.parentElement){ sEl.parentElement.className = 'mm-mkt-row'; }
       }
     });
     // Quotes came back. THIS is what 'data connection ok' means - the marker
@@ -13597,7 +13597,7 @@ async function renderProfileAccounts() {
     if(currentUser && currentUser.id) {
       var res = await db.from('mt5_accounts').select('*').eq('user_id', currentUser.id);
       accts = (res && res.data) ? res.data : [];
-      window._userAccounts = accts;
+      window._userAccounts = accts; if(typeof mmHomeRefresh==='function') mmHomeRefresh();
     }
   } catch(e) {}
   if(countEl) countEl.textContent = accts.length + '/5';
