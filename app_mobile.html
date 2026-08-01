@@ -3290,11 +3290,11 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
           <div class="toggle on" onclick="this.classList.toggle('on')"></div>
         </div>
         <div class="ea-toggle-row" style="border-bottom:none;">
-          <div><div class="ea-toggle-label" data-i18n="common.language">Language</div><div class="ea-toggle-sub">English / Bahasa Malaysia</div></div>
-          <select style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:6px 10px;color:var(--text);font-size:12px;font-family:'Sora',sans-serif;">
-            <option>English</option>
-            <option>Bahasa Malaysia</option>
-          </select>
+          <div><div class="ea-toggle-label" data-i18n="common.language">Language</div><div class="ea-toggle-sub" data-i18n="prof.langSub">Choose your display language</div></div>
+          <div onclick="openLangPicker()" style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+            <span id="mm-lang-label-prof" style="font-size:12px;color:var(--text3);">English</span>
+            <i class="ti ti-chevron-right" style="font-size:16px;color:var(--text3);"></i>
+          </div>
         </div>
       </div>
 
@@ -5093,16 +5093,19 @@ initTheme();
 // and every visible string reads from the dictionary keyed by mmGetLang().
 // English is the default and the fallback.
 var MMLANGS = [
-  { code:'en',    native:'English',    en:'English' },
+  { code:'en', native:'English', en:'English' },
   { code:'zh-TW', native:'\u7e41\u9ad4\u4e2d\u6587', en:'Chinese (Taiwan)' },
-  { code:'ko',    native:'\ud55c\uad6d\uc5b4', en:'Korean' },
-  { code:'ta',    native:'\u0ba4\u0bae\u0bbf\u0bb4\u0bcd', en:'Tamil' },
-  { code:'hi',    native:'\u0939\u093f\u0928\u094d\u0926\u0940', en:'Hindi' },
-  { code:'th',    native:'\u0e44\u0e17\u0e22', en:'Thai' },
-  { code:'vi',    native:'Ti\u1ebfng Vi\u1ec7t', en:'Vietnamese' },
-  { code:'km',    native:'\u1797\u17b6\u179f\u17b6\u1781\u17d2\u1798\u17c2\u179a', en:'Khmer' },
-  { code:'fil',   native:'Filipino',   en:'Filipino' },
-  { code:'es',    native:'Espa\u00f1ol', en:'Spanish' }
+  { code:'zh-CN', native:'\u7b80\u4f53\u4e2d\u6587', en:'Chinese (China)' },
+  { code:'ja', native:'\u65e5\u672c\u8a9e', en:'Japanese' },
+  { code:'ko', native:'\ud55c\uad6d\uc5b4', en:'Korean' },
+  { code:'ms', native:'Bahasa Melayu', en:'Malay' },
+  { code:'th', native:'\u0e44\u0e17\u0e22', en:'Thai' },
+  { code:'vi', native:'Ti\u1ebfng Vi\u1ec7t', en:'Vietnamese' },
+  { code:'fil', native:'Filipino', en:'Filipino' },
+  { code:'ta', native:'\u0ba4\u0bae\u0bbf\u0bb4\u0bcd', en:'Tamil' },
+  { code:'hi', native:'\u0939\u093f\u0928\u094d\u0926\u0940', en:'Hindi' },
+  { code:'es', native:'Espa\u00f1ol', en:'Spanish' },
+  { code:'km', native:'\u1797\u17b6\u179f\u17b6\u1781\u17d2\u1798\u17c2\u179a', en:'Khmer' }
 ];
 function mmGetLang(){ try{ return localStorage.getItem('momentum_lang') || 'en'; }catch(e){ return 'en'; } }
 function mmLangName(code){ for(var i=0;i<MMLANGS.length;i++){ if(MMLANGS[i].code===code) return MMLANGS[i].native; } return 'English'; }
@@ -5117,6 +5120,8 @@ function mmLangName(code){ for(var i=0;i<MMLANGS.length;i++){ if(MMLANGS[i].code
 // Only the OTHER languages need entries here.
 var MM_I18N = {
   'zh-TW': {
+    'lang.available':'可使用', 'lang.comingSoon':'即將推出',
+    'lang.soon':'即將', 'prof.langSub':'選擇顯示語言',
     'auth.regAft':'透過 AFT 註冊 →', 'auth.createAft':'透過 AFT 建立帳戶 →',
     'auth.signInArrow':'登入 →', 'auth.regSub':'註冊您的 Momentum AI 帳戶',
     'auth.poweredBy':'由 Bitempire Sdn Bhd 提供技術支援',
@@ -5395,6 +5400,12 @@ var MM_I18N = {
 
 // Look up a key in the current language. Falls back to the English text passed
 // in (or the key itself if none), so a missing translation is never a blank.
+function mmSyncLangLabels(code){
+  var n = mmLangName(code);
+  var a = document.getElementById('mm-lang-label'); if(a) a.textContent = n;
+  var b = document.getElementById('mm-lang-label-prof'); if(b) b.textContent = n;
+}
+
 function t(key, enFallback){
   var lang = mmGetLang();
   if(lang === 'en') return (enFallback!=null ? enFallback : key);
@@ -5417,6 +5428,7 @@ function mmApplyLang(code){
     var en = el.getAttribute('data-i18n-en');
     el.textContent = (dict && dict[key] != null) ? dict[key] : en;
   }
+  try{ mmSyncLangLabels(mmGetLang()); }catch(e){}
   // Placeholders
   var phs = document.querySelectorAll('[data-i18n-ph]');
   for(var j=0;j<phs.length;j++){
@@ -5437,11 +5449,29 @@ function openLangPicker(){
   var sheet=document.createElement('div');
   sheet.style.cssText='width:100%;max-height:82vh;overflow-y:auto;background:var(--bg2);border-radius:20px 20px 0 0;border-top:1px solid var(--border);padding:18px 16px 34px;';
   var h='<div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px;"></div>'+
-        '<div style="font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);text-align:center;margin-bottom:16px;">Language</div>';
-  for(var i=0;i<MMLANGS.length;i++){ var L=MMLANGS[i]; var on=(L.code===cur);
-    h+='<div onclick="mmSetLang(\''+L.code+'\')" style="display:flex;align-items:center;justify-content:space-between;padding:13px 14px;margin-bottom:8px;background:var(--bg3);border:1px solid '+(on?'var(--red)':'var(--border)')+';border-radius:12px;cursor:pointer;">'+
-       '<span style="font-size:14px;color:var(--text);font-weight:'+(on?'700':'500')+';">'+L.native+'<span style="font-size:11px;color:var(--text3);margin-left:8px;">'+L.en+'</span></span>'+
-       (on?'<i class="ti ti-check" style="color:var(--red);"></i>':'')+'</div>';
+        '<div style="font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);text-align:center;margin-bottom:16px;">'+t('common.language','Language')+'</div>';
+  if(cur!=='en' && !(MM_I18N[cur] && Object.keys(MM_I18N[cur]).length)) cur='en';
+  var mmAvail=[], mmSoon=[];
+  for(var i=0;i<MMLANGS.length;i++){ var L=MMLANGS[i];
+    var ready=(L.code==='en') || (MM_I18N[L.code] && Object.keys(MM_I18N[L.code]).length>0);
+    (ready?mmAvail:mmSoon).push(L);
+  }
+  function mmLangHdr(txt){ return '<div style="font-size:10px;letter-spacing:0.08em;color:var(--text3);margin:2px 2px 8px;">'+txt+'</div>'; }
+  function mmLangRow(L,on){
+    return '<div onclick="mmSetLang(\''+L.code+'\')" style="display:flex;align-items:center;justify-content:space-between;padding:13px 14px;margin-bottom:8px;background:var(--bg3);border:1px solid '+(on?'var(--red)':'var(--border)')+';border-radius:12px;cursor:pointer;">'+
+      '<span style="font-size:14px;color:var(--text);font-weight:'+(on?'700':'500')+';">'+L.native+'<span style="font-size:11px;color:var(--text3);margin-left:8px;">'+L.en+'</span></span>'+
+      (on?'<i class="ti ti-check" style="color:var(--red);"></i>':'')+'</div>';
+  }
+  function mmLangRowSoon(L){
+    return '<div style="display:flex;align-items:center;justify-content:space-between;padding:13px 14px;margin-bottom:8px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;opacity:0.55;cursor:default;">'+
+      '<span style="font-size:14px;color:var(--text3);font-weight:500;">'+L.native+'<span style="font-size:11px;color:var(--text3);margin-left:8px;">'+L.en+'</span></span>'+
+      '<span style="font-size:10px;color:var(--text3);background:var(--bg2);border-radius:6px;padding:3px 8px;">'+t('lang.soon','Soon')+'</span></div>';
+  }
+  h+=mmLangHdr(t('lang.available','AVAILABLE'));
+  for(var a=0;a<mmAvail.length;a++){ h+=mmLangRow(mmAvail[a], mmAvail[a].code===cur); }
+  if(mmSoon.length){
+    h+=mmLangHdr(t('lang.comingSoon','COMING SOON'));
+    for(var s2=0;s2<mmSoon.length;s2++){ h+=mmLangRowSoon(mmSoon[s2]); }
   }
   sheet.innerHTML=h;
   popup.appendChild(sheet); document.body.appendChild(popup);
@@ -5451,7 +5481,7 @@ function mmSetLang(code){
   try{ localStorage.setItem('momentum_lang', code); }catch(e){}
   try{ document.documentElement.setAttribute('lang', code); }catch(e){}
   var s=document.getElementById('mm-lang-sheet'); if(s) s.remove();
-  var lbl=document.getElementById('mm-lang-label'); if(lbl) lbl.textContent=mmLangName(code);
+  mmSyncLangLabels(code);
   // Hook for the translation build: apply the dictionary + re-render here.
   if(typeof mmApplyLang==='function') mmApplyLang(code);
   // Re-run the renderers that build markup in JS (they bake text at render time,
