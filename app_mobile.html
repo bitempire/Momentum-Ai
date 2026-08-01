@@ -1940,7 +1940,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
           <div class="section-title" style="font-size:12px;margin-bottom:0;"><span class="tw" data-i18n="w.live">Live</span> <span data-i18n="chart.positionsWord">Positions</span></div>
           <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--green);font-weight:700;">
             <div style="width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite;"></div>
-            MT5 LIVE
+            <span data-i18n="w.mt5Live">MT5 LIVE</span>
           </div>
         </div>
         <div id="mob-live-positions">
@@ -2127,7 +2127,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
           <span style="font-size:10px;color:var(--text3);text-align:right;" data-i18n="j.pnl">P&L</span>
         </div>
         <div id="j-recent-trades"><div style="text-align:center;font-size:12px;color:var(--text3);padding:16px 0;" data-i18n="j.noTrades">No trades yet</div></div>
-        <div style="text-align:center;margin-top:8px;"><span id="j-view-all" style="display:none;font-size:11px;color:var(--red);cursor:pointer;font-weight:700;">View all trades →</span></div>
+        <div style="text-align:center;margin-top:8px;"><span id="j-view-all" style="display:none;font-size:11px;color:var(--red);cursor:pointer;font-weight:700;" data-i18n="j.viewAll">View all trades →</span></div>
       </div>
 
       <!-- BOTTOM 4 CARDS -->
@@ -5120,6 +5120,8 @@ function mmLangName(code){ for(var i=0;i<MMLANGS.length;i++){ if(MMLANGS[i].code
 // Only the OTHER languages need entries here.
 var MM_I18N = {
   'zh-TW': {
+    'w.mt5Live':'MT5 即時',
+    'j.gradeExcellent':'● 優秀', 'j.gradeGood':'● 良好', 'j.gradeAverage':'● 普通', 'j.gradeNeedsWork':'● 需要改進', 'j.tradesSuffix':' 筆交易', 'j.win':'獲利', 'j.loss':'虧損', 'j.lotSuffix':' 手', 'j.lotsSuffix':' 手', 'j.wrSuffix':'% 勝率', 'j.analysing':'正在分析您的交易...', 'j.keepBuilding':'持續累積交易紀錄，即可獲得個人化的 AI 洞察。', 'j.viewAll':'查看所有交易 →',
     'sc.fbTechUp':'價格位於關鍵均線之上，多頭結構完整。', 'sc.fbTechDown':'價格位於關鍵均線之下，空頭壓力明顯。',
     'sc.fTech':'技術趨勢', 'sc.fNews':'經濟新聞', 'sc.fDxy':'美元指數 DXY', 'sc.fBond':'債券殖利率', 'sc.fCot':'COT 持倉', 'sc.fVix':'VIX 恐慢指數', 'sc.ma50':'移動平均(50)', 'sc.bb':'布林通道', 'sc.above':'之上', 'sc.below':'之下', 'sc.upper':'上軌', 'sc.midBand':'中軌', 'sc.lower':'下軌', 'sc.leaning':'傾向', 'sc.leanSB':'強烈看漲', 'sc.leanMB':'中度看漲', 'sc.leanN':'中性', 'sc.leanMBe':'中度看跌', 'sc.leanSBe':'強烈看跌', 'sc.lastScan':'上次掃描：', 'sc.lastScanNow':'上次掃描：剛剛 · ', 'sc.bullishPrefix':'看漲：', 'sc.bearishPrefix':'看跌：',
     'verdict.bullish':'看漲', 'verdict.bearish':'看跌', 'verdict.neutral':'中性', 'verdict.strong':'強勁', 'verdict.moderate':'中等', 'verdict.weak':'疲弱', 'verdict.low':'低', 'verdict.medium':'中', 'verdict.high':'高',
@@ -5551,6 +5553,13 @@ var MM_I18N = {
     'lb.rankDesc':'每月挑戰開始時將開放排名。持續交易以爭取您的名次。'
   },
   'zh-CN': {
+    'w.mt5Live':'MT5 即时', 'j.gradeExcellent':'● 优秀',
+    'j.gradeGood':'● 良好', 'j.gradeAverage':'● 普通',
+    'j.gradeNeedsWork':'● 需要改进', 'j.tradesSuffix':' 笔交易',
+    'j.win':'获利', 'j.loss':'亏损',
+    'j.lotSuffix':' 手', 'j.lotsSuffix':' 手',
+    'j.wrSuffix':'% 胜率', 'j.analysing':'正在分析您的交易...',
+    'j.keepBuilding':'持续累积交易纪录，即可获得个人化的 AI 洞察。', 'j.viewAll':'查看所有交易 →',
     'sc.fbTechUp':'价格位于关键均线之上，多头结构完整。', 'sc.fbTechDown':'价格位于关键均线之下，空头压力明显。',
     'sc.fTech':'技术趋势', 'sc.fNews':'经济新闻',
     'sc.fDxy':'美元指数 DXY', 'sc.fBond':'债券殖利率',
@@ -7611,7 +7620,7 @@ function admTplSummary(t){
   var lots=0; for(var i=0;i<L.length;i++) lots+=(L[i].lots||0);
   var bits=[];
   bits.push((dca.enabled&&L.length>1) ? (L.length+' entries') : 'single entry');
-  bits.push(lots.toFixed(2)+' lots');
+  bits.push(lots.toFixed(2)+mmT('j.lotsSuffix',' lots'));
   bits.push(tp.enabled ? (LV.length+' target'+(LV.length===1?'':'s')+' from '+(tp.measure_from||'average')) : 'no targets');
   bits.push((s.breakeven||{}).enabled ? 'breakeven' : 'no breakeven');
   bits.push((s.trailing||{}).enabled
@@ -8357,7 +8366,7 @@ async function loadLivePositions(){
         '<div class="trade-icon" style="background:'+(win?'rgba(0,200,122,0.12)':'rgba(255,30,60,0.10)')+';">'+(side==='SELL'?'\uD83D\uDCC9':'\uD83D\uDCC8')+'</div>'+
         '<div class="trade-info">'+
           '<div class="trade-pair">'+p.symbol+' <span style="font-size:10px;color:'+sideColor+';font-weight:700;">'+side+'</span></div>'+
-          '<div class="trade-meta">Entry: '+op+' \u00b7 '+vol+' lot</div>'+
+          '<div class="trade-meta">Entry: '+op+' \u00b7 '+vol+mmT('j.lotSuffix',' lot')+'</div>'+
         '</div>'+
         '<div><div class="trade-pnl" style="color:'+pColor+';font-weight:800;">'+(win?'+':'')+'$'+profit.toFixed(2)+'</div></div>'+
       '</div>';
@@ -9123,7 +9132,7 @@ function updateGauge(score) {
   var deg = -90 + (score/100)*180;
   needle.setAttribute('transform', 'rotate('+deg+' 50 58)');
   scoreEl.textContent = Math.round(score);
-  var grade = score>=80?'● Excellent':score>=65?'● Good':score>=50?'● Average':'● Needs Work';
+  var grade = score>=80?mmT('j.gradeExcellent','● Excellent'):score>=65?mmT('j.gradeGood','● Good'):score>=50?mmT('j.gradeAverage','● Average'):mmT('j.gradeNeedsWork','● Needs Work');
   var col = score>=80?'#00C87A':score>=65?'#FFB020':score>=50?'#4D9EFF':'#FF1E3C';
   gradeEl.textContent = grade; gradeEl.style.color = col;
 }
@@ -9208,7 +9217,7 @@ async function loadJournalData() {
       var pnl=arr.reduce(function(s,t){return s+parseFloat(t.profit||0);},0);
       var wr=Math.round((w.length/arr.length)*100);
       var pnlStr=(pnl>=0?'+$':'-$')+Math.abs(pnl).toFixed(0);
-      return pnlStr+' · '+wr+'% WR';
+      return pnlStr+' · '+wr+mmT('j.wrSuffix','% WR');
     }
     // Monthly return
     var now2=new Date(), ms2=new Date(now2.getFullYear(),now2.getMonth(),1);
@@ -9251,7 +9260,7 @@ async function loadJournalData() {
     el=document.getElementById('j-avg-win'); if(el) el.textContent='+$'+avgWin.toFixed(2);
     el=document.getElementById('j-avg-loss'); if(el) el.textContent='-$'+avgLoss.toFixed(2);
     el=document.getElementById('j-hold'); if(el) el.textContent=avgHoldStr;
-    el=document.getElementById('j-streak'); if(el) el.textContent=maxStreak+' trades';
+    el=document.getElementById('j-streak'); if(el) el.textContent=maxStreak+mmT('j.tradesSuffix',' trades');
     if(totalAssets>0){
       el=document.getElementById('j-gold-pct'); if(el) el.textContent=Math.round(assetCounts.Gold/totalAssets*100)+'%';
       el=document.getElementById('j-forex-pct'); if(el) el.textContent=Math.round(assetCounts.Forex/totalAssets*100)+'%';
@@ -9259,9 +9268,9 @@ async function loadJournalData() {
       el=document.getElementById('j-idx-pct'); if(el) el.textContent=Math.round(assetCounts.Indices/totalAssets*100)+'%';
     }
     // Method breakdown
-    el=document.getElementById('j-m-count'); if(el) el.textContent=methods.manual.length+' trades';
-    el=document.getElementById('j-t-count'); if(el) el.textContent=methods.smart.length+' trades';
-    el=document.getElementById('j-a-count'); if(el) el.textContent=methods.auto.length+' trades';
+    el=document.getElementById('j-m-count'); if(el) el.textContent=methods.manual.length+mmT('j.tradesSuffix',' trades');
+    el=document.getElementById('j-t-count'); if(el) el.textContent=methods.smart.length+mmT('j.tradesSuffix',' trades');
+    el=document.getElementById('j-a-count'); if(el) el.textContent=methods.auto.length+mmT('j.tradesSuffix',' trades');
     el=document.getElementById('j-m-stats'); if(el){el.textContent=methodStats(methods.manual);el.style.color=methods.manual.length?'var(--green)':'var(--text3)';}
     el=document.getElementById('j-t-stats'); if(el){el.textContent=methodStats(methods.smart);el.style.color=methods.smart.length?'var(--green)':'var(--text3)';}
     el=document.getElementById('j-a-stats'); if(el){el.textContent=methodStats(methods.auto);el.style.color=methods.auto.length?'var(--green)':'var(--text3)';}
@@ -9285,7 +9294,7 @@ async function loadJournalData() {
     el=document.getElementById('jd-sl-dot'); if(el) el.style.background=slPct>=80?'var(--green)':'var(--red)';
     el=document.getElementById('jd-risk'); if(el){el.textContent=riskPct+'%';el.style.color=riskPct>=70?'var(--green)':'var(--amber)';}
     el=document.getElementById('jd-risk-dot'); if(el) el.style.background=riskPct>=70?'var(--green)':'var(--amber)';
-    el=document.getElementById('jd-over'); if(el){el.textContent=overLev+' trades';el.style.color=overLev===0?'var(--green)':'var(--red)';}
+    el=document.getElementById('jd-over'); if(el){el.textContent=overLev+mmT('j.tradesSuffix',' trades');el.style.color=overLev===0?'var(--green)':'var(--red)';}
     el=document.getElementById('jd-over-dot'); if(el) el.style.background=overLev===0?'var(--green)':'var(--red)';
     el=document.getElementById('jd-rev'); if(el){el.textContent=revCount===0?'✓ Clean':revCount+' detected';el.style.color=revCount===0?'var(--green)':'var(--red)';}
     el=document.getElementById('jd-rev-dot'); if(el) el.style.background=revCount===0?'var(--green)':'var(--red)';
@@ -9302,9 +9311,9 @@ async function loadJournalData() {
     var bestPair=Object.keys(pairMap).sort(function(a,b){return pairMap[b].pnl-pairMap[a].pnl;})[0];
     if(bestPair){
       el=document.getElementById('j-best-pair'); if(el) el.textContent=bestPair;
-      el=document.getElementById('j-best-pair-sub'); if(el) el.textContent='+$'+pairMap[bestPair].pnl.toFixed(0)+' · '+Math.round(pairMap[bestPair].wins/pairMap[bestPair].total*100)+'% WR';
+      el=document.getElementById('j-best-pair-sub'); if(el) el.textContent='+$'+pairMap[bestPair].pnl.toFixed(0)+' · '+Math.round(pairMap[bestPair].wins/pairMap[bestPair].total*100)+mmT('j.wrSuffix','% WR');
     }
-    el=document.getElementById('j-win-streak'); if(el) el.textContent=maxStreak+' trades';
+    el=document.getElementById('j-win-streak'); if(el) el.textContent=maxStreak+mmT('j.tradesSuffix',' trades');
     el=document.getElementById('j-monthly-return'); if(el){el.textContent=(monthPnl>=0?'+':'')+monthPnl.toFixed(2)+' ('+monthRet+'%)';el.style.color=monthPnl>=0?'var(--green)':'var(--red)';}
     // Recent trades list
     var tradeList=document.getElementById('j-recent-trades');
@@ -9325,11 +9334,11 @@ async function loadJournalData() {
             '<div style="flex:0 0 40px;font-size:10px;color:var(--text3);">'+dateStr+'</div>'+
             '<div style="flex:1;">'+
               '<div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;"><span style="font-size:12px;font-weight:700;color:var(--text);">'+t.symbol+'</span>'+sideBadge+mBadge+'</div>'+
-              '<div style="font-size:10px;color:var(--text3);">'+parseFloat(t.volume||0).toFixed(2)+' lot</div>'+
+              '<div style="font-size:10px;color:var(--text3);">'+parseFloat(t.volume||0).toFixed(2)+mmT('j.lotSuffix',' lot')+'</div>'+
             '</div>'+
             '<div style="text-align:right;">'+
               '<div style="font-size:13px;font-weight:700;color:'+(isWin?'var(--green)':'var(--red)')+'">'+(isWin?'+$':'-$')+Math.abs(pnl).toFixed(2)+'</div>'+
-              '<div style="font-size:9px;color:'+(isWin?'var(--green)':'var(--red)')+'">'+(isWin?'WIN':'LOSS')+'</div>'+
+              '<div style="font-size:9px;color:'+(isWin?'var(--green)':'var(--red)')+'">'+(isWin?mmT('j.win','WIN'):mmT('j.loss','LOSS'))+'</div>'+
             '</div>'+
           '</div>';
         }).join('');
@@ -9347,15 +9356,15 @@ async function loadJournalData() {
 async function generateJournalInsight(winRate, avgWin, avgLoss, revCount, methods, streak, bestPair) {
   var insightEl = document.getElementById('j-ai-insight');
   if(!insightEl) return;
-  insightEl.textContent = 'Analysing your trades...';
+  insightEl.textContent = mmT('j.analysing','Analysing your trades...');
   try {
-    var prompt = 'You are a trading coach. Give a 2-sentence personalised insight for a trader with these stats: Win Rate '+winRate+'%, Avg Win $'+avgWin.toFixed(2)+', Avg Loss $'+avgLoss.toFixed(2)+', Revenge trades '+revCount+', Current streak '+streak+', Best pair '+bestPair+', Manual trades '+methods.manual.length+', Smart Tool trades '+methods.smart.length+', Auto trades '+methods.auto.length+'. Be specific, actionable and encouraging. Max 40 words.';
+    var prompt = 'You are a trading coach. Give a 2-sentence personalised insight for a trader with these stats: Win Rate '+winRate+'%, Avg Win $'+avgWin.toFixed(2)+', Avg Loss $'+avgLoss.toFixed(2)+', Revenge trades '+revCount+', Current streak '+streak+', Best pair '+bestPair+', Manual trades '+methods.manual.length+', Smart Tool trades '+methods.smart.length+', Auto trades '+methods.auto.length+'. Be specific, actionable and encouraging. Max 40 words.' + mmAiLangNote();
     var r = await fetch('https://rhtworywcqcxkahlmezg.supabase.co/functions/v1/claude-proxy',{method:'POST',headers:{'Content-Type':'application/json','x-mmai-token':mmaiToken()},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:100,messages:[{role:'user',content:prompt}]})});
     var d = await r.json();
     var txt = d.content && d.content[0] ? d.content[0].text : null;
     if(txt) insightEl.textContent = txt;
-    else insightEl.textContent = 'Keep building your trade history for personalised AI insights.';
-  } catch(e) { insightEl.textContent = 'Keep building your trade history for personalised AI insights.'; }
+    else insightEl.textContent = mmT('j.keepBuilding','Keep building your trade history for personalised AI insights.');
+  } catch(e) { insightEl.textContent = mmT('j.keepBuilding','Keep building your trade history for personalised AI insights.'); }
 }
 
 // ═══════════════════════════════════════════════════
