@@ -5120,6 +5120,7 @@ function mmLangName(code){ for(var i=0;i<MMLANGS.length;i++){ if(MMLANGS[i].code
 // Only the OTHER languages need entries here.
 var MM_I18N = {
   'zh-TW': {
+    'verdict.bullish':'看漲', 'verdict.bearish':'看跌', 'verdict.neutral':'中性', 'verdict.strong':'強勁', 'verdict.moderate':'中等', 'verdict.weak':'疲弱', 'verdict.low':'低', 'verdict.medium':'中', 'verdict.high':'高',
     'promo.claimedOn':'您已在帳戶 {n} 領取過優惠。每位使用者限用一次。', 'promo.claimed':'您已領取過優惠。每位使用者限用一次。', 'promo.enterCode':'輸入優惠碼', 'promo.connectFirst':'請先連接您的 MT5 帳戶。', 'promo.noneNow':'目前沒有可用的優惠。', 'promo.apply':'套用', 'promo.claiming':'領取中...', 'promo.claimNow':'立即領取', 'status.active':'使用中', 'status.pending':'審核中', 'status.suspended':'已停權', 'status.rejected':'已拒絕', 'status.inactive':'未啟用',
     'pa.superAdmin':'超級管理員', 'pa.analyst':'分析師', 'pa.subAdmin':'子管理員', 'pa.addAccount':'新增帳戶', 'menu.lightMode':'淺色模式',
     'ac.back':'返回', 'ac.errorLoading':'載入失敗',
@@ -5555,6 +5556,20 @@ function mmSyncLangLabels(code){
   var n = mmLangName(code);
   var a = document.getElementById('mm-lang-label'); if(a) a.textContent = n;
   var b = document.getElementById('mm-lang-label-prof'); if(b) b.textContent = n;
+}
+
+function mmAiLangNote(){
+  var c = mmGetLang();
+  if(c === 'en') return '';
+  var n = c;
+  for(var i=0;i<MMLANGS.length;i++){ if(MMLANGS[i].code===c){ n = MMLANGS[i].native; break; } }
+  return ' IMPORTANT: write every sentence of prose in ' + n +
+    '. Keep every JSON field name in English, and keep these values exactly as written in English:'+
+    ' Bullish, Bearish, Neutral, Strong, Moderate, Weak, Low, Medium, High.';
+}
+function mmVerdict(v){
+  if(v === null || v === undefined || v === '') return v;
+  return t('verdict.' + String(v).trim().toLowerCase(), String(v));
 }
 
 function t(key, enFallback){
@@ -7018,7 +7033,7 @@ async function generateMAIReport() {
     + ' AI Summary: ' + aiSummary
     + ' Scenario: ' + techScenario
     + ' Fundamental: ' + fundVerdict
-    + ' Write in flowing paragraphs only, no bullet points, no emojis. Section titles in UPPERCASE. Include: MARKET OVERVIEW, TECHNICAL PERSPECTIVE, FUNDAMENTAL LANDSCAPE, SENTIMENT READING, MAI VERDICT. Be specific with price levels. Max 400 words.';
+    + ' Write in flowing paragraphs only, no bullet points, no emojis. Section titles in UPPERCASE. Include: MARKET OVERVIEW, TECHNICAL PERSPECTIVE, FUNDAMENTAL LANDSCAPE, SENTIMENT READING, MAI VERDICT. Be specific with price levels. Max 400 words.' + mmAiLangNote();
   
   try {
     var response = await fetch('https://rhtworywcqcxkahlmezg.supabase.co/functions/v1/claude-proxy', {
@@ -11811,7 +11826,7 @@ Respond ONLY with valid JSON (no markdown):
   "overall_confidence": <0-100>,
   "overall_risk": "<Low|Moderate|High>",
   "overall_summary": "<2 sentence final summary>"
-}`;
+}` + mmAiLangNote();
 
     var ai = {};
     try {
@@ -11876,7 +11891,7 @@ Respond ONLY with valid JSON (no markdown):
     }).join('');
     document.getElementById('sent-factors').innerHTML = factorsHTML;
     var svEl = document.getElementById('sent-verdict');
-    svEl.textContent = sentDir.toUpperCase();
+    svEl.textContent = mmVerdict(sentDir.toUpperCase());
     svEl.style.color = sentDir==='Bullish'?'#00C87A':sentDir==='Bearish'?'#FF1E3C':'#FFB020';
 
     // 6. RENDER TECHNICAL
@@ -11900,10 +11915,10 @@ Respond ONLY with valid JSON (no markdown):
     // 8. RENDER OVERALL VERDICT
     var od = ai.overall_direction||'Neutral';
     var oc = ai.overall_confidence||50;
-    var odEl = document.getElementById('verdict-direction'); if(odEl){odEl.textContent=od;odEl.style.color=od==='Bullish'?'#00C87A':od==='Bearish'?'#FF1E3C':'#FFB020';}
-    var omEl = document.getElementById('verdict-momentum'); if(omEl) omEl.textContent=ai.overall_momentum||'—';
+    var odEl = document.getElementById('verdict-direction'); if(odEl){odEl.textContent=mmVerdict(od);odEl.style.color=od==='Bullish'?'#00C87A':od==='Bearish'?'#FF1E3C':'#FFB020';}
+    var omEl = document.getElementById('verdict-momentum'); if(omEl) omEl.textContent=mmVerdict(ai.overall_momentum)||'—';
     var ocEl = document.getElementById('verdict-confidence'); if(ocEl){ocEl.textContent=oc+'%';ocEl.style.color=oc>=65?'#00C87A':oc>=45?'#FFB020':'#FF1E3C';}
-    var orEl = document.getElementById('verdict-risk'); if(orEl){orEl.textContent=ai.overall_risk||'—';orEl.style.color=ai.overall_risk==='Low'?'#00C87A':ai.overall_risk==='High'?'#FF1E3C':'#FFB020';}
+    var orEl = document.getElementById('verdict-risk'); if(orEl){orEl.textContent=mmVerdict(ai.overall_risk)||'—';orEl.style.color=ai.overall_risk==='Low'?'#00C87A':ai.overall_risk==='High'?'#FF1E3C':'#FFB020';}
     var vbar = document.getElementById('verdict-bar'); if(vbar) vbar.style.width=oc+'%';
     var vsEl = document.getElementById('verdict-summary'); if(vsEl) vsEl.textContent=ai.overall_summary||'—';
 
