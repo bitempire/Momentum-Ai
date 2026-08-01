@@ -1810,13 +1810,13 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         </div>
         <svg class="mm-bal-svg" viewBox="0 0 300 80" preserveAspectRatio="none" aria-hidden="true" style="position:absolute;left:0;right:0;bottom:0;width:100%;height:80px;display:block;">
           <defs>
-            <linearGradient id="mmWaveGrad" gradientUnits="userSpaceOnUse" x1="-300" y1="0" x2="300" y2="0">
+            <linearGradient id="mmWaveGrad" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="300" y2="0" spreadMethod="repeat">
               <stop id="mm-wave-s0" offset="0%" stop-color="#8c1226"></stop>
-              <stop id="mm-wave-s1" offset="25%" stop-color="#e03050"></stop>
-              <stop id="mm-wave-s2" offset="50%" stop-color="#ff6b7e"></stop>
-              <stop id="mm-wave-s3" offset="75%" stop-color="#e03050"></stop>
+              <stop id="mm-wave-s1" offset="22%" stop-color="#e03050"></stop>
+              <stop id="mm-wave-s2" offset="45%" stop-color="#ff8fa3"></stop>
+              <stop id="mm-wave-s3" offset="70%" stop-color="#e03050"></stop>
               <stop id="mm-wave-s4" offset="100%" stop-color="#8c1226"></stop>
-              <animateTransform attributeName="gradientTransform" type="translate" from="0 0" to="600 0" dur="9s" repeatCount="indefinite"></animateTransform>
+              <animateTransform attributeName="gradientTransform" type="translate" from="0 0" to="300 0" dur="7s" repeatCount="indefinite"></animateTransform>
             </linearGradient>
             <linearGradient id="mmWaveFade" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stop-color="#fff" stop-opacity="0.8"></stop>
@@ -1825,8 +1825,8 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
             <mask id="mmWaveMask"><rect x="0" y="0" width="300" height="80" fill="url(#mmWaveFade)"></rect></mask>
           </defs>
           <g mask="url(#mmWaveMask)">
-            <path id="mm-wave-back" fill="#e03050" fill-opacity="0.13" d="M0,64 C60,52 90,74 150,60 C210,46 240,64 300,48 L300,80 L0,80 Z"></path>
-            <path id="mm-wave-front" fill="url(#mmWaveGrad)" fill-opacity="0.55" d="M0,52 C50,36 80,64 130,45 C180,26 210,52 260,30 C280,22 292,26 300,21 L300,80 L0,80 Z"></path>
+            <path id="mm-wave-back" fill="#e03050" fill-opacity="0.16" d="M0,64 C60,52 90,74 150,60 C210,46 240,64 300,48 L300,80 L0,80 Z"></path>
+            <path id="mm-wave-front" fill="url(#mmWaveGrad)" fill-opacity="0.72" d="M0,52 C50,36 80,64 130,45 C180,26 210,52 260,30 C280,22 292,26 300,21 L300,80 L0,80 Z"></path>
           </g>
         </svg>
       </div>
