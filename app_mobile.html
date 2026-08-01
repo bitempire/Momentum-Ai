@@ -2170,7 +2170,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       </div>
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:14px;margin-bottom:18px;">
         <div style="display:flex;gap:5px;background:var(--bg3);border-radius:12px;padding:4px;margin-bottom:15px;">
-          <div id="more-leader-tab-profit" onclick="switchLeaderTab('profit')" style="flex:1;text-align:center;font-size:12px;font-weight:700;color:#fff;background:var(--red);border-radius:9px;padding:8px 0;cursor:pointer;transition:all .2s;">Top Profit</div>
+          <div id="more-leader-tab-profit" onclick="switchLeaderTab('profit')" style="flex:1;text-align:center;font-size:12px;font-weight:700;color:#fff;background:var(--red);border-radius:9px;padding:8px 0;cursor:pointer;transition:all .2s;" data-i18n="more.topProfit">Top Profit</div>
           <div id="more-leader-tab-volume" onclick="switchLeaderTab('volume')" style="flex:1;text-align:center;font-size:12px;font-weight:700;color:var(--text3);background:transparent;border-radius:9px;padding:8px 0;cursor:pointer;transition:all .2s;" data-i18n="more.topVolume">Top Volume</div>
         </div>
         <div id="more-leader-body"></div>
@@ -3242,7 +3242,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         <div style="font-size:11px;color:var(--text3);line-height:1.5;margin-bottom:12px;" data-i18n="prof.promoSub">Have a code? Redeem it to unlock Premium. One promo per MT5 account.</div>
         <div style="display:flex;gap:8px;">
           <input id="profile-promo-input" type="text" placeholder="No active promo" disabled style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-size:13px;text-transform:uppercase;opacity:0.45;cursor:not-allowed;"  data-i18n-ph="prof.phNoPromo" />
-          <button id="profile-promo-btn" onclick="applyProfilePromo()" disabled style="font-size:12px;font-weight:700;padding:10px 16px;background:rgba(240,178,50,0.13);border:1px solid rgba(240,178,50,0.3);border-radius:8px;color:var(--gold);cursor:not-allowed;white-space:nowrap;opacity:0.45;">Apply</button>
+          <button id="profile-promo-btn" onclick="applyProfilePromo()" disabled style="font-size:12px;font-weight:700;padding:10px 16px;background:rgba(240,178,50,0.13);border:1px solid rgba(240,178,50,0.3);border-radius:8px;color:var(--gold);cursor:not-allowed;white-space:nowrap;opacity:0.45;" data-i18n="promo.apply">Apply</button>
         </div>
         <div id="profile-promo-msg" style="display:none;font-size:11px;margin-top:8px;line-height:1.4;"></div>
       </div>
