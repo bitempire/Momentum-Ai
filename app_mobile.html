@@ -5569,6 +5569,10 @@ function mmAiLangNote(){
     '. Keep every JSON field name in English, and keep these values exactly as written in English:'+
     ' Bullish, Bearish, Neutral, Strong, Moderate, Weak, Low, Medium, High.';
 }
+function mmReportHead(h){
+  var m = {'MARKET OVERVIEW':'rep.overview','TECHNICAL PERSPECTIVE':'rep.technical','FUNDAMENTAL LANDSCAPE':'rep.fundamental','SENTIMENT READING':'rep.sentiment','MAI VERDICT':'rep.verdict'};
+  return m[h] ? t(m[h], h) : h;
+}
 function mmVerdict(v){
   if(v === null || v === undefined || v === '') return v;
   return t('verdict.' + String(v).trim().toLowerCase(), String(v));
@@ -7052,8 +7056,10 @@ async function generateMAIReport() {
     
     // Format the text with section headers in red
     var formatted = text
-      .replace(/^(MARKET OVERVIEW|TECHNICAL PERSPECTIVE|FUNDAMENTAL LANDSCAPE|SENTIMENT READING|MAI VERDICT)/gm, 
-        '<div style="color:var(--red);font-family:Orbitron,sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;margin-top:18px;margin-bottom:8px;">$1</div>')
+      .replace(/^#{1,6}\s*/gm, '')
+      .replace(/^(MARKET OVERVIEW|TECHNICAL PERSPECTIVE|FUNDAMENTAL LANDSCAPE|SENTIMENT READING|MAI VERDICT)\s*$/gm,
+        function(_m, _h){ return '<div style="color:var(--red);font-family:Orbitron,sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;margin-top:18px;margin-bottom:8px;">' + mmReportHead(_h) + '</div>'; })
+      .replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>')
       .replace(/\n\n/g, '</p><p style="margin-bottom:12px;">')
       .replace(/\n/g, ' ');
     
