@@ -4161,7 +4161,7 @@ function activateAutoTrading() {
   var note = document.getElementById('trade-success-note');
   if(note) {
     note.style.display = 'flex';
-    note.innerHTML = '<i class="ti ti-robot"></i>'+t('misc.autoOn','Automated trading activated! MT5 VPS integration required for live execution.')+'';
+    note.innerHTML = '<i class="ti ti-robot"></i>'+mmT('misc.autoOn','Automated trading activated! MT5 VPS integration required for live execution.')+'';
   }
 }
 
@@ -4237,7 +4237,7 @@ function showAvatarPicker() {
 
   var hdr = document.createElement('div');
   hdr.style.cssText = 'display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;';
-  hdr.innerHTML = '<div style="font-size:15px;font-weight:700;color:#fff;">'+t('av.edit','Edit avatar')+'</div>';
+  hdr.innerHTML = '<div style="font-size:15px;font-weight:700;color:#fff;">'+mmT('av.edit','Edit avatar')+'</div>';
   var x = document.createElement('button');
   x.innerHTML = '&times;';
   x.style.cssText = 'background:transparent;border:none;color:rgba(255,255,255,0.5);font-size:26px;line-height:1;cursor:pointer;';
@@ -4313,7 +4313,7 @@ function showAvatarPicker() {
   }
 
   var save = document.createElement('button');
-  save.innerHTML = '<i class="ti ti-check" style="font-size:18px;"></i><span style="font-size:14px;font-weight:700;">'+t('av.save','Save avatar')+'</span>';
+  save.innerHTML = '<i class="ti ti-check" style="font-size:18px;"></i><span style="font-size:14px;font-weight:700;">'+mmT('av.save','Save avatar')+'</span>';
   save.style.cssText = 'width:100%;display:flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,#FF1E3C,#C40024);border:none;border-radius:14px;padding:14px;color:#fff;cursor:pointer;font-family:Sora,sans-serif;box-shadow:0 8px 20px rgba(255,30,60,0.35);';
   save.addEventListener('click', function(){ saveAvatar(work); overlay.remove(); });
   sheet.appendChild(save);
@@ -4326,9 +4326,9 @@ function showAvatarPicker() {
 
 function refreshScanner() {
   var btn = event.currentTarget;
-  btn.innerHTML = '<i class="ti ti-loader" style="font-size:14px;animation:spin 1s linear infinite;"></i>'+t('sc.scanning','Scanning...')+'';
+  btn.innerHTML = '<i class="ti ti-loader" style="font-size:14px;animation:spin 1s linear infinite;"></i>'+mmT('sc.scanning','Scanning...')+'';
   setTimeout(function() {
-    btn.innerHTML = '<i class="ti ti-refresh" style="font-size:14px;"></i>'+t('sc.refresh','Refresh')+'';
+    btn.innerHTML = '<i class="ti ti-refresh" style="font-size:14px;"></i>'+mmT('sc.refresh','Refresh')+'';
   }, 2000);
 }
 
@@ -4849,7 +4849,7 @@ function enterApp(user) {
     var profStatus = document.getElementById('profile-status');
     if(profAv) profAv.textContent = name.substring(0,2).toUpperCase();
     if(profName) profName.textContent = user.name || user.username || 'Trader';
-    if(profRole) profRole.textContent = user.role === 'admin' ? t('pa.superAdmin','Super Admin') : user.role === 'analyst' ? t('pa.analyst','Analyst') : (isPremiumUser() ? t('pa.premiumUser','Premium User') : t('pa.basicUser','Basic User'));
+    if(profRole) profRole.textContent = user.role === 'admin' ? mmT('pa.superAdmin','Super Admin') : user.role === 'analyst' ? mmT('pa.analyst','Analyst') : (isPremiumUser() ? mmT('pa.premiumUser','Premium User') : mmT('pa.basicUser','Basic User'));
     if(profUser) profUser.textContent = '@' + (user.username || '--');
     if(profEmail) profEmail.textContent = user.email || '--';
     if(profMt5) profMt5.textContent = user.mt5_id || '--';
@@ -4907,8 +4907,8 @@ async function loadActiveAccount() {
 function updateWelcomeBadge(){
   var b=document.getElementById('dash-tier-badge'); if(!b) return;
   var prem = (typeof isPremiumUser==='function') ? isPremiumUser() : false;
-  if(prem){ b.className='dash-welcome-badge premium'; b.innerHTML='<i class="ti ti-crown" style="font-size:11px;" aria-hidden="true"></i>'+t('w.premiumBadge','PREMIUM'); }
-  else { b.className='dash-welcome-badge basic'; b.innerHTML='<i class="ti ti-bolt" style="font-size:11px;" aria-hidden="true"></i>'+t('w.basicBadge','BASIC'); }
+  if(prem){ b.className='dash-welcome-badge premium'; b.innerHTML='<i class="ti ti-crown" style="font-size:11px;" aria-hidden="true"></i>'+mmT('w.premiumBadge','PREMIUM'); }
+  else { b.className='dash-welcome-badge basic'; b.innerHTML='<i class="ti ti-bolt" style="font-size:11px;" aria-hidden="true"></i>'+mmT('w.basicBadge','BASIC'); }
 }
 
 function renderHeaderSwitcher() {
@@ -4938,9 +4938,9 @@ function toggleAcctDropdown(e) {
   closeHeaderDropdowns();
   if(wasOpen) return;
   var conn = connectedAccounts();
-  var html = '<div class="hdr-dd-head">'+t('acct.connected','Connected accounts')+'</div>';
+  var html = '<div class="hdr-dd-head">'+mmT('acct.connected','Connected accounts')+'</div>';
   if(conn.length===0) {
-    html += '<div class="acct-row" style="cursor:default;"><span class="acct-id" style="color:var(--text2);font-weight:600;">'+t('acct.none','No account connected')+'</span></div>';
+    html += '<div class="acct-row" style="cursor:default;"><span class="acct-id" style="color:var(--text2);font-weight:600;">'+mmT('acct.none','No account connected')+'</span></div>';
   } else {
     conn.forEach(function(a){
       var isAct = activeAccount && a.id===activeAccount.id;
@@ -4951,7 +4951,7 @@ function toggleAcctDropdown(e) {
               '</div>';
     });
   }
-  html += '<div class="acct-add" onclick="closeHeaderDropdowns();showSubScreen(\'sub-profile\');"><i class="ti ti-plus" style="font-size:16px;"></i>'+t('acct.connect','Connect account')+'</div>';
+  html += '<div class="acct-add" onclick="closeHeaderDropdowns();showSubScreen(\'sub-profile\');"><i class="ti ti-plus" style="font-size:16px;"></i>'+mmT('acct.connect','Connect account')+'</div>';
   dd.innerHTML = html;
   dd.classList.add('show');
   var bd=document.getElementById('hdr-dd-backdrop'); if(bd) bd.classList.add('show');
@@ -4988,12 +4988,12 @@ function toggleAvatarDropdown(e) {
   var role = currentUser ? currentUser.role : '';
   var isStaff = (role==='admin'||role==='analyst'||role==='sub_admin');
   var roleLbl = role==='admin' ? 'Super Admin' : role==='analyst' ? 'Analyst' : role==='sub_admin' ? 'Sub Admin' : '';
-  var basicBadge = '<span class="avtr-badge" style="background:rgba(59,130,246,0.13);border-color:rgba(59,130,246,0.35);color:var(--blue);font-family:Sora,sans-serif;">'+t('w.basicBadge','BASIC')+'</span>';
+  var basicBadge = '<span class="avtr-badge" style="background:rgba(59,130,246,0.13);border-color:rgba(59,130,246,0.35);color:var(--blue);font-family:Sora,sans-serif;">'+mmT('w.basicBadge','BASIC')+'</span>';
   var topRight;
   if(isStaff){
     topRight = '<span class="avtr-badge" style="background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.15);color:var(--text2);font-family:Sora,sans-serif;">'+roleLbl+'</span>';
   } else if(isPremiumUser()){
-    topRight = '<span class="avtr-badge"><i class="ti ti-crown" style="font-size:10px;"></i>'+t('w.premiumBadge','PREMIUM')+'</span>';
+    topRight = '<span class="avtr-badge"><i class="ti ti-crown" style="font-size:10px;"></i>'+mmT('w.premiumBadge','PREMIUM')+'</span>';
   } else {
     topRight = basicBadge;
   }
@@ -5004,14 +5004,14 @@ function toggleAvatarDropdown(e) {
         '<span style="font-size:14px;font-weight:700;color:var(--text);">'+name+'</span>'+
         topRight+
       '</div></div>'+
-    '<div class="avtr-item" onclick="closeHeaderDropdowns();showSubScreen(\'sub-profile\');"><i class="ti ti-user"></i>'+t('menu.profile','Profile')+'</div>'+
-    '<div class="avtr-item" onclick="closeHeaderDropdowns();showSubScreen(\'sub-support\');"><i class="ti ti-headset"></i>'+t('menu.support','Customer Support')+'</div>'+
-    '<div class="avtr-item" onclick="openLangPicker()"><i class="ti ti-language"></i>'+t('menu.language','Language')+'<span id="mm-lang-label" style="margin-left:auto;font-size:12px;color:var(--text3);">'+mmLangName(mmGetLang())+'</span></div>'+
+    '<div class="avtr-item" onclick="closeHeaderDropdowns();showSubScreen(\'sub-profile\');"><i class="ti ti-user"></i>'+mmT('menu.profile','Profile')+'</div>'+
+    '<div class="avtr-item" onclick="closeHeaderDropdowns();showSubScreen(\'sub-support\');"><i class="ti ti-headset"></i>'+mmT('menu.support','Customer Support')+'</div>'+
+    '<div class="avtr-item" onclick="openLangPicker()"><i class="ti ti-language"></i>'+mmT('menu.language','Language')+'<span id="mm-lang-label" style="margin-left:auto;font-size:12px;color:var(--text3);">'+mmLangName(mmGetLang())+'</span></div>'+
     '<div class="avtr-toggle" onclick="toggleTheme(event)">'+
-      '<span class="avtr-toggle-left"><i class="ti ti-'+(isLight?'sun':'moon-stars')+'" id="theme-toggle-icon"></i><span id="theme-toggle-label">'+(isLight?t('menu.lightMode','Light Mode'):t('menu.darkMode','Dark Mode'))+'</span></span>'+
+      '<span class="avtr-toggle-left"><i class="ti ti-'+(isLight?'sun':'moon-stars')+'" id="theme-toggle-icon"></i><span id="theme-toggle-label">'+(isLight?mmT('menu.lightMode','Light Mode'):mmT('menu.darkMode','Dark Mode'))+'</span></span>'+
       '<span class="theme-switch"><span class="knob"></span></span>'+
     '</div>'+
-    '<div class="avtr-item danger" onclick="closeHeaderDropdowns();handleLogout();"><i class="ti ti-logout"></i>'+t('menu.signOut','Sign Out')+'</div>';
+    '<div class="avtr-item danger" onclick="closeHeaderDropdowns();handleLogout();"><i class="ti ti-logout"></i>'+mmT('menu.signOut','Sign Out')+'</div>';
   dd.innerHTML = html;
   dd.classList.add('show');
   var bd=document.getElementById('hdr-dd-backdrop'); if(bd) bd.classList.add('show');
@@ -5076,7 +5076,7 @@ function toggleTheme(e) {
   var nowLight = next === 'light';
   var lbl = document.getElementById('theme-toggle-label');
   var ic  = document.getElementById('theme-toggle-icon');
-  if (lbl) lbl.textContent = nowLight ? t('menu.lightMode','Light Mode') : t('menu.darkMode','Dark Mode');
+  if (lbl) lbl.textContent = nowLight ? mmT('menu.lightMode','Light Mode') : mmT('menu.darkMode','Dark Mode');
   if (ic)  ic.className = 'ti ti-' + (nowLight ? 'sun' : 'moon-stars');
 }
 function initTheme() {
@@ -5571,13 +5571,20 @@ function mmAiLangNote(){
 }
 function mmReportHead(h){
   var m = {'MARKET OVERVIEW':'rep.overview','TECHNICAL PERSPECTIVE':'rep.technical','FUNDAMENTAL LANDSCAPE':'rep.fundamental','SENTIMENT READING':'rep.sentiment','MAI VERDICT':'rep.verdict'};
-  return m[h] ? t(m[h], h) : h;
+  return m[h] ? mmT(m[h], h) : h;
 }
 function mmVerdict(v){
   if(v === null || v === undefined || v === '') return v;
-  return t('verdict.' + String(v).trim().toLowerCase(), String(v));
+  return mmT('verdict.' + String(v).trim().toLowerCase(), String(v));
 }
 
+function mmT(key, enFallback){
+  var lang = mmGetLang();
+  if(lang === 'en') return (enFallback!=null ? enFallback : key);
+  var d = MM_I18N[lang];
+  if(d && d[key] != null) return d[key];
+  return (enFallback!=null ? enFallback : key);
+}
 function t(key, enFallback){
   var lang = mmGetLang();
   if(lang === 'en') return (enFallback!=null ? enFallback : key);
@@ -5621,7 +5628,7 @@ function openLangPicker(){
   var sheet=document.createElement('div');
   sheet.style.cssText='width:100%;max-height:82vh;overflow-y:auto;background:var(--bg2);border-radius:20px 20px 0 0;border-top:1px solid var(--border);padding:18px 16px 34px;';
   var h='<div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px;"></div>'+
-        '<div style="font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);text-align:center;margin-bottom:16px;">'+t('common.language','Language')+'</div>';
+        '<div style="font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);text-align:center;margin-bottom:16px;">'+mmT('common.language','Language')+'</div>';
   if(cur!=='en' && !(MM_I18N[cur] && Object.keys(MM_I18N[cur]).length)) cur='en';
   var mmAvail=[], mmSoon=[];
   for(var i=0;i<MMLANGS.length;i++){ var L=MMLANGS[i];
@@ -5637,12 +5644,12 @@ function openLangPicker(){
   function mmLangRowSoon(L){
     return '<div style="display:flex;align-items:center;justify-content:space-between;padding:13px 14px;margin-bottom:8px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;opacity:0.55;cursor:default;">'+
       '<span style="font-size:14px;color:var(--text3);font-weight:500;">'+L.native+'<span style="font-size:11px;color:var(--text3);margin-left:8px;">'+L.en+'</span></span>'+
-      '<span style="font-size:10px;color:var(--text3);background:var(--bg2);border-radius:6px;padding:3px 8px;">'+t('lang.soon','Soon')+'</span></div>';
+      '<span style="font-size:10px;color:var(--text3);background:var(--bg2);border-radius:6px;padding:3px 8px;">'+mmT('lang.soon','Soon')+'</span></div>';
   }
-  h+=mmLangHdr(t('lang.available','AVAILABLE'));
+  h+=mmLangHdr(mmT('lang.available','AVAILABLE'));
   for(var a=0;a<mmAvail.length;a++){ h+=mmLangRow(mmAvail[a], mmAvail[a].code===cur); }
   if(mmSoon.length){
-    h+=mmLangHdr(t('lang.comingSoon','COMING SOON'));
+    h+=mmLangHdr(mmT('lang.comingSoon','COMING SOON'));
     for(var s2=0;s2<mmSoon.length;s2++){ h+=mmLangRowSoon(mmSoon[s2]); }
   }
   sheet.innerHTML=h;
@@ -5772,7 +5779,7 @@ async function applyPromoCode(){
   var r = await redeemPromo(inp.value);
   show(r.msg, r.ok);
   if(r.ok){ inp.value=''; setTimeout(function(){ closeDepositPopup(); updateDepositBanner(); }, 1500); }
-  if(btn){ btn.textContent=t('promo.apply','Apply'); btn.disabled=false; }
+  if(btn){ btn.textContent=mmT('promo.apply','Apply'); btn.disabled=false; }
 }
 // ---- Profile promo code (single entry point) ----
 async function isPromoLive(){
@@ -5822,21 +5829,21 @@ async function refreshProfilePromo(){
     inp.disabled=true; btn.disabled=true;
     inp.style.opacity='0.45'; btn.style.opacity='0.45';
     inp.style.cursor='not-allowed'; btn.style.cursor='not-allowed';
-    inp.value=''; inp.placeholder=t('prof.phNoPromo','No active promo');
+    inp.value=''; inp.placeholder=mmT('prof.phNoPromo','No active promo');
     if(msg){ if(text){ msg.style.display='block'; msg.textContent=text; msg.style.color='var(--text3)'; } else { msg.style.display='none'; msg.textContent=''; } }
   }
   function unlock(){
     inp.disabled=false; btn.disabled=false;
     inp.style.opacity='1'; btn.style.opacity='1';
     inp.style.cursor='text'; btn.style.cursor='pointer';
-    inp.placeholder=t('promo.enterCode','Enter promo code');
+    inp.placeholder=mmT('promo.enterCode','Enter promo code');
     if(msg){ msg.style.display='none'; msg.textContent=''; }
   }
   lock('');
-  if(!db || !currentUser || !activeAccount || !activeAccount.id){ lock(t('promo.connectFirst','Connect your MT5 account first.')); return; }
-  try { var _pc = await userPromoClaim(); if(_pc){ lock(_pc.mt5_id ? t('promo.claimedOn','You already claimed a promo on account {n}. One per user.').replace('{n}', _pc.mt5_id) : t('promo.claimed','You already claimed a promo. One per user.')); return; } } catch(e){}
-  try { if(await isPromoLive()){ unlock(); } else { lock(t('promo.noneNow','No active promo available right now.')); } }
-  catch(e){ lock(t('promo.noneNow','No active promo available right now.')); }
+  if(!db || !currentUser || !activeAccount || !activeAccount.id){ lock(mmT('promo.connectFirst','Connect your MT5 account first.')); return; }
+  try { var _pc = await userPromoClaim(); if(_pc){ lock(_pc.mt5_id ? mmT('promo.claimedOn','You already claimed a promo on account {n}. One per user.').replace('{n}', _pc.mt5_id) : mmT('promo.claimed','You already claimed a promo. One per user.')); return; } } catch(e){}
+  try { if(await isPromoLive()){ unlock(); } else { lock(mmT('promo.noneNow','No active promo available right now.')); } }
+  catch(e){ lock(mmT('promo.noneNow','No active promo available right now.')); }
 }
 async function applyProfilePromo(){
   var inp=document.getElementById('profile-promo-input');
@@ -5847,10 +5854,10 @@ async function applyProfilePromo(){
   if(!inp.value.trim()){ show('Enter a promo code.', false); return; }
   if(btn){ btn.textContent='...'; btn.disabled=true; }
   var r = await redeemPromo(inp.value);
-  if(btn){ btn.textContent=t('promo.apply','Apply'); btn.disabled=false; }
+  if(btn){ btn.textContent=mmT('promo.apply','Apply'); btn.disabled=false; }
   if(r.needMt5){ showMt5ConnectPrompt(); return; }
   show(r.msg, r.ok);
-  if(btn){ btn.textContent=t('promo.apply','Apply'); }
+  if(btn){ btn.textContent=mmT('promo.apply','Apply'); }
   if(r.ok){
     inp.value='';
     if(typeof loadProfileData==='function') loadProfileData();
@@ -5919,9 +5926,9 @@ async function claimCampaign(){
   function show(t,ok){ if(m){ m.style.display='block'; m.style.color=ok?'var(--green)':'var(--red)'; m.textContent=t; } }
   var code = inp ? inp.value.trim() : '';
   if(!code){ show('Enter your promo code.', false); return; }
-  if(btn){ btn.textContent=t('promo.claiming','Claiming...'); btn.disabled=true; }
+  if(btn){ btn.textContent=mmT('promo.claiming','Claiming...'); btn.disabled=true; }
   var r=await redeemPromo(code);
-  if(btn){ btn.textContent=t('promo.claimNow','Claim now'); btn.disabled=false; }
+  if(btn){ btn.textContent=mmT('promo.claimNow','Claim now'); btn.disabled=false; }
   if(r.needMt5){ showMt5ConnectPrompt(); return; }
   show(r.msg, r.ok);
   if(r.ok){
@@ -6019,7 +6026,7 @@ async function loadDashboardSignals() {
   var container = document.getElementById('mob-dash-signals');
   try {
     var res = await db.from('signals').select('*').eq('status','active').order('created_at',{ascending:false}).limit(4);
-    if(res.error||!res.data) { container.innerHTML='<div class="empty-state">'+t('ds.none','No signals yet')+'</div>'; return; }
+    if(res.error||!res.data) { container.innerHTML='<div class="empty-state">'+mmT('ds.none','No signals yet')+'</div>'; return; }
     window._signalStore = {};
     res.data.forEach(function(s) { window._signalStore[s.id]=s; });
     container.innerHTML = res.data.map(function(sig) {
@@ -6030,16 +6037,16 @@ async function loadDashboardSignals() {
         '<div class="dash-sig-right"><div class="dash-sig-dir '+dir+'">'+sig.direction+'</div><div class="dash-sig-strength">'+sig.strength+'%</div></div>' +
         '</div>';
     }).join('');
-  } catch(e) { container.innerHTML = '<div class="empty-state">'+t('ds.error','Error loading signals')+'</div>'; }
+  } catch(e) { container.innerHTML = '<div class="empty-state">'+mmT('ds.error','Error loading signals')+'</div>'; }
 }
 
 // ── LOAD SIGNALS FEED ──
 async function loadSignalsFeed() {
   var container = document.getElementById('mob-signals-list');
-  container.innerHTML = '<div class="empty-state"><i class="ti ti-broadcast"></i>'+t('pa.loading','Loading...')+'</div>';
+  container.innerHTML = '<div class="empty-state"><i class="ti ti-broadcast"></i>'+mmT('pa.loading','Loading...')+'</div>';
   try {
     var res = await db.from('signals').select('*').eq('status','active').order('created_at',{ascending:false});
-    if(res.error||!res.data) { container.innerHTML='<div class="empty-state"><i class="ti ti-broadcast"></i>'+t('ds.none','No signals yet')+'</div>'; return; }
+    if(res.error||!res.data) { container.innerHTML='<div class="empty-state"><i class="ti ti-broadcast"></i>'+mmT('ds.none','No signals yet')+'</div>'; return; }
     window._signalStore = {};
     res.data.forEach(function(s) { window._signalStore[s.id]=s; });
     container.innerHTML = '';
@@ -6076,10 +6083,10 @@ async function loadSignalsFeed() {
       info.appendChild(timeEl);
       var dirEl = document.createElement('div');
       dirEl.className = 'sig-card-dir ' + dir;
-      dirEl.textContent = (dir==='buy')?t('sig.buy','BUY'):t('sig.sell','SELL');
+      dirEl.textContent = (dir==='buy')?mmT('sig.buy','BUY'):mmT('sig.sell','SELL');
       var sBadge=document.createElement('div');
       var isAct=sig.status==='active';
-      sBadge.textContent=isAct?t('sig.active','ACTIVE'):t('sig.inactive','INACTIVE');
+      sBadge.textContent=isAct?mmT('sig.active','ACTIVE'):mmT('sig.inactive','INACTIVE');
       sBadge.style.cssText='padding:4px 9px;border-radius:6px;font-family:Orbitron,sans-serif;font-size:9px;font-weight:800;letter-spacing:.8px;margin-right:5px;flex-shrink:0;'+(isAct?'background:rgba(0,200,122,0.12);color:#00c87a;border:1px solid rgba(0,200,122,0.25);':'background:rgba(255,176,32,0.12);color:#ffb020;border:1px solid rgba(255,176,32,0.25);');
       top.appendChild(icon);
       top.appendChild(info);
@@ -6096,11 +6103,11 @@ async function loadSignalsFeed() {
         var lval=document.createElement('div'); lval.className='sig-level-val'+cls; lval.textContent=(val||'--');
         lbox.appendChild(llbl); lbox.appendChild(lval); return lbox;
       }
-      var _ezTile=_mkLevel(t('sig.entryZone','Entry Zone'), _entryZone, ''); _ezTile.className='sig-level sig-level-wide';
+      var _ezTile=_mkLevel(mmT('sig.entryZone','Entry Zone'), _entryZone, ''); _ezTile.className='sig-level sig-level-wide';
       levels.appendChild(_ezTile);
       var _row2=document.createElement('div'); _row2.className='sig-level-row2';
-      _row2.appendChild(_mkLevel(t('sig.stopLoss','Stop Loss'), fmtPrice(sig.pair, sig.sl), ' sl'));
-      _row2.appendChild(_mkLevel(t('sig.takeProfit','Take Profit'), fmtPrice(sig.pair, sig.tp1), ' tp'));
+      _row2.appendChild(_mkLevel(mmT('sig.stopLoss','Stop Loss'), fmtPrice(sig.pair, sig.sl), ' sl'));
+      _row2.appendChild(_mkLevel(mmT('sig.takeProfit','Take Profit'), fmtPrice(sig.pair, sig.tp1), ' tp'));
       levels.appendChild(_row2);
 
       // Footer row
@@ -6120,7 +6127,7 @@ async function loadSignalsFeed() {
       // Trade Now button
       var tradeBtn = document.createElement('button');
       tradeBtn.className = 'sig-trade-btn';
-      tradeBtn.textContent = t('sig.tradeNow','Trade Now');
+      tradeBtn.textContent = mmT('sig.tradeNow','Trade Now');
       (function(id) {
         tradeBtn.addEventListener('click', function() { openTradePopup(id); });
       })(sig.id);
@@ -6147,7 +6154,7 @@ async function loadSignalsFeed() {
         _names.sort(function(a,b){ return a.toLowerCase().localeCompare(b.toLowerCase()); });
         _aSel.innerHTML = '';
         var _optAll = document.createElement('option');
-        _optAll.value = ''; _optAll.textContent = t('sig.allAnalysts','All Analysts');
+        _optAll.value = ''; _optAll.textContent = mmT('sig.allAnalysts','All Analysts');
         _aSel.appendChild(_optAll);
         _names.forEach(function(n){
           var o = document.createElement('option');
@@ -6157,7 +6164,7 @@ async function loadSignalsFeed() {
         _aSel.value = _cur; // preserve current selection across reloads
       }
     } catch(e){}
-  } catch(e) { container.innerHTML = '<div class="empty-state">'+t('ds.error','Error loading signals')+'</div>'; }
+  } catch(e) { container.innerHTML = '<div class="empty-state">'+mmT('ds.error','Error loading signals')+'</div>'; }
 }
 
 // ── TRADE POPUP ──
@@ -6426,9 +6433,9 @@ async function executeTradeInner(method) {
     if(_armed){
       // Step 3: full armed UI - countdown + Cancel + auto-resolve
       if(cid){ armedCountdown(cid, btn, origText); }
-      else { note.innerHTML = '<i class="ti ti-clock"></i>'+t('ex.armed','Armed \u2014 waiting for price to enter the entry zone.')+''; if(btn){ btn.textContent=origText; btn.disabled=false; } }
+      else { note.innerHTML = '<i class="ti ti-clock"></i>'+mmT('ex.armed','Armed \u2014 waiting for price to enter the entry zone.')+''; if(btn){ btn.textContent=origText; btn.disabled=false; } }
     } else {
-      note.innerHTML = '<i class="ti ti-loader"></i>'+t('ex.placing','Placing trade\u2026 confirming with MT5.')+'';
+      note.innerHTML = '<i class="ti ti-loader"></i>'+mmT('ex.placing','Placing trade\u2026 confirming with MT5.')+'';
       if(btn){ btn.textContent='Placing\u2026'; btn.disabled=true; }
       if(cid) { pollTradeCommand(cid, btn, origText); }
       else { if(btn){ btn.textContent=origText; btn.disabled=false; } }
@@ -6466,34 +6473,34 @@ async function pollTradeCommand(id, btn, origText){
       if(row && row.status==='failed'){
         stop(); resetBtn();
         var _dry = (row.result||'').toLowerCase().indexOf('dry run')>=0 || (row.result||'').toLowerCase().indexOf('not armed')>=0;
-        if(_dry){ show('<i class="ti ti-flask"></i>'+t('tk.simOnly','Simulated only \u2014 this account is not armed for live trading yet, so no order was sent. Contact support to activate live trading.')+'','rgba(230,160,30,0.12)','#c9821a'); }
-        else    { show('<i class="ti ti-alert-circle"></i>'+t('tk.failed','Trade failed:')+' '+(row.result||'unknown error'),'rgba(255,60,60,0.12)','#d33'); }
+        if(_dry){ show('<i class="ti ti-flask"></i>'+mmT('tk.simOnly','Simulated only \u2014 this account is not armed for live trading yet, so no order was sent. Contact support to activate live trading.')+'','rgba(230,160,30,0.12)','#c9821a'); }
+        else    { show('<i class="ti ti-alert-circle"></i>'+mmT('tk.failed','Trade failed:')+' '+(row.result||'unknown error'),'rgba(255,60,60,0.12)','#d33'); }
         return;
       }
       if(row && (row.status==='filled'||row.status==='executed')){
         stop(); resetBtn();
-        show('<i class="ti ti-circle-check"></i>'+t('tk.filled','Trade filled on MT5! Manage it in your terminal.')+'','rgba(40,200,120,0.12)','#1a9d5a');
+        show('<i class="ti ti-circle-check"></i>'+mmT('tk.filled','Trade filled on MT5! Manage it in your terminal.')+'','rgba(40,200,120,0.12)','#1a9d5a');
         return;
       }
       if(row && row.status==='expired'){
         stop(); resetBtn();
-        show('<i class="ti ti-circle-x"></i>'+t('tk.notPlaced','Not placed \u2014 another trade was still open. Fire again at the current price.')+'','rgba(150,150,150,0.15)','#777');
+        show('<i class="ti ti-circle-x"></i>'+mmT('tk.notPlaced','Not placed \u2014 another trade was still open. Fire again at the current price.')+'','rgba(150,150,150,0.15)','#777');
         return;
       }
       if(row && row.status==='cancelled'){
         stop(); resetBtn();
-        show('<i class="ti ti-circle-x"></i>'+t('tk.cancelled','Trade cancelled.')+'','rgba(255,60,60,0.10)','#d33');
+        show('<i class="ti ti-circle-x"></i>'+mmT('tk.cancelled','Trade cancelled.')+'','rgba(255,60,60,0.10)','#d33');
         return;
       }
     }catch(e){}
     if(Date.now()-startedAt >= GIVE_UP_MS){
       stop(); resetBtn();
-      show('<i class="ti ti-clock"></i>'+t('tk.stillWaiting','Still waiting. Check the Trading Journal for the final result.')+'','rgba(255,180,0,0.12)','#c98a00');
+      show('<i class="ti ti-clock"></i>'+mmT('tk.stillWaiting','Still waiting. Check the Trading Journal for the final result.')+'','rgba(255,180,0,0.12)','#c98a00');
       return;
     }
     if(!queuedShown && tries>=FAST_TRIES){
       queuedShown=true; resetBtn();
-      show('<i class="ti ti-clock"></i>'+t('tk.queued','Queued \u2014 your worker opens one trade at a time, so this will open when your current trade closes. It expires if not placed within an hour.')+'','rgba(255,180,0,0.12)','#c98a00');
+      show('<i class="ti ti-clock"></i>'+mmT('tk.queued','Queued \u2014 your worker opens one trade at a time, so this will open when your current trade closes. It expires if not placed within an hour.')+'','rgba(255,180,0,0.12)','#c98a00');
       start(5000);
     }
   }
@@ -6520,13 +6527,13 @@ function armedCountdown(id, btn, origText){
   async function expire(){
     if(done) return; clearAll();
     try{ await mmaiTradeCommand({ updateId:id, status:'expired' }); }catch(e){}
-    show('<i class="ti ti-circle-x"></i>'+t('ex.notReached5','Entry zone not reached in 5 min \u2014 order expired.')+'','rgba(150,150,150,0.15)','#777');
+    show('<i class="ti ti-circle-x"></i>'+mmT('ex.notReached5','Entry zone not reached in 5 min \u2014 order expired.')+'','rgba(150,150,150,0.15)','#777');
   }
   window._armedCancels = window._armedCancels || {};
   window._armedCancels[id] = async function(){
     if(done) return; clearAll();
     try{ await mmaiTradeCommand({ updateId:id, status:'cancelled' }); }catch(e){}
-    show('<i class="ti ti-circle-x"></i>'+t('ex.cancelled','Armed order cancelled.')+'','rgba(255,60,60,0.10)','#d33');
+    show('<i class="ti ti-circle-x"></i>'+mmT('ex.cancelled','Armed order cancelled.')+'','rgba(255,60,60,0.10)','#d33');
   };
   tick = setInterval(render, 1000); render();
   poll = setInterval(async function(){
@@ -6535,10 +6542,10 @@ function armedCountdown(id, btn, origText){
       var r=await db.from('trade_commands').select('status,result').eq('id',id).single();
       var row=(r&&r.data)?(Array.isArray(r.data)?r.data[0]:r.data):null;
       if(!row) return;
-      if(row.status==='filled'||row.status==='executed'){ clearAll(); show('<i class="ti ti-circle-check"></i>'+t('ex.hitZone','Price hit the zone \u2014 trade filled on MT5!')+'','rgba(40,200,120,0.12)','#1a9d5a'); }
-      else if(row.status==='failed'){ clearAll(); var _d=(row.result||'').toLowerCase(); if(_d.indexOf('dry run')>=0||_d.indexOf('not armed')>=0){ show('<i class="ti ti-flask"></i>'+t('ex.simOnly','Simulated only \u2014 account not armed for live trading, no order sent. Contact support to go live.')+'','rgba(230,160,30,0.12)','#c9821a'); } else { show('<i class="ti ti-alert-circle"></i>'+t('tk.failed','Trade failed:')+' '+(row.result||'unknown error'),'rgba(255,60,60,0.12)','#d33'); } }
-      else if(row.status==='cancelled'){ clearAll(); show('<i class="ti ti-circle-x"></i>'+t('ex.cancelled','Armed order cancelled.')+'','rgba(255,60,60,0.10)','#d33'); }
-      else if(row.status==='expired'){ clearAll(); show('<i class="ti ti-circle-x"></i>'+t('ex.notReached','Entry zone not reached \u2014 order expired.')+'','rgba(150,150,150,0.15)','#777'); }
+      if(row.status==='filled'||row.status==='executed'){ clearAll(); show('<i class="ti ti-circle-check"></i>'+mmT('ex.hitZone','Price hit the zone \u2014 trade filled on MT5!')+'','rgba(40,200,120,0.12)','#1a9d5a'); }
+      else if(row.status==='failed'){ clearAll(); var _d=(row.result||'').toLowerCase(); if(_d.indexOf('dry run')>=0||_d.indexOf('not armed')>=0){ show('<i class="ti ti-flask"></i>'+mmT('ex.simOnly','Simulated only \u2014 account not armed for live trading, no order sent. Contact support to go live.')+'','rgba(230,160,30,0.12)','#c9821a'); } else { show('<i class="ti ti-alert-circle"></i>'+mmT('tk.failed','Trade failed:')+' '+(row.result||'unknown error'),'rgba(255,60,60,0.12)','#d33'); } }
+      else if(row.status==='cancelled'){ clearAll(); show('<i class="ti ti-circle-x"></i>'+mmT('ex.cancelled','Armed order cancelled.')+'','rgba(255,60,60,0.10)','#d33'); }
+      else if(row.status==='expired'){ clearAll(); show('<i class="ti ti-circle-x"></i>'+mmT('ex.notReached','Entry zone not reached \u2014 order expired.')+'','rgba(150,150,150,0.15)','#777'); }
     }catch(e){}
   }, 2000);
 }
@@ -6741,7 +6748,7 @@ function stnSignalGate(v, errEl){
     if(_sigWarnKey!==key){
       _sigWarnKey=key;
       errEl.style.color='var(--amber)';
-      errEl.innerHTML=r.warns.join('<br>')+'<br><b>'+t('stn.pressAgain','Press again to post anyway.')+'</b>';
+      errEl.innerHTML=r.warns.join('<br>')+'<br><b>'+mmT('stn.pressAgain','Press again to post anyway.')+'</b>';
       errEl.style.display='block';
       return false;
     }
@@ -6990,7 +6997,7 @@ function initiateScan() {
     if(tfLabel) tfLabel.textContent = tf;
     var results = document.getElementById('scan-results');
     if(results) results.style.display = 'block';
-    if(status) status.textContent = t('sc.lastScanNow','Last scan: just now \u00b7 ') + symbol + ' ' + tf;
+    if(status) status.textContent = mmT('sc.lastScanNow','Last scan: just now \u00b7 ') + symbol + ' ' + tf;
     if(btn) { btn.textContent = 'INITIATE SCAN'; btn.disabled = false; }
   }, 2000);
 }
@@ -7013,7 +7020,7 @@ async function generateMAIReport() {
   
   if(subtitle) subtitle.textContent = symbol + ' · ' + tf + ' · ' + dateStr;
   popup.style.display = 'flex';
-  content.innerHTML = '<div style="text-align:center;padding:30px;"><i class="ti ti-brain" style="font-size:36px;color:var(--red);display:block;margin-bottom:10px;animation:pulse 1.5s infinite;"></i>'+t('rep.generating','Generating intelligence report...')+'</div>';
+  content.innerHTML = '<div style="text-align:center;padding:30px;"><i class="ti ti-brain" style="font-size:36px;color:var(--red);display:block;margin-bottom:10px;animation:pulse 1.5s infinite;"></i>'+mmT('rep.generating','Generating intelligence report...')+'</div>';
   
   // Gather real scan data if available
   var scanPrice = document.getElementById('scan-price') ? document.getElementById('scan-price').textContent : '—';
@@ -7066,15 +7073,15 @@ async function generateMAIReport() {
     content.innerHTML = '<p style="margin-bottom:12px;">' + formatted + '</p>';
   } catch(e) {
     content.innerHTML = '<div style="padding:14px;background:rgba(255,30,60,0.06);border-radius:10px;font-size:12px;color:var(--text2);line-height:1.8;">' +
-      '<div style="color:var(--red);font-family:Orbitron,sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;margin-bottom:12px;">'+t('rep.overview','MARKET OVERVIEW')+'</div>' +
+      '<div style="color:var(--red);font-family:Orbitron,sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;margin-bottom:12px;">'+mmT('rep.overview','MARKET OVERVIEW')+'</div>' +
       '<p style="margin-bottom:14px;">Gold is currently trading at 3,348, reflecting a cautious yet constructive market environment. Price action over the past 24 hours has been contained within a defined range, with sellers showing signs of exhaustion near the lower boundary of the recent structure.</p>' +
-      '<div style="color:var(--red);font-family:Orbitron,sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;margin-bottom:12px;">'+t('rep.technical','TECHNICAL PERSPECTIVE')+'</div>' +
+      '<div style="color:var(--red);font-family:Orbitron,sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;margin-bottom:12px;">'+mmT('rep.technical','TECHNICAL PERSPECTIVE')+'</div>' +
       '<p style="margin-bottom:14px;">From a technical standpoint, the outlook remains broadly bullish. Price is holding above the 50 and 200 period moving averages, signalling that the underlying trend remains intact. The RSI reading of 38 places the market in oversold territory, a condition that has consistently preceded upward reversals. MACD has confirmed a bullish crossover, reinforcing the case for continued upside momentum.</p>' +
-      '<div style="color:var(--red);font-family:Orbitron,sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;margin-bottom:12px;">'+t('rep.fundamental','FUNDAMENTAL LANDSCAPE')+'</div>' +
+      '<div style="color:var(--red);font-family:Orbitron,sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;margin-bottom:12px;">'+mmT('rep.fundamental','FUNDAMENTAL LANDSCAPE')+'</div>' +
       '<p style="margin-bottom:14px;">The fundamental picture is neutral at present. There are no active high impact events disrupting price discovery in the immediate term. Traders should exercise caution heading into tomorrow, where the ADP Non Farm Employment Change release carries the potential to introduce meaningful volatility.</p>' +
-      '<div style="color:var(--red);font-family:Orbitron,sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;margin-bottom:12px;">'+t('rep.sentiment','SENTIMENT READING')+'</div>' +
+      '<div style="color:var(--red);font-family:Orbitron,sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;margin-bottom:12px;">'+mmT('rep.sentiment','SENTIMENT READING')+'</div>' +
       '<p style="margin-bottom:14px;">Market participants are leaning constructive on Gold. Retail positioning shows 64 percent of traders holding long positions, while the Fear and Greed Index sits at 62, firmly within greed territory. News sentiment carries a moderately positive tone with no material bearish catalysts dominating the narrative.</p>' +
-      '<div style="color:var(--red);font-family:Orbitron,sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;margin-bottom:12px;">'+t('rep.verdict','MAI VERDICT')+'</div>' +
+      '<div style="color:var(--red);font-family:Orbitron,sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;margin-bottom:12px;">'+mmT('rep.verdict','MAI VERDICT')+'</div>' +
       '<p>Taking all three dimensions into account, Momentum AI assigns an 82 percent confidence score to the bullish thesis. The technical structure is clean, sentiment is supportive, and the fundamental environment poses no immediate headwinds. The trade setup favours continuation to the upside, provided price sustains above the 3,300 support zone. Risk is classified as moderate.</p>' +
     '</div>';
   }
@@ -7087,7 +7094,7 @@ async function loadMyTickets() {
   if(!el) return;
   try {
     var res = await db.from('support_tickets').select('*').eq('user_id', currentUser.id).order('created_at', {ascending:false}).limit(10);
-    if(!res.data || !res.data.length) { el.innerHTML = '<div class="empty-state" style="padding:20px;"><i class="ti ti-ticket"></i>'+t('misc.noTickets','No tickets yet')+'</div>'; return; }
+    if(!res.data || !res.data.length) { el.innerHTML = '<div class="empty-state" style="padding:20px;"><i class="ti ti-ticket"></i>'+mmT('misc.noTickets','No tickets yet')+'</div>'; return; }
     el.innerHTML = '';
     res.data.forEach(function(t) {
       if(t.status === 'done' && t.replied_at) {
@@ -7192,7 +7199,7 @@ function loadProfileData() {
   var roleDisplay = document.getElementById('profile-role-display');
   if(roleDisplay){
     var _r = currentUser.role;
-    roleDisplay.textContent = _r==='admin' ? t('pa.superAdmin','Super Admin') : _r==='analyst' ? t('pa.analyst','Analyst') : _r==='sub_admin' ? t('pa.subAdmin','Sub Admin') : (isPremiumUser() ? t('pa.premiumUser','Premium User') : t('pa.basicUser','Basic User'));
+    roleDisplay.textContent = _r==='admin' ? mmT('pa.superAdmin','Super Admin') : _r==='analyst' ? mmT('pa.analyst','Analyst') : _r==='sub_admin' ? mmT('pa.subAdmin','Sub Admin') : (isPremiumUser() ? mmT('pa.premiumUser','Premium User') : mmT('pa.basicUser','Basic User'));
   }
   
   // Update info fields
@@ -7209,14 +7216,14 @@ function loadProfileData() {
   var statusEl = document.getElementById('profile-status');
   if(statusEl) {
     var _st = String(currentUser.status || 'active').toLowerCase();
-    statusEl.textContent = t('status.'+_st, _st.charAt(0).toUpperCase() + _st.slice(1));
+    statusEl.textContent = mmT('status.'+_st, _st.charAt(0).toUpperCase() + _st.slice(1));
     statusEl.style.color = currentUser.status === 'active' ? 'var(--green)' : 'var(--amber)';
     statusEl.style.background = currentUser.status === 'active' ? 'rgba(0,200,122,0.1)' : 'rgba(255,176,32,0.1)';
   }
   var planEl = document.getElementById('profile-plan');
   if(planEl){
     var _prem = isPremiumUser();
-    planEl.textContent = _prem ? t('w.premiumBadge','PREMIUM') : t('w.basicBadge','BASIC');
+    planEl.textContent = _prem ? mmT('w.premiumBadge','PREMIUM') : mmT('w.basicBadge','BASIC');
     planEl.style.background = _prem ? 'var(--grad)' : 'rgba(59,130,246,0.13)';
     planEl.style.color = _prem ? '#fff' : 'var(--blue)';
   }
@@ -7956,7 +7963,7 @@ async function loadLivePositions(){
   if(!box) return;
   var mt5 = (activeAccount && activeAccount.mt5_id) ? activeAccount.mt5_id : null;
   if(!mt5){
-    box.innerHTML = '<div style="text-align:center;font-size:12px;color:var(--text3);padding:16px 0;">'+t('lp.connect','Connect your MT5 account')+'</div>';
+    box.innerHTML = '<div style="text-align:center;font-size:12px;color:var(--text3);padding:16px 0;">'+mmT('lp.connect','Connect your MT5 account')+'</div>';
     mmaiShowCloseAll(false);
     if(totalEl){ totalEl.textContent='—'; totalEl.style.color='var(--text3)'; }
     return;
@@ -7965,7 +7972,7 @@ async function loadLivePositions(){
     var res = await db.from('positions').select('*').eq('mt5_id', mt5);
     var rows = (res && res.data) ? res.data : [];
     if(!rows.length){
-      box.innerHTML = '<div style="text-align:center;font-size:12px;color:var(--text3);padding:16px 0;">'+t('lp.noPositions','No open positions')+'</div>';
+      box.innerHTML = '<div style="text-align:center;font-size:12px;color:var(--text3);padding:16px 0;">'+mmT('lp.noPositions','No open positions')+'</div>';
       mmaiShowCloseAll(false);
       if(totalEl){ totalEl.textContent='$0.00'; totalEl.style.color='var(--text3)'; }
       return;
@@ -8058,7 +8065,7 @@ function mmaiTapPosition(ticket, label){
     return;
   }
   window._mmaiLastTap = { ticket: ticket, at: now };
-  mmaiCloseNote('<i class="ti ti-hand-click"></i>'+t('cl.tapAgain','Tap again to close')+' '+label,
+  mmaiCloseNote('<i class="ti ti-hand-click"></i>'+mmT('cl.tapAgain','Tap again to close')+' '+label,
                 'rgba(255,180,0,0.12)', '#c98a00');
   setTimeout(function(){
     var l = window._mmaiLastTap || {};
@@ -8289,7 +8296,7 @@ async function mmaiInsertClose(action, ticket, label){
     };
     if(ticket) cmd.position_ticket = String(ticket);
 
-    mmaiCloseNote('<i class="ti ti-loader"></i>'+t('cl.closing','Closing')+' '+label+'\u2026', 'rgba(255,180,0,0.12)', '#c98a00');
+    mmaiCloseNote('<i class="ti ti-loader"></i>'+mmT('cl.closing','Closing')+' '+label+'\u2026', 'rgba(255,180,0,0.12)', '#c98a00');
     if(btn) btn.disabled = true;
 
     var _tc = await mmaiTradeCommand({ command: cmd });
@@ -8301,11 +8308,11 @@ async function mmaiInsertClose(action, ticket, label){
     var row = ins.data ? (Array.isArray(ins.data) ? ins.data[0] : ins.data) : null;
     if(row && row.id){ mmaiPollClose(row.id, label, action === 'close_all'); }
     else {
-      mmaiCloseNote('<i class="ti ti-alert-circle"></i>'+t('cl.failed','Could not send the close.')+'', 'rgba(255,60,60,0.12)', '#d33');
+      mmaiCloseNote('<i class="ti ti-alert-circle"></i>'+mmT('cl.failed','Could not send the close.')+'', 'rgba(255,60,60,0.12)', '#d33');
       if(btn) btn.disabled = false;
     }
   }catch(e){
-    mmaiCloseNote('<i class="ti ti-alert-circle"></i>'+t('cl.failedWhy','Could not send the close:')+' '+(e.message||'error'),
+    mmaiCloseNote('<i class="ti ti-alert-circle"></i>'+mmT('cl.failedWhy','Could not send the close:')+' '+(e.message||'error'),
                   'rgba(255,60,60,0.12)', '#d33');
     if(btn) btn.disabled = false;
   }
@@ -8356,7 +8363,7 @@ function mmaiPollClose(id, label, isAll){
     if(tries >= 30){          // 30 x 2000ms = 60s
       clearInterval(timer);
       if(isAll){ mmaiVaultResult(false, 'No answer from MT5. Check your terminal.'); return; }
-      mmaiCloseNote('<i class="ti ti-clock"></i>'+t('cl.waiting','Still waiting on MT5. Check your terminal for the final result.')+'',
+      mmaiCloseNote('<i class="ti ti-clock"></i>'+mmT('cl.waiting','Still waiting on MT5. Check your terminal for the final result.')+'',
                     'rgba(255,180,0,0.12)', '#c98a00');
     }
   }, 2000);
@@ -8395,7 +8402,7 @@ async function loadPastSignals(){
   if(!box) return;
   var mt5 = (activeAccount && activeAccount.mt5_id) ? String(activeAccount.mt5_id) : null;
   if(!mt5){
-    box.innerHTML = '<div style="text-align:center;font-size:12px;color:var(--text3);padding:16px 0;">'+t('lp.connect','Connect your MT5 account')+'</div>';
+    box.innerHTML = '<div style="text-align:center;font-size:12px;color:var(--text3);padding:16px 0;">'+mmT('lp.connect','Connect your MT5 account')+'</div>';
     return;
   }
   try{
@@ -8403,7 +8410,7 @@ async function loadPastSignals(){
     if(res.error) throw res.error;
     var rows = res.data || [];
     if(!rows.length){
-      box.innerHTML = '<div style="text-align:center;font-size:12px;color:var(--text3);padding:16px 0;">'+t('ps.none','No past signals yet')+'</div>';
+      box.innerHTML = '<div style="text-align:center;font-size:12px;color:var(--text3);padding:16px 0;">'+mmT('ps.none','No past signals yet')+'</div>';
       return;
     }
     var html = '';
@@ -8428,7 +8435,7 @@ async function loadPastSignals(){
     box.innerHTML = html;
   }catch(e){
     console.warn('loadPastSignals:', e.message);
-    box.innerHTML = '<div style="text-align:center;font-size:12px;color:var(--text3);padding:16px 0;">'+t('ps.error','Could not load past signals')+'</div>';
+    box.innerHTML = '<div style="text-align:center;font-size:12px;color:var(--text3);padding:16px 0;">'+mmT('ps.error','Could not load past signals')+'</div>';
   }
 }
 // Data freshness indicator
@@ -8523,7 +8530,7 @@ function renderMoreLeader(which){
     body.innerHTML =
       '<div style="display:flex;align-items:center;gap:13px;">'+
         '<span style="width:50px;height:50px;border-radius:15px;background:rgba(255,30,60,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ti ti-trophy" style="font-size:25px;color:#FF4D63;"></i></span>'+
-        '<div style="flex:1;"><div style="font-size:14px;color:var(--text);font-weight:700;">'+t('lb.notRanked','Not ranked yet')+'</div><div style="font-size:11px;color:var(--text3);margin-top:2px;line-height:1.4;">'+t('lb.rankDesc','Rankings open when the monthly challenge starts. Keep trading to claim your spot.')+'</div></div>'+
+        '<div style="flex:1;"><div style="font-size:14px;color:var(--text);font-weight:700;">'+mmT('lb.notRanked','Not ranked yet')+'</div><div style="font-size:11px;color:var(--text3);margin-top:2px;line-height:1.4;">'+mmT('lb.rankDesc','Rankings open when the monthly challenge starts. Keep trading to claim your spot.')+'</div></div>'+
       '</div>'+
       '<div style="height:8px;border-radius:99px;background:rgba(255,255,255,0.1);overflow:hidden;margin-top:12px;"><div style="height:100%;width:0%;border-radius:99px;background:var(--red);"></div></div>';
     return;
@@ -8620,7 +8627,7 @@ function renderMAMList(filter){filter=filter||'all';_mamFilter=filter;var list=d
 '<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;"><span style="width:38px;height:38px;border-radius:11px;background:'+ti.av+';display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:15px;flex-shrink:0;">'+m.ini+'</span><div style="flex:1;min-width:0;"><div style="display:flex;align-items:center;gap:5px;"><span style="font-size:14px;font-weight:700;color:#fff;">'+m.n+'</span><i class="ti ti-rosette-discount-check-filled" style="font-size:13px;color:#3B9EFF;"></i></div><div style="font-size:9.5px;color:#8A8A96;">'+ti.lc+' Strategy · '+mamStars(m.rating)+'</div></div><span class="mam-tb" style="background:'+ti.bg+';align-self:flex-start;">'+ti.l+'</span></div>'+
 '<svg viewBox="0 0 300 40" style="width:100%;height:40px;margin-bottom:12px;"><defs><linearGradient id="sl'+i+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="rgba(0,200,122,0.28)"/><stop offset="1" stop-color="rgba(0,200,122,0)"/></linearGradient></defs><path d="'+eq.area+'" fill="url(#sl'+i+')"/><path d="'+eq.line+'" fill="none" stroke="#00C87A" stroke-width="2"/></svg>'+
 '<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:1px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.06);border-radius:10px;overflow:hidden;margin-bottom:12px;">'+mamStat('+'+tg+'%','TOTAL','#00C87A')+mamStat('+'+m.avg+'%','MONTHLY','#fff')+mamStat(m.dd+'%','MAX DD','#FFB020')+mamStat(m.win+'%','WIN','#fff')+'</div>'+
-'<div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-size:10.5px;color:#8A8A96;">'+m.inv+' investors · '+mamFmtM(m.aum)+' managed</span><span style="font-size:11px;color:#FF6B7E;font-weight:600;">'+t('mam.tapView','Tap to view \u203a')+'</span></div>'+
+'<div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-size:10.5px;color:#8A8A96;">'+m.inv+' investors · '+mamFmtM(m.aum)+' managed</span><span style="font-size:11px;color:#FF6B7E;font-weight:600;">'+mmT('mam.tapView','Tap to view \u203a')+'</span></div>'+
 '</div>';}
 list.innerHTML=html;var c=document.getElementById('mam-count');if(c)c.textContent=count+' manager'+(count===1?'':'s');}
 function mamFilter(el,type){var chips=el.parentNode.querySelectorAll('.mam-fchip');for(var i=0;i<chips.length;i++)chips[i].classList.remove('on');el.classList.add('on');renderMAMList(type);}
@@ -8629,16 +8636,16 @@ function openManager(i){_mamCur=i;var m=MAM_MANAGERS[i];var body=document.getEle
 function buildMamDetail(m,i){var months=m._months;var eq=mamEquity(months,320,90,6);var ti=mamType(m.t);var tg=Math.round((Math.pow(1+m.avg/100,m.age)-1)*100);var best=Math.max.apply(null,months),worst=Math.min.apply(null,months);var green=0;for(var j=0;j<months.length;j++){if(months[j]>=0)green++;}
 return ''+
 '<div style="display:flex;align-items:center;gap:11px;margin-bottom:14px;"><span style="width:46px;height:46px;border-radius:13px;background:'+ti.av+';display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:18px;">'+m.ini+'</span><div style="flex:1;"><div style="display:flex;align-items:center;gap:5px;"><span style="font-size:16px;font-weight:700;color:#fff;">'+m.n+'</span><i class="ti ti-rosette-discount-check-filled" style="font-size:15px;color:#3B9EFF;"></i></div><div style="font-size:10px;color:#8A8A96;">'+ti.lc+' Strategy · '+mamStars(m.rating)+' · since '+m.since+'</div></div></div>'+
-'<div style="border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:12px;margin-bottom:14px;background:#15131c;"><div style="display:flex;justify-content:space-between;font-size:10px;color:#8A8A96;margin-bottom:6px;"><span>'+t('mam.equityCurve','EQUITY CURVE')+'</span><span style="color:#00C87A;font-weight:700;">+'+tg+'% all-time</span></div><svg viewBox="0 0 320 90" style="width:100%;height:90px;"><defs><linearGradient id="deq" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="rgba(0,200,122,0.30)"/><stop offset="1" stop-color="rgba(0,200,122,0)"/></linearGradient></defs><path d="'+eq.area+'" fill="url(#deq)"/><path d="'+eq.line+'" fill="none" stroke="#00C87A" stroke-width="2"/></svg></div>'+
+'<div style="border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:12px;margin-bottom:14px;background:#15131c;"><div style="display:flex;justify-content:space-between;font-size:10px;color:#8A8A96;margin-bottom:6px;"><span>'+mmT('mam.equityCurve','EQUITY CURVE')+'</span><span style="color:#00C87A;font-weight:700;">+'+tg+'% all-time</span></div><svg viewBox="0 0 320 90" style="width:100%;height:90px;"><defs><linearGradient id="deq" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="rgba(0,200,122,0.30)"/><stop offset="1" stop-color="rgba(0,200,122,0)"/></linearGradient></defs><path d="'+eq.area+'" fill="url(#deq)"/><path d="'+eq.line+'" fill="none" stroke="#00C87A" stroke-width="2"/></svg></div>'+
 '<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:1px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.06);border-radius:10px;overflow:hidden;margin-bottom:16px;">'+mamStat('+'+m.avg+'%','MONTHLY','#fff')+mamStat(m.dd+'%','MAX DD','#FFB020')+mamStat(m.win+'%','WIN','#fff')+mamStat(m.age+'mo','AGE','#fff')+'</div>'+
-'<div style="background:#15131c;border:1px solid rgba(255,255,255,0.08);border-radius:15px;overflow:hidden;margin-bottom:16px;"><div style="display:flex;align-items:center;justify-content:space-between;padding:13px 14px 6px;"><span style="font-size:13px;font-weight:700;color:#fff;">'+t('mam.monthlyPl','Monthly Profit / Loss')+'</span><span style="font-size:11px;color:#c6c6ce;background:rgba(255,255,255,0.05);padding:5px 11px;border-radius:9px;">2025</span></div><div style="padding:6px 12px 4px;"><svg viewBox="0 0 320 80" style="width:100%;height:80px;">'+mamBars(months)+'</svg></div><div style="display:flex;padding:7px 14px;background:rgba(255,255,255,0.02);border-top:1px solid rgba(255,255,255,0.06);border-bottom:1px solid rgba(255,255,255,0.06);"><span class="mam-k" style="flex:1;">MONTH</span><span class="mam-k" style="width:88px;text-align:right;">'+t('pj.profit','PROFIT')+'</span><span class="mam-k" style="width:48px;text-align:right;">%</span></div>'+mamTable(months,m.aum)+'<div style="display:flex;padding:9px 14px;border-top:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);"><div style="flex:1;"><div class="mam-k">'+t('mam.best','BEST')+'</div><div style="font-size:12px;font-weight:800;color:#00C87A;">+'+best+'%</div></div><div style="flex:1;"><div class="mam-k">'+t('mam.worst','WORST')+'</div><div style="font-size:12px;font-weight:800;color:#FF6B7E;">'+worst+'%</div></div><div style="flex:1;"><div class="mam-k">GREEN MO</div><div style="font-size:12px;font-weight:800;color:#fff;">'+green+'/12</div></div></div></div>'+
-'<div style="background:#15131c;border:1px solid rgba(255,255,255,0.08);border-radius:15px;padding:14px;margin-bottom:16px;"><div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:9px;">'+t('mam.details','Manager Details')+'</div>'+mamDetRow('Strategy',ti.lc+' · '+m.style,true)+mamDetRow('Instruments',m.instr)+mamDetRow('Managed since',m.since)+mamDetRow('Account type',m.acct)+mamDetRow('Risk level',m.risk)+mamDetRow('Min · Fee · Lock',m.min+' · '+m.fee+' · '+m.lock)+'</div>'+
-'<div style="background:linear-gradient(160deg,#1c1018,#0f0b12);border:1px solid rgba(255,30,60,0.3);border-radius:15px;padding:14px;margin-bottom:16px;"><div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;"><i class="ti ti-key" style="font-size:16px;color:#FF1E3C;"></i><span style="font-size:13px;font-weight:700;color:#fff;">'+t('mam.investorAccess','Investor Access')+'</span><span style="flex:1;"></span><span style="font-size:9px;color:#8A8A96;">read-only</span></div><div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.06);"><span style="font-size:11px;color:#8A8A96;">'+t('mam.server','Server')+'</span><span style="font-size:11.5px;color:#e8eaed;">AsiaFutureTrading-Server</span></div><div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.06);"><span style="font-size:11px;color:#8A8A96;">'+t('mam.login','Login')+'</span><span style="font-size:11.5px;color:#e8eaed;font-family:monospace;">'+m.login+'</span></div><div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0 12px;"><span style="font-size:11px;color:#8A8A96;">'+t('mam.investorPw','Investor password')+'</span><span style="font-size:11.5px;color:#e8eaed;font-family:monospace;"><span id="mam-pw">\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022</span> <span onclick="mamRevealPw()" style="color:#FF6B7E;font-family:Sora,sans-serif;font-weight:600;cursor:pointer;">'+t('mam.reveal','Reveal')+'</span> <span onclick="comingSoonToast(\'Copied\')" style="color:#FF6B7E;font-family:Sora,sans-serif;font-weight:600;cursor:pointer;">'+t('mam.copy','Copy')+'</span></span></div><div style="display:flex;gap:8px;"><button onclick="comingSoonToast(\'Download statement\')" style="flex:1;background:rgba(255,30,60,0.12);border:1px solid rgba(255,30,60,0.35);color:#FF8090;font-size:11px;font-weight:600;padding:9px;border-radius:9px;cursor:pointer;font-family:Sora,sans-serif;"><i class="ti ti-download" style="font-size:13px;"></i> '+t('mam.statement','Statement')+'</button><button onclick="comingSoonToast(\'Open in MT5\')" style="flex:1;background:rgba(255,30,60,0.12);border:1px solid rgba(255,30,60,0.35);color:#FF8090;font-size:11px;font-weight:600;padding:9px;border-radius:9px;cursor:pointer;font-family:Sora,sans-serif;"><i class="ti ti-external-link" style="font-size:13px;"></i> '+t('mam.openMt5','Open in MT5')+'</button></div></div>'+
-'<div style="background:#15131c;border:1px solid rgba(255,255,255,0.08);border-radius:15px;padding:14px;margin-bottom:16px;"><div style="display:flex;align-items:center;gap:7px;margin-bottom:4px;"><i class="ti ti-calculator" style="font-size:16px;color:#FFB020;"></i><span style="font-size:13px;font-weight:700;color:#fff;">'+t('mam.calc','Compounding Calculator')+'</span></div><div style="font-size:10.5px;color:#8A8A96;margin-bottom:12px;">Based on +'+m.avg+'% avg monthly, profits reinvested</div><div class="mam-k" style="margin-bottom:7px;">'+t('mam.ifInvest','IF YOU INVEST')+'</div><div style="display:flex;gap:7px;margin-bottom:15px;"><span class="mam-amt" data-amt="1000" onclick="mamCalc(1000)">$1k</span><span class="mam-amt on" data-amt="5000" onclick="mamCalc(5000)">$5k</span><span class="mam-amt" data-amt="10000" onclick="mamCalc(10000)">$10k</span><span class="mam-amt" data-amt="50000" onclick="mamCalc(50000)">$50k</span></div><div id="mam-calc-out"></div><div style="margin-top:12px;padding:9px 11px;background:rgba(255,176,32,0.08);border:1px solid rgba(255,176,32,0.22);border-radius:9px;font-size:9.5px;color:#FFB020;line-height:1.5;"><i class="ti ti-alert-triangle" style="font-size:11px;"></i> '+t('mam.projDisc','Hypothetical projection assuming the average return continues and profits are reinvested. Not a guarantee. Fees may reduce returns.')+'</div></div>'+
-'<button onclick="comingSoonToast(\'Invest\')" style="width:100%;background:linear-gradient(135deg,#FF1E3C,#C40024);border:none;color:#fff;font-size:14px;font-weight:700;padding:15px;border-radius:13px;box-shadow:0 6px 16px rgba(196,0,32,0.35);cursor:pointer;font-family:Sora,sans-serif;margin-bottom:8px;">'+t('mam.availSoon','Available soon')+'</button>';
+'<div style="background:#15131c;border:1px solid rgba(255,255,255,0.08);border-radius:15px;overflow:hidden;margin-bottom:16px;"><div style="display:flex;align-items:center;justify-content:space-between;padding:13px 14px 6px;"><span style="font-size:13px;font-weight:700;color:#fff;">'+mmT('mam.monthlyPl','Monthly Profit / Loss')+'</span><span style="font-size:11px;color:#c6c6ce;background:rgba(255,255,255,0.05);padding:5px 11px;border-radius:9px;">2025</span></div><div style="padding:6px 12px 4px;"><svg viewBox="0 0 320 80" style="width:100%;height:80px;">'+mamBars(months)+'</svg></div><div style="display:flex;padding:7px 14px;background:rgba(255,255,255,0.02);border-top:1px solid rgba(255,255,255,0.06);border-bottom:1px solid rgba(255,255,255,0.06);"><span class="mam-k" style="flex:1;">MONTH</span><span class="mam-k" style="width:88px;text-align:right;">'+mmT('pj.profit','PROFIT')+'</span><span class="mam-k" style="width:48px;text-align:right;">%</span></div>'+mamTable(months,m.aum)+'<div style="display:flex;padding:9px 14px;border-top:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);"><div style="flex:1;"><div class="mam-k">'+mmT('mam.best','BEST')+'</div><div style="font-size:12px;font-weight:800;color:#00C87A;">+'+best+'%</div></div><div style="flex:1;"><div class="mam-k">'+mmT('mam.worst','WORST')+'</div><div style="font-size:12px;font-weight:800;color:#FF6B7E;">'+worst+'%</div></div><div style="flex:1;"><div class="mam-k">GREEN MO</div><div style="font-size:12px;font-weight:800;color:#fff;">'+green+'/12</div></div></div></div>'+
+'<div style="background:#15131c;border:1px solid rgba(255,255,255,0.08);border-radius:15px;padding:14px;margin-bottom:16px;"><div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:9px;">'+mmT('mam.details','Manager Details')+'</div>'+mamDetRow('Strategy',ti.lc+' · '+m.style,true)+mamDetRow('Instruments',m.instr)+mamDetRow('Managed since',m.since)+mamDetRow('Account type',m.acct)+mamDetRow('Risk level',m.risk)+mamDetRow('Min · Fee · Lock',m.min+' · '+m.fee+' · '+m.lock)+'</div>'+
+'<div style="background:linear-gradient(160deg,#1c1018,#0f0b12);border:1px solid rgba(255,30,60,0.3);border-radius:15px;padding:14px;margin-bottom:16px;"><div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;"><i class="ti ti-key" style="font-size:16px;color:#FF1E3C;"></i><span style="font-size:13px;font-weight:700;color:#fff;">'+mmT('mam.investorAccess','Investor Access')+'</span><span style="flex:1;"></span><span style="font-size:9px;color:#8A8A96;">read-only</span></div><div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.06);"><span style="font-size:11px;color:#8A8A96;">'+mmT('mam.server','Server')+'</span><span style="font-size:11.5px;color:#e8eaed;">AsiaFutureTrading-Server</span></div><div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.06);"><span style="font-size:11px;color:#8A8A96;">'+mmT('mam.login','Login')+'</span><span style="font-size:11.5px;color:#e8eaed;font-family:monospace;">'+m.login+'</span></div><div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0 12px;"><span style="font-size:11px;color:#8A8A96;">'+mmT('mam.investorPw','Investor password')+'</span><span style="font-size:11.5px;color:#e8eaed;font-family:monospace;"><span id="mam-pw">\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022</span> <span onclick="mamRevealPw()" style="color:#FF6B7E;font-family:Sora,sans-serif;font-weight:600;cursor:pointer;">'+mmT('mam.reveal','Reveal')+'</span> <span onclick="comingSoonToast(\'Copied\')" style="color:#FF6B7E;font-family:Sora,sans-serif;font-weight:600;cursor:pointer;">'+mmT('mam.copy','Copy')+'</span></span></div><div style="display:flex;gap:8px;"><button onclick="comingSoonToast(\'Download statement\')" style="flex:1;background:rgba(255,30,60,0.12);border:1px solid rgba(255,30,60,0.35);color:#FF8090;font-size:11px;font-weight:600;padding:9px;border-radius:9px;cursor:pointer;font-family:Sora,sans-serif;"><i class="ti ti-download" style="font-size:13px;"></i> '+mmT('mam.statement','Statement')+'</button><button onclick="comingSoonToast(\'Open in MT5\')" style="flex:1;background:rgba(255,30,60,0.12);border:1px solid rgba(255,30,60,0.35);color:#FF8090;font-size:11px;font-weight:600;padding:9px;border-radius:9px;cursor:pointer;font-family:Sora,sans-serif;"><i class="ti ti-external-link" style="font-size:13px;"></i> '+mmT('mam.openMt5','Open in MT5')+'</button></div></div>'+
+'<div style="background:#15131c;border:1px solid rgba(255,255,255,0.08);border-radius:15px;padding:14px;margin-bottom:16px;"><div style="display:flex;align-items:center;gap:7px;margin-bottom:4px;"><i class="ti ti-calculator" style="font-size:16px;color:#FFB020;"></i><span style="font-size:13px;font-weight:700;color:#fff;">'+mmT('mam.calc','Compounding Calculator')+'</span></div><div style="font-size:10.5px;color:#8A8A96;margin-bottom:12px;">Based on +'+m.avg+'% avg monthly, profits reinvested</div><div class="mam-k" style="margin-bottom:7px;">'+mmT('mam.ifInvest','IF YOU INVEST')+'</div><div style="display:flex;gap:7px;margin-bottom:15px;"><span class="mam-amt" data-amt="1000" onclick="mamCalc(1000)">$1k</span><span class="mam-amt on" data-amt="5000" onclick="mamCalc(5000)">$5k</span><span class="mam-amt" data-amt="10000" onclick="mamCalc(10000)">$10k</span><span class="mam-amt" data-amt="50000" onclick="mamCalc(50000)">$50k</span></div><div id="mam-calc-out"></div><div style="margin-top:12px;padding:9px 11px;background:rgba(255,176,32,0.08);border:1px solid rgba(255,176,32,0.22);border-radius:9px;font-size:9.5px;color:#FFB020;line-height:1.5;"><i class="ti ti-alert-triangle" style="font-size:11px;"></i> '+mmT('mam.projDisc','Hypothetical projection assuming the average return continues and profits are reinvested. Not a guarantee. Fees may reduce returns.')+'</div></div>'+
+'<button onclick="comingSoonToast(\'Invest\')" style="width:100%;background:linear-gradient(135deg,#FF1E3C,#C40024);border:none;color:#fff;font-size:14px;font-weight:700;padding:15px;border-radius:13px;box-shadow:0 6px 16px rgba(196,0,32,0.35);cursor:pointer;font-family:Sora,sans-serif;margin-bottom:8px;">'+mmT('mam.availSoon','Available soon')+'</button>';
 }
 function mamCalcRow(label,val,amount){var profit=val-amount;var pct=Math.round((val/amount-1)*100);return '<div style="display:flex;align-items:center;padding:11px 2px;border-top:1px solid rgba(255,255,255,0.05);"><span style="flex:1;font-size:12.5px;color:#e8eaed;font-weight:600;">'+label+'</span><span style="width:86px;text-align:right;font-size:13px;color:#fff;font-weight:700;">'+mamMoney(val)+'</span><span style="width:96px;text-align:right;font-size:12px;color:#00C87A;font-weight:700;">+'+mamMoney(profit)+'<br><span style="font-size:9.5px;">+'+pct+'%</span></span></div>';}
-function mamCalc(amount){var m=MAM_MANAGERS[_mamCur];if(!m)return;var r=m.avg/100;function proj(n){return amount*Math.pow(1+r,n);}var out=document.getElementById('mam-calc-out');if(out){out.innerHTML='<div style="display:flex;padding:7px 2px;border-bottom:1px solid rgba(255,255,255,0.08);"><span class="mam-k" style="flex:1;">'+t('pj.period','PERIOD')+'</span><span class="mam-k" style="width:86px;text-align:right;">'+t('pj.value','VALUE')+'</span><span class="mam-k" style="width:96px;text-align:right;">'+t('pj.profit','PROFIT')+'</span></div>'+mamCalcRow('1 Year',proj(12),amount)+mamCalcRow('3 Years',proj(36),amount)+mamCalcRow('5 Years',proj(60),amount);}var chips=document.querySelectorAll('#sub-mam-detail .mam-amt');for(var i=0;i<chips.length;i++){chips[i].classList.toggle('on',parseInt(chips[i].getAttribute('data-amt'),10)===amount);}}
+function mamCalc(amount){var m=MAM_MANAGERS[_mamCur];if(!m)return;var r=m.avg/100;function proj(n){return amount*Math.pow(1+r,n);}var out=document.getElementById('mam-calc-out');if(out){out.innerHTML='<div style="display:flex;padding:7px 2px;border-bottom:1px solid rgba(255,255,255,0.08);"><span class="mam-k" style="flex:1;">'+mmT('pj.period','PERIOD')+'</span><span class="mam-k" style="width:86px;text-align:right;">'+mmT('pj.value','VALUE')+'</span><span class="mam-k" style="width:96px;text-align:right;">'+mmT('pj.profit','PROFIT')+'</span></div>'+mamCalcRow('1 Year',proj(12),amount)+mamCalcRow('3 Years',proj(36),amount)+mamCalcRow('5 Years',proj(60),amount);}var chips=document.querySelectorAll('#sub-mam-detail .mam-amt');for(var i=0;i<chips.length;i++){chips[i].classList.toggle('on',parseInt(chips[i].getAttribute('data-amt'),10)===amount);}}
 function mamRevealPw(){var e=document.getElementById('mam-pw');if(e)e.textContent='Inv'+(_mamCur+1)+'x9K!';}
 // COMING SOON SHEET (30 Jul 2026).
 //
@@ -8707,10 +8714,10 @@ function loadMoreTab(){
   if(badge){
     if(prem){
       badge.style.background='var(--gold)'; badge.style.color='#3A2A05';
-      badge.innerHTML='<i class="ti ti-crown" style="font-size:10px;"></i> '+t('w.premiumBadge','PREMIUM');
+      badge.innerHTML='<i class="ti ti-crown" style="font-size:10px;"></i> '+mmT('w.premiumBadge','PREMIUM');
     } else {
       badge.style.background='linear-gradient(135deg,#EFF1F3,#BFC5CD 55%,#9AA1AA)'; badge.style.color='#2a2d33';
-      badge.innerHTML='<i class="ti ti-bolt" style="font-size:10px;"></i> '+t('w.basicBadge','BASIC');
+      badge.innerHTML='<i class="ti ti-bolt" style="font-size:10px;"></i> '+mmT('w.basicBadge','BASIC');
     }
   }
   updateMoreBalance();
@@ -8941,7 +8948,7 @@ async function loadJournalData() {
     var tradeList=document.getElementById('j-recent-trades');
     var viewAll=document.getElementById('j-view-all');
     if(tradeList){
-      if(!trades.length){ tradeList.innerHTML='<div style="text-align:center;font-size:12px;color:var(--text3);padding:16px 0;">'+t('ms.noClosed','No closed trades yet')+'</div>'; }
+      if(!trades.length){ tradeList.innerHTML='<div style="text-align:center;font-size:12px;color:var(--text3);padding:16px 0;">'+mmT('ms.noClosed','No closed trades yet')+'</div>'; }
       else {
         var show=trades.slice(0,5);
         tradeList.innerHTML=show.map(function(t){
@@ -8950,7 +8957,7 @@ async function loadJournalData() {
           var d=new Date(t.close_time||t.created_at);
           var dateStr=(d.getMonth()+1)+'/'+(d.getDate());
           var method=(t.method||'manual').toLowerCase();
-          var mBadge=method==='smart'?'<span style="font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;background:rgba(255,176,32,.1);color:#FFB020;" data-i18n="j.tools">'+t('ms.tools','TOOLS')+'</span>':method==='auto'?'<span style="font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;background:rgba(160,90,255,.1);color:#A05AFF;" data-i18n="j.autoWord">'+t('ms.auto','AUTO')+'</span>':'<span style="font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;background:rgba(77,158,255,.1);color:#4D9EFF;" data-i18n="j.manual">'+t('ms.manual','MANUAL')+'</span>';
+          var mBadge=method==='smart'?'<span style="font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;background:rgba(255,176,32,.1);color:#FFB020;" data-i18n="j.tools">'+mmT('ms.tools','TOOLS')+'</span>':method==='auto'?'<span style="font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;background:rgba(160,90,255,.1);color:#A05AFF;" data-i18n="j.autoWord">'+mmT('ms.auto','AUTO')+'</span>':'<span style="font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;background:rgba(77,158,255,.1);color:#4D9EFF;" data-i18n="j.manual">'+mmT('ms.manual','MANUAL')+'</span>';
           var sideBadge=t.side==='BUY'?'<span style="font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;background:rgba(0,200,122,.12);color:#00C87A;">BUY</span>':'<span style="font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;background:rgba(255,30,60,.1);color:#FF1E3C;">SELL</span>';
           return '<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:0.5px solid var(--border);">'+
             '<div style="flex:0 0 40px;font-size:10px;color:var(--text3);">'+dateStr+'</div>'+
@@ -9224,7 +9231,7 @@ function addAcademySection(t,h,d,img){
   var block=document.createElement('div');
   block.className='academy-section-block';
   block.style.cssText='border:1px solid var(--border);border-radius:9px;padding:12px;margin-bottom:10px;background:var(--bg3);';
-  block.innerHTML='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;"><span style="font-size:10px;color:var(--text3);font-weight:700;letter-spacing:0.5px;">'+t('ac.section','SECTION')+'</span><button type="button" class="acad-sec-remove" style="background:transparent;border:none;color:var(--text3);font-size:18px;cursor:pointer;line-height:1;padding:0 4px;">&times;</button></div><span style="font-size:10px;color:var(--text3);display:block;margin-bottom:5px;">'+t('ac.title2','Title')+' <span style="color:var(--text);">(bold)</span></span><input class="acad-sec-t auth-input" type="text" placeholder="Section title" style="margin-bottom:9px;"><span style="font-size:10px;color:var(--text3);display:block;margin-bottom:5px;">Sub-header <span style="color:var(--red);">(red, optional)</span></span><input class="acad-sec-h auth-input" type="text" placeholder="Sub-header (optional)" style="margin-bottom:9px;"><span style="font-size:10px;color:var(--text3);display:block;margin-bottom:5px;">Detail (white)</span><textarea class="acad-sec-d auth-input" rows="7" style="resize:vertical;min-height:150px;" placeholder="Detail text..."></textarea><span style="font-size:10px;color:var(--text3);display:block;margin:9px 0 5px;">'+t('ac.image','Image')+' <span style="color:var(--text3);">(optional)</span></span><input type="file" accept="image/*" class="acad-sec-file" style="display:none;"><input type="hidden" class="acad-sec-img"><div class="acad-sec-imgwrap"></div>';
+  block.innerHTML='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;"><span style="font-size:10px;color:var(--text3);font-weight:700;letter-spacing:0.5px;">'+mmT('ac.section','SECTION')+'</span><button type="button" class="acad-sec-remove" style="background:transparent;border:none;color:var(--text3);font-size:18px;cursor:pointer;line-height:1;padding:0 4px;">&times;</button></div><span style="font-size:10px;color:var(--text3);display:block;margin-bottom:5px;">'+mmT('ac.title2','Title')+' <span style="color:var(--text);">(bold)</span></span><input class="acad-sec-t auth-input" type="text" placeholder="Section title" style="margin-bottom:9px;"><span style="font-size:10px;color:var(--text3);display:block;margin-bottom:5px;">Sub-header <span style="color:var(--red);">(red, optional)</span></span><input class="acad-sec-h auth-input" type="text" placeholder="Sub-header (optional)" style="margin-bottom:9px;"><span style="font-size:10px;color:var(--text3);display:block;margin-bottom:5px;">Detail (white)</span><textarea class="acad-sec-d auth-input" rows="7" style="resize:vertical;min-height:150px;" placeholder="Detail text..."></textarea><span style="font-size:10px;color:var(--text3);display:block;margin:9px 0 5px;">'+mmT('ac.image','Image')+' <span style="color:var(--text3);">(optional)</span></span><input type="file" accept="image/*" class="acad-sec-file" style="display:none;"><input type="hidden" class="acad-sec-img"><div class="acad-sec-imgwrap"></div>';
   wrap.appendChild(block);
   if(t) block.querySelector('.acad-sec-t').value=t;
   if(h) block.querySelector('.acad-sec-h').value=h;
@@ -9238,15 +9245,15 @@ function addAcademySection(t,h,d,img){
       imgWrap.innerHTML='<div style="position:relative;border-radius:10px;overflow:hidden;border:1px solid var(--border);"><img src="'+url+'" style="width:100%;display:block;max-height:170px;object-fit:cover;"><button type="button" class="acad-sec-imgdel" style="position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:8px;background:rgba(0,0,0,0.6);border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;"><i class="ti ti-trash" style="font-size:15px;"></i></button></div>';
       imgWrap.querySelector('.acad-sec-imgdel').addEventListener('click',function(){ imgInput.value=''; renderImg(); });
     } else {
-      imgWrap.innerHTML='<div class="acad-sec-uploadbtn" style="display:flex;align-items:center;gap:10px;background:var(--surface);border:1px dashed rgba(255,255,255,0.18);border-radius:9px;padding:13px;cursor:pointer;"><div style="width:38px;height:38px;border-radius:9px;background:rgba(255,30,60,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ti ti-photo-up" style="font-size:19px;color:var(--red);"></i></div><div style="flex:1;"><div style="font-size:12px;color:var(--text);font-weight:600;">'+t('av.tapUpload','Tap to upload image')+'</div><div style="font-size:10px;color:var(--text3);">'+t('av.pngJpg','PNG or JPG')+'</div></div></div>';
+      imgWrap.innerHTML='<div class="acad-sec-uploadbtn" style="display:flex;align-items:center;gap:10px;background:var(--surface);border:1px dashed rgba(255,255,255,0.18);border-radius:9px;padding:13px;cursor:pointer;"><div style="width:38px;height:38px;border-radius:9px;background:rgba(255,30,60,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ti ti-photo-up" style="font-size:19px;color:var(--red);"></i></div><div style="flex:1;"><div style="font-size:12px;color:var(--text);font-weight:600;">'+mmT('av.tapUpload','Tap to upload image')+'</div><div style="font-size:10px;color:var(--text3);">'+mmT('av.pngJpg','PNG or JPG')+'</div></div></div>';
       imgWrap.querySelector('.acad-sec-uploadbtn').addEventListener('click',function(){ fileInput.click(); });
     }
   }
   fileInput.addEventListener('change',async function(){
     var f=fileInput.files&&fileInput.files[0]; if(!f){return;}
-    imgWrap.innerHTML='<div style="padding:13px;font-size:12px;color:var(--text3);">'+t('av.uploading','Uploading...')+'</div>';
+    imgWrap.innerHTML='<div style="padding:13px;font-size:12px;color:var(--text3);">'+mmT('av.uploading','Uploading...')+'</div>';
     try{ var url=await uploadAcademyImage(f); imgInput.value=url; renderImg(); }
-    catch(e){ imgWrap.innerHTML='<div style="padding:13px;font-size:12px;color:var(--red);">'+t('av.failed','Upload failed:')+' '+(e.message||'error')+'</div>'; setTimeout(renderImg,3000); }
+    catch(e){ imgWrap.innerHTML='<div style="padding:13px;font-size:12px;color:var(--red);">'+mmT('av.failed','Upload failed:')+' '+(e.message||'error')+'</div>'; setTimeout(renderImg,3000); }
     fileInput.value='';
   });
   if(img) imgInput.value=img;
@@ -9319,7 +9326,7 @@ var _acMeta={basics:{label:'Trading Basics',icon:'ti-book',color:'rgba(255,176,3
 async function loadAcademy(){
   loadAcademyDone();
   var cv=document.getElementById('academy-categories');if(!cv)return;
-  cv.innerHTML='<div class="empty-state" style="padding:20px;"><i class="ti ti-loader"></i> '+t('pa.loading','Loading...')+'</div>';
+  cv.innerHTML='<div class="empty-state" style="padding:20px;"><i class="ti ti-loader"></i> '+mmT('pa.loading','Loading...')+'</div>';
   var lv=document.getElementById('academy-lessons');if(lv)lv.style.display='none';
   var dv=document.getElementById('academy-detail');if(dv)dv.style.display='none';
   cv.style.display='block';
@@ -9327,13 +9334,13 @@ async function loadAcademy(){
     var res=await db.from('academy').select('*').order('created_at',{ascending:true});
     if(res.error)throw res.error;
     _acData=res.data||[];renderAcademy(cv);
-  }catch(e){cv.innerHTML='<div class="empty-state" style="padding:20px;color:var(--red);">'+t('ac.errorLoading','Error loading')+'</div>';}
+  }catch(e){cv.innerHTML='<div class="empty-state" style="padding:20px;color:var(--red);">'+mmT('ac.errorLoading','Error loading')+'</div>';}
 }
 function renderAcademy(cv){
   var groups={};_acData.forEach(function(l){var c=l.category||'basics';if(!groups[c])groups[c]=[];groups[c].push(l);});
   var cats=Object.keys(groups);
-  if(!cats.length){cv.innerHTML='<div class="empty-state" style="padding:20px;"><i class="ti ti-book"></i> '+t('ac.noLessons','No lessons yet')+'</div>';return;}
-  cv.innerHTML='<div style="font-size:12px;color:var(--text3);margin-bottom:14px;">'+t('ac.selectCat','Select a category to start learning')+'</div>';
+  if(!cats.length){cv.innerHTML='<div class="empty-state" style="padding:20px;"><i class="ti ti-book"></i> '+mmT('ac.noLessons','No lessons yet')+'</div>';return;}
+  cv.innerHTML='<div style="font-size:12px;color:var(--text3);margin-bottom:14px;">'+mmT('ac.selectCat','Select a category to start learning')+'</div>';
   cats.forEach(function(cat){
     var m=_acMeta[cat]||{label:cat,icon:'ti-book',color:'rgba(255,255,255,0.08)',ic:'var(--text)'};
     var cnt=groups[cat].length;
@@ -9351,7 +9358,7 @@ function openAcademyCategory(cat){
   if(!lv){lv=document.createElement('div');lv.id='academy-lessons';if(content)content.appendChild(lv);}
   var dvOld=document.getElementById('academy-detail'); if(dvOld) dvOld.style.display='none';
   lv.style.display='block';lv.innerHTML='';
-  var bb=document.createElement('button');bb.style.cssText='background:transparent;border:none;color:var(--red);font-size:13px;font-weight:700;cursor:pointer;padding:0;margin-bottom:16px;display:flex;align-items:center;gap:6px;';bb.innerHTML='<i class="ti ti-arrow-left"></i> '+t('ac.back','Back')+'';bb.addEventListener('click',function(){lv.style.display='none';if(cv)cv.style.display='block';});lv.appendChild(bb);
+  var bb=document.createElement('button');bb.style.cssText='background:transparent;border:none;color:var(--red);font-size:13px;font-weight:700;cursor:pointer;padding:0;margin-bottom:16px;display:flex;align-items:center;gap:6px;';bb.innerHTML='<i class="ti ti-arrow-left"></i> '+mmT('ac.back','Back')+'';bb.addEventListener('click',function(){lv.style.display='none';if(cv)cv.style.display='block';});lv.appendChild(bb);
   var td=document.createElement('div');td.style.cssText='font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);margin-bottom:14px;';td.textContent=m.label;lv.appendChild(td);
   if(!lessons.length){var em=document.createElement('div');em.className='empty-state';em.style.padding='20px';em.textContent='No lessons here yet';lv.appendChild(em);return;}
   var lc={beginner:'var(--green)',intermediate:'var(--amber)',advanced:'var(--red)'};
@@ -9385,7 +9392,7 @@ function buildAcademyBook(secs){
       +'<button class="bk-prev" style="width:40px;height:40px;border-radius:12px;background:#16161E;border:1px solid rgba(255,255,255,0.1);color:#cfcfd6;display:flex;align-items:center;justify-content:center;cursor:pointer;"><i class="ti ti-chevron-left" style="font-size:19px;"></i></button>'
       +'<div class="bk-dots" style="display:flex;gap:7px;"></div>'
       +'<button class="bk-next" style="width:40px;height:40px;border-radius:12px;background:linear-gradient(160deg,#FF2D46,#B00018);border:none;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 12px rgba(176,0,24,0.4);"><i class="ti ti-chevron-right" style="font-size:19px;"></i></button>'
-      +'</div><div style="text-align:center;margin-top:9px;font-size:10.5px;color:#6a6a76;">'+t('ac.swipeHint','swipe or tap the arrows to turn the page')+'</div>'):'');
+      +'</div><div style="text-align:center;margin-top:9px;font-size:10.5px;color:#6a6a76;">'+mmT('ac.swipeHint','swipe or tap the arrows to turn the page')+'</div>'):'');
   var i=0;
   var page=wrap.querySelector('.bk-page');
   var head=wrap.querySelector('.bk-head');
@@ -9426,10 +9433,10 @@ function openAcademyLesson(ls,lv){
   var dv=document.getElementById('academy-detail');
   if(!dv){dv=document.createElement('div');dv.id='academy-detail';if(content)content.appendChild(dv);}
   dv.style.display='block';dv.innerHTML='';
-  var bb=document.createElement('button');bb.style.cssText='background:transparent;border:none;color:var(--red);font-size:13px;font-weight:700;cursor:pointer;padding:0;margin-bottom:16px;display:flex;align-items:center;gap:6px;';bb.innerHTML='<i class="ti ti-arrow-left"></i> '+t('ac.back','Back')+'';bb.addEventListener('click',function(){dv.style.display='none';if(lv)lv.style.display='block';});dv.appendChild(bb);
+  var bb=document.createElement('button');bb.style.cssText='background:transparent;border:none;color:var(--red);font-size:13px;font-weight:700;cursor:pointer;padding:0;margin-bottom:16px;display:flex;align-items:center;gap:6px;';bb.innerHTML='<i class="ti ti-arrow-left"></i> '+mmT('ac.back','Back')+'';bb.addEventListener('click',function(){dv.style.display='none';if(lv)lv.style.display='block';});dv.appendChild(bb);
   var lc={beginner:'var(--green)',intermediate:'var(--amber)',advanced:'var(--red)'};
   var head=document.createElement('div');
-  head.innerHTML='<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;"><div style="flex:1;font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);">'+ls.title+'</div><div style="font-size:9px;padding:3px 8px;border-radius:5px;color:'+(lc[ls.level]||'var(--text3)')+';background:rgba(255,255,255,0.06);">'+(ls.level||'beginner').toUpperCase()+'</div></div>'+(ls.video_url?'<div style="margin-bottom:14px;background:var(--bg3);border-radius:10px;overflow:hidden;"><a href="'+ls.video_url+'" target="_blank" style="display:flex;align-items:center;gap:10px;padding:13px;text-decoration:none;"><div style="width:40px;height:40px;border-radius:8px;background:rgba(255,30,60,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ti ti-player-play" style="color:var(--red);font-size:18px;"></i></div><div><div style="font-size:13px;font-weight:700;color:var(--text);">'+t('ac.watchVideo','Watch Video')+'</div><div style="font-size:11px;color:var(--text3);">'+t('ac.tapOpen','Tap to open')+'</div></div></a></div>':'');
+  head.innerHTML='<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;"><div style="flex:1;font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);">'+ls.title+'</div><div style="font-size:9px;padding:3px 8px;border-radius:5px;color:'+(lc[ls.level]||'var(--text3)')+';background:rgba(255,255,255,0.06);">'+(ls.level||'beginner').toUpperCase()+'</div></div>'+(ls.video_url?'<div style="margin-bottom:14px;background:var(--bg3);border-radius:10px;overflow:hidden;"><a href="'+ls.video_url+'" target="_blank" style="display:flex;align-items:center;gap:10px;padding:13px;text-decoration:none;"><div style="width:40px;height:40px;border-radius:8px;background:rgba(255,30,60,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ti ti-player-play" style="color:var(--red);font-size:18px;"></i></div><div><div style="font-size:13px;font-weight:700;color:var(--text);">'+mmT('ac.watchVideo','Watch Video')+'</div><div style="font-size:11px;color:var(--text3);">'+mmT('ac.tapOpen','Tap to open')+'</div></div></a></div>':'');
   dv.appendChild(head);
   var secs=academyParseSections(ls.content);
   dv.appendChild(buildAcademyBook(secs));
@@ -9713,14 +9720,14 @@ async function openExecuteChoicePopup() {
   var popup = document.getElementById('execute-choice-popup');
   if(popup) popup.style.display = 'flex';
   var list = document.getElementById('exec-tpl-list');
-  if(list) list.innerHTML = '<div style="font-size:12px;color:var(--text3);padding:14px;text-align:center;">'+t('ex2.loading','Loading templates...')+'</div>';
+  if(list) list.innerHTML = '<div style="font-size:12px;color:var(--text3);padding:14px;text-align:center;">'+mmT('ex2.loading','Loading templates...')+'</div>';
   _execTpls = [];
   try {
     _execTpls = await stnLoadVisibleTemplates();
   } catch(e) {}
   if(!list) return;
   if(!_execTpls.length){
-    list.innerHTML = '<div style="font-size:12px;color:var(--text3);padding:14px;text-align:center;line-height:1.6;">'+t('ex2.none','No templates yet.')+'<br>'+t('ex2.createFirst','Create one in Smart Tools first.')+'</div>';
+    list.innerHTML = '<div style="font-size:12px;color:var(--text3);padding:14px;text-align:center;line-height:1.6;">'+mmT('ex2.none','No templates yet.')+'<br>'+mmT('ex2.createFirst','Create one in Smart Tools first.')+'</div>';
     return;
   }
   renderExecTplList();
@@ -9769,10 +9776,10 @@ function renderExecTplList(){
 
   var GRID='display:grid;grid-template-columns:3px 1fr 68px 58px 58px;align-items:center;gap:11px;';
   var html='<div style="'+GRID+'padding:0 12px 8px;font-size:9px;font-weight:700;letter-spacing:.1em;color:var(--text3);opacity:.7;">'+
-           '<span></span><span>'+t('ex2.template','TEMPLATE')+'</span>'+
-           '<span style="text-align:center;">'+t('ex2.range','RANGE')+'</span>'+
-           '<span style="text-align:center;">'+t('ex2.layers','LAYERS')+'</span>'+
-           '<span style="text-align:center;">'+t('ex2.risk','RISK')+'</span></div>';
+           '<span></span><span>'+mmT('ex2.template','TEMPLATE')+'</span>'+
+           '<span style="text-align:center;">'+mmT('ex2.range','RANGE')+'</span>'+
+           '<span style="text-align:center;">'+mmT('ex2.layers','LAYERS')+'</span>'+
+           '<span style="text-align:center;">'+mmT('ex2.risk','RISK')+'</span></div>';
 
   for(var i=0;i<rows.length;i++){
     var t=rows[i], s=t.settings||{};
@@ -9797,8 +9804,8 @@ function renderExecTplList(){
       var sm=stnSafeMode();
       html += '<div style="display:flex;align-items:center;gap:10px;margin-top:10px;padding-top:9px;border-top:1px solid var(--border);" '+
               'onclick="event.stopPropagation();stnSetSafeMode('+(sm?'false':'true')+')">'+
-              '<div style="flex:1;"><div style="font-size:12px;color:var(--text);">'+t('ex2.safeMode','Safe mode')+'</div>'+
-              '<div style="font-size:10px;color:var(--text3);margin-top:1px;">'+t('ex2.safeModeHint','Bank the shallow entries early, ride one')+'</div></div>'+
+              '<div style="flex:1;"><div style="font-size:12px;color:var(--text);">'+mmT('ex2.safeMode','Safe mode')+'</div>'+
+              '<div style="font-size:10px;color:var(--text3);margin-top:1px;">'+mmT('ex2.safeModeHint','Bank the shallow entries early, ride one')+'</div></div>'+
               '<div style="width:38px;height:22px;border-radius:11px;position:relative;flex:none;background:'+(sm?'#e03050':'#2f2f39')+';">'+
               '<div style="position:absolute;top:3px;'+(sm?'right:3px;background:#fff;':'left:3px;background:#7a7a84;')+'width:16px;height:16px;border-radius:50%;"></div>'+
               '</div></div>';
@@ -9902,10 +9909,10 @@ function openTradeConsentSheet(){
   sheet.innerHTML=
     '<div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 18px;"></div>'+
     '<div style="text-align:center;margin-bottom:8px;"><i class="ti ti-alert-triangle" style="font-size:34px;color:var(--amber);"></i></div>'+
-    '<div style="font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);text-align:center;margin-bottom:10px;">'+t('ta.title','TRADE AUTHORIZATION')+'</div>'+
+    '<div style="font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);text-align:center;margin-bottom:10px;">'+mmT('ta.title','TRADE AUTHORIZATION')+'</div>'+
     '<div style="font-size:12px;color:var(--text3);text-align:center;line-height:1.7;margin-bottom:18px;">By confirming, you authorize Momentum AI to place this trade on your connected MT5 account using your current Smart Tool settings. Trading carries risk of loss, and you remain responsible for your account.</div>'+
-    '<label style="display:flex;align-items:center;gap:10px;padding:11px;background:var(--bg3);border:1px solid var(--border);border-radius:9px;cursor:pointer;margin-bottom:8px;"><input type="checkbox" id="consent-authorize" style="accent-color:var(--red);width:16px;height:16px;flex-shrink:0;"><span style="font-size:12px;color:var(--text2);">'+t('ta.authorize','I authorize this trade')+'</span></label>'+
-    '<label style="display:flex;align-items:center;gap:10px;padding:11px;background:var(--bg3);border:1px solid var(--border);border-radius:9px;cursor:pointer;margin-bottom:16px;"><input type="checkbox" id="consent-all" style="accent-color:var(--red);width:16px;height:16px;flex-shrink:0;"><span style="font-size:12px;color:var(--text2);">'+t('ta.allowAll','Allow all future trades — do not ask me again')+'</span></label>';
+    '<label style="display:flex;align-items:center;gap:10px;padding:11px;background:var(--bg3);border:1px solid var(--border);border-radius:9px;cursor:pointer;margin-bottom:8px;"><input type="checkbox" id="consent-authorize" style="accent-color:var(--red);width:16px;height:16px;flex-shrink:0;"><span style="font-size:12px;color:var(--text2);">'+mmT('ta.authorize','I authorize this trade')+'</span></label>'+
+    '<label style="display:flex;align-items:center;gap:10px;padding:11px;background:var(--bg3);border:1px solid var(--border);border-radius:9px;cursor:pointer;margin-bottom:16px;"><input type="checkbox" id="consent-all" style="accent-color:var(--red);width:16px;height:16px;flex-shrink:0;"><span style="font-size:12px;color:var(--text2);">'+mmT('ta.allowAll','Allow all future trades — do not ask me again')+'</span></label>';
   var confirmBtn=document.createElement('button');
   confirmBtn.textContent='CONFIRM & EXECUTE';
   confirmBtn.style.cssText='width:100%;padding:14px;background:var(--grad);border:none;border-radius:12px;color:#fff;font-family:Orbitron,sans-serif;font-size:13px;font-weight:800;letter-spacing:1px;cursor:pointer;opacity:0.45;pointer-events:none;margin-bottom:10px;';
@@ -9989,9 +9996,9 @@ function editAccount(acctId, mt5id){
   sheet.style.cssText='background:#0E0E12;border-radius:24px 24px 0 0;padding:20px 18px calc(24px + env(safe-area-inset-bottom));width:100%;box-sizing:border-box;';
   sheet.innerHTML=
     '<div style="width:36px;height:4px;background:rgba(255,255,255,0.15);border-radius:2px;margin:0 auto 16px;"></div>'+
-    '<div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:4px;">'+t('mt.updatePw','Update MT5 password')+'</div>'+
+    '<div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:4px;">'+mmT('mt.updatePw','Update MT5 password')+'</div>'+
     '<div style="font-size:12px;color:#9a9aa6;margin-bottom:16px;">Account '+mt5id+' &middot; we\'ll re-check the login after you save.</div>'+
-    '<label style="font-size:11px;color:#9a9aa6;display:block;margin-bottom:6px;">'+t('mt.newPw','New MT5 password')+'</label>'+
+    '<label style="font-size:11px;color:#9a9aa6;display:block;margin-bottom:6px;">'+mmT('mt.newPw','New MT5 password')+'</label>'+
     '<input id="acct-edit-pw" type="password" placeholder="Master password" style="width:100%;padding:13px;background:#16161D;border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:#fff;font-size:14px;font-family:Sora,sans-serif;margin-bottom:8px;box-sizing:border-box;">'+
     '<div id="acct-edit-err" style="display:none;color:var(--red);font-size:12px;margin-bottom:8px;"></div>'+
     '<button id="acct-edit-save" style="width:100%;display:flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,#FF1E3C,#C40024);border:none;border-radius:14px;padding:14px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;margin-top:8px;"><i class="ti ti-refresh" style="font-size:18px;"></i>Update &amp; Retry</button>';
@@ -10036,11 +10043,11 @@ function confirmDeleteAccount(acctId, mt5id){
   sheet.style.cssText='background:#0E0E12;border-radius:24px 24px 0 0;padding:20px 18px calc(24px + env(safe-area-inset-bottom));width:100%;box-sizing:border-box;';
   sheet.innerHTML=
     '<div style="width:36px;height:4px;background:rgba(255,255,255,0.15);border-radius:2px;margin:0 auto 16px;"></div>'+
-    '<div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:4px;">'+t('cd.removeQ','Remove account?')+'</div>'+
-    '<div style="font-size:12px;color:#9a9aa6;margin-bottom:18px;line-height:1.5;">Account '+mt5id+' '+t('cd.removeBody','will be removed from your list and the EA will stop trading it. You can add it again later.')+'</div>'+
+    '<div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:4px;">'+mmT('cd.removeQ','Remove account?')+'</div>'+
+    '<div style="font-size:12px;color:#9a9aa6;margin-bottom:18px;line-height:1.5;">Account '+mt5id+' '+mmT('cd.removeBody','will be removed from your list and the EA will stop trading it. You can add it again later.')+'</div>'+
     '<div id="acct-del-err" style="display:none;color:var(--red);font-size:12px;margin-bottom:10px;"></div>'+
-    '<button id="acct-del-go" style="width:100%;background:linear-gradient(135deg,#FF1E3C,#C40024);border:none;border-radius:14px;padding:14px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;margin-bottom:10px;">'+t('cd.remove','Remove account')+'</button>'+
-    '<button id="acct-del-cancel" style="width:100%;background:transparent;border:1px solid rgba(255,255,255,0.15);border-radius:14px;padding:13px;color:#cfcfd6;font-size:14px;font-weight:600;cursor:pointer;font-family:Sora,sans-serif;">'+t('cd.cancel','Cancel')+'</button>';
+    '<button id="acct-del-go" style="width:100%;background:linear-gradient(135deg,#FF1E3C,#C40024);border:none;border-radius:14px;padding:14px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;margin-bottom:10px;">'+mmT('cd.remove','Remove account')+'</button>'+
+    '<button id="acct-del-cancel" style="width:100%;background:transparent;border:1px solid rgba(255,255,255,0.15);border-radius:14px;padding:13px;color:#cfcfd6;font-size:14px;font-weight:600;cursor:pointer;font-family:Sora,sans-serif;">'+mmT('cd.cancel','Cancel')+'</button>';
   overlay.appendChild(sheet);
   document.body.appendChild(overlay);
   document.getElementById('acct-del-cancel').addEventListener('click',function(){ overlay.remove(); });
@@ -10146,7 +10153,7 @@ function loadProfileMT5() {
   if(toggle) toggle.classList.remove('on');
   if(agree) agree.checked = false;
   lockMT5Form(false);
-  setMT5Badge(t('pa.addAccount','ADD ACCOUNT'),'disconnected');
+  setMT5Badge(mmT('pa.addAccount','ADD ACCOUNT'),'disconnected');
   var banner = document.getElementById('mt5-status-banner'); if(banner){ banner.style.display='none'; banner.innerHTML=''; }
   var btn = document.querySelector('button.red-btn[onclick="handleMT5Connect()"]'); if(btn){ btn.textContent='REQUEST ACCOUNT'; btn.disabled=false; btn.style.opacity=''; }
   renderProfileAccounts();
@@ -10156,7 +10163,7 @@ async function renderProfileAccounts() {
   var list = document.getElementById('profile-accounts-list');
   var countEl = document.getElementById('pacct-count');
   if(!list) return;
-  list.innerHTML = '<div class="pacct-empty">'+t('pa.loading','Loading...')+'</div>';
+  list.innerHTML = '<div class="pacct-empty">'+mmT('pa.loading','Loading...')+'</div>';
   var accts = [];
   try {
     if(currentUser && currentUser.id) {
@@ -10166,14 +10173,14 @@ async function renderProfileAccounts() {
     }
   } catch(e) {}
   if(countEl) countEl.textContent = accts.length + '/5';
-  if(!accts.length) { list.innerHTML = '<div class="pacct-empty">'+t('pa.none','No accounts connected yet.')+'</div>'; return; }
+  if(!accts.length) { list.innerHTML = '<div class="pacct-empty">'+mmT('pa.none','No accounts connected yet.')+'</div>'; return; }
   var activeId = currentUser ? currentUser.active_account_id : null;
   var html = '';
   accts.forEach(function(a){
     var st = (a.connection_status||'').toLowerCase();
     var conn = a.mt5_connected || st==='connected';
-    var cls='grey', lbl=t('pa.notConnected','NOT CONNECTED');
-    if(conn) { cls='green'; lbl=t('pa.connected','CONNECTED'); }
+    var cls='grey', lbl=mmT('pa.notConnected','NOT CONNECTED');
+    if(conn) { cls='green'; lbl=mmT('pa.connected','CONNECTED'); }
     else if(st==='pending'||st==='pending_setup') { cls='amber'; lbl='PENDING'; }
     else if(st==='suspended') { cls='red'; lbl='SUSPENDED'; }
     else if(st==='rejected') { cls='red'; lbl='REJECTED'; }
@@ -10186,17 +10193,17 @@ async function renderProfileAccounts() {
       reasonHtml = '<div style="font-size:10px;color:'+rc+';margin-top:4px;line-height:1.45;max-width:175px;text-align:right;">'+reason+'</div>';
     }
     var safeMt5 = (a.mt5_id||'').toString().replace(/[\\\\']/g,'');
-    var editBtn = editable ? '<button onclick="editAccount(\''+a.id+'\',\''+safeMt5+'\')" style="display:inline-flex;align-items:center;gap:4px;background:rgba(255,30,60,0.12);border:1px solid rgba(255,30,60,0.3);color:var(--red);font-size:10px;font-weight:700;padding:5px 11px;border-radius:8px;cursor:pointer;font-family:Sora,sans-serif;"><i class="ti ti-pencil" style="font-size:12px;"></i>'+t('pa.edit','Edit')+'</button>' : '';
+    var editBtn = editable ? '<button onclick="editAccount(\''+a.id+'\',\''+safeMt5+'\')" style="display:inline-flex;align-items:center;gap:4px;background:rgba(255,30,60,0.12);border:1px solid rgba(255,30,60,0.3);color:var(--red);font-size:10px;font-weight:700;padding:5px 11px;border-radius:8px;cursor:pointer;font-family:Sora,sans-serif;"><i class="ti ti-pencil" style="font-size:12px;"></i>'+mmT('pa.edit','Edit')+'</button>' : '';
     html += '<div class="pacct-row">'+
-      '<div style="flex:1;"><div class="pacct-id">'+(a.mt5_id||'--')+(isActive?'<span class="pacct-active">'+t('pa.active','ACTIVE')+'</span>':'')+'</div>'+
+      '<div style="flex:1;"><div class="pacct-id">'+(a.mt5_id||'--')+(isActive?'<span class="pacct-active">'+mmT('pa.active','ACTIVE')+'</span>':'')+'</div>'+
       '<div class="pacct-sv">'+(a.mt5_server||a.broker||'')+'</div></div>'+
       '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">'+
         '<div class="pacct-badge '+cls+'">'+lbl+'</div>'+
         reasonHtml+
         editBtn+
-        '<div style="display:flex;align-items:center;gap:7px;"><span style="font-size:10px;color:var(--text3);font-weight:600;">'+t('stn.autoWord','Auto')+'</span>'+
+        '<div style="display:flex;align-items:center;gap:7px;"><span style="font-size:10px;color:var(--text3);font-weight:600;">'+mmT('stn.autoWord','Auto')+'</span>'+
           '<div class="toggle'+(a.allow_auto_trade?' on':'')+'" onclick="toggleAccountAuto(\''+a.id+'\',this)"></div></div>'+
-        '<button onclick="confirmDeleteAccount(\''+a.id+'\',\''+safeMt5+'\')" style="display:inline-flex;align-items:center;gap:4px;background:transparent;border:none;color:var(--text3);font-size:10px;font-weight:600;cursor:pointer;font-family:Sora,sans-serif;padding:2px 0;"><i class="ti ti-trash" style="font-size:13px;"></i>'+t('pa.remove','Remove')+'</button>'+
+        '<button onclick="confirmDeleteAccount(\''+a.id+'\',\''+safeMt5+'\')" style="display:inline-flex;align-items:center;gap:4px;background:transparent;border:none;color:var(--text3);font-size:10px;font-weight:600;cursor:pointer;font-family:Sora,sans-serif;padding:2px 0;"><i class="ti ti-trash" style="font-size:13px;"></i>'+mmT('pa.remove','Remove')+'</button>'+
       '</div>'+
     '</div>';
   });
@@ -10299,10 +10306,10 @@ function confirmStopAutoTrade() {
   popup.innerHTML =
     '<div style="background:var(--bg2);border-radius:20px;border:1px solid var(--border);padding:24px;width:100%;max-width:340px;text-align:center;">' +
     '<div style="font-size:32px;margin-bottom:12px;">⚠️</div>' +
-    '<div style="font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);margin-bottom:10px;">'+t('sa.title','STOP AUTO TRADE?')+'</div>' +
-    '<div style="font-size:12px;color:var(--text3);line-height:1.7;margin-bottom:20px;">'+t('sa.body','This will disable Auto Trade immediately. No new trades will be placed automatically. Your existing open positions will not be affected.')+'</div>' +
-    '<button id="confirm-stop-auto" style="width:100%;padding:13px;background:var(--grad);border:none;border-radius:12px;color:#fff;font-family:Orbitron,sans-serif;font-size:12px;font-weight:700;cursor:pointer;margin-bottom:8px;">'+t('sa.yes','YES, STOP AUTO TRADE')+'</button>' +
-    '<button id="cancel-stop-auto" style="width:100%;padding:12px;background:transparent;border:1px solid var(--border);border-radius:12px;color:var(--text2);font-size:13px;cursor:pointer;">'+t('cd.cancel','Cancel')+'</button>' +
+    '<div style="font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);margin-bottom:10px;">'+mmT('sa.title','STOP AUTO TRADE?')+'</div>' +
+    '<div style="font-size:12px;color:var(--text3);line-height:1.7;margin-bottom:20px;">'+mmT('sa.body','This will disable Auto Trade immediately. No new trades will be placed automatically. Your existing open positions will not be affected.')+'</div>' +
+    '<button id="confirm-stop-auto" style="width:100%;padding:13px;background:var(--grad);border:none;border-radius:12px;color:#fff;font-family:Orbitron,sans-serif;font-size:12px;font-weight:700;cursor:pointer;margin-bottom:8px;">'+mmT('sa.yes','YES, STOP AUTO TRADE')+'</button>' +
+    '<button id="cancel-stop-auto" style="width:100%;padding:12px;background:transparent;border:1px solid var(--border);border-radius:12px;color:var(--text2);font-size:13px;cursor:pointer;">'+mmT('cd.cancel','Cancel')+'</button>' +
     '</div>';
   document.body.appendChild(popup);
   document.getElementById('cancel-stop-auto').onclick = function(){ popup.remove(); };
@@ -10528,7 +10535,7 @@ function stnUnitVal(sym, pts){
 function stnUnitSheet(){
   var s=document.getElementById('stn-usheet'); if(!s) return;
   if(s.style.display==='block'){ s.style.display='none'; return; }
-  var h='<div class="uh">'+t('stn.showDistance','Show distance as')+'</div>';
+  var h='<div class="uh">'+mmT('stn.showDistance','Show distance as')+'</div>';
   for(var i=0;i<STN_UNITS.length;i++){ var u=STN_UNITS[i];
     h+='<div class="uo'+(i===_stnUnit?' on':'')+'" onclick="stnSetUnit('+i+')">'+
        '<div class="n">'+u.n+(i===_stnUnit?' <i class="ti ti-check"></i>':'')+'</div>'+
@@ -10592,17 +10599,17 @@ function stnMultSheet(){
   // The toggle. Auto and manual are mutually exclusive, so picking a number
   // below turns Auto off rather than silently fighting it.
   h+='<div class="uo" style="align-items:center;" onclick="stnSetLotAuto('+(auto?'false':'true')+')">'+
-     '<div><div class="n">'+t('stn.autoWord','Auto')+'</div>'+
-     '<div class="d" style="margin-top:2px;">'+t('stn.multRule','One multiple per $10,000 of balance')+'</div></div>'+
+     '<div><div class="n">'+mmT('stn.autoWord','Auto')+'</div>'+
+     '<div class="d" style="margin-top:2px;">'+mmT('stn.multRule','One multiple per $10,000 of balance')+'</div></div>'+
      '<div style="width:40px;height:23px;border-radius:12px;position:relative;flex:none;background:'+(auto?'#e03050':'#2f2f39')+';">'+
      '<div style="position:absolute;top:3px;'+(auto?'right:3px;background:#fff;':'left:3px;background:#7a7a84;')+'width:17px;height:17px;border-radius:50%;"></div>'+
      '</div></div>';
   if(auto){
     h+='<div style="background:rgba(224,48,80,.10);border:1px solid rgba(224,48,80,.28);border-radius:10px;padding:11px;margin:10px 0;">'+
        '<div style="display:flex;align-items:baseline;justify-content:space-between;">'+
-       '<span style="font-size:12px;color:var(--text3);">'+t('stn.currently','Currently')+'</span>'+
+       '<span style="font-size:12px;color:var(--text3);">'+mmT('stn.currently','Currently')+'</span>'+
        '<span style="font-size:20px;font-weight:700;color:#ff6b7e;">&times;'+cur+'</span></div>'+
-       '<div style="font-size:11px;color:var(--text3);margin-top:5px;">'+t('stn.balance','Balance')+' '+stnMoney(bal)+' &middot; next step &times;'+(cur+1)+' at '+stnMoney(nextAt)+'</div>'+
+       '<div style="font-size:11px;color:var(--text3);margin-top:5px;">'+mmT('stn.balance','Balance')+' '+stnMoney(bal)+' &middot; next step &times;'+(cur+1)+' at '+stnMoney(nextAt)+'</div>'+
        '</div>';
   }
   h+='<div'+(auto?' style="opacity:.32;pointer-events:none;"':'')+'>';
@@ -10610,15 +10617,15 @@ function stnMultSheet(){
     h+='<div class="uo'+((!auto&&m===cur)?' on':'')+'" onclick="stnSetLotMult('+m+')">'+
        '<div class="n">&times;'+m+((!auto&&m===cur)?' <i class="ti ti-check"></i>':'')+'</div>'+
        '<div class="d">'+(m===1?'base ladder, no scaling':'every layer &times; '+m)+'</div></div>'; }
-  h+='<div class="uo" style="align-items:center;"><div class="n">'+t('stn.custom','Custom')+'</div>'+
+  h+='<div class="uo" style="align-items:center;"><div class="n">'+mmT('stn.custom','Custom')+'</div>'+
      '<div class="d" style="display:flex;gap:6px;align-items:center;">'+
      '<input id="stn-mult-custom" type="number" inputmode="numeric" step="1" min="1" placeholder="e.g. 7" '+
      'style="width:72px;padding:6px 8px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;">'+
-     '<button onclick="stnSetLotMultCustom()" style="padding:6px 12px;background:var(--grad);border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;">'+t('stn.set','Set')+'</button>'+
+     '<button onclick="stnSetLotMultCustom()" style="padding:6px 12px;background:var(--grad);border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;">'+mmT('stn.set','Set')+'</button>'+
      '</div></div>';
   h+='</div>';
-  if(auto) h+='<div style="font-size:11px;color:var(--text3);padding:2px 4px 4px;">'+t('stn.turnAutoOff','Turn Auto off to choose your own.')+'</div>';
-  else     h+='<div style="font-size:11px;color:var(--text3);padding:2px 4px 4px;">'+t('stn.wholeOnly','Whole numbers only.')+'</div>';
+  if(auto) h+='<div style="font-size:11px;color:var(--text3);padding:2px 4px 4px;">'+mmT('stn.turnAutoOff','Turn Auto off to choose your own.')+'</div>';
+  else     h+='<div style="font-size:11px;color:var(--text3);padding:2px 4px 4px;">'+mmT('stn.wholeOnly','Whole numbers only.')+'</div>';
   s.innerHTML=h; s.style.display='block';
 }
 function stnSetLotMultCustom(){
@@ -10945,7 +10952,7 @@ function stnRender(){
   if(!_stnSig){
     if($('stn-budget-big')) $('stn-budget-big').innerHTML = stnMoney(budget)+' <small>budget</small>';
     if($('stn-bar-fill'))   $('stn-bar-fill').style.width = '0%';
-    if($('stn-status'))     $('stn-status').innerHTML = '<i class="ti ti-info-circle"></i> '+t('stn.noLiveSignal','No live signal to price against')+'';
+    if($('stn-status'))     $('stn-status').innerHTML = '<i class="ti ti-info-circle"></i> '+mmT('stn.noLiveSignal','No live signal to price against')+'';
     if($('stn-rr'))    $('stn-rr').innerHTML='';
     if($('stn-exp'))   $('stn-exp').innerHTML='';
     if($('stn-basis')) $('stn-basis').innerHTML='';
@@ -10971,7 +10978,7 @@ function stnRender(){
   var rr = r.worst>0 ? (r.profit/r.worst) : 0;
   var cls = rr>=1.5 ? 'good' : (rr>=1 ? 'ok' : 'bad');
   if($('stn-rr')) $('stn-rr').innerHTML =
-    '<span>'+t('stn.risk','Risk')+' <b>'+stnMoney(r.worst)+'</b> &rarr; win <u>~'+stnMoney(r.profit)+'</u> est. at TP</span>'+
+    '<span>'+mmT('stn.risk','Risk')+' <b>'+stnMoney(r.worst)+'</b> &rarr; win <u>~'+stnMoney(r.profit)+'</u> est. at TP</span>'+
     '<span class="ratio '+cls+'">1 : '+rr.toFixed(1)+'</span>';
   if($('stn-exp')) $('stn-exp').innerHTML =
     '<span>If this fills</span><span class="v">'+stnMoney(r.worst)+' at risk &middot; '+
@@ -11011,7 +11018,7 @@ function stnRender(){
          '<span class="idx">'+L.n+'</span>'+dist+price+tail+'</div>';
   }
   if($('stn-dca-body'))   $('stn-dca-body').innerHTML=h;
-  if($('stn-dca-tot'))    $('stn-dca-tot').innerHTML='<span></span><span class="k">'+t('stn.total','Total')+'</span><span></span>'+
+  if($('stn-dca-tot'))    $('stn-dca-tot').innerHTML='<span></span><span class="k">'+mmT('stn.total','Total')+'</span><span></span>'+
       (_stnEdit ? '<span class="v">'+r.lots.toFixed(2)+'</span><span></span>'
                 : '<span class="r">'+stnMoney(r.worst)+'</span><span class="v">'+r.lots.toFixed(2)+'</span>');
   stnLadderChrome();
@@ -11045,7 +11052,7 @@ function stnRender(){
           '<span class="c px">'+T.px.toFixed(stnDp(r.symbol))+'</span>'+closec+tptail+'</div>';
   }
   if($('stn-tp-body')) $('stn-tp-body').innerHTML=th;
-  if($('stn-tp-tot'))  $('stn-tp-tot').innerHTML='<span></span><span class="k">'+t('stn.total','Total')+'</span><span></span>'+
+  if($('stn-tp-tot'))  $('stn-tp-tot').innerHTML='<span></span><span class="k">'+mmT('stn.total','Total')+'</span><span></span>'+
       (_stnEdit ? '<span class="v">'+r.closedPct+'%</span><span></span>'
                 : '<span class="g">est. '+stnMoney(r.profit)+'</span><span class="v">'+(r.lots-r.trailLots).toFixed(2)+'</span>');
   if($('stn-pct-closed')) $('stn-pct-closed').style.width=r.closedPct+'%';
@@ -11100,7 +11107,7 @@ function stnRenderRatiosOnly(){
          '</div>';
   }
   if($('stn-dca-body')) $('stn-dca-body').innerHTML=h;
-  if($('stn-dca-tot'))  $('stn-dca-tot').innerHTML='<span></span><span class="k">'+t('stn.total','Total')+'</span><span></span>'+
+  if($('stn-dca-tot'))  $('stn-dca-tot').innerHTML='<span></span><span class="k">'+mmT('stn.total','Total')+'</span><span></span>'+
       '<span class="c dm">&mdash;</span><span class="v">'+_stnRatioLots.toFixed(2)+'</span>';
   stnLadderChrome();
   var th='';
@@ -11120,7 +11127,7 @@ function stnRenderRatiosOnly(){
           '</div>';
   }
   if($('stn-tp-body')) $('stn-tp-body').innerHTML=th;
-  if($('stn-tp-tot'))  $('stn-tp-tot').innerHTML='<span></span><span class="k">'+t('stn.total','Total')+'</span><span></span>'+
+  if($('stn-tp-tot'))  $('stn-tp-tot').innerHTML='<span></span><span class="k">'+mmT('stn.total','Total')+'</span><span></span>'+
       '<span class="c dm">&mdash;</span><span class="c dm">&mdash;</span>';
   if($('stn-be-field'))    $('stn-be-field').textContent    = t.breakeven.trigger_reach_pct+'%';
   if($('stn-bebuf-field')) $('stn-bebuf-field').textContent = t.breakeven.buffer_reach_pct+'%';
@@ -11489,7 +11496,7 @@ async function stnSave(){ if(stnLocked()) return;
 var _stnTab='user';
 function stnOpenTemplates(){
   var ov=document.createElement('div'); ov.className='stn-tpl-sheet'; ov.id='stn-tpl-sheet';
-  ov.innerHTML='<div class="sheet"><div class="grab"></div><div class="hd">'+t('stn.templatesWord','Templates')+'</div><div id="stn-tpl-body"></div></div>';
+  ov.innerHTML='<div class="sheet"><div class="grab"></div><div class="hd">'+mmT('stn.templatesWord','Templates')+'</div><div id="stn-tpl-body"></div></div>';
   ov.addEventListener('click', function(e){ if(e.target===ov) stnCloseTemplates(); });
   document.body.appendChild(ov);
   stnTplTab(_stnTab);
@@ -11501,9 +11508,9 @@ function stnTplTab(which){
   // Templates are MomentumAI-provided ONLY. Users SELECT; they do not build.
   // Admins author the shared set via the admin Template tab (publish mode).
   // The old "My Templates" personal-slot tab was removed 22 Jul 2026.
-  var h = '<div class="stn-tabs"><div class="tb on">'+t('stn.maiTemplates','MAI Templates')+'</div></div>';
+  var h = '<div class="stn-tabs"><div class="tb on">'+mmT('stn.maiTemplates','MAI Templates')+'</div></div>';
   var list=_stnTpls.filter(function(x){ return x.kind==='mai'; });
-  if(!list.length) h+='<div class="tpl empty"><div class="n">'+t('stn.noTemplates','No templates yet')+'</div><div class="s">'+t('stn.noPublished','MomentumAI has not published one')+'</div></div>';
+  if(!list.length) h+='<div class="tpl empty"><div class="n">'+mmT('stn.noTemplates','No templates yet')+'</div><div class="s">'+mmT('stn.noPublished','MomentumAI has not published one')+'</div></div>';
   for(var j=0;j<list.length;j++){
     var m=list[j];
     var ML=(m.settings.dca&&m.settings.dca.layers)?m.settings.dca.layers.length:1;
@@ -11616,8 +11623,8 @@ function updateSentimentScale(pct) {
     }
   });
   if(label) {
-    var txt = pct>=75?t('sc.leanSB','strongly bullish'):pct>=60?t('sc.leanMB','moderately bullish'):pct>=45?t('sc.leanN','neutral'):pct>=30?t('sc.leanMBe','moderately bearish'):t('sc.leanSBe','strongly bearish');
-    label.innerHTML = t('sc.leaning','Leaning')+' <span style="font-weight:700;color:'+(pct>=50?'#00C87A':'#FF1E3C')+'">'+txt+'</span>';
+    var txt = pct>=75?mmT('sc.leanSB','strongly bullish'):pct>=60?mmT('sc.leanMB','moderately bullish'):pct>=45?mmT('sc.leanN','neutral'):pct>=30?mmT('sc.leanMBe','moderately bearish'):mmT('sc.leanSBe','strongly bearish');
+    label.innerHTML = mmT('sc.leaning','Leaning')+' <span style="font-weight:700;color:'+(pct>=50?'#00C87A':'#FF1E3C')+'">'+txt+'</span>';
   }
 }
 
@@ -11629,9 +11636,9 @@ async function runMAIScanner() {
   var symName = document.getElementById('scan-symbol').options[document.getElementById('scan-symbol').selectedIndex].text.split(' ')[0];
   var tfName = document.getElementById('scan-tf').options[document.getElementById('scan-tf').selectedIndex].text;
 
-  btn.textContent = t('sc.scanning','\u27F3 SCANNING...');
+  btn.textContent = mmT('sc.scanning','\u27F3 SCANNING...');
   btn.style.background = '#333';
-  if(badge) { badge.innerHTML = '<div style="width:6px;height:6px;border-radius:50%;background:var(--amber);animation:pulse 1s infinite;"></div>'+t('sc.scanningCaps','SCANNING')+''; badge.style.color='var(--amber)'; }
+  if(badge) { badge.innerHTML = '<div style="width:6px;height:6px;border-radius:50%;background:var(--amber);animation:pulse 1s infinite;"></div>'+mmT('sc.scanningCaps','SCANNING')+''; badge.style.color='var(--amber)'; }
 
   document.getElementById('scan-pair-label').innerHTML = symName+' <span style="color:var(--red);">'+tfName+'</span>';
   document.getElementById('scan-results').style.display = 'block';
@@ -11684,8 +11691,8 @@ async function runMAIScanner() {
 
     // No data guard - never fake it
     if(!closes.length) {
-      if(badge){ badge.innerHTML='<div style="width:6px;height:6px;border-radius:50%;background:var(--red);"></div>'+t('sc.noData','NO DATA')+''; badge.style.color='var(--red)'; }
-      btn.textContent=t('sc.initiate','\u25B6 INITIATE SCAN'); btn.style.background='var(--red)';
+      if(badge){ badge.innerHTML='<div style="width:6px;height:6px;border-radius:50%;background:var(--red);"></div>'+mmT('sc.noData','NO DATA')+''; badge.style.color='var(--red)'; }
+      btn.textContent=mmT('sc.initiate','\u25B6 INITIATE SCAN'); btn.style.background='var(--red)';
       alert('Scanner: market data unavailable right now. Please try again in a moment.');
       return;
     }
@@ -11695,7 +11702,7 @@ async function runMAIScanner() {
     var chgEl = document.getElementById('scan-change');
     chgEl.textContent = (chgPct>=0?'+':'')+chgPct+'% (24h)';
     chgEl.style.color = chgPct>=0?'#00C87A':'#FF1E3C';
-    document.getElementById('scan-last-time').textContent = t('sc.lastScan','Last scan: ')+new Date().toLocaleTimeString();
+    document.getElementById('scan-last-time').textContent = mmT('sc.lastScan','Last scan: ')+new Date().toLocaleTimeString();
 
     // 2. CALCULATE TECHNICAL INDICATORS
     function calcSMA(data, period) {
@@ -11767,9 +11774,9 @@ async function runMAIScanner() {
         '<span style="font-size:10px;font-weight:700;color:'+col+';min-width:50px;text-align:right;">'+label+'</span>'+
       '</div>';
     }
-    techHTML += indRow(t('sc.ma50','Moving Avg (50)'), aboveSMA50?85:15, aboveSMA50?t('sc.above','ABOVE'):t('sc.below','BELOW'), aboveSMA50?'#00C87A':'#FF1E3C');
-    techHTML += indRow('EMA 200', aboveEMA200?90:10, aboveEMA200?t('sc.above','ABOVE'):t('sc.below','BELOW'), aboveEMA200?'#00C87A':'#FF1E3C');
-    techHTML += indRow(t('sc.bb','Bollinger Bands'), bbPos*100, bbPos>0.7?t('sc.upper','UPPER'):bbPos>0.3?t('sc.midBand','MID'):t('sc.lower','LOWER'), bbPos>0.6?'#00C87A':bbPos>0.4?'#FFB020':'#FF1E3C');
+    techHTML += indRow(mmT('sc.ma50','Moving Avg (50)'), aboveSMA50?85:15, aboveSMA50?mmT('sc.above','ABOVE'):mmT('sc.below','BELOW'), aboveSMA50?'#00C87A':'#FF1E3C');
+    techHTML += indRow('EMA 200', aboveEMA200?90:10, aboveEMA200?mmT('sc.above','ABOVE'):mmT('sc.below','BELOW'), aboveEMA200?'#00C87A':'#FF1E3C');
+    techHTML += indRow(mmT('sc.bb','Bollinger Bands'), bbPos*100, bbPos>0.7?mmT('sc.upper','UPPER'):bbPos>0.3?mmT('sc.midBand','MID'):mmT('sc.lower','LOWER'), bbPos>0.6?'#00C87A':bbPos>0.4?'#FFB020':'#FF1E3C');
     techHTML += indRow('RSI (14)', rsi, rsi.toFixed(0), rsi>70?'#FF1E3C':rsi>50?'#00C87A':'#FFB020');
     techHTML += indRow('MACD', macdBull?70:30, macdBull?mmVerdict('BULLISH'):mmVerdict('BEARISH'), macdBull?'#00C87A':'#FF1E3C');
     techHTML += indRow('ATR', 55, atr.toFixed(2), '#FFB020');
@@ -11867,7 +11874,7 @@ Respond ONLY with valid JSON (no markdown):
         },
         tech_scenario_bullish: 'Price breaks above '+fmt(resistance)+' targeting higher levels.',
         tech_scenario_bearish: 'Price drops below '+fmt(support)+' targeting lower demand zones.',
-        tech_verdict: (aboveSMA50&&aboveEMA200)?t('sc.fbTechUp','Price above key moving averages, bullish structure intact.'):t('sc.fbTechDown','Price below key moving averages, bearish pressure present.'),
+        tech_verdict: (aboveSMA50&&aboveEMA200)?mmT('sc.fbTechUp','Price above key moving averages, bullish structure intact.'):mmT('sc.fbTechDown','Price below key moving averages, bearish pressure present.'),
         fund_news: [{name:'Check economic calendar for upcoming events',time:'—',forecast:'—',previous:'—',impact:'Medium'}],
         fund_verdict: 'Monitor upcoming economic events that may impact '+symName+'.',
         overall_direction: techDir,
@@ -11886,7 +11893,7 @@ Respond ONLY with valid JSON (no markdown):
 
     var factors = ai.sentiment_factors || {};
     var factorColors = ['#4D9EFF','#00C87A','#FFB020','#A05AFF','#FF6B9D','#FF1E3C'];
-    var factorNames = [t('sc.fTech','Technical Trend'),t('sc.fNews','Economic News'),t('sc.fDxy','USD Index DXY'),t('sc.fBond','Bond Yield'),t('sc.fCot','COT Positioning'),t('sc.fVix','VIX Fear Index')];
+    var factorNames = [mmT('sc.fTech','Technical Trend'),mmT('sc.fNews','Economic News'),mmT('sc.fDxy','USD Index DXY'),mmT('sc.fBond','Bond Yield'),mmT('sc.fCot','COT Positioning'),mmT('sc.fVix','VIX Fear Index')];
     var factorKeys = ['technical_trend','economic_news','dxy_impact','bond_yield','cot_positioning','vix_fear'];
     var factorsHTML = factorKeys.map(function(k,i){
       var v = factors[k]||50;
@@ -11904,9 +11911,9 @@ Respond ONLY with valid JSON (no markdown):
 
     // 6. RENDER TECHNICAL
     var techScenario = document.getElementById('tech-scenario');
-    if(techScenario) techScenario.innerHTML = '<span style="font-size:9px;color:var(--red);font-weight:700;letter-spacing:.5px;">'+t('sc.scenario',t('sc.scenario','MAI SCENARIO'))+'</span><br><span style="color:#00C87A;font-weight:700;">'+t('sc.bullishPrefix','Bullish:')+'</span> '+(ai.tech_scenario_bullish||'—')+'<br><span style="color:#FF1E3C;font-weight:700;">'+t('sc.bearishPrefix','Bearish:')+'</span> '+(ai.tech_scenario_bearish||'—');
+    if(techScenario) techScenario.innerHTML = '<span style="font-size:9px;color:var(--red);font-weight:700;letter-spacing:.5px;">'+mmT('sc.scenario',mmT('sc.scenario','MAI SCENARIO'))+'</span><br><span style="color:#00C87A;font-weight:700;">'+mmT('sc.bullishPrefix','Bullish:')+'</span> '+(ai.tech_scenario_bullish||'—')+'<br><span style="color:#FF1E3C;font-weight:700;">'+mmT('sc.bearishPrefix','Bearish:')+'</span> '+(ai.tech_scenario_bearish||'—');
     var techVerdictBox = document.getElementById('tech-verdict-box');
-    if(techVerdictBox) techVerdictBox.innerHTML = '<span style="color:#00C87A;font-weight:700;">'+t('sc.techVerdict','Technical Verdict')+'</span><br>'+(ai.tech_verdict||'—');
+    if(techVerdictBox) techVerdictBox.innerHTML = '<span style="color:#00C87A;font-weight:700;">'+mmT('sc.techVerdict','Technical Verdict')+'</span><br>'+(ai.tech_verdict||'—');
 
     // 7. RENDER FUNDAMENTAL
     var newsHTML = (ai.fund_news||[]).map(function(n){
@@ -11917,8 +11924,8 @@ Respond ONLY with valid JSON (no markdown):
         '<div style="font-size:10px;color:var(--text3);">'+n.time+' · F: '+n.forecast+' · P: '+n.previous+'</div></div>'+
       '</div>';
     }).join('');
-    document.getElementById('fund-news').innerHTML = newsHTML || '<div style="font-size:11px;color:var(--text3);padding:8px 0;">'+t('sc.noEvents','No major events found')+'</div>';
-    document.getElementById('fund-verdict-box').innerHTML = '<span style="color:#FFB020;font-weight:700;">'+t('sc.fundVerdict','Fundamental Verdict')+'</span><br>'+(ai.fund_verdict||'—');
+    document.getElementById('fund-news').innerHTML = newsHTML || '<div style="font-size:11px;color:var(--text3);padding:8px 0;">'+mmT('sc.noEvents','No major events found')+'</div>';
+    document.getElementById('fund-verdict-box').innerHTML = '<span style="color:#FFB020;font-weight:700;">'+mmT('sc.fundVerdict','Fundamental Verdict')+'</span><br>'+(ai.fund_verdict||'—');
 
     // 8. RENDER OVERALL VERDICT
     var od = ai.overall_direction||'Neutral';
@@ -11933,16 +11940,16 @@ Respond ONLY with valid JSON (no markdown):
     // Save for scanner verification in auto trade
     window._lastScanData = {symbol:symName, direction:od, confidence:oc, timestamp:Date.now()};
 
-    btn.textContent = t('sc.complete','\u2713 SCAN COMPLETE');
+    btn.textContent = mmT('sc.complete','\u2713 SCAN COMPLETE');
     btn.style.background = '#00C87A';
-    if(badge) { badge.innerHTML = '<div style="width:6px;height:6px;border-radius:50%;background:#00C87A;"></div>'+t('sc.live','LIVE')+''; badge.style.color='#00C87A'; }
-    setTimeout(function(){ btn.textContent=t('sc.initiate','\u25B6 INITIATE SCAN'); btn.style.background='var(--red)'; },2000);
+    if(badge) { badge.innerHTML = '<div style="width:6px;height:6px;border-radius:50%;background:#00C87A;"></div>'+mmT('sc.live','LIVE')+''; badge.style.color='#00C87A'; }
+    setTimeout(function(){ btn.textContent=mmT('sc.initiate','\u25B6 INITIATE SCAN'); btn.style.background='var(--red)'; },2000);
 
   } catch(e) {
-    btn.textContent = t('sc.failed','\u2715 SCAN FAILED');
+    btn.textContent = mmT('sc.failed','\u2715 SCAN FAILED');
     btn.style.background = '#FF1E3C';
-    if(badge) { badge.innerHTML = '<div style="width:6px;height:6px;border-radius:50%;background:var(--red);"></div>'+t('sc.error','ERROR')+''; badge.style.color='var(--red)'; }
-    setTimeout(function(){ btn.textContent=t('sc.initiate','\u25B6 INITIATE SCAN'); btn.style.background='var(--red)'; },2000);
+    if(badge) { badge.innerHTML = '<div style="width:6px;height:6px;border-radius:50%;background:var(--red);"></div>'+mmT('sc.error','ERROR')+''; badge.style.color='var(--red)'; }
+    setTimeout(function(){ btn.textContent=mmT('sc.initiate','\u25B6 INITIATE SCAN'); btn.style.background='var(--red)'; },2000);
     console.warn('Scanner error:', e.message);
   }
 }
@@ -12016,8 +12023,8 @@ async function loadAdminMT5() {
       if(_adminMt5Plan==='premium' && !_prem) return;
       _shown++;
       var planBadge = _prem
-        ? '<div style="font-size:9px;font-weight:700;padding:2px 8px;border-radius:5px;background:rgba(240,178,50,0.13);color:var(--gold);">'+t('w.premiumBadge','PREMIUM')+'</div>'
-        : '<div style="font-size:9px;font-weight:700;padding:2px 8px;border-radius:5px;background:rgba(59,130,246,0.13);color:var(--blue);">'+t('w.basicBadge','BASIC')+'</div>';
+        ? '<div style="font-size:9px;font-weight:700;padding:2px 8px;border-radius:5px;background:rgba(240,178,50,0.13);color:var(--gold);">'+mmT('w.premiumBadge','PREMIUM')+'</div>'
+        : '<div style="font-size:9px;font-weight:700;padding:2px 8px;border-radius:5px;background:rgba(59,130,246,0.13);color:var(--blue);">'+mmT('w.basicBadge','BASIC')+'</div>';
       // Map account to user-like object for existing UI
       var owner = usersMap[acct.user_id] || {};
       var user = Object.assign({}, acct, {
@@ -12358,12 +12365,12 @@ function openMT5ReasonSheet(actionKind, userId){
     '<div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 18px;"></div>' +
     '<div style="font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);text-align:center;margin-bottom:6px;">' + (titles[actionKind]||'Select Reason') + '</div>' +
     '<div style="font-size:11px;color:var(--text3);text-align:center;margin-bottom:18px;line-height:1.6;">' + (warns[actionKind]||'') + '</div>' +
-    '<label style="font-size:11px;color:var(--text3);display:block;margin-bottom:6px;">'+t('mt.reason','Reason')+'</label>' +
+    '<label style="font-size:11px;color:var(--text3);display:block;margin-bottom:6px;">'+mmT('mt.reason','Reason')+'</label>' +
     '<select id="mt5-reason-select" style="width:100%;padding:12px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:13px;font-family:Sora,sans-serif;margin-bottom:12px;">' +
-      '<option value="Invalid credentials">'+t('mt.invalidCreds','Invalid credentials')+'</option>' +
-      '<option value="Low balance (below $100)">'+t('mt.lowBalance','Low balance (below $100)')+'</option>' +
-      '<option value="Suspicious or external activity">'+t('mt.suspicious','Suspicious or external activity')+'</option>' +
-      '<option value="__other__">'+t('mt.other','Other (type manually)')+'</option>' +
+      '<option value="Invalid credentials">'+mmT('mt.invalidCreds','Invalid credentials')+'</option>' +
+      '<option value="Low balance (below $100)">'+mmT('mt.lowBalance','Low balance (below $100)')+'</option>' +
+      '<option value="Suspicious or external activity">'+mmT('mt.suspicious','Suspicious or external activity')+'</option>' +
+      '<option value="__other__">'+mmT('mt.other','Other (type manually)')+'</option>' +
     '</select>' +
     '<input id="mt5-reason-other" type="text" placeholder="Type reason" style="display:none;width:100%;padding:12px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:13px;margin-bottom:12px;font-family:Sora,sans-serif;">';
   var confirmBtn = document.createElement('button');
@@ -12628,12 +12635,12 @@ function renderMT5State(state, reason) {
   } else if(state === 'suspended') {
     setMT5Badge('SUSPENDED','suspended');
     lockMT5Form(true);
-    if(banner){ banner.style.cssText='display:block;background:rgba(255,176,32,0.07);border:1px solid rgba(255,176,32,0.2);border-radius:10px;padding:11px 12px;margin-bottom:12px;font-size:12px;color:var(--amber);line-height:1.6;'; banner.innerHTML='⏸️ Your MT5 connection is suspended.' + (reason ? '<br><span style="color:var(--text2);">Reason: ' + reason + '</span>' : '') + '<br><span style="color:var(--text3);">'+t('mt.contactSupport','Please contact support.')+'</span>'; }
+    if(banner){ banner.style.cssText='display:block;background:rgba(255,176,32,0.07);border:1px solid rgba(255,176,32,0.2);border-radius:10px;padding:11px 12px;margin-bottom:12px;font-size:12px;color:var(--amber);line-height:1.6;'; banner.innerHTML='⏸️ Your MT5 connection is suspended.' + (reason ? '<br><span style="color:var(--text2);">Reason: ' + reason + '</span>' : '') + '<br><span style="color:var(--text3);">'+mmT('mt.contactSupport','Please contact support.')+'</span>'; }
     if(btn){ btn.textContent='SUSPENDED'; btn.disabled=true; btn.style.opacity='0.55'; }
   } else if(state === 'rejected') {
     setMT5Badge('REJECTED','rejected');
     lockMT5Form(false);
-    if(banner){ banner.style.cssText='display:block;background:rgba(255,30,60,0.06);border:1px solid rgba(255,30,60,0.18);border-radius:10px;padding:11px 12px;margin-bottom:12px;font-size:12px;color:var(--red);line-height:1.6;'; banner.innerHTML='❌ Your connection request was rejected.' + (reason ? '<br><span style="color:var(--text2);">Reason: ' + reason + '</span>' : '') + '<br><span style="color:var(--text3);">'+t('mt.updateDetails','Update your details below and try again.')+'</span>'; }
+    if(banner){ banner.style.cssText='display:block;background:rgba(255,30,60,0.06);border:1px solid rgba(255,30,60,0.18);border-radius:10px;padding:11px 12px;margin-bottom:12px;font-size:12px;color:var(--red);line-height:1.6;'; banner.innerHTML='❌ Your connection request was rejected.' + (reason ? '<br><span style="color:var(--text2);">Reason: ' + reason + '</span>' : '') + '<br><span style="color:var(--text3);">'+mmT('mt.updateDetails','Update your details below and try again.')+'</span>'; }
     if(btn){ btn.textContent='RETRY CONNECTION'; btn.disabled=false; btn.style.opacity=''; }
   } else {
     setMT5Badge('NOT CONNECTED','disconnected');
