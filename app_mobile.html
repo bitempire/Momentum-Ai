@@ -1660,7 +1660,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
     <!-- Sign In Form -->
     <div id="form-signin">
       <div class="auth-title" data-i18n="dash.welcome">Welcome Back</div>
-      <div class="auth-sub">Sign in to your trading account</div>
+      <div class="auth-sub" data-i18n="auth.signInSub">Sign in to your trading account</div>
       <div id="signin-error" class="error-msg"></div>
       <div class="auth-field">
         <label class="auth-label" data-i18n="auth.username">Username</label>
@@ -1673,22 +1673,22 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         <button type="button" onclick="toggleLoginPw()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:18px;padding:0;line-height:1;"><i class="ti ti-eye" id="login-pw-eye"></i></button>
       </div>
       </div>
-      <div class="auth-forgot"><a>Forgot Password?</a></div>
+      <div class="auth-forgot"><a data-i18n="auth.forgot">Forgot Password?</a></div>
       <button class="auth-btn" id="btn-signin" onclick="handleLogin()" data-i18n="auth.access">ACCESS SYSTEM</button>
       <div class="auth-divider"><span>or</span></div>
       <button class="auth-google-btn" onclick="window.open('https://momentum-ai-ruddy.vercel.app','_blank')" style="gap:8px;">
         <i class="ti ti-world"></i> Visit Our Website
       </button>
-      <div class="auth-switch">No account? <span onclick="switchAuthTab('register')">Register with AFT →</span></div>
+      <div class="auth-switch"><span data-i18n="auth.noAccount">No account?</span> <span onclick="switchAuthTab('register')" data-i18n="auth.regAft">Register with AFT →</span></div>
       <div class="auth-status" style="justify-content:center;">
         <div class="auth-status-dot"></div>
-        <span>Powered by Bitempire Sdn Bhd</span>
+        <span data-i18n="auth.poweredBy">Powered by Bitempire Sdn Bhd</span>
       </div>
     </div>
     <!-- Register Form -->
     <div id="form-register" style="display:none;">
       <div class="auth-title" data-i18n="auth.getStarted">Get Started</div>
-      <div class="auth-sub">Register your Momentum AI Account</div>
+      <div class="auth-sub" data-i18n="auth.regSub">Register your Momentum AI Account</div>
       <div id="reg-error" class="error-msg"></div>
       <div id="reg-success" class="success-msg"></div>
       <div class="auth-field">
@@ -1721,8 +1721,8 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         </select>
       </div>
       <button class="auth-btn" id="btn-register" onclick="handleRegister()" data-i18n="auth.createAcct">CREATE ACCOUNT</button>
-      <button class="ghost-btn" onclick="window.open('https://www.afttmarkets.com','_blank')">Create Account with AFT →</button>
-      <div class="auth-switch" style="margin-top:12px;">Have an account? <span onclick="switchAuthTab('signin')">Sign In →</span></div>
+      <button class="ghost-btn" onclick="window.open('https://www.afttmarkets.com','_blank')" data-i18n="auth.createAft">Create Account with AFT →</button>
+      <div class="auth-switch" style="margin-top:12px;"><span data-i18n="auth.haveAccount">Have an account?</span> <span onclick="switchAuthTab('signin')" data-i18n="auth.signInArrow">Sign In →</span></div>
     </div>
   </div>
 </div>
@@ -1733,15 +1733,15 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 <div id="screen-pending" class="screen" style="display:none;">
   <div class="pending-card">
     <div class="pending-icon">⏳</div>
-    <div class="pending-title">Pending Approval</div>
-    <div class="pending-sub">Your account has been created. Our team will verify your MT5 account shortly.</div>
+    <div class="pending-title" data-i18n="pend.title">Pending Approval</div>
+    <div class="pending-sub" data-i18n="pend.sub">Your account has been created. Our team will verify your MT5 account shortly.</div>
     <div class="pending-steps">
       <div class="pending-step done"><i class="ti ti-circle-check"></i> Account created successfully</div>
       <div class="pending-step done"><i class="ti ti-circle-check"></i> MT5 ID submitted: <strong id="pending-mt5-val" style="margin-left:4px;color:var(--text)"></strong></div>
       <div class="pending-step waiting"><i class="ti ti-clock"></i> Waiting for admin approval</div>
       <div class="pending-step" style="opacity:.4;"><i class="ti ti-lock-open"></i> Full access granted</div>
     </div>
-    <button class="ghost-btn" onclick="showScreen('screen-auth')">Back to Login</button>
+    <button class="ghost-btn" onclick="showScreen('screen-auth')" data-i18n="pend.back">Back to Login</button>
   </div>
 </div>
 
@@ -1777,8 +1777,8 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
     <div id="deposit-banner" style="display:none;position:sticky;top:0;z-index:9;margin:0 0 10px;">
       <div style="display:flex;align-items:center;gap:11px;background:rgba(240,178,50,0.12);border:0.5px solid rgba(240,178,50,0.32);border-radius:12px;padding:11px 12px;backdrop-filter:blur(8px);">
         <i class="ti ti-crown" style="font-size:20px;color:var(--gold);flex-shrink:0;"></i>
-        <div style="flex:1;line-height:1.3;"><div style="font-size:13px;font-weight:700;color:var(--text);">Unlock Premium</div><div style="font-size:11px;color:var(--text2);">Deposit $100 to activate</div></div>
-        <div onclick="openDepositPage()" style="font-size:12px;font-weight:700;color:#1a1405;background:var(--gold);padding:7px 13px;border-radius:8px;flex-shrink:0;cursor:pointer;">Deposit</div>
+        <div style="flex:1;line-height:1.3;"><div style="font-size:13px;font-weight:700;color:var(--text);" data-i18n="prem.unlock">Unlock Premium</div><div style="font-size:11px;color:var(--text2);" data-i18n="prem.depositSub">Deposit $100 to activate</div></div>
+        <div onclick="openDepositPage()" style="font-size:12px;font-weight:700;color:#1a1405;background:var(--gold);padding:7px 13px;border-radius:8px;flex-shrink:0;cursor:pointer;" data-i18n="prem.deposit">Deposit</div>
         <i class="ti ti-x" onclick="dismissDepositBanner()" style="font-size:15px;color:var(--text3);flex-shrink:0;cursor:pointer;"></i>
       </div>
     </div>
@@ -1864,8 +1864,8 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
           <option value="H1" data-i18n="sc.h1">H1</option>
           <option value="H4" data-i18n="sc.h4">H4</option>
           <option value="D1" data-i18n="sc.d1">D1</option>
-          <option value="W1">Weekly</option>
-          <option value="MN1">Monthly</option>
+          <option value="W1" data-i18n="t.weekly">Weekly</option>
+          <option value="MN1" data-i18n="t.monthly">Monthly</option>
         </select>
       </div>
       <div id="mob-signals-list">
@@ -1914,9 +1914,9 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
             <i class="ti ti-chevron-down" style="font-size:12px;color:var(--text3);"></i>
           </button>
           <div id="chart-type-menu" class="chart-type-menu">
-            <button class="active" onclick="setChartType('1',this)"><i class="ti ti-chart-candle"></i><span>Candlestick</span></button>
-            <button onclick="setChartType('8',this)"><i class="ti ti-chart-candle"></i><span>Heikin Ashi</span></button>
-            <button onclick="setChartType('2',this)"><i class="ti ti-chart-line"></i><span>Line</span></button>
+            <button class="active" onclick="setChartType('1',this)"><i class="ti ti-chart-candle"></i><span data-i18n="ch.candle">Candlestick</span></button>
+            <button onclick="setChartType('8',this)"><i class="ti ti-chart-candle"></i><span data-i18n="ch.heikin">Heikin Ashi</span></button>
+            <button onclick="setChartType('2',this)"><i class="ti ti-chart-line"></i><span data-i18n="ch.line">Line</span></button>
           </div>
         </div>
       </div>
@@ -2007,7 +2007,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
           <div style="width:0.5px;background:rgba(255,255,255,0.06);flex-shrink:0;"></div>
           <!-- Stats -->
           <div style="flex:1;padding:6px 0 6px 10px;display:flex;flex-direction:column;justify-content:center;gap:7px;">
-            <div style="font-size:12px;font-weight:800;color:var(--text);margin-bottom:2px;">Trader <span style="color:var(--red);">Score</span></div>
+            <div style="font-size:12px;font-weight:800;color:var(--text);margin-bottom:2px;"><span data-i18n="w.trader">Trader</span> <span style="color:var(--red);" data-i18n="w.score">Score</span></div>
             <div style="display:flex;flex-direction:column;gap:3px;">
               <div style="display:flex;justify-content:space-between;"><span style="font-size:9px;color:#444;letter-spacing:.8px;text-transform:uppercase;" data-i18n="j.winRate">Win Rate</span><span id="ps-winrate" style="font-size:11px;font-weight:700;color:#00C87A;">—</span></div>
               <div style="height:3px;background:#1e1e1e;border-radius:2px;overflow:hidden;"><div id="pb-winrate" style="height:100%;width:0%;background:#00C87A;border-radius:2px;"></div></div>
@@ -2085,9 +2085,9 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
           <div style="margin-top:8px;padding-top:8px;border-top:0.5px solid var(--border);">
             <div style="font-size:10px;font-weight:700;color:var(--text3);margin-bottom:6px;letter-spacing:.5px;" data-i18n="j.method">METHOD BREAKDOWN</div>
             <div id="j-method-breakdown">
-              <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid var(--border);"><div style="display:flex;align-items:center;gap:6px;"><span style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:rgba(77,158,255,.1);color:#4D9EFF;">MANUAL</span><span style="font-size:11px;color:var(--text3);" id="j-m-count">—</span></div><span id="j-m-stats" style="font-size:12px;font-weight:700;color:var(--text3);">—</span></div>
-              <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid var(--border);"><div style="display:flex;align-items:center;gap:6px;"><span style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:rgba(255,176,32,.1);color:#FFB020;">TOOLS</span><span style="font-size:11px;color:var(--text3);" id="j-t-count">—</span></div><span id="j-t-stats" style="font-size:12px;font-weight:700;color:var(--text3);">—</span></div>
-              <div style="display:flex;justify-content:space-between;padding:5px 0;"><div style="display:flex;align-items:center;gap:6px;"><span style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:rgba(160,90,255,.1);color:#A05AFF;">AUTO</span><span style="font-size:11px;color:var(--text3);" id="j-a-count">—</span></div><span id="j-a-stats" style="font-size:12px;font-weight:700;color:var(--text3);">—</span></div>
+              <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid var(--border);"><div style="display:flex;align-items:center;gap:6px;"><span style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:rgba(77,158,255,.1);color:#4D9EFF;" data-i18n="j.manual">MANUAL</span><span style="font-size:11px;color:var(--text3);" id="j-m-count">—</span></div><span id="j-m-stats" style="font-size:12px;font-weight:700;color:var(--text3);">—</span></div>
+              <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid var(--border);"><div style="display:flex;align-items:center;gap:6px;"><span style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:rgba(255,176,32,.1);color:#FFB020;" data-i18n="j.tools">TOOLS</span><span style="font-size:11px;color:var(--text3);" id="j-t-count">—</span></div><span id="j-t-stats" style="font-size:12px;font-weight:700;color:var(--text3);">—</span></div>
+              <div style="display:flex;justify-content:space-between;padding:5px 0;"><div style="display:flex;align-items:center;gap:6px;"><span style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:rgba(160,90,255,.1);color:#A05AFF;" data-i18n="j.autoWord">AUTO</span><span style="font-size:11px;color:var(--text3);" id="j-a-count">—</span></div><span id="j-a-stats" style="font-size:12px;font-weight:700;color:var(--text3);">—</span></div>
             </div>
           </div>
         </div>
@@ -2108,7 +2108,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
           <div style="display:flex;align-items:center;gap:8px;padding:5px 0;"><span style="font-size:15px;">😐</span><span style="flex:0 0 70px;font-size:12px;color:var(--text);" data-i18n="j.neutral">Neutral</span><div style="flex:1;height:4px;background:var(--surface2);border-radius:2px;overflow:hidden;"><div id="je-neu" style="height:100%;width:0%;background:#888;border-radius:2px;"></div></div><span id="je-neu-v" style="font-size:11px;font-weight:700;color:#888;margin-left:6px;min-width:30px;">—</span></div>
           <div style="display:flex;align-items:center;gap:8px;padding:5px 0;"><span style="font-size:15px;">😰</span><span style="flex:0 0 70px;font-size:12px;color:var(--text);" data-i18n="j.fear">Fear</span><div style="flex:1;height:4px;background:var(--surface2);border-radius:2px;overflow:hidden;"><div id="je-fear" style="height:100%;width:0%;background:#FFB020;border-radius:2px;"></div></div><span id="je-fear-v" style="font-size:11px;font-weight:700;color:#FFB020;margin-left:6px;min-width:30px;">—</span></div>
           <div style="display:flex;align-items:center;gap:8px;padding:5px 0;"><span style="font-size:15px;">😡</span><span style="flex:0 0 70px;font-size:12px;color:var(--text);" data-i18n="j.revenge">Revenge</span><div style="flex:1;height:4px;background:var(--surface2);border-radius:2px;overflow:hidden;"><div id="je-rev" style="height:100%;width:0%;background:#FF1E3C;border-radius:2px;"></div></div><span id="je-rev-v" style="font-size:11px;font-weight:700;color:#FF1E3C;margin-left:6px;min-width:30px;">—</span></div>
-          <div style="margin-top:8px;text-align:center;font-size:11px;color:var(--text3);">Log your emotion after each trade in Recent Trades</div>
+          <div style="margin-top:8px;text-align:center;font-size:11px;color:var(--text3);" data-i18n="j.logEmotion">Log your emotion after each trade in Recent Trades</div>
         </div>
       </div>
 
@@ -2120,7 +2120,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 
       <!-- RECENT TRADES -->
       <div class="section-card" style="margin-bottom:10px;padding:12px;">
-        <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:8px;">Recent <span style="color:var(--red);">Trades</span></div>
+        <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:8px;"><span data-i18n="dash.recent">Recent</span> <span style="color:var(--red);" data-i18n="w.trades">Trades</span></div>
         <div style="display:flex;padding-bottom:5px;border-bottom:0.5px solid var(--border);margin-bottom:4px;">
           <span style="font-size:10px;color:var(--text3);flex:0 0 55px;" data-i18n="j.date">DATE</span>
           <span style="font-size:10px;color:var(--text3);flex:1;" data-i18n="j.asset">ASSET</span>
@@ -3933,8 +3933,8 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
             <option value="H1" data-i18n="sc.h1">H1</option>
             <option value="H4" selected data-i18n="sc.h4">H4</option>
             <option value="D1" data-i18n="sc.d1">D1</option>
-            <option value="W1">Weekly</option>
-            <option value="MN1">Monthly</option>
+            <option value="W1" data-i18n="t.weekly">Weekly</option>
+            <option value="MN1" data-i18n="t.monthly">Monthly</option>
           </select>
         </div>
       </div>
@@ -3986,7 +3986,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       </div>
       <div class="form-row">
         <div class="auth-field"><label class="auth-label">Take Profit 2</label><input id="edit-sig-tp2" class="auth-input" type="number" step="any"></div>
-        <div class="auth-field"><label class="auth-label" data-i18n="sig.timeframe">Timeframe</label><select id="edit-sig-timeframe" class="auth-input"><option value="M1">M1</option><option value="M5">M5</option><option value="M15">M15</option><option value="M30">M30</option><option value="H1" data-i18n="sc.h1">H1</option><option value="H4" selected data-i18n="sc.h4">H4</option><option value="D1" data-i18n="sc.d1">D1</option><option value="W1">Weekly</option><option value="MN1">Monthly</option></select></div>
+        <div class="auth-field"><label class="auth-label" data-i18n="sig.timeframe">Timeframe</label><select id="edit-sig-timeframe" class="auth-input"><option value="M1">M1</option><option value="M5">M5</option><option value="M15">M15</option><option value="M30">M30</option><option value="H1" data-i18n="sc.h1">H1</option><option value="H4" selected data-i18n="sc.h4">H4</option><option value="D1" data-i18n="sc.d1">D1</option><option value="W1" data-i18n="t.weekly">Weekly</option><option value="MN1" data-i18n="t.monthly">Monthly</option></select></div>
       </div>
       <div class="auth-field"><label class="auth-label">Strength: <span id="edit-sig-strength-val">75%</span></label><input id="edit-sig-strength" type="range" min="1" max="100" value="75" style="width:100%;accent-color:var(--red);" oninput="document.getElementById('edit-sig-strength-val').textContent=this.value+'%'"></div>
       <div class="auth-field"><label class="auth-label">Commentary</label><textarea id="edit-sig-commentary" class="auth-input" rows="3" style="resize:vertical;"></textarea></div>
@@ -5117,6 +5117,16 @@ function mmLangName(code){ for(var i=0;i<MMLANGS.length;i++){ if(MMLANGS[i].code
 // Only the OTHER languages need entries here.
 var MM_I18N = {
   'zh-TW': {
+    'auth.regAft':'透過 AFT 註冊 →', 'auth.createAft':'透過 AFT 建立帳戶 →',
+    'auth.signInArrow':'登入 →', 'auth.regSub':'註冊您的 Momentum AI 帳戶',
+    'auth.poweredBy':'由 Bitempire Sdn Bhd 提供技術支援',
+    'pend.title':'等待審核', 'pend.back':'返回登入',
+    'pend.sub':'您的帳戶已建立，我們的團隊將盡快驗證您的 MT5 帳戶。',
+    'prem.unlock':'解鎖尊榮會員', 'prem.depositSub':'存入 $100 即可啟用', 'prem.deposit':'存款',
+    't.weekly':'每週', 't.monthly':'每月',
+    'ch.candle':'K線圖', 'ch.heikin':'平均K線', 'ch.line':'折線圖',
+    'j.manual':'手動', 'j.tools':'智能工具', 'j.autoWord':'自動',
+    'j.logEmotion':'在「最近交易」中記錄每筆交易後的情緒',
     'nav.home':'首頁', 'nav.signals':'訊號', 'nav.charts':'圖表', 'nav.journal':'日誌', 'nav.more':'更多',
     'scr.smartTool':'智能工具', 'scr.tradeSettings':'交易設定', 'scr.autoTrade':'自動交易',
     'scr.scanner':'MAI 掃描器', 'scr.manager':'MAI 基金經理', 'scr.portfolio':'投資組合',
@@ -8734,7 +8744,7 @@ async function loadJournalData() {
           var d=new Date(t.close_time||t.created_at);
           var dateStr=(d.getMonth()+1)+'/'+(d.getDate());
           var method=(t.method||'manual').toLowerCase();
-          var mBadge=method==='smart'?'<span style="font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;background:rgba(255,176,32,.1);color:#FFB020;">TOOLS</span>':method==='auto'?'<span style="font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;background:rgba(160,90,255,.1);color:#A05AFF;">AUTO</span>':'<span style="font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;background:rgba(77,158,255,.1);color:#4D9EFF;">MANUAL</span>';
+          var mBadge=method==='smart'?'<span style="font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;background:rgba(255,176,32,.1);color:#FFB020;" data-i18n="j.tools">TOOLS</span>':method==='auto'?'<span style="font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;background:rgba(160,90,255,.1);color:#A05AFF;" data-i18n="j.autoWord">AUTO</span>':'<span style="font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;background:rgba(77,158,255,.1);color:#4D9EFF;" data-i18n="j.manual">MANUAL</span>';
           var sideBadge=t.side==='BUY'?'<span style="font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;background:rgba(0,200,122,.12);color:#00C87A;">BUY</span>':'<span style="font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;background:rgba(255,30,60,.1);color:#FF1E3C;">SELL</span>';
           return '<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:0.5px solid var(--border);">'+
             '<div style="flex:0 0 40px;font-size:10px;color:var(--text3);">'+dateStr+'</div>'+
