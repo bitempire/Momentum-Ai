@@ -10041,10 +10041,15 @@ async function mmHomeCurve(){
     var accts = window._userAccounts || [];
     var ids = accts.map(function(a){ return String(a.mt5_id); }).filter(Boolean);
     if(!ids.length) return;
-    var res = await db.from('closed_trades').select('close_time,profit').in('mt5_id', ids)
-      .order('close_time',{ascending:true}).limit(400);
-    if(res.error || !res.data || res.data.length < 2) return;
-    var run = 0, pts = res.data.map(function(r){ run += mmHomeNum(r.profit); return run; });
+    var results = await Promise.all(ids.map(function(id){
+      return db.from('closed_trades').select('close_time,profit').eq('mt5_id', id)
+        .order('close_time',{ascending:true}).limit(200);
+    }));
+    var rows = [];
+    results.forEach(function(r){ if(r && !r.error && r.data) rows = rows.concat(r.data); });
+    rows.sort(function(a,b){ return new Date(a.close_time) - new Date(b.close_time); });
+    if(rows.length < 2){ console.warn('mmHomeCurve: only '+rows.length+' closed trades, no curve'); return; }
+    var run = 0, pts = rows.map(function(r){ run += mmHomeNum(r.profit); return run; });
     var lo = Math.min.apply(null, pts), hi = Math.max.apply(null, pts), span = (hi-lo) || 1;
     var W = 300, H = 74, top = 8, bot = 68;
     var stepX = W / (pts.length - 1);
@@ -10062,7 +10067,7 @@ async function mmHomeCurve(){
     if(line){ line.setAttribute('d', d); line.style.strokeDasharray='340'; line.style.animation='mmTrace 2.2s ease-out forwards'; }
     if(area){ area.setAttribute('d', d + ' L'+W+','+H+' L0,'+H+' Z'); area.style.animation='mmRise 1.4s ease-out forwards'; }
     if(dot){ var last = xy[xy.length-1]; dot.setAttribute('cx', last[0].toFixed(1)); dot.setAttribute('cy', last[1].toFixed(1)); }
-  }catch(e){}
+  }catch(e){ console.warn('mmHomeCurve failed:', e && e.message); }
 }
 function mmHomeRefresh(){ mmHomeBalance(); mmHomeCurve(); }
 
