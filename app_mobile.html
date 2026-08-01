@@ -5120,6 +5120,8 @@ function mmLangName(code){ for(var i=0;i<MMLANGS.length;i++){ if(MMLANGS[i].code
 // Only the OTHER languages need entries here.
 var MM_I18N = {
   'zh-TW': {
+    'sc.fbTechUp':'價格位於關鍵均線之上，多頭結構完整。', 'sc.fbTechDown':'價格位於關鍵均線之下，空頭壓力明顯。',
+    'sc.fTech':'技術趨勢', 'sc.fNews':'經濟新聞', 'sc.fDxy':'美元指數 DXY', 'sc.fBond':'債券殖利率', 'sc.fCot':'COT 持倉', 'sc.fVix':'VIX 恐慢指數', 'sc.ma50':'移動平均(50)', 'sc.bb':'布林通道', 'sc.above':'之上', 'sc.below':'之下', 'sc.upper':'上軌', 'sc.midBand':'中軌', 'sc.lower':'下軌', 'sc.leaning':'傾向', 'sc.leanSB':'強烈看漲', 'sc.leanMB':'中度看漲', 'sc.leanN':'中性', 'sc.leanMBe':'中度看跌', 'sc.leanSBe':'強烈看跌', 'sc.lastScan':'上次掃描：', 'sc.lastScanNow':'上次掃描：剛剛 · ', 'sc.bullishPrefix':'看漲：', 'sc.bearishPrefix':'看跌：',
     'verdict.bullish':'看漲', 'verdict.bearish':'看跌', 'verdict.neutral':'中性', 'verdict.strong':'強勁', 'verdict.moderate':'中等', 'verdict.weak':'疲弱', 'verdict.low':'低', 'verdict.medium':'中', 'verdict.high':'高',
     'promo.claimedOn':'您已在帳戶 {n} 領取過優惠。每位使用者限用一次。', 'promo.claimed':'您已領取過優惠。每位使用者限用一次。', 'promo.enterCode':'輸入優惠碼', 'promo.connectFirst':'請先連接您的 MT5 帳戶。', 'promo.noneNow':'目前沒有可用的優惠。', 'promo.apply':'套用', 'promo.claiming':'領取中...', 'promo.claimNow':'立即領取', 'status.active':'使用中', 'status.pending':'審核中', 'status.suspended':'已停權', 'status.rejected':'已拒絕', 'status.inactive':'未啟用',
     'pa.superAdmin':'超級管理員', 'pa.analyst':'分析師', 'pa.subAdmin':'子管理員', 'pa.addAccount':'新增帳戶', 'menu.lightMode':'淺色模式',
@@ -6984,7 +6986,7 @@ function initiateScan() {
     if(tfLabel) tfLabel.textContent = tf;
     var results = document.getElementById('scan-results');
     if(results) results.style.display = 'block';
-    if(status) status.textContent = 'Last scan: just now · ' + symbol + ' ' + tf;
+    if(status) status.textContent = t('sc.lastScanNow','Last scan: just now \u00b7 ') + symbol + ' ' + tf;
     if(btn) { btn.textContent = 'INITIATE SCAN'; btn.disabled = false; }
   }, 2000);
 }
@@ -7012,11 +7014,11 @@ async function generateMAIReport() {
   // Gather real scan data if available
   var scanPrice = document.getElementById('scan-price') ? document.getElementById('scan-price').textContent : '—';
   var scanChange = document.getElementById('scan-change') ? document.getElementById('scan-change').textContent : '—';
-  var techDir = document.getElementById('tech-direction') ? document.getElementById('tech-direction').textContent : '—';
-  var techMom = document.getElementById('tech-momentum') ? document.getElementById('tech-momentum').textContent : '—';
+  var techDir = document.getElementById('tech-direction') ? (document.getElementById('tech-direction').getAttribute('data-en') || document.getElementById('tech-direction').textContent) : '—';
+  var techMom = document.getElementById('tech-momentum') ? (document.getElementById('tech-momentum').getAttribute('data-en') || document.getElementById('tech-momentum').textContent) : '—';
   var support = document.getElementById('tech-support') ? document.getElementById('tech-support').textContent : '—';
   var resistance = document.getElementById('tech-resistance') ? document.getElementById('tech-resistance').textContent : '—';
-  var sentVerdict = document.getElementById('sent-verdict') ? document.getElementById('sent-verdict').textContent : '—';
+  var sentVerdict = document.getElementById('sent-verdict') ? (document.getElementById('sent-verdict').getAttribute('data-en') || document.getElementById('sent-verdict').textContent) : '—';
   var overDir = document.getElementById('verdict-direction') ? document.getElementById('verdict-direction').textContent : '—';
   var overConf = document.getElementById('verdict-confidence') ? document.getElementById('verdict-confidence').textContent : '—';
   var overRisk = document.getElementById('verdict-risk') ? document.getElementById('verdict-risk').textContent : '—';
@@ -11608,8 +11610,8 @@ function updateSentimentScale(pct) {
     }
   });
   if(label) {
-    var txt = pct>=75?'strongly bullish':pct>=60?'moderately bullish':pct>=45?'neutral':pct>=30?'moderately bearish':'strongly bearish';
-    label.innerHTML = 'Leaning <span style="font-weight:700;color:'+(pct>=50?'#00C87A':'#FF1E3C')+'">'+txt+'</span>';
+    var txt = pct>=75?t('sc.leanSB','strongly bullish'):pct>=60?t('sc.leanMB','moderately bullish'):pct>=45?t('sc.leanN','neutral'):pct>=30?t('sc.leanMBe','moderately bearish'):t('sc.leanSBe','strongly bearish');
+    label.innerHTML = t('sc.leaning','Leaning')+' <span style="font-weight:700;color:'+(pct>=50?'#00C87A':'#FF1E3C')+'">'+txt+'</span>';
   }
 }
 
@@ -11687,7 +11689,7 @@ async function runMAIScanner() {
     var chgEl = document.getElementById('scan-change');
     chgEl.textContent = (chgPct>=0?'+':'')+chgPct+'% (24h)';
     chgEl.style.color = chgPct>=0?'#00C87A':'#FF1E3C';
-    document.getElementById('scan-last-time').textContent = 'Last scan: '+new Date().toLocaleTimeString();
+    document.getElementById('scan-last-time').textContent = t('sc.lastScan','Last scan: ')+new Date().toLocaleTimeString();
 
     // 2. CALCULATE TECHNICAL INDICATORS
     function calcSMA(data, period) {
@@ -11759,20 +11761,20 @@ async function runMAIScanner() {
         '<span style="font-size:10px;font-weight:700;color:'+col+';min-width:50px;text-align:right;">'+label+'</span>'+
       '</div>';
     }
-    techHTML += indRow('Moving Avg (50)', aboveSMA50?85:15, aboveSMA50?'ABOVE':'BELOW', aboveSMA50?'#00C87A':'#FF1E3C');
-    techHTML += indRow('EMA 200', aboveEMA200?90:10, aboveEMA200?'ABOVE':'BELOW', aboveEMA200?'#00C87A':'#FF1E3C');
-    techHTML += indRow('Bollinger Bands', bbPos*100, bbPos>0.7?'UPPER':bbPos>0.3?'MID':'LOWER', bbPos>0.6?'#00C87A':bbPos>0.4?'#FFB020':'#FF1E3C');
+    techHTML += indRow(t('sc.ma50','Moving Avg (50)'), aboveSMA50?85:15, aboveSMA50?t('sc.above','ABOVE'):t('sc.below','BELOW'), aboveSMA50?'#00C87A':'#FF1E3C');
+    techHTML += indRow('EMA 200', aboveEMA200?90:10, aboveEMA200?t('sc.above','ABOVE'):t('sc.below','BELOW'), aboveEMA200?'#00C87A':'#FF1E3C');
+    techHTML += indRow(t('sc.bb','Bollinger Bands'), bbPos*100, bbPos>0.7?t('sc.upper','UPPER'):bbPos>0.3?t('sc.midBand','MID'):t('sc.lower','LOWER'), bbPos>0.6?'#00C87A':bbPos>0.4?'#FFB020':'#FF1E3C');
     techHTML += indRow('RSI (14)', rsi, rsi.toFixed(0), rsi>70?'#FF1E3C':rsi>50?'#00C87A':'#FFB020');
-    techHTML += indRow('MACD', macdBull?70:30, macdBull?'BULLISH':'BEARISH', macdBull?'#00C87A':'#FF1E3C');
+    techHTML += indRow('MACD', macdBull?70:30, macdBull?mmVerdict('BULLISH'):mmVerdict('BEARISH'), macdBull?'#00C87A':'#FF1E3C');
     techHTML += indRow('ATR', 55, atr.toFixed(2), '#FFB020');
     document.getElementById('tech-indicators').innerHTML = techHTML;
 
     var fmt = price>100 ? function(v){return v.toFixed(2);} : function(v){return v.toFixed(4);};
     document.getElementById('tech-support').textContent = fmt(support);
     document.getElementById('tech-resistance').textContent = fmt(resistance);
-    document.getElementById('tech-direction').textContent = techDir;
+    (function(_e){ if(_e){ _e.setAttribute('data-en', techDir); _e.textContent = mmVerdict(techDir); } })(document.getElementById('tech-direction'));
     document.getElementById('tech-direction').style.color = techDir==='Bullish'?'#00C87A':techDir==='Bearish'?'#FF1E3C':'#FFB020';
-    document.getElementById('tech-momentum').textContent = techMom;
+    (function(_e){ if(_e){ _e.setAttribute('data-en', techMom); _e.textContent = mmVerdict(techMom); } })(document.getElementById('tech-momentum'));
     document.getElementById('tech-momentum').style.color = techMom==='Strong'?'#00C87A':techMom==='Moderate'?'#FFB020':'#FF1E3C';
 
     // 3. DXY for sentiment - fresh from TwelveData, not the dead live_prices table.
@@ -11859,7 +11861,7 @@ Respond ONLY with valid JSON (no markdown):
         },
         tech_scenario_bullish: 'Price breaks above '+fmt(resistance)+' targeting higher levels.',
         tech_scenario_bearish: 'Price drops below '+fmt(support)+' targeting lower demand zones.',
-        tech_verdict: (aboveSMA50&&aboveEMA200)?'Price above key moving averages, bullish structure intact.':'Price below key moving averages, bearish pressure present.',
+        tech_verdict: (aboveSMA50&&aboveEMA200)?t('sc.fbTechUp','Price above key moving averages, bullish structure intact.'):t('sc.fbTechDown','Price below key moving averages, bearish pressure present.'),
         fund_news: [{name:'Check economic calendar for upcoming events',time:'—',forecast:'—',previous:'—',impact:'Medium'}],
         fund_verdict: 'Monitor upcoming economic events that may impact '+symName+'.',
         overall_direction: techDir,
@@ -11878,7 +11880,7 @@ Respond ONLY with valid JSON (no markdown):
 
     var factors = ai.sentiment_factors || {};
     var factorColors = ['#4D9EFF','#00C87A','#FFB020','#A05AFF','#FF6B9D','#FF1E3C'];
-    var factorNames = ['Technical Trend','Economic News','USD Index DXY','Bond Yield','COT Positioning','VIX Fear Index'];
+    var factorNames = [t('sc.fTech','Technical Trend'),t('sc.fNews','Economic News'),t('sc.fDxy','USD Index DXY'),t('sc.fBond','Bond Yield'),t('sc.fCot','COT Positioning'),t('sc.fVix','VIX Fear Index')];
     var factorKeys = ['technical_trend','economic_news','dxy_impact','bond_yield','cot_positioning','vix_fear'];
     var factorsHTML = factorKeys.map(function(k,i){
       var v = factors[k]||50;
@@ -11891,12 +11893,12 @@ Respond ONLY with valid JSON (no markdown):
     }).join('');
     document.getElementById('sent-factors').innerHTML = factorsHTML;
     var svEl = document.getElementById('sent-verdict');
-    svEl.textContent = mmVerdict(sentDir.toUpperCase());
+    svEl.setAttribute('data-en', sentDir.toUpperCase()); svEl.textContent = mmVerdict(sentDir.toUpperCase());
     svEl.style.color = sentDir==='Bullish'?'#00C87A':sentDir==='Bearish'?'#FF1E3C':'#FFB020';
 
     // 6. RENDER TECHNICAL
     var techScenario = document.getElementById('tech-scenario');
-    if(techScenario) techScenario.innerHTML = '<span style="font-size:9px;color:var(--red);font-weight:700;letter-spacing:.5px;">'+t('sc.scenario','MAI SCENARIO')+'</span><br><span style="color:#00C87A;font-weight:700;">Bullish:</span> '+(ai.tech_scenario_bullish||'—')+'<br><span style="color:#FF1E3C;font-weight:700;">Bearish:</span> '+(ai.tech_scenario_bearish||'—');
+    if(techScenario) techScenario.innerHTML = '<span style="font-size:9px;color:var(--red);font-weight:700;letter-spacing:.5px;">'+t('sc.scenario',t('sc.scenario','MAI SCENARIO'))+'</span><br><span style="color:#00C87A;font-weight:700;">'+t('sc.bullishPrefix','Bullish:')+'</span> '+(ai.tech_scenario_bullish||'—')+'<br><span style="color:#FF1E3C;font-weight:700;">'+t('sc.bearishPrefix','Bearish:')+'</span> '+(ai.tech_scenario_bearish||'—');
     var techVerdictBox = document.getElementById('tech-verdict-box');
     if(techVerdictBox) techVerdictBox.innerHTML = '<span style="color:#00C87A;font-weight:700;">'+t('sc.techVerdict','Technical Verdict')+'</span><br>'+(ai.tech_verdict||'—');
 
