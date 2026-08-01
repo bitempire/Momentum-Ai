@@ -1810,13 +1810,13 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         </div>
         <svg class="mm-bal-svg" viewBox="0 0 300 80" preserveAspectRatio="none" aria-hidden="true">
           <defs>
-            <linearGradient id="mmWaveGrad" class="mm-wave-grad" x1="0" y1="0" x2="0" y2="1">
-              <stop class="mm-wave-s0" offset="0%" stop-opacity=".34"></stop>
-              <stop class="mm-wave-s1" offset="100%" stop-opacity="0"></stop>
+            <linearGradient id="mmWaveGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop id="mm-wave-s0" offset="0%" stop-color="#ff5c78" stop-opacity="0.42"></stop>
+              <stop id="mm-wave-s1" offset="100%" stop-color="#ff5c78" stop-opacity="0"></stop>
             </linearGradient>
           </defs>
-          <path class="mm-wave-back" d="M0,64 C60,52 90,74 150,60 C210,46 240,64 300,48 L300,80 L0,80 Z"></path>
-          <path class="mm-wave-front" fill="url(#mmWaveGrad)" d="M0,52 C50,36 80,64 130,45 C180,26 210,52 260,30 C280,22 292,26 300,21 L300,80 L0,80 Z"></path>
+          <path id="mm-wave-back" fill="#ff5c78" fill-opacity="0.14" d="M0,64 C60,52 90,74 150,60 C210,46 240,64 300,48 L300,80 L0,80 Z"></path>
+          <path id="mm-wave-front" fill="url(#mmWaveGrad)" d="M0,52 C50,36 80,64 130,45 C180,26 210,52 260,30 C280,22 292,26 300,21 L300,80 L0,80 Z"></path>
         </svg>
       </div>
       <!-- Market Overview -->
@@ -10031,6 +10031,13 @@ function mmHomeBalance(){
       card.classList.toggle('stale', stale === accts.length);
       card.classList.toggle('up', diff >= 0);
     }
+    var wc = (diff >= 0) ? '#00d68f' : '#ff5c78';
+    var s0 = document.getElementById('mm-wave-s0');
+    var s1 = document.getElementById('mm-wave-s1');
+    var wb = document.getElementById('mm-wave-back');
+    if(s0) s0.setAttribute('stop-color', wc);
+    if(s1) s1.setAttribute('stop-color', wc);
+    if(wb) wb.setAttribute('fill', wc);
   }catch(e){}
 }
 function mmHomeRefresh(){ mmHomeBalance(); }
@@ -16221,10 +16228,6 @@ function showMT5ConnNotice(kind, reason) {
 .mm-bal-dot{width:5px;height:5px;border-radius:50%;background:currentColor;animation:mmBalDot 1.7s infinite;}
 @keyframes mmBalDot{0%,100%{opacity:1}50%{opacity:.4}}
 .mm-bal-svg{position:absolute;left:0;right:0;top:70px;bottom:0;width:100%;}
-.mm-wave-s0,.mm-wave-s1{stop-color:#ff5c78;}
-.mm-wave-back{fill:#ff5c78;opacity:.10;}
-.mm-bal-card.up .mm-wave-s0,.mm-bal-card.up .mm-wave-s1{stop-color:#00d68f;}
-.mm-bal-card.up .mm-wave-back{fill:#00d68f;}
 @keyframes mmTrace{from{stroke-dashoffset:340}to{stroke-dashoffset:0}}
 @keyframes mmRise{from{opacity:0}to{opacity:1}}
 .mm-bal-card.stale{filter:grayscale(.85);}
