@@ -1808,7 +1808,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
           </div>
           <span class="mm-bal-chg up" id="mm-bal-chg"><i class="mm-bal-dot"></i><span id="mm-bal-chg-val">0.00%</span></span>
         </div>
-        <svg class="mm-bal-svg" viewBox="0 0 300 80" preserveAspectRatio="none" aria-hidden="true">
+        <svg class="mm-bal-svg" viewBox="0 0 300 80" preserveAspectRatio="none" aria-hidden="true" style="position:absolute;left:0;right:0;bottom:0;width:100%;height:80px;display:block;">
           <defs>
             <linearGradient id="mmWaveGrad" x1="0" y1="0" x2="0" y2="1">
               <stop id="mm-wave-s0" offset="0%" stop-color="#ff5c78" stop-opacity="0.42"></stop>
@@ -16227,7 +16227,7 @@ function showMT5ConnNotice(kind, reason) {
 .mm-bal-chg.up{background:rgba(0,214,143,.14);color:#4fe0ab;}
 .mm-bal-dot{width:5px;height:5px;border-radius:50%;background:currentColor;animation:mmBalDot 1.7s infinite;}
 @keyframes mmBalDot{0%,100%{opacity:1}50%{opacity:.4}}
-.mm-bal-svg{position:absolute;left:0;right:0;top:70px;bottom:0;width:100%;}
+.mm-bal-svg{position:absolute;left:0;right:0;bottom:0;width:100%;height:80px;display:block;}
 @keyframes mmTrace{from{stroke-dashoffset:340}to{stroke-dashoffset:0}}
 @keyframes mmRise{from{opacity:0}to{opacity:1}}
 .mm-bal-card.stale{filter:grayscale(.85);}
