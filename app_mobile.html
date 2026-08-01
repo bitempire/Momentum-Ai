@@ -1800,35 +1800,24 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       </div>
       <!-- Overall balance -->
       <div class="mm-bal-card" id="mm-bal-card">
-        <div class="mm-bal-top">
-          <div>
-            <div class="mm-bal-label" data-i18n="home.overallBalance">Overall account balance</div>
-            <div class="mm-bal-num" id="mm-bal-total">$0.00</div>
-            <div class="mm-bal-sub" id="mm-bal-sub"></div>
-          </div>
-          <span class="mm-bal-chg up" id="mm-bal-chg"><i class="mm-bal-dot"></i><span id="mm-bal-chg-val">0.00%</span></span>
+        <div class="mm-bal-dots"></div>
+        <div class="mm-bal-radar"></div>
+        <div class="mm-bal-rings">
+          <span class="mm-ring r1"></span><span class="mm-ring r2"></span><span class="mm-ring r3"></span>
+          <span class="mm-rip a"></span><span class="mm-rip b"></span>
         </div>
-        <svg class="mm-bal-svg" viewBox="0 0 300 80" preserveAspectRatio="none" aria-hidden="true" style="position:absolute;left:0;right:0;bottom:0;width:100%;height:80px;display:block;">
-          <defs>
-            <linearGradient id="mmWaveGrad" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="300" y2="0" spreadMethod="repeat">
-              <stop id="mm-wave-s0" offset="0%" stop-color="#8c1226"></stop>
-              <stop id="mm-wave-s1" offset="22%" stop-color="#e03050"></stop>
-              <stop id="mm-wave-s2" offset="45%" stop-color="#ff8fa3"></stop>
-              <stop id="mm-wave-s3" offset="70%" stop-color="#e03050"></stop>
-              <stop id="mm-wave-s4" offset="100%" stop-color="#8c1226"></stop>
-              <animateTransform attributeName="gradientTransform" type="translate" from="0 0" to="300 0" dur="7s" repeatCount="indefinite"></animateTransform>
-            </linearGradient>
-            <linearGradient id="mmWaveFade" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#fff" stop-opacity="0.8"></stop>
-              <stop offset="100%" stop-color="#fff" stop-opacity="0.1"></stop>
-            </linearGradient>
-            <mask id="mmWaveMask"><rect x="0" y="0" width="300" height="80" fill="url(#mmWaveFade)"></rect></mask>
-          </defs>
-          <g mask="url(#mmWaveMask)">
-            <path id="mm-wave-back" fill="#e03050" fill-opacity="0.16" d="M0,64 C60,52 90,74 150,60 C210,46 240,64 300,48 L300,80 L0,80 Z"></path>
-            <path id="mm-wave-front" fill="url(#mmWaveGrad)" fill-opacity="0.72" d="M0,52 C50,36 80,64 130,45 C180,26 210,52 260,30 C280,22 292,26 300,21 L300,80 L0,80 Z"></path>
-          </g>
-        </svg>
+        <div class="mm-bal-fg">
+          <div class="mm-bal-head">
+            <span class="mm-bal-label" data-i18n="home.overallBalance">Overall account balance</span>
+            <span class="mm-bal-chg" id="mm-bal-chg"><i class="mm-bal-dot"></i><span id="mm-bal-chg-val">0.00%</span></span>
+          </div>
+          <div class="mm-bal-num" id="mm-bal-total">$0.00</div>
+          <div class="mm-bal-tiles">
+            <span class="mm-tile t1"><b data-i18n="chart.equity">Equity</b><i id="mm-bal-eq">-</i></span>
+            <span class="mm-tile t2"><b data-i18n="home.openPnl">Open P&amp;L</b><i id="mm-bal-pnl">-</i></span>
+            <span class="mm-tile t3"><b data-i18n="w.accounts">Accounts</b><i id="mm-bal-acc">-</i></span>
+          </div>
+        </div>
       </div>
       <!-- Market Overview -->
       <div class="section-title" style="margin-bottom:10px;"><span class="tw" data-i18n="w.market">Market</span> <span data-i18n="dash.overview">Overview</span></div>
@@ -5131,6 +5120,7 @@ function mmLangName(code){ for(var i=0;i<MMLANGS.length;i++){ if(MMLANGS[i].code
 // Only the OTHER languages need entries here.
 var MM_I18N = {
   'zh-TW': {
+    'home.openPnl':'未平倉損益',
     'home.overallBalance':'整體帳戶餘額', 'home.confidence':'信心度',
     'w.mt5Live':'MT5 即時',
     'j.gradeExcellent':'● 優秀', 'j.gradeGood':'● 良好', 'j.gradeAverage':'● 普通', 'j.gradeNeedsWork':'● 需要改進', 'j.tradesSuffix':' 筆交易', 'j.win':'獲利', 'j.loss':'虧損', 'j.lotSuffix':' 手', 'j.lotsSuffix':' 手', 'j.wrSuffix':'% 勝率', 'j.analysing':'正在分析您的交易...', 'j.keepBuilding':'持續累積交易紀錄，即可獲得個人化的 AI 洞察。', 'j.viewAll':'查看所有交易 →',
@@ -5565,6 +5555,7 @@ var MM_I18N = {
     'lb.rankDesc':'每月挑戰開始時將開放排名。持續交易以爭取您的名次。'
   },
   'zh-CN': {
+    'home.openPnl':'未平仓损益',
     'home.overallBalance':'整体账户余额', 'home.confidence':'信心度',
     'w.mt5Live':'MT5 即时', 'j.gradeExcellent':'● 优秀',
     'j.gradeGood':'● 良好', 'j.gradeAverage':'● 普通',
@@ -5935,6 +5926,7 @@ var MM_I18N = {
     'lb.rankDesc':'每月挑战开始时将开放排名。持续交易以争取您的名次。'
   },
   'ms': {
+    'home.openPnl':'Untung Rugi Terbuka',
     'home.overallBalance':'Jumlah Baki Akaun', 'home.confidence':'keyakinan',
     'w.mt5Live':'MT5 LANGSUNG', 'j.gradeExcellent':'● Cemerlang',
     'j.gradeGood':'● Baik', 'j.gradeAverage':'● Sederhana',
@@ -6305,6 +6297,7 @@ var MM_I18N = {
     'lb.rankDesc':'Kedudukan dibuka apabila cabaran bulanan bermula. Teruskan berdagang untuk merebut tempat anda.'
   },
   'ja': {
+    'home.openPnl':'評価損益',
     'home.overallBalance':'総口座残高', 'home.confidence':'信頼度',
     'w.mt5Live':'MT5 ライブ', 'j.gradeExcellent':'● 優秀',
     'j.gradeGood':'● 良好', 'j.gradeAverage':'● 平均',
@@ -6675,6 +6668,7 @@ var MM_I18N = {
     'lb.rankDesc':'月間チャレンジ開始とともにランキングが公開されます。取引を続けて順位を確保しましょう。'
   },
   'ko': {
+    'home.openPnl':'미실현 손익',
     'home.overallBalance':'전체 계좌 잔고', 'home.confidence':'신뢰도',
     'w.mt5Live':'MT5 실시간', 'j.gradeExcellent':'● 우수',
     'j.gradeGood':'● 양호', 'j.gradeAverage':'● 보통',
@@ -7045,6 +7039,7 @@ var MM_I18N = {
     'lb.rankDesc':'월간 챌린지가 시작되면 순위가 공개됩니다. 계속 거래해 자리를 확보하세요.'
   },
   'th': {
+    'home.openPnl':'กำไรขาดทุนที่ยังไม่ปิด',
     'home.overallBalance':'ยอดเงินรวมทุกบัญชี', 'home.confidence':'ความเชื่อมั่น',
     'w.mt5Live':'MT5 เรียลไทม์', 'j.gradeExcellent':'● ยอดเยี่ยม',
     'j.gradeGood':'● ดี', 'j.gradeAverage':'● ปานกลาง',
@@ -7415,6 +7410,7 @@ var MM_I18N = {
     'lb.rankDesc':'อันดับจะเปิดเมื่อการแข่งขันประจำเดือนเริ่มขึ้น เทรดต่อไปเพื่อคว้าตำแหน่งของคุณ'
   },
   'vi': {
+    'home.openPnl':'Lãi lỗ mở',
     'home.overallBalance':'Tổng số dư tài khoản', 'home.confidence':'độ tin cậy',
     'w.mt5Live':'MT5 TRỰC TIẾP', 'j.gradeExcellent':'● Xuất sắc',
     'j.gradeGood':'● Tốt', 'j.gradeAverage':'● Trung bình',
@@ -7785,6 +7781,7 @@ var MM_I18N = {
     'lb.rankDesc':'Xếp hạng sẽ mở khi thử thách hàng tháng bắt đầu. Hãy tiếp tục giao dịch để giữ vị trí của bạn.'
   },
   'fil': {
+    'home.openPnl':'Bukas na P&L',
     'home.overallBalance':'Kabuuang balanse ng account', 'home.confidence':'kumpiyansa',
     'w.mt5Live':'MT5 LIVE', 'j.gradeExcellent':'● Napakahusay',
     'j.gradeGood':'● Mahusay', 'j.gradeAverage':'● Katamtaman',
@@ -8155,6 +8152,7 @@ var MM_I18N = {
     'lb.rankDesc':'Bubuksan ang ranggo kapag nagsimula ang buwanang challenge. Magpatuloy sa pag-trade para makuha ang puwesto mo.'
   },
   'hi': {
+    'home.openPnl':'खुला लाभ-हानि',
     'home.overallBalance':'कुल खाता बैलेंस', 'home.confidence':'विश्वास',
     'w.mt5Live':'MT5 लाइव', 'j.gradeExcellent':'● उत्कृष्ट',
     'j.gradeGood':'● अच्छा', 'j.gradeAverage':'● औसत',
@@ -8525,6 +8523,7 @@ var MM_I18N = {
     'lb.rankDesc':'मासिक चुनौती शुरू होते ही रैंकिंग खुल जाएगी। अपनी जगह पक्की करने के लिए ट्रेडिंग जारी रखें।'
   },
   'es': {
+    'home.openPnl':'Resultado abierto',
     'home.overallBalance':'Saldo total de las cuentas', 'home.confidence':'confianza',
     'w.mt5Live':'MT5 EN VIVO', 'j.gradeExcellent':'● Excelente',
     'j.gradeGood':'● Buena', 'j.gradeAverage':'● Media',
@@ -10026,32 +10025,23 @@ function mmHomeBalance(){
     var diff = eq - bal;
     var pct  = bal > 0 ? (diff / bal * 100) : 0;
     mmHomeCountUp(document.getElementById('mm-bal-total'), bal);
-    var sub = document.getElementById('mm-bal-sub');
-    if(sub){
-      var liveTxt = stale ? ((accts.length-stale)+'/'+accts.length) : String(accts.length);
-      sub.innerHTML = mmT('chart.equity','Equity')+' '+mmHomeMoney(eq)+' \u00b7 <b>'+liveTxt+' '+mmT('w.accounts','Accounts')+'</b>';
-    }
+    var eqEl = document.getElementById('mm-bal-eq');
+    if(eqEl) eqEl.textContent = mmHomeMoney(eq);
+    var pnlEl = document.getElementById('mm-bal-pnl');
+    if(pnlEl) pnlEl.textContent = (diff < 0 ? '-' : '+') + mmHomeMoney(Math.abs(diff));
+    var accEl = document.getElementById('mm-bal-acc');
+    if(accEl) accEl.textContent = stale ? ((accts.length-stale)+'/'+accts.length) : String(accts.length);
+    var t2 = document.querySelector('.mm-tile.t2');
+    if(t2) t2.classList.toggle('dn', diff < 0);
     var chg = document.getElementById('mm-bal-chg');
     var cv  = document.getElementById('mm-bal-chg-val');
     if(chg && cv){
-      chg.className = 'mm-bal-chg ' + (diff >= 0 ? 'up' : 'dn');
-      cv.textContent = (diff>=0?'+':'') + diff.toFixed(2) + ' (' + (pct>=0?'+':'') + pct.toFixed(2) + '%)';
+      chg.className = 'mm-bal-chg ' + (diff >= 0 ? 'up' : '');
+      cv.textContent = (pct>=0?'+':'') + pct.toFixed(2) + '%';
     }
     var card = document.getElementById('mm-bal-card');
-    if(card){
-      card.classList.toggle('stale', stale === accts.length);
-      card.classList.toggle('up', diff >= 0);
-    }
-    var ramp = (diff >= 0)
-      ? ['#085041','#00b87a','#5df0bd','#00b87a','#085041']
-      : ['#8c1226','#e03050','#ff6b7e','#e03050','#8c1226'];
-    for(var wi = 0; wi < 5; wi++){
-      var st = document.getElementById('mm-wave-s' + wi);
-      if(st) st.setAttribute('stop-color', ramp[wi]);
-    }
-    var wb = document.getElementById('mm-wave-back');
-    if(wb) wb.setAttribute('fill', ramp[1]);
-  }catch(e){}
+    if(card) card.classList.toggle('stale', stale === accts.length);
+  }catch(e){ console.warn('mmHomeBalance failed:', e && e.message); }
 }
 function mmHomeRefresh(){ mmHomeBalance(); }
 
@@ -16228,23 +16218,37 @@ function showMT5ConnNotice(kind, reason) {
 #ptr-indicator.ptr-spin #ptr-spinner{ animation:ptrSpin .7s linear infinite; }
 @keyframes ptrSpin{ to{ transform:rotate(360deg); } }
 
-.mm-bal-card{position:relative;overflow:hidden;border-radius:16px;height:150px;padding:13px 15px 0;margin-bottom:14px;background:radial-gradient(95% 75% at 82% 108%,rgba(255,92,120,.55) 0%,rgba(224,48,80,.12) 42%,rgba(0,0,0,0) 70%),radial-gradient(80% 70% at 6% 4%,rgba(140,18,38,.6) 0%,rgba(0,0,0,0) 60%),#0f1017;}
-.mm-bal-card.up{background:radial-gradient(95% 75% at 82% 108%,rgba(0,214,143,.4) 0%,rgba(0,214,143,.08) 42%,rgba(0,0,0,0) 70%),radial-gradient(80% 70% at 6% 4%,rgba(12,80,58,.55) 0%,rgba(0,0,0,0) 60%),#0f1017;}
-.mm-bal-top{position:relative;display:flex;align-items:flex-start;justify-content:space-between;}
-.mm-bal-label{color:#9aa0b4;font-size:10px;}
-.mm-bal-num{color:#fff;font-size:27px;font-weight:800;letter-spacing:-.5px;margin-top:2px;font-family:'Orbitron',sans-serif;}
-.mm-bal-sub{color:#9aa0b4;font-size:10px;margin-top:3px;}
-.mm-bal-sub b{color:#ff8fa3;font-weight:700;}
-.mm-bal-chg{display:flex;align-items:center;gap:5px;background:rgba(255,92,120,.14);color:#ff8fa3;font-size:11px;padding:3px 9px;border-radius:8px;white-space:nowrap;font-weight:700;}
-.mm-bal-chg.dn{background:rgba(255,92,120,.14);color:#ff8fa3;}
-.mm-bal-chg.up{background:rgba(0,214,143,.14);color:#4fe0ab;}
-.mm-bal-dot{width:5px;height:5px;border-radius:50%;background:currentColor;animation:mmBalDot 1.7s infinite;}
-@keyframes mmBalDot{0%,100%{opacity:1}50%{opacity:.4}}
-.mm-bal-svg{position:absolute;left:0;right:0;bottom:0;width:100%;height:80px;display:block;}
-
-@keyframes mmTrace{from{stroke-dashoffset:340}to{stroke-dashoffset:0}}
-@keyframes mmRise{from{opacity:0}to{opacity:1}}
+.mm-bal-card{position:relative;overflow:hidden;border-radius:14px;background:#0c0f18;padding:13px 15px;margin-bottom:14px;}
 .mm-bal-card.stale{filter:grayscale(.85);}
+.mm-bal-dots{position:absolute;inset:0;background-image:radial-gradient(rgba(255,120,145,.11) 1px,transparent 1px);background-size:14px 14px;}
+.mm-bal-radar{position:absolute;right:-70px;bottom:-90px;width:210px;height:210px;border-radius:50%;background:conic-gradient(from 0deg,rgba(224,48,80,.42),rgba(224,48,80,0) 28%,rgba(224,48,80,0) 100%);animation:mmRadarSpin 7s linear infinite;}
+@keyframes mmRadarSpin{to{transform:rotate(360deg)}}
+.mm-bal-rings{position:absolute;right:-70px;bottom:-90px;width:210px;height:210px;}
+.mm-ring{position:absolute;border-radius:50%;border:1px solid rgba(224,48,80,.35);}
+.mm-ring.r1{inset:0;}
+.mm-ring.r2{inset:22%;border-color:rgba(224,48,80,.28);}
+.mm-ring.r3{inset:44%;border-color:rgba(224,48,80,.22);}
+.mm-rip{position:absolute;inset:0;border-radius:50%;border:1.4px solid rgba(255,143,163,.55);animation:mmRipple 5s ease-out infinite;}
+.mm-rip.b{border-color:rgba(224,48,80,.5);animation-delay:2.5s;}
+@keyframes mmRipple{0%{transform:scale(.28);opacity:0}12%{opacity:.75}100%{transform:scale(1.6);opacity:0}}
+.mm-bal-fg{position:relative;}
+.mm-bal-head{display:flex;align-items:center;justify-content:space-between;}
+.mm-bal-label{color:#9aa0b4;font-size:10px;letter-spacing:.07em;}
+.mm-bal-chg{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:#ff8fa3;}
+.mm-bal-chg.up{color:#4fe0ab;}
+.mm-bal-dot{width:5px;height:5px;border-radius:50%;background:currentColor;animation:mmBalDot 1.6s infinite;}
+@keyframes mmBalDot{0%,100%{opacity:1}50%{opacity:.3}}
+.mm-bal-num{color:#fff;font-size:29px;font-weight:800;letter-spacing:-.6px;margin:3px 0 10px;font-family:'Orbitron',sans-serif;}
+.mm-bal-tiles{display:flex;gap:6px;}
+.mm-tile{flex:1;background:rgba(0,0,0,.5);border-radius:0 8px 8px 0;padding:6px 9px;min-width:0;}
+.mm-tile b{display:block;color:#8b90a3;font-size:9px;font-weight:400;}
+.mm-tile i{font-style:normal;color:#fff;font-size:12px;font-weight:700;}
+.mm-tile.t1{border-left:2px solid #e03050;}
+.mm-tile.t2{border-left:2px solid #00d68f;}
+.mm-tile.t2 i{color:#4fe0ab;}
+.mm-tile.t2.dn{border-left-color:#e03050;}
+.mm-tile.t2.dn i{color:#ff8fa3;}
+.mm-tile.t3{border-left:2px solid #ff8fa3;}
 .mm-mkt-list{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:2px 13px;margin-bottom:14px;}
 .mm-mkt-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);}
 .mm-mkt-row:last-child{border-bottom:none;}
