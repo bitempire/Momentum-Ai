@@ -1821,7 +1821,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       </div>
       <!-- Market Overview -->
       <div class="section-title" style="margin-bottom:10px;"><span class="tw" data-i18n="w.market">Market</span> <span data-i18n="dash.overview">Overview</span></div>
-      <div class="mm-mkt-strip" id="mm-mkt-strip">
+      <div class="mm-mkt-grid" id="mm-mkt-grid">
           <div class="mm-mkt-card dn" id="mkt-card-XAUUSD">
             <span class="mm-mkt-glow"></span>
             <div class="mm-mkt-h"><span class="mm-mkt-sym" id="sym-XAUUSD">XAUUSD</span><span class="mm-mkt-chg dn" id="change-XAUUSD">▼ -0.25%</span></div>
@@ -10068,41 +10068,36 @@ function mmHomeBalance(){
   }catch(e){ console.warn('mmHomeBalance failed:', e && e.message); }
 }
 window._mmLastPx = window._mmLastPx || {};
-function mmMktPulse(app, isUp, price){
+window._mmLastFlip = window._mmLastFlip || {};
+function mmMktApply(app, isUp, priceTxt, chgTxt){
+  var pEl = document.getElementById('price-' + app);
+  var cEl = document.getElementById('change-' + app);
+  var mc  = document.getElementById('mkt-card-' + app);
+  if(pEl && priceTxt != null) pEl.textContent = priceTxt;
+  if(cEl && chgTxt != null){ cEl.textContent = chgTxt; cEl.className = 'mm-mkt-chg ' + (isUp?'up':'dn'); }
+  if(mc) mc.className = 'mm-mkt-card ' + (isUp?'up':'dn');
+}
+function mmMktPulse(app, isUp, price, priceTxt, chgTxt){
   var mc = document.getElementById('mkt-card-' + app);
-  if(!mc) return;
-  mc.className = 'mm-mkt-card ' + (isUp ? 'up' : 'dn');
   var prev = window._mmLastPx[app];
   window._mmLastPx[app] = price;
-  if(prev === undefined || prev === price) return;
+  var moved = (prev !== undefined) && prev !== price &&
+              (Math.abs(price - prev) / Math.max(Math.abs(prev), 1e-9)) > 0.00002;
+  var now = Date.now();
+  var cooling = (now - (window._mmLastFlip[app] || 0)) < 4000;
+  if(!mc || !moved || cooling){ mmMktApply(app, isUp, priceTxt, chgTxt); return; }
+  window._mmLastFlip[app] = now;
   mc.style.animation = 'none'; void mc.offsetWidth;
-  mc.style.animation = 'mmMktTilt .5s ease-out';
+  mc.style.animation = 'mmMktFlip .62s cubic-bezier(.4,0,.25,1)';
+  setTimeout(function(){ mmMktApply(app, isUp, priceTxt, chgTxt); }, 300);
   var g = mc.querySelector('.mm-mkt-glow');
   if(g){
-    g.style.boxShadow = '0 0 0 1px ' + (isUp ? '#00d68f' : '#ff4d6a') + ', 0 0 16px ' + (isUp ? 'rgba(0,214,143,.28)' : 'rgba(255,77,106,.28)');
+    g.style.boxShadow = '0 0 0 1px ' + (isUp?'#00d68f':'#ff4d6a') + ', 0 0 16px ' + (isUp?'rgba(0,214,143,.28)':'rgba(255,77,106,.28)');
     g.style.animation = 'none'; void g.offsetWidth;
     g.style.animation = 'mmMktEdge .9s ease-out';
   }
 }
-function mmMktAuto(){
-  var el = document.getElementById('mm-mkt-strip');
-  if(!el || el._mmAuto) return;
-  el._mmAuto = true;
-  var resume = 0;
-  ['pointerdown','touchstart','wheel'].forEach(function(ev){
-    el.addEventListener(ev, function(){ resume = Date.now() + 6000; }, {passive:true});
-  });
-  setInterval(function(){
-    if(document.hidden || Date.now() < resume) return;
-    var card = el.querySelector('.mm-mkt-card');
-    if(!card || el.scrollWidth <= el.clientWidth + 2) return;
-    var step = card.offsetWidth + 8;
-    var max  = el.scrollWidth - el.clientWidth;
-    var next = (el.scrollLeft + step > max - 2) ? 0 : el.scrollLeft + step;
-    try{ el.scrollTo({left: next, behavior: 'smooth'}); }catch(e){ el.scrollLeft = next; }
-  }, 3500);
-}
-function mmHomeRefresh(){ mmHomeBalance(); mmMktAuto(); }
+function mmHomeRefresh(){ mmHomeBalance(); }
 
 // ── SPARKLINES ──
 function drawSparklines() {
@@ -11329,9 +11324,7 @@ async function loadLivePrices() {
       var pEl=document.getElementById('price-'+app);
       var cEl=document.getElementById('change-'+app);
       var sEl=document.getElementById('sym-'+app);
-      if(pEl) pEl.textContent = fmtPrice(app, price);
-      if(cEl) { cEl.textContent=(isUp?'▲ +':'▼ ')+chg+'%'; cEl.className='mm-mkt-chg '+(isUp?'up':'dn'); }
-      mmMktPulse(app, isUp, price);
+      mmMktPulse(app, isUp, price, fmtPrice(app, price), (isUp?'▲ +':'▼ ')+chg+'%');
     });
   } catch(e) { console.warn('loadLivePrices:', e.message); }
   loadAFTPrices();
@@ -11395,15 +11388,11 @@ async function loadAFTPrices() {
         mid = (parseFloat(row.bid) + parseFloat(row.ask)) / 2;
       }
       if(isNaN(mid) || mid <= 0) return;
-      var pEl = document.getElementById('price-'+app);
-      if(pEl) pEl.textContent = fmtPrice(app, mid);
       var open = _mktOpen[app];
       if(open!=null && !isNaN(open) && open>0){
         var isUp = mid >= open;
         var chg = ((mid-open)/open*100).toFixed(2);
-        var cEl = document.getElementById('change-'+app);
-        if(cEl){ cEl.textContent = (isUp?'▲ +':'▼ ')+chg+'%'; cEl.className='mm-mkt-chg '+(isUp?'up':'dn'); }
-        mmMktPulse(app, isUp, mid);
+        mmMktPulse(app, isUp, mid, fmtPrice(app, mid), (isUp?'▲ +':'▼ ')+chg+'%');
       }
     });
     // Quotes came back. THIS is what 'data connection ok' means - the marker
@@ -16302,9 +16291,8 @@ function showMT5ConnNotice(kind, reason) {
 .mm-tile.t2.dn{border-left-color:#e03050;}
 .mm-tile.t2.dn i{color:#ff8fa3;}
 .mm-tile.t3{border-left:2px solid #ff8fa3;}
-.mm-mkt-strip{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin-bottom:14px;padding-bottom:2px;}
-.mm-mkt-strip::-webkit-scrollbar{display:none;}
-.mm-mkt-card{position:relative;overflow:hidden;flex:0 0 calc(50% - 4px);scroll-snap-align:start;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:8px 10px 15px;}
+.mm-mkt-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.mm-mkt-card{position:relative;overflow:hidden;transform-style:preserve-3d;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:8px 10px 15px;}
 .mm-mkt-card::before{content:'';position:absolute;left:10px;right:10px;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);}
 .mm-mkt-h{display:flex;align-items:center;justify-content:space-between;}
 .mm-mkt-sym{color:var(--text3);font-size:9px;letter-spacing:.06em;font-weight:700;}
@@ -16321,7 +16309,7 @@ function showMT5ConnNotice(kind, reason) {
 .mm-mkt-card.up .mm-mkt-bloom{background:linear-gradient(180deg,rgba(0,214,143,0) 0%,rgba(0,214,143,.10) 45%,rgba(0,214,143,.30) 100%);}
 .mm-mkt-card.dn .mm-mkt-bloom{background:linear-gradient(180deg,rgba(255,77,106,0) 0%,rgba(255,77,106,.10) 45%,rgba(255,77,106,.30) 100%);}
 .mm-mkt-glow{position:absolute;inset:0;border-radius:10px;opacity:0;pointer-events:none;}
-@keyframes mmMktTilt{0%{transform:perspective(420px) rotateX(9deg) scale(1.03)}100%{transform:perspective(420px) rotateX(0) scale(1)}}
+@keyframes mmMktFlip{0%{transform:perspective(600px) rotateX(0)}45%{transform:perspective(600px) rotateX(-88deg)}55%{transform:perspective(600px) rotateX(88deg)}100%{transform:perspective(600px) rotateX(0)}}
 @keyframes mmMktEdge{0%{opacity:1}100%{opacity:0}}
 .mm-feed-row{padding:9px 0;border-bottom:1px solid var(--border);}
 .mm-feed-row:last-child{border-bottom:none;}
