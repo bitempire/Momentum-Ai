@@ -1810,24 +1810,23 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         </div>
         <svg class="mm-bal-svg" viewBox="0 0 300 80" preserveAspectRatio="none" aria-hidden="true" style="position:absolute;left:0;right:0;bottom:0;width:100%;height:80px;display:block;">
           <defs>
-            <linearGradient id="mmWaveGrad" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="300" y2="0">
+            <linearGradient id="mmWaveGrad" gradientUnits="userSpaceOnUse" x1="-300" y1="0" x2="300" y2="0">
               <stop id="mm-wave-s0" offset="0%" stop-color="#8c1226"></stop>
-              <stop id="mm-wave-s1" offset="30%" stop-color="#e03050"></stop>
-              <stop id="mm-wave-s2" offset="55%" stop-color="#ff6b7e"></stop>
-              <stop id="mm-wave-s3" offset="80%" stop-color="#e03050"></stop>
+              <stop id="mm-wave-s1" offset="25%" stop-color="#e03050"></stop>
+              <stop id="mm-wave-s2" offset="50%" stop-color="#ff6b7e"></stop>
+              <stop id="mm-wave-s3" offset="75%" stop-color="#e03050"></stop>
               <stop id="mm-wave-s4" offset="100%" stop-color="#8c1226"></stop>
+              <animateTransform attributeName="gradientTransform" type="translate" from="0 0" to="600 0" dur="9s" repeatCount="indefinite"></animateTransform>
             </linearGradient>
             <linearGradient id="mmWaveFade" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#fff" stop-opacity="0.75"></stop>
-              <stop offset="100%" stop-color="#fff" stop-opacity="0.08"></stop>
+              <stop offset="0%" stop-color="#fff" stop-opacity="0.8"></stop>
+              <stop offset="100%" stop-color="#fff" stop-opacity="0.1"></stop>
             </linearGradient>
             <mask id="mmWaveMask"><rect x="0" y="0" width="300" height="80" fill="url(#mmWaveFade)"></rect></mask>
           </defs>
           <g mask="url(#mmWaveMask)">
-            <g class="mm-wave-drift">
-              <path id="mm-wave-back" fill="#e03050" fill-opacity="0.20" d="M0,64 C60,52 90,74 150,60 C210,46 240,64 300,48 M300,48 C340,40 380,60 430,54 C480,48 540,66 600,56 L600,80 L0,80 Z"></path>
-              <path id="mm-wave-front" fill="url(#mmWaveGrad)" fill-opacity="0.62" d="M0,52 C50,36 80,64 130,45 C180,26 210,52 260,30 C280,22 292,26 300,21 M300,21 C320,17 340,34 370,30 C410,25 440,48 480,38 C520,28 560,44 600,34 L600,80 L0,80 Z"></path>
-            </g>
+            <path id="mm-wave-back" fill="#e03050" fill-opacity="0.13" d="M0,64 C60,52 90,74 150,60 C210,46 240,64 300,48 L300,80 L0,80 Z"></path>
+            <path id="mm-wave-front" fill="url(#mmWaveGrad)" fill-opacity="0.55" d="M0,52 C50,36 80,64 130,45 C180,26 210,52 260,30 C280,22 292,26 300,21 L300,80 L0,80 Z"></path>
           </g>
         </svg>
       </div>
@@ -16242,8 +16241,6 @@ function showMT5ConnNotice(kind, reason) {
 .mm-bal-dot{width:5px;height:5px;border-radius:50%;background:currentColor;animation:mmBalDot 1.7s infinite;}
 @keyframes mmBalDot{0%,100%{opacity:1}50%{opacity:.4}}
 .mm-bal-svg{position:absolute;left:0;right:0;bottom:0;width:100%;height:80px;display:block;}
-.mm-wave-drift{animation:mmWaveDrift 16s linear infinite;will-change:transform;}
-@keyframes mmWaveDrift{from{transform:translateX(0)}to{transform:translateX(-300px)}}
 
 @keyframes mmTrace{from{stroke-dashoffset:340}to{stroke-dashoffset:0}}
 @keyframes mmRise{from{opacity:0}to{opacity:1}}
