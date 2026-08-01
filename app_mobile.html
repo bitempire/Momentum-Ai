@@ -1823,24 +1823,32 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <div class="section-title" style="margin-bottom:10px;"><span class="tw" data-i18n="w.market">Market</span> <span data-i18n="dash.overview">Overview</span></div>
       <div class="mm-mkt-strip" id="mm-mkt-strip">
           <div class="mm-mkt-card dn" id="mkt-card-XAUUSD">
+            <span class="mm-mkt-glow"></span>
             <div class="mm-mkt-h"><span class="mm-mkt-sym" id="sym-XAUUSD">XAUUSD</span><span class="mm-mkt-chg dn" id="change-XAUUSD">▼ -0.25%</span></div>
             <div class="mm-mkt-price" id="price-XAUUSD">4,042.72</div>
-            <span class="mm-mkt-wash"></span>
+            <span class="mm-mkt-bloom"></span>
+            <span class="mm-mkt-line"><span></span></span>
           </div>
           <div class="mm-mkt-card up" id="mkt-card-DXY">
+            <span class="mm-mkt-glow"></span>
             <div class="mm-mkt-h"><span class="mm-mkt-sym" id="sym-DXY">DXY</span><span class="mm-mkt-chg up" id="change-DXY">▲ +0.52%</span></div>
             <div class="mm-mkt-price" id="price-DXY">99.50</div>
-            <span class="mm-mkt-wash"></span>
+            <span class="mm-mkt-bloom"></span>
+            <span class="mm-mkt-line"><span></span></span>
           </div>
           <div class="mm-mkt-card dn" id="mkt-card-BTCUSD">
+            <span class="mm-mkt-glow"></span>
             <div class="mm-mkt-h"><span class="mm-mkt-sym" id="sym-BTCUSD">BTCUSD</span><span class="mm-mkt-chg dn" id="change-BTCUSD">▼ -0.18%</span></div>
             <div class="mm-mkt-price" id="price-BTCUSD">62,662.14</div>
-            <span class="mm-mkt-wash"></span>
+            <span class="mm-mkt-bloom"></span>
+            <span class="mm-mkt-line"><span></span></span>
           </div>
           <div class="mm-mkt-card up" id="mkt-card-USOIL">
+            <span class="mm-mkt-glow"></span>
             <div class="mm-mkt-h"><span class="mm-mkt-sym" id="sym-USOIL">USOIL</span><span class="mm-mkt-chg up" id="change-USOIL">▲ +0.34%</span></div>
             <div class="mm-mkt-price" id="price-USOIL">64.50</div>
-            <span class="mm-mkt-wash"></span>
+            <span class="mm-mkt-bloom"></span>
+            <span class="mm-mkt-line"><span></span></span>
           </div>
       </div>
       <!-- Recent Signals -->
@@ -10059,6 +10067,23 @@ function mmHomeBalance(){
     if(card) card.classList.toggle('stale', stale === accts.length);
   }catch(e){ console.warn('mmHomeBalance failed:', e && e.message); }
 }
+window._mmLastPx = window._mmLastPx || {};
+function mmMktPulse(app, isUp, price){
+  var mc = document.getElementById('mkt-card-' + app);
+  if(!mc) return;
+  mc.className = 'mm-mkt-card ' + (isUp ? 'up' : 'dn');
+  var prev = window._mmLastPx[app];
+  window._mmLastPx[app] = price;
+  if(prev === undefined || prev === price) return;
+  mc.style.animation = 'none'; void mc.offsetWidth;
+  mc.style.animation = 'mmMktTilt .5s ease-out';
+  var g = mc.querySelector('.mm-mkt-glow');
+  if(g){
+    g.style.boxShadow = '0 0 0 1px ' + (isUp ? '#00d68f' : '#ff4d6a') + ', 0 0 16px ' + (isUp ? 'rgba(0,214,143,.28)' : 'rgba(255,77,106,.28)');
+    g.style.animation = 'none'; void g.offsetWidth;
+    g.style.animation = 'mmMktEdge .9s ease-out';
+  }
+}
 function mmMktAuto(){
   var el = document.getElementById('mm-mkt-strip');
   if(!el || el._mmAuto) return;
@@ -11306,8 +11331,7 @@ async function loadLivePrices() {
       var sEl=document.getElementById('sym-'+app);
       if(pEl) pEl.textContent = fmtPrice(app, price);
       if(cEl) { cEl.textContent=(isUp?'▲ +':'▼ ')+chg+'%'; cEl.className='mm-mkt-chg '+(isUp?'up':'dn'); }
-      var mc = document.getElementById('mkt-card-'+app);
-      if(mc) mc.className = 'mm-mkt-card ' + (isUp?'up':'dn');
+      mmMktPulse(app, isUp, price);
     });
   } catch(e) { console.warn('loadLivePrices:', e.message); }
   loadAFTPrices();
@@ -11379,8 +11403,7 @@ async function loadAFTPrices() {
         var chg = ((mid-open)/open*100).toFixed(2);
         var cEl = document.getElementById('change-'+app);
         if(cEl){ cEl.textContent = (isUp?'▲ +':'▼ ')+chg+'%'; cEl.className='mm-mkt-chg '+(isUp?'up':'dn'); }
-        var mc = document.getElementById('mkt-card-'+app);
-        if(mc) mc.className = 'mm-mkt-card ' + (isUp?'up':'dn');
+        mmMktPulse(app, isUp, mid);
       }
     });
     // Quotes came back. THIS is what 'data connection ok' means - the marker
@@ -16281,16 +16304,25 @@ function showMT5ConnNotice(kind, reason) {
 .mm-tile.t3{border-left:2px solid #ff8fa3;}
 .mm-mkt-strip{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin-bottom:14px;padding-bottom:2px;}
 .mm-mkt-strip::-webkit-scrollbar{display:none;}
-.mm-mkt-card{position:relative;overflow:hidden;flex:0 0 calc(50% - 4px);scroll-snap-align:start;background:var(--bg3);border:1px solid var(--border);border-radius:11px;padding:9px 11px 24px;}
-.mm-mkt-h{display:flex;align-items:center;gap:6px;}
-.mm-mkt-sym{color:var(--text3);font-size:10px;font-weight:700;}
+.mm-mkt-card{position:relative;overflow:hidden;flex:0 0 calc(50% - 4px);scroll-snap-align:start;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:8px 10px 15px;}
+.mm-mkt-card::before{content:'';position:absolute;left:10px;right:10px;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);}
+.mm-mkt-h{display:flex;align-items:center;justify-content:space-between;}
+.mm-mkt-sym{color:var(--text3);font-size:9px;letter-spacing:.06em;font-weight:700;}
 .mm-mkt-chg{font-size:9px;font-weight:700;}
 .mm-mkt-chg.up{color:var(--green);}
 .mm-mkt-chg.dn{color:var(--red);}
-.mm-mkt-price{color:var(--text);font-size:16px;margin-top:3px;font-family:'Orbitron',sans-serif;position:relative;z-index:1;}
-.mm-mkt-wash{position:absolute;left:0;right:0;bottom:0;height:22px;pointer-events:none;}
-.mm-mkt-card.dn .mm-mkt-wash{background:linear-gradient(180deg,rgba(255,77,106,0),rgba(255,77,106,.5));}
-.mm-mkt-card.up .mm-mkt-wash{background:linear-gradient(180deg,rgba(0,214,143,0),rgba(0,214,143,.5));}
+.mm-mkt-price{position:relative;z-index:1;color:var(--text);font-size:16px;margin-top:2px;letter-spacing:-.2px;font-family:'Orbitron',sans-serif;}
+.mm-mkt-bloom{position:absolute;left:0;right:0;bottom:0;height:34px;pointer-events:none;filter:blur(9px);}
+.mm-mkt-line{position:absolute;left:0;right:0;bottom:0;height:2px;overflow:hidden;pointer-events:none;-webkit-mask-image:linear-gradient(90deg,transparent,#000 22%,#000 78%,transparent);mask-image:linear-gradient(90deg,transparent,#000 22%,#000 78%,transparent);}
+.mm-mkt-line > span{position:absolute;inset:0;background-size:220% 100%;animation:mmMktFlow 6s linear infinite;}
+@keyframes mmMktFlow{0%{background-position:0% 50%}100%{background-position:200% 50%}}
+.mm-mkt-card.up .mm-mkt-line > span{background:linear-gradient(90deg,rgba(0,214,143,0) 0%,rgba(0,214,143,.35) 18%,rgba(0,214,143,.75) 38%,rgba(0,214,143,.95) 50%,rgba(0,214,143,.75) 62%,rgba(0,214,143,.35) 82%,rgba(0,214,143,0) 100%);}
+.mm-mkt-card.dn .mm-mkt-line > span{background:linear-gradient(90deg,rgba(255,77,106,0) 0%,rgba(255,77,106,.35) 18%,rgba(255,77,106,.75) 38%,rgba(255,77,106,.95) 50%,rgba(255,77,106,.75) 62%,rgba(255,77,106,.35) 82%,rgba(255,77,106,0) 100%);}
+.mm-mkt-card.up .mm-mkt-bloom{background:linear-gradient(180deg,rgba(0,214,143,0) 0%,rgba(0,214,143,.10) 45%,rgba(0,214,143,.30) 100%);}
+.mm-mkt-card.dn .mm-mkt-bloom{background:linear-gradient(180deg,rgba(255,77,106,0) 0%,rgba(255,77,106,.10) 45%,rgba(255,77,106,.30) 100%);}
+.mm-mkt-glow{position:absolute;inset:0;border-radius:10px;opacity:0;pointer-events:none;}
+@keyframes mmMktTilt{0%{transform:perspective(420px) rotateX(9deg) scale(1.03)}100%{transform:perspective(420px) rotateX(0) scale(1)}}
+@keyframes mmMktEdge{0%{opacity:1}100%{opacity:0}}
 .mm-feed-row{padding:9px 0;border-bottom:1px solid var(--border);}
 .mm-feed-row:last-child{border-bottom:none;}
 .mm-feed-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
