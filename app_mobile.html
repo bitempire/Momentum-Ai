@@ -10049,18 +10049,39 @@ async function mmHomeCurve(){
     results.forEach(function(r){ if(r && !r.error && r.data) rows = rows.concat(r.data); });
     rows.sort(function(a,b){ return new Date(a.close_time) - new Date(b.close_time); });
     if(rows.length < 2){ console.warn('mmHomeCurve: only '+rows.length+' closed trades, no curve'); return; }
-    var run = 0, pts = rows.map(function(r){ run += mmHomeNum(r.profit); return run; });
-    var lo = Math.min.apply(null, pts), hi = Math.max.apply(null, pts), span = (hi-lo) || 1;
-    var W = 300, H = 74, top = 8, bot = 68;
-    var stepX = W / (pts.length - 1);
-    var xy = pts.map(function(v,i){
-      return [ (i*stepX), bot - ((v-lo)/span) * (bot-top) ];
+    var run = 0, series = rows.map(function(r){
+      run += mmHomeNum(r.profit);
+      return { day: String(r.close_time || '').slice(0,10), v: run };
     });
-    var d = 'M' + xy[0][0].toFixed(1) + ',' + xy[0][1].toFixed(1);
-    for(var i=1;i<xy.length;i++){
-      var p0 = xy[i-1], p1 = xy[i], cx = (p0[0]+p1[0])/2;
-      d += ' C'+cx.toFixed(1)+','+p0[1].toFixed(1)+' '+cx.toFixed(1)+','+p1[1].toFixed(1)+' '+p1[0].toFixed(1)+','+p1[1].toFixed(1);
+    var byDay = {}, order = [];
+    series.forEach(function(s){ if(!(s.day in byDay)) order.push(s.day); byDay[s.day] = s.v; });
+    var pts = order.map(function(d){ return byDay[d]; });
+    if(pts.length > 60) pts = pts.slice(pts.length - 60);
+    if(pts.length < 2){
+      pts = series.map(function(s){ return s.v; });
+      if(pts.length > 40){
+        var keep = [], stepK = pts.length / 40;
+        for(var k = 0; k < 40; k++) keep.push(pts[Math.floor(k * stepK)]);
+        keep.push(pts[pts.length - 1]);
+        pts = keep;
+      }
     }
+    if(pts.length < 2){ console.warn('mmHomeCurve: not enough points'); return; }
+    var lo = Math.min.apply(null, pts), hi = Math.max.apply(null, pts), span = (hi-lo) || 1;
+    var W = 300, H = 74, top = 10, bot = 66;
+    var stepX = W / (pts.length - 1);
+    var xy = pts.map(function(v,i){ return [ i*stepX, bot - ((v-lo)/span) * (bot-top) ]; });
+    function catmull(P){
+      var s = 'M' + P[0][0].toFixed(1) + ',' + P[0][1].toFixed(1);
+      for(var i = 0; i < P.length - 1; i++){
+        var p0 = P[i-1] || P[i], p1 = P[i], p2 = P[i+1], p3 = P[i+2] || P[i+1];
+        var c1x = p1[0] + (p2[0]-p0[0])/6, c1y = p1[1] + (p2[1]-p0[1])/6;
+        var c2x = p2[0] - (p3[0]-p1[0])/6, c2y = p2[1] - (p3[1]-p1[1])/6;
+        s += ' C'+c1x.toFixed(1)+','+c1y.toFixed(1)+' '+c2x.toFixed(1)+','+c2y.toFixed(1)+' '+p2[0].toFixed(1)+','+p2[1].toFixed(1);
+      }
+      return s;
+    }
+    var d = catmull(xy);
     var line = document.getElementById('mm-bal-line');
     var area = document.getElementById('mm-bal-area');
     var dot  = document.getElementById('mm-bal-dot-end');
