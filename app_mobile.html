@@ -2380,7 +2380,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         <span onclick="aiChatSend('What is the risk reward?')" style="font-size:11px;color:#c6c6ce;background:rgba(123,92,255,0.1);border:1px solid rgba(123,92,255,0.25);padding:6px 11px;border-radius:16px;white-space:nowrap;cursor:pointer;" data-i18n="chat.riskReward">Risk : reward?</span>
       </div>
       <div style="display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:6px 6px 6px 15px;">
-        <input id="ai-chat-input" type="text" placeholder="Message Momentum Intelligence…" style="flex:1;background:transparent;border:none;outline:none;color:var(--text);font-size:12.5px;font-family:Sora,sans-serif;">
+        <input id="ai-chat-input" type="text" placeholder="Message Momentum Intelligence…" style="flex:1;background:transparent;border:none;outline:none;color:var(--text);font-size:12.5px;font-family:Sora,sans-serif;" data-i18n-ph="chat.phMessage">
         <button onclick="aiChatSend()" style="width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,#7B5CFF,#FF2D81,#FF1E3C);background-size:200% 200%;animation:aiGrad 5s ease infinite;border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ti ti-send" style="font-size:16px;"></i></button>
       </div>
       <div style="text-align:center;font-size:9.5px;color:var(--text3);margin-top:7px;">Each reply uses ~10 credits &middot; related questions only</div>
@@ -2800,7 +2800,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         </div>
         <div class="auth-field">
           <label class="auth-label" data-i18n="prof.mt5id">MT5 Account ID</label>
-          <input id="follow-mt5" class="auth-input" type="text" placeholder="Your AFTT MT5 account ID">
+          <input id="follow-mt5" class="auth-input" type="text" placeholder="Your AFTT MT5 account ID" data-i18n-ph="ff.phMt5Id">
         </div>
         <div class="auth-field">
           <label class="auth-label" data-i18n="ff.allocation">Allocation Amount (USD)</label>
@@ -3241,7 +3241,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         <div class="section-title" style="font-size:13px;margin-bottom:6px;"><span data-i18n="prof.promo">Promo</span> <span data-i18n="prof.codeWord">Code</span></div>
         <div style="font-size:11px;color:var(--text3);line-height:1.5;margin-bottom:12px;" data-i18n="prof.promoSub">Have a code? Redeem it to unlock Premium. One promo per MT5 account.</div>
         <div style="display:flex;gap:8px;">
-          <input id="profile-promo-input" type="text" placeholder="No active promo" disabled style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-size:13px;text-transform:uppercase;opacity:0.45;cursor:not-allowed;" />
+          <input id="profile-promo-input" type="text" placeholder="No active promo" disabled style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-size:13px;text-transform:uppercase;opacity:0.45;cursor:not-allowed;" / data-i18n-ph="prof.phNoPromo">
           <button id="profile-promo-btn" onclick="applyProfilePromo()" disabled style="font-size:12px;font-weight:700;padding:10px 16px;background:rgba(240,178,50,0.13);border:1px solid rgba(240,178,50,0.3);border-radius:8px;color:var(--gold);cursor:not-allowed;white-space:nowrap;opacity:0.45;">Apply</button>
         </div>
         <div id="profile-promo-msg" style="display:none;font-size:11px;margin-top:8px;line-height:1.4;"></div>
@@ -3506,7 +3506,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         </div>
         <div class="auth-field">
           <label class="auth-label" data-i18n="sup.message">Message</label>
-          <textarea id="support-message" class="auth-input" rows="4" placeholder="Describe your issue in detail..." style="resize:vertical;"></textarea>
+          <textarea id="support-message" class="auth-input" rows="4" placeholder="Describe your issue in detail..." style="resize:vertical;" data-i18n-ph="sup.phDescribe"></textarea>
         </div>
         <div id="support-error" class="error-msg"></div>
         <div id="support-success" class="success-msg"></div>
@@ -5120,6 +5120,7 @@ function mmLangName(code){ for(var i=0;i<MMLANGS.length;i++){ if(MMLANGS[i].code
 // Only the OTHER languages need entries here.
 var MM_I18N = {
   'zh-TW': {
+    'chat.phMessage':'傳訊息給 Momentum Intelligence…', 'ff.phMt5Id':'您的 AFTT MT5 帳號', 'prof.phNoPromo':'沒有有效的優惠碼', 'sup.phDescribe':'請詳細描述您的問題...',
     'acad.backCats':'返回分類', 'acad.backLessons':'返回課程',
     'acad.cat4':'4 堂課 · 必修', 'acad.cat5b':'5 堂課 · 初階',
     'acad.cat5i':'5 堂課 · 重要', 'acad.cat6':'6 堂課 · 進階',
