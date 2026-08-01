@@ -10068,7 +10068,7 @@ async function mmHomeCurve(){
     }
     if(pts.length < 2){ console.warn('mmHomeCurve: not enough points'); return; }
     var lo = Math.min.apply(null, pts), hi = Math.max.apply(null, pts), span = (hi-lo) || 1;
-    var W = 300, H = 74, top = 10, bot = 66;
+    var W = 300, H = 74, top = 6, bot = 68;
     var stepX = W / (pts.length - 1);
     var xy = pts.map(function(v,i){ return [ i*stepX, bot - ((v-lo)/span) * (bot-top) ]; });
     function catmull(P){
@@ -16276,7 +16276,7 @@ function showMT5ConnNotice(kind, reason) {
 .mm-bal-chg.up{background:rgba(0,214,143,.14);color:#4fe0ab;}
 .mm-bal-dot{width:5px;height:5px;border-radius:50%;background:currentColor;animation:mmBalDot 1.7s infinite;}
 @keyframes mmBalDot{0%,100%{opacity:1}50%{opacity:.4}}
-.mm-bal-svg{position:absolute;left:0;right:0;bottom:0;width:100%;height:74px;}
+.mm-bal-svg{position:absolute;left:0;right:0;top:84px;bottom:0;width:100%;}
 @keyframes mmTrace{from{stroke-dashoffset:340}to{stroke-dashoffset:0}}
 @keyframes mmRise{from{opacity:0}to{opacity:1}}
 .mm-bal-card.stale{filter:grayscale(.85);}
