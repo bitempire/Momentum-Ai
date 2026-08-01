@@ -3241,7 +3241,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         <div class="section-title" style="font-size:13px;margin-bottom:6px;"><span data-i18n="prof.promo">Promo</span> <span data-i18n="prof.codeWord">Code</span></div>
         <div style="font-size:11px;color:var(--text3);line-height:1.5;margin-bottom:12px;" data-i18n="prof.promoSub">Have a code? Redeem it to unlock Premium. One promo per MT5 account.</div>
         <div style="display:flex;gap:8px;">
-          <input id="profile-promo-input" type="text" placeholder="No active promo" disabled style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-size:13px;text-transform:uppercase;opacity:0.45;cursor:not-allowed;" / data-i18n-ph="prof.phNoPromo">
+          <input id="profile-promo-input" type="text" placeholder="No active promo" disabled style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-size:13px;text-transform:uppercase;opacity:0.45;cursor:not-allowed;"  data-i18n-ph="prof.phNoPromo" />
           <button id="profile-promo-btn" onclick="applyProfilePromo()" disabled style="font-size:12px;font-weight:700;padding:10px 16px;background:rgba(240,178,50,0.13);border:1px solid rgba(240,178,50,0.3);border-radius:8px;color:var(--gold);cursor:not-allowed;white-space:nowrap;opacity:0.45;">Apply</button>
         </div>
         <div id="profile-promo-msg" style="display:none;font-size:11px;margin-top:8px;line-height:1.4;"></div>
@@ -5120,6 +5120,7 @@ function mmLangName(code){ for(var i=0;i<MMLANGS.length;i++){ if(MMLANGS[i].code
 // Only the OTHER languages need entries here.
 var MM_I18N = {
   'zh-TW': {
+    'promo.claimedOn':'您已在帳戶 {n} 領取過優惠。每位使用者限用一次。', 'promo.claimed':'您已領取過優惠。每位使用者限用一次。', 'promo.enterCode':'輸入優惠碼', 'promo.connectFirst':'請先連接您的 MT5 帳戶。', 'promo.noneNow':'目前沒有可用的優惠。', 'promo.apply':'套用', 'promo.claiming':'領取中...', 'promo.claimNow':'立即領取', 'status.active':'使用中', 'status.pending':'審核中', 'status.suspended':'已停權', 'status.rejected':'已拒絕', 'status.inactive':'未啟用',
     'pa.superAdmin':'超級管理員', 'pa.analyst':'分析師', 'pa.subAdmin':'子管理員', 'pa.addAccount':'新增帳戶', 'menu.lightMode':'淺色模式',
     'ac.back':'返回', 'ac.errorLoading':'載入失敗',
     'ac.image':'圖片', 'ac.noLessons':'尚無課程',
@@ -5750,7 +5751,7 @@ async function applyPromoCode(){
   var r = await redeemPromo(inp.value);
   show(r.msg, r.ok);
   if(r.ok){ inp.value=''; setTimeout(function(){ closeDepositPopup(); updateDepositBanner(); }, 1500); }
-  if(btn){ btn.textContent='Apply'; btn.disabled=false; }
+  if(btn){ btn.textContent=t('promo.apply','Apply'); btn.disabled=false; }
 }
 // ---- Profile promo code (single entry point) ----
 async function isPromoLive(){
@@ -5800,21 +5801,21 @@ async function refreshProfilePromo(){
     inp.disabled=true; btn.disabled=true;
     inp.style.opacity='0.45'; btn.style.opacity='0.45';
     inp.style.cursor='not-allowed'; btn.style.cursor='not-allowed';
-    inp.value=''; inp.placeholder='No active promo';
+    inp.value=''; inp.placeholder=t('prof.phNoPromo','No active promo');
     if(msg){ if(text){ msg.style.display='block'; msg.textContent=text; msg.style.color='var(--text3)'; } else { msg.style.display='none'; msg.textContent=''; } }
   }
   function unlock(){
     inp.disabled=false; btn.disabled=false;
     inp.style.opacity='1'; btn.style.opacity='1';
     inp.style.cursor='text'; btn.style.cursor='pointer';
-    inp.placeholder='Enter promo code';
+    inp.placeholder=t('promo.enterCode','Enter promo code');
     if(msg){ msg.style.display='none'; msg.textContent=''; }
   }
   lock('');
-  if(!db || !currentUser || !activeAccount || !activeAccount.id){ lock('Connect your MT5 account first.'); return; }
-  try { var _pc = await userPromoClaim(); if(_pc){ lock('You already claimed a promo'+(_pc.mt5_id?(' on account '+_pc.mt5_id):'')+'. One per user.'); return; } } catch(e){}
-  try { if(await isPromoLive()){ unlock(); } else { lock('No active promo available right now.'); } }
-  catch(e){ lock('No active promo available right now.'); }
+  if(!db || !currentUser || !activeAccount || !activeAccount.id){ lock(t('promo.connectFirst','Connect your MT5 account first.')); return; }
+  try { var _pc = await userPromoClaim(); if(_pc){ lock(_pc.mt5_id ? t('promo.claimedOn','You already claimed a promo on account {n}. One per user.').replace('{n}', _pc.mt5_id) : t('promo.claimed','You already claimed a promo. One per user.')); return; } } catch(e){}
+  try { if(await isPromoLive()){ unlock(); } else { lock(t('promo.noneNow','No active promo available right now.')); } }
+  catch(e){ lock(t('promo.noneNow','No active promo available right now.')); }
 }
 async function applyProfilePromo(){
   var inp=document.getElementById('profile-promo-input');
@@ -5825,10 +5826,10 @@ async function applyProfilePromo(){
   if(!inp.value.trim()){ show('Enter a promo code.', false); return; }
   if(btn){ btn.textContent='...'; btn.disabled=true; }
   var r = await redeemPromo(inp.value);
-  if(btn){ btn.textContent='Apply'; btn.disabled=false; }
+  if(btn){ btn.textContent=t('promo.apply','Apply'); btn.disabled=false; }
   if(r.needMt5){ showMt5ConnectPrompt(); return; }
   show(r.msg, r.ok);
-  if(btn){ btn.textContent='Apply'; }
+  if(btn){ btn.textContent=t('promo.apply','Apply'); }
   if(r.ok){
     inp.value='';
     if(typeof loadProfileData==='function') loadProfileData();
@@ -5897,9 +5898,9 @@ async function claimCampaign(){
   function show(t,ok){ if(m){ m.style.display='block'; m.style.color=ok?'var(--green)':'var(--red)'; m.textContent=t; } }
   var code = inp ? inp.value.trim() : '';
   if(!code){ show('Enter your promo code.', false); return; }
-  if(btn){ btn.textContent='Claiming...'; btn.disabled=true; }
+  if(btn){ btn.textContent=t('promo.claiming','Claiming...'); btn.disabled=true; }
   var r=await redeemPromo(code);
-  if(btn){ btn.textContent='Claim now'; btn.disabled=false; }
+  if(btn){ btn.textContent=t('promo.claimNow','Claim now'); btn.disabled=false; }
   if(r.needMt5){ showMt5ConnectPrompt(); return; }
   show(r.msg, r.ok);
   if(r.ok){
@@ -7184,7 +7185,8 @@ function loadProfileData() {
   if(brokerEl) brokerEl.textContent = currentUser.broker || 'AFTT Markets';
   var statusEl = document.getElementById('profile-status');
   if(statusEl) {
-    statusEl.textContent = (currentUser.status || 'Active').charAt(0).toUpperCase() + (currentUser.status || 'active').slice(1);
+    var _st = String(currentUser.status || 'active').toLowerCase();
+    statusEl.textContent = t('status.'+_st, _st.charAt(0).toUpperCase() + _st.slice(1));
     statusEl.style.color = currentUser.status === 'active' ? 'var(--green)' : 'var(--amber)';
     statusEl.style.background = currentUser.status === 'active' ? 'rgba(0,200,122,0.1)' : 'rgba(255,176,32,0.1)';
   }
