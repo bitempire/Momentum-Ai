@@ -1808,21 +1808,15 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
           </div>
           <span class="mm-bal-chg up" id="mm-bal-chg"><i class="mm-bal-dot"></i><span id="mm-bal-chg-val">0.00%</span></span>
         </div>
-        <svg class="mm-bal-svg" viewBox="0 0 300 74" preserveAspectRatio="none" aria-hidden="true">
+        <svg class="mm-bal-svg" viewBox="0 0 300 80" preserveAspectRatio="none" aria-hidden="true">
           <defs>
-            <linearGradient id="mmBalFill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#ff5c78" stop-opacity=".45"></stop>
-              <stop offset="100%" stop-color="#ff5c78" stop-opacity="0"></stop>
-            </linearGradient>
-            <linearGradient id="mmBalStroke" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stop-color="#8c1226"></stop>
-              <stop offset="50%" stop-color="#e03050"></stop>
-              <stop offset="100%" stop-color="#ff8fa3"></stop>
+            <linearGradient id="mmWaveGrad" class="mm-wave-grad" x1="0" y1="0" x2="0" y2="1">
+              <stop class="mm-wave-s0" offset="0%" stop-opacity=".34"></stop>
+              <stop class="mm-wave-s1" offset="100%" stop-opacity="0"></stop>
             </linearGradient>
           </defs>
-          <path id="mm-bal-area" fill="url(#mmBalFill)" d=""></path>
-          <path id="mm-bal-line" fill="none" stroke="url(#mmBalStroke)" stroke-width="2.5" stroke-linejoin="round" d=""></path>
-          <circle id="mm-bal-dot-end" r="5" fill="#fff" cx="-10" cy="-10"></circle>
+          <path class="mm-wave-back" d="M0,64 C60,52 90,74 150,60 C210,46 240,64 300,48 L300,80 L0,80 Z"></path>
+          <path class="mm-wave-front" fill="url(#mmWaveGrad)" d="M0,52 C50,36 80,64 130,45 C180,26 210,52 260,30 C280,22 292,26 300,21 L300,80 L0,80 Z"></path>
         </svg>
       </div>
       <!-- Market Overview -->
@@ -10033,64 +10027,13 @@ function mmHomeBalance(){
       cv.textContent = (diff>=0?'+':'') + diff.toFixed(2) + ' (' + (pct>=0?'+':'') + pct.toFixed(2) + '%)';
     }
     var card = document.getElementById('mm-bal-card');
-    if(card) card.classList.toggle('stale', stale === accts.length);
+    if(card){
+      card.classList.toggle('stale', stale === accts.length);
+      card.classList.toggle('up', diff >= 0);
+    }
   }catch(e){}
 }
-async function mmHomeCurve(){
-  try{
-    var accts = window._userAccounts || [];
-    var ids = accts.map(function(a){ return String(a.mt5_id); }).filter(Boolean);
-    if(!ids.length) return;
-    var results = await Promise.all(ids.map(function(id){
-      return db.from('closed_trades').select('close_time,profit').eq('mt5_id', id)
-        .order('close_time',{ascending:true}).limit(200);
-    }));
-    var rows = [];
-    results.forEach(function(r){ if(r && !r.error && r.data) rows = rows.concat(r.data); });
-    rows.sort(function(a,b){ return new Date(a.close_time) - new Date(b.close_time); });
-    if(rows.length < 2){ console.warn('mmHomeCurve: only '+rows.length+' closed trades, no curve'); return; }
-    var run = 0, series = rows.map(function(r){
-      run += mmHomeNum(r.profit);
-      return { day: String(r.close_time || '').slice(0,10), v: run };
-    });
-    var byDay = {}, order = [];
-    series.forEach(function(s){ if(!(s.day in byDay)) order.push(s.day); byDay[s.day] = s.v; });
-    var pts = order.map(function(d){ return byDay[d]; });
-    if(pts.length > 60) pts = pts.slice(pts.length - 60);
-    if(pts.length < 2){
-      pts = series.map(function(s){ return s.v; });
-      if(pts.length > 40){
-        var keep = [], stepK = pts.length / 40;
-        for(var k = 0; k < 40; k++) keep.push(pts[Math.floor(k * stepK)]);
-        keep.push(pts[pts.length - 1]);
-        pts = keep;
-      }
-    }
-    if(pts.length < 2){ console.warn('mmHomeCurve: not enough points'); return; }
-    var lo = Math.min.apply(null, pts), hi = Math.max.apply(null, pts), span = (hi-lo) || 1;
-    var W = 300, H = 74, top = 6, bot = 68;
-    var stepX = W / (pts.length - 1);
-    var xy = pts.map(function(v,i){ return [ i*stepX, bot - ((v-lo)/span) * (bot-top) ]; });
-    function catmull(P){
-      var s = 'M' + P[0][0].toFixed(1) + ',' + P[0][1].toFixed(1);
-      for(var i = 0; i < P.length - 1; i++){
-        var p0 = P[i-1] || P[i], p1 = P[i], p2 = P[i+1], p3 = P[i+2] || P[i+1];
-        var c1x = p1[0] + (p2[0]-p0[0])/6, c1y = p1[1] + (p2[1]-p0[1])/6;
-        var c2x = p2[0] - (p3[0]-p1[0])/6, c2y = p2[1] - (p3[1]-p1[1])/6;
-        s += ' C'+c1x.toFixed(1)+','+c1y.toFixed(1)+' '+c2x.toFixed(1)+','+c2y.toFixed(1)+' '+p2[0].toFixed(1)+','+p2[1].toFixed(1);
-      }
-      return s;
-    }
-    var d = catmull(xy);
-    var line = document.getElementById('mm-bal-line');
-    var area = document.getElementById('mm-bal-area');
-    var dot  = document.getElementById('mm-bal-dot-end');
-    if(line){ line.setAttribute('d', d); line.style.strokeDasharray='340'; line.style.animation='mmTrace 2.2s ease-out forwards'; }
-    if(area){ area.setAttribute('d', d + ' L'+W+','+H+' L0,'+H+' Z'); area.style.animation='mmRise 1.4s ease-out forwards'; }
-    if(dot){ var last = xy[xy.length-1]; dot.setAttribute('cx', last[0].toFixed(1)); dot.setAttribute('cy', last[1].toFixed(1)); }
-  }catch(e){ console.warn('mmHomeCurve failed:', e && e.message); }
-}
-function mmHomeRefresh(){ mmHomeBalance(); mmHomeCurve(); }
+function mmHomeRefresh(){ mmHomeBalance(); }
 
 // ── SPARKLINES ──
 function drawSparklines() {
@@ -16266,6 +16209,7 @@ function showMT5ConnNotice(kind, reason) {
 @keyframes ptrSpin{ to{ transform:rotate(360deg); } }
 
 .mm-bal-card{position:relative;overflow:hidden;border-radius:16px;height:150px;padding:13px 15px 0;margin-bottom:14px;background:radial-gradient(95% 75% at 82% 108%,rgba(255,92,120,.55) 0%,rgba(224,48,80,.12) 42%,rgba(0,0,0,0) 70%),radial-gradient(80% 70% at 6% 4%,rgba(140,18,38,.6) 0%,rgba(0,0,0,0) 60%),#0f1017;}
+.mm-bal-card.up{background:radial-gradient(95% 75% at 82% 108%,rgba(0,214,143,.4) 0%,rgba(0,214,143,.08) 42%,rgba(0,0,0,0) 70%),radial-gradient(80% 70% at 6% 4%,rgba(12,80,58,.55) 0%,rgba(0,0,0,0) 60%),#0f1017;}
 .mm-bal-top{position:relative;display:flex;align-items:flex-start;justify-content:space-between;}
 .mm-bal-label{color:#9aa0b4;font-size:10px;}
 .mm-bal-num{color:#fff;font-size:27px;font-weight:800;letter-spacing:-.5px;margin-top:2px;font-family:'Orbitron',sans-serif;}
@@ -16276,7 +16220,11 @@ function showMT5ConnNotice(kind, reason) {
 .mm-bal-chg.up{background:rgba(0,214,143,.14);color:#4fe0ab;}
 .mm-bal-dot{width:5px;height:5px;border-radius:50%;background:currentColor;animation:mmBalDot 1.7s infinite;}
 @keyframes mmBalDot{0%,100%{opacity:1}50%{opacity:.4}}
-.mm-bal-svg{position:absolute;left:0;right:0;top:84px;bottom:0;width:100%;}
+.mm-bal-svg{position:absolute;left:0;right:0;top:70px;bottom:0;width:100%;}
+.mm-wave-s0,.mm-wave-s1{stop-color:#ff5c78;}
+.mm-wave-back{fill:#ff5c78;opacity:.10;}
+.mm-bal-card.up .mm-wave-s0,.mm-bal-card.up .mm-wave-s1{stop-color:#00d68f;}
+.mm-bal-card.up .mm-wave-back{fill:#00d68f;}
 @keyframes mmTrace{from{stroke-dashoffset:340}to{stroke-dashoffset:0}}
 @keyframes mmRise{from{opacity:0}to{opacity:1}}
 .mm-bal-card.stale{filter:grayscale(.85);}
