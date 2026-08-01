@@ -6781,7 +6781,7 @@ async function loadDashboardSignals() {
       return '<div class="dash-sig-item">' +
         '<div class="dash-sig-icon '+dir+'"><i class="ti ti-trending-'+(dir==='buy'?'up':'down')+'" style="color:'+(dir==='buy'?'var(--green)':'var(--red)')+';font-size:19px;"></i></div>' +
         '<div class="dash-sig-info"><div class="dash-sig-pair">'+sig.pair+'</div><div class="dash-sig-entry">'+fmtPrice(sig.pair,sig.entry_from)+' - '+fmtPrice(sig.pair,sig.entry_to)+'</div></div>' +
-        '<div class="dash-sig-right"><div class="dash-sig-dir '+dir+'">'+sig.direction+'</div><div class="dash-sig-strength">'+sig.strength+'%</div></div>' +
+        '<div class="dash-sig-right"><div class="dash-sig-dir '+dir+'">'+mmSide(sig.direction)+'</div><div class="dash-sig-strength">'+sig.strength+'%</div></div>' +
         '</div>';
     }).join('');
   } catch(e) { container.innerHTML = '<div class="empty-state">'+mmT('ds.error','Error loading signals')+'</div>'; }
@@ -8741,7 +8741,7 @@ async function loadLivePositions(){
         (_tk ? ' onclick="mmaiTapPosition(\''+_tk+'\',\''+_lbl+'\')" style="cursor:pointer;"' : '')+'>'+
         '<div class="trade-icon" style="background:'+(win?'rgba(0,200,122,0.12)':'rgba(255,30,60,0.10)')+';">'+(side==='SELL'?'\uD83D\uDCC9':'\uD83D\uDCC8')+'</div>'+
         '<div class="trade-info">'+
-          '<div class="trade-pair">'+p.symbol+' <span style="font-size:10px;color:'+sideColor+';font-weight:700;">'+side+'</span></div>'+
+          '<div class="trade-pair">'+p.symbol+' <span style="font-size:10px;color:'+sideColor+';font-weight:700;">'+mmSide(side)+'</span></div>'+
           '<div class="trade-meta">Entry: '+op+' \u00b7 '+vol+mmT('j.lotSuffix',' lot')+'</div>'+
         '</div>'+
         '<div><div class="trade-pnl" style="color:'+pColor+';font-weight:800;">'+(win?'+':'')+'$'+profit.toFixed(2)+'</div></div>'+
