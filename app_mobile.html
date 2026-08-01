@@ -1674,7 +1674,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       </div>
       </div>
       <div class="auth-forgot"><a data-i18n="auth.forgot">Forgot Password?</a></div>
-      <button class="auth-btn" id="btn-signin" onclick="handleLogin()" data-i18n="auth.access">ACCESS SYSTEM</button>
+      <button class="auth-btn" id="btn-signin" onclick="handleLogin()">ACCESS SYSTEM</button>
       <div class="auth-divider"><span data-i18n="auth.or">or</span></div>
       <button class="auth-google-btn" onclick="window.open('https://momentum-ai-ruddy.vercel.app','_blank')" style="gap:8px;">
         <i class="ti ti-world"></i> <span data-i18n="auth.visitSite">Visit Our Website</span>
@@ -1736,10 +1736,10 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
     <div class="pending-title" data-i18n="pend.title">Pending Approval</div>
     <div class="pending-sub" data-i18n="pend.sub">Your account has been created. Our team will verify your MT5 account shortly.</div>
     <div class="pending-steps">
-      <div class="pending-step done"><i class="ti ti-circle-check"></i> Account created successfully</div>
-      <div class="pending-step done"><i class="ti ti-circle-check"></i> MT5 ID submitted: <strong id="pending-mt5-val" style="margin-left:4px;color:var(--text)"></strong></div>
-      <div class="pending-step waiting"><i class="ti ti-clock"></i> Waiting for admin approval</div>
-      <div class="pending-step" style="opacity:.4;"><i class="ti ti-lock-open"></i> Full access granted</div>
+      <div class="pending-step done"><i class="ti ti-circle-check"></i> <span data-i18n="pend.created">Account created successfully</span></div>
+      <div class="pending-step done"><i class="ti ti-circle-check"></i> <span data-i18n="pend.mt5Submitted">MT5 ID submitted:</span> <strong id="pending-mt5-val" style="margin-left:4px;color:var(--text)"></strong></div>
+      <div class="pending-step waiting"><i class="ti ti-clock"></i> <span data-i18n="pend.waiting">Waiting for admin approval</span></div>
+      <div class="pending-step" style="opacity:.4;"><i class="ti ti-lock-open"></i> <span data-i18n="pend.fullAccess">Full access granted</span></div>
     </div>
     <button class="ghost-btn" onclick="showScreen('screen-auth')" data-i18n="pend.back">Back to Login</button>
   </div>
@@ -1830,7 +1830,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <div class="section-card">
         <div class="section-title"><span class="tw" data-i18n="w.recent">Recent</span> <span data-i18n="dash.signalsWord">Signals</span></div>
         <div id="mob-dash-signals">
-          <div class="empty-state"><i class="ti ti-broadcast"></i>Loading signals...</div>
+          <div class="empty-state"><i class="ti ti-broadcast"></i><span data-i18n="app.loadingSignals">Loading signals...</span></div>
         </div>
         <button class="ghost-btn" style="margin-top:12px;" onclick="switchTab('signals')" data-i18n="dash.viewAll">View All Signals →</button>
       </div>
@@ -1869,7 +1869,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         </select>
       </div>
       <div id="mob-signals-list">
-        <div class="empty-state"><i class="ti ti-broadcast"></i>Loading signals...</div>
+        <div class="empty-state"><i class="ti ti-broadcast"></i><span data-i18n="app.loadingSignals">Loading signals...</span></div>
       </div>
     </div>
 
@@ -2058,7 +2058,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <!-- 3-TAB ANALYTICS -->
       <div class="section-card" style="margin-bottom:10px;padding:12px;">
         <div style="display:flex;gap:6px;margin-bottom:10px;">
-          <button class="j-tab-btn active" onclick="switchJournalTab('analytics',this)" style="flex:1;padding:7px;background:var(--red);border:1px solid var(--red);border-radius:8px;color:#fff;font-size:11px;font-weight:700;cursor:pointer;">Analytics</button>
+          <button class="j-tab-btn active" onclick="switchJournalTab('analytics',this)" style="flex:1;padding:7px;background:var(--red);border:1px solid var(--red);border-radius:8px;color:#fff;font-size:11px;font-weight:700;cursor:pointer;" data-i18n="app.analytics">Analytics</button>
           <button class="j-tab-btn" onclick="switchJournalTab('discipline',this)" style="flex:1;padding:7px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;" data-i18n="j.discipline">Discipline</button>
           <button class="j-tab-btn" onclick="switchJournalTab('emotions',this)" style="flex:1;padding:7px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;" data-i18n="j.emotions">Emotions</button>
         </div>
@@ -2102,7 +2102,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         </div>
         <!-- EMOTIONS -->
         <div id="jtab-emotions" style="display:none;">
-          <div style="display:flex;justify-content:flex-end;margin-bottom:8px;"><span style="font-size:11px;color:var(--text3);">Emotion Score <span id="j-emo-score" style="color:#4D9EFF;font-weight:700;">—</span></span></div>
+          <div style="display:flex;justify-content:flex-end;margin-bottom:8px;"><span style="font-size:11px;color:var(--text3);"><span data-i18n="app.emotionScore">Emotion Score</span> <span id="j-emo-score" style="color:#4D9EFF;font-weight:700;">—</span></span></div>
           <div style="display:flex;align-items:center;gap:8px;padding:5px 0;"><span style="font-size:15px;">😊</span><span style="flex:0 0 70px;font-size:12px;color:var(--text);" data-i18n="j.calm">Calm</span><div style="flex:1;height:4px;background:var(--surface2);border-radius:2px;overflow:hidden;"><div id="je-calm" style="height:100%;width:0%;background:#00C87A;border-radius:2px;"></div></div><span id="je-calm-v" style="font-size:11px;font-weight:700;color:#00C87A;margin-left:6px;min-width:30px;">—</span></div>
           <div style="display:flex;align-items:center;gap:8px;padding:5px 0;"><span style="font-size:15px;">😎</span><span style="flex:0 0 70px;font-size:12px;color:var(--text);" data-i18n="j.confident">Confident</span><div style="flex:1;height:4px;background:var(--surface2);border-radius:2px;overflow:hidden;"><div id="je-conf" style="height:100%;width:0%;background:#4D9EFF;border-radius:2px;"></div></div><span id="je-conf-v" style="font-size:11px;font-weight:700;color:#4D9EFF;margin-left:6px;min-width:30px;">—</span></div>
           <div style="display:flex;align-items:center;gap:8px;padding:5px 0;"><span style="font-size:15px;">😐</span><span style="flex:0 0 70px;font-size:12px;color:var(--text);" data-i18n="j.neutral">Neutral</span><div style="flex:1;height:4px;background:var(--surface2);border-radius:2px;overflow:hidden;"><div id="je-neu" style="height:100%;width:0%;background:#888;border-radius:2px;"></div></div><span id="je-neu-v" style="font-size:11px;font-weight:700;color:#888;margin-left:6px;min-width:30px;">—</span></div>
@@ -2170,7 +2170,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       </div>
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:14px;margin-bottom:18px;">
         <div style="display:flex;gap:5px;background:var(--bg3);border-radius:12px;padding:4px;margin-bottom:15px;">
-          <div id="more-leader-tab-profit" onclick="switchLeaderTab('profit')" style="flex:1;text-align:center;font-size:12px;font-weight:700;color:#fff;background:var(--red);border-radius:9px;padding:8px 0;cursor:pointer;transition:all .2s;" data-i18n="more.topProfit">Top Profit</div>
+          <div id="more-leader-tab-profit" onclick="switchLeaderTab('profit')" style="flex:1;text-align:center;font-size:12px;font-weight:700;color:#fff;background:var(--red);border-radius:9px;padding:8px 0;cursor:pointer;transition:all .2s;">Top Profit</div>
           <div id="more-leader-tab-volume" onclick="switchLeaderTab('volume')" style="flex:1;text-align:center;font-size:12px;font-weight:700;color:var(--text3);background:transparent;border-radius:9px;padding:8px 0;cursor:pointer;transition:all .2s;" data-i18n="more.topVolume">Top Volume</div>
         </div>
         <div id="more-leader-body"></div>
@@ -2262,13 +2262,13 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
             <div style="font-size:21px;color:#fff;font-weight:800;line-height:1.1;">820</div>
           </div>
           <div style="text-align:right;">
-            <div style="font-size:10px;color:var(--text3);">Lots traded</div>
+            <div style="font-size:10px;color:var(--text3);" data-i18n="aia.lotsTraded">Lots traded</div>
             <div style="font-size:15px;color:#fff;font-weight:700;">8.2</div>
           </div>
         </div>
-        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-bottom:5px;"><span>+80 to next reward</span><span>0.8 / 1.0 lot</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-bottom:5px;"><span data-i18n="aia.toNextReward">+80 to next reward</span><span data-i18n="aia.lotsProgress">0.8 / 1.0 lot</span></div>
         <div style="height:7px;border-radius:4px;background:rgba(255,255,255,0.08);overflow:hidden;margin-bottom:9px;"><div style="width:80%;height:100%;background:linear-gradient(90deg,#FF1E3C,#FF8090);"></div></div>
-        <div style="display:flex;align-items:center;gap:6px;font-size:10.5px;color:#FF8090;background:rgba(255,30,60,0.08);border:1px solid rgba(255,90,110,0.2);border-radius:8px;padding:7px 9px;"><i class="ti ti-gift" style="font-size:13px;"></i> Trade 1 lot = 100 free AI credits</div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:10.5px;color:#FF8090;background:rgba(255,30,60,0.08);border:1px solid rgba(255,90,110,0.2);border-radius:8px;padding:7px 9px;"><i class="ti ti-gift" style="font-size:13px;"></i> <span data-i18n="aia.creditRule">Trade 1 lot = 100 free AI credits</span></div>
       </div>
 
       <!-- chart -->
@@ -2294,23 +2294,23 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 
       <!-- result (revealed after Generate) -->
       <div id="ai-result" style="display:none;">
-        <div style="font-size:11px;font-weight:800;letter-spacing:.5px;color:#FF1E3C;margin-bottom:9px;">AI ANALYSIS</div>
+        <div style="font-size:11px;font-weight:800;letter-spacing:.5px;color:#FF1E3C;margin-bottom:9px;" data-i18n="aia.title">AI ANALYSIS</div>
         <div style="background:linear-gradient(160deg,#16131c,#0b0b12);border:1px solid rgba(255,90,110,0.18);border-radius:16px;padding:15px;margin-bottom:16px;">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
             <span style="font-size:10.5px;font-weight:800;letter-spacing:.4px;color:#fff;background:linear-gradient(135deg,#FF1E3C,#C40024);padding:5px 11px;border-radius:14px;">SELL &middot; 78%</span>
             <span id="ai-style-label" style="font-size:10px;color:var(--text3);">XAUUSD &middot; 15M &middot; Supply &amp; Demand</span>
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
-            <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:9px 11px;"><div style="font-size:9px;color:var(--text3);font-weight:600;">SELL ZONE</div><div style="font-size:13px;color:#fff;font-weight:700;">4,082–4,088</div></div>
-            <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:9px 11px;"><div style="font-size:9px;color:var(--text3);font-weight:600;">STOP</div><div style="font-size:13px;color:#FF6B7E;font-weight:700;">4,095</div></div>
+            <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:9px 11px;"><div style="font-size:9px;color:var(--text3);font-weight:600;" data-i18n="app.sellZone">SELL ZONE</div><div style="font-size:13px;color:#fff;font-weight:700;">4,082–4,088</div></div>
+            <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:9px 11px;"><div style="font-size:9px;color:var(--text3);font-weight:600;" data-i18n="app.stop">STOP</div><div style="font-size:13px;color:#FF6B7E;font-weight:700;">4,095</div></div>
             <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:9px 11px;"><div style="font-size:9px;color:var(--text3);font-weight:600;">TP 1</div><div style="font-size:13px;color:#00C87A;font-weight:700;">4,068</div></div>
             <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:9px 11px;"><div style="font-size:9px;color:var(--text3);font-weight:600;">TP 2</div><div style="font-size:13px;color:#00C87A;font-weight:700;">4,052</div></div>
           </div>
           <div style="font-size:12px;color:#b6b6c0;line-height:1.6;margin-bottom:11px;">Price tapped a 15M supply zone at 4,082–4,088 with an unmitigated imbalance and fading momentum near the prior swing high. A rejection favours a move toward 4,068, with 4,052 as the extended target.</div>
-          <div style="font-size:9.5px;color:#FFB020;background:rgba(255,176,32,0.08);border:1px solid rgba(255,176,32,0.22);border-radius:8px;padding:7px 9px;line-height:1.4;"><i class="ti ti-alert-triangle" style="font-size:11px;"></i> AI-generated educational analysis. Not financial advice. Trade at your own risk.</div>
+          <div style="font-size:9.5px;color:#FFB020;background:rgba(255,176,32,0.08);border:1px solid rgba(255,176,32,0.22);border-radius:8px;padding:7px 9px;line-height:1.4;"><i class="ti ti-alert-triangle" style="font-size:11px;"></i> <span data-i18n="aia.disc">AI-generated educational analysis. Not financial advice. Trade at your own risk.</span></div>
         </div>
 
-        <div onclick="aiOpenChat()" style="display:flex;align-items:center;justify-content:center;gap:9px;padding:14px;border-radius:14px;background:linear-gradient(90deg,#7B5CFF,#FF2D81,#FF1E3C,#7B5CFF);background-size:300% 100%;animation:aiGrad 5s ease infinite;box-shadow:0 6px 18px rgba(150,60,200,0.4);cursor:pointer;margin-top:4px;"><i class="ti ti-message-chatbot" style="font-size:18px;color:#fff;"></i><span style="font-size:13.5px;font-weight:700;color:#fff;">Chat with Momentum Intelligence</span></div>
+        <div onclick="aiOpenChat()" style="display:flex;align-items:center;justify-content:center;gap:9px;padding:14px;border-radius:14px;background:linear-gradient(90deg,#7B5CFF,#FF2D81,#FF1E3C,#7B5CFF);background-size:300% 100%;animation:aiGrad 5s ease infinite;box-shadow:0 6px 18px rgba(150,60,200,0.4);cursor:pointer;margin-top:4px;"><i class="ti ti-message-chatbot" style="font-size:18px;color:#fff;"></i><span style="font-size:13.5px;font-weight:700;color:#fff;" data-i18n="aia.chatWith">Chat with Momentum Intelligence</span></div>
       </div>
 
     </div>
@@ -2320,15 +2320,15 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
   <div id="ai-style-sheet" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.82);z-index:99999;align-items:flex-end;justify-content:center;" onclick="if(event.target===this)aiCloseStyle()">
     <div style="background:#0E0E12;border-radius:24px 24px 0 0;padding:20px 18px calc(22px + env(safe-area-inset-bottom));width:100%;max-width:480px;box-sizing:border-box;">
       <div style="width:36px;height:4px;background:rgba(255,255,255,0.15);border-radius:2px;margin:0 auto 16px;"></div>
-      <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:4px;">Choose analysis style</div>
-      <div style="font-size:12px;color:var(--text3);margin-bottom:16px;">The AI will read your chart using this method.</div>
+      <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:4px;" data-i18n="app.chooseStyle">Choose analysis style</div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:16px;" data-i18n="app.styleHint">The AI will read your chart using this method.</div>
       <div style="display:flex;flex-wrap:wrap;gap:9px;margin-bottom:20px;">
         <span class="ai-chip on" onclick="aiPickStyle(this,'Supply &amp; Demand')">Supply &amp; Demand</span>
-        <span class="ai-chip" onclick="aiPickStyle(this,'Fibonacci')">Fibonacci</span>
-        <span class="ai-chip" onclick="aiPickStyle(this,'Trendline')">Trendline</span>
+        <span class="ai-chip" onclick="aiPickStyle(this,'Fibonacci')" data-i18n="app.fibonacci">Fibonacci</span>
+        <span class="ai-chip" onclick="aiPickStyle(this,'Trendline')" data-i18n="app.trendline">Trendline</span>
         <span class="ai-chip" onclick="aiPickStyle(this,'S &amp; R')">S &amp; R</span>
-        <span class="ai-chip" onclick="aiPickStyle(this,'Chart Pattern')">Chart Pattern</span>
-        <span class="ai-chip" onclick="aiPickStyle(this,'Auto')">Auto</span>
+        <span class="ai-chip" onclick="aiPickStyle(this,'Chart Pattern')" data-i18n="app.chartPattern">Chart Pattern</span>
+        <span class="ai-chip" onclick="aiPickStyle(this,'Auto')" data-i18n="app.auto">Auto</span>
       </div>
       <button class="ai-grad-btn" onclick="aiGenerate()"><span class="ai-shine"></span><i class="ti ti-sparkles" style="font-size:17px;"></i> <span class="t">Generate Analysis &middot; 60 credits</span></button>
     </div>
@@ -2351,13 +2351,13 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         <div style="display:flex;align-items:center;gap:7px;">
           <i class="ti ti-chart-candle" style="font-size:14px;color:#9B7Cff;"></i>
           <span style="font-size:11px;font-weight:700;color:#fff;">XAUUSD &middot; 15M</span>
-          <span style="font-size:9px;font-weight:800;color:#fff;background:linear-gradient(135deg,#FF1E3C,#C40024);padding:2px 7px;border-radius:9px;">SELL 78%</span>
+          <span style="font-size:9px;font-weight:800;color:#fff;background:linear-gradient(135deg,#FF1E3C,#C40024);padding:2px 7px;border-radius:9px;" data-i18n="chat.sell78">SELL 78%</span>
           <span style="flex:1;"></span>
-          <span style="font-size:10px;color:#9B7Cff;display:flex;align-items:center;gap:3px;">Details <i class="ti ti-chevron-down" style="font-size:12px;"></i></span>
+          <span style="font-size:10px;color:#9B7Cff;display:flex;align-items:center;gap:3px;"><span data-i18n="chat.details">Details</span> <i class="ti ti-chevron-down" style="font-size:12px;"></i></span>
         </div>
         <div style="display:flex;gap:6px;margin-top:9px;">
-          <div style="flex:1;background:rgba(255,255,255,0.03);border-radius:8px;padding:6px 5px;text-align:center;"><div style="font-size:8.5px;color:var(--text3);">ZONE</div><div style="font-size:11px;color:#fff;font-weight:700;">4,082–88</div></div>
-          <div style="flex:1;background:rgba(255,255,255,0.03);border-radius:8px;padding:6px 5px;text-align:center;"><div style="font-size:8.5px;color:var(--text3);">STOP</div><div style="font-size:11px;color:#FF6B7E;font-weight:700;">4,095</div></div>
+          <div style="flex:1;background:rgba(255,255,255,0.03);border-radius:8px;padding:6px 5px;text-align:center;"><div style="font-size:8.5px;color:var(--text3);" data-i18n="chat.zone">ZONE</div><div style="font-size:11px;color:#fff;font-weight:700;">4,082–88</div></div>
+          <div style="flex:1;background:rgba(255,255,255,0.03);border-radius:8px;padding:6px 5px;text-align:center;"><div style="font-size:8.5px;color:var(--text3);" data-i18n="app.stop">STOP</div><div style="font-size:11px;color:#FF6B7E;font-weight:700;">4,095</div></div>
           <div style="flex:1;background:rgba(255,255,255,0.03);border-radius:8px;padding:6px 5px;text-align:center;"><div style="font-size:8.5px;color:var(--text3);">TP1</div><div style="font-size:11px;color:#00C87A;font-weight:700;">4,068</div></div>
           <div style="flex:1;background:rgba(255,255,255,0.03);border-radius:8px;padding:6px 5px;text-align:center;"><div style="font-size:8.5px;color:var(--text3);">TP2</div><div style="font-size:11px;color:#00C87A;font-weight:700;">4,052</div></div>
         </div>
@@ -2366,18 +2366,18 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 
     <!-- chat body -->
     <div class="sub-content" id="ai-chat-body" style="padding:14px;background:radial-gradient(120% 50% at 100% 0%,rgba(255,30,60,0.05),transparent 50%);">
-      <div style="text-align:center;margin-bottom:16px;"><span style="font-size:10px;color:var(--text3);background:rgba(255,255,255,0.04);padding:4px 12px;border-radius:20px;">Today</span></div>
-      <div style="display:flex;gap:9px;margin-bottom:14px;"><span style="width:28px;height:28px;border-radius:9px;background:linear-gradient(135deg,#7B5CFF,#FF2D81,#FF1E3C);background-size:200% 200%;animation:aiGrad 5s ease infinite;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ti ti-sparkles" style="font-size:14px;color:#fff;"></i></span><div style="max-width:80%;background:rgba(255,255,255,0.04);border:1px solid rgba(123,92,255,0.16);color:#d6d6de;font-size:12.5px;line-height:1.6;padding:11px 13px;border-radius:4px 15px 15px 15px;">Hi! I've reviewed your XAUUSD 15M chart. Ask me anything about the zone, the signal, or your risk.</div></div>
-      <div style="display:flex;justify-content:flex-end;margin-bottom:14px;"><div style="max-width:80%;background:linear-gradient(135deg,#FF1E3C,#C40024);color:#fff;font-size:12.5px;line-height:1.45;padding:11px 13px;border-radius:15px 15px 4px 15px;box-shadow:0 4px 14px rgba(196,0,32,0.32);">Why is the stop at 4,095?</div></div>
-      <div style="display:flex;gap:9px;margin-bottom:14px;"><span style="width:28px;height:28px;border-radius:9px;background:linear-gradient(135deg,#7B5CFF,#FF2D81,#FF1E3C);background-size:200% 200%;animation:aiGrad 5s ease infinite;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ti ti-sparkles" style="font-size:14px;color:#fff;"></i></span><div style="max-width:80%;background:rgba(255,255,255,0.04);border:1px solid rgba(123,92,255,0.16);color:#d6d6de;font-size:12.5px;line-height:1.6;padding:11px 13px;border-radius:4px 15px 15px 15px;">It sits just above the supply zone's high. A close above invalidates the sell idea — so it's the logical stop. Higher would only widen your risk.</div></div>
+      <div style="text-align:center;margin-bottom:16px;"><span style="font-size:10px;color:var(--text3);background:rgba(255,255,255,0.04);padding:4px 12px;border-radius:20px;" data-i18n="chat.today">Today</span></div>
+      <div style="display:flex;gap:9px;margin-bottom:14px;"><span style="width:28px;height:28px;border-radius:9px;background:linear-gradient(135deg,#7B5CFF,#FF2D81,#FF1E3C);background-size:200% 200%;animation:aiGrad 5s ease infinite;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ti ti-sparkles" style="font-size:14px;color:#fff;"></i></span><div style="max-width:80%;background:rgba(255,255,255,0.04);border:1px solid rgba(123,92,255,0.16);color:#d6d6de;font-size:12.5px;line-height:1.6;padding:11px 13px;border-radius:4px 15px 15px 15px;" data-i18n="chat.greeting">Hi! I've reviewed your XAUUSD 15M chart. Ask me anything about the zone, the signal, or your risk.</div></div>
+      <div style="display:flex;justify-content:flex-end;margin-bottom:14px;"><div style="max-width:80%;background:linear-gradient(135deg,#FF1E3C,#C40024);color:#fff;font-size:12.5px;line-height:1.45;padding:11px 13px;border-radius:15px 15px 4px 15px;box-shadow:0 4px 14px rgba(196,0,32,0.32);" data-i18n="chat.whyStop">Why is the stop at 4,095?</div></div>
+      <div style="display:flex;gap:9px;margin-bottom:14px;"><span style="width:28px;height:28px;border-radius:9px;background:linear-gradient(135deg,#7B5CFF,#FF2D81,#FF1E3C);background-size:200% 200%;animation:aiGrad 5s ease infinite;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ti ti-sparkles" style="font-size:14px;color:#fff;"></i></span><div style="max-width:80%;background:rgba(255,255,255,0.04);border:1px solid rgba(123,92,255,0.16);color:#d6d6de;font-size:12.5px;line-height:1.6;padding:11px 13px;border-radius:4px 15px 15px 15px;" data-i18n="chat.stopAnswer">It sits just above the supply zone's high. A close above invalidates the sell idea — so it's the logical stop. Higher would only widen your risk.</div></div>
     </div>
 
     <!-- input bar -->
     <div style="flex-shrink:0;padding:10px 12px;border-top:1px solid var(--border);background:var(--bg2);">
       <div style="display:flex;gap:7px;margin-bottom:10px;overflow-x:auto;">
-        <span onclick="aiChatSend('Is this setup still valid?')" style="font-size:11px;color:#c6c6ce;background:rgba(123,92,255,0.1);border:1px solid rgba(123,92,255,0.25);padding:6px 11px;border-radius:16px;white-space:nowrap;cursor:pointer;">Is it still valid?</span>
-        <span onclick="aiChatSend('Is there a better entry?')" style="font-size:11px;color:#c6c6ce;background:rgba(123,92,255,0.1);border:1px solid rgba(123,92,255,0.25);padding:6px 11px;border-radius:16px;white-space:nowrap;cursor:pointer;">Better entry?</span>
-        <span onclick="aiChatSend('What is the risk reward?')" style="font-size:11px;color:#c6c6ce;background:rgba(123,92,255,0.1);border:1px solid rgba(123,92,255,0.25);padding:6px 11px;border-radius:16px;white-space:nowrap;cursor:pointer;">Risk : reward?</span>
+        <span onclick="aiChatSend('Is this setup still valid?')" style="font-size:11px;color:#c6c6ce;background:rgba(123,92,255,0.1);border:1px solid rgba(123,92,255,0.25);padding:6px 11px;border-radius:16px;white-space:nowrap;cursor:pointer;" data-i18n="chat.stillValid">Is it still valid?</span>
+        <span onclick="aiChatSend('Is there a better entry?')" style="font-size:11px;color:#c6c6ce;background:rgba(123,92,255,0.1);border:1px solid rgba(123,92,255,0.25);padding:6px 11px;border-radius:16px;white-space:nowrap;cursor:pointer;" data-i18n="chat.betterEntry">Better entry?</span>
+        <span onclick="aiChatSend('What is the risk reward?')" style="font-size:11px;color:#c6c6ce;background:rgba(123,92,255,0.1);border:1px solid rgba(123,92,255,0.25);padding:6px 11px;border-radius:16px;white-space:nowrap;cursor:pointer;" data-i18n="chat.riskReward">Risk : reward?</span>
       </div>
       <div style="display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:6px 6px 6px 15px;">
         <input id="ai-chat-input" type="text" placeholder="Message Momentum Intelligence…" style="flex:1;background:transparent;border:none;outline:none;color:var(--text);font-size:12.5px;font-family:Sora,sans-serif;">
@@ -2396,15 +2396,15 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         <span style="font-size:10px;color:var(--text3);">XAUUSD &middot; 15M &middot; Supply &amp; Demand</span>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:13px;">
-        <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:9px 11px;"><div style="font-size:9px;color:var(--text3);font-weight:600;">SELL ZONE</div><div style="font-size:14px;color:#fff;font-weight:700;">4,082–4,088</div></div>
-        <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:9px 11px;"><div style="font-size:9px;color:var(--text3);font-weight:600;">STOP</div><div style="font-size:14px;color:#FF6B7E;font-weight:700;">4,095</div></div>
+        <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:9px 11px;"><div style="font-size:9px;color:var(--text3);font-weight:600;" data-i18n="app.sellZone">SELL ZONE</div><div style="font-size:14px;color:#fff;font-weight:700;">4,082–4,088</div></div>
+        <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:9px 11px;"><div style="font-size:9px;color:var(--text3);font-weight:600;" data-i18n="app.stop">STOP</div><div style="font-size:14px;color:#FF6B7E;font-weight:700;">4,095</div></div>
         <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:9px 11px;"><div style="font-size:9px;color:var(--text3);font-weight:600;">TP 1</div><div style="font-size:14px;color:#00C87A;font-weight:700;">4,068</div></div>
         <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:9px 11px;"><div style="font-size:9px;color:var(--text3);font-weight:600;">TP 2</div><div style="font-size:14px;color:#00C87A;font-weight:700;">4,052</div></div>
       </div>
-      <div style="font-size:10px;color:var(--text3);font-weight:700;letter-spacing:.4px;margin-bottom:6px;">REASONING</div>
+      <div style="font-size:10px;color:var(--text3);font-weight:700;letter-spacing:.4px;margin-bottom:6px;" data-i18n="app.reasoning">REASONING</div>
       <div style="font-size:12px;color:#b6b6c0;line-height:1.65;margin-bottom:13px;">Price tapped a 15M supply zone at 4,082–4,088 with an unmitigated imbalance and fading momentum near the prior swing high. A rejection favours a move toward 4,068, with 4,052 as the extended target if selling pressure continues.</div>
-      <div style="font-size:9.5px;color:#FFB020;background:rgba(255,176,32,0.08);border:1px solid rgba(255,176,32,0.22);border-radius:8px;padding:7px 9px;line-height:1.4;margin-bottom:14px;"><i class="ti ti-alert-triangle" style="font-size:11px;"></i> AI-generated educational analysis. Not financial advice.</div>
-      <button onclick="aiCloseSummary()" style="width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text2);font-size:13px;font-weight:600;padding:12px;border-radius:12px;cursor:pointer;font-family:Sora,sans-serif;">Close</button>
+      <div style="font-size:9.5px;color:#FFB020;background:rgba(255,176,32,0.08);border:1px solid rgba(255,176,32,0.22);border-radius:8px;padding:7px 9px;line-height:1.4;margin-bottom:14px;"><i class="ti ti-alert-triangle" style="font-size:11px;"></i> <span data-i18n="app.aiEduDisc">AI-generated educational analysis. Not financial advice.</span></div>
+      <button onclick="aiCloseSummary()" style="width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text2);font-size:13px;font-weight:600;padding:12px;border-radius:12px;cursor:pointer;font-family:Sora,sans-serif;" data-i18n="app.close">Close</button>
     </div>
   </div>
 
@@ -2412,14 +2412,14 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
     <div class="sub-header">
       <button class="sub-back" onclick="goBackSubScreen('sub-smart-tool-new')"><i class="ti ti-arrow-left"></i></button>
       <div class="sub-title" data-i18n="scr.smartTool">SMART TOOL</div>
-      <div class="stn-tpl-top" onclick="stnOpenTemplates()"><i class="ti ti-folder"></i>Templates</div>
+      <div class="stn-tpl-top" onclick="stnOpenTemplates()"><i class="ti ti-folder"></i><span data-i18n="stn.templates">Templates</span></div>
     </div>
     <div class="sub-content">
       <div class="stn-scr-sub" id="stn-scr-sub" data-i18n="st.autoRules">Auto-trade rules for this account</div>
 
       <div class="stn-meter">
-        <div class="cap"><span class="k">Loss Budget</span><span class="v" id="stn-budget-cap">% of balance</span></div>
-        <div class="big" id="stn-budget-big">$0 <small>/ $0 used</small></div>
+        <div class="cap"><span class="k" data-i18n="stn.lossBudget">Loss Budget</span><span class="v" id="stn-budget-cap">% of balance</span></div>
+        <div class="big" id="stn-budget-big">$0 <small data-i18n="stn.usedZero">/ $0 used</small></div>
         <div class="stn-bar"><i id="stn-bar-fill" style="width:0%"></i></div>
         <div class="stn-status" id="stn-status"><i class="ti ti-check"></i> Within budget</div>
         <div class="stn-rr" id="stn-rr"></div>
@@ -2427,7 +2427,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         <div class="stn-basis" id="stn-basis"></div>
       </div>
 
-      <div class="stn-eyebrow">Risk</div>
+      <div class="stn-eyebrow" data-i18n="stn.risk">Risk</div>
       <div class="stn-row">
         <div><div class="stn-lbl" data-i18n="st.riskPer">Risk per trade</div><div class="stn-hint" id="stn-risk-hint">Loss budget</div></div>
         <div class="stn-field pct" id="stn-risk-field" onclick="stnEditNum('risk','Risk per trade (%)',0.1,100,0.1)">1.0%</div>
@@ -2441,14 +2441,14 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         </div></div>
       <div class="stn-usheet" id="stn-msheet"></div>
       <div class="stn-mtable dca" id="stn-dca-tbl">
-        <div class="th"><span>#</span><span class="unit" id="stn-unit-h" onclick="stnUnitSheet()">Distance <i class="ti ti-chevron-down"></i></span><span>Price</span><span id="stn-h4">Risk</span><span id="stn-h5">Vol</span></div>
+        <div class="th"><span>#</span><span class="unit" id="stn-unit-h" onclick="stnUnitSheet()">Distance <i class="ti ti-chevron-down"></i></span><span data-i18n="stn.price">Price</span><span id="stn-h4">Risk</span><span id="stn-h5">Vol</span></div>
         <div id="stn-dca-body"></div>
         <div class="stn-addrow" id="stn-addrow" onclick="stnAddLayer()" style="display:none"><i class="ti ti-plus"></i> Add layer</div>
         <div class="tot" id="stn-dca-tot"></div>
       </div>
       <div class="stn-editbar" id="stn-editbar">
         <button class="cn" onclick="stnEditCancel()" data-i18n="common.cancel">Cancel</button>
-        <button class="ap" onclick="stnEditApply()">Apply</button></div>
+        <button class="ap" onclick="stnEditApply()" data-i18n="stn.apply">Apply</button></div>
       <div class="stn-usheet" id="stn-usheet"></div>
       <div class="stn-stats">
         <div class="s"><div class="k" data-i18n="st.totalLots">Total lots</div><div class="v" id="stn-total-lots">0.00</div></div>
@@ -2471,7 +2471,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <div class="stn-tbl-cap"><div class="t" data-i18n="st.levels">Levels</div>
         <div class="stn-pen" id="stn-tp-pen" onclick="stnToggleEdit()"><i class="ti ti-pencil"></i></div></div>
       <div class="stn-mtable tp" id="stn-tp-tbl">
-        <div class="th"><span>#</span><span class="unit" id="stn-tp-unit-h" onclick="stnUnitSheet()">Reach <i class="ti ti-chevron-down"></i></span><span>Price</span><span id="stn-tp-h4">Close</span><span id="stn-tp-h5">Lots</span></div>
+        <div class="th"><span>#</span><span class="unit" id="stn-tp-unit-h" onclick="stnUnitSheet()">Reach <i class="ti ti-chevron-down"></i></span><span data-i18n="stn.price">Price</span><span id="stn-tp-h4">Close</span><span id="stn-tp-h5">Lots</span></div>
         <div id="stn-tp-body"></div>
         <div class="stn-addrow" id="stn-tp-addrow" onclick="stnAddTp()" style="display:none"><i class="ti ti-plus"></i> Add level</div>
         <div class="tot" id="stn-tp-tot"></div>
@@ -2479,7 +2479,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <div class="stn-pctbar"><div class="closed" id="stn-pct-closed" style="width:0%"></div><div class="run" id="stn-pct-run" style="width:0%"></div></div>
       <div class="stn-tp-ind" id="stn-tp-ind"></div>
 
-      <div class="stn-eyebrow">Breakeven</div>
+      <div class="stn-eyebrow" data-i18n="stn.breakeven">Breakeven</div>
       <div class="stn-row">
         <div><div class="stn-lbl" data-i18n="st.moveSl">Move SL to entry</div><div class="stn-hint" id="stn-be-hint">-</div></div>
         <div class="stn-field" id="stn-be-field" onclick="stnEditNum('be_trigger','Breakeven at % of the way to target',0,100,1)">20%</div>
@@ -2489,7 +2489,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         <div class="stn-field" id="stn-bebuf-field" onclick="stnEditNum('be_buffer','Buffer, % of the way to target',0,50,1)">2%</div>
       </div>
 
-      <div class="stn-eyebrow">Trailing Stop</div>
+      <div class="stn-eyebrow" data-i18n="stn.trailing">Trailing Stop</div>
       <div class="stn-row">
         <div class="stn-lbl" data-i18n="st.enableTrail">Enable trailing</div>
         <div class="toggle on" id="stn-tr-on" onclick="stnToggleField(this)"></div>
@@ -2510,7 +2510,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <div id="stn-ro-note" style="display:none;margin-top:16px;padding:12px 13px;border:1px solid rgba(255,30,60,0.3);border-radius:10px;background:rgba(255,30,60,0.06);font-size:11px;color:var(--text2);line-height:1.6;">
         <i class="ti ti-lock" style="color:var(--red);"></i> <b style="color:var(--text);">MAI template &middot; view only</b><br>
         Provided by MomentumAI. Selecting it is enough &mdash; your trades will use it. Templates are managed by MomentumAI &mdash; ask your admin if you need a different one.</div>
-      <button class="red-btn" id="stn-save-btn" style="margin-top:16px;" onclick="stnSave()" data-i18n="st.save">SAVE SMART TOOLS</button>
+      <button class="red-btn" id="stn-save-btn" style="margin-top:16px;" onclick="stnSave()">SAVE SMART TOOLS</button>
     </div>
   </div>
 
@@ -2521,12 +2521,12 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <div class="sub-title" data-i18n="scr.tradeSettings">TRADE SETTINGS</div>
     </div>
     <div class="sub-content">
-      <div style="font-size:11px;color:var(--text3);margin-bottom:14px;line-height:1.6;">Configure how Momentum AI executes and manages your trades.</div>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:14px;line-height:1.6;" data-i18n="ts.intro">Configure how Momentum AI executes and manages your trades.</div>
       <div class="more-menu-item" onclick="openSmartTool('sub-trade-settings')" style="background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-bottom:10px;padding:14px;">
         <div class="more-menu-icon" style="background:rgba(0,200,122,0.1);"><i class="ti ti-tool" style="color:var(--green);"></i></div>
         <div class="more-menu-text">
           <div class="more-menu-label" data-i18n="more.smartTool">Smart Tool</div>
-          <div class="more-menu-sub">AI-powered risk, DCA, trailing stop, breakeven, partial close</div>
+          <div class="more-menu-sub" data-i18n="ts.stnSub">AI-powered risk, DCA, trailing stop, breakeven, partial close</div>
         </div>
         <i class="ti ti-chevron-right more-menu-arrow"></i>
       </div>
@@ -2534,7 +2534,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         <div class="more-menu-icon" style="background:rgba(255,30,60,0.1);"><i class="ti ti-robot" style="color:var(--red);"></i></div>
         <div class="more-menu-text">
           <div class="more-menu-label" data-i18n="more.autoTrade">Auto Trade</div>
-          <div class="more-menu-sub">Follow analysts and trade automatically when signals are posted</div>
+          <div class="more-menu-sub" data-i18n="ts.autoSub">Follow analysts and trade automatically when signals are posted</div>
         </div>
         <i class="ti ti-chevron-right more-menu-arrow"></i>
       </div>
@@ -2553,7 +2553,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         <div style="display:flex;align-items:center;justify-content:space-between;">
           <div style="flex:1;padding-right:12px;">
             <div style="font-size:13px;font-weight:700;color:var(--text);" data-i18n="at.enable">Enable Auto Trade</div>
-            <div style="font-size:11px;color:var(--text3);margin-top:2px;line-height:1.5;">Automatically place trades when your followed analysts post signals.</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px;line-height:1.5;" data-i18n="auto.autoPlace">Automatically place trades when your followed analysts post signals.</div>
           </div>
           <div class="toggle" id="at-enable" onclick="toggleAutoTradeEnable(this)"></div>
         </div>
@@ -2561,19 +2561,19 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <!-- Follow Analysts -->
       <div class="section-card" style="margin-bottom:10px;" id="at-analysts-section">
         <div class="section-title" style="font-size:13px;margin-bottom:12px;"><span class="tw" data-i18n="w.follow">Follow</span> <span data-i18n="at.analystsWord">Analysts</span></div>
-        <div style="font-size:11px;color:var(--text3);margin-bottom:10px;">Select one or more analysts to follow. A trade will be placed automatically when they post an active signal.</div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:10px;" data-i18n="auto.selectAnalysts">Select one or more analysts to follow. A trade will be placed automatically when they post an active signal.</div>
         <div id="at-analyst-list" style="display:flex;flex-direction:column;gap:8px;">
-          <div style="font-size:12px;color:var(--text3);padding:12px;text-align:center;">Loading analysts...</div>
+          <div style="font-size:12px;color:var(--text3);padding:12px;text-align:center;" data-i18n="auto.loadingAnalysts">Loading analysts...</div>
         </div>
         <!-- Warning: multiple analysts on same account -->
         <div id="at-multi-warning" style="display:none;margin-top:10px;padding:10px;background:rgba(255,176,32,0.08);border:1px solid rgba(255,176,32,0.25);border-radius:8px;">
-          <div style="font-size:11px;font-weight:700;color:var(--amber);margin-bottom:4px;">⚠️ Multiple Analysts Selected</div>
-          <div style="font-size:11px;color:var(--text3);line-height:1.6;">Following multiple analysts on one MT5 account increases drawdown risk. We recommend using 1 MT5 account per analyst for better risk management.</div>
+          <div style="font-size:11px;font-weight:700;color:var(--amber);margin-bottom:4px;" data-i18n="auto.multiTitle">⚠️ Multiple Analysts Selected</div>
+          <div style="font-size:11px;color:var(--text3);line-height:1.6;" data-i18n="auto.multiWarn">Following multiple analysts on one MT5 account increases drawdown risk. We recommend using 1 MT5 account per analyst for better risk management.</div>
         </div>
         <!-- Warning: mixing Smart Tool + Auto -->
         <div id="at-mix-warning" style="display:none;margin-top:8px;padding:10px;background:rgba(255,30,60,0.06);border:1px solid rgba(255,30,60,0.2);border-radius:8px;">
-          <div style="font-size:11px;font-weight:700;color:var(--red);margin-bottom:4px;">⚠️ Smart Tool Active on This Account</div>
-          <div style="font-size:11px;color:var(--text3);line-height:1.6;">Mixing Smart Tool and Auto trades on the same account may cause conflicting positions. Consider using separate MT5 accounts.</div>
+          <div style="font-size:11px;font-weight:700;color:var(--red);margin-bottom:4px;" data-i18n="auto.stnTitle">⚠️ Smart Tool Active on This Account</div>
+          <div style="font-size:11px;color:var(--text3);line-height:1.6;" data-i18n="auto.mixWarn">Mixing Smart Tool and Auto trades on the same account may cause conflicting positions. Consider using separate MT5 accounts.</div>
         </div>
       </div>
       <!-- Use Smart Tool Settings -->
@@ -2581,21 +2581,21 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         <div style="display:flex;align-items:center;justify-content:space-between;">
           <div style="flex:1;padding-right:12px;">
             <div style="font-size:13px;font-weight:700;color:var(--text);" data-i18n="at.useSmart">Use Smart Tool Settings</div>
-            <div style="font-size:11px;color:var(--text3);margin-top:2px;">Apply your AI risk settings to all auto trades.</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px;" data-i18n="auto.applyRisk">Apply your AI risk settings to all auto trades.</div>
           </div>
           <div class="toggle on" id="at-use-smart"></div>
         </div>
       </div>
       <!-- Entry Confirmation -->
       <div class="section-card" style="margin-bottom:10px;">
-        <div class="section-title" style="font-size:13px;margin-bottom:12px;">Entry <span data-i18n="at.confirmWord">Confirmation</span></div>
+        <div class="section-title" style="font-size:13px;margin-bottom:12px;"><span data-i18n="auto.entry">Entry</span> <span data-i18n="at.confirmWord">Confirmation</span></div>
         <label style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg3);border-radius:8px;cursor:pointer;border:1px solid var(--border);margin-bottom:8px;">
           <input type="radio" name="at-entry-confirm" value="instant" id="at-instant" checked style="accent-color:var(--red);width:16px;height:16px;">
-          <div><div style="font-size:13px;font-weight:700;color:var(--text);" data-i18n="at.instant">Instant Execution</div><div style="font-size:11px;color:var(--text3);">Signal posted — trade executes immediately</div></div>
+          <div><div style="font-size:13px;font-weight:700;color:var(--text);" data-i18n="at.instant">Instant Execution</div><div style="font-size:11px;color:var(--text3);" data-i18n="auto.modeInstant">Signal posted — trade executes immediately</div></div>
         </label>
         <label style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg3);border-radius:8px;cursor:pointer;border:1px solid var(--border);">
           <input type="radio" name="at-entry-confirm" value="scanner" id="at-scanner" style="accent-color:var(--red);width:16px;height:16px;">
-          <div><div style="font-size:13px;font-weight:700;color:var(--text);" data-i18n="at.scannerFirst">Check MAI Scanner First</div><div style="font-size:11px;color:var(--text3);">Signal — AI checks direction — execute if confirmed</div></div>
+          <div><div style="font-size:13px;font-weight:700;color:var(--text);" data-i18n="at.scannerFirst">Check MAI Scanner First</div><div style="font-size:11px;color:var(--text3);" data-i18n="auto.modeConfirm">Signal — AI checks direction — execute if confirmed</div></div>
         </label>
       </div>
       <button class="red-btn" onclick="saveAutoTradeSettings()" data-i18n="at.save">SAVE AUTO TRADE</button>
@@ -2614,32 +2614,32 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         <div class="news-item">
           <div class="news-impact high"></div>
           <div class="news-info">
-            <div class="news-event">US Non-Farm Payrolls</div>
-            <div class="news-meta">USD · High Impact</div>
+            <div class="news-event" data-i18n="news.usNfp">US Non-Farm Payrolls</div>
+            <div class="news-meta" data-i18n="news.usdHigh">USD · High Impact</div>
           </div>
           <div class="news-time">15:30</div>
         </div>
         <div class="news-item">
           <div class="news-impact medium"></div>
           <div class="news-info">
-            <div class="news-event">EUR CPI Flash Estimate</div>
-            <div class="news-meta">EUR · Medium Impact</div>
+            <div class="news-event" data-i18n="news.eurCpi">EUR CPI Flash Estimate</div>
+            <div class="news-meta" data-i18n="news.eurMed">EUR · Medium Impact</div>
           </div>
           <div class="news-time">11:00</div>
         </div>
         <div class="news-item">
           <div class="news-impact high"></div>
           <div class="news-info">
-            <div class="news-event">Fed Interest Rate Decision</div>
-            <div class="news-meta">USD · High Impact</div>
+            <div class="news-event" data-i18n="news.fedRate">Fed Interest Rate Decision</div>
+            <div class="news-meta" data-i18n="news.usdHigh">USD · High Impact</div>
           </div>
           <div class="news-time">20:00</div>
         </div>
         <div class="news-item">
           <div class="news-impact low"></div>
           <div class="news-info">
-            <div class="news-event">UK Manufacturing PMI</div>
-            <div class="news-meta">GBP · Low Impact</div>
+            <div class="news-event" data-i18n="news.ukPmi">UK Manufacturing PMI</div>
+            <div class="news-meta" data-i18n="news.gbpLow">GBP · Low Impact</div>
           </div>
           <div class="news-time">09:30</div>
         </div>
@@ -2661,22 +2661,22 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         <div class="news-item">
           <div class="news-impact high"></div>
           <div class="news-info">
-            <div class="news-event">Gold surges amid Fed uncertainty</div>
-            <div class="news-meta">Reuters · 2h ago</div>
+            <div class="news-event" data-i18n="nf.head1">Gold surges amid Fed uncertainty</div>
+            <div class="news-meta" data-i18n="nf.src3">Reuters · 2h ago</div>
           </div>
         </div>
         <div class="news-item">
           <div class="news-impact medium"></div>
           <div class="news-info">
-            <div class="news-event">Nasdaq hits new all-time high</div>
-            <div class="news-meta">Bloomberg · 4h ago</div>
+            <div class="news-event" data-i18n="nf.head2">Nasdaq hits new all-time high</div>
+            <div class="news-meta" data-i18n="nf.src1">Bloomberg · 4h ago</div>
           </div>
         </div>
         <div class="news-item">
           <div class="news-impact high"></div>
           <div class="news-info">
-            <div class="news-event">USD weakens on inflation data</div>
-            <div class="news-meta">CNBC · 6h ago</div>
+            <div class="news-event" data-i18n="nf.head3">USD weakens on inflation data</div>
+            <div class="news-meta" data-i18n="nf.src2">CNBC · 6h ago</div>
           </div>
         </div>
       </div>
@@ -2694,32 +2694,32 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <div style="background:linear-gradient(135deg,#C40024,#FF1E3C);border-radius:14px;padding:16px;margin-bottom:12px;position:relative;overflow:hidden;">
         <div style="position:absolute;top:-30px;right:-30px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,0.08);"></div>
         <div style="position:absolute;bottom:-20px;left:-20px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,0.05);"></div>
-        <div style="font-size:9px;font-weight:700;color:rgba(255,255,255,0.7);letter-spacing:2px;margin-bottom:4px;">MOMENTUM MONTHLY TRADING CHALLENGE</div>
-        <div style="font-size:16px;font-weight:800;color:#fff;line-height:1.3;margin-bottom:6px;">Trade Profitably. Climb The Rank. Win The Prize.</div>
-        <div style="font-size:10px;color:rgba(255,255,255,0.75);line-height:1.6;margin-bottom:14px;">Top ranked traders win rewards every month based on verified closed trades, ROI and consistency.</div>
+        <div style="font-size:9px;font-weight:700;color:rgba(255,255,255,0.7);letter-spacing:2px;margin-bottom:4px;" data-i18n="lb.challengeTitle">MOMENTUM MONTHLY TRADING CHALLENGE</div>
+        <div style="font-size:16px;font-weight:800;color:#fff;line-height:1.3;margin-bottom:6px;" data-i18n="lb.tagline">Trade Profitably. Climb The Rank. Win The Prize.</div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.75);line-height:1.6;margin-bottom:14px;" data-i18n="lb.rewardsNote">Top ranked traders win rewards every month based on verified closed trades, ROI and consistency.</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
           <div style="background:rgba(255,255,255,0.12);border-radius:10px;padding:10px;">
-            <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.8);margin-bottom:8px;letter-spacing:.5px;">HIGHEST PROFIT TRADER</div>
+            <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.8);margin-bottom:8px;letter-spacing:.5px;" data-i18n="lb.highestProfit">HIGHEST PROFIT TRADER</div>
             <div style="display:flex;justify-content:space-between;">
-              <div style="text-align:center;"><div style="font-size:9px;color:rgba(255,255,255,0.6);">1st</div><div style="font-size:13px;font-weight:800;color:#fff;">$500</div></div>
-              <div style="text-align:center;"><div style="font-size:9px;color:rgba(255,255,255,0.6);">2nd</div><div style="font-size:13px;font-weight:800;color:#fff;">$300</div></div>
-              <div style="text-align:center;"><div style="font-size:9px;color:rgba(255,255,255,0.6);">3rd</div><div style="font-size:13px;font-weight:800;color:#fff;">$200</div></div>
+              <div style="text-align:center;"><div style="font-size:9px;color:rgba(255,255,255,0.6);" data-i18n="lb.first">1st</div><div style="font-size:13px;font-weight:800;color:#fff;">$500</div></div>
+              <div style="text-align:center;"><div style="font-size:9px;color:rgba(255,255,255,0.6);" data-i18n="lb.second">2nd</div><div style="font-size:13px;font-weight:800;color:#fff;">$300</div></div>
+              <div style="text-align:center;"><div style="font-size:9px;color:rgba(255,255,255,0.6);" data-i18n="lb.third">3rd</div><div style="font-size:13px;font-weight:800;color:#fff;">$200</div></div>
             </div>
           </div>
           <div style="background:rgba(255,255,255,0.12);border-radius:10px;padding:10px;">
-            <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.8);margin-bottom:8px;letter-spacing:.5px;">HIGHEST LOTS TRADER</div>
+            <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.8);margin-bottom:8px;letter-spacing:.5px;" data-i18n="lb.highestLots">HIGHEST LOTS TRADER</div>
             <div style="display:flex;justify-content:space-between;">
-              <div style="text-align:center;"><div style="font-size:9px;color:rgba(255,255,255,0.6);">1st</div><div style="font-size:13px;font-weight:800;color:#fff;">$500</div></div>
-              <div style="text-align:center;"><div style="font-size:9px;color:rgba(255,255,255,0.6);">2nd</div><div style="font-size:13px;font-weight:800;color:#fff;">$300</div></div>
-              <div style="text-align:center;"><div style="font-size:9px;color:rgba(255,255,255,0.6);">3rd</div><div style="font-size:13px;font-weight:800;color:#fff;">$200</div></div>
+              <div style="text-align:center;"><div style="font-size:9px;color:rgba(255,255,255,0.6);" data-i18n="lb.first">1st</div><div style="font-size:13px;font-weight:800;color:#fff;">$500</div></div>
+              <div style="text-align:center;"><div style="font-size:9px;color:rgba(255,255,255,0.6);" data-i18n="lb.second">2nd</div><div style="font-size:13px;font-weight:800;color:#fff;">$300</div></div>
+              <div style="text-align:center;"><div style="font-size:9px;color:rgba(255,255,255,0.6);" data-i18n="lb.third">3rd</div><div style="font-size:13px;font-weight:800;color:#fff;">$200</div></div>
             </div>
           </div>
         </div>
       </div>
       <div class="section-card" style="margin-bottom:12px;text-align:center;padding:32px 16px;">
         <div style="font-size:32px;margin-bottom:12px;">🏆</div>
-        <div style="font-size:14px;font-weight:800;color:var(--text);margin-bottom:6px;">Leaderboard Coming Soon</div>
-        <div style="font-size:12px;color:var(--text3);line-height:1.6;">Rankings will appear here once the monthly challenge begins. Start trading to secure your spot!</div>
+        <div style="font-size:14px;font-weight:800;color:var(--text);margin-bottom:6px;" data-i18n="lb.comingSoon">Leaderboard Coming Soon</div>
+        <div style="font-size:12px;color:var(--text3);line-height:1.6;" data-i18n="lb.rankingsSoon">Rankings will appear here once the monthly challenge begins. Start trading to secure your spot!</div>
       </div>
     </div>
   </div>
@@ -2731,7 +2731,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
   <div id="soon-wrap" onclick="if(event.target===this)soonClose()">
     <div id="soon-sheet">
       <div style="width:36px;height:3px;background:#33333c;border-radius:2px;margin:0 auto 18px;"></div>
-      <div class="soon-badge"><span style="position:relative;color:#ff6b7e;font-size:11px;font-weight:700;letter-spacing:.14em;">COMING SOON</span><span class="soon-streak"></span></div>
+      <div class="soon-badge"><span style="position:relative;color:#ff6b7e;font-size:11px;font-weight:700;letter-spacing:.14em;" data-i18n="app.comingSoonCaps">COMING SOON</span><span class="soon-streak"></span></div>
       <div id="soon-title" style="font-size:22px;font-weight:700;color:#f2f2f4;margin:12px 0 0;"></div>
       <div id="soon-body" style="font-size:13px;color:#8b8b95;line-height:1.65;margin:10px 0 0;"></div>
       <div style="display:flex;align-items:center;gap:6px;margin-top:14px;">
@@ -2741,8 +2741,8 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         <span style="font-size:11px;color:#6a6a74;margin-left:4px;">Building now &middot; sample data inside</span>
       </div>
       <div style="display:flex;gap:9px;margin-top:18px;">
-        <button class="soon-alt" onclick="soonBack()">Not now</button>
-        <button class="soon-cta" onclick="soonClose()">View the feature</button>
+        <button class="soon-alt" onclick="soonBack()" data-i18n="app.notNow">Not now</button>
+        <button class="soon-cta" onclick="soonClose()" data-i18n="app.viewFeature">View the feature</button>
       </div>
     </div>
   </div>
@@ -2762,7 +2762,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <div class="sub-title" data-i18n="scr.manager">MAI MANAGER</div>
     </div>
     <div class="sub-content">
-      <div style="font-size:12px;color:var(--text3);line-height:1.6;margin-bottom:14px;">Invest with verified fund managers. Browse performance, view the statement, then invest in the portfolio you trust.</div>
+      <div style="font-size:12px;color:var(--text3);line-height:1.6;margin-bottom:14px;" data-i18n="fund.intro">Invest with verified fund managers. Browse performance, view the statement, then invest in the portfolio you trust.</div>
       <div style="display:flex;gap:7px;margin-bottom:12px;overflow-x:auto;">
         <span class="mam-fchip on" onclick="mamFilter(this,'all')" data-i18n="mam.all">All</span>
         <span class="mam-fchip" onclick="mamFilter(this,'ai')">AI</span>
@@ -2803,19 +2803,19 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
           <input id="follow-mt5" class="auth-input" type="text" placeholder="Your AFTT MT5 account ID">
         </div>
         <div class="auth-field">
-          <label class="auth-label">Allocation Amount (USD)</label>
+          <label class="auth-label" data-i18n="ff.allocation">Allocation Amount (USD)</label>
           <input id="follow-amount" class="auth-input" type="number" placeholder="e.g. 1000">
         </div>
         <div class="auth-field">
-          <label class="auth-label">Risk Level</label>
+          <label class="auth-label" data-i18n="ff.riskLevel">Risk Level</label>
           <select id="follow-risk" class="auth-input">
-            <option value="low">Low — Conservative</option>
-            <option value="medium" selected>Medium — Balanced</option>
-            <option value="high">High — Aggressive</option>
+            <option value="low" data-i18n="ff.riskLow">Low — Conservative</option>
+            <option value="medium" selected data-i18n="ff.riskMed">Medium — Balanced</option>
+            <option value="high" data-i18n="ff.riskHigh">High — Aggressive</option>
           </select>
         </div>
         <div class="auth-field">
-          <label class="auth-label">Phone Number</label>
+          <label class="auth-label" data-i18n="ff.phone">Phone Number</label>
           <input id="follow-phone" class="auth-input" type="tel" placeholder="+60 12 345 6789">
         </div>
         <!-- Agreement -->
@@ -2823,12 +2823,12 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
           <div style="font-size:11px;color:var(--text2);line-height:1.7;margin-bottom:10px;">I understand that trading involves risk and past performance does not guarantee future results. I authorize Momentum AI and AFTT Markets to manage my MT5 account under the selected fund.</div>
           <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;">
             <input type="checkbox" id="follow-agree" style="width:18px;height:18px;margin-top:2px;accent-color:var(--red);flex-shrink:0;">
-            <span style="font-size:12px;color:var(--text);font-weight:600;">I have read and agree to the Terms & Conditions</span>
+            <span style="font-size:12px;color:var(--text);font-weight:600;" data-i18n="ff.agreeTerms">I have read and agree to the Terms & Conditions</span>
           </label>
         </div>
         <div id="follow-error" class="error-msg"></div>
         <div id="follow-success" class="success-msg"></div>
-        <button class="red-btn" onclick="handleFundFollow()">SUBMIT APPLICATION</button>
+        <button class="red-btn" onclick="handleFundFollow()" data-i18n="ff.submit">SUBMIT APPLICATION</button>
       </div>
     </div>
   </div>
@@ -3185,7 +3185,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         </div>
         <div style="font-size:16px;font-weight:800;color:var(--text);" id="profile-name-display">Trader</div>
         <div style="font-size:12px;color:var(--text3);margin-top:2px;" id="profile-role-display">Basic User</div>
-        <div style="font-size:10px;color:var(--text3);margin-top:4px;">Tap pencil to change avatar</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:4px;" data-i18n="prof.tapPencil">Tap pencil to change avatar</div>
       </div>
 
 
@@ -3208,7 +3208,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
           </div>
           <div style="display:flex;justify-content:space-between;padding:10px 0;">
             <span style="font-size:12px;color:var(--text3);" data-i18n="prof.phone">Phone</span>
-            <span style="font-size:12px;font-weight:700;color:var(--text);" id="profile-phone">Not set</span>
+            <span style="font-size:12px;font-weight:700;color:var(--text);" id="profile-phone" data-i18n="prof.notSet">Not set</span>
           </div>
         </div>
       </div>
@@ -3238,8 +3238,8 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 
       <!-- Promo Code -->
       <div class="section-card" style="margin-bottom:12px;">
-        <div class="section-title" style="font-size:13px;margin-bottom:6px;">Promo <span data-i18n="prof.codeWord">Code</span></div>
-        <div style="font-size:11px;color:var(--text3);line-height:1.5;margin-bottom:12px;">Have a code? Redeem it to unlock Premium. One promo per MT5 account.</div>
+        <div class="section-title" style="font-size:13px;margin-bottom:6px;"><span data-i18n="prof.promo">Promo</span> <span data-i18n="prof.codeWord">Code</span></div>
+        <div style="font-size:11px;color:var(--text3);line-height:1.5;margin-bottom:12px;" data-i18n="prof.promoSub">Have a code? Redeem it to unlock Premium. One promo per MT5 account.</div>
         <div style="display:flex;gap:8px;">
           <input id="profile-promo-input" type="text" placeholder="No active promo" disabled style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-size:13px;text-transform:uppercase;opacity:0.45;cursor:not-allowed;" />
           <button id="profile-promo-btn" onclick="applyProfilePromo()" disabled style="font-size:12px;font-weight:700;padding:10px 16px;background:rgba(240,178,50,0.13);border:1px solid rgba(240,178,50,0.3);border-radius:8px;color:var(--gold);cursor:not-allowed;white-space:nowrap;opacity:0.45;">Apply</button>
@@ -3277,7 +3277,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         </div>
         <div class="more-menu-item" style="border:none;padding:10px 0;opacity:0.5;">
           <div class="more-menu-icon" style="width:36px;height:36px;"><i class="ti ti-shield-check" style="font-size:17px;"></i></div>
-          <div class="more-menu-text"><div class="more-menu-label" style="font-size:13px;">Enable 2FA (Authy)</div><div class="more-menu-sub" style="font-size:10px;">Coming soon</div></div>
+          <div class="more-menu-text"><div class="more-menu-label" style="font-size:13px;" data-i18n="prof.enable2fa">Enable 2FA (Authy)</div><div class="more-menu-sub" style="font-size:10px;" data-i18n="prof.comingSoon">Coming soon</div></div>
           <i class="ti ti-chevron-right more-menu-arrow"></i>
         </div>
       </div>
@@ -3331,21 +3331,21 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         </div>
         <!-- Disclaimer -->
         <div style="background:rgba(255,176,32,0.06);border:1px solid rgba(255,176,32,0.2);border-radius:10px;padding:12px;margin-bottom:12px;">
-          <div style="font-size:11px;font-weight:700;color:var(--amber);margin-bottom:8px;">⚠️ RISK DISCLAIMER</div>
+          <div style="font-size:11px;font-weight:700;color:var(--amber);margin-bottom:8px;" data-i18n="prof.riskTitle">⚠️ RISK DISCLAIMER</div>
           <div style="font-size:11px;color:var(--text3);line-height:1.7;">
-            1. Trading involves significant risk of loss.<br>
-            2. Past performance does not guarantee future results.<br>
-            3. The EA executes trades based on analyst signals automatically.<br>
-            4. You are responsible for monitoring your account at all times.<br>
-            5. Momentum AI is not liable for any trading losses incurred.<br>
-            6. Ensure sufficient margin before enabling automated trading.<br>
-            7. EA will stop functioning if your MT5 password is changed.
+            <span data-i18n="prof.risk1">1. Trading involves significant risk of loss.</span><br>
+            <span data-i18n="prof.risk2">2. Past performance does not guarantee future results.</span><br>
+            <span data-i18n="prof.risk3">3. The EA executes trades based on analyst signals automatically.</span><br>
+            <span data-i18n="prof.risk4">4. You are responsible for monitoring your account at all times.</span><br>
+            <span data-i18n="prof.risk5">5. Momentum AI is not liable for any trading losses incurred.</span><br>
+            <span data-i18n="prof.risk6">6. Ensure sufficient margin before enabling automated trading.</span><br>
+            <span data-i18n="prof.risk7">7. EA will stop functioning if your MT5 password is changed.</span>
           </div>
         </div>
         <!-- Agreement Checkbox -->
         <label style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg3);border-radius:8px;cursor:pointer;border:1px solid var(--border);margin-bottom:14px;">
           <input type="checkbox" id="mt5-agree-check" style="accent-color:var(--red);width:16px;height:16px;flex-shrink:0;">
-          <div style="font-size:12px;color:var(--text2);line-height:1.5;">I have read and agree to the risk disclaimer above</div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.5;" data-i18n="prof.agreeRisk">I have read and agree to the risk disclaimer above</div>
         </label>
         <div id="mt5-status-banner" style="display:none;"></div>
         <div id="mt5-connect-error" class="error-msg"></div>
@@ -3373,7 +3373,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <div class="sub-title" data-i18n="scr.followUs">FOLLOW US</div>
     </div>
     <div class="sub-content">
-      <div style="font-size:12px;color:var(--text3);margin-bottom:14px;">Stay connected and never miss an update.</div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:14px;" data-i18n="fu.sub">Stay connected and never miss an update.</div>
 
       <div class="more-menu-item" onclick="openSocial('instagram')" style="margin-bottom:8px;">
         <div class="more-menu-icon" style="background:rgba(228,64,95,0.12);border-color:rgba(228,64,95,0.2);"><i class="ti ti-brand-instagram" style="color:#E4405F;"></i></div>
@@ -3471,7 +3471,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         <div class="more-menu-icon" style="background:rgba(0,136,204,0.15);border-color:rgba(0,136,204,0.2);"><i class="ti ti-brand-telegram" style="color:#0088CC;"></i></div>
         <div class="more-menu-text">
           <div class="more-menu-label" data-i18n="sup.telegram">Telegram</div>
-          <div class="more-menu-sub">1PM – 1AM · @momentumai</div>
+          <div class="more-menu-sub" data-i18n="sup.tgHours">1PM – 1AM · @momentumai</div>
         </div>
         <i class="ti ti-chevron-right more-menu-arrow"></i>
       </div>
@@ -3479,14 +3479,14 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         <div class="more-menu-icon" style="background:rgba(37,211,102,0.12);border-color:rgba(37,211,102,0.2);"><i class="ti ti-brand-whatsapp" style="color:#25D366;"></i></div>
         <div class="more-menu-text">
           <div class="more-menu-label" data-i18n="sup.whatsapp">WhatsApp</div>
-          <div class="more-menu-sub">1PM – 1AM · Response within 1 hour</div>
+          <div class="more-menu-sub" data-i18n="sup.respHours">1PM – 1AM · Response within 1 hour</div>
         </div>
         <i class="ti ti-chevron-right more-menu-arrow"></i>
       </div>
       <!-- Support hours notice -->
       <div style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:rgba(255,30,60,0.08);border:1px solid rgba(255,30,60,0.2);border-radius:8px;margin-bottom:14px;">
         <i class="ti ti-clock" style="color:var(--red);font-size:16px;flex-shrink:0;"></i>
-        <div style="font-size:11px;color:var(--red);">Support hours: 1:00 PM – 1:00 AM (MYT) · Mon – Sun</div>
+        <div style="font-size:11px;color:var(--red);" data-i18n="sup.hours">Support hours: 1:00 PM – 1:00 AM (MYT) · Mon – Sun</div>
       </div>
       <!-- Ticket Form -->
       <div class="section-card">
@@ -3496,10 +3496,10 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
           <select id="support-subject" class="auth-input">
             <option value="" data-i18n="sup.selectSubject">Select subject</option>
             <option data-i18n="sup.login">Login Issue</option>
-            <option>Signal Not Showing</option>
-            <option>Trade Execution Problem</option>
-            <option>Account Verification</option>
-            <option>Fund Management Query</option>
+            <option data-i18n="sup.topicSignal">Signal Not Showing</option>
+            <option data-i18n="sup.topicExec">Trade Execution Problem</option>
+            <option data-i18n="sup.topicVerify">Account Verification</option>
+            <option data-i18n="sup.topicFund">Fund Management Query</option>
             <option data-i18n="sup.tech">Technical Issue</option>
             <option data-i18n="sup.other">Other</option>
           </select>
@@ -3516,7 +3516,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <div class="section-card" style="margin-top:12px;">
         <div class="section-title" style="font-size:13px;margin-bottom:12px;"><span class="tw" data-i18n="w.my">My </span><span data-i18n="w.tickets">Tickets</span></div>
         <div id="my-tickets">
-          <div class="empty-state" style="padding:20px;"><i class="ti ti-ticket"></i>No tickets yet</div>
+          <div class="empty-state" style="padding:20px;"><i class="ti ti-ticket"></i><span data-i18n="sup.noTickets">No tickets yet</span></div>
         </div>
       </div>
     </div>
@@ -3537,7 +3537,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
         <div>
           <div style="font-family:'Orbitron',sans-serif;font-size:16px;font-weight:800;color:var(--text);" id="scan-pair-label">XAUUSD <span style="color:var(--red);" data-i18n="sc.h4">H4</span></div>
-          <div style="font-size:10px;color:var(--text3);" id="scan-last-time" data-i18n="sc.selectPair">Select pair and scan</div>
+          <div style="font-size:10px;color:var(--text3);" id="scan-last-time">Select pair and scan</div>
         </div>
         <div style="text-align:right;">
           <div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:800;color:var(--text);" id="scan-price">—</div>
@@ -3678,7 +3678,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         </div>
 
         <!-- GENERATE REPORT -->
-        <button onclick="generateMAIReport()" style="width:100%;padding:11px;background:transparent;border:1px solid var(--red);border-radius:10px;color:var(--red);font-family:'Orbitron',sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;cursor:pointer;margin-bottom:12px;">⬇ GENERATE MAI FULL REPORT</button>
+        <button onclick="generateMAIReport()" style="width:100%;padding:11px;background:transparent;border:1px solid var(--red);border-radius:10px;color:var(--red);font-family:'Orbitron',sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;cursor:pointer;margin-bottom:12px;" data-i18n="scan.genReport">⬇ GENERATE MAI FULL REPORT</button>
 
       </div>
     </div>
@@ -3698,7 +3698,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
           <div class="more-menu-icon" style="background:rgba(255,176,32,0.12);border-color:rgba(255,176,32,0.2);"><i class="ti ti-book" style="color:var(--amber);"></i></div>
           <div class="more-menu-text">
             <div class="more-menu-label" data-i18n="ac.basics">Trading Basics</div>
-            <div class="more-menu-sub">5 lessons · Beginner</div>
+            <div class="more-menu-sub" data-i18n="acad.cat5b">5 lessons · Beginner</div>
           </div>
           <div style="display:flex;align-items:center;gap:6px;">
             <div style="font-size:10px;color:var(--text3);">0/5</div>
@@ -3710,7 +3710,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
           <div class="more-menu-icon" style="background:rgba(77,158,255,0.12);border-color:rgba(77,158,255,0.2);"><i class="ti ti-chart-line" style="color:#4D9EFF;"></i></div>
           <div class="more-menu-text">
             <div class="more-menu-label" data-i18n="ac.technical">Technical Analysis</div>
-            <div class="more-menu-sub">8 lessons · Intermediate</div>
+            <div class="more-menu-sub" data-i18n="acad.cat8">8 lessons · Intermediate</div>
           </div>
           <div style="display:flex;align-items:center;gap:6px;">
             <div style="font-size:10px;color:var(--text3);">0/8</div>
@@ -3722,7 +3722,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
           <div class="more-menu-icon" style="background:rgba(255,30,60,0.1);border-color:rgba(255,30,60,0.2);"><i class="ti ti-shield" style="color:var(--red);"></i></div>
           <div class="more-menu-text">
             <div class="more-menu-label" data-i18n="ac.risk">Risk Management</div>
-            <div class="more-menu-sub">4 lessons · Essential</div>
+            <div class="more-menu-sub" data-i18n="acad.cat4">4 lessons · Essential</div>
           </div>
           <div style="display:flex;align-items:center;gap:6px;">
             <div style="font-size:10px;color:var(--text3);">0/4</div>
@@ -3734,7 +3734,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
           <div class="more-menu-icon" style="background:rgba(155,89,182,0.12);border-color:rgba(155,89,182,0.2);"><i class="ti ti-robot" style="color:#9B59B6;"></i></div>
           <div class="more-menu-text">
             <div class="more-menu-label" data-i18n="more.tradeSettings">Trade Settings</div>
-            <div class="more-menu-sub">6 lessons · Advanced</div>
+            <div class="more-menu-sub" data-i18n="acad.cat6">6 lessons · Advanced</div>
           </div>
           <div style="display:flex;align-items:center;gap:6px;">
             <div style="font-size:10px;color:var(--text3);">0/6</div>
@@ -3746,7 +3746,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
           <div class="more-menu-icon" style="background:rgba(0,200,122,0.1);border-color:rgba(0,200,122,0.2);"><i class="ti ti-brain" style="color:var(--green);"></i></div>
           <div class="more-menu-text">
             <div class="more-menu-label" data-i18n="ac.psych">Trading Psychology</div>
-            <div class="more-menu-sub">5 lessons · Important</div>
+            <div class="more-menu-sub" data-i18n="acad.cat5i">5 lessons · Important</div>
           </div>
           <div style="display:flex;align-items:center;gap:6px;">
             <div style="font-size:10px;color:var(--text3);">0/5</div>
@@ -3758,7 +3758,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
           <div class="more-menu-icon" style="background:rgba(255,30,60,0.1);border-color:rgba(255,30,60,0.2);"><i class="ti ti-trending-up" style="color:var(--red);"></i></div>
           <div class="more-menu-text">
             <div class="more-menu-label" data-i18n="ac.advanced">Advanced Strategies</div>
-            <div class="more-menu-sub">7 lessons · Expert</div>
+            <div class="more-menu-sub" data-i18n="acad.cat7">7 lessons · Expert</div>
           </div>
           <div style="display:flex;align-items:center;gap:6px;">
             <div style="font-size:10px;color:var(--text3);">0/7</div>
@@ -3770,22 +3770,22 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <!-- Lesson list (shown when category clicked) -->
       <div id="academy-lessons" style="display:none;">
         <button onclick="showAcademyCategories()" style="display:flex;align-items:center;gap:6px;background:transparent;border:none;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;padding:0;margin-bottom:14px;font-family:'Sora',sans-serif;">
-          <i class="ti ti-arrow-left" style="font-size:16px;"></i> Back to Categories
+          <i class="ti ti-arrow-left" style="font-size:16px;"></i> <span data-i18n="acad.backCats">Back to Categories</span>
         </button>
-        <div style="font-size:15px;font-weight:800;color:var(--text);margin-bottom:14px;" id="academy-category-title" data-i18n="ac.technical">Technical Analysis</div>
+        <div style="font-size:15px;font-weight:800;color:var(--text);margin-bottom:14px;" id="academy-category-title">Technical Analysis</div>
         <div id="academy-lessons-list" style="display:flex;flex-direction:column;gap:8px;"></div>
       </div>
 
       <!-- Lesson content (shown when lesson clicked) -->
       <div id="academy-lesson-content" style="display:none;">
         <button onclick="showAcademyLessons()" style="display:flex;align-items:center;gap:6px;background:transparent;border:none;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;padding:0;margin-bottom:14px;font-family:'Sora',sans-serif;">
-          <i class="ti ti-arrow-left" style="font-size:16px;"></i> Back to Lessons
+          <i class="ti ti-arrow-left" style="font-size:16px;"></i> <span data-i18n="acad.backLessons">Back to Lessons</span>
         </button>
         <div id="academy-lesson-title" style="font-size:17px;font-weight:800;color:var(--text);margin-bottom:4px;"></div>
         <div id="academy-lesson-tag" style="font-size:11px;color:var(--text3);margin-bottom:16px;"></div>
         <div id="academy-lesson-body" style="font-size:13px;color:var(--text2);line-height:1.8;"></div>
         <div style="margin-top:20px;padding:14px;background:rgba(255,30,60,0.04);border:1px solid rgba(255,30,60,0.15);border-radius:10px;font-size:12px;color:var(--text2);line-height:1.7;" id="academy-lesson-tip"></div>
-        <button onclick="markLessonComplete()" style="width:100%;margin-top:16px;padding:13px;background:var(--grad);border:none;border-radius:12px;color:#fff;font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;cursor:pointer;box-shadow:0 6px 20px rgba(255,30,60,0.3);">✅ MARK AS COMPLETE</button>
+        <button onclick="markLessonComplete()" style="width:100%;margin-top:16px;padding:13px;background:var(--grad);border:none;border-radius:12px;color:#fff;font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;cursor:pointer;box-shadow:0 6px 20px rgba(255,30,60,0.3);" data-i18n="acad.markComplete">✅ MARK AS COMPLETE</button>
       </div>
     </div>
   </div>
@@ -3801,13 +3801,13 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
     <div style="display:flex;gap:6px;margin-bottom:14px;">
       <button class="trade-tab-btn active" id="trade-tab-smart" onclick="switchTradeTab('smart')" style="flex:1;padding:9px;background:rgba(255,30,60,0.12);border:1px solid rgba(255,30,60,0.3);border-radius:8px;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;" data-i18n="more.smartTool">Smart Tool</button>
       <button class="trade-tab-btn" id="trade-tab-manual" onclick="switchTradeTab('manual')" style="flex:1;padding:9px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:11px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;" data-i18n="mam.manual">Manual</button>
-      <button class="trade-tab-btn" id="trade-tab-auto" onclick="switchTradeTab('auto')" style="flex:1;padding:9px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:11px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;">Auto</button>
+      <button class="trade-tab-btn" id="trade-tab-auto" onclick="switchTradeTab('auto')" style="flex:1;padding:9px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:11px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;" data-i18n="app.auto">Auto</button>
     </div>
 
     <!-- SMART TOOL TAB -->
     <div id="trade-content-smart">
       <div style="padding:12px;background:rgba(0,200,122,0.06);border:1px solid rgba(0,200,122,0.15);border-radius:10px;font-size:12px;color:var(--green);margin-bottom:12px;">
-        <div style="font-weight:700;margin-bottom:4px;">AI Smart Tool Active</div>
+        <div style="font-weight:700;margin-bottom:4px;" data-i18n="app.stActive">AI Smart Tool Active</div>
         <div id="smart-tool-summary" style="color:var(--text3);">Loading your settings...</div>
       </div>
       <div class="trade-levels-row">
@@ -3815,8 +3815,8 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         <div class="trade-level-box"><div class="trade-level-lbl" data-i18n="sig.stopLoss">Stop Loss</div><div class="trade-level-val sl" id="popup-sl">--</div></div>
         <div class="trade-level-box"><div class="trade-level-lbl" data-i18n="sig.takeProfit">Take Profit</div><div class="trade-level-val tp" id="popup-tp">--</div></div>
       </div>
-      <button class="trade-execute-btn" onclick="checkMT5ThenExecute()">EXECUTE WITH SMART TOOL</button>
-      <button onclick="closeTradePopup();openSmartTool('more')" style="width:100%;margin-top:8px;padding:10px;background:transparent;border:1px solid var(--border);border-radius:10px;color:var(--text2);font-size:12px;cursor:pointer;font-family:'Sora',sans-serif;">⚙️ Adjust Smart Tool Settings</button>
+      <button class="trade-execute-btn" onclick="checkMT5ThenExecute()" data-i18n="app.execSmart">EXECUTE WITH SMART TOOL</button>
+      <button onclick="closeTradePopup();openSmartTool('more')" style="width:100%;margin-top:8px;padding:10px;background:transparent;border:1px solid var(--border);border-radius:10px;color:var(--text2);font-size:12px;cursor:pointer;font-family:'Sora',sans-serif;" data-i18n="app.adjustStn">⚙️ Adjust Smart Tool Settings</button>
     </div>
 
     <!-- MANUAL TAB -->
@@ -3826,20 +3826,20 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         <div class="trade-level-box"><div class="trade-level-lbl" data-i18n="sig.stopLoss">Stop Loss</div><div class="trade-level-val sl" id="popup-sl-m">--</div></div>
         <div class="trade-level-box"><div class="trade-level-lbl" data-i18n="sig.takeProfit">Take Profit</div><div class="trade-level-val tp" id="popup-tp-m">--</div></div>
       </div>
-      <label class="trade-vol-label">Volume (Lot Size)</label>
+      <label class="trade-vol-label" data-i18n="app.volumeLot">Volume (Lot Size)</label>
       <input class="trade-vol-input" id="trade-volume" type="number" value="0.01" step="0.01" min="0.01">
-      <button class="trade-execute-btn" onclick="executeTrade('manual')">EXECUTE TRADE</button>
+      <button class="trade-execute-btn" onclick="executeTrade('manual')" data-i18n="app.execTrade">EXECUTE TRADE</button>
     </div>
 
     <!-- AUTO TAB — status only, no settings -->
     <div id="trade-content-auto" style="display:none;">
       <div id="auto-trade-status-box" style="padding:16px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;text-align:center;margin-bottom:12px;">
         <div style="font-size:28px;margin-bottom:8px;">🤖</div>
-        <div id="auto-trade-status-text" style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;" data-i18n="more.autoTrade">Auto Trade</div>
+        <div id="auto-trade-status-text" style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">Auto Trade</div>
         <div id="auto-trade-status-sub" style="font-size:11px;color:var(--text3);line-height:1.6;">Loading...</div>
       </div>
       <div style="display:flex;gap:8px;">
-        <button onclick="closeTradePopup();showSubScreen('sub-trade-settings')" style="flex:1;padding:13px;background:var(--grad);border:none;border-radius:12px;color:#fff;font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;">TRADE SETTINGS</button>
+        <button onclick="closeTradePopup();showSubScreen('sub-trade-settings')" style="flex:1;padding:13px;background:var(--grad);border:none;border-radius:12px;color:#fff;font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;" data-i18n="app.tradeSettings">TRADE SETTINGS</button>
         <button onclick="confirmStopAutoTrade()" id="stop-auto-btn" style="flex:1;padding:13px;background:transparent;border:1px solid var(--red);border-radius:12px;color:var(--red);font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;">STOP AUTO</button>
       </div>
     </div>
@@ -5120,6 +5120,82 @@ function mmLangName(code){ for(var i=0;i<MMLANGS.length;i++){ if(MMLANGS[i].code
 // Only the OTHER languages need entries here.
 var MM_I18N = {
   'zh-TW': {
+    'acad.backCats':'返回分類', 'acad.backLessons':'返回課程',
+    'acad.cat4':'4 堂課 · 必修', 'acad.cat5b':'5 堂課 · 初階',
+    'acad.cat5i':'5 堂課 · 重要', 'acad.cat6':'6 堂課 · 進階',
+    'acad.cat7':'7 堂課 · 專家', 'acad.cat8':'8 堂課 · 中階',
+    'acad.markComplete':'✅ 標記為完成', 'aia.chatWith':'與 Momentum Intelligence 對話',
+    'aia.creditRule':'交易 1 手 = 100 點免費 AI 額度', 'aia.disc':'AI 生成的教學分析，非投資建議。交易風險請自行承擔。',
+    'aia.lotsProgress':'0.8 / 1.0 手', 'aia.lotsTraded':'已交易手數',
+    'aia.title':'AI 分析', 'aia.toNextReward':'距離下個獎勵還差 +80',
+    'app.adjustStn':'⚙️ 調整智能工具設定', 'app.aiEduDisc':'AI 生成的教學分析，非投資建議。',
+    'app.analytics':'數據分析', 'app.auto':'自動',
+    'app.chartPattern':'圖表形態', 'app.chooseStyle':'選擇分析方式',
+    'app.close':'關閉', 'app.comingSoonCaps':'即將推出',
+    'app.emotionScore':'情緒指數', 'app.execSmart':'以智能工具執行',
+    'app.execTrade':'執行交易', 'app.fibonacci':'斐波那契',
+    'app.loadingSignals':'訊號載入中...', 'app.notNow':'暫時不用',
+    'app.reasoning':'分析理由', 'app.sellZone':'賣出區間',
+    'app.stActive':'AI 智能工具已啟用', 'app.stop':'止損',
+    'app.styleHint':'AI 將以此方式解讀您的圖表。', 'app.tradeSettings':'交易設定',
+    'app.trendline':'趨勢線', 'app.viewFeature':'查看功能',
+    'app.volumeLot':'交易量（手數）', 'auto.applyRisk':'將您的 AI 風險設定套用至所有自動交易。',
+    'auto.autoPlace':'當您追蹤的分析師發布訊號時自動下單。', 'auto.entry':'進場',
+    'auto.loadingAnalysts':'分析師載入中...', 'auto.mixWarn':'在同一帳戶混用智能工具與自動交易可能造成倉位衝突。建議使用不同的 MT5 帳戶。',
+    'auto.modeConfirm':'訊號 — AI 確認方向 — 確認後執行', 'auto.modeInstant':'訊號發布 — 立即執行交易',
+    'auto.multiTitle':'⚠️ 已選擇多位分析師', 'auto.multiWarn':'在同一個 MT5 帳戶追蹤多位分析師會提高回撤風險。建議每位分析師使用一個 MT5 帳戶，以便更好地管理風險。',
+    'auto.selectAnalysts':'選擇一位或多位分析師追蹤。當他們發布有效訊號時將自動下單。', 'auto.stnTitle':'⚠️ 此帳戶已啟用智能工具',
+    'chat.betterEntry':'有更好的進場點嗎？', 'chat.details':'詳細內容',
+    'chat.greeting':'您好！我已檢視您的 XAUUSD 15M 圖表。歡迎詢問任何關於區間、訊號或風險的問題。', 'chat.riskReward':'風險報酬比？',
+    'chat.sell78':'賣出 78%', 'chat.stillValid':'現在還有效嗎？',
+    'chat.stopAnswer':'它就位於供應區高點的上方。收盤價突破該點即代表賣出的想法失效，因此這是合理的止損位置。設得更高只會擴大您的風險。', 'chat.today':'今天',
+    'chat.whyStop':'為什麼止損設在 4,095？', 'chat.zone':'區間',
+    'ff.agreeTerms':'我已閱讀並同意條款與細則', 'ff.allocation':'配置金額（美元）',
+    'ff.phone':'電話號碼', 'ff.riskHigh':'高 — 積極型',
+    'ff.riskLevel':'風險等級', 'ff.riskLow':'低 — 保守型',
+    'ff.riskMed':'中 — 平衡型', 'ff.submit':'提交申請',
+    'fu.sub':'保持聯繫，不錯過任何更新。', 'fund.intro':'與經過驗證的基金經理人一同投資。瀏覽績效、查看對帳單，然後投資您信任的投資組合。',
+    'lb.challengeTitle':'MOMENTUM 每月交易挑戰賽', 'lb.comingSoon':'排行榜即將推出',
+    'lb.first':'第一名', 'lb.highestLots':'最高交易手數',
+    'lb.highestProfit':'最高獲利交易者', 'lb.rankingsSoon':'每月挑戰賽開始後，排名將顯示於此。立即開始交易，搶下您的名次！',
+    'lb.rewardsNote':'排名頂尖的交易者將依據已驗證的平倉交易、投資報酬率與穩定性，每月獲得獎勵。', 'lb.second':'第二名',
+    'lb.tagline':'交易獲利。攀升排名。贏得獎勵。', 'lb.third':'第三名',
+    'news.eurCpi':'歐元區 CPI 快報估值', 'news.eurMed':'EUR · 中度影響',
+    'news.fedRate':'聯準會利率決議', 'news.gbpLow':'GBP · 低度影響',
+    'news.ukPmi':'英國製造業 PMI', 'news.usNfp':'美國非農就業數據',
+    'news.usdHigh':'USD · 高度影響', 'nf.head1':'黃金在聯準會不確定性中飆升',
+    'nf.head2':'納斯達克創歷史新高', 'nf.head3':'美元因通膨數據走弱',
+    'nf.src1':'Bloomberg · 4 小時前', 'nf.src2':'CNBC · 6 小時前',
+    'nf.src3':'Reuters · 2 小時前', 'pend.created':'帳戶建立成功',
+    'pend.fullAccess':'已授予完整權限', 'pend.mt5Submitted':'已提交 MT5 帳號：',
+    'pend.waiting':'等待管理員審核', 'pop.allClosed':'所有倉位已平倉',
+    'pop.announcement':'公告', 'pop.back':'返回',
+    'pop.choosePlan':'選擇您的方案', 'pop.chooseTemplate':'選擇範本',
+    'pop.connectLater':'稍後連接', 'pop.connectNow':'立即連接',
+    'pop.couldNotClose':'無法平倉', 'pop.depositNow':'立即存款',
+    'pop.depositUnlock':'存入 $100 即可解鎖自動交易、MAI 掃描器、智能工具、交易日誌與排行榜。', 'pop.footerTag':'✦ Momentum AI · 超越情緒的交易 · 非投資建議',
+    'pop.freeCore':'免費 — 核心功能', 'pop.fullAccess':'完整權限 — 所有功能',
+    'pop.gotIt':'我知道了', 'pop.loadingTemplates':'範本載入中...',
+    'pop.maiFullReport':'✦ MAI 完整報告', 'pop.maybeLater':'稍後再說',
+    'pop.premiumFeature':'尊榮會員功能', 'pop.promoNeedMt5':'您需要先連接 MT5 帳戶才能領取此優惠。立即連接以解鎖尊榮會員權限。',
+    'pop.upgradeAnytime':'您可隨時升級', 'prof.agreeRisk':'我已閱讀並同意以上風險聲明',
+    'prof.comingSoon':'即將推出', 'prof.enable2fa':'啟用雙重驗證（Authy）',
+    'prof.notSet':'未設定', 'prof.promoSub':'有優惠碼嗎？兌換即可解鎖尊榮會員。每個 MT5 帳戶限用一次。',
+    'prof.risk1':'1. 交易涉及重大虧損風險。', 'prof.risk2':'2. 過往績效不代表未來表現。',
+    'prof.risk3':'3. EA 會依據分析師訊號自動執行交易。', 'prof.risk4':'4. 您有責任隨時監控自己的帳戶。',
+    'prof.risk5':'5. Momentum AI 不對任何交易虧損負責。', 'prof.risk6':'6. 啟用自動交易前請確保保證金充足。',
+    'prof.risk7':'7. 若您變更 MT5 密碼，EA 將停止運作。', 'prof.riskTitle':'⚠️ 風險聲明',
+    'prof.tapPencil':'點擊鉛筆更換頭像', 'scan.genReport':'⬇ 產生 MAI 完整報告',
+    'stn.apply':'套用', 'stn.breakeven':'保本',
+    'stn.lossBudget':'虧損預算', 'stn.price':'價格',
+    'stn.risk':'風險', 'stn.templates':'範本',
+    'stn.trailing':'移動止損', 'stn.usedZero':'/ 已使用 $0',
+    'sup.hours':'服務時間：下午 1:00 – 凌晨 1:00（馬來西亞時間）· 週一至週日', 'sup.noTickets':'尚無支援單',
+    'sup.respHours':'下午1點 – 凌晨1點 · 1 小時內回覆', 'sup.tgHours':'下午1點 – 凌晨1點 · @momentumai',
+    'sup.topicExec':'交易執行問題', 'sup.topicFund':'資金管理查詢',
+    'sup.topicSignal':'訊號未顯示', 'sup.topicVerify':'帳戶驗證',
+    'ts.autoSub':'追蹤分析師，訊號發布時自動交易', 'ts.intro':'設定 Momentum AI 執行與管理交易的方式。',
+    'ts.stnSub':'AI 驅動的風險控管、加碼、移動止損、保本與部分平倉',
     'lang.available':'可使用', 'lang.comingSoon':'即將推出',
     'lang.soon':'即將', 'prof.langSub':'選擇顯示語言',
     'auth.regAft':'透過 AFT 註冊 →', 'auth.createAft':'透過 AFT 建立帳戶 →',
@@ -12566,7 +12642,7 @@ function showMT5ConnNotice(kind, reason) {
                   <svg viewBox="0 0 80 80" style="width:112px;height:112px;position:absolute;inset:0;animation:mmaiSpinB 10s linear infinite;"><circle cx="40" cy="40" r="26" fill="none" stroke="#1c8f66" stroke-width="1.5" stroke-dasharray="5 9"></circle></svg>
                   <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#2fd598;font-size:38px;"><i class="ti ti-lock-open"></i></div>
                 </div>
-                <div style="font-size:14px;color:#e9e9ef;margin-top:12px;">All positions closed</div>
+                <div style="font-size:14px;color:#e9e9ef;margin-top:12px;" data-i18n="pop.allClosed">All positions closed</div>
                 <div id="mmai-ok-sub" style="font-family:ui-monospace,Menlo,monospace;font-size:12px;color:#2fd598;margin-top:4px;"></div>
               </div>
               <div class="mmai-pan" id="mmai-p-fail">
@@ -12575,7 +12651,7 @@ function showMT5ConnNotice(kind, reason) {
                   <svg viewBox="0 0 80 80" style="width:112px;height:112px;position:absolute;inset:0;"><circle cx="40" cy="40" r="26" fill="none" stroke="#7d1b2c" stroke-width="1.5" stroke-dasharray="5 9"></circle></svg>
                   <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#ff4d63;font-size:38px;"><i class="ti ti-lock-exclamation"></i></div>
                 </div>
-                <div style="font-size:14px;color:#e9e9ef;margin-top:12px;">Could not close</div>
+                <div style="font-size:14px;color:#e9e9ef;margin-top:12px;" data-i18n="pop.couldNotClose">Could not close</div>
                 <div id="mmai-fail-sub" style="font-family:ui-monospace,Menlo,monospace;font-size:12px;color:#ff6478;margin-top:4px;text-align:center;padding:0 18px;line-height:1.5;"></div>
               </div>
         </div>
@@ -12583,10 +12659,10 @@ function showMT5ConnNotice(kind, reason) {
   <div id="execute-choice-popup" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);z-index:9200;align-items:flex-end;">
     <div style="width:100%;background:var(--bg2);border-radius:20px 20px 0 0;border-top:1px solid var(--border);padding:20px 18px 36px;max-height:88vh;overflow-y:auto;">
       <div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px;"></div>
-      <div style="font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);margin-bottom:4px;">CHOOSE TEMPLATE</div>
+      <div style="font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);margin-bottom:4px;" data-i18n="pop.chooseTemplate">CHOOSE TEMPLATE</div>
       <div id="execute-popup-pair" style="font-size:12px;color:var(--text3);margin-bottom:18px;">--</div>
       <div id="exec-tpl-list" style="margin-bottom:18px;">
-        <div style="font-size:12px;color:var(--text3);padding:14px;text-align:center;">Loading templates...</div>
+        <div style="font-size:12px;color:var(--text3);padding:14px;text-align:center;" data-i18n="pop.loadingTemplates">Loading templates...</div>
       </div>
       <button id="exec-confirm-btn" onclick="confirmExecution()" style="width:100%;padding:14px;background:var(--grad);border:none;border-radius:12px;color:#fff;font-family:Orbitron,sans-serif;font-size:13px;font-weight:800;letter-spacing:1px;cursor:pointer;opacity:0.4;pointer-events:none;margin-bottom:10px;">CONFIRM &amp; TRADE</button>
       <button onclick="closeExecutePopup()" style="width:100%;padding:12px;background:transparent;border:1px solid var(--border);border-radius:12px;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;" data-i18n="common.cancel">Cancel</button>
@@ -12600,12 +12676,12 @@ function showMT5ConnNotice(kind, reason) {
     <div style="width:100%;background:var(--bg2);border-radius:20px 20px 0 0;border-top:1px solid var(--border);max-height:90vh;overflow-y:auto;padding:20px 18px 40px;">
       <div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px;"></div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
-        <div style="font-size:13px;font-weight:800;color:var(--red);letter-spacing:1px;">✦ MAI FULL REPORT</div>
+        <div style="font-size:13px;font-weight:800;color:var(--red);letter-spacing:1px;" data-i18n="pop.maiFullReport">✦ MAI FULL REPORT</div>
         <button onclick="document.getElementById('mai-report-popup').style.display='none'" style="width:32px;height:32px;border-radius:50%;background:var(--surface);border:1px solid var(--border);color:var(--text2);font-size:18px;cursor:pointer;">×</button>
       </div>
       <div id="report-subtitle" style="font-size:10px;color:var(--text3);margin-bottom:16px;"></div>
       <div id="mai-report-content" style="font-size:13px;color:var(--text2);line-height:1.9;"></div>
-      <div style="margin-top:20px;padding-top:12px;border-top:0.5px solid var(--border);text-align:center;font-size:10px;color:var(--text3);">✦ Momentum AI · Trade Beyond Emotion · Not financial advice</div>
+      <div style="margin-top:20px;padding-top:12px;border-top:0.5px solid var(--border);text-align:center;font-size:10px;color:var(--text3);" data-i18n="pop.footerTag">✦ Momentum AI · Trade Beyond Emotion · Not financial advice</div>
     </div>
   </div>
 <!-- ══════════ PULL-TO-REFRESH ══════════ -->
@@ -12713,31 +12789,31 @@ function showMT5ConnNotice(kind, reason) {
 </script>
 <div id="reg-plan-modal" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.65);align-items:center;justify-content:center;padding:20px;">
   <div style="background:var(--bg2);border:0.5px solid var(--border);border-radius:18px;padding:24px 20px;max-width:360px;width:100%;">
-    <div style="font-size:18px;font-weight:700;color:var(--text);text-align:center;">Choose your plan</div>
-    <div style="font-size:12px;color:var(--text3);text-align:center;margin:4px 0 18px;">You can upgrade anytime</div>
+    <div style="font-size:18px;font-weight:700;color:var(--text);text-align:center;" data-i18n="pop.choosePlan">Choose your plan</div>
+    <div style="font-size:12px;color:var(--text3);text-align:center;margin:4px 0 18px;" data-i18n="pop.upgradeAnytime">You can upgrade anytime</div>
     <div id="rpm-basic" onclick="pickRegPlan('basic')" style="display:flex;align-items:center;gap:12px;border:1.5px solid var(--green);background:rgba(0,200,122,0.07);border-radius:12px;padding:14px;cursor:pointer;margin-bottom:10px;">
       <div style="width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ti ti-user" style="font-size:20px;color:var(--text);"></i></div>
-      <div style="flex:1;"><div style="font-size:15px;font-weight:700;color:var(--text);" data-i18n="w.basicWord">Basic</div><div style="font-size:11px;color:var(--text3);">Free — core features</div></div>
+      <div style="flex:1;"><div style="font-size:15px;font-weight:700;color:var(--text);" data-i18n="w.basicWord">Basic</div><div style="font-size:11px;color:var(--text3);" data-i18n="pop.freeCore">Free — core features</div></div>
       <i class="ti ti-circle-check rpm-check" style="font-size:20px;color:var(--green);opacity:1;"></i>
     </div>
     <div id="rpm-premium" onclick="pickRegPlan('premium')" style="display:flex;align-items:center;gap:12px;border:1.5px solid var(--border);background:transparent;border-radius:12px;padding:14px;cursor:pointer;">
       <div style="width:38px;height:38px;border-radius:10px;background:rgba(255,176,32,0.13);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ti ti-crown" style="font-size:20px;color:var(--amber);"></i></div>
-      <div style="flex:1;"><div style="font-size:15px;font-weight:700;color:var(--text);" data-i18n="w.premiumWord">Premium</div><div style="font-size:11px;color:var(--text3);">Full access — all features</div></div>
+      <div style="flex:1;"><div style="font-size:15px;font-weight:700;color:var(--text);" data-i18n="w.premiumWord">Premium</div><div style="font-size:11px;color:var(--text3);" data-i18n="pop.fullAccess">Full access — all features</div></div>
       <i class="ti ti-circle-check rpm-check" style="font-size:20px;color:var(--green);opacity:0;"></i>
     </div>
     <div id="rpm-note" style="display:none;font-size:11px;color:var(--amber);margin-top:12px;line-height:1.5;background:rgba(255,176,32,0.06);border-radius:8px;padding:10px;">Deposit $100 within 24h of connecting your MT5 to keep Premium, otherwise it switches to Basic.</div>
     <button class="auth-btn" id="rpm-continue" style="margin-top:18px;" onclick="submitRegister()">Continue</button>
-    <button onclick="closeRegPlan()" style="width:100%;background:transparent;border:none;color:var(--text3);padding:10px;font-size:13px;cursor:pointer;margin-top:4px;">Back</button>
+    <button onclick="closeRegPlan()" style="width:100%;background:transparent;border:none;color:var(--text3);padding:10px;font-size:13px;cursor:pointer;margin-top:4px;" data-i18n="pop.back">Back</button>
   </div>
 </div>
 <div id="deposit-popup" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.65);align-items:center;justify-content:center;padding:20px;">
   <div style="background:var(--bg2);border:0.5px solid var(--border);border-radius:18px;padding:24px 20px;max-width:320px;width:100%;text-align:center;position:relative;">
     <i class="ti ti-x" onclick="closeDepositPopup()" style="position:absolute;top:14px;right:14px;font-size:18px;color:var(--text3);cursor:pointer;"></i>
     <div style="width:54px;height:54px;border-radius:14px;background:var(--grad);display:flex;align-items:center;justify-content:center;margin:4px auto 14px;"><i class="ti ti-crown" style="font-size:28px;color:#fff;"></i></div>
-    <div style="font-size:17px;font-weight:700;color:var(--text);margin-bottom:6px;">Premium feature</div>
-    <div style="font-size:12.5px;color:var(--text3);line-height:1.6;margin-bottom:16px;">Deposit $100 to unlock auto-trade, the MAI Scanner, smart tool, journal and leaderboard.</div>
-    <button class="auth-btn" onclick="openDepositPage()" style="background:var(--grad);">Deposit now</button>
-    <button onclick="closeDepositPopup()" style="width:100%;background:transparent;border:none;color:var(--text3);padding:10px;font-size:13px;cursor:pointer;margin-top:8px;">Maybe later</button>
+    <div style="font-size:17px;font-weight:700;color:var(--text);margin-bottom:6px;" data-i18n="pop.premiumFeature">Premium feature</div>
+    <div style="font-size:12.5px;color:var(--text3);line-height:1.6;margin-bottom:16px;" data-i18n="pop.depositUnlock">Deposit $100 to unlock auto-trade, the MAI Scanner, smart tool, journal and leaderboard.</div>
+    <button class="auth-btn" onclick="openDepositPage()" style="background:var(--grad);" data-i18n="pop.depositNow">Deposit now</button>
+    <button onclick="closeDepositPopup()" style="width:100%;background:transparent;border:none;color:var(--text3);padding:10px;font-size:13px;cursor:pointer;margin-top:8px;" data-i18n="pop.maybeLater">Maybe later</button>
   </div>
 </div>
 <div id="campaign-banner" style="display:none;position:fixed;inset:0;z-index:99998;background:rgba(0,0,0,0.7);align-items:center;justify-content:center;padding:20px;">
@@ -12761,9 +12837,9 @@ function showMT5ConnNotice(kind, reason) {
   <div style="background:var(--bg2);border:0.5px solid var(--border);border-radius:18px;max-width:330px;width:100%;padding:24px 20px;text-align:center;position:relative;">
     <div style="width:54px;height:54px;border-radius:14px;background:var(--grad);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;"><i class="ti ti-plug-connected" style="font-size:26px;color:#fff;"></i></div>
     <div style="font-size:17px;font-weight:700;color:var(--text);margin-bottom:6px;" data-i18n="chart.connect">Connect your MT5 account</div>
-    <div style="font-size:12.5px;color:var(--text3);line-height:1.6;margin-bottom:18px;">You need a connected MT5 account before you can claim this promo. Connect now to unlock your premium access.</div>
-    <button class="auth-btn" onclick="mt5PromptConnectNow()" style="background:var(--grad);margin-bottom:8px;">Connect now</button>
-    <button onclick="mt5PromptLater()" style="width:100%;background:transparent;border:none;color:var(--text3);padding:10px;font-size:13px;cursor:pointer;">Connect later</button>
+    <div style="font-size:12.5px;color:var(--text3);line-height:1.6;margin-bottom:18px;" data-i18n="pop.promoNeedMt5">You need a connected MT5 account before you can claim this promo. Connect now to unlock your premium access.</div>
+    <button class="auth-btn" onclick="mt5PromptConnectNow()" style="background:var(--grad);margin-bottom:8px;" data-i18n="pop.connectNow">Connect now</button>
+    <button onclick="mt5PromptLater()" style="width:100%;background:transparent;border:none;color:var(--text3);padding:10px;font-size:13px;cursor:pointer;" data-i18n="pop.connectLater">Connect later</button>
   </div>
 </div>
 <div id="announcement-popup" style="display:none;position:fixed;inset:0;z-index:99997;background:rgba(0,0,0,0.7);align-items:center;justify-content:center;padding:20px;">
@@ -12771,10 +12847,10 @@ function showMT5ConnNotice(kind, reason) {
     <i class="ti ti-x" onclick="closeAnnouncementPopup()" style="position:absolute;top:10px;right:10px;font-size:16px;color:#fff;background:rgba(0,0,0,0.45);border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2;"></i>
     <img id="ann-pop-img" alt="" style="display:none;width:100%;aspect-ratio:1/1;object-fit:cover;background:var(--bg3);" />
     <div style="padding:18px;">
-      <div style="display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;color:var(--red);background:rgba(255,30,60,0.12);padding:3px 9px;border-radius:5px;margin-bottom:10px;"><i class="ti ti-speakerphone" style="font-size:12px;"></i>ANNOUNCEMENT</div>
+      <div style="display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;color:var(--red);background:rgba(255,30,60,0.12);padding:3px 9px;border-radius:5px;margin-bottom:10px;"><i class="ti ti-speakerphone" style="font-size:12px;"></i><span data-i18n="pop.announcement">ANNOUNCEMENT</span></div>
       <div id="ann-pop-title" style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:6px;"></div>
       <div id="ann-pop-msg" style="font-size:12.5px;color:var(--text2);line-height:1.6;margin-bottom:16px;white-space:pre-wrap;"></div>
-      <button class="auth-btn" onclick="closeAnnouncementPopup()" style="background:var(--grad);">Got it</button>
+      <button class="auth-btn" onclick="closeAnnouncementPopup()" style="background:var(--grad);" data-i18n="pop.gotIt">Got it</button>
     </div>
   </div>
 </div>
