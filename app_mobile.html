@@ -1821,11 +1821,27 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       </div>
       <!-- Market Overview -->
       <div class="section-title" style="margin-bottom:10px;"><span class="tw" data-i18n="w.market">Market</span> <span data-i18n="dash.overview">Overview</span></div>
-      <div class="mm-mkt-list">
-        <div class="mm-mkt-row"><span class="mm-mkt-sym" id="sym-XAUUSD">XAUUSD</span><span class="mm-mkt-right"><span class="mm-mkt-price" id="price-XAUUSD">3348.75</span><span class="mm-mkt-chg dn" id="change-XAUUSD">▼ -0.25%</span></span></div>
-        <div class="mm-mkt-row"><span class="mm-mkt-sym" id="sym-DXY">DXY</span><span class="mm-mkt-right"><span class="mm-mkt-price" id="price-DXY">99.50</span><span class="mm-mkt-chg up" id="change-DXY">▲ +0.52%</span></span></div>
-        <div class="mm-mkt-row"><span class="mm-mkt-sym" id="sym-BTCUSD">BTCUSD</span><span class="mm-mkt-right"><span class="mm-mkt-price" id="price-BTCUSD">67,432</span><span class="mm-mkt-chg dn" id="change-BTCUSD">▼ -0.18%</span></span></div>
-        <div class="mm-mkt-row"><span class="mm-mkt-sym" id="sym-USOIL">USOIL</span><span class="mm-mkt-right"><span class="mm-mkt-price" id="price-USOIL">64.50</span><span class="mm-mkt-chg up" id="change-USOIL">▲ +0.34%</span></span></div>
+      <div class="mm-mkt-strip" id="mm-mkt-strip">
+          <div class="mm-mkt-card dn" id="mkt-card-XAUUSD">
+            <div class="mm-mkt-h"><span class="mm-mkt-sym" id="sym-XAUUSD">XAUUSD</span><span class="mm-mkt-chg dn" id="change-XAUUSD">▼ -0.25%</span></div>
+            <div class="mm-mkt-price" id="price-XAUUSD">4,042.72</div>
+            <span class="mm-mkt-wash"></span>
+          </div>
+          <div class="mm-mkt-card up" id="mkt-card-DXY">
+            <div class="mm-mkt-h"><span class="mm-mkt-sym" id="sym-DXY">DXY</span><span class="mm-mkt-chg up" id="change-DXY">▲ +0.52%</span></div>
+            <div class="mm-mkt-price" id="price-DXY">99.50</div>
+            <span class="mm-mkt-wash"></span>
+          </div>
+          <div class="mm-mkt-card dn" id="mkt-card-BTCUSD">
+            <div class="mm-mkt-h"><span class="mm-mkt-sym" id="sym-BTCUSD">BTCUSD</span><span class="mm-mkt-chg dn" id="change-BTCUSD">▼ -0.18%</span></div>
+            <div class="mm-mkt-price" id="price-BTCUSD">62,662.14</div>
+            <span class="mm-mkt-wash"></span>
+          </div>
+          <div class="mm-mkt-card up" id="mkt-card-USOIL">
+            <div class="mm-mkt-h"><span class="mm-mkt-sym" id="sym-USOIL">USOIL</span><span class="mm-mkt-chg up" id="change-USOIL">▲ +0.34%</span></div>
+            <div class="mm-mkt-price" id="price-USOIL">64.50</div>
+            <span class="mm-mkt-wash"></span>
+          </div>
       </div>
       <!-- Recent Signals -->
       <div class="section-card">
@@ -10043,7 +10059,25 @@ function mmHomeBalance(){
     if(card) card.classList.toggle('stale', stale === accts.length);
   }catch(e){ console.warn('mmHomeBalance failed:', e && e.message); }
 }
-function mmHomeRefresh(){ mmHomeBalance(); }
+function mmMktAuto(){
+  var el = document.getElementById('mm-mkt-strip');
+  if(!el || el._mmAuto) return;
+  el._mmAuto = true;
+  var resume = 0;
+  ['pointerdown','touchstart','wheel'].forEach(function(ev){
+    el.addEventListener(ev, function(){ resume = Date.now() + 6000; }, {passive:true});
+  });
+  setInterval(function(){
+    if(document.hidden || Date.now() < resume) return;
+    var card = el.querySelector('.mm-mkt-card');
+    if(!card || el.scrollWidth <= el.clientWidth + 2) return;
+    var step = card.offsetWidth + 8;
+    var max  = el.scrollWidth - el.clientWidth;
+    var next = (el.scrollLeft + step > max - 2) ? 0 : el.scrollLeft + step;
+    try{ el.scrollTo({left: next, behavior: 'smooth'}); }catch(e){ el.scrollLeft = next; }
+  }, 3500);
+}
+function mmHomeRefresh(){ mmHomeBalance(); mmMktAuto(); }
 
 // ── SPARKLINES ──
 function drawSparklines() {
@@ -11272,12 +11306,8 @@ async function loadLivePrices() {
       var sEl=document.getElementById('sym-'+app);
       if(pEl) pEl.textContent = fmtPrice(app, price);
       if(cEl) { cEl.textContent=(isUp?'▲ +':'▼ ')+chg+'%'; cEl.className='mm-mkt-chg '+(isUp?'up':'dn'); }
-      if(sEl&&sEl.parentElement) {
-        var card=sEl.parentElement;
-        card.className='mm-mkt-row';
-        var spark=card.querySelector('.mkt-spark');
-        if(spark){ spark.dataset.trend=isUp?'up':'dn'; spark.dataset.color=isUp?'#00c87a':'#FF1E3C'; drawSpark(spark); }
-      }
+      var mc = document.getElementById('mkt-card-'+app);
+      if(mc) mc.className = 'mm-mkt-card ' + (isUp?'up':'dn');
     });
   } catch(e) { console.warn('loadLivePrices:', e.message); }
   loadAFTPrices();
@@ -11349,8 +11379,8 @@ async function loadAFTPrices() {
         var chg = ((mid-open)/open*100).toFixed(2);
         var cEl = document.getElementById('change-'+app);
         if(cEl){ cEl.textContent = (isUp?'▲ +':'▼ ')+chg+'%'; cEl.className='mm-mkt-chg '+(isUp?'up':'dn'); }
-        var sEl = document.getElementById('sym-'+app);
-        if(sEl && sEl.parentElement){ sEl.parentElement.className = 'mm-mkt-row'; }
+        var mc = document.getElementById('mkt-card-'+app);
+        if(mc) mc.className = 'mm-mkt-card ' + (isUp?'up':'dn');
       }
     });
     // Quotes came back. THIS is what 'data connection ok' means - the marker
@@ -16249,15 +16279,18 @@ function showMT5ConnNotice(kind, reason) {
 .mm-tile.t2.dn{border-left-color:#e03050;}
 .mm-tile.t2.dn i{color:#ff8fa3;}
 .mm-tile.t3{border-left:2px solid #ff8fa3;}
-.mm-mkt-list{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:2px 13px;margin-bottom:14px;}
-.mm-mkt-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);}
-.mm-mkt-row:last-child{border-bottom:none;}
-.mm-mkt-sym{font-size:13px;color:var(--text);font-weight:700;}
-.mm-mkt-right{display:flex;align-items:baseline;gap:10px;}
-.mm-mkt-price{font-size:14px;color:var(--text);font-family:'Orbitron',sans-serif;}
-.mm-mkt-chg{font-size:11px;width:62px;text-align:right;font-weight:700;}
+.mm-mkt-strip{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin-bottom:14px;padding-bottom:2px;}
+.mm-mkt-strip::-webkit-scrollbar{display:none;}
+.mm-mkt-card{position:relative;overflow:hidden;flex:0 0 calc(50% - 4px);scroll-snap-align:start;background:var(--bg3);border:1px solid var(--border);border-radius:11px;padding:9px 11px 24px;}
+.mm-mkt-h{display:flex;align-items:center;gap:6px;}
+.mm-mkt-sym{color:var(--text3);font-size:10px;font-weight:700;}
+.mm-mkt-chg{font-size:9px;font-weight:700;}
 .mm-mkt-chg.up{color:var(--green);}
 .mm-mkt-chg.dn{color:var(--red);}
+.mm-mkt-price{color:var(--text);font-size:16px;margin-top:3px;font-family:'Orbitron',sans-serif;position:relative;z-index:1;}
+.mm-mkt-wash{position:absolute;left:0;right:0;bottom:0;height:22px;pointer-events:none;}
+.mm-mkt-card.dn .mm-mkt-wash{background:linear-gradient(180deg,rgba(255,77,106,0),rgba(255,77,106,.5));}
+.mm-mkt-card.up .mm-mkt-wash{background:linear-gradient(180deg,rgba(0,214,143,0),rgba(0,214,143,.5));}
 .mm-feed-row{padding:9px 0;border-bottom:1px solid var(--border);}
 .mm-feed-row:last-child{border-bottom:none;}
 .mm-feed-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
