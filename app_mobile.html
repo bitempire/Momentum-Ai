@@ -5102,10 +5102,8 @@ var MMLANGS = [
   { code:'th', native:'\u0e44\u0e17\u0e22', en:'Thai' },
   { code:'vi', native:'Ti\u1ebfng Vi\u1ec7t', en:'Vietnamese' },
   { code:'fil', native:'Filipino', en:'Filipino' },
-  { code:'ta', native:'\u0ba4\u0bae\u0bbf\u0bb4\u0bcd', en:'Tamil' },
   { code:'hi', native:'\u0939\u093f\u0928\u094d\u0926\u0940', en:'Hindi' },
-  { code:'es', native:'Espa\u00f1ol', en:'Spanish' },
-  { code:'km', native:'\u1797\u17b6\u179f\u17b6\u1781\u17d2\u1798\u17c2\u179a', en:'Khmer' }
+  { code:'es', native:'Espa\u00f1ol', en:'Spanish' }
 ];
 function mmGetLang(){ try{ return localStorage.getItem('momentum_lang') || 'en'; }catch(e){ return 'en'; } }
 function mmLangName(code){ for(var i=0;i<MMLANGS.length;i++){ if(MMLANGS[i].code===code) return MMLANGS[i].native; } return 'English'; }
