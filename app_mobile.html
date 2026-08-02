@@ -9341,7 +9341,7 @@ function switchTab(tab) {
   if(nav) nav.classList.add('active');
   var content = document.getElementById('app-content');
   if(content) content.scrollTop = 0;
-  if(tab==='dashboard') { if(!_priceLoaded) { loadLivePrices(); _priceLoaded=true; } }
+  if(tab==='dashboard') { if(!_priceLoaded) { loadLivePrices(); _priceLoaded=true; } if(typeof mmHomeRefresh==='function') mmHomeRefresh(); if(typeof mmHomeSync==='function') mmHomeSync(); }
   if(tab==='charts') initTVChart();
   if(tab==='journal') { loadJournalData(); refreshActiveBalance(); }
   if(tab==='signals') loadSignalsFeed();
@@ -10100,7 +10100,21 @@ function mmMktPulse(app, isUp, price, priceTxt, chgTxt){
     g.style.animation = 'mmMktEdge .9s ease-out';
   }
 }
-function mmHomeRefresh(){ mmHomeBalance(); }
+async function mmHomeSync(){
+  try{
+    if(document.hidden) return;
+    if(!db || !currentUser || !currentUser.id) return;
+    var dash = document.getElementById('tab-dashboard');
+    if(!dash || dash.style.display === 'none') return;
+    var res = await db.from('mt5_accounts').select('*').eq('user_id', currentUser.id);
+    var accts = (res && res.data) ? res.data : null;
+    if(accts && accts.length){ window._userAccounts = accts; mmHomeBalance(); }
+  }catch(e){ console.warn('mmHomeSync:', e && e.message); }
+}
+function mmHomeRefresh(){
+  mmHomeBalance();
+  if(!window._mmHomePoll) window._mmHomePoll = setInterval(mmHomeSync, 4000);
+}
 
 // ── SPARKLINES ──
 function drawSparklines() {
