@@ -1799,7 +1799,9 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         </div>
       </div>
       <!-- Overall balance -->
-      <div class="mm-bal-card" id="mm-bal-card">
+      <div class="mm-bal-wrap" id="mm-bal-wrap">
+        <span class="mm-bal-beam"></span>
+        <div class="mm-bal-card" id="mm-bal-card">
         <div class="mm-bal-dots"></div>
         <div class="mm-bal-radar"></div>
         <div class="mm-bal-rings">
@@ -1818,6 +1820,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
             <span class="mm-tile t3"><b data-i18n="w.accounts">Accounts</b><i id="mm-bal-acc">-</i></span>
           </div>
         </div>
+      </div>
       </div>
       <!-- Market Overview -->
       <div class="section-title" style="margin-bottom:10px;"><span class="tw" data-i18n="w.market">Market</span> <span data-i18n="dash.overview">Overview</span></div>
@@ -10063,7 +10066,7 @@ function mmHomeBalance(){
       chg.className = 'mm-bal-chg ' + (diff >= 0 ? 'up' : '');
       cv.textContent = (pct>=0?'+':'') + pct.toFixed(2) + '%';
     }
-    var card = document.getElementById('mm-bal-card');
+    var card = document.getElementById('mm-bal-wrap');
     if(card) card.classList.toggle('stale', stale === accts.length);
   }catch(e){ console.warn('mmHomeBalance failed:', e && e.message); }
 }
@@ -16260,8 +16263,11 @@ function showMT5ConnNotice(kind, reason) {
 #ptr-indicator.ptr-spin #ptr-spinner{ animation:ptrSpin .7s linear infinite; }
 @keyframes ptrSpin{ to{ transform:rotate(360deg); } }
 
-.mm-bal-card{position:relative;overflow:hidden;border-radius:14px;background:#0c0f18;padding:13px 15px;margin-bottom:14px;}
-.mm-bal-card.stale{filter:grayscale(.85);}
+.mm-bal-wrap{position:relative;overflow:hidden;border-radius:14px;padding:1.5px;margin-bottom:14px;}
+.mm-bal-wrap.stale{filter:grayscale(.85);}
+.mm-bal-beam{position:absolute;inset:-60%;background:conic-gradient(from 0deg,transparent 0 62%,rgba(224,48,80,.9) 76%,#ff8fa3 84%,rgba(224,48,80,.9) 90%,transparent 100%);animation:mmBeamSpin 4.5s linear infinite;}
+@keyframes mmBeamSpin{to{transform:rotate(360deg)}}
+.mm-bal-card{position:relative;overflow:hidden;border-radius:12.5px;background:#0c0f18;padding:13px 15px;}
 .mm-bal-dots{position:absolute;inset:0;background-image:radial-gradient(rgba(255,120,145,.11) 1px,transparent 1px);background-size:14px 14px;}
 .mm-bal-radar{position:absolute;right:-70px;bottom:-90px;width:210px;height:210px;border-radius:50%;background:conic-gradient(from 0deg,rgba(224,48,80,.42),rgba(224,48,80,0) 28%,rgba(224,48,80,0) 100%);animation:mmRadarSpin 7s linear infinite;}
 @keyframes mmRadarSpin{to{transform:rotate(360deg)}}
