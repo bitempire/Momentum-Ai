@@ -2625,7 +2625,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
           </div>
           <div class="toggle on" id="at-use-smart" onclick="atSmartToggle(this)"></div>
         </div>
-        <div id="at-tpl-card" onclick="atOpenSmartTool()" style="display:flex;align-items:center;gap:10px;margin-top:12px;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,30,60,.30);background-image:linear-gradient(100deg,rgba(255,30,60,.22),rgba(196,0,36,.05) 65%,rgba(255,30,60,.14));cursor:pointer;">
+        <div id="at-tpl-card" onclick="atPickTemplate()" style="display:flex;align-items:center;gap:10px;margin-top:12px;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,30,60,.30);background-image:linear-gradient(100deg,rgba(255,30,60,.22),rgba(196,0,36,.05) 65%,rgba(255,30,60,.14));cursor:pointer;">
           <i id="at-tpl-icon" class="ti ti-bolt" style="font-size:18px;color:var(--red);"></i>
           <div style="flex:1;min-width:0;">
             <div id="at-tpl-name" style="color:var(--text);font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Loading...</div>
@@ -13364,12 +13364,28 @@ async function confirmExecution() {
     activeAccount.smart_template_id = _execSelectedOption;
   }
   closeExecutePopup();
+  // Pick-only mode is the Auto Trade screen borrowing this picker to CHOOSE a
+  // template. Same list, same persistence, but it must not start a trade.
+  if(_execPickOnly){
+    _execPickOnly = false;
+    if(typeof atSmartSync === 'function') atSmartSync();
+    return;
+  }
   requestTradeConsent();
 }
 
 function closeExecutePopup() {
   var popup = document.getElementById('execute-choice-popup');
   if(popup) popup.style.display = 'none';
+  // Always put the picker back the way it was found, whether it was confirmed
+  // or cancelled. Leaving it in pick-only mode would mean the next real
+  // Execute selected a template and never traded.
+  _execPickOnly = false;
+  var _b = document.getElementById('exec-confirm-btn');
+  if(_b && _b.getAttribute('data-mm-orig')){
+    _b.textContent = _b.getAttribute('data-mm-orig');
+    _b.removeAttribute('data-mm-orig');
+  }
 }
 
 // 18 Jul 2026: resetExecOptions() and selectExecOption() removed. They drove the
@@ -16511,6 +16527,27 @@ function atAutoLock(){
   } else {
     switchTradeTab('smart');
     if(typeof updateSmartToolSummary === 'function') updateSmartToolSummary();
+  }
+}
+
+// The Auto Trade card opens the SAME template picker the Execute flow uses,
+// rather than the Smart Tool editor. The editor is for viewing a template's
+// internals; choosing one is a two-tap job and this sheet already shows range,
+// layers and risk side by side. _execPickOnly makes its button select and stop
+// instead of select and trade.
+var _execPickOnly = false;
+
+async function atPickTemplate(){
+  _execPickOnly = true;
+  try {
+    if(typeof openExecuteChoicePopup === 'function') await openExecuteChoicePopup();
+  } catch(e){}
+  var lbl = document.getElementById('execute-popup-pair');
+  if(lbl) lbl.textContent = 'Used for every auto trade on this account';
+  var btn = document.getElementById('exec-confirm-btn');
+  if(btn){
+    if(!btn.getAttribute('data-mm-orig')) btn.setAttribute('data-mm-orig', btn.textContent);
+    btn.textContent = 'USE THIS TEMPLATE';
   }
 }
 </script>
