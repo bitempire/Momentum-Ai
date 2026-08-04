@@ -16295,7 +16295,11 @@ async function mmPushSend(action, sub){
   try { payload.platform = (navigator.userAgent || '').slice(0, 60); } catch(e){}
   var r = await fetch(MM_PUSH_FN, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'x-mmai-token': mmaiToken() },
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': SUPABASE_ANON_KEY,
+      'x-mmai-token': mmaiToken()
+    },
     body: JSON.stringify(payload)
   });
   return r;
