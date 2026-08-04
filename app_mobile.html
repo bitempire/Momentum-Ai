@@ -12198,6 +12198,20 @@ var SOON_SCREENS = {
   "sub-ai-analyst": {
     title: "AI Chart Analyst",
     body: "Capture any chart, pick the technique you trade with, and let the AI read it for you. Then ask it questions about what it found."
+  },
+  // 3 Aug 2026. Both of these screens hold hardcoded sample content: sub-news
+  // has an invented economic calendar and sub-newsfeed has invented headlines
+  // with invented timestamps. This sheet is the only place that is disclosed,
+  // so the wording says sample outright rather than implying the data is live.
+  // The calendar is planned to come from the MT5 terminal through the bridge,
+  // which is licensed data already paid for, rather than from scraping.
+  "sub-news": {
+    title: "Economic Calendar",
+    body: "High impact releases, forecasts and previous readings, so you know what is coming before you take a trade. What you can see now is sample content, not live data."
+  },
+  "sub-newsfeed": {
+    title: "Market News",
+    body: "Headlines that actually move gold, oil and the dollar, in one feed. What you can see now is sample content, not live data."
   }
 };
 var _soonFor = null;
