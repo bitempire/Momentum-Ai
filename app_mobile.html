@@ -1432,6 +1432,13 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
   from { background-position: 0% 50%; }
   to { background-position: 200% 50%; }
 }
+.mmnews-dot {
+  animation: mmNewsDot 1.6s ease-in-out infinite;
+}
+@keyframes mmNewsDot {
+  0%, 100% { opacity: .35; transform: scale(1); }
+  50%      { opacity: 1;   transform: scale(1.5); }
+}
 .mmnews-pulse {
   animation: mmNewsPulse 1.4s ease-in-out infinite;
 }
@@ -16655,12 +16662,18 @@ function mmNewsEsc(s){
     .replace(/"/g,'&quot;');
 }
 
+// Every impact level gets a tint, but not at equal strength. Green at the same
+// weight as red reads as a success state, and a routine data release is not good
+// news, so low is deliberately the faintest of the three.
 function mmNewsImpact(n){
   var v = Number(n);
-  if(v >= 3) return { label: 'HIGH',   col: '#FF1E3C', bd: 'rgba(255,30,60,.45)' };
-  if(v === 2) return { label: 'MEDIUM', col: '#e0a12a', bd: 'rgba(224,161,42,.40)' };
-  if(v === 1) return { label: 'LOW',    col: '#00c87a', bd: 'rgba(0,200,122,.35)' };
-  return { label: 'NONE', col: '#7c8494', bd: 'rgba(255,255,255,.14)' };
+  if(v >= 3) return { label:'HIGH', col:'#FF1E3C', bd:'rgba(255,30,60,.28)',
+    tint:'linear-gradient(115deg,rgba(255,30,60,.13),transparent 65%)' };
+  if(v === 2) return { label:'MEDIUM', col:'#e0a12a', bd:'rgba(224,161,42,.22)',
+    tint:'linear-gradient(115deg,rgba(224,161,42,.09),transparent 65%)' };
+  if(v === 1) return { label:'LOW', col:'#00c87a', bd:'rgba(0,200,122,.22)',
+    tint:'linear-gradient(115deg,rgba(0,200,122,.08),transparent 65%)' };
+  return { label:'NONE', col:'#7c8494', bd:'rgba(255,255,255,.08)', tint:'none' };
 }
 
 // The unit is a SUFFIX supplied by the bridge (K, M, B, T, %). It is a label,
@@ -16694,6 +16707,15 @@ function mmNewsCountdown(mins){
   if(mins < 60) return 'in ' + mins + ' min';
   if(mins < 24*60) return 'in ' + Math.floor(mins/60) + 'h';
   return '';
+}
+
+// Inside five minutes the countdown ticks by the second, which is the only
+// place in this screen worth a one-second timer.
+function mmNewsClock(d){
+  var s = Math.max(0, Math.floor((d.getTime() - Date.now()) / 1000));
+  var m = Math.floor(s / 60);
+  var r = s % 60;
+  return (m < 10 ? '0' : '') + m + ':' + (r < 10 ? '0' : '') + r;
 }
 
 function mmNewsTab(t){
@@ -16760,6 +16782,8 @@ function mmNewsRender(){
 
   var html = '';
   var lastDay = '';
+  var nowDrawn = false;
+  MMNEWS.soon = false;
   for(var i = 0; i < rows.length; i++){
     var x = rows[i];
     var d = new Date(x.event_time);
@@ -16775,25 +16799,47 @@ function mmNewsRender(){
     var soon = (mins >= 0 && mins <= 5);
     var cd = mmNewsCountdown(mins);
 
-    var border = soon ? 'rgba(255,30,60,.30)' : 'rgba(255,255,255,.07)';
-    var bg = soon
-      ? 'background-image:linear-gradient(100deg,rgba(255,30,60,.16),rgba(196,0,36,.03) 70%);'
-      : 'background:#0e111a;';
+    var past = (mins < 0);
+    if(soon) MMNEWS.soon = true;
+
+    // The NOW marker is drawn once, at the boundary between what has gone and
+    // what is coming. It is the only element on the screen that moves down the
+    // list on its own as the day passes.
+    if(!past && !nowDrawn){
+      nowDrawn = true;
+      html += '<div style="display:flex;align-items:center;gap:8px;padding:8px 2px 10px;">'
+           +    '<span class="mmnews-dot" style="width:6px;height:6px;border-radius:50%;background:var(--red);"></span>'
+           +    '<span style="color:var(--red);font-size:9px;letter-spacing:.1em;">NOW ' + mmNewsTimeStr(new Date()) + '</span>'
+           +    '<span style="flex:1;height:1px;background-image:linear-gradient(90deg,rgba(255,30,60,.45),transparent);"></span>'
+           + '</div>';
+    }
+
+    var border = soon ? 'rgba(255,30,60,.30)' : imp.bd;
+    var actualShown = mmNewsVal(x.actual, x.unit);
+    var right = soon ? mmNewsClock(d) : cd;
 
     html += '<div class="' + (soon ? 'mmnews-pulse' : '') + '" style="border:1px solid ' + border
-         + ';border-radius:10px;padding:10px 12px;margin-bottom:7px;' + bg + '">'
+         + ';border-left:3px solid ' + imp.col
+         + ';border-radius:10px;padding:10px 12px;margin-bottom:7px;background:#0e111a;background-image:'
+         + imp.tint + ';' + (past ? 'opacity:.8;' : '') + '">'
          +   '<div style="display:flex;align-items:center;gap:8px;">'
          +     '<div style="flex:1;min-width:0;color:var(--text);font-size:12px;font-weight:600;'
          +          'white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + mmNewsEsc(x.name) + '</div>'
-         +     '<span style="flex:none;color:' + imp.col + ';font-size:9px;border:1px solid ' + imp.bd
-         +          ';border-radius:5px;padding:1px 6px;">' + imp.label + '</span>'
+         +     '<span style="flex:none;color:' + (imp.label === 'HIGH' ? '#fff' : imp.col)
+         +          ';font-size:9px;border:1px solid ' + imp.bd + ';border-radius:5px;padding:1px 6px;'
+         +          (imp.label === 'HIGH' ? 'background:var(--red);' : '') + '">' + imp.label + '</span>'
          +   '</div>'
-         +   '<div style="color:' + (soon ? '#ff6b80' : '#7c8494') + ';font-size:10px;margin-top:3px;">'
-         +     mmNewsEsc(x.currency || '') + ' &middot; ' + mmNewsTimeStr(d)
-         +     (cd ? ' &middot; ' + cd : '')
+         +   '<div style="display:flex;align-items:center;margin-top:4px;">'
+         +     '<span style="color:' + imp.col + ';font-size:9px;border-radius:4px;padding:1px 5px;'
+         +          'background:rgba(255,255,255,.06);">' + mmNewsEsc(x.currency || '--') + '</span>'
+         +     '<span style="color:#9aa0b4;font-size:10px;margin-left:6px;">' + mmNewsTimeStr(d) + '</span>'
+         +     '<span style="flex:1;"></span>'
+         +     (right ? '<span style="color:' + (soon ? 'var(--red)' : '#7c8494')
+                      + ';font-size:10px;' + (soon ? 'font-family:ui-monospace,monospace;' : '')
+                      + '">' + right + '</span>' : '')
          +   '</div>'
          +   '<div style="display:flex;gap:6px;margin-top:8px;">'
-         +     mmNewsBox('ACTUAL',   mmNewsVal(x.actual,   x.unit), true)
+         +     mmNewsBox('ACTUAL',   actualShown, actualShown !== '--')
          +     mmNewsBox('FORECAST', mmNewsVal(x.forecast, x.unit), false)
          +     mmNewsBox('PREVIOUS', mmNewsVal(x.previous, x.unit), false)
          +   '</div>'
@@ -16803,9 +16849,10 @@ function mmNewsRender(){
 }
 
 function mmNewsBox(label, value, strong){
-  var bg = strong ? 'rgba(255,255,255,.05)' : 'rgba(255,255,255,.03)';
-  var col = (value === '--') ? '#5a6070' : (strong ? 'var(--text)' : '#9aa0b4');
-  return '<div style="flex:1;text-align:center;padding:5px;border-radius:6px;background:' + bg + ';">'
+  var bg = strong ? 'rgba(255,255,255,.09)' : 'rgba(255,255,255,.03)';
+  var bd = strong ? 'border:1px solid rgba(255,255,255,.10);' : '';
+  var col = (value === '--') ? '#5a6070' : (strong ? '#ffffff' : '#9aa0b4');
+  return '<div style="flex:1;text-align:center;padding:5px;border-radius:6px;' + bd + 'background:' + bg + ';">'
        +   '<div style="color:#7c8494;font-size:8px;letter-spacing:.05em;">' + label + '</div>'
        +   '<div style="color:' + col + ';font-size:11px;margin-top:1px;">' + mmNewsEsc(value) + '</div>'
        + '</div>';
@@ -16815,12 +16862,16 @@ function mmNewsBox(label, value, strong){
 // comes inside five minutes. Only while the screen is actually on.
 function mmNewsStartTimer(){
   if(MMNEWS.timer) return;
+  var tick = 0;
   MMNEWS.timer = setInterval(function(){
     var el = document.getElementById('sub-news');
     if(!el || !el.classList.contains('active')) return;
+    tick++;
     if(Date.now() - MMNEWS.fetched > 300000) { mmNewsLoad(true); return; }
-    mmNewsRender();
-  }, 30000);
+    // One second only while a countdown is actually running, otherwise every
+    // thirty. Re-rendering this list every second all day would be waste.
+    if(MMNEWS.soon || (tick % 30) === 0) mmNewsRender();
+  }, 1000);
 }
 </script>
 
