@@ -13831,9 +13831,17 @@ function confirmStopAutoTrade() {
     popup.remove();
     try {
       if(!activeAccount) return;
-      await db.from('mt5_accounts').update({auto_trade: false}).eq('id', activeAccount.id);
+      // The db wrapper returns errors in the result rather than throwing, so an
+      // unchecked update looks identical whether it worked or was refused.
+      var _r = await db.from('mt5_accounts').update({auto_trade: false}).eq('id', activeAccount.id);
+      if(_r && _r.error){ alert('Could not stop auto trade: '+_r.error.message); return; }
       activeAccount.auto_trade = false;
       updateAutoTradeStatusInPopup();
+      // Bring the Smart Tool and Manual tabs back straight away. atAutoLock
+      // hid them when auto was on, and nothing else calls it, so without this
+      // the customer has to reload the app before they can place by hand.
+      if(typeof atAutoLock === 'function') atAutoLock();
+      if(typeof atSmartSync === 'function') atSmartSync();
     } catch(e) { alert('Error: '+(e.message||'Could not stop auto trade')); }
   };
 }
