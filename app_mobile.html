@@ -13778,9 +13778,14 @@ function checkAutoWarnings() {
   var multiWarn = document.getElementById('at-multi-warning');
   var mixWarn = document.getElementById('at-mix-warning');
   if(multiWarn) multiWarn.style.display = checks.length > 1 ? 'block' : 'none';
-  // Check if smart tool trades exist on active account
-  var hasSmartTrades = window._eaSettings && (window._eaSettings.trailing || window._eaSettings.breakeven || window._eaSettings.partial_close);
-  if(mixWarn) mixWarn.style.display = (checks.length > 0 && hasSmartTrades) ? 'block' : 'none';
+  // 3 Aug 2026: the mixing warning is retired. It fired whenever an analyst was
+  // followed AND the account had trailing, breakeven or partial close set,
+  // which is true of every real template, so it showed almost always. Mixing is
+  // no longer possible either: with Enable Auto Trade on, atAutoLock() greys
+  // out the Smart Tool and Manual tabs in the trade popup, so a customer
+  // cannot place by hand alongside automation. Kept hidden rather than deleted
+  // so the element and its translation keys stay intact.
+  if(mixWarn) mixWarn.style.display = 'none';
 }
 function toggleAutoTradeEnable(el) {
   el.classList.toggle('on');
