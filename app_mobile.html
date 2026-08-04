@@ -4653,6 +4653,43 @@ const db = {
     } catch(e) { return {data:null,error:{message:e.message||'Network error'}}; }
   }
 };
+// ============================================================
+// SQ - THE HAND-ROLLED QUERY BUILDER BEHIND db.from()
+//
+// READ THIS BEFORE WRITING A QUERY. This is NOT the Supabase client. It looks
+// like it, it chains like it, and it returns {data,error} like it, but it
+// supports only what is listed below. Anything else is undefined and throws
+// TypeError at runtime, which no parser will catch. This has caused two live
+// failures already.
+//
+// WHAT EXISTS
+//   .select(cols)        default '*'
+//   .eq(col, val)        the ONLY comparison. Repeatable, they AND together
+//   .limit(n)
+//   .order(col, {ascending:false})
+//   .insert(row|rows)
+//   .update(obj)
+//   .delete()
+//   .single()            SEE THE WARNING BELOW
+//   .minimal()           insert without the read-back, needed while logged out
+//   await               .then makes the builder thenable, so await runs it
+//   db.rpc(fn, args)     separate from db.from()
+//
+// WHAT DOES NOT EXIST, and every one of these is a silent runtime failure
+//   .in()  .gt()  .gte()  .lt()  .lte()  .neq()  .or()  .not()  .is()
+//   .ilike()  .like()  .range()  .filter()  .maybeSingle()  .upsert()
+//
+// THE TRAP INSIDE .single(). It is NOT the Supabase .single(). All it does is
+// set limit 1. IT STILL RETURNS AN ARRAY. Every caller must unwrap it:
+//     var row = r.data ? (Array.isArray(r.data) ? r.data[0] : r.data) : null;
+// Treating r.data as an object gives undefined for every field, with no error.
+//
+// FOR SEVERAL IDS, since there is no .in(): query per id with .eq() inside
+// Promise.all and merge in JavaScript.
+//
+// DO NOT EXTEND THIS FOR ONE FEATURE. It is shared by roughly 141 call sites
+// and a change here can break any of them. Work around it at the call site.
+// ============================================================
 function SQ(table) {
   this.table = table; this._filters = []; this._select = '*';
   this._limit = null; this._order = null; this._orderAsc = true;
@@ -4925,7 +4962,12 @@ function enterApp(user) {
   loadLivePositions();
   loadPastSignals();
   loadEASettings();
-  if(!window._aftPricePoll) window._aftPricePoll = setInterval(function(){ refreshActiveBalance(); loadLivePositions(); checkDataFreshness(); }, 4000);
+  // P14 (3 Aug 2026): mmHomeSync used to run on its OWN 4 second interval,
+  // so every customer with Home open made two timers' worth of queries on the
+  // same cadence. One timer now does both. mmHomeSync still returns early
+  // when the tab is hidden or Home is off screen, so the cost is unchanged
+  // when nobody is looking at it.
+  if(!window._aftPricePoll) window._aftPricePoll = setInterval(function(){ refreshActiveBalance(); loadLivePositions(); checkDataFreshness(); mmHomeSync(); }, 4000);
   if(!window._pastSigPoll)  window._pastSigPoll  = setInterval(function(){ loadPastSignals(); }, 30000);
   if(!window._pricePoll) window._pricePoll = setInterval(function(){ loadAFTPrices(); }, 2000);
   // Baseline only, so the banner does not flash before the first poll lands.
@@ -10136,7 +10178,10 @@ async function mmHomeSync(){
 }
 function mmHomeRefresh(){
   mmHomeBalance();
-  if(!window._mmHomePoll) window._mmHomePoll = setInterval(mmHomeSync, 4000);
+  // No timer here any more. The 4 second poll started at login calls
+  // mmHomeSync itself. This one immediate call is so returning to Home
+  // updates without waiting for the next tick.
+  mmHomeSync();
 }
 
 // ── SPARKLINES ──
