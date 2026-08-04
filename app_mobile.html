@@ -16526,8 +16526,12 @@ function atAutoLock(){
   ['smart','manual'].forEach(function(t){
     var btn = document.getElementById('trade-tab-' + t);
     if(!btn) return;
-    btn.style.opacity = locked ? '0.35' : '1';
-    btn.style.pointerEvents = locked ? 'none' : 'auto';
+    // Hidden outright rather than greyed. A greyed button still reads as
+    // something you ought to be able to press, and there is nothing useful a
+    // customer can do with it while automation is running.
+    btn.style.display = locked ? 'none' : '';
+    btn.style.opacity = '1';
+    btn.style.pointerEvents = 'auto';
   });
   if(locked){
     switchTradeTab('auto');
