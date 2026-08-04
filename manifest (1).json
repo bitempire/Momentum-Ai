@@ -1,0 +1,11 @@
+{
+  "name": "Momentum AI",
+  "short_name": "Momentum AI",
+  "description": "MT5 algorithmic trading signals and execution",
+  "start_url": "/app_mobile.html",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#07070a",
+  "theme_color": "#07070a"
+}
