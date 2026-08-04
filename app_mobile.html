@@ -16446,6 +16446,15 @@ async function atSmartSync(){
     metaEl.textContent = 'Auto trades will not be placed';
   }
 
+  function atUnknown(){
+    card.style.borderColor = 'rgba(255,255,255,.10)';
+    card.style.backgroundImage = 'none';
+    if(iconEl) iconEl.className = 'ti ti-help-circle';
+    nameEl.textContent = 'Template not readable';
+    nameEl.style.color = 'var(--text)';
+    metaEl.textContent = 'Could not load the template details';
+  }
+
   if(!activeAccount || !db){ atWarn(); return; }
 
   try {
@@ -16454,8 +16463,13 @@ async function atSmartSync(){
     var tplId = accRow ? accRow.smart_template_id : null;
     if(!tplId){ atWarn(); return; }
 
-    var r = await db.from('smart_templates').select('name,risk_pct').eq('id', tplId).single();
+    // risk_pct IS NOT A COLUMN. It lives inside the settings JSON as
+    // settings.risk.risk_pct, which is how stnTplTab reads it. Selecting the
+    // column returns 400 and the old catch then reported "No template
+    // selected" on an account that HAD one. Read settings, not columns.
+    var r = await db.from('smart_templates').select('name,settings').eq('id', tplId).single();
     var tpl = r && r.data ? (Array.isArray(r.data) ? r.data[0] : r.data) : null;
+    if(r && r.error){ atUnknown(); return; }
     if(!tpl){ atWarn(); return; }
 
     card.style.borderColor = 'rgba(255,30,60,.30)';
@@ -16466,11 +16480,16 @@ async function atSmartSync(){
 
     var mult = 1;
     try { if(typeof stnLotMult === 'function') mult = stnLotMult(); } catch(e){}
-    var risk = Number(tpl.risk_pct);
-    var riskTxt = Number.isFinite(risk) ? risk.toFixed(1) : String(tpl.risk_pct);
-    metaEl.textContent = 'Risk ' + riskTxt + '% \u00B7 x' + mult;
+    var st = tpl.settings || {};
+    var risk = Number(st.risk && st.risk.risk_pct);
+    var layers = (st.dca && st.dca.layers) ? st.dca.layers.length : 1;
+    var bits = [];
+    if(Number.isFinite(risk)) bits.push('Risk ' + risk + '%');
+    bits.push(layers + ' layers');
+    bits.push('x' + mult);
+    metaEl.textContent = bits.join(' \u00B7 ');
   } catch(e){
-    atWarn();
+    atUnknown();
   }
 }
 
