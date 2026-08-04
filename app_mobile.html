@@ -9396,6 +9396,9 @@ function goBackSubScreen(id) {
     var el = document.getElementById(parent);
     if(el) el.classList.add('active');
   }
+  // A template chosen on the Smart Tool screen changes what the Auto Trade
+  // card should say, and coming back does not re-run showSubScreen.
+  if(parent === 'sub-auto-trade' && typeof atSmartSync === 'function') atSmartSync();
   // if parent is 'more' or undefined/null, just hide — More tab already visible
 }
 function showSubScreen(id) {
@@ -9593,7 +9596,7 @@ function openTradePopup(sigId) {
   if(sm) sm.textContent = fmtPrice(currentSignal.pair,currentSignal.sl);
   if(tm) tm.textContent = fmtPrice(currentSignal.pair,currentSignal.tp1);
   document.getElementById('trade-success-note').style.display = 'none';
-  switchTradeTab('smart'); updateSmartToolSummary();
+  atAutoLock();
   document.getElementById('trade-popup').classList.add('active');
 }
 function closeTradePopup() { document.getElementById('trade-popup').classList.remove('active'); }
@@ -16398,8 +16401,15 @@ if(mmPushSupported()){
 
 function atOpenSmartTool(){
   try {
-    if(typeof showSubScreenFrom === 'function'){ showSubScreenFrom('sub-smart-tool-new', 'sub-auto-trade'); return; }
-    if(typeof showSubScreen === 'function') showSubScreen('sub-smart-tool-new');
+    if(typeof showSubScreenFrom === 'function'){ showSubScreenFrom('sub-smart-tool-new', 'sub-auto-trade'); }
+    else if(typeof showSubScreen === 'function'){ showSubScreen('sub-smart-tool-new'); }
+    // The editor is not the picker. stnOpenTemplates is the sheet whose
+    // selection actually writes smart_template_id onto the account, which is
+    // the only thing an auto trade reads. Opening the screen first guarantees
+    // loadSmartToolNew has populated the list before the sheet reads it.
+    setTimeout(function(){
+      try { if(typeof stnOpenTemplates === 'function') stnOpenTemplates(); } catch(e){}
+    }, 450);
   } catch(e){}
 }
 
@@ -16461,6 +16471,27 @@ async function atSmartSync(){
     metaEl.textContent = 'Risk ' + riskTxt + '% \u00B7 x' + mult;
   } catch(e){
     atWarn();
+  }
+}
+
+// When Enable Auto Trade is on, the customer must not also place by hand.
+// Two paths trading the same account produce conflicting positions, which is
+// what the old mixing warning only warned about. Smart Tool and Manual are
+// greyed and made untappable, and the popup opens on Auto, whose panel already
+// explains that automation is running.
+function atAutoLock(){
+  var locked = !!(activeAccount && activeAccount.auto_trade);
+  ['smart','manual'].forEach(function(t){
+    var btn = document.getElementById('trade-tab-' + t);
+    if(!btn) return;
+    btn.style.opacity = locked ? '0.35' : '1';
+    btn.style.pointerEvents = locked ? 'none' : 'auto';
+  });
+  if(locked){
+    switchTradeTab('auto');
+  } else {
+    switchTradeTab('smart');
+    if(typeof updateSmartToolSummary === 'function') updateSmartToolSummary();
   }
 }
 </script>
