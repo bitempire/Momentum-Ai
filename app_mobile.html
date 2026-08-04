@@ -1432,6 +1432,13 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
   from { background-position: 0% 50%; }
   to { background-position: 200% 50%; }
 }
+.mmnews-pulse {
+  animation: mmNewsPulse 1.4s ease-in-out infinite;
+}
+@keyframes mmNewsPulse {
+  0%, 100% { border-color: rgba(255,30,60,.28); box-shadow: 0 0 0 rgba(255,30,60,0); }
+  50%      { border-color: rgba(255,30,60,.95); box-shadow: 0 0 13px rgba(255,30,60,.42); }
+}
 .error-msg {
   display: none;
   padding: 10px 12px;
@@ -2657,41 +2664,16 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <div class="sub-title" data-i18n="scr.news">NEWS CALENDAR</div>
     </div>
     <div class="sub-content">
-      <div class="section-card">
-        <div class="section-title" style="font-size:13px;margin-bottom:12px;"><span class="tw" data-i18n="w.today">Today's </span><span data-i18n="w.events">Events</span></div>
-        <div class="news-item">
-          <div class="news-impact high"></div>
-          <div class="news-info">
-            <div class="news-event" data-i18n="news.usNfp">US Non-Farm Payrolls</div>
-            <div class="news-meta" data-i18n="news.usdHigh">USD · High Impact</div>
-          </div>
-          <div class="news-time">15:30</div>
-        </div>
-        <div class="news-item">
-          <div class="news-impact medium"></div>
-          <div class="news-info">
-            <div class="news-event" data-i18n="news.eurCpi">EUR CPI Flash Estimate</div>
-            <div class="news-meta" data-i18n="news.eurMed">EUR · Medium Impact</div>
-          </div>
-          <div class="news-time">11:00</div>
-        </div>
-        <div class="news-item">
-          <div class="news-impact high"></div>
-          <div class="news-info">
-            <div class="news-event" data-i18n="news.fedRate">Fed Interest Rate Decision</div>
-            <div class="news-meta" data-i18n="news.usdHigh">USD · High Impact</div>
-          </div>
-          <div class="news-time">20:00</div>
-        </div>
-        <div class="news-item">
-          <div class="news-impact low"></div>
-          <div class="news-info">
-            <div class="news-event" data-i18n="news.ukPmi">UK Manufacturing PMI</div>
-            <div class="news-meta" data-i18n="news.gbpLow">GBP · Low Impact</div>
-          </div>
-          <div class="news-time">09:30</div>
-        </div>
+      <div style="display:flex;gap:6px;margin-bottom:10px;">
+        <button id="news-tab-today" onclick="mmNewsTab('today')" style="flex:1;text-align:center;font-size:11px;padding:8px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text3);cursor:pointer;">Today</button>
+        <button id="news-tab-tomorrow" onclick="mmNewsTab('tomorrow')" style="flex:1;text-align:center;font-size:11px;padding:8px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text3);cursor:pointer;">Tomorrow</button>
+        <button id="news-tab-week" onclick="mmNewsTab('week')" style="flex:1;text-align:center;font-size:11px;padding:8px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text3);cursor:pointer;">This week</button>
       </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:0 2px 4px;">
+        <span style="color:var(--text3);font-size:10px;letter-spacing:.06em;">HIGH IMPACT ONLY</span>
+        <div class="toggle" id="news-high-toggle" onclick="mmNewsToggleHigh(this)"></div>
+      </div>
+      <div id="news-list"></div>
     </div>
   </div>
 
@@ -9452,6 +9434,7 @@ function showSubScreen(id) {
   if(id==='sub-profile') { loadSavedProfilePhoto(); loadProfileData(); if(typeof mmPushSync==='function') mmPushSync(); }
   if(id==='sub-support') { loadMyTickets(); }
   if(id==='sub-academy') { loadAcademy(); }
+  if(id==='sub-news') { mmNewsLoad(false); mmNewsStartTimer(); }
   if(id==='sub-profile') { loadProfileMT5(); }
   if(id==='sub-trade-settings'||id==='sub-ea') { setAutoApproveUI(tradeConsentAll()); }
   if(id==='sub-auto-trade') { loadAutoTradeSettings(); }
@@ -16646,6 +16629,194 @@ async function atViewTemplate(){
   setTimeout(function(){
     try { if(typeof stnUseTpl === 'function') stnUseTpl(id); } catch(e){}
   }, 450);
+}
+
+// ============================================================
+// ECONOMIC CALENDAR SCREEN  (P17, 3 August 2026)
+//
+// Replaces four hardcoded invented events with real MetaQuotes calendar data,
+// read from the terminal by MMAI_Bridge v1.23 and stored in economic_calendar.
+//
+// IT GOES THROUGH AN RPC, NOT db.from(). The SQ wrapper has no .gte() or
+// .lte() (see the SQ comment block), so it cannot express a date range at all.
+// mmai_calendar() does the window server-side and is granted to anon.
+//
+// TIMES ARE STORED IN UTC AND RENDERED LOCAL. Never print event_time raw.
+//
+// THE ACTUAL IS NOT COLOURED against the forecast on purpose. Whether a beat is
+// good depends on the instrument and the direction being traded, and the app
+// has no business implying that call.
+// ============================================================
+var MMNEWS = { rows: [], tab: 'today', highOnly: false, fetched: 0, timer: null };
+
+function mmNewsEsc(s){
+  return String(s == null ? '' : s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+}
+
+function mmNewsImpact(n){
+  var v = Number(n);
+  if(v >= 3) return { label: 'HIGH',   col: '#FF1E3C', bd: 'rgba(255,30,60,.45)' };
+  if(v === 2) return { label: 'MEDIUM', col: '#e0a12a', bd: 'rgba(224,161,42,.40)' };
+  if(v === 1) return { label: 'LOW',    col: '#00c87a', bd: 'rgba(0,200,122,.35)' };
+  return { label: 'NONE', col: '#7c8494', bd: 'rgba(255,255,255,.14)' };
+}
+
+function mmNewsVal(v){
+  if(v === null || v === undefined || v === '') return '--';
+  var n = Number(v);
+  if(!isFinite(n)) return String(v);
+  return String(n);
+}
+
+function mmNewsTimeStr(d){
+  try { return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }); }
+  catch(e){ return ''; }
+}
+
+function mmNewsDayKey(d){ return d.getFullYear()+'-'+d.getMonth()+'-'+d.getDate(); }
+
+function mmNewsDayLabel(d){
+  try { return d.toLocaleDateString([], { weekday:'long', day:'numeric', month:'long' }).toUpperCase(); }
+  catch(e){ return ''; }
+}
+
+// Minutes until the event. Negative once it has passed.
+function mmNewsMins(d){ return Math.round((d.getTime() - Date.now()) / 60000); }
+
+function mmNewsCountdown(mins){
+  if(mins < 0) return '';
+  if(mins < 60) return 'in ' + mins + ' min';
+  if(mins < 24*60) return 'in ' + Math.floor(mins/60) + 'h';
+  return '';
+}
+
+function mmNewsTab(t){
+  MMNEWS.tab = t;
+  mmNewsRender();
+}
+
+function mmNewsToggleHigh(el){
+  MMNEWS.highOnly = !MMNEWS.highOnly;
+  if(el) el.classList.toggle('on', MMNEWS.highOnly);
+  mmNewsRender();
+}
+
+async function mmNewsLoad(force){
+  var list = document.getElementById('news-list');
+  if(!list) return;
+  var age = Date.now() - MMNEWS.fetched;
+  if(!force && MMNEWS.rows.length && age < 300000){ mmNewsRender(); return; }
+
+  list.innerHTML = '<div style="color:#7c8494;font-size:12px;padding:18px;text-align:center;">Loading calendar...</div>';
+  try {
+    var r = await db.rpc('mmai_calendar', {});
+    if(r && r.error) throw new Error(r.error.message);
+    MMNEWS.rows = (r && r.data) ? r.data : [];
+    MMNEWS.fetched = Date.now();
+  } catch(e){
+    list.innerHTML = '<div style="color:#7c8494;font-size:12px;padding:18px;text-align:center;">Could not load the calendar. Pull back and try again.</div>';
+    return;
+  }
+  mmNewsRender();
+}
+
+function mmNewsRender(){
+  var list = document.getElementById('news-list');
+  if(!list) return;
+
+  ['today','tomorrow','week'].forEach(function(t){
+    var b = document.getElementById('news-tab-' + t);
+    if(!b) return;
+    var on = (MMNEWS.tab === t);
+    b.style.backgroundImage = on ? 'linear-gradient(100deg,#8f0019,#FF1E3C)' : 'none';
+    b.style.color = on ? '#fff' : 'var(--text3)';
+    b.style.borderColor = on ? 'transparent' : 'var(--border)';
+  });
+
+  var now = new Date();
+  var today = mmNewsDayKey(now);
+  var tmr = new Date(now.getTime() + 86400000);
+  var tomorrow = mmNewsDayKey(tmr);
+
+  var rows = MMNEWS.rows.filter(function(x){
+    var d = new Date(x.event_time);
+    if(MMNEWS.highOnly && Number(x.importance) < 3) return false;
+    var k = mmNewsDayKey(d);
+    if(MMNEWS.tab === 'today') return k === today;
+    if(MMNEWS.tab === 'tomorrow') return k === tomorrow;
+    return d.getTime() >= now.getTime() - 3600000;
+  });
+
+  if(!rows.length){
+    list.innerHTML = '<div style="color:#7c8494;font-size:12px;padding:24px;text-align:center;">No events for this selection.</div>';
+    return;
+  }
+
+  var html = '';
+  var lastDay = '';
+  for(var i = 0; i < rows.length; i++){
+    var x = rows[i];
+    var d = new Date(x.event_time);
+    var key = mmNewsDayKey(d);
+    if(key !== lastDay){
+      html += '<div style="color:#7c8494;font-size:9px;letter-spacing:.07em;padding:12px 2px 6px;">'
+            + mmNewsEsc(mmNewsDayLabel(d)) + '</div>';
+      lastDay = key;
+    }
+
+    var imp = mmNewsImpact(x.importance);
+    var mins = mmNewsMins(d);
+    var soon = (mins >= 0 && mins <= 5);
+    var cd = mmNewsCountdown(mins);
+
+    var border = soon ? 'rgba(255,30,60,.30)' : 'rgba(255,255,255,.07)';
+    var bg = soon
+      ? 'background-image:linear-gradient(100deg,rgba(255,30,60,.16),rgba(196,0,36,.03) 70%);'
+      : 'background:#0e111a;';
+
+    html += '<div class="' + (soon ? 'mmnews-pulse' : '') + '" style="border:1px solid ' + border
+         + ';border-radius:10px;padding:10px 12px;margin-bottom:7px;' + bg + '">'
+         +   '<div style="display:flex;align-items:center;gap:8px;">'
+         +     '<div style="flex:1;min-width:0;color:var(--text);font-size:12px;font-weight:600;'
+         +          'white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + mmNewsEsc(x.name) + '</div>'
+         +     '<span style="flex:none;color:' + imp.col + ';font-size:9px;border:1px solid ' + imp.bd
+         +          ';border-radius:5px;padding:1px 6px;">' + imp.label + '</span>'
+         +   '</div>'
+         +   '<div style="color:' + (soon ? '#ff6b80' : '#7c8494') + ';font-size:10px;margin-top:3px;">'
+         +     mmNewsEsc(x.currency || '') + ' &middot; ' + mmNewsTimeStr(d)
+         +     (cd ? ' &middot; ' + cd : '')
+         +   '</div>'
+         +   '<div style="display:flex;gap:6px;margin-top:8px;">'
+         +     mmNewsBox('ACTUAL',   mmNewsVal(x.actual),   true)
+         +     mmNewsBox('FORECAST', mmNewsVal(x.forecast), false)
+         +     mmNewsBox('PREVIOUS', mmNewsVal(x.previous), false)
+         +   '</div>'
+         + '</div>';
+  }
+  list.innerHTML = html;
+}
+
+function mmNewsBox(label, value, strong){
+  var bg = strong ? 'rgba(255,255,255,.05)' : 'rgba(255,255,255,.03)';
+  var col = (value === '--') ? '#5a6070' : (strong ? 'var(--text)' : '#9aa0b4');
+  return '<div style="flex:1;text-align:center;padding:5px;border-radius:6px;background:' + bg + ';">'
+       +   '<div style="color:#7c8494;font-size:8px;letter-spacing:.05em;">' + label + '</div>'
+       +   '<div style="color:' + col + ';font-size:11px;margin-top:1px;">' + mmNewsEsc(value) + '</div>'
+       + '</div>';
+}
+
+// Re-render every 30s so countdowns move and a card starts pulsing when it
+// comes inside five minutes. Only while the screen is actually on.
+function mmNewsStartTimer(){
+  if(MMNEWS.timer) return;
+  MMNEWS.timer = setInterval(function(){
+    var el = document.getElementById('sub-news');
+    if(!el || !el.classList.contains('active')) return;
+    if(Date.now() - MMNEWS.fetched > 300000) { mmNewsLoad(true); return; }
+    mmNewsRender();
+  }, 30000);
 }
 </script>
 
