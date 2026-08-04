@@ -2623,7 +2623,15 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
             <div style="font-size:13px;font-weight:700;color:var(--text);" data-i18n="at.useSmart">Use Smart Tool Settings</div>
             <div style="font-size:11px;color:var(--text3);margin-top:2px;" data-i18n="auto.applyRisk">Apply your AI risk settings to all auto trades.</div>
           </div>
-          <div class="toggle on" id="at-use-smart"></div>
+          <div class="toggle on" id="at-use-smart" onclick="atSmartToggle(this)"></div>
+        </div>
+        <div id="at-tpl-card" onclick="atOpenSmartTool()" style="display:flex;align-items:center;gap:10px;margin-top:12px;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,30,60,.30);background-image:linear-gradient(100deg,rgba(255,30,60,.22),rgba(196,0,36,.05) 65%,rgba(255,30,60,.14));cursor:pointer;">
+          <i id="at-tpl-icon" class="ti ti-bolt" style="font-size:18px;color:var(--red);"></i>
+          <div style="flex:1;min-width:0;">
+            <div id="at-tpl-name" style="color:var(--text);font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Loading...</div>
+            <div id="at-tpl-meta" style="color:#9aa0b4;font-size:11px;margin-top:1px;"></div>
+          </div>
+          <i class="ti ti-chevron-right" style="font-size:16px;color:#9aa0b4;"></i>
         </div>
       </div>
       <!-- Entry Confirmation -->
@@ -3879,7 +3887,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         <div id="auto-trade-status-sub" style="font-size:11px;color:var(--text3);line-height:1.6;">Loading...</div>
       </div>
       <div style="display:flex;gap:8px;">
-        <button onclick="closeTradePopup();showSubScreen('sub-trade-settings')" style="flex:1;padding:13px;background:var(--grad);border:none;border-radius:12px;color:#fff;font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;" data-i18n="app.tradeSettings">TRADE SETTINGS</button>
+        <button onclick="closeTradePopup();showSubScreen('sub-auto-trade')" style="flex:1;padding:13px;background:var(--grad);border:none;border-radius:12px;color:#fff;font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;" data-i18n="app.tradeSettings">TRADE SETTINGS</button>
         <button onclick="confirmStopAutoTrade()" id="stop-auto-btn" style="flex:1;padding:13px;background:transparent;border:1px solid var(--red);border-radius:12px;color:var(--red);font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;">STOP AUTO</button>
       </div>
     </div>
@@ -13717,6 +13725,7 @@ async function loadAutoTradeSettings() {
     // Set use smart toggle
     var smEl = document.getElementById('at-use-smart');
     if(smEl){ if(d.auto_use_smart!==false) smEl.classList.add('on'); else smEl.classList.remove('on'); }
+    if(typeof atSmartSync==='function') atSmartSync();
     // Set entry confirm
     var ec = d.auto_entry_confirm || 'instant';
     var ecEl = document.getElementById('at-'+ec);
@@ -16368,6 +16377,91 @@ if(mmPushSupported()){
   window.addEventListener('load', function(){
     navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(function(){});
   });
+}
+
+// ============================================================
+// AUTO TRADE, SMART TOOL SUMMARY  (item P16, 3 August 2026)
+//
+// Three faults were fixed here:
+//  1. The TRADE SETTINGS button in the trade popup's Auto tab opened the
+//     Trade Settings MENU instead of the Auto Trade screen.
+//  2. #at-use-smart had NO onclick at all. It rendered on, was set from the
+//     database and was read on save, but nobody could ever tap it.
+//  3. The screen never said WHICH template an auto trade would use. The
+//     template lives on mt5_accounts.smart_template_id and is chosen in
+//     Smart Tools, so this is a read-only summary with a tap through, NOT a
+//     second picker. Two places setting one value would drift apart.
+//
+// An account with no template silently refuses every auto trade, which is
+// why the empty case is a red warning rather than a blank line.
+// ============================================================
+
+function atOpenSmartTool(){
+  try {
+    if(typeof showSubScreenFrom === 'function'){ showSubScreenFrom('sub-smart-tool-new', 'sub-auto-trade'); return; }
+    if(typeof showSubScreen === 'function') showSubScreen('sub-smart-tool-new');
+  } catch(e){}
+}
+
+function atSmartCardDim(){
+  var sm = document.getElementById('at-use-smart');
+  var card = document.getElementById('at-tpl-card');
+  if(!sm || !card) return;
+  var on = sm.classList.contains('on');
+  card.style.opacity = on ? '1' : '0.45';
+  card.style.pointerEvents = on ? 'auto' : 'none';
+}
+
+function atSmartToggle(el){
+  if(!el) return;
+  el.classList.toggle('on');
+  atSmartCardDim();
+}
+
+async function atSmartSync(){
+  var card = document.getElementById('at-tpl-card');
+  var nameEl = document.getElementById('at-tpl-name');
+  var metaEl = document.getElementById('at-tpl-meta');
+  var iconEl = document.getElementById('at-tpl-icon');
+  if(!card || !nameEl || !metaEl) return;
+
+  atSmartCardDim();
+
+  function atWarn(){
+    card.style.borderColor = 'rgba(255,30,60,.55)';
+    card.style.backgroundImage = 'linear-gradient(100deg,rgba(255,30,60,.30),rgba(196,0,36,.08) 65%,rgba(255,30,60,.20))';
+    if(iconEl) iconEl.className = 'ti ti-alert-triangle';
+    nameEl.textContent = 'No template selected';
+    nameEl.style.color = '#ff6b80';
+    metaEl.textContent = 'Auto trades will not be placed';
+  }
+
+  if(!activeAccount || !db){ atWarn(); return; }
+
+  try {
+    var acc = await db.from('mt5_accounts').select('smart_template_id').eq('id', activeAccount.id).single();
+    var accRow = acc && acc.data ? (Array.isArray(acc.data) ? acc.data[0] : acc.data) : null;
+    var tplId = accRow ? accRow.smart_template_id : null;
+    if(!tplId){ atWarn(); return; }
+
+    var r = await db.from('smart_templates').select('name,risk_pct').eq('id', tplId).single();
+    var tpl = r && r.data ? (Array.isArray(r.data) ? r.data[0] : r.data) : null;
+    if(!tpl){ atWarn(); return; }
+
+    card.style.borderColor = 'rgba(255,30,60,.30)';
+    card.style.backgroundImage = 'linear-gradient(100deg,rgba(255,30,60,.22),rgba(196,0,36,.05) 65%,rgba(255,30,60,.14))';
+    if(iconEl) iconEl.className = 'ti ti-bolt';
+    nameEl.textContent = tpl.name || 'Template';
+    nameEl.style.color = 'var(--text)';
+
+    var mult = 1;
+    try { if(typeof stnLotMult === 'function') mult = stnLotMult(); } catch(e){}
+    var risk = Number(tpl.risk_pct);
+    var riskTxt = Number.isFinite(risk) ? risk.toFixed(1) : String(tpl.risk_pct);
+    metaEl.textContent = 'Risk ' + riskTxt + '% \u00B7 x' + mult;
+  } catch(e){
+    atWarn();
+  }
 }
 </script>
 
