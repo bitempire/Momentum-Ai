@@ -1420,6 +1420,18 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
   font-weight: 600;
   margin-top: 10px;
 }
+.mm-cta-red {
+  border: 0;
+  color: #ffffff;
+  background-color: var(--red);
+  background-image: linear-gradient(90deg,#8f0019,#FF1E3C,#ff7285,#FF1E3C,#8f0019);
+  background-size: 200% 100%;
+  animation: mmCtaFlow 3.5s linear infinite;
+}
+@keyframes mmCtaFlow {
+  from { background-position: 0% 50%; }
+  to { background-position: 200% 50%; }
+}
 .error-msg {
   display: none;
   padding: 10px 12px;
@@ -1860,7 +1872,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         <div id="mob-dash-signals">
           <div class="empty-state"><i class="ti ti-broadcast"></i><span data-i18n="app.loadingSignals">Loading signals...</span></div>
         </div>
-        <button class="ghost-btn" style="margin-top:12px;" onclick="switchTab('signals')" data-i18n="dash.viewAll">View All Signals →</button>
+        <button class="ghost-btn mm-cta-red" style="margin-top:12px;" onclick="switchTab('signals')" data-i18n="dash.viewAll">View All Signals →</button>
       </div>
     </div>
 
