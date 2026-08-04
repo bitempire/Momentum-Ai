@@ -16663,11 +16663,15 @@ function mmNewsImpact(n){
   return { label: 'NONE', col: '#7c8494', bd: 'rgba(255,255,255,.14)' };
 }
 
-function mmNewsVal(v){
+// The unit is a SUFFIX supplied by the bridge (K, M, B, T, %). It is a label,
+// not a scale: the value already arrives at the magnitude the terminal shows,
+// so nothing is multiplied here. A missing unit prints the bare number rather
+// than guessing one.
+function mmNewsVal(v, unit){
   if(v === null || v === undefined || v === '') return '--';
   var n = Number(v);
   if(!isFinite(n)) return String(v);
-  return String(n);
+  return String(n) + (unit ? String(unit) : '');
 }
 
 function mmNewsTimeStr(d){
@@ -16789,9 +16793,9 @@ function mmNewsRender(){
          +     (cd ? ' &middot; ' + cd : '')
          +   '</div>'
          +   '<div style="display:flex;gap:6px;margin-top:8px;">'
-         +     mmNewsBox('ACTUAL',   mmNewsVal(x.actual),   true)
-         +     mmNewsBox('FORECAST', mmNewsVal(x.forecast), false)
-         +     mmNewsBox('PREVIOUS', mmNewsVal(x.previous), false)
+         +     mmNewsBox('ACTUAL',   mmNewsVal(x.actual,   x.unit), true)
+         +     mmNewsBox('FORECAST', mmNewsVal(x.forecast, x.unit), false)
+         +     mmNewsBox('PREVIOUS', mmNewsVal(x.previous, x.unit), false)
          +   '</div>'
          + '</div>';
   }
