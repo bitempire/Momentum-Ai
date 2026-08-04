@@ -13386,6 +13386,8 @@ function closeExecutePopup() {
     _b.textContent = _b.getAttribute('data-mm-orig');
     _b.removeAttribute('data-mm-orig');
   }
+  var _v = document.getElementById('exec-view-btn');
+  if(_v) _v.style.display = 'none';
 }
 
 // 18 Jul 2026: resetExecOptions() and selectExecOption() removed. They drove the
@@ -16549,6 +16551,25 @@ async function atPickTemplate(){
     if(!btn.getAttribute('data-mm-orig')) btn.setAttribute('data-mm-orig', btn.textContent);
     btn.textContent = 'USE THIS TEMPLATE';
   }
+  var vb = document.getElementById('exec-view-btn');
+  if(vb) vb.style.display = 'block';
+}
+
+// VIEW TEMPLATE opens the Smart Tool screen with the tapped template loaded so
+// the customer can read the ladder, the take profit levels and the trailing
+// rules. stnUseTpl also persists the selection, which is correct here: they
+// have already tapped the row, so viewing it is not a different intention.
+async function atViewTemplate(){
+  var id = _execSelectedOption;
+  if(!id) return;
+  closeExecutePopup();
+  try {
+    if(typeof showSubScreenFrom === 'function'){ showSubScreenFrom('sub-smart-tool-new', 'sub-auto-trade'); }
+    else if(typeof showSubScreen === 'function'){ showSubScreen('sub-smart-tool-new'); }
+  } catch(e){}
+  setTimeout(function(){
+    try { if(typeof stnUseTpl === 'function') stnUseTpl(id); } catch(e){}
+  }, 450);
 }
 </script>
 
@@ -16610,6 +16631,7 @@ async function atPickTemplate(){
         <div style="font-size:12px;color:var(--text3);padding:14px;text-align:center;" data-i18n="pop.loadingTemplates">Loading templates...</div>
       </div>
       <button id="exec-confirm-btn" onclick="confirmExecution()" style="width:100%;padding:14px;background:var(--grad);border:none;border-radius:12px;color:#fff;font-family:Orbitron,sans-serif;font-size:13px;font-weight:800;letter-spacing:1px;cursor:pointer;opacity:0.4;pointer-events:none;margin-bottom:10px;">CONFIRM &amp; TRADE</button>
+      <button id="exec-view-btn" onclick="atViewTemplate()" style="display:none;width:100%;padding:12px;background:transparent;border:1px solid var(--border);border-radius:12px;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;margin-bottom:10px;">VIEW TEMPLATE</button>
       <button onclick="closeExecutePopup()" style="width:100%;padding:12px;background:transparent;border:1px solid var(--border);border-radius:12px;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;" data-i18n="common.cancel">Cancel</button>
     </div>
   </div>
