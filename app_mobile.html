@@ -3327,7 +3327,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         <div class="section-title" style="font-size:13px;margin-bottom:12px;"><span data-i18n="prof.prefs">Preferences</span></div>
         <div class="ea-toggle-row">
           <div><div class="ea-toggle-label" data-i18n="prof.notifications">Push Notifications</div><div class="ea-toggle-sub" data-i18n="prof.notifSub">Signal alerts and updates</div></div>
-          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+          <div class="toggle" id="mm-push-toggle" onclick="mmPushToggle()"></div>
         </div>
         <div class="ea-toggle-row" style="border-bottom:none;">
           <div><div class="ea-toggle-label" data-i18n="common.language">Language</div><div class="ea-toggle-sub" data-i18n="prof.langSub">Choose your display language</div></div>
@@ -9396,7 +9396,7 @@ function showSubScreen(id) {
   if(el) { el.classList.add('active'); }
   soonMaybe(id);
   if(id==='sub-admin') { switchAdminTab('dashboard'); }
-  if(id==='sub-profile') { loadSavedProfilePhoto(); loadProfileData(); }
+  if(id==='sub-profile') { loadSavedProfilePhoto(); loadProfileData(); if(typeof mmPushSync==='function') mmPushSync(); }
   if(id==='sub-support') { loadMyTickets(); }
   if(id==='sub-academy') { loadAcademy(); }
   if(id==='sub-profile') { loadProfileMT5(); }
@@ -16190,6 +16190,181 @@ function showMT5ConnNotice(kind, reason) {
   document.body.appendChild(popup);
 }
 
+
+// ============================================================
+// PUSH NOTIFICATIONS  (item P15, 3 August 2026)
+//
+// The Profile toggle used to be onclick="this.classList.toggle('on')" and it
+// did nothing at all while telling the customer alerts were on. It is now
+// driven by the real subscription state.
+//
+// iOS: web push only works for a web app added through Safari, Share, Add to
+// Home Screen and opened from that icon. A Safari tab cannot subscribe and
+// cannot even be asked. That is Apple's rule, not something the app can work
+// around, so an uninstalled iPhone gets the instruction card instead.
+//
+// The subscription is NOT written to the database from here. It is posted to
+// the push-subscribe Edge Function with x-mmai-token, the same door the trade
+// gate uses, because push_subscriptions is RLS locked with no policies.
+// ============================================================
+var MM_VAPID_PUBLIC = 'BK7YuhpcTlzOiokTozqVduo0f0vJuK-mFfbaQNqBeIj02HU9-Oj8RpL9JYzCnr96pgsWpPbm4kVpKlwzvf_IZcA';
+var MM_PUSH_FN = 'https://rhtworywcqcxkahlmezg.supabase.co/functions/v1/push-subscribe';
+
+function mmPushSupported(){
+  try {
+    return ('serviceWorker' in navigator) && ('PushManager' in window) && ('Notification' in window);
+  } catch(e){ return false; }
+}
+
+function mmPushIsIOS(){
+  try {
+    var ua = navigator.userAgent || '';
+    return /iPad|iPhone|iPod/.test(ua) ||
+           (ua.indexOf('Macintosh') !== -1 && 'ontouchend' in document);
+  } catch(e){ return false; }
+}
+
+function mmPushStandalone(){
+  try {
+    if(window.navigator.standalone === true) return true;
+    return window.matchMedia && window.matchMedia('(display-mode: standalone)').matches;
+  } catch(e){ return false; }
+}
+
+function mmPushKey(base64){
+  var pad = '='.repeat((4 - base64.length % 4) % 4);
+  var b64 = (base64 + pad).replace(/-/g, '+').replace(/_/g, '/');
+  var raw = window.atob(b64);
+  var out = new Uint8Array(raw.length);
+  for(var i = 0; i < raw.length; i++) out[i] = raw.charCodeAt(i);
+  return out;
+}
+
+function mmPushNote(title, body){
+  var old = document.getElementById('mm-push-note');
+  if(old) old.remove();
+  var wrap = document.createElement('div');
+  wrap.id = 'mm-push-note';
+  wrap.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;padding:24px;';
+  var card = document.createElement('div');
+  card.style.cssText = 'background:#0e111a;border:1px solid rgba(255,255,255,.10);border-radius:14px;padding:18px;max-width:320px;width:100%;box-shadow:0 10px 30px rgba(0,0,0,.6);';
+  var h = document.createElement('div');
+  h.style.cssText = 'color:#f4f7fa;font-size:14px;font-weight:600;margin-bottom:8px;';
+  h.textContent = title;
+  var p = document.createElement('div');
+  p.style.cssText = 'color:#8b93a5;font-size:12px;line-height:1.7;';
+  p.textContent = body;
+  var b = document.createElement('div');
+  b.style.cssText = 'margin-top:16px;text-align:center;color:#f4f7fa;font-size:12px;border:1px solid rgba(255,255,255,.10);border-radius:10px;padding:11px;cursor:pointer;';
+  b.textContent = 'Got it';
+  b.onclick = function(){ wrap.remove(); };
+  card.appendChild(h); card.appendChild(p); card.appendChild(b);
+  wrap.appendChild(card);
+  wrap.onclick = function(ev){ if(ev.target === wrap) wrap.remove(); };
+  document.body.appendChild(wrap);
+}
+
+function mmPushSetToggle(on){
+  var el = document.getElementById('mm-push-toggle');
+  if(!el) return;
+  if(on) el.classList.add('on'); else el.classList.remove('on');
+}
+
+async function mmPushRegistration(){
+  if(!mmPushSupported()) return null;
+  try {
+    var reg = await navigator.serviceWorker.getRegistration('/');
+    if(!reg) reg = await navigator.serviceWorker.register('/sw.js', { scope: '/' });
+    return await navigator.serviceWorker.ready;
+  } catch(e){ return null; }
+}
+
+async function mmPushSync(){
+  if(!mmPushSupported()){ mmPushSetToggle(false); return; }
+  try {
+    if(Notification.permission !== 'granted'){ mmPushSetToggle(false); return; }
+    var reg = await mmPushRegistration();
+    if(!reg){ mmPushSetToggle(false); return; }
+    var sub = await reg.pushManager.getSubscription();
+    mmPushSetToggle(!!sub);
+  } catch(e){ mmPushSetToggle(false); }
+}
+
+async function mmPushSend(action, sub){
+  var payload = { action: action, subscription: sub ? sub.toJSON() : null };
+  try { payload.platform = (navigator.userAgent || '').slice(0, 60); } catch(e){}
+  var r = await fetch(MM_PUSH_FN, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-mmai-token': mmaiToken() },
+    body: JSON.stringify(payload)
+  });
+  return r;
+}
+
+async function mmPushToggle(){
+  var el = document.getElementById('mm-push-toggle');
+  if(!el) return;
+  var wasOn = el.classList.contains('on');
+
+  if(wasOn){
+    try {
+      var reg = await mmPushRegistration();
+      var sub = reg ? await reg.pushManager.getSubscription() : null;
+      if(sub){ await mmPushSend('unsubscribe', sub); await sub.unsubscribe(); }
+    } catch(e){}
+    mmPushSetToggle(false);
+    return;
+  }
+
+  if(!mmPushSupported()){
+    mmPushNote('Not available', 'This browser cannot show notifications. Try Chrome on Android, Safari on iPhone, or a desktop browser.');
+    return;
+  }
+
+  if(mmPushIsIOS() && !mmPushStandalone()){
+    mmPushNote('One step first', 'Tap Share, then Add to Home Screen, then open Momentum AI from the new icon.');
+    return;
+  }
+
+  if(Notification.permission === 'denied'){
+    mmPushNote('Blocked', 'Notifications are blocked for this app in your phone settings. Turn them on there, then come back and try again.');
+    return;
+  }
+
+  try {
+    var perm = await Notification.requestPermission();
+    if(perm !== 'granted'){
+      mmPushNote('Not allowed', 'Notifications were not allowed, so alerts stay off. You can change this in your phone settings.');
+      return;
+    }
+
+    var reg2 = await mmPushRegistration();
+    if(!reg2){ mmPushNote('Could not start', 'The notification service did not start. Reload the app and try again.'); return; }
+
+    var newSub = await reg2.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: mmPushKey(MM_VAPID_PUBLIC)
+    });
+
+    var res = await mmPushSend('subscribe', newSub);
+    if(!res.ok){
+      try { await newSub.unsubscribe(); } catch(e){}
+      mmPushNote('Could not save', 'Alerts could not be turned on. Please try again, or sign out and back in.');
+      mmPushSetToggle(false);
+      return;
+    }
+    mmPushSetToggle(true);
+  } catch(e){
+    mmPushNote('Could not turn on', 'Something stopped alerts from turning on. Please try again.');
+    mmPushSetToggle(false);
+  }
+}
+
+if(mmPushSupported()){
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(function(){});
+  });
+}
 </script>
 
   <!-- Execute Choice Popup -->
