@@ -4287,14 +4287,14 @@ function showAvatarPicker() {
   var prev = document.createElement('div');
   prev.style.cssText = 'width:96px;height:96px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(0,0,0,0.45);';
   var prevHint = document.createElement('div');
-  prevHint.textContent = 'Live preview';
+  prevHint.textContent = mmT('av.livePreview','Live preview');
   prevHint.style.cssText = 'font-size:12px;color:#7d7d88;margin-top:10px;';
   prevWrap.appendChild(prev); prevWrap.appendChild(prevHint);
   sheet.appendChild(prevWrap);
   function renderPreview(){ paintAvatar(prev, work, 44, 34); }
 
   var il = document.createElement('div');
-  il.textContent = 'Choose icon';
+  il.textContent = mmT('av.chooseIcon','Choose icon');
   il.style.cssText = 'font-size:12px;color:#9a9aa6;margin-bottom:10px;';
   sheet.appendChild(il);
 
@@ -4324,7 +4324,7 @@ function showAvatarPicker() {
   }
 
   var cl = document.createElement('div');
-  cl.textContent = 'Background colour';
+  cl.textContent = mmT('common.bgColour','Background colour');
   cl.style.cssText = 'font-size:12px;color:#9a9aa6;margin-bottom:10px;';
   sheet.appendChild(cl);
   var colorGrid = document.createElement('div');
@@ -5198,6 +5198,16 @@ function mmLangName(code){ for(var i=0;i<MMLANGS.length;i++){ if(MMLANGS[i].code
 // Only the OTHER languages need entries here.
 var MM_I18N = {
   'zh-TW': {
+    'common.bgColour':'背景顏色',
+    'st.cannotDelete':'無法刪除',
+    'av.chooseIcon':'選擇圖示',
+    'promo.claim':'領取',
+    'mt5.deleteAcct':'刪除 MT5 帳戶',
+    'av.livePreview':'即時預覽',
+    'common.saveChanges':'儲存變更',
+    'mt5.switchTo':'切換至帳戶',
+    'st.gone':'此帳戶原本設定使用的範本已不再提供。\n\n',
+    'st.maiReadOnly':'這是 MomentumAI 範本。\n\n由 MomentumAI 提供，無法編輯。',
     'sc.analysing':'正在分析市場數據...',
     'fund.applied':'申請已送出！我們的團隊會在 24 小時內與您聯繫。',
     'at.offTitle':'自動交易已關閉',
@@ -5694,6 +5704,16 @@ var MM_I18N = {
     'lb.rankDesc':'每月挑戰開始時將開放排名。持續交易以爭取您的名次。'
   },
   'zh-CN': {
+    'common.bgColour':'背景颜色',
+    'st.cannotDelete':'无法删除',
+    'av.chooseIcon':'选择图示',
+    'promo.claim':'领取',
+    'mt5.deleteAcct':'删除 MT5 账户',
+    'av.livePreview':'即时预览',
+    'common.saveChanges':'储存变更',
+    'mt5.switchTo':'切换至账户',
+    'st.gone':'此账户原本设定使用的范本已不再提供。\n\n',
+    'st.maiReadOnly':'这是 MomentumAI 范本。\n\n由 MomentumAI 提供，无法编辑。',
     'sc.analysing':'正在分析市场数据...',
     'fund.applied':'申请已送出！我们的团队会在 24 小时内与您联系。',
     'at.offTitle':'自动交易已关闭',
@@ -6126,6 +6146,16 @@ var MM_I18N = {
     'lb.rankDesc':'每月挑战开始时将开放排名。持续交易以争取您的名次。'
   },
   'ms': {
+    'common.bgColour':'Warna latar belakang',
+    'st.cannotDelete':'TIDAK BOLEH DIPADAM',
+    'av.chooseIcon':'Pilih ikon',
+    'promo.claim':'Tuntut',
+    'mt5.deleteAcct':'Padam akaun MT5',
+    'av.livePreview':'Pratonton langsung',
+    'common.saveChanges':'SIMPAN PERUBAHAN',
+    'mt5.switchTo':'Tukar ke akaun',
+    'st.gone':'Templat yang ditetapkan untuk akaun ini tidak lagi tersedia.\n\n',
+    'st.maiReadOnly':'Ini templat MomentumAI.\n\nIa disediakan oleh MomentumAI dan tidak boleh diubah.',
     'sc.analysing':'Menganalisis data pasaran...',
     'fund.applied':'Permohonan dihantar! Pasukan kami akan menghubungi anda dalam masa 24 jam.',
     'at.offTitle':'Dagangan Auto DIMATIKAN',
@@ -6558,6 +6588,16 @@ var MM_I18N = {
     'lb.rankDesc':'Kedudukan dibuka apabila cabaran bulanan bermula. Teruskan berdagang untuk merebut tempat anda.'
   },
   'ja': {
+    'common.bgColour':'背景色',
+    'st.cannotDelete':'削除できません',
+    'av.chooseIcon':'アイコンを選択',
+    'promo.claim':'受け取る',
+    'mt5.deleteAcct':'MT5口座を削除',
+    'av.livePreview':'ライブプレビュー',
+    'common.saveChanges':'変更を保存',
+    'mt5.switchTo':'口座を切り替える',
+    'st.gone':'この口座に設定されていたテンプレートは利用できなくなりました。\n\n',
+    'st.maiReadOnly':'これはMomentumAIのテンプレートです。\n\nMomentumAIが提供しており、編集はできません。',
     'sc.analysing':'市場データを分析中...',
     'fund.applied':'申請を送信しました！担当チームより24時間以内にご連絡します。',
     'at.offTitle':'自動売買はオフです',
@@ -6990,6 +7030,16 @@ var MM_I18N = {
     'lb.rankDesc':'月間チャレンジ開始とともにランキングが公開されます。取引を続けて順位を確保しましょう。'
   },
   'ko': {
+    'common.bgColour':'배경 색상',
+    'st.cannotDelete':'삭제할 수 없음',
+    'av.chooseIcon':'아이콘 선택',
+    'promo.claim':'받기',
+    'mt5.deleteAcct':'MT5 계좌 삭제',
+    'av.livePreview':'실시간 미리보기',
+    'common.saveChanges':'변경 사항 저장',
+    'mt5.switchTo':'계좌 전환',
+    'st.gone':'이 계좌에 설정되어 있던 템플릿은 더 이상 제공되지 않습니다.\n\n',
+    'st.maiReadOnly':'MomentumAI 템플릿입니다.\n\nMomentumAI에서 제공하며 편집할 수 없습니다.',
     'sc.analysing':'시장 데이터 분석 중...',
     'fund.applied':'신청이 접수되었습니다! 담당 팀이 24시간 이내에 연락드립니다.',
     'at.offTitle':'자동 매매가 꺼져 있습니다',
@@ -7422,6 +7472,16 @@ var MM_I18N = {
     'lb.rankDesc':'월간 챌린지가 시작되면 순위가 공개됩니다. 계속 거래해 자리를 확보하세요.'
   },
   'th': {
+    'common.bgColour':'สีพื้นหลัง',
+    'st.cannotDelete':'ลบไม่ได้',
+    'av.chooseIcon':'เลือกไอคอน',
+    'promo.claim':'รับสิทธิ์',
+    'mt5.deleteAcct':'ลบบัญชี MT5',
+    'av.livePreview':'ตัวอย่างแบบสด',
+    'common.saveChanges':'บันทึกการเปลี่ยนแปลง',
+    'mt5.switchTo':'สลับไปยังบัญชี',
+    'st.gone':'เทมเพลตที่ตั้งค่าไว้สำหรับบัญชีนี้ไม่พร้อมใช้งานอีกต่อไป\n\n',
+    'st.maiReadOnly':'นี่คือเทมเพลตของ MomentumAI\n\nจัดทำโดย MomentumAI และไม่สามารถแก้ไขได้',
     'sc.analysing':'กำลังวิเคราะห์ข้อมูลตลาด...',
     'fund.applied':'ส่งใบสมัครแล้ว! ทีมงานจะติดต่อคุณภายใน 24 ชั่วโมง',
     'at.offTitle':'ปิดการเทรดอัตโนมัติอยู่',
@@ -7854,6 +7914,16 @@ var MM_I18N = {
     'lb.rankDesc':'อันดับจะเปิดเมื่อการแข่งขันประจำเดือนเริ่มขึ้น เทรดต่อไปเพื่อคว้าตำแหน่งของคุณ'
   },
   'vi': {
+    'common.bgColour':'Màu nền',
+    'st.cannotDelete':'KHÔNG THỂ XÓA',
+    'av.chooseIcon':'Chọn biểu tượng',
+    'promo.claim':'Nhận',
+    'mt5.deleteAcct':'Xóa tài khoản MT5',
+    'av.livePreview':'Xem trước trực tiếp',
+    'common.saveChanges':'LƯU THAY ĐỔI',
+    'mt5.switchTo':'Chuyển sang tài khoản',
+    'st.gone':'Mẫu mà tài khoản này được đặt để giao dịch không còn khả dụng.\n\n',
+    'st.maiReadOnly':'Đây là mẫu của MomentumAI.\n\nMẫu do MomentumAI cung cấp và không thể chỉnh sửa.',
     'sc.analysing':'Đang phân tích dữ liệu thị trường...',
     'fund.applied':'Đã gửi đơn đăng ký! Đội ngũ của chúng tôi sẽ liên hệ trong vòng 24 giờ.',
     'at.offTitle':'Giao dịch tự động đang TẮT',
@@ -8286,6 +8356,16 @@ var MM_I18N = {
     'lb.rankDesc':'Xếp hạng sẽ mở khi thử thách hàng tháng bắt đầu. Hãy tiếp tục giao dịch để giữ vị trí của bạn.'
   },
   'fil': {
+    'common.bgColour':'Kulay ng background',
+    'st.cannotDelete':'HINDI MAAARING TANGGALIN',
+    'av.chooseIcon':'Pumili ng icon',
+    'promo.claim':'Kunin',
+    'mt5.deleteAcct':'Tanggalin ang MT5 account',
+    'av.livePreview':'Live preview',
+    'common.saveChanges':'I-SAVE ANG MGA PAGBABAGO',
+    'mt5.switchTo':'Lumipat sa account',
+    'st.gone':'Hindi na available ang template na nakatakda para sa account na ito.\n\n',
+    'st.maiReadOnly':'Ito ay template ng MomentumAI.\n\nMula ito sa MomentumAI at hindi maaaring i-edit.',
     'sc.analysing':'Sinusuri ang market data...',
     'fund.applied':'Naisumite ang aplikasyon! Makikipag-ugnayan ang aming team sa loob ng 24 oras.',
     'at.offTitle':'NAKA-OFF ang Auto Trade',
@@ -8718,6 +8798,16 @@ var MM_I18N = {
     'lb.rankDesc':'Bubuksan ang ranggo kapag nagsimula ang buwanang challenge. Magpatuloy sa pag-trade para makuha ang puwesto mo.'
   },
   'hi': {
+    'common.bgColour':'पृष्ठभूमि रंग',
+    'st.cannotDelete':'हटाया नहीं जा सकता',
+    'av.chooseIcon':'आइकन चुनें',
+    'promo.claim':'प्राप्त करें',
+    'mt5.deleteAcct':'MT5 खाता हटाएँ',
+    'av.livePreview':'लाइव पूर्वावलोकन',
+    'common.saveChanges':'परिवर्तन सहेजें',
+    'mt5.switchTo':'खाते पर स्विच करें',
+    'st.gone':'इस खाते के लिए निर्धारित टेम्पलेट अब उपलब्ध नहीं है।\n\n',
+    'st.maiReadOnly':'यह MomentumAI का टेम्पलेट है।\n\nयह MomentumAI द्वारा प्रदान किया गया है और संपादित नहीं किया जा सकता।',
     'sc.analysing':'बाज़ार डेटा का विश्लेषण हो रहा है...',
     'fund.applied':'आवेदन भेज दिया गया! हमारी टीम 24 घंटे के भीतर आपसे संपर्क करेगी।',
     'at.offTitle':'ऑटो ट्रेड बंद है',
@@ -9150,6 +9240,16 @@ var MM_I18N = {
     'lb.rankDesc':'मासिक चुनौती शुरू होते ही रैंकिंग खुल जाएगी। अपनी जगह पक्की करने के लिए ट्रेडिंग जारी रखें।'
   },
   'es': {
+    'common.bgColour':'Color de fondo',
+    'st.cannotDelete':'NO SE PUEDE ELIMINAR',
+    'av.chooseIcon':'Elegir icono',
+    'promo.claim':'Reclamar',
+    'mt5.deleteAcct':'Eliminar cuenta MT5',
+    'av.livePreview':'Vista previa en vivo',
+    'common.saveChanges':'GUARDAR CAMBIOS',
+    'mt5.switchTo':'Cambiar a la cuenta',
+    'st.gone':'La plantilla asignada a esta cuenta ya no está disponible.\n\n',
+    'st.maiReadOnly':'Esta es una plantilla de MomentumAI.\n\nLa proporciona MomentumAI y no se puede editar.',
     'sc.analysing':'Analizando datos del mercado...',
     'fund.applied':'¡Solicitud enviada! Nuestro equipo te contactará en 24 horas.',
     'at.offTitle':'El trading automático está DESACTIVADO',
@@ -13174,7 +13274,7 @@ function openEditAnalystPopup(analyst){
   var saved=(analyst.trading_pairs&&analyst.trading_pairs!=='all')?analyst.trading_pairs.split(','):[];
   var ph=pairs.map(function(p){var c=(!analyst.trading_pairs||analyst.trading_pairs==='all'||saved.indexOf(p)>-1)?'checked':'';return '<label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="'+p+'" class="ea-pair-check" '+c+' style="accent-color:var(--red);width:15px;height:15px;"> '+p+'</label>';}).join('');
   sheet.innerHTML='<div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 18px;"></div><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;"><div style="font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);">EDIT ANALYST</div><button id="ea-x" style="width:32px;height:32px;border-radius:50%;background:var(--surface);border:1px solid var(--border);color:var(--text2);font-size:18px;cursor:pointer;">×</button></div><div class="auth-field"><label class="auth-label">Full Name</label><input id="ea-name" class="auth-input" type="text" value="'+(analyst.name||'')+'"></div><div class="auth-field"><label class="auth-label">New Password</label><input id="ea-pw" class="auth-input" type="password" placeholder="Leave blank to keep"></div><div class="auth-field"><label class="auth-label">Trading Pairs</label><div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px 12px;"><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">'+ph+'</div></div></div><div class="auth-field"><label class="auth-label">Status</label><select id="ea-status" class="auth-input"><option value="active"'+(analyst.status==='active'?' selected':'')+'>Active</option><option value="suspended"'+(analyst.status==='suspended'?' selected':'')+'>Suspended</option></select></div><div id="ea-error" class="error-msg"></div><div id="ea-success" class="success-msg"></div>';
-  var sb=document.createElement('button');sb.className='red-btn';sb.textContent='SAVE CHANGES';sb.addEventListener('click',function(){saveAnalystEdit(analyst.id);});sheet.appendChild(sb);
+  var sb=document.createElement('button');sb.className='red-btn';sb.textContent=mmT('common.saveChanges','SAVE CHANGES');sb.addEventListener('click',function(){saveAnalystEdit(analyst.id);});sheet.appendChild(sb);
   var cb=document.createElement('button');cb.className='ghost-btn';cb.style.marginTop='10px';cb.textContent=mmT('common.cancel','Cancel');cb.addEventListener('click',function(){popup.remove();});sheet.appendChild(cb);
   popup.appendChild(sheet);popup.addEventListener('click',function(e){if(e.target===popup)popup.remove();});document.body.appendChild(popup);
   sheet.querySelector('#ea-x').addEventListener('click',function(){popup.remove();});
@@ -13257,7 +13357,7 @@ function openEditSubAdminPopup(sub){
   var saved=(sub.allowed_tabs||'').split(',');
   var th=allTabs.map(function(t){var c=saved.indexOf(t)>-1?'checked':'';return '<label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="'+t+'" class="esa-tab-check" '+c+' style="accent-color:var(--red);width:15px;height:15px;"> '+tabLabels[t]+'</label>';}).join('');
   sheet.innerHTML='<div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 18px;"></div><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;"><div style="font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);">EDIT SUB-ADMIN</div><button id="esa-x" style="width:32px;height:32px;border-radius:50%;background:var(--surface);border:1px solid var(--border);color:var(--text2);font-size:18px;cursor:pointer;">×</button></div><div class="auth-field"><label class="auth-label">Full Name</label><input id="esa-name" class="auth-input" type="text" value="'+(sub.name||'')+'"></div><div class="auth-field"><label class="auth-label">New Password</label><input id="esa-pw" class="auth-input" type="password" placeholder="Leave blank to keep"></div><div class="auth-field"><label class="auth-label">Status</label><select id="esa-status" class="auth-input"><option value="active"'+(sub.status==='active'?' selected':'')+'>Active</option><option value="suspended"'+(sub.status==='suspended'?' selected':'')+'>Suspended</option></select></div><div class="auth-field"><label class="auth-label">Panel Access</label><div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px 12px;"><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">'+th+'</div></div></div><div id="esa-error" class="error-msg"></div><div id="esa-success" class="success-msg"></div>';
-  var sb=document.createElement('button');sb.className='red-btn';sb.textContent='SAVE CHANGES';sb.addEventListener('click',function(){saveSubAdminEdit(sub.id);});sheet.appendChild(sb);
+  var sb=document.createElement('button');sb.className='red-btn';sb.textContent=mmT('common.saveChanges','SAVE CHANGES');sb.addEventListener('click',function(){saveSubAdminEdit(sub.id);});sheet.appendChild(sb);
   var cb=document.createElement('button');cb.className='ghost-btn';cb.style.marginTop='10px';cb.textContent=mmT('common.cancel','Cancel');cb.addEventListener('click',function(){popup.remove();});sheet.appendChild(cb);
   popup.appendChild(sheet);popup.addEventListener('click',function(e){if(e.target===popup)popup.remove();});document.body.appendChild(popup);
   sheet.querySelector('#esa-x').addEventListener('click',function(){popup.remove();});
@@ -14469,7 +14569,7 @@ async function saveAutoTradeSettings() {
     activeAccount.auto_trade = on;
     activeAccount.auto_analyst_ids = JSON.stringify(analystIds);
     var btn = document.querySelector('#sub-auto-trade .red-btn');
-    if(btn){ var orig=btn.textContent; btn.textContent='✓ SAVED'; btn.style.background='var(--green)'; setTimeout(function(){ btn.textContent=orig; btn.style.background=''; },2000); }
+    if(btn){ var orig=btn.textContent; btn.textContent=mmT('common.savedTick','✓ SAVED'); btn.style.background='var(--green)'; setTimeout(function(){ btn.textContent=orig; btn.style.background=''; },2000); }
   } catch(e) { alert('Save failed: '+(e.message||'Unknown error')); }
 }
 function confirmStopAutoTrade() {
@@ -15469,7 +15569,7 @@ async function loadSmartToolNew(){
           var _cl = await db.from('mt5_accounts').update({ smart_template_id:null }).eq('id', activeAccount.id);
           if(!(_cl && _cl.error)) activeAccount.smart_template_id = null;
         } catch(e){ console.error('could not clear dangling smart_template_id:', e); }
-        alert('The template this account was set to trade with is no longer available.\n\n'
+        alert(mmT('st.gone','The template this account was set to trade with is no longer available.\n\n')
             + 'Pick one from the Templates list before you trade.');
       }
     }
@@ -16596,7 +16696,7 @@ function openMT5EditSheet(user){
     fld('Broker Server', '<input id="edit-mt5-server" type="text" value="' + (user.mt5_server||'') + '" style="' + inp + '">') +
     fld('Connection Status', '<select id="edit-mt5-status" style="' + inp + '">' + statusOpts + '</select>');
   var saveBtn = document.createElement('button');
-  saveBtn.textContent = 'SAVE CHANGES';
+  saveBtn.textContent = mmT('common.saveChanges','SAVE CHANGES');
   saveBtn.style.cssText = 'width:100%;padding:14px;background:var(--grad);border:none;border-radius:12px;color:#fff;font-family:Orbitron,sans-serif;font-size:13px;font-weight:800;letter-spacing:1px;cursor:pointer;margin-bottom:10px;';
   var cancelBtn = document.createElement('button');
   cancelBtn.textContent = mmT('common.cancel','Cancel');
