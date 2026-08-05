@@ -4067,7 +4067,7 @@ async function handleFundFollow() {
     sucEl.textContent = mmT('fund.applied','Application submitted! Our team will contact you within 24 hours.');
     sucEl.style.display = 'block';
   } catch(e) {
-    errEl.textContent = 'Error: ' + (e.message || 'Please try again');
+    errEl.textContent = mmT('err.generic','Error: ') + (e.message || 'Please try again');
     errEl.style.display = 'block';
   }
 }
@@ -4169,7 +4169,7 @@ async function handleChangePassword() {
     setTimeout(function() { document.getElementById('change-pw-form').style.display = 'none'; }, 2000);
     pwDone();
   } catch(e) {
-    errEl.textContent = 'Error: ' + (e.message || 'Please try again');
+    errEl.textContent = mmT('err.generic','Error: ') + (e.message || 'Please try again');
     errEl.style.display = 'block';
     pwDone();
   }
@@ -4802,7 +4802,7 @@ async function handleLogin() {
     currentUser = user;
     sessionStorage.setItem('mob_user', JSON.stringify(user));
     routeUser(user);
-  } catch(e) { errEl.textContent='Error: '+e.message; errEl.style.display='block'; }
+  } catch(e) { errEl.textContent=mmT('err.generic','Error: ')+e.message; errEl.style.display='block'; }
   btn.textContent = mmT('auth.access','ACCESS SYSTEM'); btn.disabled = false;
 }
 
@@ -4841,11 +4841,11 @@ async function submitRegister() {
   try {
     var hash = await mmaiHashPassword(password);
     var res = await db.from('users').insert([{name,email,username,password_hash:hash,mt5_id:mt5,broker:broker||'AFTT Markets',plan_choice:_regPlan,status:'pending',role:'user',created_at:new Date().toISOString()}]).minimal();
-    if(res.error) { closeRegPlan(); errEl.textContent='Error: '+res.error.message; errEl.style.display='block'; btn.textContent=mmT('common.continue','Continue'); btn.disabled=false; return; }
+    if(res.error) { closeRegPlan(); errEl.textContent=mmT('err.generic','Error: ')+res.error.message; errEl.style.display='block'; btn.textContent=mmT('common.continue','Continue'); btn.disabled=false; return; }
     closeRegPlan();
     document.getElementById('pending-mt5-val').textContent = mt5;
     showScreen('screen-pending');
-  } catch(e) { closeRegPlan(); errEl.textContent='Error: '+e.message; errEl.style.display='block'; }
+  } catch(e) { closeRegPlan(); errEl.textContent=mmT('err.generic','Error: ')+e.message; errEl.style.display='block'; }
   btn.textContent = mmT('common.continue','Continue'); btn.disabled = false;
 }
 
@@ -5047,14 +5047,14 @@ async function selectAccount(accId) {
   if(!ok) return;
   try {
     var res = await db.from('users').update({active_account_id:accId}).eq('id',currentUser.id);
-    if(res && res.error) { alert('Could not switch account: '+res.error.message); return; }
+    if(res && res.error) { alert(mmT('err.switchAccount','Could not switch account: ')+res.error.message); return; }
     currentUser.active_account_id = accId;
     try { sessionStorage.setItem('mob_user', JSON.stringify(currentUser)); } catch(e2) {}
     await loadActiveAccount();
     // Reload settings for new account
     window._eaSettings = {};
     loadEASettings();
-  } catch(e) { alert('Could not switch account: '+e.message); }
+  } catch(e) { alert(mmT('err.switchAccount','Could not switch account: ')+e.message); }
 }
 
 function toggleAvatarDropdown(e) {
@@ -5198,6 +5198,22 @@ function mmLangName(code){ for(var i=0;i<MMLANGS.length;i++){ if(MMLANGS[i].code
 // Only the OTHER languages need entries here.
 var MM_I18N = {
   'zh-TW': {
+    'err.actionFailed':'操作失敗：',
+    'err.couldNotDelete':'無法刪除：',
+    'err.saveMultiplier':'無法儲存倍數：',
+    'err.saveSafeMode':'無法儲存安全模式：',
+    'err.saveTplSelection':'無法儲存範本選擇：',
+    'err.saveAutoSetting':'無法儲存自動設定：',
+    'err.setBasic':'無法設為基本方案：',
+    'err.setPremium':'無法設為進階方案：',
+    'err.setTemplate':'無法設定範本：',
+    'err.stopAuto':'無法停止自動交易：',
+    'err.switchAccount':'無法切換帳戶：',
+    'err.updateBanner':'無法更新橫幅：',
+    'err.couldNotUpdate':'無法更新：',
+    'err.deleteFailed':'刪除失敗：',
+    'err.saveFailed':'儲存失敗：',
+    'err.generic':'錯誤：',
     'common.bgColour':'背景顏色',
     'st.cannotDelete':'無法刪除',
     'av.chooseIcon':'選擇圖示',
@@ -5704,6 +5720,22 @@ var MM_I18N = {
     'lb.rankDesc':'每月挑戰開始時將開放排名。持續交易以爭取您的名次。'
   },
   'zh-CN': {
+    'err.actionFailed':'操作失败：',
+    'err.couldNotDelete':'无法删除：',
+    'err.saveMultiplier':'无法储存倍数：',
+    'err.saveSafeMode':'无法储存安全模式：',
+    'err.saveTplSelection':'无法储存范本选择：',
+    'err.saveAutoSetting':'无法储存自动设定：',
+    'err.setBasic':'无法设为基本方案：',
+    'err.setPremium':'无法设为进阶方案：',
+    'err.setTemplate':'无法设定范本：',
+    'err.stopAuto':'无法停止自动交易：',
+    'err.switchAccount':'无法切换账户：',
+    'err.updateBanner':'无法更新横幅：',
+    'err.couldNotUpdate':'无法更新：',
+    'err.deleteFailed':'删除失败：',
+    'err.saveFailed':'储存失败：',
+    'err.generic':'错误：',
     'common.bgColour':'背景颜色',
     'st.cannotDelete':'无法删除',
     'av.chooseIcon':'选择图示',
@@ -6146,6 +6178,22 @@ var MM_I18N = {
     'lb.rankDesc':'每月挑战开始时将开放排名。持续交易以争取您的名次。'
   },
   'ms': {
+    'err.actionFailed':'Tindakan gagal: ',
+    'err.couldNotDelete':'Tidak dapat dipadam: ',
+    'err.saveMultiplier':'Tidak dapat menyimpan pendarab: ',
+    'err.saveSafeMode':'Tidak dapat menyimpan mod selamat: ',
+    'err.saveTplSelection':'Tidak dapat menyimpan pilihan templat: ',
+    'err.saveAutoSetting':'Tidak dapat menyimpan tetapan auto: ',
+    'err.setBasic':'Tidak dapat menetapkan kepada asas: ',
+    'err.setPremium':'Tidak dapat menetapkan kepada premium: ',
+    'err.setTemplate':'Tidak dapat menetapkan templat: ',
+    'err.stopAuto':'Tidak dapat menghentikan dagangan auto: ',
+    'err.switchAccount':'Tidak dapat menukar akaun: ',
+    'err.updateBanner':'Tidak dapat mengemas kini sepanduk: ',
+    'err.couldNotUpdate':'Tidak dapat dikemas kini: ',
+    'err.deleteFailed':'Pemadaman gagal: ',
+    'err.saveFailed':'Simpan gagal: ',
+    'err.generic':'Ralat: ',
     'common.bgColour':'Warna latar belakang',
     'st.cannotDelete':'TIDAK BOLEH DIPADAM',
     'av.chooseIcon':'Pilih ikon',
@@ -6588,6 +6636,22 @@ var MM_I18N = {
     'lb.rankDesc':'Kedudukan dibuka apabila cabaran bulanan bermula. Teruskan berdagang untuk merebut tempat anda.'
   },
   'ja': {
+    'err.actionFailed':'操作に失敗しました: ',
+    'err.couldNotDelete':'削除できませんでした: ',
+    'err.saveMultiplier':'倍率を保存できませんでした: ',
+    'err.saveSafeMode':'セーフモードを保存できませんでした: ',
+    'err.saveTplSelection':'テンプレートの選択を保存できませんでした: ',
+    'err.saveAutoSetting':'自動設定を保存できませんでした: ',
+    'err.setBasic':'ベーシックに設定できませんでした: ',
+    'err.setPremium':'プレミアムに設定できませんでした: ',
+    'err.setTemplate':'テンプレートを設定できませんでした: ',
+    'err.stopAuto':'自動売買を停止できませんでした: ',
+    'err.switchAccount':'口座を切り替えられませんでした: ',
+    'err.updateBanner':'バナーを更新できませんでした: ',
+    'err.couldNotUpdate':'更新できませんでした: ',
+    'err.deleteFailed':'削除に失敗しました: ',
+    'err.saveFailed':'保存に失敗しました: ',
+    'err.generic':'エラー: ',
     'common.bgColour':'背景色',
     'st.cannotDelete':'削除できません',
     'av.chooseIcon':'アイコンを選択',
@@ -7030,6 +7094,22 @@ var MM_I18N = {
     'lb.rankDesc':'月間チャレンジ開始とともにランキングが公開されます。取引を続けて順位を確保しましょう。'
   },
   'ko': {
+    'err.actionFailed':'작업 실패: ',
+    'err.couldNotDelete':'삭제하지 못했습니다: ',
+    'err.saveMultiplier':'배수를 저장하지 못했습니다: ',
+    'err.saveSafeMode':'세이프 모드를 저장하지 못했습니다: ',
+    'err.saveTplSelection':'템플릿 선택을 저장하지 못했습니다: ',
+    'err.saveAutoSetting':'자동 설정을 저장하지 못했습니다: ',
+    'err.setBasic':'베이직으로 설정하지 못했습니다: ',
+    'err.setPremium':'프리미엄으로 설정하지 못했습니다: ',
+    'err.setTemplate':'템플릿을 설정하지 못했습니다: ',
+    'err.stopAuto':'자동 매매를 중지하지 못했습니다: ',
+    'err.switchAccount':'계좌를 전환하지 못했습니다: ',
+    'err.updateBanner':'배너를 업데이트하지 못했습니다: ',
+    'err.couldNotUpdate':'업데이트하지 못했습니다: ',
+    'err.deleteFailed':'삭제 실패: ',
+    'err.saveFailed':'저장 실패: ',
+    'err.generic':'오류: ',
     'common.bgColour':'배경 색상',
     'st.cannotDelete':'삭제할 수 없음',
     'av.chooseIcon':'아이콘 선택',
@@ -7472,6 +7552,22 @@ var MM_I18N = {
     'lb.rankDesc':'월간 챌린지가 시작되면 순위가 공개됩니다. 계속 거래해 자리를 확보하세요.'
   },
   'th': {
+    'err.actionFailed':'ดำเนินการไม่สำเร็จ: ',
+    'err.couldNotDelete':'ลบไม่สำเร็จ: ',
+    'err.saveMultiplier':'บันทึกตัวคูณไม่สำเร็จ: ',
+    'err.saveSafeMode':'บันทึกโหมดปลอดภัยไม่สำเร็จ: ',
+    'err.saveTplSelection':'บันทึกการเลือกเทมเพลตไม่สำเร็จ: ',
+    'err.saveAutoSetting':'บันทึกการตั้งค่าอัตโนมัติไม่สำเร็จ: ',
+    'err.setBasic':'ตั้งเป็นเบสิกไม่สำเร็จ: ',
+    'err.setPremium':'ตั้งเป็นพรีเมียมไม่สำเร็จ: ',
+    'err.setTemplate':'ตั้งค่าเทมเพลตไม่สำเร็จ: ',
+    'err.stopAuto':'หยุดการเทรดอัตโนมัติไม่สำเร็จ: ',
+    'err.switchAccount':'สลับบัญชีไม่สำเร็จ: ',
+    'err.updateBanner':'อัปเดตแบนเนอร์ไม่สำเร็จ: ',
+    'err.couldNotUpdate':'อัปเดตไม่สำเร็จ: ',
+    'err.deleteFailed':'ลบไม่สำเร็จ: ',
+    'err.saveFailed':'บันทึกไม่สำเร็จ: ',
+    'err.generic':'ข้อผิดพลาด: ',
     'common.bgColour':'สีพื้นหลัง',
     'st.cannotDelete':'ลบไม่ได้',
     'av.chooseIcon':'เลือกไอคอน',
@@ -7914,6 +8010,22 @@ var MM_I18N = {
     'lb.rankDesc':'อันดับจะเปิดเมื่อการแข่งขันประจำเดือนเริ่มขึ้น เทรดต่อไปเพื่อคว้าตำแหน่งของคุณ'
   },
   'vi': {
+    'err.actionFailed':'Thao tác thất bại: ',
+    'err.couldNotDelete':'Không thể xóa: ',
+    'err.saveMultiplier':'Không thể lưu hệ số nhân: ',
+    'err.saveSafeMode':'Không thể lưu chế độ an toàn: ',
+    'err.saveTplSelection':'Không thể lưu lựa chọn mẫu: ',
+    'err.saveAutoSetting':'Không thể lưu cài đặt tự động: ',
+    'err.setBasic':'Không thể đặt thành cơ bản: ',
+    'err.setPremium':'Không thể đặt thành premium: ',
+    'err.setTemplate':'Không thể đặt mẫu: ',
+    'err.stopAuto':'Không thể dừng giao dịch tự động: ',
+    'err.switchAccount':'Không thể chuyển tài khoản: ',
+    'err.updateBanner':'Không thể cập nhật biểu ngữ: ',
+    'err.couldNotUpdate':'Không thể cập nhật: ',
+    'err.deleteFailed':'Xóa thất bại: ',
+    'err.saveFailed':'Lưu thất bại: ',
+    'err.generic':'Lỗi: ',
     'common.bgColour':'Màu nền',
     'st.cannotDelete':'KHÔNG THỂ XÓA',
     'av.chooseIcon':'Chọn biểu tượng',
@@ -8356,6 +8468,22 @@ var MM_I18N = {
     'lb.rankDesc':'Xếp hạng sẽ mở khi thử thách hàng tháng bắt đầu. Hãy tiếp tục giao dịch để giữ vị trí của bạn.'
   },
   'fil': {
+    'err.actionFailed':'Nabigo ang aksyon: ',
+    'err.couldNotDelete':'Hindi matanggal: ',
+    'err.saveMultiplier':'Hindi ma-save ang multiplier: ',
+    'err.saveSafeMode':'Hindi ma-save ang safe mode: ',
+    'err.saveTplSelection':'Hindi ma-save ang piniling template: ',
+    'err.saveAutoSetting':'Hindi ma-save ang auto setting: ',
+    'err.setBasic':'Hindi maitakda bilang basic: ',
+    'err.setPremium':'Hindi maitakda bilang premium: ',
+    'err.setTemplate':'Hindi maitakda ang template: ',
+    'err.stopAuto':'Hindi mahinto ang auto trade: ',
+    'err.switchAccount':'Hindi makalipat ng account: ',
+    'err.updateBanner':'Hindi ma-update ang banner: ',
+    'err.couldNotUpdate':'Hindi ma-update: ',
+    'err.deleteFailed':'Nabigo ang pagtanggal: ',
+    'err.saveFailed':'Nabigo ang pag-save: ',
+    'err.generic':'Error: ',
     'common.bgColour':'Kulay ng background',
     'st.cannotDelete':'HINDI MAAARING TANGGALIN',
     'av.chooseIcon':'Pumili ng icon',
@@ -8798,6 +8926,22 @@ var MM_I18N = {
     'lb.rankDesc':'Bubuksan ang ranggo kapag nagsimula ang buwanang challenge. Magpatuloy sa pag-trade para makuha ang puwesto mo.'
   },
   'hi': {
+    'err.actionFailed':'कार्रवाई विफल: ',
+    'err.couldNotDelete':'हटाया नहीं जा सका: ',
+    'err.saveMultiplier':'गुणक सहेजा नहीं जा सका: ',
+    'err.saveSafeMode':'सेफ मोड सहेजा नहीं जा सका: ',
+    'err.saveTplSelection':'टेम्पलेट चयन सहेजा नहीं जा सका: ',
+    'err.saveAutoSetting':'ऑटो सेटिंग सहेजी नहीं जा सकी: ',
+    'err.setBasic':'बेसिक सेट नहीं किया जा सका: ',
+    'err.setPremium':'प्रीमियम सेट नहीं किया जा सका: ',
+    'err.setTemplate':'टेम्पलेट सेट नहीं किया जा सका: ',
+    'err.stopAuto':'ऑटो ट्रेड बंद नहीं किया जा सका: ',
+    'err.switchAccount':'खाता बदला नहीं जा सका: ',
+    'err.updateBanner':'बैनर अपडेट नहीं हो सका: ',
+    'err.couldNotUpdate':'अपडेट नहीं हो सका: ',
+    'err.deleteFailed':'हटाना विफल: ',
+    'err.saveFailed':'सहेजना विफल: ',
+    'err.generic':'त्रुटि: ',
     'common.bgColour':'पृष्ठभूमि रंग',
     'st.cannotDelete':'हटाया नहीं जा सकता',
     'av.chooseIcon':'आइकन चुनें',
@@ -9240,6 +9384,22 @@ var MM_I18N = {
     'lb.rankDesc':'मासिक चुनौती शुरू होते ही रैंकिंग खुल जाएगी। अपनी जगह पक्की करने के लिए ट्रेडिंग जारी रखें।'
   },
   'es': {
+    'err.actionFailed':'Acción fallida: ',
+    'err.couldNotDelete':'No se pudo eliminar: ',
+    'err.saveMultiplier':'No se pudo guardar el multiplicador: ',
+    'err.saveSafeMode':'No se pudo guardar el modo seguro: ',
+    'err.saveTplSelection':'No se pudo guardar la plantilla elegida: ',
+    'err.saveAutoSetting':'No se pudo guardar el ajuste automático: ',
+    'err.setBasic':'No se pudo cambiar a básico: ',
+    'err.setPremium':'No se pudo cambiar a premium: ',
+    'err.setTemplate':'No se pudo establecer la plantilla: ',
+    'err.stopAuto':'No se pudo detener el trading automático: ',
+    'err.switchAccount':'No se pudo cambiar de cuenta: ',
+    'err.updateBanner':'No se pudo actualizar el banner: ',
+    'err.couldNotUpdate':'No se pudo actualizar: ',
+    'err.deleteFailed':'Error al eliminar: ',
+    'err.saveFailed':'Error al guardar: ',
+    'err.generic':'Error: ',
     'common.bgColour':'Color de fondo',
     'st.cannotDelete':'NO SE PUEDE ELIMINAR',
     'av.chooseIcon':'Elegir icono',
@@ -10587,7 +10747,7 @@ async function executeTradeInner(method) {
       if(cid) { pollTradeCommand(cid, btn, origText); }
       else { if(btn){ btn.textContent=origText; btn.disabled=false; } }
     }
-  } catch(e) { alert('Error: '+e.message); if(btn){ btn.textContent=origText; btn.disabled=false; } }
+  } catch(e) { alert(mmT('err.generic','Error: ')+e.message); if(btn){ btn.textContent=origText; btn.disabled=false; } }
 }
 function mtTradeBtn(method){
   if(method==='manual') return document.querySelector('button[onclick="executeTrade(\'manual\')"]');
@@ -11039,7 +11199,7 @@ async function handlePostSignal() {
     document.getElementById('sig-tp2').value='';
     document.getElementById('sig-commentary').value='';
     setTimeout(function() { sucEl.style.display='none'; },3000);
-  } catch(e) { errEl.textContent='Error: '+e.message; errEl.style.display='block'; }
+  } catch(e) { errEl.textContent=mmT('err.generic','Error: ')+e.message; errEl.style.display='block'; }
 }
 
 // ── ADMIN ──
@@ -11074,17 +11234,17 @@ async function loadAdminUsers() {
 }
 async function approveUser(id) {
   var r=await db.from('users').update({status:'active'}).eq('id',id);
-  if(r.error){alert('Error: '+r.error.message);return;}
+  if(r.error){alert(mmT('err.generic','Error: ')+r.error.message);return;}
   loadAdminUsers();
 }
 async function unsuspendUser(id) {
   var r=await db.from('users').update({status:'active'}).eq('id',id);
-  if(r.error){alert('Error: '+r.error.message);return;}
+  if(r.error){alert(mmT('err.generic','Error: ')+r.error.message);return;}
   loadAdminUsers();
 }
 async function suspendUser(id) {
   var r=await db.from('users').update({status:'suspended'}).eq('id',id);
-  if(r.error){alert('Error: '+r.error.message);return;}
+  if(r.error){alert(mmT('err.generic','Error: ')+r.error.message);return;}
   loadAdminUsers();
 }
 async function deleteUser(id) {
@@ -11095,7 +11255,7 @@ async function deleteUser(id) {
     var r=await db.from('users').delete().eq('id',id);
     if(r.error) throw r.error;
     loadAdminUsers();
-  } catch(e) { alert('Delete failed: '+(e.message||'Unknown error')); }
+  } catch(e) { alert(mmT('err.deleteFailed','Delete failed: ')+(e.message||'Unknown error')); }
 }
 
 // ── ADD ANALYST ──
@@ -11117,7 +11277,7 @@ async function handleAddAnalyst() {
     document.getElementById('mob-analyst-username').value='';
     document.getElementById('mob-analyst-password').value='';
     loadAdminUsers();
-  } catch(e) { errEl.textContent='Error: '+e.message; errEl.style.display='block'; }
+  } catch(e) { errEl.textContent=mmT('err.generic','Error: ')+e.message; errEl.style.display='block'; }
   btn.disabled=false;
 }
 
@@ -11579,7 +11739,7 @@ async function admDeleteTpl(id, name){
     var r=await db.from('smart_templates').delete().eq('id',id);
     if(r.error) throw r.error;
     loadAdminTemplates();
-  }catch(e){ alert('Delete failed: '+(e.message||e)); }
+  }catch(e){ alert(mmT('err.deleteFailed','Delete failed: ')+(e.message||e)); }
 }
 
 function switchAdminTab(tab) {
@@ -11844,7 +12004,7 @@ async function toggleAnnActive(id, makeActive){
     var r = await db.from('announcements').update(upd).eq('id', id);
     if(r&&r.error) throw r.error;
     loadAdminAnnouncements();
-  } catch(e){ alert('Could not update: '+(e.message||'failed')); }
+  } catch(e){ alert(mmT('err.couldNotUpdate','Could not update: ')+(e.message||'failed')); }
 }
 async function deleteAnnouncement(id){
   if(!window.confirm('Delete this announcement?')) return;
@@ -11852,7 +12012,7 @@ async function deleteAnnouncement(id){
     var r = await db.from('announcements').delete().eq('id', id);
     if(r&&r.error) throw r.error;
     loadAdminAnnouncements();
-  } catch(e){ alert('Could not delete: '+(e.message||'failed')); }
+  } catch(e){ alert(mmT('err.couldNotDelete','Could not delete: ')+(e.message||'failed')); }
 }
 
 var _annImageData = null;
@@ -11902,7 +12062,7 @@ async function postAnnouncement() {
     loadAdminAnnouncements();
   } catch(e) {
     console.error('postAnnouncement error:', e);
-    errEl.textContent = 'Error: ' + (e.message || 'Please try again');
+    errEl.textContent = mmT('err.generic','Error: ') + (e.message || 'Please try again');
     errEl.style.display = 'block';
   }
 }
@@ -13291,7 +13451,7 @@ async function saveAnalystEdit(id){
     if(res.error) throw res.error;
     sucEl.textContent='Updated!';sucEl.style.display='block';
     setTimeout(function(){document.getElementById('edit-analyst-popup').remove();loadAdminAnalysts();},1200);
-  }catch(e){errEl.textContent='Error: '+(e.message||'failed');errEl.style.display='block';}
+  }catch(e){errEl.textContent=mmT('err.generic','Error: ')+(e.message||'failed');errEl.style.display='block';}
 }
 async function deleteAnalystAdmin(id){
   if(!confirm('Delete this analyst? Their signals will be kept but unlinked from this account.'))return;
@@ -13305,7 +13465,7 @@ async function deleteAnalystAdmin(id){
     var r2=await db.from('users').delete().eq('id',id);
     if(r2.error)throw r2.error;
     loadAdminAnalysts();
-  }catch(e){alert('Error: '+(e.message||'Could not delete analyst'));}
+  }catch(e){alert(mmT('err.generic','Error: ')+(e.message||'Could not delete analyst'));}
 }
 
 // ═══════════════════════════════════════════════════
@@ -13326,7 +13486,7 @@ async function handleAddSubAdmin(){
     document.getElementById('mob-subadmin-name').value='';document.getElementById('mob-subadmin-username').value='';document.getElementById('mob-subadmin-password').value='';
     document.querySelectorAll('.subadmin-tab-check').forEach(function(c){c.checked=false;});
     loadAdminSubAdmins();
-  }catch(e){errEl.textContent='Error: '+(e.message||'Failed');errEl.style.display='block';}
+  }catch(e){errEl.textContent=mmT('err.generic','Error: ')+(e.message||'Failed');errEl.style.display='block';}
 }
 async function loadAdminSubAdmins(){
   var el=document.getElementById('admin-subadmin-list');if(!el)return;
@@ -13371,7 +13531,7 @@ async function saveSubAdminEdit(id){
     var upd={name:name,status:status,allowed_tabs:tabs};if(pw)upd.password_hash=await mmaiHashPassword(pw);
     var res=await db.from('users').update(upd).eq('id',id);if(res.error)throw res.error;
     sucEl.textContent='Updated!';sucEl.style.display='block';setTimeout(function(){document.getElementById('edit-subadmin-popup').remove();loadAdminSubAdmins();},1200);
-  }catch(e){errEl.textContent='Error: '+(e.message||'failed');errEl.style.display='block';}
+  }catch(e){errEl.textContent=mmT('err.generic','Error: ')+(e.message||'failed');errEl.style.display='block';}
 }
 async function deleteSubAdmin(id){if(!confirm('Delete this sub-admin?'))return;var r=await db.from('users').delete().eq('id',id);if(r.error){alert(r.error.message);return;}loadAdminSubAdmins();}
 function enterSubAdmin(user){
@@ -13384,7 +13544,7 @@ function enterSubAdmin(user){
     if(allowed.length) switchAdminTab(allowed[0]);
   },150);
 }
-async function adminUpdateSig(id,st){try{var r=await db.from('signals').update({status:st}).eq('id',id);if(r.error)throw r.error;loadAdminSignals();}catch(e){alert('Error: '+e.message);}}
+async function adminUpdateSig(id,st){try{var r=await db.from('signals').update({status:st}).eq('id',id);if(r.error)throw r.error;loadAdminSignals();}catch(e){alert(mmT('err.generic','Error: ')+e.message);}}
 async function adminDeleteSig(id){
   if(!confirm('Delete this signal permanently?'))return;
   try{
@@ -13393,7 +13553,7 @@ async function adminDeleteSig(id){
     var r=await db.from('signals').delete().eq('id',id);
     if(r.error)throw r.error;
     loadAdminSignals();
-  }catch(e){alert('Delete failed: '+(e.message||'Unknown error'));}
+  }catch(e){alert(mmT('err.deleteFailed','Delete failed: ')+(e.message||'Unknown error'));}
 }
 
 // ═══════════════════════════════════════════════════
@@ -13424,7 +13584,7 @@ async function handlePublishAcademy(){
     sucEl.textContent=editId?'Lesson updated!':'Lesson published!';sucEl.style.display='block';
     resetAcademyForm();
     setTimeout(function(){sucEl.style.display='none';loadAdminAcademy();},1200);
-  }catch(e){errEl.textContent='Error: '+(e.message||'Failed');errEl.style.display='block';}
+  }catch(e){errEl.textContent=mmT('err.generic','Error: ')+(e.message||'Failed');errEl.style.display='block';}
 }
 async function loadAdminAcademy(){
   var el=document.getElementById('admin-academy-list');if(!el)return;
@@ -13767,8 +13927,8 @@ function renderAnalystSignals(sigs){
     card.appendChild(br);container.appendChild(card);
   });
 }
-async function setSignalStatus(id,st){try{var r=await db.from('signals').update({status:st}).eq('id',id);if(r.error)throw r.error;_analystAllSignals=_analystAllSignals.map(function(s){return s.id===id?Object.assign({},s,{status:st}):s;});renderAnalystSignals(_analystAllSignals);}catch(e){alert('Error: '+e.message);}}
-async function deleteAnalystSignal(id){if(!confirm('Delete signal?'))return;try{var r=await db.from('signals').delete().eq('id',id);if(r.error)throw r.error;_analystAllSignals=_analystAllSignals.filter(function(s){return s.id!==id;});renderAnalystSignals(_analystAllSignals);}catch(e){alert('Error: '+e.message);}}
+async function setSignalStatus(id,st){try{var r=await db.from('signals').update({status:st}).eq('id',id);if(r.error)throw r.error;_analystAllSignals=_analystAllSignals.map(function(s){return s.id===id?Object.assign({},s,{status:st}):s;});renderAnalystSignals(_analystAllSignals);}catch(e){alert(mmT('err.generic','Error: ')+e.message);}}
+async function deleteAnalystSignal(id){if(!confirm('Delete signal?'))return;try{var r=await db.from('signals').delete().eq('id',id);if(r.error)throw r.error;_analystAllSignals=_analystAllSignals.filter(function(s){return s.id!==id;});renderAnalystSignals(_analystAllSignals);}catch(e){alert(mmT('err.generic','Error: ')+e.message);}}
 function openEditSignal(sigId){
   var sig=_analystAllSignals.find(function(s){return s.id===sigId;});if(!sig)return;
   var fields=['pair','direction','entry-from','entry-to','sl','tp1','tp2','timeframe','strength','commentary'];
@@ -13796,7 +13956,7 @@ async function handleUpdateSignal(){
     if(r.error)throw r.error;
     _analystAllSignals=_analystAllSignals.map(function(s){return s.id===id?Object.assign({},s,{pair:pair,direction:dir,entry_from:parseFloat(ef),entry_to:parseFloat(et),sl:parseFloat(sl),tp1:parseFloat(tp1),timeframe:tf,strength:parseInt(str),commentary:com}):s;});
     sucEl.textContent='Updated!';sucEl.style.display='block';setTimeout(function(){closeAnalystEditPopup();renderAnalystSignals(_analystAllSignals);},1500);
-  }catch(e){errEl.textContent='Error: '+(e.message||'Failed');errEl.style.display='block';}
+  }catch(e){errEl.textContent=mmT('err.generic','Error: ')+(e.message||'Failed');errEl.style.display='block';}
 }
 function loadAnalystScreen(user){var n=document.querySelector('#screen-analyst .app-header-name');if(n&&user)n.textContent=user.name||user.username||'ANALYST';setTimeout(loadAnalystSignals,500);}
 
@@ -13862,7 +14022,7 @@ async function loadAdminSignals(){
     });
   }catch(e){el.innerHTML='<div style="padding:12px;color:var(--red);">Error: '+(e.message||'Failed')+'</div>';}
 }
-async function adminUpdateSig(id,st){try{var r=await db.from('signals').update({status:st}).eq('id',id);if(r.error)throw r.error;loadAdminSignals();}catch(e){alert('Error: '+e.message);}}
+async function adminUpdateSig(id,st){try{var r=await db.from('signals').update({status:st}).eq('id',id);if(r.error)throw r.error;loadAdminSignals();}catch(e){alert(mmT('err.generic','Error: ')+e.message);}}
 async function adminDeleteSig(id){
   if(!confirm('Delete this signal permanently?'))return;
   try{
@@ -13871,7 +14031,7 @@ async function adminDeleteSig(id){
     var r=await db.from('signals').delete().eq('id',id);
     if(r.error)throw r.error;
     loadAdminSignals();
-  }catch(e){alert('Delete failed: '+(e.message||'Unknown error'));}
+  }catch(e){alert(mmT('err.deleteFailed','Delete failed: ')+(e.message||'Unknown error'));}
 }
 
 
@@ -13881,7 +14041,7 @@ async function adminDeleteTicket(id) {
     var r = await db.from('support_tickets').delete().eq('id', id);
     if(r.error) throw r.error;
     loadAdminTickets();
-  } catch(e) { alert('Delete failed: ' + (e.message||'Unknown error')); }
+  } catch(e) { alert(mmT('err.deleteFailed','Delete failed: ') + (e.message||'Unknown error')); }
 }
 
 async function adminToggleTicketDone(id, currentStatus) {
@@ -13890,7 +14050,7 @@ async function adminToggleTicketDone(id, currentStatus) {
     var r = await db.from('support_tickets').update({status: newStatus}).eq('id', id);
     if(r.error) throw r.error;
     loadAdminTickets();
-  } catch(e) { alert('Error: ' + (e.message||'Unknown error')); }
+  } catch(e) { alert(mmT('err.generic','Error: ') + (e.message||'Unknown error')); }
 }
 
 
@@ -14110,7 +14270,7 @@ async function stnSetSafeMode(on){
     activeAccount.mm_settings=cur;
     (window._userAccounts||[]).forEach(function(a){ if(a.id===activeAccount.id) a.mm_settings=cur; });
     renderExecTplList();
-  }catch(e){ alert('Could not save safe mode: '+(e.message||'error')); }
+  }catch(e){ alert(mmT('err.saveSafeMode','Could not save safe mode: ')+(e.message||'error')); }
 }
 
 async function confirmExecution() {
@@ -14119,7 +14279,7 @@ async function confirmExecution() {
   // executeTrade reads activeAccount.smart_template_id to build the command.
   if(activeAccount && _execSelectedOption !== activeAccount.smart_template_id){
     var r = await db.from('mt5_accounts').update({ smart_template_id:_execSelectedOption }).eq('id', activeAccount.id);
-    if(r && r.error){ alert('Could not set template: '+r.error.message); return; }
+    if(r && r.error){ alert(mmT('err.setTemplate','Could not set template: ')+r.error.message); return; }
     activeAccount.smart_template_id = _execSelectedOption;
   }
   closeExecutePopup();
@@ -14288,7 +14448,7 @@ async function submitAccountEdit(acctId, mt5id){
     renderProfileAccounts();
     showAcctToast('Updated! Re-checking '+mt5id+' now \u2014 it will show Pending, then Connected if the login works.');
   }catch(e){
-    if(errEl){ errEl.textContent='Error: '+(e.message||'update failed'); errEl.style.display='block'; }
+    if(errEl){ errEl.textContent=mmT('err.generic','Error: ')+(e.message||'update failed'); errEl.style.display='block'; }
     if(btn){ btn.disabled=false; btn.style.opacity=''; btn.innerHTML='<i class="ti ti-refresh" style="font-size:18px;"></i>Update &amp; Retry'; }
   }
 }
@@ -14330,7 +14490,7 @@ async function doDeleteAccount(acctId, mt5id){
     renderProfileAccounts();
     showAcctToast('Account '+mt5id+' removed.');
   }catch(e){
-    if(errEl){ errEl.textContent='Error: '+(e.message||'could not remove account'); errEl.style.display='block'; }
+    if(errEl){ errEl.textContent=mmT('err.generic','Error: ')+(e.message||'could not remove account'); errEl.style.display='block'; }
     if(btn){ btn.disabled=false; btn.style.opacity=''; btn.textContent=mmT('mt5.removeAcct','Remove account'); }
   }
 }
@@ -14397,7 +14557,7 @@ async function handleMT5Connect() {
     sucEl.textContent = "Account request submitted! Setup can take up to 24 hours — it will show as Pending below until active.";
     sucEl.style.display = 'block';
   } catch(e) {
-    errEl.textContent = 'Error: ' + (e.message || 'Failed to submit request');
+    errEl.textContent = mmT('err.generic','Error: ') + (e.message || 'Failed to submit request');
     errEl.style.display = 'block';
   } finally {
     window._mt5Submitting = false;
@@ -14486,9 +14646,9 @@ async function toggleAccountAuto(accId, el) {
   var on = el.classList.contains('on');
   try {
     var r = await db.from('mt5_accounts').update({allow_auto_trade:on}).eq('id',accId);
-    if(r && r.error) { el.classList.toggle('on'); alert('Could not update: '+r.error.message); return; }
+    if(r && r.error) { el.classList.toggle('on'); alert(mmT('err.couldNotUpdate','Could not update: ')+r.error.message); return; }
     (window._userAccounts||[]).forEach(function(a){ if(a.id===accId) a.allow_auto_trade=on; });
-  } catch(e) { el.classList.toggle('on'); alert('Could not update: '+e.message); }
+  } catch(e) { el.classList.toggle('on'); alert(mmT('err.couldNotUpdate','Could not update: ')+e.message); }
 }
 
 // AUTO TRADE SETTINGS PAGE
@@ -14570,7 +14730,7 @@ async function saveAutoTradeSettings() {
     activeAccount.auto_analyst_ids = JSON.stringify(analystIds);
     var btn = document.querySelector('#sub-auto-trade .red-btn');
     if(btn){ var orig=btn.textContent; btn.textContent=mmT('common.savedTick','✓ SAVED'); btn.style.background='var(--green)'; setTimeout(function(){ btn.textContent=orig; btn.style.background=''; },2000); }
-  } catch(e) { alert('Save failed: '+(e.message||'Unknown error')); }
+  } catch(e) { alert(mmT('err.saveFailed','Save failed: ')+(e.message||'Unknown error')); }
 }
 function confirmStopAutoTrade() {
   var popup = document.createElement('div');
@@ -14593,7 +14753,7 @@ function confirmStopAutoTrade() {
       // The db wrapper returns errors in the result rather than throwing, so an
       // unchecked update looks identical whether it worked or was refused.
       var _r = await db.from('mt5_accounts').update({auto_trade: false}).eq('id', activeAccount.id);
-      if(_r && _r.error){ alert('Could not stop auto trade: '+_r.error.message); return; }
+      if(_r && _r.error){ alert(mmT('err.stopAuto','Could not stop auto trade: ')+_r.error.message); return; }
       activeAccount.auto_trade = false;
       updateAutoTradeStatusInPopup();
       // Bring the Smart Tool and Manual tabs back straight away. atAutoLock
@@ -14601,7 +14761,7 @@ function confirmStopAutoTrade() {
       // the customer has to reload the app before they can place by hand.
       if(typeof atAutoLock === 'function') atAutoLock();
       if(typeof atSmartSync === 'function') atSmartSync();
-    } catch(e) { alert('Error: '+(e.message||'Could not stop auto trade')); }
+    } catch(e) { alert(mmT('err.generic','Error: ')+(e.message||'Could not stop auto trade')); }
   };
 }
 
@@ -14929,7 +15089,7 @@ async function stnSetLotAuto(on){
     activeAccount.mm_settings=cur;
     (window._userAccounts||[]).forEach(function(a){ if(a.id===activeAccount.id) a.mm_settings=cur; });
     stnRender();
-  }catch(e){ alert('Could not save the auto setting: '+(e.message||'error')); }
+  }catch(e){ alert(mmT('err.saveAutoSetting','Could not save the auto setting: ')+(e.message||'error')); }
 }
 async function stnSetLotMult(m){
   // Whole numbers only, and choosing a number IS the manual choice - so this
@@ -14948,7 +15108,7 @@ async function stnSetLotMult(m){
     activeAccount.mm_settings=cur;
     (window._userAccounts||[]).forEach(function(a){ if(a.id===activeAccount.id) a.mm_settings=cur; });
     stnRender();
-  }catch(e){ alert('Could not save multiplier: '+(e.message||'error')); }
+  }catch(e){ alert(mmT('err.saveMultiplier','Could not save multiplier: ')+(e.message||'error')); }
 }
 // ---- EDIT MODE. Changes apply to _stnTpl live so the preview updates as you
 // type, but a snapshot is held so Cancel truly reverts. Leaving without Apply
@@ -15767,7 +15927,7 @@ async function stnSave(){ if(stnLocked()) return;
     if(b){ var o=b.textContent; b.textContent=mmT('common.saved','SAVED'); b.style.background='var(--green)';
            setTimeout(function(){ b.textContent=o; b.style.background=''; },1800); }
     await loadSmartToolNew();
-  }catch(e){ alert('Save failed: '+(e.message||e)); }
+  }catch(e){ alert(mmT('err.saveFailed','Save failed: ')+(e.message||e)); }
 }
 
 // ─────────────────────────────────────────────────────────────────────────
@@ -15823,7 +15983,7 @@ async function stnDelTemplate(id, name){
   if(!confirm('Delete your template "'+name+'"?\n\nThis frees the slot. It cannot be undone.')) return;
   try{
     var r=await db.from('smart_templates').delete().eq('id',id);
-    if(r && r.error){ alert('Delete failed: '+r.error.message); return; }
+    if(r && r.error){ alert(mmT('err.deleteFailed','Delete failed: ')+r.error.message); return; }
 
     // If the account was set to trade with it, clear the pointer. Leaving a
     // dangling smart_template_id means the next trade looks up a row that is
@@ -15836,7 +15996,7 @@ async function stnDelTemplate(id, name){
     }
     _stnTpls = await stnLoadVisibleTemplates();
     stnTplTab('user');
-  }catch(e){ alert('Delete failed: '+(e.message||e)); }
+  }catch(e){ alert(mmT('err.deleteFailed','Delete failed: ')+(e.message||e)); }
 }
 
 async function stnUseTpl(id){
@@ -15854,7 +16014,7 @@ async function stnUseTpl(id){
     // Check the result, and tell the user if it did not persist.
     var _r = await db.from('mt5_accounts').update({ smart_template_id:t.id }).eq('id', activeAccount.id);
     if(_r && _r.error){
-      alert('Could not save template selection: '+_r.error.message);
+      alert(mmT('err.saveTplSelection','Could not save template selection: ')+_r.error.message);
       return;
     }
     activeAccount.smart_template_id=t.id;
@@ -16480,7 +16640,7 @@ async function mt5SetPremium(id){
     var r = await db.from('mt5_accounts').update({premium_manual:true, premium_status:'active', premium_until:until}).eq('id', id);
     if(r.error) throw r.error;
     loadAdminMT5();
-  } catch(e){ alert('Could not set premium: '+(e.message||'failed')); }
+  } catch(e){ alert(mmT('err.setPremium','Could not set premium: ')+(e.message||'failed')); }
 }
 async function mt5SetBasic(id){
   if(!db) return;
@@ -16489,7 +16649,7 @@ async function mt5SetBasic(id){
     var r = await db.from('mt5_accounts').update({premium_manual:false, premium_status:'basic', premium_until:null}).eq('id', id);
     if(r.error) throw r.error;
     loadAdminMT5();
-  } catch(e){ alert('Could not set basic: '+(e.message||'failed')); }
+  } catch(e){ alert(mmT('err.setBasic','Could not set basic: ')+(e.message||'failed')); }
 }
 
 async function applyMT5Transition(acctId, core, extra, noticeKind, reason){
@@ -16500,7 +16660,7 @@ async function applyMT5Transition(acctId, core, extra, noticeKind, reason){
     if(r.error) r = await db.from('mt5_accounts').update(base).eq('id', acctId);
     if(r.error) throw r.error;
     loadAdminMT5();
-  } catch(e){ alert('Action failed: ' + (e.message||'Unknown error')); }
+  } catch(e){ alert(mmT('err.actionFailed','Action failed: ') + (e.message||'Unknown error')); }
 }
 
 function mt5Activate(id){ applyMT5Transition(id, { connection_status:'connected', mt5_connected:true }, { connected_at:new Date().toISOString() }, 'connected', null); }
@@ -16628,7 +16788,7 @@ async function mt5DeleteAccount(acct){
     if(r.error) throw r.error;
     if(typeof loadAdminMT5 === 'function') loadAdminMT5();
   } catch(e){
-    alert('Delete failed: ' + (e.message || 'unknown error'));
+    alert(mmT('err.deleteFailed','Delete failed: ') + (e.message || 'unknown error'));
   }
 }
 
@@ -16722,7 +16882,7 @@ async function mt5SaveEdit(userId){
     if(r.error) throw r.error;
     var sh = document.getElementById('mt5-edit-sheet'); if(sh) sh.remove();
     loadAdminMT5();
-  } catch(e){ alert('Save failed: ' + (e.message||'Unknown error')); }
+  } catch(e){ alert(mmT('err.saveFailed','Save failed: ') + (e.message||'Unknown error')); }
 }
 
 function openAdminPanel(){
@@ -16861,7 +17021,7 @@ async function togglePromoActive(id, makeActive){
     var r=await db.from('promo_codes').update({active:!!makeActive}).eq('id',id);
     if(r&&r.error) throw r.error;
     loadAdminPromos();
-  } catch(e){ alert('Could not update: '+(e.message||'failed')); }
+  } catch(e){ alert(mmT('err.couldNotUpdate','Could not update: ')+(e.message||'failed')); }
 }
 async function deletePromoCode(id, code){
   if(!window.confirm('Delete code '+(code||'')+'? This cannot be undone.')) return;
@@ -16869,7 +17029,7 @@ async function deletePromoCode(id, code){
     var r=await db.from('promo_codes').delete().eq('id',id);
     if(r&&r.error) throw r.error;
     loadAdminPromos();
-  } catch(e){ alert('Could not delete: '+(e.message||'failed')); }
+  } catch(e){ alert(mmT('err.couldNotDelete','Could not delete: ')+(e.message||'failed')); }
 }
 async function setCampaignBanner(id, makeOn){
   try {
@@ -16882,7 +17042,7 @@ async function setCampaignBanner(id, makeOn){
       await db.from('promo_codes').update({is_campaign:false}).eq('id', id);
     }
     loadAdminPromos();
-  } catch(e){ alert('Could not update banner: '+(e.message||'failed')); }
+  } catch(e){ alert(mmT('err.updateBanner','Could not update banner: ')+(e.message||'failed')); }
 }
 
 function lockMT5Form(locked) {
