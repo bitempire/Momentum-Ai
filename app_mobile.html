@@ -4101,8 +4101,8 @@ async function handleSupportTicket() {
   var errEl = document.getElementById('support-error');
   var sucEl = document.getElementById('support-success');
   errEl.style.display = 'none'; sucEl.style.display = 'none';
-  if(!subject) { errEl.textContent = 'Please select a subject'; errEl.style.display = 'block'; return; }
-  if(!message) { errEl.textContent = 'Please enter your message'; errEl.style.display = 'block'; return; }
+  if(!subject) { errEl.textContent = mmT('sup.needSubject','Please select a subject'); errEl.style.display = 'block'; return; }
+  if(!message) { errEl.textContent = mmT('sup.needMsg','Please enter your message'); errEl.style.display = 'block'; return; }
   try {
     await db.from('support_tickets').insert([{
       user_id: currentUser ? currentUser.id : null,
@@ -4110,14 +4110,14 @@ async function handleSupportTicket() {
       subject: subject, message: message,
       status: 'open', created_at: new Date().toISOString()
     }]);
-    sucEl.textContent = 'Ticket submitted! We will reply within 24 hours.';
+    sucEl.textContent = mmT('sup.sent24','Ticket submitted! We will reply within 24 hours.');
     sucEl.style.display = 'block';
     document.getElementById('support-subject').value = '';
     document.getElementById('support-message').value = '';
     loadMyTickets();
   } catch(e) {
     // Table may not exist yet - show success anyway
-    sucEl.textContent = 'Ticket submitted! We will reply via Telegram/WhatsApp.';
+    sucEl.textContent = mmT('sup.sentTg','Ticket submitted! We will reply via Telegram/WhatsApp.');
     sucEl.style.display = 'block';
   }
 }
@@ -4131,9 +4131,9 @@ async function handleChangePassword() {
   var errEl = document.getElementById('pw-error');
   var sucEl = document.getElementById('pw-success');
   errEl.style.display = 'none'; sucEl.style.display = 'none';
-  if(!oldPw || !newPw || !confirmPw) { errEl.textContent = 'Please fill all fields'; errEl.style.display = 'block'; return; }
-  if(newPw !== confirmPw) { errEl.textContent = 'New passwords do not match'; errEl.style.display = 'block'; return; }
-  if(newPw.length < 6) { errEl.textContent = 'Password must be at least 6 characters'; errEl.style.display = 'block'; return; }
+  if(!oldPw || !newPw || !confirmPw) { errEl.textContent = mmT('common.fillAll','Please fill all fields'); errEl.style.display = 'block'; return; }
+  if(newPw !== confirmPw) { errEl.textContent = mmT('pw.noMatch','New passwords do not match'); errEl.style.display = 'block'; return; }
+  if(newPw.length < 6) { errEl.textContent = mmT('pw.tooShort','Password must be at least 6 characters'); errEl.style.display = 'block'; return; }
   if(!currentUser) return;
   // GUARD AGAINST A DOUBLE TAP. Without this the first request succeeds and
   // changes the password, then the second arrives with an old password that is
@@ -4164,7 +4164,7 @@ async function handleChangePassword() {
       errEl.style.display = 'block'; pwDone(); return;
     }
     errEl.style.display = 'none';
-    sucEl.textContent = 'Password changed successfully!';
+    sucEl.textContent = mmT('pw.changed','Password changed successfully!');
     sucEl.style.display = 'block';
     setTimeout(function() { document.getElementById('change-pw-form').style.display = 'none'; }, 2000);
     pwDone();
@@ -4766,9 +4766,9 @@ async function handleLogin() {
   var password = document.getElementById('input-password').value;
   var errEl = document.getElementById('signin-error');
   errEl.style.display = 'none';
-  if(!username||!password) { errEl.textContent='Please enter your username and password'; errEl.style.display='block'; return; }
+  if(!username||!password) { errEl.textContent=mmT('auth.needCreds','Please enter your username and password'); errEl.style.display='block'; return; }
   var btn = document.getElementById('btn-signin');
-  btn.textContent = 'SIGNING IN...'; btn.disabled = true;
+  btn.textContent = mmT('auth.signingIn','SIGNING IN...'); btn.disabled = true;
   try {
     // SERVER-SIDE LOGIN. The browser no longer reads the users table and never
     // sees a password hash. auth-login verifies against user_secrets, which is
@@ -4787,7 +4787,7 @@ async function handleLogin() {
       errEl.textContent = (lr.status === 401)
         ? 'Incorrect username or password.'
         : ('Sign-in failed: ' + (lout.error || ('error ' + lr.status)));
-      errEl.style.display='block'; btn.textContent='ACCESS SYSTEM'; btn.disabled=false; return;
+      errEl.style.display='block'; btn.textContent=mmT('auth.access','ACCESS SYSTEM'); btn.disabled=false; return;
     }
     var user = lout.user;
     try { sessionStorage.setItem('mob_token', lout.token || ''); } catch(e) {}
@@ -4803,7 +4803,7 @@ async function handleLogin() {
     sessionStorage.setItem('mob_user', JSON.stringify(user));
     routeUser(user);
   } catch(e) { errEl.textContent='Error: '+e.message; errEl.style.display='block'; }
-  btn.textContent = 'ACCESS SYSTEM'; btn.disabled = false;
+  btn.textContent = mmT('auth.access','ACCESS SYSTEM'); btn.disabled = false;
 }
 
 // ── REGISTER ──
@@ -4837,16 +4837,16 @@ async function submitRegister() {
   var broker = document.getElementById('reg-broker').value;
   var errEl = document.getElementById('reg-error');
   var btn = document.getElementById('rpm-continue');
-  btn.textContent = 'CREATING...'; btn.disabled = true;
+  btn.textContent = mmT('common.creating','CREATING...'); btn.disabled = true;
   try {
     var hash = await mmaiHashPassword(password);
     var res = await db.from('users').insert([{name,email,username,password_hash:hash,mt5_id:mt5,broker:broker||'AFTT Markets',plan_choice:_regPlan,status:'pending',role:'user',created_at:new Date().toISOString()}]).minimal();
-    if(res.error) { closeRegPlan(); errEl.textContent='Error: '+res.error.message; errEl.style.display='block'; btn.textContent='Continue'; btn.disabled=false; return; }
+    if(res.error) { closeRegPlan(); errEl.textContent='Error: '+res.error.message; errEl.style.display='block'; btn.textContent=mmT('common.continue','Continue'); btn.disabled=false; return; }
     closeRegPlan();
     document.getElementById('pending-mt5-val').textContent = mt5;
     showScreen('screen-pending');
   } catch(e) { closeRegPlan(); errEl.textContent='Error: '+e.message; errEl.style.display='block'; }
-  btn.textContent = 'Continue'; btn.disabled = false;
+  btn.textContent = mmT('common.continue','Continue'); btn.disabled = false;
 }
 
 // 31 Jul 2026 (item 8): browsers used to write btoa(pw+'_momentum_salt'), which
@@ -5198,6 +5198,29 @@ function mmLangName(code){ for(var i=0;i<MMLANGS.length;i++){ if(MMLANGS[i].code
 // Only the OTHER languages need entries here.
 var MM_I18N = {
   'zh-TW': {
+    'st.slotsFull':'5 個範本欄位已滿，請先刪除一個。',
+    'common.creating':'建立中...',
+    'common.continue':'繼續',
+    'st.maiNoDelete':'MAI 範本無法在此刪除。',
+    'pw.noMatch':'新密碼不一致',
+    'auth.notSignedIn':'尚未登入。',
+    'pw.changed':'密碼已成功變更！',
+    'pw.tooShort':'密碼至少須有 6 個字元',
+    'reg.agreeRisk':'請同意風險聲明',
+    'mt5.needId':'請輸入您的 MT5 帳號',
+    'mt5.needPw':'請輸入您的 MT5 主密碼',
+    'sup.needMsg':'請輸入您的訊息',
+    'auth.needCreds':'請輸入使用者名稱與密碼',
+    'common.fillAll':'請填寫所有欄位',
+    'sup.needSubject':'請選擇主旨',
+    'mt5.reqPending':'申請審核中',
+    'mt5.retry':'重新連接',
+    'common.saved':'已儲存',
+    'auth.signingIn':'登入中...',
+    'st.maiProvided':'範本由 MomentumAI 提供。\n\n請從範本清單中選擇一個來交易。',
+    'sup.sentTg':'工單已送出！我們會透過 Telegram/WhatsApp 回覆。',
+    'sup.sent24':'工單已送出！我們會在 24 小時內回覆。',
+    'mt5.maxAccounts':'您已達到 5 個帳戶的上限。',
     'home.openPnl':'未平倉損益',
     'home.overallBalance':'整體帳戶餘額', 'home.confidence':'信心度',
     'w.mt5Live':'MT5 即時',
@@ -5633,6 +5656,29 @@ var MM_I18N = {
     'lb.rankDesc':'每月挑戰開始時將開放排名。持續交易以爭取您的名次。'
   },
   'zh-CN': {
+    'st.slotsFull':'5 个范本字段已满，请先删除一个。',
+    'common.creating':'建立中...',
+    'common.continue':'继续',
+    'st.maiNoDelete':'MAI 范本无法在此删除。',
+    'pw.noMatch':'新密码不一致',
+    'auth.notSignedIn':'尚未登入。',
+    'pw.changed':'密码已成功变更！',
+    'pw.tooShort':'密码至少须有 6 个字元',
+    'reg.agreeRisk':'请同意风险声明',
+    'mt5.needId':'请输入您的 MT5 账号',
+    'mt5.needPw':'请输入您的 MT5 主密码',
+    'sup.needMsg':'请输入您的讯息',
+    'auth.needCreds':'请输入使用者名称与密码',
+    'common.fillAll':'请填写所有字段',
+    'sup.needSubject':'请选择主旨',
+    'mt5.reqPending':'申请审核中',
+    'mt5.retry':'重新连接',
+    'common.saved':'已储存',
+    'auth.signingIn':'登入中...',
+    'st.maiProvided':'范本由 MomentumAI 提供。\n\n请从范本清单中选择一个来交易。',
+    'sup.sentTg':'工单已送出！我们会透过 Telegram/WhatsApp 回复。',
+    'sup.sent24':'工单已送出！我们会在 24 小时内回复。',
+    'mt5.maxAccounts':'您已达到 5 个账户的上限。',
     'home.openPnl':'未平仓损益',
     'home.overallBalance':'整体账户余额', 'home.confidence':'信心度',
     'w.mt5Live':'MT5 即时', 'j.gradeExcellent':'● 优秀',
@@ -6004,6 +6050,29 @@ var MM_I18N = {
     'lb.rankDesc':'每月挑战开始时将开放排名。持续交易以争取您的名次。'
   },
   'ms': {
+    'st.slotsFull':'5 slot templat sudah penuh. Padam satu dahulu.',
+    'common.creating':'SEDANG MENCIPTA...',
+    'common.continue':'Teruskan',
+    'st.maiNoDelete':'Templat MAI tidak boleh dipadam di sini.',
+    'pw.noMatch':'Kata laluan baharu tidak sepadan',
+    'auth.notSignedIn':'Belum log masuk.',
+    'pw.changed':'Kata laluan berjaya ditukar!',
+    'pw.tooShort':'Kata laluan mesti sekurang-kurangnya 6 aksara',
+    'reg.agreeRisk':'Sila setuju dengan penafian risiko',
+    'mt5.needId':'Sila masukkan ID Akaun MT5 anda',
+    'mt5.needPw':'Sila masukkan Kata Laluan Induk MT5 anda',
+    'sup.needMsg':'Sila masukkan mesej anda',
+    'auth.needCreds':'Sila masukkan nama pengguna dan kata laluan anda',
+    'common.fillAll':'Sila isi semua ruangan',
+    'sup.needSubject':'Sila pilih subjek',
+    'mt5.reqPending':'PERMOHONAN MENUNGGU',
+    'mt5.retry':'CUBA SAMBUNG SEMULA',
+    'common.saved':'DISIMPAN',
+    'auth.signingIn':'SEDANG LOG MASUK...',
+    'st.maiProvided':'Templat disediakan oleh MomentumAI.\n\nPilih satu daripada senarai Templat untuk berdagang.',
+    'sup.sentTg':'Tiket dihantar! Kami akan membalas melalui Telegram/WhatsApp.',
+    'sup.sent24':'Tiket dihantar! Kami akan membalas dalam masa 24 jam.',
+    'mt5.maxAccounts':'Anda telah mencapai had maksimum 5 akaun.',
     'home.openPnl':'Untung Rugi Terbuka',
     'home.overallBalance':'Jumlah Baki Akaun', 'home.confidence':'keyakinan',
     'w.mt5Live':'MT5 LANGSUNG', 'j.gradeExcellent':'● Cemerlang',
@@ -6375,6 +6444,29 @@ var MM_I18N = {
     'lb.rankDesc':'Kedudukan dibuka apabila cabaran bulanan bermula. Teruskan berdagang untuk merebut tempat anda.'
   },
   'ja': {
+    'st.slotsFull':'5つのテンプレート枠がすべて使用中です。まず1つ削除してください。',
+    'common.creating':'作成中...',
+    'common.continue':'続ける',
+    'st.maiNoDelete':'MAIテンプレートはここでは削除できません。',
+    'pw.noMatch':'新しいパスワードが一致しません',
+    'auth.notSignedIn':'ログインしていません。',
+    'pw.changed':'パスワードを変更しました！',
+    'pw.tooShort':'パスワードは6文字以上で入力してください',
+    'reg.agreeRisk':'リスク開示に同意してください',
+    'mt5.needId':'MT5口座番号を入力してください',
+    'mt5.needPw':'MT5マスターパスワードを入力してください',
+    'sup.needMsg':'メッセージを入力してください',
+    'auth.needCreds':'ユーザー名とパスワードを入力してください',
+    'common.fillAll':'すべての項目を入力してください',
+    'sup.needSubject':'件名を選択してください',
+    'mt5.reqPending':'申請審査中',
+    'mt5.retry':'再接続する',
+    'common.saved':'保存しました',
+    'auth.signingIn':'ログイン中...',
+    'st.maiProvided':'テンプレートはMomentumAIが提供しています。\n\nテンプレート一覧から1つ選んで取引してください。',
+    'sup.sentTg':'チケットを送信しました！Telegram/WhatsAppで返信します。',
+    'sup.sent24':'チケットを送信しました！24時間以内に返信します。',
+    'mt5.maxAccounts':'口座数の上限5件に達しました。',
     'home.openPnl':'評価損益',
     'home.overallBalance':'総口座残高', 'home.confidence':'信頼度',
     'w.mt5Live':'MT5 ライブ', 'j.gradeExcellent':'● 優秀',
@@ -6746,6 +6838,29 @@ var MM_I18N = {
     'lb.rankDesc':'月間チャレンジ開始とともにランキングが公開されます。取引を続けて順位を確保しましょう。'
   },
   'ko': {
+    'st.slotsFull':'템플릿 5개 슬롯이 모두 찼습니다. 먼저 하나를 삭제하세요.',
+    'common.creating':'생성 중...',
+    'common.continue':'계속',
+    'st.maiNoDelete':'MAI 템플릿은 여기서 삭제할 수 없습니다.',
+    'pw.noMatch':'새 비밀번호가 일치하지 않습니다',
+    'auth.notSignedIn':'로그인되어 있지 않습니다.',
+    'pw.changed':'비밀번호가 변경되었습니다!',
+    'pw.tooShort':'비밀번호는 6자 이상이어야 합니다',
+    'reg.agreeRisk':'위험 고지에 동의해 주세요',
+    'mt5.needId':'MT5 계좌 번호를 입력하세요',
+    'mt5.needPw':'MT5 마스터 비밀번호를 입력하세요',
+    'sup.needMsg':'메시지를 입력하세요',
+    'auth.needCreds':'사용자 이름과 비밀번호를 입력하세요',
+    'common.fillAll':'모든 항목을 입력하세요',
+    'sup.needSubject':'제목을 선택하세요',
+    'mt5.reqPending':'요청 대기 중',
+    'mt5.retry':'연결 재시도',
+    'common.saved':'저장됨',
+    'auth.signingIn':'로그인 중...',
+    'st.maiProvided':'템플릿은 MomentumAI에서 제공합니다.\n\n템플릿 목록에서 하나를 선택해 거래하세요.',
+    'sup.sentTg':'티켓이 접수되었습니다! Telegram/WhatsApp으로 답변드립니다.',
+    'sup.sent24':'티켓이 접수되었습니다! 24시간 이내에 답변드립니다.',
+    'mt5.maxAccounts':'최대 5개 계좌 한도에 도달했습니다.',
     'home.openPnl':'미실현 손익',
     'home.overallBalance':'전체 계좌 잔고', 'home.confidence':'신뢰도',
     'w.mt5Live':'MT5 실시간', 'j.gradeExcellent':'● 우수',
@@ -7117,6 +7232,29 @@ var MM_I18N = {
     'lb.rankDesc':'월간 챌린지가 시작되면 순위가 공개됩니다. 계속 거래해 자리를 확보하세요.'
   },
   'th': {
+    'st.slotsFull':'ช่องเทมเพลตทั้ง 5 เต็มแล้ว กรุณาลบหนึ่งรายการก่อน',
+    'common.creating':'กำลังสร้าง...',
+    'common.continue':'ดำเนินการต่อ',
+    'st.maiNoDelete':'ไม่สามารถลบเทมเพลต MAI ที่นี่ได้',
+    'pw.noMatch':'รหัสผ่านใหม่ไม่ตรงกัน',
+    'auth.notSignedIn':'ยังไม่ได้เข้าสู่ระบบ',
+    'pw.changed':'เปลี่ยนรหัสผ่านสำเร็จแล้ว!',
+    'pw.tooShort':'รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร',
+    'reg.agreeRisk':'กรุณายอมรับคำเตือนความเสี่ยง',
+    'mt5.needId':'กรุณากรอกหมายเลขบัญชี MT5 ของคุณ',
+    'mt5.needPw':'กรุณากรอกรหัสผ่านหลัก MT5 ของคุณ',
+    'sup.needMsg':'กรุณากรอกข้อความของคุณ',
+    'auth.needCreds':'กรุณากรอกชื่อผู้ใช้และรหัสผ่าน',
+    'common.fillAll':'กรุณากรอกข้อมูลให้ครบทุกช่อง',
+    'sup.needSubject':'กรุณาเลือกหัวข้อ',
+    'mt5.reqPending':'คำขออยู่ระหว่างรอดำเนินการ',
+    'mt5.retry':'ลองเชื่อมต่ออีกครั้ง',
+    'common.saved':'บันทึกแล้ว',
+    'auth.signingIn':'กำลังเข้าสู่ระบบ...',
+    'st.maiProvided':'เทมเพลตจัดทำโดย MomentumAI\n\nเลือกหนึ่งรายการจากรายการเทมเพลตเพื่อเทรด',
+    'sup.sentTg':'ส่งตั๋วแล้ว! เราจะตอบกลับทาง Telegram/WhatsApp',
+    'sup.sent24':'ส่งตั๋วแล้ว! เราจะตอบกลับภายใน 24 ชั่วโมง',
+    'mt5.maxAccounts':'คุณใช้บัญชีครบ 5 บัญชีแล้ว',
     'home.openPnl':'กำไรขาดทุนที่ยังไม่ปิด',
     'home.overallBalance':'ยอดเงินรวมทุกบัญชี', 'home.confidence':'ความเชื่อมั่น',
     'w.mt5Live':'MT5 เรียลไทม์', 'j.gradeExcellent':'● ยอดเยี่ยม',
@@ -7488,6 +7626,29 @@ var MM_I18N = {
     'lb.rankDesc':'อันดับจะเปิดเมื่อการแข่งขันประจำเดือนเริ่มขึ้น เทรดต่อไปเพื่อคว้าตำแหน่งของคุณ'
   },
   'vi': {
+    'st.slotsFull':'Cả 5 vị trí mẫu đã đầy. Hãy xóa một mẫu trước.',
+    'common.creating':'ĐANG TẠO...',
+    'common.continue':'Tiếp tục',
+    'st.maiNoDelete':'Không thể xóa mẫu MAI tại đây.',
+    'pw.noMatch':'Mật khẩu mới không khớp',
+    'auth.notSignedIn':'Chưa đăng nhập.',
+    'pw.changed':'Đổi mật khẩu thành công!',
+    'pw.tooShort':'Mật khẩu phải có ít nhất 6 ký tự',
+    'reg.agreeRisk':'Vui lòng đồng ý với tuyên bố rủi ro',
+    'mt5.needId':'Vui lòng nhập ID tài khoản MT5 của bạn',
+    'mt5.needPw':'Vui lòng nhập Mật khẩu chính MT5 của bạn',
+    'sup.needMsg':'Vui lòng nhập tin nhắn của bạn',
+    'auth.needCreds':'Vui lòng nhập tên đăng nhập và mật khẩu',
+    'common.fillAll':'Vui lòng điền đầy đủ các trường',
+    'sup.needSubject':'Vui lòng chọn chủ đề',
+    'mt5.reqPending':'YÊU CẦU ĐANG CHỜ',
+    'mt5.retry':'KẾT NỐI LẠI',
+    'common.saved':'ĐÃ LƯU',
+    'auth.signingIn':'ĐANG ĐĂNG NHẬP...',
+    'st.maiProvided':'Mẫu do MomentumAI cung cấp.\n\nChọn một mẫu từ danh sách Mẫu để giao dịch.',
+    'sup.sentTg':'Đã gửi yêu cầu! Chúng tôi sẽ trả lời qua Telegram/WhatsApp.',
+    'sup.sent24':'Đã gửi yêu cầu! Chúng tôi sẽ trả lời trong vòng 24 giờ.',
+    'mt5.maxAccounts':'Bạn đã đạt giới hạn tối đa 5 tài khoản.',
     'home.openPnl':'Lãi lỗ mở',
     'home.overallBalance':'Tổng số dư tài khoản', 'home.confidence':'độ tin cậy',
     'w.mt5Live':'MT5 TRỰC TIẾP', 'j.gradeExcellent':'● Xuất sắc',
@@ -7859,6 +8020,29 @@ var MM_I18N = {
     'lb.rankDesc':'Xếp hạng sẽ mở khi thử thách hàng tháng bắt đầu. Hãy tiếp tục giao dịch để giữ vị trí của bạn.'
   },
   'fil': {
+    'st.slotsFull':'Puno na ang lahat ng 5 template slot. Magtanggal muna ng isa.',
+    'common.creating':'GUMAGAWA...',
+    'common.continue':'Magpatuloy',
+    'st.maiNoDelete':'Hindi maaaring tanggalin dito ang mga MAI template.',
+    'pw.noMatch':'Hindi magkatugma ang mga bagong password',
+    'auth.notSignedIn':'Hindi naka-sign in.',
+    'pw.changed':'Matagumpay na napalitan ang password!',
+    'pw.tooShort':'Dapat may hindi bababa sa 6 na karakter ang password',
+    'reg.agreeRisk':'Pakisang-ayunan ang risk disclaimer',
+    'mt5.needId':'Pakilagay ang iyong MT5 Account ID',
+    'mt5.needPw':'Pakilagay ang iyong MT5 Master Password',
+    'sup.needMsg':'Pakilagay ang iyong mensahe',
+    'auth.needCreds':'Pakilagay ang iyong username at password',
+    'common.fillAll':'Pakipunan ang lahat ng field',
+    'sup.needSubject':'Pumili ng paksa',
+    'mt5.reqPending':'NAKABINBIN ANG KAHILINGAN',
+    'mt5.retry':'SUBUKANG KUMONEKTA MULI',
+    'common.saved':'NA-SAVE',
+    'auth.signingIn':'NAGSA-SIGN IN...',
+    'st.maiProvided':'Ang mga template ay mula sa MomentumAI.\n\nPumili ng isa sa listahan ng Templates para magamit sa trade.',
+    'sup.sentTg':'Naisumite ang ticket! Sasagot kami sa Telegram/WhatsApp.',
+    'sup.sent24':'Naisumite ang ticket! Sasagot kami sa loob ng 24 oras.',
+    'mt5.maxAccounts':'Naabot mo na ang maximum na 5 account.',
     'home.openPnl':'Bukas na P&L',
     'home.overallBalance':'Kabuuang balanse ng account', 'home.confidence':'kumpiyansa',
     'w.mt5Live':'MT5 LIVE', 'j.gradeExcellent':'● Napakahusay',
@@ -8230,6 +8414,29 @@ var MM_I18N = {
     'lb.rankDesc':'Bubuksan ang ranggo kapag nagsimula ang buwanang challenge. Magpatuloy sa pag-trade para makuha ang puwesto mo.'
   },
   'hi': {
+    'st.slotsFull':'सभी 5 टेम्पलेट स्लॉट भरे हुए हैं। पहले एक हटाएँ।',
+    'common.creating':'बनाया जा रहा है...',
+    'common.continue':'जारी रखें',
+    'st.maiNoDelete':'MAI टेम्पलेट यहाँ से नहीं हटाए जा सकते।',
+    'pw.noMatch':'नए पासवर्ड मेल नहीं खाते',
+    'auth.notSignedIn':'साइन इन नहीं किया गया।',
+    'pw.changed':'पासवर्ड सफलतापूर्वक बदल दिया गया!',
+    'pw.tooShort':'पासवर्ड कम से कम 6 अक्षरों का होना चाहिए',
+    'reg.agreeRisk':'कृपया जोखिम अस्वीकरण से सहमत हों',
+    'mt5.needId':'कृपया अपना MT5 खाता आईडी दर्ज करें',
+    'mt5.needPw':'कृपया अपना MT5 मास्टर पासवर्ड दर्ज करें',
+    'sup.needMsg':'कृपया अपना संदेश दर्ज करें',
+    'auth.needCreds':'कृपया अपना उपयोगकर्ता नाम और पासवर्ड दर्ज करें',
+    'common.fillAll':'कृपया सभी फ़ील्ड भरें',
+    'sup.needSubject':'कृपया एक विषय चुनें',
+    'mt5.reqPending':'अनुरोध लंबित',
+    'mt5.retry':'फिर से कनेक्ट करें',
+    'common.saved':'सहेजा गया',
+    'auth.signingIn':'साइन इन हो रहा है...',
+    'st.maiProvided':'टेम्पलेट MomentumAI द्वारा प्रदान किए जाते हैं।\n\nट्रेड करने के लिए टेम्पलेट सूची से एक चुनें।',
+    'sup.sentTg':'टिकट भेज दिया गया! हम Telegram/WhatsApp पर उत्तर देंगे।',
+    'sup.sent24':'टिकट भेज दिया गया! हम 24 घंटे के भीतर उत्तर देंगे।',
+    'mt5.maxAccounts':'आप 5 खातों की अधिकतम सीमा तक पहुँच चुके हैं।',
     'home.openPnl':'खुला लाभ-हानि',
     'home.overallBalance':'कुल खाता बैलेंस', 'home.confidence':'विश्वास',
     'w.mt5Live':'MT5 लाइव', 'j.gradeExcellent':'● उत्कृष्ट',
@@ -8601,6 +8808,29 @@ var MM_I18N = {
     'lb.rankDesc':'मासिक चुनौती शुरू होते ही रैंकिंग खुल जाएगी। अपनी जगह पक्की करने के लिए ट्रेडिंग जारी रखें।'
   },
   'es': {
+    'st.slotsFull':'Los 5 espacios de plantilla están llenos. Elimina uno primero.',
+    'common.creating':'CREANDO...',
+    'common.continue':'Continuar',
+    'st.maiNoDelete':'Las plantillas MAI no se pueden eliminar aquí.',
+    'pw.noMatch':'Las contraseñas nuevas no coinciden',
+    'auth.notSignedIn':'No has iniciado sesión.',
+    'pw.changed':'¡Contraseña cambiada correctamente!',
+    'pw.tooShort':'La contraseña debe tener al menos 6 caracteres',
+    'reg.agreeRisk':'Acepta la advertencia de riesgo',
+    'mt5.needId':'Introduce tu ID de cuenta MT5',
+    'mt5.needPw':'Introduce tu contraseña maestra MT5',
+    'sup.needMsg':'Introduce tu mensaje',
+    'auth.needCreds':'Introduce tu usuario y contraseña',
+    'common.fillAll':'Completa todos los campos',
+    'sup.needSubject':'Selecciona un asunto',
+    'mt5.reqPending':'SOLICITUD PENDIENTE',
+    'mt5.retry':'REINTENTAR CONEXIÓN',
+    'common.saved':'GUARDADO',
+    'auth.signingIn':'INICIANDO SESIÓN...',
+    'st.maiProvided':'Las plantillas las proporciona MomentumAI.\n\nSelecciona una de la lista para operar con ella.',
+    'sup.sentTg':'¡Ticket enviado! Responderemos por Telegram/WhatsApp.',
+    'sup.sent24':'¡Ticket enviado! Responderemos en un plazo de 24 horas.',
+    'mt5.maxAccounts':'Has alcanzado el máximo de 5 cuentas.',
     'home.openPnl':'Resultado abierto',
     'home.overallBalance':'Saldo total de las cuentas', 'home.confidence':'confianza',
     'w.mt5Live':'MT5 EN VIVO', 'j.gradeExcellent':'● Excelente',
@@ -10395,7 +10625,7 @@ async function handleAddAnalyst() {
       password=document.getElementById('mob-analyst-password').value;
   var errEl=document.getElementById('mob-analyst-error'), sucEl=document.getElementById('mob-analyst-success');
   errEl.style.display='none'; sucEl.style.display='none';
-  if(!name||!username||!password) { errEl.textContent='Please fill all fields'; errEl.style.display='block'; return; }
+  if(!name||!username||!password) { errEl.textContent=mmT('common.fillAll','Please fill all fields'); errEl.style.display='block'; return; }
   var btn=document.getElementById('btn-add-analyst'); btn.disabled=true;
   try {
     var hash=await mmaiHashPassword(password);
@@ -12605,7 +12835,7 @@ async function handleAddSubAdmin(){
   var name=document.getElementById('mob-subadmin-name').value.trim(),username=document.getElementById('mob-subadmin-username').value.trim().toLowerCase(),password=document.getElementById('mob-subadmin-password').value;
   var checks=document.querySelectorAll('.subadmin-tab-check:checked'),tabs=Array.from(checks).map(function(c){return c.value;}).join(',');
   var errEl=document.getElementById('mob-subadmin-error'),sucEl=document.getElementById('mob-subadmin-success');errEl.style.display='none';sucEl.style.display='none';
-  if(!name||!username||!password){errEl.textContent='Please fill all fields';errEl.style.display='block';return;}
+  if(!name||!username||!password){errEl.textContent=mmT('common.fillAll','Please fill all fields');errEl.style.display='block';return;}
   if(!tabs){errEl.textContent='Select at least one tab';errEl.style.display='block';return;}
   if(password.length<6){errEl.textContent='Password min 6 characters';errEl.style.display='block';return;}
   var hash=await mmaiHashPassword(password);
@@ -13633,9 +13863,9 @@ async function handleMT5Connect() {
   var sucEl   = document.getElementById('mt5-connect-success');
   errEl.style.display = 'none'; sucEl.style.display = 'none';
 
-  if(!mt5Id)   { errEl.textContent = 'Please enter your MT5 Account ID'; errEl.style.display = 'block'; return; }
-  if(!mt5Pw)   { errEl.textContent = 'Please enter your MT5 Master Password'; errEl.style.display = 'block'; return; }
-  if(!agreed)  { errEl.textContent = 'Please agree to the risk disclaimer'; errEl.style.display = 'block'; return; }
+  if(!mt5Id)   { errEl.textContent = mmT('mt5.needId','Please enter your MT5 Account ID'); errEl.style.display = 'block'; return; }
+  if(!mt5Pw)   { errEl.textContent = mmT('mt5.needPw','Please enter your MT5 Master Password'); errEl.style.display = 'block'; return; }
+  if(!agreed)  { errEl.textContent = mmT('reg.agreeRisk','Please agree to the risk disclaimer'); errEl.style.display = 'block'; return; }
 
   var encrypted = btoa(unescape(encodeURIComponent(mt5Pw + '_mmai_' + mt5Id)));
 
@@ -13647,7 +13877,7 @@ async function handleMT5Connect() {
   try {
     var existing = [];
     try { var ex = await db.from('mt5_accounts').select('*').eq('user_id', currentUser.id); existing = (ex&&ex.data)?ex.data:[]; } catch(ee) {}
-    if(existing.length >= 5) { errEl.textContent = 'You have reached the maximum of 5 accounts.'; errEl.style.display='block'; return; }
+    if(existing.length >= 5) { errEl.textContent = mmT('mt5.maxAccounts','You have reached the maximum of 5 accounts.'); errEl.style.display='block'; return; }
     // UNIQUENESS GUARD (22 Jul 2026): one broker login = one account, across ALL
     // users - not just this user's own list. Closes the hole where the same MT5
     // login was connected on two different rows (dup 554503734, handoff). NOTE:
@@ -14972,10 +15202,10 @@ async function stnSave(){ if(stnLocked()) return;
   // smart_templates (role = 'admin'); until Phase D, the service_role key is public.
   var _isAdmin = !!(currentUser && currentUser.role === 'admin');
   if(!_stnPublishMode || !_isAdmin){
-    alert('Templates are provided by MomentumAI.\n\nSelect one from the Templates list to trade with it.');
+    alert(mmT('st.maiProvided','Templates are provided by MomentumAI.\n\nSelect one from the Templates list to trade with it.'));
     return;
   }
-  if(!_stnTpl || !db || !currentUser){ alert('Not signed in.'); return; }
+  if(!_stnTpl || !db || !currentUser){ alert(mmT('auth.notSignedIn','Not signed in.')); return; }
 
   var v = stnValidateTemplate(_stnTpl);
   if(v.errors.length){ alert('Cannot save:\n\n\u2022 '+v.errors.join('\n\u2022 ')); return; }
@@ -15018,7 +15248,7 @@ async function stnSave(){ if(stnLocked()) return;
     if(existing) slot = existing.slot;
     else {
       for(var i=1;i<=5;i++){ if(!pool.some(function(x){return x.slot===i;})){ slot=i; break; } }
-      if(slot===null){ alert('All 5 template slots are full. Delete one first.'); return; }
+      if(slot===null){ alert(mmT('st.slotsFull','All 5 template slots are full. Delete one first.')); return; }
     }
   }
   if(asMai && !existing &&
@@ -15054,7 +15284,7 @@ async function stnSave(){ if(stnLocked()) return;
       return;
     }
     var b=document.querySelector('#sub-smart-tool-new .red-btn');
-    if(b){ var o=b.textContent; b.textContent='SAVED'; b.style.background='var(--green)';
+    if(b){ var o=b.textContent; b.textContent=mmT('common.saved','SAVED'); b.style.background='var(--green)';
            setTimeout(function(){ b.textContent=o; b.style.background=''; },1800); }
     await loadSmartToolNew();
   }catch(e){ alert('Save failed: '+(e.message||e)); }
@@ -15109,7 +15339,7 @@ function stnLocked(){
 async function stnDelTemplate(id, name){
   var t=_stnTpls.filter(function(x){ return x.id===id; })[0];
   if(!t) return;
-  if(t.kind!=='user'){ alert('MAI templates cannot be deleted here.'); return; }
+  if(t.kind!=='user'){ alert(mmT('st.maiNoDelete','MAI templates cannot be deleted here.')); return; }
   if(!confirm('Delete your template "'+name+'"?\n\nThis frees the slot. It cannot be undone.')) return;
   try{
     var r=await db.from('smart_templates').delete().eq('id',id);
@@ -16193,30 +16423,30 @@ function renderMT5State(state, reason) {
   var banner = document.getElementById('mt5-status-banner');
   var btn = document.querySelector('button.red-btn[onclick="handleMT5Connect()"]');
   if(state === 'connected') {
-    setMT5Badge('CONNECTED','connected');
+    setMT5Badge(mmT('pa.connected','CONNECTED'),'connected');
     lockMT5Form(true);
     if(banner){ banner.style.cssText='display:block;background:rgba(0,200,122,0.07);border:1px solid rgba(0,200,122,0.2);border-radius:10px;padding:11px 12px;margin-bottom:12px;font-size:12px;color:var(--green);line-height:1.6;'; banner.innerHTML='✅ Your MT5 account is connected and active. The EA can now execute signals.'; }
-    if(btn){ btn.textContent='CONNECTED'; btn.disabled=true; btn.style.opacity='0.55'; }
+    if(btn){ btn.textContent=mmT('pa.connected','CONNECTED'); btn.disabled=true; btn.style.opacity='0.55'; }
   } else if(state === 'pending') {
-    setMT5Badge('PENDING','pending');
+    setMT5Badge(mmT('status.pending','PENDING'),'pending');
     lockMT5Form(true);
     if(banner){ banner.style.cssText='display:block;background:rgba(255,176,32,0.07);border:1px solid rgba(255,176,32,0.2);border-radius:10px;padding:11px 12px;margin-bottom:12px;font-size:12px;color:var(--amber);line-height:1.6;'; banner.innerHTML="⏳ Connection request submitted. Our team is setting things up — this can take up to 24 hours. You'll be notified here once it's active."; }
-    if(btn){ btn.textContent='REQUEST PENDING'; btn.disabled=true; btn.style.opacity='0.55'; }
+    if(btn){ btn.textContent=mmT('mt5.reqPending','REQUEST PENDING'); btn.disabled=true; btn.style.opacity='0.55'; }
   } else if(state === 'suspended') {
-    setMT5Badge('SUSPENDED','suspended');
+    setMT5Badge(mmT('status.suspended','SUSPENDED'),'suspended');
     lockMT5Form(true);
     if(banner){ banner.style.cssText='display:block;background:rgba(255,176,32,0.07);border:1px solid rgba(255,176,32,0.2);border-radius:10px;padding:11px 12px;margin-bottom:12px;font-size:12px;color:var(--amber);line-height:1.6;'; banner.innerHTML='⏸️ Your MT5 connection is suspended.' + (reason ? '<br><span style="color:var(--text2);">Reason: ' + reason + '</span>' : '') + '<br><span style="color:var(--text3);">'+mmT('mt.contactSupport','Please contact support.')+'</span>'; }
-    if(btn){ btn.textContent='SUSPENDED'; btn.disabled=true; btn.style.opacity='0.55'; }
+    if(btn){ btn.textContent=mmT('status.suspended','SUSPENDED'); btn.disabled=true; btn.style.opacity='0.55'; }
   } else if(state === 'rejected') {
-    setMT5Badge('REJECTED','rejected');
+    setMT5Badge(mmT('status.rejected','REJECTED'),'rejected');
     lockMT5Form(false);
     if(banner){ banner.style.cssText='display:block;background:rgba(255,30,60,0.06);border:1px solid rgba(255,30,60,0.18);border-radius:10px;padding:11px 12px;margin-bottom:12px;font-size:12px;color:var(--red);line-height:1.6;'; banner.innerHTML='❌ Your connection request was rejected.' + (reason ? '<br><span style="color:var(--text2);">Reason: ' + reason + '</span>' : '') + '<br><span style="color:var(--text3);">'+mmT('mt.updateDetails','Update your details below and try again.')+'</span>'; }
-    if(btn){ btn.textContent='RETRY CONNECTION'; btn.disabled=false; btn.style.opacity=''; }
+    if(btn){ btn.textContent=mmT('mt5.retry','RETRY CONNECTION'); btn.disabled=false; btn.style.opacity=''; }
   } else {
-    setMT5Badge('NOT CONNECTED','disconnected');
+    setMT5Badge(mmT('pa.notConnected','NOT CONNECTED'),'disconnected');
     lockMT5Form(false);
     if(banner){ banner.style.display='none'; banner.innerHTML=''; }
-    if(btn){ btn.textContent='CONNECT MT5'; btn.disabled=false; btn.style.opacity=''; }
+    if(btn){ btn.textContent=mmT('prof.connectBtn','CONNECT MT5'); btn.disabled=false; btn.style.opacity=''; }
   }
 }
 
