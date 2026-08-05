@@ -1963,7 +1963,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
           <button class="chart-tf" onclick="switchTF('M',this)">1M</button>
         </div>
         <div style="position:relative;flex-shrink:0;">
-          <button id="chart-type-btn" class="chart-type-btn" onclick="toggleChartTypeMenu(event)" aria-label="Chart type">
+          <button id="chart-type-btn" class="chart-type-btn" onclick="toggleChartTypeMenu(event)" aria-label="Chart type" data-i18n-aria="aria.chartType">
             <i class="ti ti-chart-candle" id="chart-type-icon"></i>
             <i class="ti ti-chevron-down" style="font-size:12px;color:var(--text3);"></i>
           </button>
@@ -2027,7 +2027,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         <div style="display:flex;gap:10px;align-items:stretch;">
           <!-- Gauge Box -->
           <div style="flex:0 0 110px;background:rgba(255,30,60,0.03);border:0.5px solid rgba(255,30,60,0.2);border-radius:12px;padding:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;">
-            <svg id="perf-gauge-svg" width="100" height="70" viewBox="0 0 100 70" role="img" aria-label="Performance gauge">
+            <svg id="perf-gauge-svg" width="100" height="70" viewBox="0 0 100 70" role="img" aria-label="Performance gauge" data-i18n-aria="aria.perfGauge">
               <defs><linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#FF1E3C"/><stop offset="50%" stop-color="#FFB020"/><stop offset="100%" stop-color="#00C87A"/></linearGradient></defs>
               <g stroke="#2a2a2a" stroke-width="1">
                 <line x1="50" y1="8" x2="50" y2="14" transform="rotate(-90 50 58)"/>
@@ -2102,7 +2102,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
             <button id="jbtn-all" onclick="setJournalRange('all',this)" style="padding:3px 7px;border-radius:4px;font-size:9px;font-weight:700;border:1px solid var(--border);color:var(--text3);background:transparent;cursor:pointer;">ALL</button>
           </div>
         </div>
-        <div style="position:relative;height:90px;"><canvas id="j-growth-chart" role="img" aria-label="Account P&L growth chart">Account growth over time.</canvas></div>
+        <div style="position:relative;height:90px;"><canvas id="j-growth-chart" role="img" aria-label="Account P&L growth chart" data-i18n-aria="aria.pnlChart">Account growth over time.</canvas></div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px;">
           <div style="background:rgba(0,200,122,0.06);border:0.5px solid rgba(0,200,122,0.15);border-radius:8px;padding:7px;"><div style="font-size:9px;color:#555;letter-spacing:.5px;text-transform:uppercase;margin-bottom:2px;" data-i18n="j.bestTrade">Best Trade</div><div id="j-best-trade" style="font-size:12px;font-weight:700;color:#00C87A;">—</div></div>
           <div style="background:rgba(255,30,60,0.04);border:0.5px solid rgba(255,30,60,0.12);border-radius:8px;padding:7px;"><div style="font-size:9px;color:#555;letter-spacing:.5px;text-transform:uppercase;margin-bottom:2px;" data-i18n="j.worstTrade">Worst Trade</div><div id="j-worst-trade" style="font-size:12px;font-weight:700;color:#FF1E3C;">—</div></div>
@@ -3614,7 +3614,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
           <div style="font-size:10px;font-weight:800;color:var(--red);letter-spacing:1px;margin-bottom:10px;" data-i18n="sc.sentiment">SENTIMENT ANALYSIS</div>
           <div style="display:flex;align-items:center;gap:10px;background:rgba(255,30,60,0.03);border:0.5px solid rgba(255,30,60,0.12);border-radius:10px;padding:10px;margin-bottom:10px;">
             <div style="flex-shrink:0;text-align:center;">
-              <svg id="sent-gauge-svg" width="80" height="55" viewBox="0 0 80 55" role="img" aria-label="Sentiment confidence gauge">
+              <svg id="sent-gauge-svg" width="80" height="55" viewBox="0 0 80 55" role="img" aria-label="Sentiment confidence gauge" data-i18n-aria="aria.sentGauge">
                 <defs><linearGradient id="sentGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#FF1E3C"/><stop offset="50%" stop-color="#FFB020"/><stop offset="100%" stop-color="#00C87A"/></linearGradient></defs>
                 <path d="M 6 48 A 34 34 0 0 1 74 48" fill="none" stroke="#1e1e1e" stroke-width="6" stroke-linecap="round"/>
                 <path d="M 6 48 A 34 34 0 0 1 74 48" fill="none" stroke="url(#sentGrad)" stroke-width="6" stroke-linecap="round" stroke-dasharray="106.8" stroke-dashoffset="106.8" opacity="0.15"/>
@@ -5198,6 +5198,10 @@ function mmLangName(code){ for(var i=0;i<MMLANGS.length;i++){ if(MMLANGS[i].code
 // Only the OTHER languages need entries here.
 var MM_I18N = {
   'zh-TW': {
+    'aria.chartType':'圖表類型',
+    'aria.perfGauge':'績效儀表',
+    'aria.pnlChart':'帳戶損益成長圖',
+    'aria.sentGauge':'情緒信心儀表',
     'sc.fbSummary':'技術分析顯示 {d} 結構。RSI 為 {r}。留意關鍵價位：支撐 {s} / 阻力 {x}。',
     'sc.fbFund':'請留意可能影響 {n} 的即將公布經濟數據。',
     'sc.fbBull':'價格突破 {n} 後有望挑戰更高價位。',
@@ -5729,6 +5733,10 @@ var MM_I18N = {
     'lb.rankDesc':'每月挑戰開始時將開放排名。持續交易以爭取您的名次。'
   },
   'zh-CN': {
+    'aria.chartType':'图表类型',
+    'aria.perfGauge':'绩效仪表',
+    'aria.pnlChart':'账户损益成长图',
+    'aria.sentGauge':'情绪信心仪表',
     'sc.fbSummary':'技术分析显示 {d} 结构。RSI 为 {r}。留意关键价位：支撑 {s} / 阻力 {x}。',
     'sc.fbFund':'请留意可能影响 {n} 的即将公布经济数据。',
     'sc.fbBull':'价格突破 {n} 后有望挑战更高价位。',
@@ -6196,6 +6204,10 @@ var MM_I18N = {
     'lb.rankDesc':'每月挑战开始时将开放排名。持续交易以争取您的名次。'
   },
   'ms': {
+    'aria.chartType':'Jenis carta',
+    'aria.perfGauge':'Tolok prestasi',
+    'aria.pnlChart':'Carta pertumbuhan untung rugi akaun',
+    'aria.sentGauge':'Tolok keyakinan sentimen',
     'sc.fbSummary':'Analisis teknikal menunjukkan struktur {d}. RSI pada {r}. Perhatikan paras utama: Sokongan {s} / Rintangan {x}.',
     'sc.fbFund':'Pantau acara ekonomi akan datang yang mungkin memberi kesan kepada {n}.',
     'sc.fbBull':'Harga menembusi {n} dan menyasarkan paras lebih tinggi.',
@@ -6663,6 +6675,10 @@ var MM_I18N = {
     'lb.rankDesc':'Kedudukan dibuka apabila cabaran bulanan bermula. Teruskan berdagang untuk merebut tempat anda.'
   },
   'ja': {
+    'aria.chartType':'チャートの種類',
+    'aria.perfGauge':'パフォーマンスゲージ',
+    'aria.pnlChart':'口座損益の推移チャート',
+    'aria.sentGauge':'センチメント信頼度ゲージ',
     'sc.fbSummary':'テクニカル分析では {d} の構造です。RSIは {r}。主要水準に注目: サポート {s} / レジスタンス {x}。',
     'sc.fbFund':'{n} に影響し得る今後の経済イベントに注意してください。',
     'sc.fbBull':'価格が {n} を上抜けし、より高い水準を目指します。',
@@ -7130,6 +7146,10 @@ var MM_I18N = {
     'lb.rankDesc':'月間チャレンジ開始とともにランキングが公開されます。取引を続けて順位を確保しましょう。'
   },
   'ko': {
+    'aria.chartType':'차트 유형',
+    'aria.perfGauge':'성과 게이지',
+    'aria.pnlChart':'계좌 손익 성장 차트',
+    'aria.sentGauge':'심리 신뢰도 게이지',
     'sc.fbSummary':'기술적 분석은 {d} 구조를 보입니다. RSI는 {r}. 주요 레벨 주시: 지지 {s} / 저항 {x}.',
     'sc.fbFund':'{n}에 영향을 줄 수 있는 향후 경제 이벤트를 주시하세요.',
     'sc.fbBull':'가격이 {n}을 상향 돌파해 더 높은 레벨을 목표로 합니다.',
@@ -7597,6 +7617,10 @@ var MM_I18N = {
     'lb.rankDesc':'월간 챌린지가 시작되면 순위가 공개됩니다. 계속 거래해 자리를 확보하세요.'
   },
   'th': {
+    'aria.chartType':'ประเภทกราฟ',
+    'aria.perfGauge':'มาตรวัดผลงาน',
+    'aria.pnlChart':'กราฟการเติบโตกำไรขาดทุนของบัญชี',
+    'aria.sentGauge':'มาตรวัดความเชื่อมั่นของตลาด',
     'sc.fbSummary':'การวิเคราะห์ทางเทคนิคแสดงโครงสร้าง {d} RSI อยู่ที่ {r} จับตาระดับสำคัญ: แนวรับ {s} / แนวต้าน {x}',
     'sc.fbFund':'ติดตามเหตุการณ์ทางเศรษฐกิจที่กำลังจะมาถึงซึ่งอาจกระทบ {n}',
     'sc.fbBull':'ราคาทะลุเหนือ {n} มุ่งสู่ระดับที่สูงขึ้น',
@@ -8064,6 +8088,10 @@ var MM_I18N = {
     'lb.rankDesc':'อันดับจะเปิดเมื่อการแข่งขันประจำเดือนเริ่มขึ้น เทรดต่อไปเพื่อคว้าตำแหน่งของคุณ'
   },
   'vi': {
+    'aria.chartType':'Loại biểu đồ',
+    'aria.perfGauge':'Đồng hồ hiệu suất',
+    'aria.pnlChart':'Biểu đồ tăng trưởng lãi lỗ tài khoản',
+    'aria.sentGauge':'Đồng hồ độ tin cậy tâm lý',
     'sc.fbSummary':'Phân tích kỹ thuật cho thấy cấu trúc {d}. RSI ở mức {r}. Theo dõi các mức quan trọng: Hỗ trợ {s} / Kháng cự {x}.',
     'sc.fbFund':'Theo dõi các sự kiện kinh tế sắp tới có thể ảnh hưởng đến {n}.',
     'sc.fbBull':'Giá vượt lên trên {n} hướng tới các mức cao hơn.',
@@ -8531,6 +8559,10 @@ var MM_I18N = {
     'lb.rankDesc':'Xếp hạng sẽ mở khi thử thách hàng tháng bắt đầu. Hãy tiếp tục giao dịch để giữ vị trí của bạn.'
   },
   'fil': {
+    'aria.chartType':'Uri ng chart',
+    'aria.perfGauge':'Performance gauge',
+    'aria.pnlChart':'Chart ng paglago ng P&L ng account',
+    'aria.sentGauge':'Sentiment confidence gauge',
     'sc.fbSummary':'Ipinapakita ng technical analysis ang {d} na istraktura. RSI sa {r}. Bantayan ang mahahalagang level: Support {s} / Resistance {x}.',
     'sc.fbFund':'Bantayan ang mga paparating na economic event na maaaring makaapekto sa {n}.',
     'sc.fbBull':'Lumampas ang presyo sa {n} patungo sa mas mataas na antas.',
@@ -8998,6 +9030,10 @@ var MM_I18N = {
     'lb.rankDesc':'Bubuksan ang ranggo kapag nagsimula ang buwanang challenge. Magpatuloy sa pag-trade para makuha ang puwesto mo.'
   },
   'hi': {
+    'aria.chartType':'चार्ट प्रकार',
+    'aria.perfGauge':'प्रदर्शन गेज',
+    'aria.pnlChart':'खाता लाभ-हानि वृद्धि चार्ट',
+    'aria.sentGauge':'भावना विश्वास गेज',
     'sc.fbSummary':'तकनीकी विश्लेषण {d} संरचना दिखाता है। RSI {r} पर। मुख्य स्तर देखें: सपोर्ट {s} / रेज़िस्टेंस {x}।',
     'sc.fbFund':'{n} को प्रभावित कर सकने वाली आगामी आर्थिक घटनाओं पर नज़र रखें।',
     'sc.fbBull':'कीमत {n} के ऊपर टूटकर उच्च स्तरों की ओर बढ़ती है।',
@@ -9465,6 +9501,10 @@ var MM_I18N = {
     'lb.rankDesc':'मासिक चुनौती शुरू होते ही रैंकिंग खुल जाएगी। अपनी जगह पक्की करने के लिए ट्रेडिंग जारी रखें।'
   },
   'es': {
+    'aria.chartType':'Tipo de gráfico',
+    'aria.perfGauge':'Indicador de rendimiento',
+    'aria.pnlChart':'Gráfico de evolución de pérdidas y ganancias',
+    'aria.sentGauge':'Indicador de confianza del sentimiento',
     'sc.fbSummary':'El análisis técnico muestra una estructura {d}. RSI en {r}. Vigila los niveles clave: Soporte {s} / Resistencia {x}.',
     'sc.fbFund':'Vigila los próximos eventos económicos que puedan afectar a {n}.',
     'sc.fbBull':'El precio rompe por encima de {n} apuntando a niveles más altos.',
@@ -10003,6 +10043,16 @@ function mmApplyLang(code){
     if(p.getAttribute('data-i18n-phen') === null) p.setAttribute('data-i18n-phen', p.getAttribute('placeholder')||'');
     var en2 = p.getAttribute('data-i18n-phen');
     p.setAttribute('placeholder', (dict && dict[k2] != null) ? dict[k2] : en2);
+  }
+  // Aria labels (P5). Same shape as placeholders: capture the English ONCE into
+  // its own attribute so switching back to English is lossless. Screen readers
+  // only, nothing visible changes.
+  var ars = document.querySelectorAll('[data-i18n-aria]');
+  for(var a=0;a<ars.length;a++){
+    var el3 = ars[a], k3 = el3.getAttribute('data-i18n-aria');
+    if(el3.getAttribute('data-i18n-arien') === null) el3.setAttribute('data-i18n-arien', el3.getAttribute('aria-label')||'');
+    var en3 = el3.getAttribute('data-i18n-arien');
+    el3.setAttribute('aria-label', (dict && dict[k3] != null) ? dict[k3] : en3);
   }
 }
 
