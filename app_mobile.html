@@ -4055,8 +4055,8 @@ async function handleFundFollow() {
   var errEl = document.getElementById('follow-error');
   var sucEl = document.getElementById('follow-success');
   errEl.style.display = 'none'; sucEl.style.display = 'none';
-  if(!name || !mt5 || !amount) { errEl.textContent = 'Please fill all required fields'; errEl.style.display = 'block'; return; }
-  if(!agreed) { errEl.textContent = 'Please agree to the Terms & Conditions'; errEl.style.display = 'block'; return; }
+  if(!name || !mt5 || !amount) { errEl.textContent = mmT('common.fillRequired','Please fill all required fields'); errEl.style.display = 'block'; return; }
+  if(!agreed) { errEl.textContent = mmT('fund.agreeTerms','Please agree to the Terms & Conditions'); errEl.style.display = 'block'; return; }
   try {
     await db.from('fund_requests').insert([{
       user_id: currentUser ? currentUser.id : null,
@@ -4064,7 +4064,7 @@ async function handleFundFollow() {
       risk_level: risk, phone: phone, agreed: true,
       status: 'pending', created_at: new Date().toISOString()
     }]);
-    sucEl.textContent = 'Application submitted! Our team will contact you within 24 hours.';
+    sucEl.textContent = mmT('fund.applied','Application submitted! Our team will contact you within 24 hours.');
     sucEl.style.display = 'block';
   } catch(e) {
     errEl.textContent = 'Error: ' + (e.message || 'Please try again');
@@ -4466,7 +4466,7 @@ function openAcademyCategory(category) {
     infoDiv.style.cssText = 'flex:1;min-width:0;';
     infoDiv.innerHTML = '<div style="font-size:13px;font-weight:700;color:var(--text);">' + lesson.title + '</div><div style="font-size:11px;color:var(--text3);margin-top:2px;">' + lesson.tag + '</div>';
     var btn = document.createElement('button');
-    btn.textContent = 'Read Now';
+    btn.textContent = mmT('ac.readNow','Read Now');
     btn.style.cssText = 'padding:7px 14px;background:linear-gradient(135deg,#FF1E3C,#C40024);border:none;border-radius:8px;color:#fff;font-size:11px;font-weight:700;cursor:pointer;flex-shrink:0;font-family:Sora,sans-serif;';
     btn.addEventListener('click', function(e) { e.stopPropagation(); openLesson(div.getAttribute('data-cat'), parseInt(div.getAttribute('data-idx'))); });
     div.appendChild(iconDiv);
@@ -4825,7 +4825,7 @@ async function handleRegister() {
   var errEl = document.getElementById('reg-error');
   var sucEl = document.getElementById('reg-success');
   errEl.style.display = 'none'; sucEl.style.display = 'none';
-  if(!mt5||!name||!email||!username||!password) { errEl.textContent='Please fill in all fields'; errEl.style.display='block'; return; }
+  if(!mt5||!name||!email||!username||!password) { errEl.textContent=mmT('common.fillAllFields','Please fill in all fields'); errEl.style.display='block'; return; }
   openRegPlan();
 }
 async function submitRegister() {
@@ -4882,7 +4882,7 @@ function routeUser(user) {
     enterApp(user);
   } else if(user.status === 'suspended') {
     var errEl = document.getElementById('signin-error');
-    errEl.textContent = 'Your account has been suspended. Contact support.';
+    errEl.textContent = mmT('auth.suspended','Your account has been suspended. Contact support.');
     errEl.style.display = 'block';
   }
 }
@@ -5198,6 +5198,44 @@ function mmLangName(code){ for(var i=0;i<MMLANGS.length;i++){ if(MMLANGS[i].code
 // Only the OTHER languages need entries here.
 var MM_I18N = {
   'zh-TW': {
+    'sc.analysing':'正在分析市場數據...',
+    'fund.applied':'申請已送出！我們的團隊會在 24 小時內與您聯繫。',
+    'at.offTitle':'自動交易已關閉',
+    'at.onTitle':'自動交易已開啟',
+    'at.noTrades':'將不會執行自動交易',
+    'sup.awaiting':'等待管理員回覆...',
+    'sup.adminReply':'管理員回覆',
+    'trade.confirmExec':'確認並執行',
+    'mt5.connectFirst':'請先連接您的 MT5 帳戶。',
+    'st.loadFail':'無法載入範本。',
+    'at.tplUnreadableSub':'無法載入範本詳細資料',
+    'stn.wholeNumber':'請輸入 1 以上的整數（例如 7）。',
+    'at.offSub':'請前往交易設定開啟自動交易，並選擇要追蹤的分析師。',
+    'zone.blocked':'MAI 掃描器：市場方向不支持此訊號，交易已阻擋。',
+    'st.noneSet':'此帳戶尚未設定智能工具範本。請先開啟智能工具並選擇一個再交易。',
+    'acct.noneSelected':'尚未選擇使用中的帳戶。',
+    'at.noTpl':'尚未選擇範本',
+    'st.chooseOnExec':'尚未選擇範本，執行交易時再選擇一個。',
+    'common.open':'開啟',
+    'trade.placing':'下單中\u2026',
+    'fund.agreeTerms':'請同意條款與條件',
+    'mt5.needPwShort':'請輸入您的 MT5 密碼',
+    'common.fillRequired':'請填寫所有必填欄位',
+    'common.fillAllFields':'請填寫所有欄位',
+    'mt5.requestAcct':'申請帳戶',
+    'mt5.removeAcct':'移除帳戶',
+    'common.removing':'移除中...',
+    'sc.unavailable':'掃描器：目前無法取得市場數據，請稍後再試。',
+    'at.tplUnreadable':'無法讀取範本',
+    'st.notFoundExec':'找不到範本，執行交易時再選擇一個。',
+    'at.useTpl':'使用此範本',
+    'common.updating':'更新中...',
+    'at.usedForAuto':'此帳戶的每筆自動交易都會使用',
+    'common.savedTick':'\u2713 已儲存',
+    'auth.suspended':'您的帳戶已被停權，請聯絡客服。',
+    'ac.readNow':'立即閱讀',
+    'ac.completed':'\u2713 已完成',
+    'ac.done':'\u2713 完成',
     'st.slotsFull':'5 個範本欄位已滿，請先刪除一個。',
     'common.creating':'建立中...',
     'common.continue':'繼續',
@@ -5656,6 +5694,44 @@ var MM_I18N = {
     'lb.rankDesc':'每月挑戰開始時將開放排名。持續交易以爭取您的名次。'
   },
   'zh-CN': {
+    'sc.analysing':'正在分析市场数据...',
+    'fund.applied':'申请已送出！我们的团队会在 24 小时内与您联系。',
+    'at.offTitle':'自动交易已关闭',
+    'at.onTitle':'自动交易已开启',
+    'at.noTrades':'将不会执行自动交易',
+    'sup.awaiting':'等待管理员回复...',
+    'sup.adminReply':'管理员回复',
+    'trade.confirmExec':'确认并执行',
+    'mt5.connectFirst':'请先连接您的 MT5 账户。',
+    'st.loadFail':'无法载入范本。',
+    'at.tplUnreadableSub':'无法载入范本详细资料',
+    'stn.wholeNumber':'请输入 1 以上的整数（例如 7）。',
+    'at.offSub':'请前往交易设定开启自动交易，并选择要追踪的分析师。',
+    'zone.blocked':'MAI 扫描器：市场方向不支持此讯号，交易已阻挡。',
+    'st.noneSet':'此账户尚未设定智能工具范本。请先开启智能工具并选择一个再交易。',
+    'acct.noneSelected':'尚未选择使用中的账户。',
+    'at.noTpl':'尚未选择范本',
+    'st.chooseOnExec':'尚未选择范本，执行交易时再选择一个。',
+    'common.open':'开启',
+    'trade.placing':'下单中\u2026',
+    'fund.agreeTerms':'请同意条款与条件',
+    'mt5.needPwShort':'请输入您的 MT5 密码',
+    'common.fillRequired':'请填写所有必填字段',
+    'common.fillAllFields':'请填写所有字段',
+    'mt5.requestAcct':'申请账户',
+    'mt5.removeAcct':'移除账户',
+    'common.removing':'移除中...',
+    'sc.unavailable':'扫描器：目前无法取得市场数据，请稍后再试。',
+    'at.tplUnreadable':'无法读取范本',
+    'st.notFoundExec':'找不到范本，执行交易时再选择一个。',
+    'at.useTpl':'使用此范本',
+    'common.updating':'更新中...',
+    'at.usedForAuto':'此账户的每笔自动交易都会使用',
+    'common.savedTick':'\u2713 已储存',
+    'auth.suspended':'您的账户已被停权，请联络客服。',
+    'ac.readNow':'立即阅读',
+    'ac.completed':'\u2713 已完成',
+    'ac.done':'\u2713 完成',
     'st.slotsFull':'5 个范本字段已满，请先删除一个。',
     'common.creating':'建立中...',
     'common.continue':'继续',
@@ -6050,6 +6126,44 @@ var MM_I18N = {
     'lb.rankDesc':'每月挑战开始时将开放排名。持续交易以争取您的名次。'
   },
   'ms': {
+    'sc.analysing':'Menganalisis data pasaran...',
+    'fund.applied':'Permohonan dihantar! Pasukan kami akan menghubungi anda dalam masa 24 jam.',
+    'at.offTitle':'Dagangan Auto DIMATIKAN',
+    'at.onTitle':'Dagangan Auto DIHIDUPKAN',
+    'at.noTrades':'Dagangan auto tidak akan dilaksanakan',
+    'sup.awaiting':'Menunggu balasan pentadbir...',
+    'sup.adminReply':'BALASAN PENTADBIR',
+    'trade.confirmExec':'SAHKAN & LAKSANA',
+    'mt5.connectFirst':'Sambungkan akaun MT5 anda dahulu.',
+    'st.loadFail':'Templat tidak dapat dimuatkan.',
+    'at.tplUnreadableSub':'Butiran templat tidak dapat dimuatkan',
+    'stn.wholeNumber':'Masukkan nombor bulat 1 atau lebih (contoh: 7).',
+    'at.offSub':'Pergi ke Tetapan Dagangan untuk menghidupkan Dagangan Auto dan pilih penganalisis untuk diikuti.',
+    'zone.blocked':'Pengimbas MAI: Arah pasaran tidak mengesahkan isyarat ini. Dagangan disekat.',
+    'st.noneSet':'Tiada templat Smart Tool ditetapkan untuk akaun ini. Buka Smart Tools dan pilih satu sebelum berdagang.',
+    'acct.noneSelected':'Tiada akaun aktif dipilih.',
+    'at.noTpl':'Tiada templat dipilih',
+    'st.chooseOnExec':'Tiada templat dipilih - pilih satu semasa anda melaksanakan dagangan.',
+    'common.open':'Buka',
+    'trade.placing':'Sedang menempatkan\u2026',
+    'fund.agreeTerms':'Sila setuju dengan Terma & Syarat',
+    'mt5.needPwShort':'Sila masukkan kata laluan MT5 anda',
+    'common.fillRequired':'Sila isi semua ruangan yang diperlukan',
+    'common.fillAllFields':'Sila isi semua ruangan',
+    'mt5.requestAcct':'MOHON AKAUN',
+    'mt5.removeAcct':'Buang akaun',
+    'common.removing':'Sedang membuang...',
+    'sc.unavailable':'Pengimbas: data pasaran tidak tersedia sekarang. Sila cuba sebentar lagi.',
+    'at.tplUnreadable':'Templat tidak dapat dibaca',
+    'st.notFoundExec':'Templat tidak dijumpai - pilih satu semasa anda melaksanakan dagangan.',
+    'at.useTpl':'GUNA TEMPLAT INI',
+    'common.updating':'Sedang mengemas kini...',
+    'at.usedForAuto':'Digunakan untuk setiap dagangan auto pada akaun ini',
+    'common.savedTick':'\u2713 DISIMPAN',
+    'auth.suspended':'Akaun anda telah digantung. Sila hubungi sokongan.',
+    'ac.readNow':'Baca Sekarang',
+    'ac.completed':'\u2713 SELESAI',
+    'ac.done':'\u2713 Selesai',
     'st.slotsFull':'5 slot templat sudah penuh. Padam satu dahulu.',
     'common.creating':'SEDANG MENCIPTA...',
     'common.continue':'Teruskan',
@@ -6444,6 +6558,44 @@ var MM_I18N = {
     'lb.rankDesc':'Kedudukan dibuka apabila cabaran bulanan bermula. Teruskan berdagang untuk merebut tempat anda.'
   },
   'ja': {
+    'sc.analysing':'市場データを分析中...',
+    'fund.applied':'申請を送信しました！担当チームより24時間以内にご連絡します。',
+    'at.offTitle':'自動売買はオフです',
+    'at.onTitle':'自動売買はオンです',
+    'at.noTrades':'自動売買は実行されません',
+    'sup.awaiting':'管理者の返信待ち...',
+    'sup.adminReply':'管理者からの返信',
+    'trade.confirmExec':'確認して執行',
+    'mt5.connectFirst':'先にMT5口座を接続してください。',
+    'st.loadFail':'テンプレートを読み込めませんでした。',
+    'at.tplUnreadableSub':'テンプレートの詳細を読み込めませんでした',
+    'stn.wholeNumber':'1以上の整数を入力してください（例: 7）。',
+    'at.offSub':'取引設定から自動売買をオンにし、フォローするアナリストを選んでください。',
+    'zone.blocked':'MAIスキャナー: 相場の方向がこのシグナルを裏付けていません。取引を停止しました。',
+    'st.noneSet':'この口座にはSmart Toolテンプレートが設定されていません。取引前にSmart Toolsで選択してください。',
+    'acct.noneSelected':'有効な口座が選択されていません。',
+    'at.noTpl':'テンプレート未選択',
+    'st.chooseOnExec':'テンプレート未選択です。取引実行時に選んでください。',
+    'common.open':'開く',
+    'trade.placing':'発注中\u2026',
+    'fund.agreeTerms':'利用規約に同意してください',
+    'mt5.needPwShort':'MT5のパスワードを入力してください',
+    'common.fillRequired':'必須項目をすべて入力してください',
+    'common.fillAllFields':'すべての項目を入力してください',
+    'mt5.requestAcct':'口座を申請',
+    'mt5.removeAcct':'口座を削除',
+    'common.removing':'削除中...',
+    'sc.unavailable':'スキャナー: 現在市場データを取得できません。しばらくしてからお試しください。',
+    'at.tplUnreadable':'テンプレートを読み取れません',
+    'st.notFoundExec':'テンプレートが見つかりません。取引実行時に選んでください。',
+    'at.useTpl':'このテンプレートを使う',
+    'common.updating':'更新中...',
+    'at.usedForAuto':'この口座のすべての自動売買で使用されます',
+    'common.savedTick':'\u2713 保存しました',
+    'auth.suspended':'アカウントが停止されています。サポートまでご連絡ください。',
+    'ac.readNow':'今すぐ読む',
+    'ac.completed':'\u2713 完了',
+    'ac.done':'\u2713 完了',
     'st.slotsFull':'5つのテンプレート枠がすべて使用中です。まず1つ削除してください。',
     'common.creating':'作成中...',
     'common.continue':'続ける',
@@ -6838,6 +6990,44 @@ var MM_I18N = {
     'lb.rankDesc':'月間チャレンジ開始とともにランキングが公開されます。取引を続けて順位を確保しましょう。'
   },
   'ko': {
+    'sc.analysing':'시장 데이터 분석 중...',
+    'fund.applied':'신청이 접수되었습니다! 담당 팀이 24시간 이내에 연락드립니다.',
+    'at.offTitle':'자동 매매가 꺼져 있습니다',
+    'at.onTitle':'자동 매매가 켜져 있습니다',
+    'at.noTrades':'자동 매매가 실행되지 않습니다',
+    'sup.awaiting':'관리자 답변 대기 중...',
+    'sup.adminReply':'관리자 답변',
+    'trade.confirmExec':'확인 후 실행',
+    'mt5.connectFirst':'먼저 MT5 계좌를 연결하세요.',
+    'st.loadFail':'템플릿을 불러오지 못했습니다.',
+    'at.tplUnreadableSub':'템플릿 정보를 불러오지 못했습니다',
+    'stn.wholeNumber':'1 이상의 정수를 입력하세요 (예: 7).',
+    'at.offSub':'거래 설정에서 자동 매매를 켜고 팔로우할 애널리스트를 선택하세요.',
+    'zone.blocked':'MAI 스캐너: 시장 방향이 이 신호를 확인해 주지 않습니다. 거래가 차단되었습니다.',
+    'st.noneSet':'이 계좌에 Smart Tool 템플릿이 설정되어 있지 않습니다. 거래 전에 Smart Tools에서 하나를 선택하세요.',
+    'acct.noneSelected':'활성 계좌가 선택되지 않았습니다.',
+    'at.noTpl':'선택된 템플릿 없음',
+    'st.chooseOnExec':'선택된 템플릿이 없습니다. 주문할 때 선택하세요.',
+    'common.open':'열기',
+    'trade.placing':'주문 중\u2026',
+    'fund.agreeTerms':'이용 약관에 동의해 주세요',
+    'mt5.needPwShort':'MT5 비밀번호를 입력하세요',
+    'common.fillRequired':'필수 항목을 모두 입력하세요',
+    'common.fillAllFields':'모든 항목을 입력하세요',
+    'mt5.requestAcct':'계좌 신청',
+    'mt5.removeAcct':'계좌 삭제',
+    'common.removing':'삭제 중...',
+    'sc.unavailable':'스캐너: 지금은 시장 데이터를 가져올 수 없습니다. 잠시 후 다시 시도하세요.',
+    'at.tplUnreadable':'템플릿을 읽을 수 없음',
+    'st.notFoundExec':'템플릿을 찾을 수 없습니다. 주문할 때 선택하세요.',
+    'at.useTpl':'이 템플릿 사용',
+    'common.updating':'업데이트 중...',
+    'at.usedForAuto':'이 계좌의 모든 자동 매매에 사용됩니다',
+    'common.savedTick':'\u2713 저장됨',
+    'auth.suspended':'계정이 정지되었습니다. 고객지원에 문의하세요.',
+    'ac.readNow':'지금 읽기',
+    'ac.completed':'\u2713 완료',
+    'ac.done':'\u2713 완료',
     'st.slotsFull':'템플릿 5개 슬롯이 모두 찼습니다. 먼저 하나를 삭제하세요.',
     'common.creating':'생성 중...',
     'common.continue':'계속',
@@ -7232,6 +7422,44 @@ var MM_I18N = {
     'lb.rankDesc':'월간 챌린지가 시작되면 순위가 공개됩니다. 계속 거래해 자리를 확보하세요.'
   },
   'th': {
+    'sc.analysing':'กำลังวิเคราะห์ข้อมูลตลาด...',
+    'fund.applied':'ส่งใบสมัครแล้ว! ทีมงานจะติดต่อคุณภายใน 24 ชั่วโมง',
+    'at.offTitle':'ปิดการเทรดอัตโนมัติอยู่',
+    'at.onTitle':'เปิดการเทรดอัตโนมัติอยู่',
+    'at.noTrades':'จะไม่มีการเทรดอัตโนมัติ',
+    'sup.awaiting':'รอผู้ดูแลตอบกลับ...',
+    'sup.adminReply':'คำตอบจากผู้ดูแล',
+    'trade.confirmExec':'ยืนยันและดำเนินการ',
+    'mt5.connectFirst':'กรุณาเชื่อมต่อบัญชี MT5 ของคุณก่อน',
+    'st.loadFail':'ไม่สามารถโหลดเทมเพลตได้',
+    'at.tplUnreadableSub':'ไม่สามารถโหลดรายละเอียดเทมเพลตได้',
+    'stn.wholeNumber':'กรอกจำนวนเต็มตั้งแต่ 1 ขึ้นไป (เช่น 7)',
+    'at.offSub':'ไปที่การตั้งค่าการเทรดเพื่อเปิดการเทรดอัตโนมัติ และเลือกนักวิเคราะห์ที่ต้องการติดตาม',
+    'zone.blocked':'MAI Scanner: ทิศทางตลาดไม่ยืนยันสัญญาณนี้ การเทรดถูกระงับ',
+    'st.noneSet':'บัญชีนี้ยังไม่ได้ตั้งค่าเทมเพลต Smart Tool กรุณาเปิด Smart Tools และเลือกก่อนเทรด',
+    'acct.noneSelected':'ยังไม่ได้เลือกบัญชีที่ใช้งาน',
+    'at.noTpl':'ยังไม่ได้เลือกเทมเพลต',
+    'st.chooseOnExec':'ยังไม่ได้เลือกเทมเพลต เลือกตอนที่คุณส่งคำสั่งเทรด',
+    'common.open':'เปิด',
+    'trade.placing':'กำลังส่งคำสั่ง\u2026',
+    'fund.agreeTerms':'กรุณายอมรับข้อกำหนดและเงื่อนไข',
+    'mt5.needPwShort':'กรุณากรอกรหัสผ่าน MT5 ของคุณ',
+    'common.fillRequired':'กรุณากรอกข้อมูลที่จำเป็นให้ครบ',
+    'common.fillAllFields':'กรุณากรอกข้อมูลให้ครบทุกช่อง',
+    'mt5.requestAcct':'ขอเปิดบัญชี',
+    'mt5.removeAcct':'ลบบัญชี',
+    'common.removing':'กำลังลบ...',
+    'sc.unavailable':'สแกนเนอร์: ขณะนี้ไม่มีข้อมูลตลาด กรุณาลองใหม่อีกครั้งในอีกสักครู่',
+    'at.tplUnreadable':'อ่านเทมเพลตไม่ได้',
+    'st.notFoundExec':'ไม่พบเทมเพลต เลือกตอนที่คุณส่งคำสั่งเทรด',
+    'at.useTpl':'ใช้เทมเพลตนี้',
+    'common.updating':'กำลังอัปเดต...',
+    'at.usedForAuto':'ใช้กับการเทรดอัตโนมัติทุกครั้งของบัญชีนี้',
+    'common.savedTick':'\u2713 บันทึกแล้ว',
+    'auth.suspended':'บัญชีของคุณถูกระงับ กรุณาติดต่อฝ่ายสนับสนุน',
+    'ac.readNow':'อ่านเลย',
+    'ac.completed':'\u2713 เสร็จสิ้น',
+    'ac.done':'\u2713 เสร็จแล้ว',
     'st.slotsFull':'ช่องเทมเพลตทั้ง 5 เต็มแล้ว กรุณาลบหนึ่งรายการก่อน',
     'common.creating':'กำลังสร้าง...',
     'common.continue':'ดำเนินการต่อ',
@@ -7626,6 +7854,44 @@ var MM_I18N = {
     'lb.rankDesc':'อันดับจะเปิดเมื่อการแข่งขันประจำเดือนเริ่มขึ้น เทรดต่อไปเพื่อคว้าตำแหน่งของคุณ'
   },
   'vi': {
+    'sc.analysing':'Đang phân tích dữ liệu thị trường...',
+    'fund.applied':'Đã gửi đơn đăng ký! Đội ngũ của chúng tôi sẽ liên hệ trong vòng 24 giờ.',
+    'at.offTitle':'Giao dịch tự động đang TẮT',
+    'at.onTitle':'Giao dịch tự động đang BẬT',
+    'at.noTrades':'Giao dịch tự động sẽ không được đặt',
+    'sup.awaiting':'Đang chờ quản trị viên trả lời...',
+    'sup.adminReply':'PHẢN HỒI CỦA QUẢN TRỊ VIÊN',
+    'trade.confirmExec':'XÁC NHẬN & THỰC HIỆN',
+    'mt5.connectFirst':'Hãy kết nối tài khoản MT5 của bạn trước.',
+    'st.loadFail':'Không thể tải mẫu.',
+    'at.tplUnreadableSub':'Không thể tải chi tiết mẫu',
+    'stn.wholeNumber':'Nhập số nguyên từ 1 trở lên (ví dụ: 7).',
+    'at.offSub':'Vào Cài đặt Giao dịch để bật Giao dịch tự động và chọn nhà phân tích để theo dõi.',
+    'zone.blocked':'MAI Scanner: Hướng thị trường không xác nhận tín hiệu này. Giao dịch bị chặn.',
+    'st.noneSet':'Tài khoản này chưa đặt mẫu Smart Tool. Hãy mở Smart Tools và chọn một mẫu trước khi giao dịch.',
+    'acct.noneSelected':'Chưa chọn tài khoản đang hoạt động.',
+    'at.noTpl':'Chưa chọn mẫu',
+    'st.chooseOnExec':'Chưa chọn mẫu - hãy chọn khi bạn đặt lệnh.',
+    'common.open':'Mở',
+    'trade.placing':'Đang đặt lệnh\u2026',
+    'fund.agreeTerms':'Vui lòng đồng ý với Điều khoản và Điều kiện',
+    'mt5.needPwShort':'Vui lòng nhập mật khẩu MT5 của bạn',
+    'common.fillRequired':'Vui lòng điền tất cả các trường bắt buộc',
+    'common.fillAllFields':'Vui lòng điền đầy đủ các trường',
+    'mt5.requestAcct':'YÊU CẦU TÀI KHOẢN',
+    'mt5.removeAcct':'Xóa tài khoản',
+    'common.removing':'Đang xóa...',
+    'sc.unavailable':'Trình quét: hiện không có dữ liệu thị trường. Vui lòng thử lại sau giây lát.',
+    'at.tplUnreadable':'Không đọc được mẫu',
+    'st.notFoundExec':'Không tìm thấy mẫu - hãy chọn khi bạn đặt lệnh.',
+    'at.useTpl':'DÙNG MẪU NÀY',
+    'common.updating':'Đang cập nhật...',
+    'at.usedForAuto':'Dùng cho mọi giao dịch tự động trên tài khoản này',
+    'common.savedTick':'\u2713 ĐÃ LƯU',
+    'auth.suspended':'Tài khoản của bạn đã bị đình chỉ. Hãy liên hệ bộ phận hỗ trợ.',
+    'ac.readNow':'Đọc ngay',
+    'ac.completed':'\u2713 HOÀN THÀNH',
+    'ac.done':'\u2713 Xong',
     'st.slotsFull':'Cả 5 vị trí mẫu đã đầy. Hãy xóa một mẫu trước.',
     'common.creating':'ĐANG TẠO...',
     'common.continue':'Tiếp tục',
@@ -8020,6 +8286,44 @@ var MM_I18N = {
     'lb.rankDesc':'Xếp hạng sẽ mở khi thử thách hàng tháng bắt đầu. Hãy tiếp tục giao dịch để giữ vị trí của bạn.'
   },
   'fil': {
+    'sc.analysing':'Sinusuri ang market data...',
+    'fund.applied':'Naisumite ang aplikasyon! Makikipag-ugnayan ang aming team sa loob ng 24 oras.',
+    'at.offTitle':'NAKA-OFF ang Auto Trade',
+    'at.onTitle':'NAKA-ON ang Auto Trade',
+    'at.noTrades':'Hindi ilalagay ang mga auto trade',
+    'sup.awaiting':'Naghihintay ng sagot ng admin...',
+    'sup.adminReply':'SAGOT NG ADMIN',
+    'trade.confirmExec':'KUMPIRMAHIN AT ISAGAWA',
+    'mt5.connectFirst':'Ikonekta muna ang iyong MT5 account.',
+    'st.loadFail':'Hindi ma-load ang template.',
+    'at.tplUnreadableSub':'Hindi ma-load ang detalye ng template',
+    'stn.wholeNumber':'Maglagay ng buong numero na 1 o higit pa (halimbawa: 7).',
+    'at.offSub':'Pumunta sa Trade Settings para i-on ang Auto Trade at pumili ng analyst na susundan.',
+    'zone.blocked':'MAI Scanner: Hindi sinusuportahan ng direksyon ng market ang signal na ito. Naka-block ang trade.',
+    'st.noneSet':'Walang nakatakdang Smart Tool template para sa account na ito. Buksan ang Smart Tools at pumili bago mag-trade.',
+    'acct.noneSelected':'Walang napiling aktibong account.',
+    'at.noTpl':'Walang napiling template',
+    'st.chooseOnExec':'Walang napiling template - pumili kapag nag-execute ka.',
+    'common.open':'Buksan',
+    'trade.placing':'Inilalagay\u2026',
+    'fund.agreeTerms':'Pakisang-ayunan ang Terms & Conditions',
+    'mt5.needPwShort':'Pakilagay ang iyong MT5 password',
+    'common.fillRequired':'Pakipunan ang lahat ng kinakailangang field',
+    'common.fillAllFields':'Pakipunan ang lahat ng field',
+    'mt5.requestAcct':'HUMILING NG ACCOUNT',
+    'mt5.removeAcct':'Alisin ang account',
+    'common.removing':'Inaalis...',
+    'sc.unavailable':'Scanner: wala pang market data ngayon. Subukan muli maya-maya.',
+    'at.tplUnreadable':'Hindi mabasa ang template',
+    'st.notFoundExec':'Hindi nakita ang template - pumili kapag nag-execute ka.',
+    'at.useTpl':'GAMITIN ANG TEMPLATE NA ITO',
+    'common.updating':'Ina-update...',
+    'at.usedForAuto':'Ginagamit sa bawat auto trade sa account na ito',
+    'common.savedTick':'\u2713 NA-SAVE',
+    'auth.suspended':'Na-suspend ang iyong account. Makipag-ugnayan sa support.',
+    'ac.readNow':'Basahin Ngayon',
+    'ac.completed':'\u2713 TAPOS NA',
+    'ac.done':'\u2713 Tapos',
     'st.slotsFull':'Puno na ang lahat ng 5 template slot. Magtanggal muna ng isa.',
     'common.creating':'GUMAGAWA...',
     'common.continue':'Magpatuloy',
@@ -8414,6 +8718,44 @@ var MM_I18N = {
     'lb.rankDesc':'Bubuksan ang ranggo kapag nagsimula ang buwanang challenge. Magpatuloy sa pag-trade para makuha ang puwesto mo.'
   },
   'hi': {
+    'sc.analysing':'बाज़ार डेटा का विश्लेषण हो रहा है...',
+    'fund.applied':'आवेदन भेज दिया गया! हमारी टीम 24 घंटे के भीतर आपसे संपर्क करेगी।',
+    'at.offTitle':'ऑटो ट्रेड बंद है',
+    'at.onTitle':'ऑटो ट्रेड चालू है',
+    'at.noTrades':'ऑटो ट्रेड नहीं लगाए जाएँगे',
+    'sup.awaiting':'व्यवस्थापक के उत्तर की प्रतीक्षा...',
+    'sup.adminReply':'व्यवस्थापक का उत्तर',
+    'trade.confirmExec':'पुष्टि करें और निष्पादित करें',
+    'mt5.connectFirst':'पहले अपना MT5 खाता कनेक्ट करें।',
+    'st.loadFail':'टेम्पलेट लोड नहीं हो सका।',
+    'at.tplUnreadableSub':'टेम्पलेट का विवरण लोड नहीं हो सका',
+    'stn.wholeNumber':'1 या उससे अधिक की पूर्ण संख्या दर्ज करें (जैसे 7)।',
+    'at.offSub':'ऑटो ट्रेड चालू करने और विश्लेषक चुनने के लिए ट्रेड सेटिंग्स में जाएँ।',
+    'zone.blocked':'MAI स्कैनर: बाज़ार की दिशा इस सिग्नल की पुष्टि नहीं करती। ट्रेड रोक दिया गया।',
+    'st.noneSet':'इस खाते के लिए कोई स्मार्ट टूल टेम्पलेट सेट नहीं है। ट्रेड करने से पहले स्मार्ट टूल्स खोलकर एक चुनें।',
+    'acct.noneSelected':'कोई सक्रिय खाता चयनित नहीं है।',
+    'at.noTpl':'कोई टेम्पलेट चयनित नहीं',
+    'st.chooseOnExec':'कोई टेम्पलेट चयनित नहीं - निष्पादन के समय एक चुनें।',
+    'common.open':'खोलें',
+    'trade.placing':'ऑर्डर लगाया जा रहा है\u2026',
+    'fund.agreeTerms':'कृपया नियम और शर्तों से सहमत हों',
+    'mt5.needPwShort':'कृपया अपना MT5 पासवर्ड दर्ज करें',
+    'common.fillRequired':'कृपया सभी आवश्यक फ़ील्ड भरें',
+    'common.fillAllFields':'कृपया सभी फ़ील्ड भरें',
+    'mt5.requestAcct':'खाता अनुरोध करें',
+    'mt5.removeAcct':'खाता हटाएँ',
+    'common.removing':'हटाया जा रहा है...',
+    'sc.unavailable':'स्कैनर: अभी बाज़ार डेटा उपलब्ध नहीं है। कृपया कुछ देर बाद पुनः प्रयास करें।',
+    'at.tplUnreadable':'टेम्पलेट पढ़ा नहीं जा सका',
+    'st.notFoundExec':'टेम्पलेट नहीं मिला - निष्पादन के समय एक चुनें।',
+    'at.useTpl':'इस टेम्पलेट का उपयोग करें',
+    'common.updating':'अपडेट हो रहा है...',
+    'at.usedForAuto':'इस खाते के हर ऑटो ट्रेड के लिए उपयोग होता है',
+    'common.savedTick':'\u2713 सहेजा गया',
+    'auth.suspended':'आपका खाता निलंबित कर दिया गया है। सहायता से संपर्क करें।',
+    'ac.readNow':'अभी पढ़ें',
+    'ac.completed':'\u2713 पूर्ण',
+    'ac.done':'\u2713 हो गया',
     'st.slotsFull':'सभी 5 टेम्पलेट स्लॉट भरे हुए हैं। पहले एक हटाएँ।',
     'common.creating':'बनाया जा रहा है...',
     'common.continue':'जारी रखें',
@@ -8808,6 +9150,44 @@ var MM_I18N = {
     'lb.rankDesc':'मासिक चुनौती शुरू होते ही रैंकिंग खुल जाएगी। अपनी जगह पक्की करने के लिए ट्रेडिंग जारी रखें।'
   },
   'es': {
+    'sc.analysing':'Analizando datos del mercado...',
+    'fund.applied':'¡Solicitud enviada! Nuestro equipo te contactará en 24 horas.',
+    'at.offTitle':'El trading automático está DESACTIVADO',
+    'at.onTitle':'El trading automático está ACTIVADO',
+    'at.noTrades':'No se ejecutarán operaciones automáticas',
+    'sup.awaiting':'Esperando respuesta del administrador...',
+    'sup.adminReply':'RESPUESTA DEL ADMINISTRADOR',
+    'trade.confirmExec':'CONFIRMAR Y EJECUTAR',
+    'mt5.connectFirst':'Conecta primero tu cuenta MT5.',
+    'st.loadFail':'No se pudo cargar la plantilla.',
+    'at.tplUnreadableSub':'No se pudieron cargar los detalles de la plantilla',
+    'stn.wholeNumber':'Introduce un número entero de 1 o más (por ejemplo, 7).',
+    'at.offSub':'Ve a Ajustes de Trading para activar el trading automático y elegir a qué analistas seguir.',
+    'zone.blocked':'MAI Scanner: la dirección del mercado no confirma esta señal. Operación bloqueada.',
+    'st.noneSet':'Esta cuenta no tiene plantilla de Smart Tool. Abre Smart Tools y elige una antes de operar.',
+    'acct.noneSelected':'No hay ninguna cuenta activa seleccionada.',
+    'at.noTpl':'Sin plantilla seleccionada',
+    'st.chooseOnExec':'Sin plantilla seleccionada: elige una al ejecutar.',
+    'common.open':'Abrir',
+    'trade.placing':'Enviando orden\u2026',
+    'fund.agreeTerms':'Acepta los Términos y Condiciones',
+    'mt5.needPwShort':'Introduce tu contraseña de MT5',
+    'common.fillRequired':'Completa todos los campos obligatorios',
+    'common.fillAllFields':'Completa todos los campos',
+    'mt5.requestAcct':'SOLICITAR CUENTA',
+    'mt5.removeAcct':'Eliminar cuenta',
+    'common.removing':'Eliminando...',
+    'sc.unavailable':'Scanner: los datos de mercado no están disponibles ahora. Inténtalo en un momento.',
+    'at.tplUnreadable':'Plantilla no legible',
+    'st.notFoundExec':'Plantilla no encontrada: elige una al ejecutar.',
+    'at.useTpl':'USAR ESTA PLANTILLA',
+    'common.updating':'Actualizando...',
+    'at.usedForAuto':'Se usa en todas las operaciones automáticas de esta cuenta',
+    'common.savedTick':'\u2713 GUARDADO',
+    'auth.suspended':'Tu cuenta ha sido suspendida. Contacta con soporte.',
+    'ac.readNow':'Leer ahora',
+    'ac.completed':'\u2713 COMPLETADO',
+    'ac.done':'\u2713 Hecho',
     'st.slotsFull':'Los 5 espacios de plantilla están llenos. Elimina uno primero.',
     'common.creating':'CREANDO...',
     'common.continue':'Continuar',
@@ -9904,7 +10284,7 @@ async function executeTrade(method) {
 
 async function executeTradeInner(method) {
   if(!currentSignal) return;
-  if(!activeAccount || !activeAccount.mt5_id){ alert('Connect your MT5 account first.'); return; }
+  if(!activeAccount || !activeAccount.mt5_id){ alert(mmT('mt5.connectFirst','Connect your MT5 account first.')); return; }
   var dir = (currentSignal.direction||'').toString().toUpperCase();
   var side = (dir==='SELL'||dir==='SHORT') ? 'SELL' : 'BUY';
   var sym = (currentSignal.pair||'').toString().toUpperCase().replace('/','');
@@ -9956,7 +10336,7 @@ async function executeTradeInner(method) {
     // No template resolved -> send NO template. The EA then runs single-entry.
     // Never invent a default ladder: a guessed ladder is a guessed money instruction.
     if(!tplPayload) {
-      alert('No Smart Tool template is set for this account. Open Smart Tools and choose one before trading.');
+      alert(mmT('st.noneSet','No Smart Tool template is set for this account. Open Smart Tools and choose one before trading.'));
       if(btn){ btn.textContent=origText; btn.disabled=false; }
       return;
     }
@@ -10079,7 +10459,7 @@ async function executeTradeInner(method) {
     if(method === 'auto' && activeAccount && activeAccount.auto_entry_confirm === 'scanner') {
       var scanOk = await verifyScannerBeforeTrade(sym, side);
       if(!scanOk) {
-        alert('MAI Scanner: Market direction does not confirm this signal. Trade blocked.');
+        alert(mmT('zone.blocked','MAI Scanner: Market direction does not confirm this signal. Trade blocked.'));
         if(btn){ btn.textContent=origText; btn.disabled=false; }
         return;
       }
@@ -10103,7 +10483,7 @@ async function executeTradeInner(method) {
       else { note.innerHTML = '<i class="ti ti-clock"></i>'+mmT('ex.armed','Armed \u2014 waiting for price to enter the entry zone.')+''; if(btn){ btn.textContent=origText; btn.disabled=false; } }
     } else {
       note.innerHTML = '<i class="ti ti-loader"></i>'+mmT('ex.placing','Placing trade\u2026 confirming with MT5.')+'';
-      if(btn){ btn.textContent='Placing\u2026'; btn.disabled=true; }
+      if(btn){ btn.textContent=mmT('trade.placing','Placing\u2026'); btn.disabled=true; }
       if(cid) { pollTradeCommand(cid, btn, origText); }
       else { if(btn){ btn.textContent=origText; btn.disabled=false; } }
     }
@@ -10545,7 +10925,7 @@ async function handlePostSignal() {
       str=document.getElementById('sig-strength').value, com=document.getElementById('sig-commentary').value.trim();
   var errEl=document.getElementById('analyst-error'), sucEl=document.getElementById('analyst-success');
   errEl.style.display='none'; sucEl.style.display='none';
-  if(!pair||!ef||!et||!sl||!tp1) { errEl.style.color='var(--red)'; errEl.textContent='Please fill all required fields'; errEl.style.display='block'; return; }
+  if(!pair||!ef||!et||!sl||!tp1) { errEl.style.color='var(--red)'; errEl.textContent=mmT('common.fillRequired','Please fill all required fields'); errEl.style.display='block'; return; }
   if(!stnSignalGate({pair:pair,dir:dir,ef:ef,et:et,sl:sl,tp1:tp1}, errEl)) return;
   try {
     var res = await db.from('signals').insert([{pair,direction:dir,entry_from:parseFloat(ef),entry_to:parseFloat(et),sl:parseFloat(sl),tp1:parseFloat(tp1),tp2:tp2?parseFloat(tp2):null,timeframe:tf,strength:parseInt(str),commentary:com,analyst_id:currentUser?currentUser.id:null,analyst_name:currentUser?(currentUser.name||currentUser.username):'Analyst',status:'active',created_at:new Date().toISOString()}]);
@@ -10751,9 +11131,9 @@ function updateScanSymbols() {
 
 function initiateScan() {
   var btn = document.querySelector('[onclick="initiateScan()"]');
-  if(btn) { btn.textContent = 'SCANNING...'; btn.disabled = true; }
+  if(btn) { btn.textContent = mmT('sc.scanningCaps','SCANNING...'); btn.disabled = true; }
   var status = document.getElementById('scan-status');
-  if(status) status.textContent = 'Analysing market data...';
+  if(status) status.textContent = mmT('sc.analysing','Analysing market data...');
   setTimeout(function() {
     var symbol = document.getElementById('scan-symbol') ? document.getElementById('scan-symbol').value : 'XAUUSD';
     var tf = document.getElementById('scan-tf') ? document.getElementById('scan-tf').value : 'H4';
@@ -10764,7 +11144,7 @@ function initiateScan() {
     var results = document.getElementById('scan-results');
     if(results) results.style.display = 'block';
     if(status) status.textContent = mmT('sc.lastScanNow','Last scan: just now \u00b7 ') + symbol + ' ' + tf;
-    if(btn) { btn.textContent = 'INITIATE SCAN'; btn.disabled = false; }
+    if(btn) { btn.textContent = mmT('sc.initiate','INITIATE SCAN'); btn.disabled = false; }
   }, 2000);
 }
 
@@ -10878,7 +11258,7 @@ async function loadMyTickets() {
       msg.style.cssText = 'font-size:11px;color:var(--text3);margin-bottom:8px;';
       msg.textContent = t.message.substring(0,80) + (t.message.length > 80 ? '...' : '');
       var btn = document.createElement('button');
-      btn.textContent = 'Open';
+      btn.textContent = mmT('common.open','Open');
       btn.style.cssText = 'padding:6px 14px;background:linear-gradient(135deg,#FF1E3C,#C40024);border:none;border-radius:7px;color:#fff;font-size:11px;font-weight:700;cursor:pointer;';
       btn.addEventListener('click', function() { openTicketDetail(t); });
       div.appendChild(hdr); div.appendChild(msg); div.appendChild(btn);
@@ -10918,7 +11298,7 @@ function openTicketDetail(ticket) {
     rep.style.cssText = 'padding:12px;background:rgba(0,200,122,0.06);border:1px solid rgba(0,200,122,0.15);border-radius:10px;';
     var repTitle = document.createElement('div');
     repTitle.style.cssText = 'font-size:10px;color:var(--text3);margin-bottom:6px;font-weight:700;';
-    repTitle.textContent = 'ADMIN REPLY';
+    repTitle.textContent = mmT('sup.adminReply','ADMIN REPLY');
     var repMsg = document.createElement('div');
     repMsg.style.cssText = 'font-size:12px;color:var(--green);line-height:1.7;';
     repMsg.textContent = ticket.admin_reply;
@@ -10927,7 +11307,7 @@ function openTicketDetail(ticket) {
   } else {
     var waiting = document.createElement('div');
     waiting.style.cssText = 'font-size:12px;color:var(--text3);font-style:italic;';
-    waiting.textContent = 'Awaiting admin reply...';
+    waiting.textContent = mmT('sup.awaiting','Awaiting admin reply...');
     sheet.appendChild(waiting);
   }
   popup.appendChild(sheet);
@@ -12795,7 +13175,7 @@ function openEditAnalystPopup(analyst){
   var ph=pairs.map(function(p){var c=(!analyst.trading_pairs||analyst.trading_pairs==='all'||saved.indexOf(p)>-1)?'checked':'';return '<label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="'+p+'" class="ea-pair-check" '+c+' style="accent-color:var(--red);width:15px;height:15px;"> '+p+'</label>';}).join('');
   sheet.innerHTML='<div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 18px;"></div><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;"><div style="font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);">EDIT ANALYST</div><button id="ea-x" style="width:32px;height:32px;border-radius:50%;background:var(--surface);border:1px solid var(--border);color:var(--text2);font-size:18px;cursor:pointer;">×</button></div><div class="auth-field"><label class="auth-label">Full Name</label><input id="ea-name" class="auth-input" type="text" value="'+(analyst.name||'')+'"></div><div class="auth-field"><label class="auth-label">New Password</label><input id="ea-pw" class="auth-input" type="password" placeholder="Leave blank to keep"></div><div class="auth-field"><label class="auth-label">Trading Pairs</label><div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px 12px;"><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">'+ph+'</div></div></div><div class="auth-field"><label class="auth-label">Status</label><select id="ea-status" class="auth-input"><option value="active"'+(analyst.status==='active'?' selected':'')+'>Active</option><option value="suspended"'+(analyst.status==='suspended'?' selected':'')+'>Suspended</option></select></div><div id="ea-error" class="error-msg"></div><div id="ea-success" class="success-msg"></div>';
   var sb=document.createElement('button');sb.className='red-btn';sb.textContent='SAVE CHANGES';sb.addEventListener('click',function(){saveAnalystEdit(analyst.id);});sheet.appendChild(sb);
-  var cb=document.createElement('button');cb.className='ghost-btn';cb.style.marginTop='10px';cb.textContent='Cancel';cb.addEventListener('click',function(){popup.remove();});sheet.appendChild(cb);
+  var cb=document.createElement('button');cb.className='ghost-btn';cb.style.marginTop='10px';cb.textContent=mmT('common.cancel','Cancel');cb.addEventListener('click',function(){popup.remove();});sheet.appendChild(cb);
   popup.appendChild(sheet);popup.addEventListener('click',function(e){if(e.target===popup)popup.remove();});document.body.appendChild(popup);
   sheet.querySelector('#ea-x').addEventListener('click',function(){popup.remove();});
 }
@@ -12878,7 +13258,7 @@ function openEditSubAdminPopup(sub){
   var th=allTabs.map(function(t){var c=saved.indexOf(t)>-1?'checked':'';return '<label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="'+t+'" class="esa-tab-check" '+c+' style="accent-color:var(--red);width:15px;height:15px;"> '+tabLabels[t]+'</label>';}).join('');
   sheet.innerHTML='<div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 18px;"></div><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;"><div style="font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);">EDIT SUB-ADMIN</div><button id="esa-x" style="width:32px;height:32px;border-radius:50%;background:var(--surface);border:1px solid var(--border);color:var(--text2);font-size:18px;cursor:pointer;">×</button></div><div class="auth-field"><label class="auth-label">Full Name</label><input id="esa-name" class="auth-input" type="text" value="'+(sub.name||'')+'"></div><div class="auth-field"><label class="auth-label">New Password</label><input id="esa-pw" class="auth-input" type="password" placeholder="Leave blank to keep"></div><div class="auth-field"><label class="auth-label">Status</label><select id="esa-status" class="auth-input"><option value="active"'+(sub.status==='active'?' selected':'')+'>Active</option><option value="suspended"'+(sub.status==='suspended'?' selected':'')+'>Suspended</option></select></div><div class="auth-field"><label class="auth-label">Panel Access</label><div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px 12px;"><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">'+th+'</div></div></div><div id="esa-error" class="error-msg"></div><div id="esa-success" class="success-msg"></div>';
   var sb=document.createElement('button');sb.className='red-btn';sb.textContent='SAVE CHANGES';sb.addEventListener('click',function(){saveSubAdminEdit(sub.id);});sheet.appendChild(sb);
-  var cb=document.createElement('button');cb.className='ghost-btn';cb.style.marginTop='10px';cb.textContent='Cancel';cb.addEventListener('click',function(){popup.remove();});sheet.appendChild(cb);
+  var cb=document.createElement('button');cb.className='ghost-btn';cb.style.marginTop='10px';cb.textContent=mmT('common.cancel','Cancel');cb.addEventListener('click',function(){popup.remove();});sheet.appendChild(cb);
   popup.appendChild(sheet);popup.addEventListener('click',function(e){if(e.target===popup)popup.remove();});document.body.appendChild(popup);
   sheet.querySelector('#esa-x').addEventListener('click',function(){popup.remove();});
 }
@@ -13128,7 +13508,7 @@ function openAcademyCategory(cat){
   lv.style.display='block';lv.innerHTML='';
   var bb=document.createElement('button');bb.style.cssText='background:transparent;border:none;color:var(--red);font-size:13px;font-weight:700;cursor:pointer;padding:0;margin-bottom:16px;display:flex;align-items:center;gap:6px;';bb.innerHTML='<i class="ti ti-arrow-left"></i> '+mmT('ac.back','Back')+'';bb.addEventListener('click',function(){lv.style.display='none';if(cv)cv.style.display='block';});lv.appendChild(bb);
   var td=document.createElement('div');td.style.cssText='font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);margin-bottom:14px;';td.textContent=m.label;lv.appendChild(td);
-  if(!lessons.length){var em=document.createElement('div');em.className='empty-state';em.style.padding='20px';em.textContent='No lessons here yet';lv.appendChild(em);return;}
+  if(!lessons.length){var em=document.createElement('div');em.className='empty-state';em.style.padding='20px';em.textContent=mmT('ac.noLessons','No lessons here yet');lv.appendChild(em);return;}
   var lc={beginner:'var(--green)',intermediate:'var(--amber)',advanced:'var(--red)'};
   lessons.forEach(function(ls){
     var done=isAcademyDone(ls.id);
@@ -13136,8 +13516,8 @@ function openAcademyCategory(cat){
     var card=document.createElement('div');card.style.cssText='padding:13px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:10px;';
     card.innerHTML='<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><div style="flex:1;font-size:13px;font-weight:700;color:var(--text);">'+ls.title+'</div><div style="font-size:9px;font-weight:700;padding:2px 8px;border-radius:4px;color:'+(lc[ls.level]||'var(--text3)')+';background:rgba(255,255,255,0.05);">'+(ls.level||'beginner').toUpperCase()+'</div></div><div style="font-size:11px;color:var(--text3);line-height:1.5;margin-bottom:10px;">'+summary+'</div>';
     var btn=document.createElement('button');
-    if(done){ btn.textContent='\u2713 Done'; btn.style.cssText='width:100%;padding:9px;background:rgba(0,200,122,0.12);border:1px solid rgba(0,200,122,0.25);border-radius:8px;color:var(--green);font-size:12px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;'; }
-    else { btn.textContent='Read Now'; btn.style.cssText='width:100%;padding:9px;background:linear-gradient(135deg,#FF1E3C,#C40024);border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;'; }
+    if(done){ btn.textContent=mmT('ac.done','\u2713 Done'); btn.style.cssText='width:100%;padding:9px;background:rgba(0,200,122,0.12);border:1px solid rgba(0,200,122,0.25);border-radius:8px;color:var(--green);font-size:12px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;'; }
+    else { btn.textContent=mmT('ac.readNow','Read Now'); btn.style.cssText='width:100%;padding:9px;background:linear-gradient(135deg,#FF1E3C,#C40024);border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;'; }
     btn.addEventListener('click',function(){openAcademyLesson(ls,lv);});
     card.appendChild(btn);
     lv.appendChild(card);
@@ -13218,7 +13598,7 @@ function openAcademyLesson(ls,lv){
   doneBtn.addEventListener('click',function(){
     if(isAcademyDone(ls.id)) return;
     markAcademyDone(ls.id);
-    doneBtn.textContent='\u2713 COMPLETED';
+    doneBtn.textContent=mmT('ac.completed','\u2713 COMPLETED');
     doneBtn.style.cssText=doneStyleA+doneDone;
   });
   dv.appendChild(doneBtn);
@@ -13464,7 +13844,7 @@ function showNoMT5Warning(state) {
     closeTradePopup(); switchTab('more'); setTimeout(function(){ showSubScreen('sub-profile'); }, 300);
   });
   var cancelBtn = document.createElement('button');
-  cancelBtn.textContent = 'Cancel';
+  cancelBtn.textContent = mmT('common.cancel','Cancel');
   cancelBtn.style.cssText = 'width:100%;padding:12px;background:transparent;border:1px solid var(--border);border-radius:12px;color:var(--text2);font-size:13px;cursor:pointer;';
   cancelBtn.addEventListener('click', function(){ popup.remove(); });
   sheet.appendChild(goBtn);
@@ -13619,7 +13999,7 @@ function stnSafeMode(){
   }catch(e){ return true; }
 }
 async function stnSetSafeMode(on){
-  if(!activeAccount){ alert('No active account selected.'); return; }
+  if(!activeAccount){ alert(mmT('acct.noneSelected','No active account selected.')); return; }
   try{
     var cur=activeAccount.mm_settings;
     if(typeof cur==='string'){ try{ cur=JSON.parse(cur); }catch(e){ cur={}; } }
@@ -13700,10 +14080,10 @@ function openTradeConsentSheet(){
     '<label style="display:flex;align-items:center;gap:10px;padding:11px;background:var(--bg3);border:1px solid var(--border);border-radius:9px;cursor:pointer;margin-bottom:8px;"><input type="checkbox" id="consent-authorize" style="accent-color:var(--red);width:16px;height:16px;flex-shrink:0;"><span style="font-size:12px;color:var(--text2);">'+mmT('ta.authorize','I authorize this trade')+'</span></label>'+
     '<label style="display:flex;align-items:center;gap:10px;padding:11px;background:var(--bg3);border:1px solid var(--border);border-radius:9px;cursor:pointer;margin-bottom:16px;"><input type="checkbox" id="consent-all" style="accent-color:var(--red);width:16px;height:16px;flex-shrink:0;"><span style="font-size:12px;color:var(--text2);">'+mmT('ta.allowAll','Allow all future trades — do not ask me again')+'</span></label>';
   var confirmBtn=document.createElement('button');
-  confirmBtn.textContent='CONFIRM & EXECUTE';
+  confirmBtn.textContent=mmT('trade.confirmExec','CONFIRM & EXECUTE');
   confirmBtn.style.cssText='width:100%;padding:14px;background:var(--grad);border:none;border-radius:12px;color:#fff;font-family:Orbitron,sans-serif;font-size:13px;font-weight:800;letter-spacing:1px;cursor:pointer;opacity:0.45;pointer-events:none;margin-bottom:10px;';
   var cancelBtn=document.createElement('button');
-  cancelBtn.textContent='Cancel';
+  cancelBtn.textContent=mmT('common.cancel','Cancel');
   cancelBtn.style.cssText='width:100%;padding:12px;background:transparent;border:1px solid var(--border);border-radius:12px;color:var(--text2);font-size:13px;cursor:pointer;';
   sheet.appendChild(confirmBtn); sheet.appendChild(cancelBtn);
   popup.appendChild(sheet); document.body.appendChild(popup);
@@ -13798,8 +14178,8 @@ async function submitAccountEdit(acctId, mt5id){
   var errEl=document.getElementById('acct-edit-err');
   var btn=document.getElementById('acct-edit-save');
   var pw=pwEl?pwEl.value:'';
-  if(!pw){ if(errEl){ errEl.textContent='Please enter your MT5 password'; errEl.style.display='block'; } return; }
-  if(btn){ btn.disabled=true; btn.style.opacity='0.6'; btn.textContent='Updating...'; }
+  if(!pw){ if(errEl){ errEl.textContent=mmT('mt5.needPwShort','Please enter your MT5 password'); errEl.style.display='block'; } return; }
+  if(btn){ btn.disabled=true; btn.style.opacity='0.6'; btn.textContent=mmT('common.updating','Updating...'); }
   var encrypted=btoa(unescape(encodeURIComponent(pw+'_mmai_'+mt5id)));
   try{
     var ru=await db.from('mt5_accounts').update({ mt5_credential:encrypted, connection_status:'pending', mt5_connected:false, status_reason:null, connection_requested_at:new Date().toISOString() }).eq('id',acctId);
@@ -13842,7 +14222,7 @@ function confirmDeleteAccount(acctId, mt5id){
 async function doDeleteAccount(acctId, mt5id){
   var btn=document.getElementById('acct-del-go');
   var errEl=document.getElementById('acct-del-err');
-  if(btn){ btn.disabled=true; btn.style.opacity='0.6'; btn.textContent='Removing...'; }
+  if(btn){ btn.disabled=true; btn.style.opacity='0.6'; btn.textContent=mmT('common.removing','Removing...'); }
   try{
     var r=await db.from('mt5_accounts').delete().eq('id', acctId);
     if(r && r.error) throw r.error;
@@ -13851,7 +14231,7 @@ async function doDeleteAccount(acctId, mt5id){
     showAcctToast('Account '+mt5id+' removed.');
   }catch(e){
     if(errEl){ errEl.textContent='Error: '+(e.message||'could not remove account'); errEl.style.display='block'; }
-    if(btn){ btn.disabled=false; btn.style.opacity=''; btn.textContent='Remove account'; }
+    if(btn){ btn.disabled=false; btn.style.opacity=''; btn.textContent=mmT('mt5.removeAcct','Remove account'); }
   }
 }
 async function handleMT5Connect() {
@@ -13941,7 +14321,7 @@ function loadProfileMT5() {
   lockMT5Form(false);
   setMT5Badge(mmT('pa.addAccount','ADD ACCOUNT'),'disconnected');
   var banner = document.getElementById('mt5-status-banner'); if(banner){ banner.style.display='none'; banner.innerHTML=''; }
-  var btn = document.querySelector('button.red-btn[onclick="handleMT5Connect()"]'); if(btn){ btn.textContent='REQUEST ACCOUNT'; btn.disabled=false; btn.style.opacity=''; }
+  var btn = document.querySelector('button.red-btn[onclick="handleMT5Connect()"]'); if(btn){ btn.textContent=mmT('mt5.requestAcct','REQUEST ACCOUNT'); btn.disabled=false; btn.style.opacity=''; }
   renderProfileAccounts();
 }
 
@@ -14141,14 +14521,14 @@ async function updateAutoTradeStatusInPopup() {
     if(d.auto_trade) {
       var ids = [];
       try{ ids = JSON.parse(d.auto_analyst_ids||'[]'); }catch(e){}
-      textEl.textContent = 'Auto Trade is ON';
+      textEl.textContent = mmT('at.onTitle','Auto Trade is ON');
       textEl.style.color = 'var(--green)';
       subEl.textContent = 'Following '+ids.length+' analyst'+(ids.length!==1?'s':'')+'. Trades placed automatically when they post signals.';
       if(stopBtn) stopBtn.style.display = 'block';
     } else {
-      textEl.textContent = 'Auto Trade is OFF';
+      textEl.textContent = mmT('at.offTitle','Auto Trade is OFF');
       textEl.style.color = 'var(--text3)';
-      subEl.textContent = 'Go to Trade Settings to enable Auto Trade and choose which analysts to follow.';
+      subEl.textContent = mmT('at.offSub','Go to Trade Settings to enable Auto Trade and choose which analysts to follow.');
       if(stopBtn) stopBtn.style.display = 'none';
     }
   } catch(e) {}
@@ -14162,14 +14542,14 @@ async function updateSmartToolSummary() {
   var el = document.getElementById('smart-tool-summary');
   if(!el) return;
   if(!activeAccount || !activeAccount.smart_template_id){
-    el.textContent = 'No template selected - choose one when you execute.';
+    el.textContent = mmT('st.chooseOnExec','No template selected - choose one when you execute.');
     return;
   }
   try {
     var r = await db.from('smart_templates').select('name,settings')
                     .eq('id', activeAccount.smart_template_id).limit(1);
     var row = r && r.data && r.data[0];
-    if(!row){ el.textContent = 'Template not found - choose one when you execute.'; return; }
+    if(!row){ el.textContent = mmT('st.notFoundExec','Template not found - choose one when you execute.'); return; }
     var s = (typeof row.settings==='string') ? JSON.parse(row.settings) : (row.settings||{});
     var parts = [];
     parts.push(row.name || 'Template');
@@ -14186,7 +14566,7 @@ async function updateSmartToolSummary() {
     if(s.risk && s.risk.risk_pct!=null)    parts.push('risk ' + s.risk.risk_pct + '%');
     el.textContent = parts.join(' \u00b7 ');
   } catch(e) {
-    el.textContent = 'Could not load template.';
+    el.textContent = mmT('st.loadFail','Could not load template.');
   }
 }
 // AUTO TRADING (legacy - kept for compatibility)
@@ -14431,14 +14811,14 @@ function stnMultSheet(){
 function stnSetLotMultCustom(){
   var el=document.getElementById('stn-mult-custom'); if(!el) return;
   var m=parseInt(el.value,10);
-  if(isNaN(m)||m<1){ alert('Enter a whole number of 1 or more (e.g. 7).'); return; }
+  if(isNaN(m)||m<1){ alert(mmT('stn.wholeNumber','Enter a whole number of 1 or more (e.g. 7).')); return; }
   stnSetLotMult(m);
 }
 // Turning Auto ON leaves lot_multiplier untouched, so switching back off
 // restores whatever they had chosen before rather than resetting them to x1.
 async function stnSetLotAuto(on){
   var s=document.getElementById('stn-msheet'); if(s) s.style.display='none';
-  if(!activeAccount){ alert('No active account selected.'); return; }
+  if(!activeAccount){ alert(mmT('acct.noneSelected','No active account selected.')); return; }
   try{
     var cur=activeAccount.mm_settings;
     if(typeof cur==='string'){ try{ cur=JSON.parse(cur); }catch(e){ cur={}; } }
@@ -14456,7 +14836,7 @@ async function stnSetLotMult(m){
   // turns Auto off rather than saving a value Auto would immediately override.
   m=parseInt(m,10); if(isNaN(m)||m<1) return;
   var s=document.getElementById('stn-msheet'); if(s) s.style.display='none';
-  if(!activeAccount){ alert('No active account selected.'); return; }
+  if(!activeAccount){ alert(mmT('acct.noneSelected','No active account selected.')); return; }
   try{
     var cur=activeAccount.mm_settings;
     if(typeof cur==='string'){ try{ cur=JSON.parse(cur); }catch(e){ cur={}; } }
@@ -14593,7 +14973,7 @@ function stnLadderChrome(){
   if(tu) tu.innerHTML=_stnEdit ? 'Reach to target'
         : STN_UNITS[_stnUnit].h.replace('Distance','Reach')+' <i class="ti ti-chevron-down"></i>';
   if(tu) tu.style.cursor=_stnEdit?'default':'pointer';
-  if(t4) t4.textContent='Close';
+  if(t4) t4.textContent=mmT('common.close','Close');
   if(t5) t5.textContent=_stnEdit?'':'Lots';
   if(uh) uh.innerHTML=_stnEdit ? 'Depth into zone'
         : STN_UNITS[_stnUnit].h+' <i class="ti ti-chevron-down"></i>';
@@ -15493,7 +15873,7 @@ async function runMAIScanner() {
     if(!closes.length) {
       if(badge){ badge.innerHTML='<div style="width:6px;height:6px;border-radius:50%;background:var(--red);"></div>'+mmT('sc.noData','NO DATA')+''; badge.style.color='var(--red)'; }
       btn.textContent=mmT('sc.initiate','\u25B6 INITIATE SCAN'); btn.style.background='var(--red)';
-      alert('Scanner: market data unavailable right now. Please try again in a moment.');
+      alert(mmT('sc.unavailable','Scanner: market data unavailable right now. Please try again in a moment.'));
       return;
     }
 
@@ -16174,10 +16554,10 @@ function openMT5ReasonSheet(actionKind, userId){
     '</select>' +
     '<input id="mt5-reason-other" type="text" placeholder="Type reason" style="display:none;width:100%;padding:12px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:13px;margin-bottom:12px;font-family:Sora,sans-serif;">';
   var confirmBtn = document.createElement('button');
-  confirmBtn.textContent = 'CONFIRM';
+  confirmBtn.textContent = mmT('common.confirm','CONFIRM');
   confirmBtn.style.cssText = 'width:100%;padding:14px;background:var(--grad);border:none;border-radius:12px;color:#fff;font-family:Orbitron,sans-serif;font-size:13px;font-weight:800;letter-spacing:1px;cursor:pointer;margin-bottom:10px;';
   var cancelBtn = document.createElement('button');
-  cancelBtn.textContent = 'Cancel';
+  cancelBtn.textContent = mmT('common.cancel','Cancel');
   cancelBtn.style.cssText = 'width:100%;padding:12px;background:transparent;border:1px solid var(--border);border-radius:12px;color:var(--text2);font-size:13px;cursor:pointer;';
   sheet.appendChild(confirmBtn); sheet.appendChild(cancelBtn);
   popup.appendChild(sheet); document.body.appendChild(popup);
@@ -16219,7 +16599,7 @@ function openMT5EditSheet(user){
   saveBtn.textContent = 'SAVE CHANGES';
   saveBtn.style.cssText = 'width:100%;padding:14px;background:var(--grad);border:none;border-radius:12px;color:#fff;font-family:Orbitron,sans-serif;font-size:13px;font-weight:800;letter-spacing:1px;cursor:pointer;margin-bottom:10px;';
   var cancelBtn = document.createElement('button');
-  cancelBtn.textContent = 'Cancel';
+  cancelBtn.textContent = mmT('common.cancel','Cancel');
   cancelBtn.style.cssText = 'width:100%;padding:12px;background:transparent;border:1px solid var(--border);border-radius:12px;color:var(--text2);font-size:13px;cursor:pointer;';
   sheet.appendChild(saveBtn); sheet.appendChild(cancelBtn);
   popup.appendChild(sheet); document.body.appendChild(popup);
@@ -16578,7 +16958,7 @@ function mmPushNote(title, body){
   p.textContent = body;
   var b = document.createElement('div');
   b.style.cssText = 'margin-top:16px;text-align:center;color:#f4f7fa;font-size:12px;border:1px solid rgba(255,255,255,.10);border-radius:10px;padding:11px;cursor:pointer;';
-  b.textContent = 'Got it';
+  b.textContent = mmT('common.gotIt','Got it');
   b.onclick = function(){ wrap.remove(); };
   card.appendChild(h); card.appendChild(p); card.appendChild(b);
   wrap.appendChild(card);
@@ -16751,18 +17131,18 @@ async function atSmartSync(){
     card.style.borderColor = 'rgba(255,30,60,.55)';
     card.style.backgroundImage = 'linear-gradient(100deg,rgba(255,30,60,.30),rgba(196,0,36,.08) 65%,rgba(255,30,60,.20))';
     if(iconEl) iconEl.className = 'ti ti-alert-triangle';
-    nameEl.textContent = 'No template selected';
+    nameEl.textContent = mmT('at.noTpl','No template selected');
     nameEl.style.color = '#ff6b80';
-    metaEl.textContent = 'Auto trades will not be placed';
+    metaEl.textContent = mmT('at.noTrades','Auto trades will not be placed');
   }
 
   function atUnknown(){
     card.style.borderColor = 'rgba(255,255,255,.10)';
     card.style.backgroundImage = 'none';
     if(iconEl) iconEl.className = 'ti ti-help-circle';
-    nameEl.textContent = 'Template not readable';
+    nameEl.textContent = mmT('at.tplUnreadable','Template not readable');
     nameEl.style.color = 'var(--text)';
-    metaEl.textContent = 'Could not load the template details';
+    metaEl.textContent = mmT('at.tplUnreadableSub','Could not load the template details');
   }
 
   if(!activeAccount || !db){ atWarn(); return; }
@@ -16841,11 +17221,11 @@ async function atPickTemplate(){
     if(typeof openExecuteChoicePopup === 'function') await openExecuteChoicePopup();
   } catch(e){}
   var lbl = document.getElementById('execute-popup-pair');
-  if(lbl) lbl.textContent = 'Used for every auto trade on this account';
+  if(lbl) lbl.textContent = mmT('at.usedForAuto','Used for every auto trade on this account');
   var btn = document.getElementById('exec-confirm-btn');
   if(btn){
     if(!btn.getAttribute('data-mm-orig')) btn.setAttribute('data-mm-orig', btn.textContent);
-    btn.textContent = 'USE THIS TEMPLATE';
+    btn.textContent = mmT('at.useTpl','USE THIS TEMPLATE');
   }
   var vb = document.getElementById('exec-view-btn');
   if(vb) vb.style.display = 'block';
