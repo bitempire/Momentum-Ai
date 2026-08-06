@@ -1325,8 +1325,8 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 .sg-edit { border-color: rgba(240,178,50,0.55); background: rgba(240,178,50,0.12); color: #F0B232; }
 .sg-tp { border-color: rgba(0,200,122,0.5); background: rgba(0,200,122,0.12); color: #00C87A; }
 .sg-ft { font-size: 10px; color: var(--text3); margin: 7px 2px 0; line-height: 1.5; }
-.sg-hero { position: relative; border-radius: 15px; padding: 16px; overflow: hidden; margin-bottom: 11px; background: linear-gradient(135deg,#7A0016,#C40020 35%,#F0B232 130%); background-size: 200% 200%; animation: sgHero 13s ease-in-out infinite; }
-.sg-hero-ico { position: absolute; right: -14px; bottom: -24px; font-size: 108px; color: rgba(255,255,255,0.09); line-height: 1; }
+.sg-hero { position: relative; border-radius: 15px; padding: 16px; overflow: hidden; margin-bottom: 11px; background: linear-gradient(115deg,#5E0011 0%,#C40020 42%,#FF3355 66%,#F0B232 100%); background-size: 200% 200%; animation: sgHero 13s ease-in-out infinite; }
+.sg-hero-ico { position: absolute; right: 10px; bottom: -30px; font-size: 96px; color: rgba(255,255,255,0.07); line-height: 1; pointer-events: none; }
 .sg-line { display: flex; justify-content: space-between; align-items: baseline; padding: 9px 0; border-bottom: 1px solid var(--border); }
 .sg-line:last-child { border-bottom: none; }
 .sg-v { font-size: 15px; font-weight: 700; font-family: ui-monospace, Menlo, monospace; letter-spacing: -0.3px; }
@@ -4176,7 +4176,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
     <button class="red-btn" onclick="sigOpenReview()" data-i18n="sig.submit">SUBMIT</button>
 
     <div id="sig-review-popup" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);z-index:9300;align-items:flex-end;">
-      <div style="width:100%;background:var(--bg2);border-radius:20px 20px 0 0;border-top:1px solid var(--border);padding:12px 14px 30px;max-height:90vh;overflow-y:auto;">
+      <div style="width:100%;max-width:520px;margin:0 auto;background:var(--bg2);border-radius:20px 20px 0 0;border-top:1px solid var(--border);padding:12px 14px 30px;max-height:90vh;overflow-y:auto;">
         <div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 13px;"></div>
         <div class="sg-hero">
           <i class="ti ti-coin sg-hero-ico"></i>
@@ -4185,7 +4185,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
               <div id="sgr-pair" style="font-size:24px;font-weight:800;letter-spacing:-0.6px;line-height:1;">XAUUSD</div>
               <div id="sgr-meta" style="font-size:11px;color:rgba(255,255,255,0.65);margin-top:4px;">--</div>
             </div>
-            <div style="text-align:right;">
+            <div style="text-align:right;position:relative;z-index:2;">
               <div id="sgr-dir" style="font-size:12px;font-weight:700;letter-spacing:0.6px;color:#0B2A18;background:#3BE39B;border-radius:7px;padding:5px 12px;">BUY</div>
               <div id="sgr-rr" style="font-family:ui-monospace,Menlo,monospace;font-size:13px;font-weight:700;color:rgba(255,255,255,0.85);margin-top:7px;">--</div>
             </div>
