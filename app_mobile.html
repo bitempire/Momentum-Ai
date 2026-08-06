@@ -1301,6 +1301,17 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
   box-shadow: 0 1px 4px rgba(0,0,0,0.3);
 }
 .toggle.on::after { transform: translateX(20px); }
+.mm-nt-hd { font-size: 11px; letter-spacing: 0.6px; text-transform: uppercase; color: var(--text3); margin: 18px 4px 7px; }
+.mm-nt-card { background: var(--surface); border-radius: 12px; overflow: hidden; }
+.mm-nt-row { display: flex; align-items: center; gap: 12px; padding: 12px; }
+.mm-nt-sep { height: 1px; background: var(--border); margin-left: 12px; }
+.mm-nt-sep.ind { margin-left: 53px; }
+.mm-nt-lb { flex: 1; font-size: 14px; color: var(--text); }
+.mm-nt-val { font-size: 14px; color: var(--text3); }
+.mm-nt-ft { font-size: 11px; color: var(--text3); margin: 8px 4px 0; line-height: 1.5; }
+.mm-nt-tile { width: 29px; height: 29px; border-radius: 7px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.mm-nt-chk { font-size: 17px; color: var(--gold); visibility: hidden; }
+.mm-nt-chk.on { visibility: visible; }
 .ea-input-row { margin-bottom: 12px; }
 .ea-input-label { font-size: 11px; color: var(--text2); font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; display: block; margin-bottom: 6px; }
 .ea-input {
@@ -3205,6 +3216,123 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 
 
   <!-- Profile -->
+  <div id="sub-notifications" class="sub-screen">
+    <div class="sub-header">
+      <button class="sub-back" onclick="goBackSubScreen('sub-notifications')"><i class="ti ti-arrow-left"></i></button>
+      <div class="sub-title" data-i18n="nt.title">NOTIFICATIONS</div>
+    </div>
+    <div class="sub-content">
+      <div class="mm-nt-card">
+        <div class="mm-nt-row">
+          <div class="mm-nt-tile" style="background:#FF1E3C;"><i class="ti ti-bell" style="font-size:17px;color:#fff;"></i></div>
+          <div class="mm-nt-lb" data-i18n="nt.allow">Allow notifications</div>
+          <div class="toggle" id="mm-push-toggle" onclick="mmPushToggle()"></div>
+        </div>
+      </div>
+      <div class="mm-nt-ft" data-i18n="nt.allowFoot">Turning this off stops everything below it.</div>
+      <div class="mm-nt-hd" data-i18n="nt.trade">Trade alerts</div>
+      <div class="mm-nt-card">
+          <div class="mm-nt-row">
+            <div class="mm-nt-lb" data-i18n="nt.placed">Trade placed</div>
+            <div class="toggle" id="nt-tg-placed" onclick="ntFlip('trade_placed')"></div>
+          </div>
+          <div class="mm-nt-sep"></div>
+          <div class="mm-nt-row">
+            <div class="mm-nt-lb" data-i18n="nt.tp">Take profit hit</div>
+            <div class="toggle" id="nt-tg-tp" onclick="ntFlip('trade_tp')"></div>
+          </div>
+          <div class="mm-nt-sep"></div>
+          <div class="mm-nt-row">
+            <div class="mm-nt-lb" data-i18n="nt.sl">Stop loss hit</div>
+            <div class="toggle" id="nt-tg-sl" onclick="ntFlip('trade_sl')"></div>
+          </div>
+          <div class="mm-nt-sep"></div>
+          <div class="mm-nt-row">
+            <div class="mm-nt-lb" data-i18n="nt.half">Halfway to target</div>
+            <div class="toggle" id="nt-tg-half" onclick="ntFlip('trade_halfway')"></div>
+          </div>
+      </div>
+      <div class="mm-nt-ft" data-i18n="nt.tradeFoot">Layers filled within a minute of each other arrive as one alert.</div>
+      <div class="mm-nt-hd" data-i18n="nt.cal">Economic calendar</div>
+      <div class="mm-nt-card">
+          <div class="mm-nt-row">
+            <div class="mm-nt-lb" data-i18n="nt.calOn">Event reminders</div>
+            <div class="toggle" id="nt-tg-cal" onclick="ntFlip('cal_enabled')"></div>
+          </div>
+          <div class="mm-nt-sep"></div>
+          <div class="mm-nt-row" style="cursor:pointer;" onclick="showSubScreenFrom('sub-notif-impact','sub-notifications')">
+            <div class="mm-nt-lb" data-i18n="nt.impact">Impact</div>
+            <span class="mm-nt-val" id="nt-v-imp">High</span>
+            <i class="ti ti-chevron-right" style="font-size:16px;color:var(--text3);"></i>
+          </div>
+          <div class="mm-nt-sep"></div>
+          <div class="mm-nt-row" style="cursor:pointer;" onclick="showSubScreenFrom('sub-notif-remind','sub-notifications')">
+            <div class="mm-nt-lb" data-i18n="nt.remind">Remind me</div>
+            <span class="mm-nt-val" id="nt-v-rem">30, 5 min</span>
+            <i class="ti ti-chevron-right" style="font-size:16px;color:var(--text3);"></i>
+          </div>
+      </div>
+      <div class="mm-nt-ft" id="nt-count">Counting this week's events...</div>
+    </div>
+  </div>
+
+  <div id="sub-notif-impact" class="sub-screen">
+    <div class="sub-header">
+      <button class="sub-back" onclick="goBackSubScreen('sub-notif-impact')"><i class="ti ti-arrow-left"></i></button>
+      <div class="sub-title" data-i18n="nt.impact">IMPACT</div>
+    </div>
+    <div class="sub-content">
+      <div class="mm-nt-card">
+          <div class="mm-nt-row" style="cursor:pointer;" onclick="ntSetImpact('High')">
+            <div class="mm-nt-lb" data-i18n="nt.impHigh">High</div>
+            <i class="ti ti-check mm-nt-chk" id="nt-imp-High"></i>
+          </div>
+          <div class="mm-nt-sep"></div>
+          <div class="mm-nt-row" style="cursor:pointer;" onclick="ntSetImpact('Medium')">
+            <div class="mm-nt-lb" data-i18n="nt.impMed">Medium and above</div>
+            <i class="ti ti-check mm-nt-chk" id="nt-imp-Medium"></i>
+          </div>
+          <div class="mm-nt-sep"></div>
+          <div class="mm-nt-row" style="cursor:pointer;" onclick="ntSetImpact('Low')">
+            <div class="mm-nt-lb" data-i18n="nt.impAll">Everything</div>
+            <i class="ti ti-check mm-nt-chk" id="nt-imp-Low"></i>
+          </div>
+      </div>
+      <div class="mm-nt-ft" id="nt-imp-ft"></div>
+    </div>
+  </div>
+
+  <div id="sub-notif-remind" class="sub-screen">
+    <div class="sub-header">
+      <button class="sub-back" onclick="goBackSubScreen('sub-notif-remind')"><i class="ti ti-arrow-left"></i></button>
+      <div class="sub-title" data-i18n="nt.remind">REMIND ME</div>
+    </div>
+    <div class="sub-content">
+      <div class="mm-nt-card">
+          <div class="mm-nt-row" style="cursor:pointer;" onclick="ntFlipLead(60)">
+            <div class="mm-nt-lb" data-i18n="nt.r60">60 minutes before</div>
+            <i class="ti ti-check mm-nt-chk" id="nt-rem-60"></i>
+          </div>
+          <div class="mm-nt-sep"></div>
+          <div class="mm-nt-row" style="cursor:pointer;" onclick="ntFlipLead(30)">
+            <div class="mm-nt-lb" data-i18n="nt.r30">30 minutes before</div>
+            <i class="ti ti-check mm-nt-chk" id="nt-rem-30"></i>
+          </div>
+          <div class="mm-nt-sep"></div>
+          <div class="mm-nt-row" style="cursor:pointer;" onclick="ntFlipLead(5)">
+            <div class="mm-nt-lb" data-i18n="nt.r5">5 minutes before</div>
+            <i class="ti ti-check mm-nt-chk" id="nt-rem-5"></i>
+          </div>
+          <div class="mm-nt-sep"></div>
+          <div class="mm-nt-row" style="cursor:pointer;" onclick="ntFlipLead(1)">
+            <div class="mm-nt-lb" data-i18n="nt.r1">1 minute before</div>
+            <i class="ti ti-check mm-nt-chk" id="nt-rem-1"></i>
+          </div>
+      </div>
+      <div class="mm-nt-ft" id="nt-rem-ft"></div>
+    </div>
+  </div>
+
   <div id="sub-profile" class="sub-screen">
     <div class="sub-header">
       <button class="sub-back" onclick="hideSubScreen('sub-profile')"><i class="ti ti-arrow-left"></i></button>
@@ -3322,17 +3450,21 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <!-- Preferences -->
       <div class="section-card" style="margin-bottom:12px;">
         <div class="section-title" style="font-size:13px;margin-bottom:12px;"><span data-i18n="prof.prefs">Preferences</span></div>
-        <div class="ea-toggle-row">
-          <div><div class="ea-toggle-label" data-i18n="prof.notifications">Push Notifications</div><div class="ea-toggle-sub" data-i18n="prof.notifSub">Signal alerts and updates</div></div>
-          <div class="toggle" id="mm-push-toggle" onclick="mmPushToggle()"></div>
-        </div>
-        <div class="ea-toggle-row" style="border-bottom:none;">
-          <div><div class="ea-toggle-label" data-i18n="common.language">Language</div><div class="ea-toggle-sub" data-i18n="prof.langSub">Choose your display language</div></div>
-          <div onclick="openLangPicker()" style="display:flex;align-items:center;gap:8px;cursor:pointer;">
-            <span id="mm-lang-label-prof" style="font-size:12px;color:var(--text3);">English</span>
+        <div class="mm-nt-card">
+          <div class="mm-nt-row" style="cursor:pointer;" onclick="showSubScreenFrom('sub-notifications','sub-profile')">
+            <div class="mm-nt-tile" style="background:#FF1E3C;"><i class="ti ti-bell" style="font-size:17px;color:#fff;"></i></div>
+            <div class="mm-nt-lb" data-i18n="nt.entry">Notifications</div>
+            <i class="ti ti-chevron-right" style="font-size:16px;color:var(--text3);"></i>
+          </div>
+          <div class="mm-nt-sep ind"></div>
+          <div class="mm-nt-row" style="cursor:pointer;" onclick="openLangPicker()">
+            <div class="mm-nt-tile" style="background:var(--gold);"><i class="ti ti-world" style="font-size:17px;color:#2A1D02;"></i></div>
+            <div class="mm-nt-lb" data-i18n="common.language">Language</div>
+            <span class="mm-nt-val" id="mm-lang-label-prof">English</span>
             <i class="ti ti-chevron-right" style="font-size:16px;color:var(--text3);"></i>
           </div>
         </div>
+        <div class="mm-nt-ft" data-i18n="nt.entryFoot">Manage which alerts reach your phone, including trades, signals and economic news.</div>
       </div>
 
       <!-- Sign Out -->
@@ -10453,6 +10585,7 @@ function showSubScreen(id) {
   if(id==='sub-academy') { loadAcademy(); }
   if(id==='sub-news') { mmNewsLoad(false); mmNewsStartTimer(); }
   if(id==='sub-profile') { loadProfileMT5(); }
+  if(id==='sub-notifications') { if(typeof mmPushSync==='function') mmPushSync(); if(typeof ntLoad==='function') ntLoad(); }
   if(id==='sub-trade-settings'||id==='sub-ea') { setAutoApproveUI(tradeConsentAll()); }
   if(id==='sub-auto-trade') { loadAutoTradeSettings(); }
   if(id==='sub-smart-tool-new') { loadSmartToolNew(); }
@@ -17883,6 +18016,184 @@ function mmNewsStartTimer(){
     if(MMNEWS.soon || (tick % 30) === 0) mmNewsRender();
   }, 1000);
 }
+// ============================================================
+// P18 NOTIFICATION SETTINGS
+//
+// Preferences live in public.notification_prefs, one row per user.
+// NO ROW MEANS DEFAULTS. A customer who never opens this screen has
+// no row at all, and every sender treats absence as everything on.
+// That is why there is no backfill and why this screen does not
+// write anything until the customer actually changes something.
+//
+// THE MASTER SWITCH IS NOT STORED. "Allow notifications" is the
+// existing push toggle, and its truth is whether a push subscription
+// exists in the browser. Storing a second boolean would let the
+// database say ON while iOS says OFF, and the phone always wins.
+//
+// Names are all prefixed nt so nothing shadows the old t trap.
+// ============================================================
+var NT_P = null, NT_HASROW = false, NT_COUNTS = null, NT_BUSY = false;
+
+function ntDefaults(){
+  return { trade_placed:true, trade_tp:true, trade_sl:true, trade_halfway:true,
+           cal_enabled:true, cal_impact:'High', cal_leads:[30,5] };
+}
+
+// High is importance 3, Medium is 2 and above, Everything is 1 and above.
+// The calendar column is importance and holds a number, not a word.
+function ntLvl(imp){ return imp === 'High' ? 3 : (imp === 'Medium' ? 2 : 1); }
+
+async function ntLoad(){
+  NT_P = ntDefaults(); NT_HASROW = false;
+  if(currentUser && currentUser.id){
+    try {
+      var r = await db.from('notification_prefs').select('*').eq('user_id', currentUser.id).limit(1);
+      if(r && r.data && r.data[0]){
+        var d = r.data[0];
+        NT_HASROW = true;
+        NT_P = {
+          trade_placed:  d.trade_placed  !== false,
+          trade_tp:      d.trade_tp      !== false,
+          trade_sl:      d.trade_sl      !== false,
+          trade_halfway: d.trade_halfway !== false,
+          cal_enabled:   d.cal_enabled   !== false,
+          cal_impact:    d.cal_impact || 'High',
+          cal_leads:     Array.isArray(d.cal_leads) ? d.cal_leads.slice() : [30,5]
+        };
+      }
+    } catch(e){}
+  }
+  ntRender();
+  ntLoadCounts();
+}
+
+// Separate header builder, same reason as mmai_live_quotes: this does not go
+// through SQ.prototype._run, so the user's JWT has to be added by hand or RLS
+// denies it.
+async function ntLoadCounts(){
+  try {
+    var jw = await mmaiAuthJwtFresh();
+    var hdr = {'apikey':SUPABASE_ANON_KEY,'Content-Type':'application/json'};
+    if(jw) hdr['Authorization'] = 'Bearer ' + jw;
+    var res = await fetch(SUPABASE_URL + '/rest/v1/rpc/mmai_notif_event_counts',
+                          {method:'POST', headers:hdr, body:'{}'});
+    if(!res.ok) return;
+    var rows = await res.json();
+    if(!Array.isArray(rows)) return;
+    NT_COUNTS = {};
+    rows.forEach(function(x){ NT_COUNTS[String(x.lvl)] = Number(x.events) || 0; });
+    ntRender();
+  } catch(e){}
+}
+
+function ntMark(id, on){
+  var el = document.getElementById(id);
+  if(!el) return;
+  if(on) el.classList.add('on'); else el.classList.remove('on');
+}
+
+function ntRender(){
+  if(!NT_P) NT_P = ntDefaults();
+  ntMark('nt-tg-placed', NT_P.trade_placed);
+  ntMark('nt-tg-tp',     NT_P.trade_tp);
+  ntMark('nt-tg-sl',     NT_P.trade_sl);
+  ntMark('nt-tg-half',   NT_P.trade_halfway);
+  ntMark('nt-tg-cal',    NT_P.cal_enabled);
+
+  var impName = NT_P.cal_impact === 'High' ? mmT('nt.impHigh','High')
+              : (NT_P.cal_impact === 'Medium' ? mmT('nt.impMed','Medium and above')
+                                              : mmT('nt.impAll','Everything'));
+  var vi = document.getElementById('nt-v-imp');
+  if(vi) vi.textContent = impName;
+
+  var leads = (NT_P.cal_leads || []).slice().sort(function(a,b){ return b - a; });
+  var vr = document.getElementById('nt-v-rem');
+  if(vr) vr.textContent = leads.length ? (leads.join(', ') + ' min') : mmT('nt.rnone','None');
+
+  ntMark('nt-imp-High',   NT_P.cal_impact === 'High');
+  ntMark('nt-imp-Medium', NT_P.cal_impact === 'Medium');
+  ntMark('nt-imp-Low',    NT_P.cal_impact === 'Low');
+  [60,30,5,1].forEach(function(m){ ntMark('nt-rem-' + m, (NT_P.cal_leads || []).indexOf(m) >= 0); });
+
+  ntFoot();
+}
+
+function ntEvents(){
+  if(!NT_COUNTS) return -1;
+  return NT_COUNTS[String(ntLvl(NT_P.cal_impact))] || 0;
+}
+
+function ntFoot(){
+  var ev = ntEvents();
+  var n = (NT_P.cal_leads || []).length;
+
+  var main = document.getElementById('nt-count');
+  if(main){
+    if(ev < 0) main.textContent = mmT('nt.counting','Counting this week\u0027s events...');
+    else if(!NT_P.cal_enabled) main.textContent = mmT('nt.calOff','Calendar reminders are off.');
+    else main.textContent = mmT('nt.about','About') + ' ' + (ev * n) + ' ' +
+                            mmT('nt.calAlerts','calendar alerts this week at these settings.');
+  }
+
+  var f1 = document.getElementById('nt-imp-ft');
+  if(f1) f1.textContent = ev < 0 ? '' : (ev + ' ' + mmT('nt.eventsWeek','events this week.'));
+
+  var f2 = document.getElementById('nt-rem-ft');
+  if(f2) f2.textContent = ev < 0 ? '' : (n + ' ' + mmT('nt.selected','selected, so') + ' ' +
+                                         (ev * n) + ' ' + mmT('nt.alertsThose','alerts for those events.'));
+}
+
+// minimal() is deliberate. The returned row is never used, so the write only
+// has to satisfy the INSERT or UPDATE policy and never the SELECT one.
+async function ntSave(){
+  if(NT_BUSY || !currentUser || !currentUser.id) return;
+  NT_BUSY = true;
+  var body = {
+    trade_placed:  NT_P.trade_placed,
+    trade_tp:      NT_P.trade_tp,
+    trade_sl:      NT_P.trade_sl,
+    trade_halfway: NT_P.trade_halfway,
+    cal_enabled:   NT_P.cal_enabled,
+    cal_impact:    NT_P.cal_impact,
+    cal_leads:     NT_P.cal_leads,
+    updated_at:    new Date().toISOString()
+  };
+  try {
+    if(NT_HASROW){
+      await db.from('notification_prefs').update(body).eq('user_id', currentUser.id).minimal();
+    } else {
+      body.user_id = currentUser.id;
+      var r = await db.from('notification_prefs').insert([body]).minimal();
+      if(!(r && r.error)) NT_HASROW = true;
+    }
+  } catch(e){}
+  NT_BUSY = false;
+}
+
+function ntFlip(k){
+  if(!NT_P) NT_P = ntDefaults();
+  NT_P[k] = !NT_P[k];
+  ntRender();
+  ntSave();
+}
+
+function ntSetImpact(v){
+  if(!NT_P) NT_P = ntDefaults();
+  NT_P.cal_impact = v;
+  ntRender();
+  ntSave();
+}
+
+function ntFlipLead(m){
+  if(!NT_P) NT_P = ntDefaults();
+  var a = (NT_P.cal_leads || []).slice();
+  var i = a.indexOf(m);
+  if(i >= 0) a.splice(i, 1); else a.push(m);
+  NT_P.cal_leads = a;
+  ntRender();
+  ntSave();
+}
+
 </script>
 
   <!-- Execute Choice Popup -->
