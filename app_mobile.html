@@ -13641,16 +13641,11 @@ var SOON_SCREENS = {
     title: "AI Chart Analyst",
     body: "Capture any chart, pick the technique you trade with, and let the AI read it for you. Then ask it questions about what it found."
   },
-  // 3 Aug 2026. Both of these screens hold hardcoded sample content: sub-news
-  // has an invented economic calendar and sub-newsfeed has invented headlines
-  // with invented timestamps. This sheet is the only place that is disclosed,
-  // so the wording says sample outright rather than implying the data is live.
-  // The calendar is planned to come from the MT5 terminal through the bridge,
-  // which is licensed data already paid for, rather than from scraping.
-  "sub-news": {
-    title: "Economic Calendar",
-    body: "High impact releases, forecasts and previous readings, so you know what is coming before you take a trade. What you can see now is sample content, not live data."
-  },
+  // 6 Aug 2026. sub-news was REMOVED from this list. P17 replaced its sample
+  // calendar with the real one read from the MT5 terminal through the bridge,
+  // so the sheet was telling customers the data was fake when it is now live.
+  // sub-newsfeed stays: its headlines are still invented, and real headlines
+  // are somebody else's copyrighted text so that one is not simply a build job.
   "sub-newsfeed": {
     title: "Market News",
     body: "Headlines that actually move gold, oil and the dollar, in one feed. What you can see now is sample content, not live data."
@@ -18480,6 +18475,169 @@ async function ntSave(){
   } catch(e){}
   NT_BUSY = false;
 }
+
+// ============================================================
+// TOUCH GESTURES
+//
+// Two additions, both ADDITIVE. The back button in every sub header
+// and the cancel button in every sheet still work exactly as before.
+//
+// 1. EDGE SWIPE BACK. A drag that STARTS within 30px of the left edge
+//    drags the top sub screen with the finger and goes back past 70px.
+//    Edge only on purpose: a full width swipe would fight the chart and
+//    every horizontally scrolling list in the app.
+//
+// 2. SWIPE DOWN TO CLOSE A SHEET. Only engages when the sheet is
+//    scrolled to its top, so it never steals a scroll from the template
+//    list. Past 90px the sheet closes through its OWN close function,
+//    never by hiding the element, so nothing downstream is skipped.
+//
+// SMOOTHNESS. Three things do the work. Transform writes are batched
+// into ONE requestAnimationFrame per frame rather than one per touch
+// event, since a finger fires faster than the screen redraws and the
+// extra writes are thrown away anyway. translate3d puts the element on
+// its own compositor layer so dragging never repaints the page. And
+// will-change is set at the moment the drag commits and cleared the
+// moment it ends, rather than left on, which would hold a layer in
+// memory for every screen forever.
+// ============================================================
+(function(){
+  if(!('ontouchstart' in window)) return;
+
+  var EDGE = 30, BACK_MIN = 70, SHEET_MIN = 90;
+  var mode = null, sx = 0, sy = 0, locked = false;
+  var target = null, closeFn = null;
+  var pending = 0, raf = 0;
+
+  function paint(){
+    raf = 0;
+    if(!target || !locked) return;
+    target.style.transform = (mode === 'back')
+      ? 'translate3d(' + pending + 'px,0,0)'
+      : 'translate3d(0,' + pending + 'px,0)';
+  }
+
+  function topSubScreen(){
+    var els = document.querySelectorAll('.sub-screen.active');
+    return els.length ? els[els.length - 1] : null;
+  }
+
+  // Each sheet is closed by the function that owns it. Removing the node
+  // by hand would skip whatever that function also resets.
+  function sheetInfo(node){
+    while(node && node !== document.body){
+      if(node.id === 'execute-choice-popup'){
+        return { panel: node.firstElementChild,
+                 close: function(){ if(typeof closeExecutePopup === 'function') closeExecutePopup(); } };
+      }
+      if(node.id === 'stn-tpl-sheet'){
+        return { panel: node.querySelector('.sheet'),
+                 close: function(){ if(typeof stnCloseTemplates === 'function') stnCloseTemplates(); else node.remove(); } };
+      }
+      if(node.classList && node.classList.contains('stn-sheet-ov')){
+        var ov1 = node;
+        return { panel: ov1.querySelector('.sheet'), close: function(){ ov1.remove(); } };
+      }
+      if(node.classList && node.classList.contains('popup-overlay')){
+        var ov2 = node;
+        return { panel: ov2.querySelector('.popup-sheet'), close: function(){ ov2.classList.remove('active'); } };
+      }
+      node = node.parentNode;
+    }
+    return null;
+  }
+
+  function reset(el){
+    if(!el) return;
+    el.style.transition = '';
+    el.style.transform = '';
+    el.style.willChange = '';
+  }
+
+  function clearRaf(){
+    if(raf){ cancelAnimationFrame(raf); raf = 0; }
+  }
+
+  document.addEventListener('touchstart', function(e){
+    clearRaf();
+    mode = null; locked = false; target = null; closeFn = null; pending = 0;
+    if(e.touches.length !== 1) return;
+    var t = e.touches[0];
+    sx = t.clientX; sy = t.clientY;
+
+    var info = sheetInfo(e.target);
+    if(info && info.panel){
+      if((info.panel.scrollTop || 0) <= 0){ mode = 'sheet'; target = info.panel; closeFn = info.close; }
+      return;
+    }
+    if(sx <= EDGE){
+      var sc = topSubScreen();
+      if(sc){ mode = 'back'; target = sc; }
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchmove', function(e){
+    if(!mode || !target || e.touches.length !== 1) return;
+    var t = e.touches[0];
+    var dx = t.clientX - sx, dy = t.clientY - sy;
+
+    // Decide once which axis this drag belongs to, then commit.
+    if(!locked){
+      if(Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
+      if(mode === 'back' && (dx <= 0 || Math.abs(dy) > Math.abs(dx))){ mode = null; return; }
+      if(mode === 'sheet' && (dy <= 0 || Math.abs(dx) > Math.abs(dy))){ mode = null; return; }
+      locked = true;
+      target.style.transition = 'none';
+      target.style.willChange = 'transform';
+    }
+
+    e.preventDefault();
+    pending = (mode === 'back') ? dx : dy;
+    if(!raf) raf = requestAnimationFrame(paint);
+  }, { passive: false });
+
+  document.addEventListener('touchend', function(e){
+    clearRaf();
+    if(!mode || !target || !locked){ mode = null; target = null; closeFn = null; return; }
+    var t = (e.changedTouches && e.changedTouches[0]) || null;
+    var dx = t ? t.clientX - sx : 0;
+    var dy = t ? t.clientY - sy : 0;
+    var el = target, fn = closeFn, m = mode;
+    mode = null; target = null; closeFn = null; locked = false;
+
+    el.style.transition = 'transform 0.22s cubic-bezier(0.22,0.61,0.36,1)';
+
+    if(m === 'back'){
+      if(dx > BACK_MIN){
+        var id = el.id;
+        el.style.transform = 'translate3d(100%,0,0)';
+        setTimeout(function(){
+          if(typeof goBackSubScreen === 'function') goBackSubScreen(id);
+          else if(typeof hideSubScreen === 'function') hideSubScreen(id);
+          reset(el);
+        }, 200);
+      } else {
+        el.style.transform = 'translate3d(0,0,0)';
+        setTimeout(function(){ reset(el); }, 240);
+      }
+      return;
+    }
+
+    if(dy > SHEET_MIN){
+      el.style.transform = 'translate3d(0,100%,0)';
+      setTimeout(function(){ if(fn) fn(); reset(el); }, 200);
+    } else {
+      el.style.transform = 'translate3d(0,0,0)';
+      setTimeout(function(){ reset(el); }, 240);
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchcancel', function(){
+    clearRaf();
+    if(target) reset(target);
+    mode = null; target = null; closeFn = null; locked = false;
+  }, { passive: true });
+})();
 
 // The change password form expands under its own row rather than opening a
 // screen, which is why that row carries a down chevron and not a right one.
