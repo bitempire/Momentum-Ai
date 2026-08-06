@@ -1312,6 +1312,9 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 .mm-nt-tile { width: 29px; height: 29px; border-radius: 7px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .mm-nt-chk { font-size: 17px; color: var(--gold); visibility: hidden; }
 .mm-nt-chk.on { visibility: visible; }
+.at-ai { background: linear-gradient(90deg,#8B5CF6,#FF1E3C 45%,#F0B232 70%,#8B5CF6); background-size: 220% 100%; animation: atAi 5s linear infinite; }
+@keyframes atAi { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
+@media (prefers-reduced-motion: reduce) { .at-ai { animation: none; } }
 .sg-sel { background: transparent; border: none; color: var(--text2); font-family: inherit; font-size: 14px; text-align: right; text-align-last: right; padding: 4px 0; max-width: 168px; -webkit-appearance: none; appearance: none; cursor: pointer; }
 .sg-sel:focus { outline: none; }
 .sg-sel option { background: #12121a; color: var(--text); }
@@ -2665,8 +2668,11 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
           <div style="font-size:11px;color:var(--text3);line-height:1.6;" data-i18n="auto.mixWarn">Mixing Smart Tool and Auto trades on the same account may cause conflicting positions. Consider using separate MT5 accounts.</div>
         </div>
       </div>
-      <!-- Use Smart Tool Settings -->
-      <div class="section-card" style="margin-bottom:10px;">
+      <!-- Use Smart Tool Settings. P20 replaced this with the risk level
+           picker below. HIDDEN, NOT DELETED: atSmartSync, atPickTemplate and
+           atAutoLock all look these elements up by id and would break on null,
+           and the translation keys stay intact. Same treatment as at-mix-warning. -->
+      <div class="section-card" style="margin-bottom:10px;display:none;">
         <div style="display:flex;align-items:center;justify-content:space-between;">
           <div style="flex:1;padding-right:12px;">
             <div style="font-size:13px;font-weight:700;color:var(--text);" data-i18n="at.useSmart">Use Smart Tool Settings</div>
@@ -2683,17 +2689,90 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
           <i class="ti ti-chevron-right" style="font-size:16px;color:#9aa0b4;"></i>
         </div>
       </div>
+      <!-- Risk Level (P20). The customer picks the RISK; the BAND comes from
+           each signal, so risk plus band names one of the sixteen templates at
+           trade time. The customer never sees a template name here. -->
+      <div class="section-card" style="margin-bottom:10px;">
+        <div class="section-title" style="font-size:13px;margin-bottom:12px;"><span data-i18n="at.riskLevel">Risk Level</span></div>
+        <div class="sg-card">
+          <div class="sg-row" style="cursor:pointer;" onclick="atSetRisk(5)">
+            <div class="sg-tile" style="background:#22C98A;"><i class="ti ti-leaf" style="font-size:16px;color:#04240F;"></i></div>
+            <div style="flex:1;">
+              <div style="font-size:14px;">Conservative</div>
+              <div style="font-size:11px;color:var(--text3);margin-top:1px;">Smallest position, widest survival</div>
+            </div>
+            <i class="ti ti-check" id="at-rk-5" style="font-size:18px;color:#F0B232;visibility:hidden;"></i>
+          </div>
+          <div class="sg-sep"></div>
+          <div class="sg-row" style="cursor:pointer;" onclick="atSetRisk(10)">
+            <div class="sg-tile" style="background:#F0B232;"><i class="ti ti-flame" style="font-size:16px;color:#2A1D02;"></i></div>
+            <div style="flex:1;">
+              <div style="font-size:14px;">Moderate</div>
+              <div style="font-size:11px;color:var(--text3);margin-top:1px;">Double the size, same shape</div>
+            </div>
+            <i class="ti ti-check" id="at-rk-10" style="font-size:18px;color:#F0B232;visibility:hidden;"></i>
+          </div>
+          <div class="sg-sep"></div>
+          <div class="sg-row" style="cursor:pointer;" onclick="atSetRisk(20)">
+            <div class="sg-tile" style="background:#FF8C42;"><i class="ti ti-bolt" style="font-size:16px;color:#2A1402;"></i></div>
+            <div style="flex:1;">
+              <div style="font-size:14px;">Aggressive</div>
+              <div style="font-size:11px;color:var(--text3);margin-top:1px;">A fifth of the account per trade</div>
+            </div>
+            <i class="ti ti-check" id="at-rk-20" style="font-size:18px;color:#F0B232;visibility:hidden;"></i>
+          </div>
+          <div class="sg-sep"></div>
+          <div class="sg-row" style="cursor:pointer;" onclick="atSetRisk(40)">
+            <div class="sg-tile" style="background:#E03050;"><i class="ti ti-alert-triangle" style="font-size:16px;color:#ffffff;"></i></div>
+            <div style="flex:1;">
+              <div style="font-size:14px;">Extreme</div>
+              <div style="font-size:11px;color:var(--text3);margin-top:1px;">Four losing trades would end the account</div>
+            </div>
+            <i class="ti ti-check" id="at-rk-40" style="font-size:18px;color:#F0B232;visibility:hidden;"></i>
+          </div>
+        </div>
+        <div class="sg-ft" data-i18n="at.riskFoot">The range comes from each signal. Moderate runs BETA on a 100 pip signal and SMART on a 150 pip one, so you never pick a template.</div>
+        <div id="at-risk-warn" style="display:flex;align-items:flex-start;gap:9px;background:rgba(240,178,50,0.08);border:1px solid rgba(240,178,50,0.28);border-radius:11px;padding:11px 12px;margin-top:11px;">
+          <i class="ti ti-alert-triangle" style="font-size:15px;color:#F0B232;flex-shrink:0;margin-top:1px;"></i>
+          <div style="font-size:11px;color:var(--text2);line-height:1.55;" data-i18n="at.needRisk">Auto trade stays off until a risk level is chosen.</div>
+        </div>
+      </div>
+      <!-- Behaviour. Safe mode is ONE account setting shared with the Smart
+           Tool picker, so both screens always show the same value. -->
+      <div class="section-card" style="margin-bottom:10px;">
+        <div class="sg-card">
+          <div class="sg-row">
+            <div class="sg-tile" style="background:#3B82F6;"><i class="ti ti-shield-half" style="font-size:16px;color:#ffffff;"></i></div>
+            <div style="flex:1;">
+              <div style="font-size:14px;" data-i18n="at.safeMode">Safe mode</div>
+              <div style="font-size:11px;color:var(--text3);margin-top:1px;" data-i18n="at.safeModeSub">Bank the shallow entries early, ride one</div>
+            </div>
+            <div class="toggle" id="at-safe" onclick="atSafeToggle()"></div>
+          </div>
+        </div>
+      </div>
       <!-- Entry Confirmation -->
       <div class="section-card" style="margin-bottom:10px;">
         <div class="section-title" style="font-size:13px;margin-bottom:12px;"><span data-i18n="auto.entry">Entry</span> <span data-i18n="at.confirmWord">Confirmation</span></div>
-        <label style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg3);border-radius:8px;cursor:pointer;border:1px solid var(--border);margin-bottom:8px;">
-          <input type="radio" name="at-entry-confirm" value="instant" id="at-instant" checked style="accent-color:var(--red);width:16px;height:16px;">
-          <div><div style="font-size:13px;font-weight:700;color:var(--text);" data-i18n="at.instant">Instant Execution</div><div style="font-size:11px;color:var(--text3);" data-i18n="auto.modeInstant">Signal posted — trade executes immediately</div></div>
-        </label>
-        <label style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg3);border-radius:8px;cursor:pointer;border:1px solid var(--border);">
-          <input type="radio" name="at-entry-confirm" value="scanner" id="at-scanner" style="accent-color:var(--red);width:16px;height:16px;">
-          <div><div style="font-size:13px;font-weight:700;color:var(--text);" data-i18n="at.scannerFirst">Check MAI Scanner First</div><div style="font-size:11px;color:var(--text3);" data-i18n="auto.modeConfirm">Signal — AI checks direction — execute if confirmed</div></div>
-        </label>
+        <div class="sg-card">
+          <label class="sg-row" style="cursor:pointer;">
+            <div class="sg-tile" style="background:#00C87A;"><i class="ti ti-rocket" style="font-size:16px;color:#04240F;"></i></div>
+            <div style="flex:1;">
+              <div style="font-size:14px;" data-i18n="at.instant">Instant Execution</div>
+              <div style="font-size:11px;color:var(--text3);margin-top:1px;" data-i18n="at.instantSub">Signal posted, trade goes straight in</div>
+            </div>
+            <input type="radio" name="at-entry-confirm" value="instant" id="at-instant" checked style="accent-color:var(--red);width:17px;height:17px;">
+          </label>
+          <div class="sg-sep"></div>
+          <label class="sg-row" style="cursor:pointer;">
+            <div class="sg-tile at-ai"><i class="ti ti-brain" style="font-size:16px;color:#ffffff;"></i></div>
+            <div style="flex:1;">
+              <div style="font-size:14px;" data-i18n="at.scannerFirst">Check MAI Scanner First</div>
+              <div style="font-size:11px;color:var(--text3);margin-top:1px;" data-i18n="at.scannerSub">Execute only if the scanner agrees</div>
+            </div>
+            <input type="radio" name="at-entry-confirm" value="scanner" id="at-scanner" style="accent-color:var(--red);width:17px;height:17px;">
+          </label>
+        </div>
       </div>
       <button class="red-btn" onclick="saveAutoTradeSettings()" data-i18n="at.save">SAVE AUTO TRADE</button>
     </div>
@@ -15479,7 +15558,7 @@ async function loadAutoTradeSettings() {
   if(!currentUser || !db) return;
   try {
     if(!activeAccount) return;
-    var r = await db.from('mt5_accounts').select('auto_trade,auto_analyst_ids,auto_use_smart,auto_entry_confirm').eq('id',activeAccount.id).single();
+    var r = await db.from('mt5_accounts').select('auto_trade,auto_analyst_ids,auto_use_smart,auto_entry_confirm,auto_risk_pct').eq('id',activeAccount.id).single();
     var d = r && r.data ? (Array.isArray(r.data)?r.data[0]:r.data) : null;
     if(!d) return;
     // Set enable toggle
@@ -15489,6 +15568,9 @@ async function loadAutoTradeSettings() {
     var smEl = document.getElementById('at-use-smart');
     if(smEl){ if(d.auto_use_smart!==false) smEl.classList.add('on'); else smEl.classList.remove('on'); }
     if(typeof atSmartSync==='function') atSmartSync();
+    AT_RISK = d.auto_risk_pct || null;
+    atPaintRisk();
+    atSafeSync();
     // Set entry confirm
     var ec = d.auto_entry_confirm || 'instant';
     var ecEl = document.getElementById('at-'+ec);
@@ -15530,12 +15612,67 @@ function checkAutoWarnings() {
   if(mixWarn) mixWarn.style.display = 'none';
 }
 function toggleAutoTradeEnable(el) {
+  // Mandatory: without a risk level there is nothing to resolve a template
+  // from, so auto would accept every signal and place none of them.
+  if(!el.classList.contains('on') && !AT_RISK){
+    alert(mmT('at.pickRiskFirst','Choose a risk level first. Auto trade cannot run without one.'));
+    return;
+  }
   el.classList.toggle('on');
 }
+
+// ============================================================
+// P20 AUTO TRADE BY RISK LEVEL
+//
+// The customer picks the RISK once. The BAND comes from each signal.
+// Risk plus band names exactly one of the sixteen templates, resolved
+// by auto-producer at trade time, so no template is stored here.
+//
+// Choosing one is MANDATORY. Without it there is nothing to resolve
+// against, so auto would accept every signal and place none.
+// ============================================================
+var AT_RISK = null;
+
+function atSetRisk(pct){
+  AT_RISK = pct;
+  atPaintRisk();
+}
+
+function atPaintRisk(){
+  [5,10,20,40].forEach(function(x){
+    var el = document.getElementById('at-rk-' + x);
+    if(el) el.style.visibility = (AT_RISK === x) ? 'visible' : 'hidden';
+  });
+  var w = document.getElementById('at-risk-warn');
+  if(w) w.style.display = AT_RISK ? 'none' : 'flex';
+}
+
+// One account setting, two screens. Reusing the Smart Tool helpers rather
+// than writing mm_settings again here is what keeps them in step.
+function atSafeSync(){
+  var el = document.getElementById('at-safe');
+  if(!el) return;
+  var on = (typeof stnSafeMode === 'function') ? (stnSafeMode() !== false) : true;
+  if(on) el.classList.add('on'); else el.classList.remove('on');
+}
+
+function atSafeToggle(){
+  var el = document.getElementById('at-safe');
+  if(!el) return;
+  var on = !el.classList.contains('on');
+  if(on) el.classList.add('on'); else el.classList.remove('on');
+  if(typeof stnSetSafeMode === 'function') stnSetSafeMode(on);
+}
+
 async function saveAutoTradeSettings() {
   if(!currentUser || !db) return;
   var on = document.getElementById('at-enable').classList.contains('on');
-  var useSmart = document.getElementById('at-use-smart').classList.contains('on');
+  if(on && !AT_RISK){
+    alert(mmT('at.pickRiskFirst','Choose a risk level first. Auto trade cannot run without one.'));
+    return;
+  }
+  var smEl0 = document.getElementById('at-use-smart');
+  var useSmart = smEl0 ? smEl0.classList.contains('on') : true;
   var entryConfirm = document.querySelector('input[name="at-entry-confirm"]:checked');
   var ec = entryConfirm ? entryConfirm.value : 'instant';
   var checks = document.querySelectorAll('#at-analyst-list input[type=checkbox]:checked');
@@ -15546,7 +15683,8 @@ async function saveAutoTradeSettings() {
       auto_trade: on,
       auto_analyst_ids: JSON.stringify(analystIds),
       auto_use_smart: useSmart,
-      auto_entry_confirm: ec
+      auto_entry_confirm: ec,
+      auto_risk_pct: (AT_RISK || null)
     }).eq('id', activeAccount.id);
     if(r && r.error) throw r.error;
     activeAccount.auto_trade = on;
