@@ -10999,8 +10999,51 @@ function mt5PromptConnectNow(){
     var idi=document.getElementById('profile-mt5-id'); if(idi){ try{ idi.focus(); }catch(e){} }
   }, 350);
 }
+// ============================================================
+// REMEMBER WHERE YOU WERE
+//
+// A refresh used to land on Home no matter what screen you were on.
+// The tab and the open sub screen are now written into sessionStorage
+// on every navigation and replayed once the session has been restored.
+//
+// sessionStorage on purpose, NOT localStorage: it dies with the tab and
+// is already wiped by logout, so it can never resurrect a screen for the
+// next person to sign in on that device.
+//
+// The parent is stored too, so a screen reached through another one still
+// has a working back button after the refresh.
+// ============================================================
+var MMNAV = { tab: null, sub: null, parent: null };
+
+function mmNavSave(){
+  try { sessionStorage.setItem('mm_nav', JSON.stringify(MMNAV)); } catch(e){}
+}
+
+function mmNavRestore(){
+  var raw = null;
+  try { raw = sessionStorage.getItem('mm_nav'); } catch(e){}
+  if(!raw) return;
+  var n = null;
+  try { n = JSON.parse(raw); } catch(e){ return; }
+  if(!n) return;
+
+  // Only replay inside the main app. An analyst or a pending account is
+  // routed elsewhere and must stay there.
+  var app = document.getElementById('screen-app');
+  if(!app || app.style.display === 'none') return;
+
+  try {
+    if(n.tab && typeof switchTab === 'function') switchTab(n.tab);
+    if(n.sub){
+      if(n.parent && typeof showSubScreenFrom === 'function') showSubScreenFrom(n.sub, n.parent);
+      else if(typeof showSubScreen === 'function') showSubScreen(n.sub);
+    }
+  } catch(e){}
+}
+
 function switchTab(tab) {
   if(_premiumTabs.indexOf(tab)>=0 && !premiumGate()) return;
+  MMNAV.tab = tab; MMNAV.sub = null; MMNAV.parent = null; mmNavSave();
   document.querySelectorAll('.app-tab').forEach(function(t) { 
     t.classList.remove('active');
     t.style.display = 'none';
@@ -11028,6 +11071,7 @@ var _subScreenStack = [];
 function showSubScreenFrom(id, parentId) {
   if(_premiumScreens.indexOf(id)>=0 && !premiumGate()) return;
   _subScreenParent[id] = parentId;
+  MMNAV.parent = parentId;
   // Hide parent first so screens don't stack
   var parentEl = document.getElementById(parentId);
   if(parentEl) parentEl.classList.remove('active');
@@ -11068,10 +11112,12 @@ function showSubScreen(id) {
   if(id==='sub-auto-trade') { loadAutoTradeSettings(); }
   if(id==='sub-smart-tool-new') { loadSmartToolNew(); }
   if(typeof mmApplyLang==='function') mmApplyLang();
+  MMNAV.sub = id; mmNavSave();
 }
 function hideSubScreen(id) {
   var el = document.getElementById(id);
   if(el) el.classList.remove('active');
+  if(MMNAV.sub === id){ MMNAV.sub = null; MMNAV.parent = null; mmNavSave(); }
 }
 
 // ── LOAD DASHBOARD SIGNALS ──
@@ -12240,7 +12286,7 @@ function showSocialToast(msg){
 // ── INIT ──
 document.addEventListener('DOMContentLoaded', function() {
   var saved = sessionStorage.getItem('mob_user');
-  if(saved) { try { currentUser=JSON.parse(saved); routeUser(currentUser); refreshCurrentUser(true); } catch(e) { showScreen('screen-auth'); } }
+  if(saved) { try { currentUser=JSON.parse(saved); routeUser(currentUser); refreshCurrentUser(true); setTimeout(mmNavRestore, 350); } catch(e) { showScreen('screen-auth'); } }
   else { showScreen('screen-auth'); }
   document.addEventListener('visibilitychange', function(){ if(document.visibilityState==='visible') refreshCurrentUser(false); });
 });
