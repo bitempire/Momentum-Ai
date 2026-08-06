@@ -2693,7 +2693,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
            each signal, so risk plus band names one of the sixteen templates at
            trade time. The customer never sees a template name here. -->
       <div class="section-card" style="margin-bottom:10px;">
-        <div class="section-title" style="font-size:13px;margin-bottom:12px;"><span data-i18n="at.riskLevel">Risk Level</span></div>
+        <div class="section-title" style="font-size:13px;margin-bottom:12px;"><span class="tw" data-i18n="at.riskWord">Risk</span> <span data-i18n="at.levelWord">Level</span></div>
         <div class="sg-card">
           <div class="sg-row" style="cursor:pointer;" onclick="atSetRisk(5)">
             <div class="sg-tile" style="background:#22C98A;"><i class="ti ti-leaf" style="font-size:16px;color:#04240F;"></i></div>
@@ -2753,7 +2753,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       </div>
       <!-- Entry Confirmation -->
       <div class="section-card" style="margin-bottom:10px;">
-        <div class="section-title" style="font-size:13px;margin-bottom:12px;"><span data-i18n="auto.entry">Entry</span> <span data-i18n="at.confirmWord">Confirmation</span></div>
+        <div class="section-title" style="font-size:13px;margin-bottom:12px;"><span class="tw" data-i18n="auto.entry">Entry</span> <span data-i18n="at.confirmWord">Confirmation</span></div>
         <div class="sg-card">
           <label class="sg-row" style="cursor:pointer;">
             <div class="sg-tile" style="background:#00C87A;"><i class="ti ti-rocket" style="font-size:16px;color:#04240F;"></i></div>
@@ -15590,8 +15590,10 @@ async function loadAutoAnalystList(selectedIds) {
     analysts.forEach(function(a){
       var checked = selectedIds.includes(a.id);
       var row = document.createElement('label');
-      row.style.cssText='display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg3);border-radius:8px;cursor:pointer;border:1px solid var(--border);';
-      row.innerHTML='<input type="checkbox" value="'+a.id+'" '+(checked?'checked':'')+' style="accent-color:var(--red);width:16px;height:16px;" onchange="checkAutoWarnings()"><div><div style="font-size:13px;font-weight:700;color:var(--text);">'+(a.name||'Analyst')+'</div></div>';
+      row.style.cssText='display:flex;align-items:center;gap:11px;padding:10px 12px;background:var(--surface);border-radius:12px;cursor:pointer;border:1px solid var(--border);';
+      row.innerHTML='<div class="sg-tile" style="background:#F0B232;"><i class="ti ti-user" style="font-size:16px;color:#2A1D02;"></i></div>'+
+                     '<div style="flex:1;font-size:14px;color:var(--text);">'+(a.name||'Analyst')+'</div>'+
+                     '<input type="checkbox" value="'+a.id+'" '+(checked?'checked':'')+' style="accent-color:var(--red);width:17px;height:17px;" onchange="checkAutoWarnings()">';
       list.appendChild(row);
     });
     checkAutoWarnings();
