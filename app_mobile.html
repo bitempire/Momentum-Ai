@@ -12085,6 +12085,21 @@ function sigOpenReview(){
   var str  = document.getElementById('sig-strength').value;
 
   if(errEl){ errEl.style.display = 'none'; }
+
+  // THE BAND IS MANDATORY ON GOLD. Without it the signal is stored with a
+  // null pip_range, and auto-producer then skips EVERY account with
+  // "signal has no range set" - silently, as far as the customer is
+  // concerned. The risk level is mandatory on their side, so the band has
+  // to be mandatory on this one or the pair never meets.
+  if(sigBandApplies() && !SIG_BAND){
+    if(errEl){
+      errEl.style.color = 'var(--red)';
+      errEl.textContent = mmT('sig.needRange','Pick a range first. Without one, auto trade cannot place this signal.');
+      errEl.style.display = 'block';
+    }
+    return;
+  }
+
   if(!pair || !isFinite(ef) || !isFinite(et) || !isFinite(sl) || !isFinite(tp)){
     if(errEl){
       errEl.style.color = 'var(--red)';
