@@ -14984,12 +14984,33 @@ function renderExecTplList(){
     return rx-ry;
   });
 
+
+  // P20: a signal carries its own band, so only the templates built for that
+  // band can trade it. Layer count IS the band, 4/8/14/18 for 50/100/150/200,
+  // and it comes from settings rather than a parsed label so it cannot drift.
+  // A template whose layer count is none of those four belongs to no band -
+  // Super Scalper has 5 - and stays visible. A signal with no band, meaning
+  // anything posted before P20, shows everything exactly as it did before.
+  // If the filter would empty the list, it is abandoned rather than leaving
+  // the customer with nothing to pick.
+  var BAND_LAYERS = {50:4,100:8,150:14,200:18};
+  var wantL = (currentSignal && currentSignal.pip_range) ? BAND_LAYERS[currentSignal.pip_range] : null;
+  if(wantL){
+    var kept = rows.filter(function(t){
+      var st = t.settings || {};
+      var n = (st.dca && st.dca.layers) ? st.dca.layers.length : 1;
+      return (n === wantL) || [4,8,14,18].indexOf(n) < 0;
+    });
+    if(kept.length) rows = kept; else wantL = null;
+  }
+
   var GRID='display:grid;grid-template-columns:3px 1fr 68px 58px 58px;align-items:center;gap:11px;';
   var html='<div style="'+GRID+'padding:0 12px 8px;font-size:9px;font-weight:700;letter-spacing:.1em;color:var(--text3);opacity:.7;">'+
            '<span></span><span>'+mmT('ex2.template','TEMPLATE')+'</span>'+
            '<span style="text-align:center;">'+mmT('ex2.range','RANGE')+'</span>'+
            '<span style="text-align:center;">'+mmT('ex2.layers','LAYERS')+'</span>'+
            '<span style="text-align:center;">'+mmT('ex2.risk','RISK')+'</span></div>';
+  if(wantL){ html += '<div style="font-size:10px;color:var(--text3);padding:0 12px 9px;line-height:1.5;">'+mmT('ex2.bandOnly','Matched to this {n} pip signal. Templates built for other ranges are hidden.').replace('{n}', currentSignal.pip_range)+'</div>'; }
 
   for(var i=0;i<rows.length;i++){
     var t=rows[i], s=t.settings||{};
