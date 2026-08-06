@@ -3216,6 +3216,54 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 
 
   <!-- Profile -->
+  <div id="sub-security" class="sub-screen">
+    <div class="sub-header">
+      <button class="sub-back" onclick="goBackSubScreen('sub-security')"><i class="ti ti-arrow-left"></i></button>
+      <div class="sub-title" data-i18n="prof.security">SECURITY</div>
+    </div>
+    <div class="sub-content">
+      <div class="mm-nt-card">
+        <div class="mm-nt-row" style="cursor:pointer;" onclick="secTogglePw()">
+          <div class="mm-nt-tile" style="background:#3B82F6;"><i class="ti ti-lock" style="font-size:17px;color:#fff;"></i></div>
+          <div class="mm-nt-lb" data-i18n="prof.changePw">Change Password</div>
+          <i class="ti ti-chevron-down" style="font-size:16px;color:var(--text3);"></i>
+        </div>
+        <div class="mm-nt-sep ind"></div>
+        <div class="mm-nt-row" style="opacity:0.5;">
+          <div class="mm-nt-tile" style="background:#6B7280;"><i class="ti ti-shield-check" style="font-size:17px;color:#fff;"></i></div>
+          <div style="flex:1;">
+            <div style="font-size:14px;color:var(--text);" data-i18n="prof.enable2fa">Enable 2FA (Authy)</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:1px;" data-i18n="prof.comingSoon">Coming soon</div>
+          </div>
+          <i class="ti ti-chevron-right" style="font-size:16px;color:var(--text3);"></i>
+        </div>
+      </div>
+      <div style="margin-top:12px;">
+<div id="change-pw-form" style="display:none;margin-bottom:12px;">
+          <div class="auth-field">
+            <label class="auth-label" data-i18n="prof.curPw">Current Password</label>
+            <input id="sec-old-pw" class="auth-input" type="password"  placeholder="Current password" data-i18n-ph="ph.curPw">
+          </div>
+          <div class="auth-field">
+            <label class="auth-label" data-i18n="prof.newPw">New Password</label>
+            <input id="sec-new-pw" class="auth-input" type="password"  placeholder="New password" data-i18n-ph="ph.newPw">
+          </div>
+          <div class="auth-field">
+            <label class="auth-label" data-i18n="prof.confirmPw">Confirm New Password</label>
+            <input id="sec-confirm-pw" class="auth-input" type="password"  placeholder="Confirm new password" data-i18n-ph="ph.confirmPw">
+          </div>
+          <div id="pw-error" class="error-msg"></div>
+          <div id="pw-success" class="success-msg"></div>
+          <div style="display:flex;gap:8px;">
+            <button id="btn-change-pw" onclick="handleChangePassword()" style="flex:1;padding:11px;background:var(--grad);border:none;border-radius:10px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;" data-i18n="prof.updatePw">Update Password</button>
+            <button onclick="document.getElementById('change-pw-form').style.display='none'" style="padding:11px 16px;background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--text2);font-size:12px;cursor:pointer;font-family:'Sora',sans-serif;" data-i18n="common.cancel">Cancel</button>
+          </div>
+        </div>
+      </div>
+      <div class="mm-nt-ft" data-i18n="sec.foot">Your password protects the account. Two factor authentication is coming.</div>
+    </div>
+  </div>
+
   <div id="sub-notifications" class="sub-screen">
     <div class="sub-header">
       <button class="sub-back" onclick="goBackSubScreen('sub-notifications')"><i class="ti ti-arrow-left"></i></button>
@@ -3272,7 +3320,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
             <i class="ti ti-chevron-right" style="font-size:16px;color:var(--text3);"></i>
           </div>
       </div>
-      <div class="mm-nt-ft" id="nt-count">Counting this week's events...</div>
+      <div class="mm-nt-ft" id="nt-count">Counting events this week...</div>
     </div>
   </div>
 
@@ -3412,41 +3460,6 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         <div id="profile-promo-msg" style="display:none;font-size:11px;margin-top:8px;line-height:1.4;"></div>
       </div>
 
-      <!-- Security -->
-      <div class="section-card" style="margin-bottom:12px;">
-        <div class="section-title" style="font-size:13px;margin-bottom:12px;"><span data-i18n="prof.security">Security</span></div>
-        <div id="change-pw-form" style="display:none;margin-bottom:12px;">
-          <div class="auth-field">
-            <label class="auth-label" data-i18n="prof.curPw">Current Password</label>
-            <input id="sec-old-pw" class="auth-input" type="password"  placeholder="Current password" data-i18n-ph="ph.curPw">
-          </div>
-          <div class="auth-field">
-            <label class="auth-label" data-i18n="prof.newPw">New Password</label>
-            <input id="sec-new-pw" class="auth-input" type="password"  placeholder="New password" data-i18n-ph="ph.newPw">
-          </div>
-          <div class="auth-field">
-            <label class="auth-label" data-i18n="prof.confirmPw">Confirm New Password</label>
-            <input id="sec-confirm-pw" class="auth-input" type="password"  placeholder="Confirm new password" data-i18n-ph="ph.confirmPw">
-          </div>
-          <div id="pw-error" class="error-msg"></div>
-          <div id="pw-success" class="success-msg"></div>
-          <div style="display:flex;gap:8px;">
-            <button id="btn-change-pw" onclick="handleChangePassword()" style="flex:1;padding:11px;background:var(--grad);border:none;border-radius:10px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;" data-i18n="prof.updatePw">Update Password</button>
-            <button onclick="document.getElementById('change-pw-form').style.display='none'" style="padding:11px 16px;background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--text2);font-size:12px;cursor:pointer;font-family:'Sora',sans-serif;" data-i18n="common.cancel">Cancel</button>
-          </div>
-        </div>
-        <div class="more-menu-item" style="border:none;padding:10px 0;" onclick="document.getElementById('change-pw-form').style.display=document.getElementById('change-pw-form').style.display==='none'?'block':'none'">
-          <div class="more-menu-icon" style="width:36px;height:36px;"><i class="ti ti-lock" style="font-size:17px;"></i></div>
-          <div class="more-menu-text"><div class="more-menu-label" style="font-size:13px;" data-i18n="prof.changePw">Change Password</div></div>
-          <i class="ti ti-chevron-right more-menu-arrow"></i>
-        </div>
-        <div class="more-menu-item" style="border:none;padding:10px 0;opacity:0.5;">
-          <div class="more-menu-icon" style="width:36px;height:36px;"><i class="ti ti-shield-check" style="font-size:17px;"></i></div>
-          <div class="more-menu-text"><div class="more-menu-label" style="font-size:13px;" data-i18n="prof.enable2fa">Enable 2FA (Authy)</div><div class="more-menu-sub" style="font-size:10px;" data-i18n="prof.comingSoon">Coming soon</div></div>
-          <i class="ti ti-chevron-right more-menu-arrow"></i>
-        </div>
-      </div>
-
       <!-- Preferences -->
       <div class="section-card" style="margin-bottom:12px;">
         <div class="section-title" style="font-size:13px;margin-bottom:12px;"><span data-i18n="prof.prefs">Preferences</span></div>
@@ -3461,6 +3474,12 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
             <div class="mm-nt-tile" style="background:var(--gold);"><i class="ti ti-world" style="font-size:17px;color:#2A1D02;"></i></div>
             <div class="mm-nt-lb" data-i18n="common.language">Language</div>
             <span class="mm-nt-val" id="mm-lang-label-prof">English</span>
+            <i class="ti ti-chevron-right" style="font-size:16px;color:var(--text3);"></i>
+          </div>
+          <div class="mm-nt-sep ind"></div>
+          <div class="mm-nt-row" style="cursor:pointer;" onclick="showSubScreenFrom('sub-security','sub-profile')">
+            <div class="mm-nt-tile" style="background:#3B82F6;"><i class="ti ti-shield-lock" style="font-size:17px;color:#fff;"></i></div>
+            <div class="mm-nt-lb" data-i18n="prof.security">Security</div>
             <i class="ti ti-chevron-right" style="font-size:16px;color:var(--text3);"></i>
           </div>
         </div>
@@ -5330,6 +5349,35 @@ function mmLangName(code){ for(var i=0;i<MMLANGS.length;i++){ if(MMLANGS[i].code
 // Only the OTHER languages need entries here.
 var MM_I18N = {
   'zh-TW': {
+    'sec.foot':'密碼保護你的帳戶。雙重驗證即將推出。',
+    'nt.entry':'通知',
+    'nt.entryFoot':'管理哪些提醒會傳送到你的手機，包括交易、訊號與經濟數據。',
+    'nt.title':'通知',
+    'nt.allow':'允許通知',
+    'nt.allowFoot':'關閉後，以下所有提醒都會停止。',
+    'nt.trade':'交易提醒',
+    'nt.placed':'已下單',
+    'nt.tp':'觸及止盈',
+    'nt.sl':'觸及止損',
+    'nt.half':'到達目標一半',
+    'nt.tradeFoot':'一分鐘內成交的層級會合併為一則提醒。',
+    'nt.cal':'財經日曆',
+    'nt.calOn':'事件提醒',
+    'nt.impact':'影響程度',
+    'nt.remind':'提醒時間',
+    'nt.impHigh':'高',
+    'nt.impMed':'中等以上',
+    'nt.impAll':'全部',
+    'nt.r60':'事前 60 分鐘',
+    'nt.r30':'事前 30 分鐘',
+    'nt.r5':'事前 5 分鐘',
+    'nt.r1':'事前 1 分鐘',
+    'nt.rnone':'無',
+    'nt.counting':'正在統計本週事件…',
+    'nt.calOff':'日曆提醒已關閉。',
+    'nt.countLine':'依目前設定，本週約有 {n} 則日曆提醒。',
+    'nt.eventsLine':'本週有 {n} 個事件。',
+    'nt.remindLine':'已選 {n} 項，因此這些事件共有 {a} 則提醒。',
     'aria.chartType':'圖表類型',
     'aria.perfGauge':'績效儀表',
     'aria.pnlChart':'帳戶損益成長圖',
@@ -5865,6 +5913,35 @@ var MM_I18N = {
     'lb.rankDesc':'每月挑戰開始時將開放排名。持續交易以爭取您的名次。'
   },
   'zh-CN': {
+    'sec.foot':'密码保护你的账户。双重验证即将推出。',
+    'nt.entry':'通知',
+    'nt.entryFoot':'管理哪些提醒会发送到你的手机，包括交易、信号与经济数据。',
+    'nt.title':'通知',
+    'nt.allow':'允许通知',
+    'nt.allowFoot':'关闭后，以下所有提醒都会停止。',
+    'nt.trade':'交易提醒',
+    'nt.placed':'已下单',
+    'nt.tp':'触及止盈',
+    'nt.sl':'触及止损',
+    'nt.half':'到达目标一半',
+    'nt.tradeFoot':'一分钟内成交的层级会合并为一条提醒。',
+    'nt.cal':'财经日历',
+    'nt.calOn':'事件提醒',
+    'nt.impact':'影响程度',
+    'nt.remind':'提醒时间',
+    'nt.impHigh':'高',
+    'nt.impMed':'中等以上',
+    'nt.impAll':'全部',
+    'nt.r60':'事前 60 分钟',
+    'nt.r30':'事前 30 分钟',
+    'nt.r5':'事前 5 分钟',
+    'nt.r1':'事前 1 分钟',
+    'nt.rnone':'无',
+    'nt.counting':'正在统计本周事件…',
+    'nt.calOff':'日历提醒已关闭。',
+    'nt.countLine':'按当前设置，本周约有 {n} 条日历提醒。',
+    'nt.eventsLine':'本周有 {n} 个事件。',
+    'nt.remindLine':'已选 {n} 项，因此这些事件共有 {a} 条提醒。',
     'aria.chartType':'图表类型',
     'aria.perfGauge':'绩效仪表',
     'aria.pnlChart':'账户损益成长图',
@@ -6336,6 +6413,35 @@ var MM_I18N = {
     'lb.rankDesc':'每月挑战开始时将开放排名。持续交易以争取您的名次。'
   },
   'ms': {
+    'sec.foot':'Kata laluan melindungi akaun anda. Pengesahan dua faktor akan datang.',
+    'nt.entry':'Pemberitahuan',
+    'nt.entryFoot':'Urus makluman yang sampai ke telefon anda, termasuk dagangan, isyarat dan berita ekonomi.',
+    'nt.title':'PEMBERITAHUAN',
+    'nt.allow':'Benarkan pemberitahuan',
+    'nt.allowFoot':'Mematikan ini menghentikan semua di bawah.',
+    'nt.trade':'Makluman dagangan',
+    'nt.placed':'Dagangan dibuka',
+    'nt.tp':'Take profit dicapai',
+    'nt.sl':'Stop loss dicapai',
+    'nt.half':'Separuh jalan ke sasaran',
+    'nt.tradeFoot':'Lapisan yang diisi dalam satu minit digabungkan menjadi satu makluman.',
+    'nt.cal':'Kalendar ekonomi',
+    'nt.calOn':'Peringatan acara',
+    'nt.impact':'Impak',
+    'nt.remind':'Ingatkan saya',
+    'nt.impHigh':'Tinggi',
+    'nt.impMed':'Sederhana ke atas',
+    'nt.impAll':'Semua',
+    'nt.r60':'60 minit sebelum',
+    'nt.r30':'30 minit sebelum',
+    'nt.r5':'5 minit sebelum',
+    'nt.r1':'1 minit sebelum',
+    'nt.rnone':'Tiada',
+    'nt.counting':'Mengira acara minggu ini...',
+    'nt.calOff':'Peringatan kalendar dimatikan.',
+    'nt.countLine':'Kira-kira {n} makluman kalendar minggu ini pada tetapan ini.',
+    'nt.eventsLine':'{n} acara minggu ini.',
+    'nt.remindLine':'{n} dipilih, jadi {a} makluman untuk acara tersebut.',
     'aria.chartType':'Jenis carta',
     'aria.perfGauge':'Tolok prestasi',
     'aria.pnlChart':'Carta pertumbuhan untung rugi akaun',
@@ -6807,6 +6913,35 @@ var MM_I18N = {
     'lb.rankDesc':'Kedudukan dibuka apabila cabaran bulanan bermula. Teruskan berdagang untuk merebut tempat anda.'
   },
   'ja': {
+    'sec.foot':'パスワードがアカウントを守ります。二要素認証は近日公開です。',
+    'nt.entry':'通知',
+    'nt.entryFoot':'取引、シグナル、経済ニュースなど、スマートフォンに届く通知を管理します。',
+    'nt.title':'通知',
+    'nt.allow':'通知を許可',
+    'nt.allowFoot':'オフにすると以下のすべてが停止します。',
+    'nt.trade':'取引の通知',
+    'nt.placed':'注文が成立',
+    'nt.tp':'利食いに到達',
+    'nt.sl':'損切りに到達',
+    'nt.half':'目標の半分に到達',
+    'nt.tradeFoot':'1分以内に成立したレイヤーは1件の通知にまとめられます。',
+    'nt.cal':'経済カレンダー',
+    'nt.calOn':'イベント通知',
+    'nt.impact':'重要度',
+    'nt.remind':'通知タイミング',
+    'nt.impHigh':'高',
+    'nt.impMed':'中以上',
+    'nt.impAll':'すべて',
+    'nt.r60':'60分前',
+    'nt.r30':'30分前',
+    'nt.r5':'5分前',
+    'nt.r1':'1分前',
+    'nt.rnone':'なし',
+    'nt.counting':'今週のイベントを集計中…',
+    'nt.calOff':'カレンダー通知はオフです。',
+    'nt.countLine':'現在の設定では今週およそ {n} 件のカレンダー通知が届きます。',
+    'nt.eventsLine':'今週は {n} 件のイベントがあります。',
+    'nt.remindLine':'{n} 件を選択したため、対象イベントの通知は {a} 件になります。',
     'aria.chartType':'チャートの種類',
     'aria.perfGauge':'パフォーマンスゲージ',
     'aria.pnlChart':'口座損益の推移チャート',
@@ -7278,6 +7413,35 @@ var MM_I18N = {
     'lb.rankDesc':'月間チャレンジ開始とともにランキングが公開されます。取引を続けて順位を確保しましょう。'
   },
   'ko': {
+    'sec.foot':'비밀번호가 계정을 보호합니다. 2단계 인증은 곧 제공됩니다.',
+    'nt.entry':'알림',
+    'nt.entryFoot':'거래, 시그널, 경제 뉴스 등 휴대폰으로 받을 알림을 관리합니다.',
+    'nt.title':'알림',
+    'nt.allow':'알림 허용',
+    'nt.allowFoot':'끄면 아래 항목이 모두 중지됩니다.',
+    'nt.trade':'거래 알림',
+    'nt.placed':'주문 체결',
+    'nt.tp':'익절 도달',
+    'nt.sl':'손절 도달',
+    'nt.half':'목표의 절반 도달',
+    'nt.tradeFoot':'1분 이내에 체결된 레이어는 하나의 알림으로 묶입니다.',
+    'nt.cal':'경제 캘린더',
+    'nt.calOn':'이벤트 알림',
+    'nt.impact':'중요도',
+    'nt.remind':'알림 시점',
+    'nt.impHigh':'높음',
+    'nt.impMed':'중간 이상',
+    'nt.impAll':'전체',
+    'nt.r60':'60분 전',
+    'nt.r30':'30분 전',
+    'nt.r5':'5분 전',
+    'nt.r1':'1분 전',
+    'nt.rnone':'없음',
+    'nt.counting':'이번 주 이벤트 계산 중…',
+    'nt.calOff':'캘린더 알림이 꺼져 있습니다.',
+    'nt.countLine':'현재 설정으로 이번 주 약 {n} 건의 캘린더 알림이 발송됩니다.',
+    'nt.eventsLine':'이번 주 이벤트는 {n} 건입니다.',
+    'nt.remindLine':'{n} 개를 선택하여 해당 이벤트 알림은 {a} 건입니다.',
     'aria.chartType':'차트 유형',
     'aria.perfGauge':'성과 게이지',
     'aria.pnlChart':'계좌 손익 성장 차트',
@@ -7749,6 +7913,35 @@ var MM_I18N = {
     'lb.rankDesc':'월간 챌린지가 시작되면 순위가 공개됩니다. 계속 거래해 자리를 확보하세요.'
   },
   'th': {
+    'sec.foot':'รหัสผ่านปกป้องบัญชีของคุณ การยืนยันตัวตนสองชั้นกำลังจะมา',
+    'nt.entry':'การแจ้งเตือน',
+    'nt.entryFoot':'จัดการการแจ้งเตือนที่ส่งถึงโทรศัพท์ของคุณ รวมถึงการเทรด สัญญาณ และข่าวเศรษฐกิจ',
+    'nt.title':'การแจ้งเตือน',
+    'nt.allow':'อนุญาตการแจ้งเตือน',
+    'nt.allowFoot':'ปิดแล้วรายการทั้งหมดด้านล่างจะหยุดทำงาน',
+    'nt.trade':'แจ้งเตือนการเทรด',
+    'nt.placed':'เปิดออเดอร์แล้ว',
+    'nt.tp':'ถึงจุดทำกำไร',
+    'nt.sl':'ถึงจุดตัดขาดทุน',
+    'nt.half':'ถึงครึ่งทางของเป้าหมาย',
+    'nt.tradeFoot':'ชั้นที่เปิดภายในหนึ่งนาทีจะรวมเป็นการแจ้งเตือนเดียว',
+    'nt.cal':'ปฏิทินเศรษฐกิจ',
+    'nt.calOn':'เตือนก่อนเหตุการณ์',
+    'nt.impact':'ระดับผลกระทบ',
+    'nt.remind':'เตือนล่วงหน้า',
+    'nt.impHigh':'สูง',
+    'nt.impMed':'ปานกลางขึ้นไป',
+    'nt.impAll':'ทั้งหมด',
+    'nt.r60':'ก่อน 60 นาที',
+    'nt.r30':'ก่อน 30 นาที',
+    'nt.r5':'ก่อน 5 นาที',
+    'nt.r1':'ก่อน 1 นาที',
+    'nt.rnone':'ไม่มี',
+    'nt.counting':'กำลังนับเหตุการณ์สัปดาห์นี้...',
+    'nt.calOff':'ปิดการเตือนปฏิทินอยู่',
+    'nt.countLine':'ตามการตั้งค่านี้ สัปดาห์นี้จะมีการแจ้งเตือนปฏิทินประมาณ {n} ครั้ง',
+    'nt.eventsLine':'สัปดาห์นี้มี {n} เหตุการณ์',
+    'nt.remindLine':'เลือกไว้ {n} รายการ จึงมีการแจ้งเตือน {a} ครั้งสำหรับเหตุการณ์เหล่านั้น',
     'aria.chartType':'ประเภทกราฟ',
     'aria.perfGauge':'มาตรวัดผลงาน',
     'aria.pnlChart':'กราฟการเติบโตกำไรขาดทุนของบัญชี',
@@ -8220,6 +8413,35 @@ var MM_I18N = {
     'lb.rankDesc':'อันดับจะเปิดเมื่อการแข่งขันประจำเดือนเริ่มขึ้น เทรดต่อไปเพื่อคว้าตำแหน่งของคุณ'
   },
   'vi': {
+    'sec.foot':'Mật khẩu bảo vệ tài khoản của bạn. Xác thực hai lớp sắp có.',
+    'nt.entry':'Thông báo',
+    'nt.entryFoot':'Quản lý các thông báo gửi tới điện thoại của bạn, gồm giao dịch, tín hiệu và tin kinh tế.',
+    'nt.title':'THÔNG BÁO',
+    'nt.allow':'Cho phép thông báo',
+    'nt.allowFoot':'Tắt mục này sẽ dừng toàn bộ bên dưới.',
+    'nt.trade':'Thông báo giao dịch',
+    'nt.placed':'Đã vào lệnh',
+    'nt.tp':'Chạm chốt lời',
+    'nt.sl':'Chạm cắt lỗ',
+    'nt.half':'Đạt nửa đường tới mục tiêu',
+    'nt.tradeFoot':'Các lớp khớp trong vòng một phút sẽ gộp thành một thông báo.',
+    'nt.cal':'Lịch kinh tế',
+    'nt.calOn':'Nhắc trước sự kiện',
+    'nt.impact':'Mức ảnh hưởng',
+    'nt.remind':'Nhắc tôi',
+    'nt.impHigh':'Cao',
+    'nt.impMed':'Trung bình trở lên',
+    'nt.impAll':'Tất cả',
+    'nt.r60':'Trước 60 phút',
+    'nt.r30':'Trước 30 phút',
+    'nt.r5':'Trước 5 phút',
+    'nt.r1':'Trước 1 phút',
+    'nt.rnone':'Không có',
+    'nt.counting':'Đang đếm sự kiện tuần này...',
+    'nt.calOff':'Nhắc lịch đang tắt.',
+    'nt.countLine':'Khoảng {n} thông báo lịch trong tuần này với thiết lập hiện tại.',
+    'nt.eventsLine':'Tuần này có {n} sự kiện.',
+    'nt.remindLine':'Đã chọn {n} mốc, nên có {a} thông báo cho các sự kiện đó.',
     'aria.chartType':'Loại biểu đồ',
     'aria.perfGauge':'Đồng hồ hiệu suất',
     'aria.pnlChart':'Biểu đồ tăng trưởng lãi lỗ tài khoản',
@@ -8691,6 +8913,35 @@ var MM_I18N = {
     'lb.rankDesc':'Xếp hạng sẽ mở khi thử thách hàng tháng bắt đầu. Hãy tiếp tục giao dịch để giữ vị trí của bạn.'
   },
   'fil': {
+    'sec.foot':'Pinoprotektahan ng password ang iyong account. Malapit na ang two factor authentication.',
+    'nt.entry':'Mga notification',
+    'nt.entryFoot':'Pamahalaan ang mga alerto na dumarating sa iyong telepono, kasama ang trades, signals at economic news.',
+    'nt.title':'MGA NOTIFICATION',
+    'nt.allow':'Payagan ang mga notification',
+    'nt.allowFoot':'Kapag pinatay ito, hihinto ang lahat sa ibaba.',
+    'nt.trade':'Trade alerts',
+    'nt.placed':'Nailagay ang trade',
+    'nt.tp':'Natamaan ang take profit',
+    'nt.sl':'Natamaan ang stop loss',
+    'nt.half':'Kalahati na papunta sa target',
+    'nt.tradeFoot':'Ang mga layer na napunan sa loob ng isang minuto ay pinagsasama sa isang alerto.',
+    'nt.cal':'Economic calendar',
+    'nt.calOn':'Mga paalala sa event',
+    'nt.impact':'Impact',
+    'nt.remind':'Paalalahanan ako',
+    'nt.impHigh':'Mataas',
+    'nt.impMed':'Medium pataas',
+    'nt.impAll':'Lahat',
+    'nt.r60':'60 minuto bago',
+    'nt.r30':'30 minuto bago',
+    'nt.r5':'5 minuto bago',
+    'nt.r1':'1 minuto bago',
+    'nt.rnone':'Wala',
+    'nt.counting':'Binibilang ang mga event ngayong linggo...',
+    'nt.calOff':'Naka-off ang mga paalala sa calendar.',
+    'nt.countLine':'Humigit-kumulang {n} calendar alerts ngayong linggo sa setting na ito.',
+    'nt.eventsLine':'{n} events ngayong linggo.',
+    'nt.remindLine':'{n} ang napili, kaya {a} alerts para sa mga event na iyon.',
     'aria.chartType':'Uri ng chart',
     'aria.perfGauge':'Performance gauge',
     'aria.pnlChart':'Chart ng paglago ng P&L ng account',
@@ -9162,6 +9413,35 @@ var MM_I18N = {
     'lb.rankDesc':'Bubuksan ang ranggo kapag nagsimula ang buwanang challenge. Magpatuloy sa pag-trade para makuha ang puwesto mo.'
   },
   'hi': {
+    'sec.foot':'आपका पासवर्ड खाते की सुरक्षा करता है। टू फैक्टर प्रमाणीकरण जल्द आ रहा है।',
+    'nt.entry':'सूचनाएं',
+    'nt.entryFoot':'अपने फोन पर आने वाली सूचनाएं प्रबंधित करें, जिनमें ट्रेड, सिग्नल और आर्थिक समाचार शामिल हैं।',
+    'nt.title':'सूचनाएं',
+    'nt.allow':'सूचनाएं चालू करें',
+    'nt.allowFoot':'इसे बंद करने पर नीचे की सभी सूचनाएं रुक जाएंगी।',
+    'nt.trade':'ट्रेड सूचनाएं',
+    'nt.placed':'ट्रेड लगाया गया',
+    'nt.tp':'टेक प्रॉफिट लगा',
+    'nt.sl':'स्टॉप लॉस लगा',
+    'nt.half':'लक्ष्य के आधे तक पहुंचा',
+    'nt.tradeFoot':'एक मिनट के भीतर भरी गई लेयर एक ही सूचना में आती हैं।',
+    'nt.cal':'आर्थिक कैलेंडर',
+    'nt.calOn':'इवेंट रिमाइंडर',
+    'nt.impact':'प्रभाव',
+    'nt.remind':'मुझे याद दिलाएं',
+    'nt.impHigh':'उच्च',
+    'nt.impMed':'मध्यम और उससे ऊपर',
+    'nt.impAll':'सब कुछ',
+    'nt.r60':'60 मिनट पहले',
+    'nt.r30':'30 मिनट पहले',
+    'nt.r5':'5 मिनट पहले',
+    'nt.r1':'1 मिनट पहले',
+    'nt.rnone':'कोई नहीं',
+    'nt.counting':'इस सप्ताह के इवेंट गिने जा रहे हैं...',
+    'nt.calOff':'कैलेंडर रिमाइंडर बंद हैं।',
+    'nt.countLine':'इन सेटिंग्स पर इस सप्ताह लगभग {n} कैलेंडर सूचनाएं।',
+    'nt.eventsLine':'इस सप्ताह {n} इवेंट हैं।',
+    'nt.remindLine':'{n} चुने गए, इसलिए उन इवेंट के लिए {a} सूचनाएं।',
     'aria.chartType':'चार्ट प्रकार',
     'aria.perfGauge':'प्रदर्शन गेज',
     'aria.pnlChart':'खाता लाभ-हानि वृद्धि चार्ट',
@@ -9633,6 +9913,35 @@ var MM_I18N = {
     'lb.rankDesc':'मासिक चुनौती शुरू होते ही रैंकिंग खुल जाएगी। अपनी जगह पक्की करने के लिए ट्रेडिंग जारी रखें।'
   },
   'es': {
+    'sec.foot':'Tu contraseña protege la cuenta. La autenticación en dos pasos llegará pronto.',
+    'nt.entry':'Notificaciones',
+    'nt.entryFoot':'Gestiona las alertas que llegan a tu teléfono, incluidas operaciones, señales y noticias económicas.',
+    'nt.title':'NOTIFICACIONES',
+    'nt.allow':'Permitir notificaciones',
+    'nt.allowFoot':'Al desactivarlo se detiene todo lo de abajo.',
+    'nt.trade':'Alertas de operaciones',
+    'nt.placed':'Operación abierta',
+    'nt.tp':'Take profit alcanzado',
+    'nt.sl':'Stop loss alcanzado',
+    'nt.half':'Mitad del camino al objetivo',
+    'nt.tradeFoot':'Las capas ejecutadas en menos de un minuto llegan como una sola alerta.',
+    'nt.cal':'Calendario económico',
+    'nt.calOn':'Recordatorios de eventos',
+    'nt.impact':'Impacto',
+    'nt.remind':'Recordarme',
+    'nt.impHigh':'Alto',
+    'nt.impMed':'Medio y superior',
+    'nt.impAll':'Todo',
+    'nt.r60':'60 minutos antes',
+    'nt.r30':'30 minutos antes',
+    'nt.r5':'5 minutos antes',
+    'nt.r1':'1 minuto antes',
+    'nt.rnone':'Ninguno',
+    'nt.counting':'Contando los eventos de esta semana...',
+    'nt.calOff':'Los recordatorios del calendario están desactivados.',
+    'nt.countLine':'Unas {n} alertas de calendario esta semana con esta configuración.',
+    'nt.eventsLine':'{n} eventos esta semana.',
+    'nt.remindLine':'{n} seleccionados, por lo que {a} alertas para esos eventos.',
     'aria.chartType':'Tipo de gráfico',
     'aria.perfGauge':'Indicador de rendimiento',
     'aria.pnlChart':'Gráfico de evolución de pérdidas y ganancias',
@@ -18129,18 +18438,20 @@ function ntFoot(){
 
   var main = document.getElementById('nt-count');
   if(main){
-    if(ev < 0) main.textContent = mmT('nt.counting','Counting this week\u0027s events...');
+    if(ev < 0) main.textContent = mmT('nt.counting','Counting events this week...');
     else if(!NT_P.cal_enabled) main.textContent = mmT('nt.calOff','Calendar reminders are off.');
-    else main.textContent = mmT('nt.about','About') + ' ' + (ev * n) + ' ' +
-                            mmT('nt.calAlerts','calendar alerts this week at these settings.');
+    else main.textContent = mmT('nt.countLine','About {n} calendar alerts this week at these settings.')
+                              .replace('{n}', ev * n);
   }
 
   var f1 = document.getElementById('nt-imp-ft');
-  if(f1) f1.textContent = ev < 0 ? '' : (ev + ' ' + mmT('nt.eventsWeek','events this week.'));
+  if(f1) f1.textContent = ev < 0 ? '' :
+    mmT('nt.eventsLine','{n} events this week.').replace('{n}', ev);
 
   var f2 = document.getElementById('nt-rem-ft');
-  if(f2) f2.textContent = ev < 0 ? '' : (n + ' ' + mmT('nt.selected','selected, so') + ' ' +
-                                         (ev * n) + ' ' + mmT('nt.alertsThose','alerts for those events.'));
+  if(f2) f2.textContent = ev < 0 ? '' :
+    mmT('nt.remindLine','{n} selected, so {a} alerts for those events.')
+      .replace('{n}', n).replace('{a}', ev * n);
 }
 
 // minimal() is deliberate. The returned row is never used, so the write only
@@ -18168,6 +18479,14 @@ async function ntSave(){
     }
   } catch(e){}
   NT_BUSY = false;
+}
+
+// The change password form expands under its own row rather than opening a
+// screen, which is why that row carries a down chevron and not a right one.
+function secTogglePw(){
+  var f = document.getElementById('change-pw-form');
+  if(!f) return;
+  f.style.display = (f.style.display === 'block') ? 'none' : 'block';
 }
 
 function ntFlip(k){
