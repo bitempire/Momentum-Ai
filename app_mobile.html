@@ -1312,6 +1312,10 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 .mm-nt-tile { width: 29px; height: 29px; border-radius: 7px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .mm-nt-chk { font-size: 17px; color: var(--gold); visibility: hidden; }
 .mm-nt-chk.on { visibility: visible; }
+.sg-sel { background: transparent; border: none; color: var(--text2); font-family: inherit; font-size: 14px; text-align: right; text-align-last: right; padding: 4px 0; max-width: 168px; -webkit-appearance: none; appearance: none; cursor: pointer; }
+.sg-sel:focus { outline: none; }
+.sg-sel option { background: #12121a; color: var(--text); }
+.sg-dir { padding: 6px 14px; border-radius: 8px; font-size: 11px; font-weight: 700; letter-spacing: 0.4px; font-family: inherit; cursor: pointer; }
 .sg-chip { padding: 9px 0; border-radius: 10px; font-size: 12px; background: var(--surface); border: 1px solid var(--border); color: var(--text3); cursor: pointer; font-family: inherit; }
 .sg-chip.on { background: linear-gradient(135deg,#F0B232,#FF8C42); border-color: #F0B232; color: #2A1D02; font-weight: 700; }
 .sg-card { background: var(--surface); border-radius: 12px; overflow: hidden; }
@@ -4085,8 +4089,12 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
     <div id="analyst-success" class="success-msg"></div>
     <div class="section-card">
       <div class="auth-field">
-        <label class="auth-label">Instrument / Pair</label>
-        <select id="sig-pair" class="auth-input" onchange="sigCompute()">
+        <label class="auth-label" data-i18n="sig.signalGroup">Signal</label>
+        <div class="sg-card">
+          <div class="sg-row">
+            <div class="sg-tile" style="background:#F0B232;"><i class="ti ti-coin" style="font-size:16px;color:#2A1D02;"></i></div>
+            <div class="sg-lb" data-i18n="sig.instrument">Instrument</div>
+            <select id="sig-pair" class="sg-sel" onchange="sigCompute()">
           <option value="">Select instrument</option>
           <option value="XAUUSD">XAUUSD — Gold</option>
           <option value="NAS100">NAS100 — Nasdaq</option>
@@ -4097,14 +4105,34 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
           <option value="USDJPY">USDJPY</option>
           <option value="US30">US30 — Dow Jones</option>
         </select>
-      </div>
-      <div class="auth-field">
-        <label class="auth-label">Direction</label>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-          <button id="dir-buy" class="auth-btn" style="margin:0;background:rgba(0,200,122,0.12);color:var(--green);box-shadow:none;border:1px solid rgba(0,200,122,0.25);" onclick="setDirection('buy');sigCompute()">▲ BUY</button>
-          <button id="dir-sell" class="auth-btn" style="margin:0;background:var(--surface);color:var(--text2);box-shadow:none;border:1px solid var(--border);" onclick="setDirection('sell');sigCompute()">▼ SELL</button>
+          </div>
+          <div class="sg-sep"></div>
+          <div class="sg-row">
+            <div class="sg-tile" style="background:#00C87A;"><i class="ti ti-trending-up" style="font-size:16px;color:#04240F;"></i></div>
+            <div class="sg-lb" data-i18n="sig.direction">Direction</div>
+            <div style="display:flex;gap:5px;">
+              <button type="button" id="dir-buy" class="sg-dir" style="background:rgba(0,200,122,0.16);color:var(--green);border:1px solid rgba(0,200,122,0.4);" onclick="setDirection('buy');sigCompute()">BUY</button>
+              <button type="button" id="dir-sell" class="sg-dir" style="background:var(--surface);color:var(--text3);border:1px solid var(--border);" onclick="setDirection('sell');sigCompute()">SELL</button>
+            </div>
+            <input type="hidden" id="sig-direction" value="BUY">
+          </div>
+          <div class="sg-sep"></div>
+          <div class="sg-row">
+            <div class="sg-tile" style="background:#3B82F6;"><i class="ti ti-clock" style="font-size:16px;color:#ffffff;"></i></div>
+            <div class="sg-lb" data-i18n="sig.timeframe">Timeframe</div>
+            <select id="sig-timeframe" class="sg-sel">
+            <option value="M1">M1</option>
+            <option value="M5">M5</option>
+            <option value="M15">M15</option>
+            <option value="M30">M30</option>
+            <option value="H1" data-i18n="sc.h1">H1</option>
+            <option value="H4" selected data-i18n="sc.h4">H4</option>
+            <option value="D1" data-i18n="sc.d1">D1</option>
+            <option value="W1" data-i18n="t.weekly">Weekly</option>
+            <option value="MN1" data-i18n="t.monthly">Monthly</option>
+          </select>
+          </div>
         </div>
-        <input type="hidden" id="sig-direction" value="BUY">
       </div>
       <div class="auth-field" id="sig-band-wrap">
         <label class="auth-label" data-i18n="sig.range">Range</label>
@@ -4142,34 +4170,26 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
           <div class="sg-lb" data-i18n="sig.takeProfit">Take profit</div>
           <input id="sig-tp1" class="sg-num sg-tp" type="number" step="any" placeholder="4110.00" oninput="this.dataset.touched='1'">
         </div>
+        <div class="sg-sep"></div>
+        <div class="sg-row">
+          <div class="sg-tile" style="background:rgba(0,200,122,0.22);"><i class="ti ti-flag-2" style="font-size:16px;color:#00C87A;"></i></div>
+          <div class="sg-lb" style="color:var(--text2);" data-i18n="sig.takeProfit2">Take profit 2</div>
+          <input id="sig-tp2" class="sg-num" type="number" step="any" placeholder="optional">
+        </div>
         </div>
       </div>
-      <div class="form-row">
-        <div class="auth-field">
-          <label class="auth-label">Take Profit 2</label>
-          <input id="sig-tp2" class="auth-input" type="number" step="any" placeholder="2360.00">
-        </div>
-        <div class="auth-field">
-          <label class="auth-label" data-i18n="sig.timeframe">Timeframe</label>
-          <select id="sig-timeframe" class="auth-input">
-            <option value="M1">M1</option>
-            <option value="M5">M5</option>
-            <option value="M15">M15</option>
-            <option value="M30">M30</option>
-            <option value="H1" data-i18n="sc.h1">H1</option>
-            <option value="H4" selected data-i18n="sc.h4">H4</option>
-            <option value="D1" data-i18n="sc.d1">D1</option>
-            <option value="W1" data-i18n="t.weekly">Weekly</option>
-            <option value="MN1" data-i18n="t.monthly">Monthly</option>
-          </select>
+            <div class="auth-field">
+        <label class="auth-label" data-i18n="sig.confidence">Confidence</label>
+        <div class="sg-card" style="padding:13px;">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;">
+            <span style="font-size:14px;color:var(--text2);">Signal strength</span>
+            <span id="sig-strength-val" style="font-size:15px;font-weight:700;font-family:ui-monospace,Menlo,monospace;color:#F0B232;">75%</span>
+          </div>
+          <input id="sig-strength" type="range" min="1" max="100" value="75" style="width:100%;accent-color:#F0B232;" oninput="document.getElementById('sig-strength-val').textContent=this.value+'%'">
         </div>
       </div>
       <div class="auth-field">
-        <label class="auth-label">Signal Strength: <span id="sig-strength-val" style="color:var(--red);">75%</span></label>
-        <input id="sig-strength" type="range" min="1" max="100" value="75" style="width:100%;accent-color:var(--red);" oninput="document.getElementById('sig-strength-val').textContent=this.value+'%'">
-      </div>
-      <div class="auth-field">
-        <label class="auth-label">Commentary</label>
+        <label class="auth-label" data-i18n="sig.commentary">Commentary</label>
         <textarea id="sig-commentary" class="auth-input" rows="3" placeholder="Market analysis and reasoning..." style="resize:vertical;"></textarea>
       </div>
     </div>
