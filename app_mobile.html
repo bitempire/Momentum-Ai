@@ -5227,6 +5227,7 @@ async function refreshCurrentUser(force){
 }
 function enterApp(user) {
   _priceLoaded = false;
+  try { setTimeout(mmNavRestore, 80); } catch(e){}
   if(user) {
     var name = user.username || user.name || 'Trader';
     document.getElementById('mob-username').textContent = name;
@@ -11015,17 +11016,29 @@ function mt5PromptConnectNow(){
 // ============================================================
 var MMNAV = { tab: null, sub: null, parent: null };
 
+// Read the saved screen ONCE, at load, before any code can overwrite it.
+// It has to survive being read more than once, because refreshCurrentUser
+// is called with force=true on startup, which always counts as changed and
+// therefore routes a SECOND time after the network answers. That second
+// enterApp resets the tab to Home, so a single replay always lost the race.
+var MMNAV_PENDING = null;
+try { MMNAV_PENDING = JSON.parse(sessionStorage.getItem('mm_nav') || 'null'); } catch(e){ MMNAV_PENDING = null; }
+
+// The first real touch or click means the customer has taken over, so stop
+// replaying. Without this a late route could yank them back off a screen
+// they had just chosen themselves.
+try {
+  document.addEventListener('pointerdown', function(){ MMNAV_PENDING = null; }, { once: true, capture: true });
+} catch(e){}
+
 function mmNavSave(){
   try { sessionStorage.setItem('mm_nav', JSON.stringify(MMNAV)); } catch(e){}
 }
 
 function mmNavRestore(){
-  var raw = null;
-  try { raw = sessionStorage.getItem('mm_nav'); } catch(e){}
-  if(!raw) return;
-  var n = null;
-  try { n = JSON.parse(raw); } catch(e){ return; }
+  var n = MMNAV_PENDING;
   if(!n) return;
+  if(!n.tab && !n.sub) return;
 
   // Only replay inside the main app. An analyst or a pending account is
   // routed elsewhere and must stay there.
