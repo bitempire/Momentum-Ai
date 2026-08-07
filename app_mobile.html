@@ -2882,7 +2882,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
   <div id="soon-wrap" onclick="if(event.target===this)soonClose()">
     <div id="soon-sheet">
       <div style="width:36px;height:3px;background:#33333c;border-radius:2px;margin:0 auto 18px;"></div>
-      <div class="soon-badge"><span style="position:relative;color:#ff6b7e;font-size:11px;font-weight:700;letter-spacing:.14em;" data-i18n="app.comingSoonCaps">COMING SOON</span><span class="soon-streak"></span></div>
+      <div class="soon-badge"><span style="position:relative;color:#ff6b7e;font-size:11px;font-weight:700;letter-spacing:.10em;white-space:nowrap;" id="soon-badge" data-i18n="app.comingSoonCaps">COMING SOON</span><span class="soon-streak"></span></div>
       <div id="soon-title" style="font-size:22px;font-weight:700;color:#f2f2f4;margin:12px 0 0;"></div>
       <div id="soon-body" style="font-size:13px;color:#8b8b95;line-height:1.65;margin:10px 0 0;"></div>
       <div style="display:flex;align-items:center;gap:6px;margin-top:14px;">
@@ -14048,7 +14048,8 @@ var SOON_SCREENS = {
   "journal": {
     title: "Trading Journal",
     body: "Your full trade history, win rate and profit factor in one place. Right now the totals count every entry in a ladder as its own trade, so treat the figures as a preview while they are corrected.",
-    note: "Building now \u00b7 figures being corrected"
+    note: "Building now \u00b7 figures being corrected",
+    badge: "UPGRADING IN PROGRESS"
   },
   "sub-newsfeed": {
     title: "Market News",
@@ -14067,6 +14068,20 @@ function soonMaybe(id){
   var b = document.getElementById("soon-body");  if(b) b.textContent = cfg.body;
   var nt = document.getElementById("soon-note");
   if(nt) nt.textContent = cfg.note || "Building now \u00b7 sample data inside";
+  // The badge is normally translated through data-i18n. A per-screen override
+  // is NOT in the dictionary, so the attribute is REMOVED while it is showing,
+  // otherwise the next language switch would quietly put COMING SOON back. The
+  // attribute is restored for any screen that does not override it.
+  var bd = document.getElementById("soon-badge");
+  if(bd){
+    if(cfg.badge){
+      bd.removeAttribute("data-i18n");
+      bd.textContent = cfg.badge;
+    } else {
+      bd.setAttribute("data-i18n", "app.comingSoonCaps");
+      bd.textContent = (typeof mmT === "function") ? mmT("app.comingSoonCaps","COMING SOON") : "COMING SOON";
+    }
+  }
   w.classList.add("on");
 }
 function soonMark(){
