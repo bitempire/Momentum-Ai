@@ -2889,7 +2889,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         <span class="soon-dot"></span>
         <span class="soon-dot" style="animation-delay:.18s;"></span>
         <span class="soon-dot" style="animation-delay:.36s;"></span>
-        <span id="soon-note" style="font-size:11px;color:#6a6a74;margin-left:4px;">Building now &middot; sample data inside</span>
+        <span style="font-size:11px;color:#6a6a74;margin-left:4px;">Building now &middot; sample data inside</span>
       </div>
       <div style="display:flex;gap:9px;margin-top:18px;">
         <button class="soon-alt" onclick="soonBack()" data-i18n="app.notNow">Not now</button>
@@ -11057,7 +11057,6 @@ function mmNavRestore(){
 function switchTab(tab) {
   if(_premiumTabs.indexOf(tab)>=0 && !premiumGate()) return;
   MMNAV.tab = tab; MMNAV.sub = null; MMNAV.parent = null; mmNavSave();
-  if(typeof soonMaybe === 'function') soonMaybe(tab);
   document.querySelectorAll('.app-tab').forEach(function(t) { 
     t.classList.remove('active');
     t.style.display = 'none';
@@ -14025,17 +14024,6 @@ var SOON_SCREENS = {
   // so the sheet was telling customers the data was fake when it is now live.
   // sub-newsfeed stays: its headlines are still invented, and real headlines
   // are somebody else's copyrighted text so that one is not simply a build job.
-  // 7 Aug 2026. The Journal is a TAB, not a sub-screen, so switchTab calls
-  // soonMaybe as well as showSubScreen. Its data is REAL, unlike the other
-  // entries here, which is why it carries its own note line: saying "sample
-  // data inside" would be untrue on this screen. What is wrong is the
-  // COUNTING - every row in closed_trades is one LADDER ENTRY, so 184 rows are
-  // 81 actual trades, and the win rate, streak and averages all measure rungs.
-  "journal": {
-    title: "Trading Journal",
-    body: "Your full trade history, win rate and profit factor in one place. Right now the totals count every entry in a ladder as its own trade, so treat the figures as a preview while they are corrected.",
-    note: "Building now \u00b7 figures being corrected"
-  },
   "sub-newsfeed": {
     title: "Market News",
     body: "Headlines that actually move gold, oil and the dollar, in one feed. What you can see now is sample content, not live data."
@@ -14051,8 +14039,6 @@ function soonMaybe(id){
   _soonFor = id;
   var t = document.getElementById("soon-title"); if(t) t.textContent = cfg.title;
   var b = document.getElementById("soon-body");  if(b) b.textContent = cfg.body;
-  var nt = document.getElementById("soon-note");
-  if(nt) nt.textContent = cfg.note || "Building now \u00b7 sample data inside";
   w.classList.add("on");
 }
 function soonMark(){
@@ -14070,13 +14056,7 @@ function soonBack(){
   soonMark();
   var w = document.getElementById("soon-wrap"); if(w) w.classList.remove("on");
   _soonFor = null;
-  // A sub-screen can be closed. A TAB has nothing to close, so Not now leaves
-  // the customer on Home rather than sitting on the screen they just declined.
-  if(id && document.getElementById(id)) {
-    if(typeof hideSubScreen === "function") hideSubScreen(id);
-  } else if(id && typeof switchTab === "function") {
-    switchTab("dashboard");
-  }
+  if(id && typeof hideSubScreen === "function") hideSubScreen(id);
 }
 function comingSoonToast(label){
   var t = document.createElement('div');
