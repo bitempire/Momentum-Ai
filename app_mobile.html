@@ -11045,11 +11045,25 @@ function mmNavRestore(){
   var app = document.getElementById('screen-app');
   if(!app || app.style.display === 'none') return;
 
+  // NEVER REPLAY A LOCKED SCREEN. switchTab and showSubScreen both call
+  // premiumGate(), which OPENS THE DEPOSIT POPUP as a side effect. Replaying a
+  // premium tab therefore threw the paywall in a customer's face on EVERY
+  // reload, which is worse than simply landing on Home - the gate would have
+  // sent them there anyway. Checked with isPremiumUser(), which reads the
+  // account rather than firing the popup.
+  var locked = (typeof isPremiumUser === 'function') ? !isPremiumUser() : false;
+
   try {
-    if(n.tab && typeof switchTab === 'function') switchTab(n.tab);
+    if(n.tab && typeof switchTab === 'function'){
+      var tabLocked = locked && typeof _premiumTabs !== 'undefined' && _premiumTabs.indexOf(n.tab) >= 0;
+      if(!tabLocked) switchTab(n.tab);
+    }
     if(n.sub){
-      if(n.parent && typeof showSubScreenFrom === 'function') showSubScreenFrom(n.sub, n.parent);
-      else if(typeof showSubScreen === 'function') showSubScreen(n.sub);
+      var subLocked = locked && typeof _premiumScreens !== 'undefined' && _premiumScreens.indexOf(n.sub) >= 0;
+      if(!subLocked){
+        if(n.parent && typeof showSubScreenFrom === 'function') showSubScreenFrom(n.sub, n.parent);
+        else if(typeof showSubScreen === 'function') showSubScreen(n.sub);
+      }
     }
   } catch(e){}
 }
