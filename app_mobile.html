@@ -2224,7 +2224,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 
       <!-- BOTTOM 4 CARDS -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
-        <div class="section-card" style="padding:8px;"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;" data-i18n="j.bestPair">Best Pair</div><div id="j-best-pair" style="font-family:'Orbitron',sans-serif;font-size:13px;font-weight:800;color:#FFB020;">—</div><div id="j-best-pair-sub" style="font-size:10px;color:var(--text3);margin-top:2px;">—</div></div>
+        <div class="section-card" style="padding:8px;"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;" id="j-best-pair-label" data-i18n="j.bestPair">Best Pair</div><div id="j-best-pair" style="font-family:'Orbitron',sans-serif;font-size:13px;font-weight:800;color:#FFB020;">—</div><div id="j-best-pair-sub" style="font-size:10px;color:var(--text3);margin-top:2px;">—</div></div>
         <div class="section-card" style="padding:8px;"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;" data-i18n="j.bestSession">Best Session</div><div id="j-best-session2" style="font-family:'Orbitron',sans-serif;font-size:13px;font-weight:800;color:var(--text);">—</div><div style="font-size:10px;color:var(--text3);margin-top:2px;" data-i18n="j.byAvg">By avg profit</div></div>
         <div class="section-card" style="padding:8px;"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;" data-i18n="j.winStreak">Win Streak</div><div id="j-win-streak" style="font-family:'Orbitron',sans-serif;font-size:13px;font-weight:800;color:#00C87A;">—</div><div style="font-size:10px;color:var(--text3);margin-top:2px;" data-i18n="j.curStreak">Current streak</div></div>
         <div class="section-card" style="padding:8px;"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;" data-i18n="j.monthlyRet">Monthly Return</div><div id="j-monthly-return" style="font-family:'Orbitron',sans-serif;font-size:13px;font-weight:800;color:#00C87A;">—</div><div id="j-monthly-label" style="font-size:10px;color:var(--text3);margin-top:2px;" data-i18n="j.thisMonth">This month</div></div>
@@ -14407,6 +14407,22 @@ async function loadJournalData() {
     var bestPair=Object.keys(pairMap).sort(function(a,b){return pairMap[b].pnl-pairMap[a].pnl;})[0];
     if(bestPair){
       el=document.getElementById('j-best-pair'); if(el) el.textContent=bestPair;
+      // 8 Aug 2026. The list is sorted by profit and the top one is taken, so
+      // when EVERY pair is negative the least-bad one gets called "Best Pair".
+      // That is arithmetically right and reads as nonsense. The number stays,
+      // because it is real and useful; only the heading changes to say what it
+      // actually is. data-i18n is removed while the override shows, or the next
+      // language switch would quietly put "Best Pair" back over it.
+      var bpLab = document.getElementById('j-best-pair-label');
+      if(bpLab){
+        if(pairMap[bestPair].pnl < 0){
+          bpLab.removeAttribute('data-i18n');
+          bpLab.textContent = 'Least loss';
+        } else {
+          bpLab.setAttribute('data-i18n','j.bestPair');
+          bpLab.textContent = mmT('j.bestPair','Best Pair');
+        }
+      }
       el=document.getElementById('j-best-pair-sub'); if(el) el.textContent=(pairMap[bestPair].pnl>=0?'+$':'-$')+Math.abs(pairMap[bestPair].pnl).toFixed(0)+' · '+Math.round(pairMap[bestPair].wins/pairMap[bestPair].total*100)+mmT('j.wrSuffix','% WR');
     }
     el=document.getElementById('j-win-streak'); if(el) el.textContent=maxStreak+mmT('j.tradesSuffix',' trades');
@@ -14443,7 +14459,12 @@ async function loadJournalData() {
     }
     // AI Insight via Claude API
     if(trades.length>=3){
-      generateJournalInsight(winRate, avgWin, avgLoss, revCount, methods, maxStreak, bestPair);
+      // Tell the AI the truth about that pair. Handed the bare symbol, it read a
+      // losing pair with two trades as evidence of strength and said so on screen.
+      generateJournalInsight(winRate, avgWin, avgLoss, revCount, methods, maxStreak,
+        (bestPair && pairMap[bestPair] && pairMap[bestPair].pnl >= 0)
+          ? bestPair
+          : (bestPair ? ('none profitable yet, smallest loss on ' + bestPair) : 'none'));
     }
     // Render chart
     renderJournalChart(trades);
