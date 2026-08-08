@@ -14207,10 +14207,59 @@ window._journalRange = '30d';
 async function loadJournalData() {
   if(!activeAccount||!db) return;
   try {
-    var res = await db.from('closed_trades').select('*').eq('mt5_id', String(activeAccount.mt5_id)).order('close_time',{ascending:false}).limit(200);
+    var res = await db.from('closed_trades').select('*').eq('mt5_id', String(activeAccount.mt5_id)).order('close_time',{ascending:false}).limit(1000);
     if(res.error) throw res.error;
-    var trades = res.data || [];
+    var raw = res.data || [];
+
+    // ------------------------------------------------------------------
+    // 7 Aug 2026. A ROW IN closed_trades IS ONE LADDER ENTRY, NOT ONE TRADE.
+    // 184 gold rows on one account were 81 actual baskets. Counting rows made
+    // the total, the win rate, the streak and both averages measure RUNGS: a
+    // ladder closing 7 winners and 1 loser read as 7 wins and 1 loss instead
+    // of one result. Everything below this point now works on BASKETS.
+    //
+    // A row with no basket_id is its own basket, keyed by ticket. Those are
+    // the older single-entry rows and they are genuinely one trade each.
+    //
+    // METHOD comes from trade_commands, not from closed_trades. The bridge
+    // stamps every row it writes as 'history', so the stored column can never
+    // say whether a trade was manual, smart or auto. The command that created
+    // the basket knows, and basket_id is the link.
+    // ------------------------------------------------------------------
+    var mMap = {};
+    try {
+      var cmdRes = await db.from('trade_commands').select('basket_id,method').eq('mt5_id', String(activeAccount.mt5_id)).limit(1000);
+      (cmdRes && cmdRes.data ? cmdRes.data : []).forEach(function(c){
+        if(c && c.basket_id && c.method) mMap[c.basket_id] = String(c.method).toLowerCase();
+      });
+    } catch(e){ /* no commands is not fatal: everything falls back to manual */ }
+
+    var byBasket = {};
+    raw.forEach(function(t){
+      var key = t.basket_id || ('T' + t.ticket);
+      if(!byBasket[key]){
+        byBasket[key] = {
+          basket_id: t.basket_id || null, ticket: t.ticket,
+          symbol: t.symbol, side: t.side, comment: t.comment,
+          profit: 0, volume: 0, legs: 0,
+          close_time: t.close_time, open_time: t.open_time || null,
+          open_price: t.open_price, sl: t.sl,
+          method: (t.basket_id && mMap[t.basket_id]) ? mMap[t.basket_id] : null
+        };
+      }
+      var b = byBasket[key];
+      b.profit += parseFloat(t.profit || 0);
+      b.volume += parseFloat(t.volume || 0);
+      b.legs++;
+      if(t.close_time && (!b.close_time || t.close_time > b.close_time)) b.close_time = t.close_time;
+      if(t.open_time && (!b.open_time || t.open_time < b.open_time)) b.open_time = t.open_time;
+      if(!b.sl && t.sl) b.sl = t.sl;
+    });
+    var trades = Object.keys(byBasket).map(function(k){ return byBasket[k]; })
+      .sort(function(a,b){ return new Date(b.close_time || 0) - new Date(a.close_time || 0); });
+
     window._journalTrades = trades;
+    window._journalLegs = raw;
     if(!trades.length) {
       renderJournalChart([]);
       updateGauge(0);
@@ -14233,8 +14282,12 @@ async function loadJournalData() {
     var runPnl=0, peak=0, maxDD=0;
     trades.slice().reverse().forEach(function(t){ runPnl+=parseFloat(t.profit||0); if(runPnl>peak)peak=runPnl; var dd=peak-runPnl; if(dd>maxDD)maxDD=dd; });
     // Avg hold time
-    var holdsWithDur = trades.filter(function(t){return t.duration_seconds>0;});
-    var avgHoldSec = holdsWithDur.length>0 ? holdsWithDur.reduce(function(s,t){return s+t.duration_seconds;},0)/holdsWithDur.length : 0;
+    // `duration_seconds` has never existed on closed_trades, so this was always
+    // empty. It is now derived, and appears as soon as open_time is populated.
+    var holdsWithDur = trades.filter(function(t){ return t.open_time && t.close_time; });
+    var avgHoldSec = holdsWithDur.length>0 ? holdsWithDur.reduce(function(s,t){
+      return s + Math.max(0, (new Date(t.close_time) - new Date(t.open_time)) / 1000);
+    },0)/holdsWithDur.length : 0;
     var avgHoldStr = avgHoldSec>0 ? Math.floor(avgHoldSec/3600)+'h '+Math.floor((avgHoldSec%3600)/60)+'m' : '—';
     // Win streak
     var streak=0, maxStreak=0;
@@ -14244,13 +14297,15 @@ async function loadJournalData() {
     trades.forEach(function(t){
       var s=(t.symbol||'').toUpperCase();
       if(s.includes('XAU')||s.includes('XAG')) assetCounts.Gold++;
-      else if(s.includes('BTC')||s.includes('ETH')||s.includes('USDT')) assetCounts.Crypto++;
+      else if(s.includes('BTC')||s.includes('BITCOIN')||s.includes('ETH')||s.includes('USDT')) assetCounts.Crypto++;
       else if(s.includes('US30')||s.includes('NAS')||s.includes('SPX')||s.includes('DAX')) assetCounts.Indices++;
       else assetCounts.Forex++;
     });
     var totalAssets=Object.values(assetCounts).reduce(function(s,v){return s+v;},0);
     // Method breakdown
     var methods={manual:[],smart:[],auto:[]};
+    // t.method was resolved from trade_commands above. Null means no command
+    // was found, which is the older hand-placed rows, so manual is correct.
     trades.forEach(function(t){ var m=(t.method||'manual').toLowerCase(); if(methods[m])methods[m].push(t); else methods.manual.push(t); });
     function methodStats(arr){
       if(!arr.length) return '—';
@@ -14316,8 +14371,8 @@ async function loadJournalData() {
     el=document.getElementById('j-t-stats'); if(el){el.textContent=methodStats(methods.smart);el.style.color=methods.smart.length?'var(--green)':'var(--text3)';}
     el=document.getElementById('j-a-stats'); if(el){el.textContent=methodStats(methods.auto);el.style.color=methods.auto.length?'var(--green)':'var(--text3)';}
     // Best/worst trade
-    el=document.getElementById('j-best-trade'); if(el) el.textContent='+$'+parseFloat(bestTrade.profit||0).toFixed(2)+' '+bestTrade.symbol;
-    el=document.getElementById('j-worst-trade'); if(el) el.textContent='-$'+Math.abs(parseFloat(worstTrade.profit||0)).toFixed(2)+' '+worstTrade.symbol;
+    el=document.getElementById('j-best-trade'); if(el){var bp=parseFloat(bestTrade.profit||0); el.textContent=(bp>=0?'+$':'-$')+Math.abs(bp).toFixed(2)+' '+bestTrade.symbol;}
+    el=document.getElementById('j-worst-trade'); if(el){var wp=parseFloat(worstTrade.profit||0); el.textContent=(wp>=0?'+$':'-$')+Math.abs(wp).toFixed(2)+' '+worstTrade.symbol;}
     // Performance score gauge
     updateGauge(perfScore);
     el=document.getElementById('ps-winrate'); if(el) el.textContent=winRate+'%';
@@ -14326,7 +14381,7 @@ async function loadJournalData() {
     el=document.getElementById('pb-disc'); if(el) el.style.width=discScore+'%';
     el=document.getElementById('ps-risk'); if(el) el.textContent=riskPct+'%';
     el=document.getElementById('pb-risk'); if(el) el.style.width=riskPct+'%';
-    var psychScore=Math.min(100,Math.round(100-revCount*15));
+    var psychScore=Math.max(0,Math.min(100,Math.round(100-revCount*15)));
     el=document.getElementById('ps-psych'); if(el) el.textContent=psychScore+'%';
     el=document.getElementById('pb-psych'); if(el) el.style.width=psychScore+'%';
     // Discipline tab
@@ -14352,7 +14407,7 @@ async function loadJournalData() {
     var bestPair=Object.keys(pairMap).sort(function(a,b){return pairMap[b].pnl-pairMap[a].pnl;})[0];
     if(bestPair){
       el=document.getElementById('j-best-pair'); if(el) el.textContent=bestPair;
-      el=document.getElementById('j-best-pair-sub'); if(el) el.textContent='+$'+pairMap[bestPair].pnl.toFixed(0)+' · '+Math.round(pairMap[bestPair].wins/pairMap[bestPair].total*100)+mmT('j.wrSuffix','% WR');
+      el=document.getElementById('j-best-pair-sub'); if(el) el.textContent=(pairMap[bestPair].pnl>=0?'+$':'-$')+Math.abs(pairMap[bestPair].pnl).toFixed(0)+' · '+Math.round(pairMap[bestPair].wins/pairMap[bestPair].total*100)+mmT('j.wrSuffix','% WR');
     }
     el=document.getElementById('j-win-streak'); if(el) el.textContent=maxStreak+mmT('j.tradesSuffix',' trades');
     el=document.getElementById('j-monthly-return'); if(el){el.textContent=(monthPnl>=0?'+':'')+monthPnl.toFixed(2)+' ('+monthRet+'%)';el.style.color=monthPnl>=0?'var(--green)':'var(--red)';}
