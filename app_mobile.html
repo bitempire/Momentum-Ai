@@ -1409,6 +1409,32 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 .jam-v{font-family:'Orbitron',ui-monospace,monospace;font-size:13px;font-weight:700;white-space:nowrap;}
 .jam-k{font-size:8px;color:var(--text3);letter-spacing:.3px;white-space:nowrap;}
 .jsec{font-size:10px;letter-spacing:.7px;color:var(--text3);margin:12px 3px 6px;}
+/* ══════════════════════════════════════════════════════════
+   RANK TICK. 9 Aug 2026. Replaces the medal block.
+   The gold, silver and bronze tiles were dropped because a medal colour
+   belongs to the POSITION, so it moved to whichever method happened to be
+   leading and taught nobody anything. A thin tick reads as a list rather
+   than a podium, which suits three rows, and it leaves green and red free
+   to mean money and nothing else. Only the leader's tick is coloured.
+   ══════════════════════════════════════════════════════════ */
+.jmb-tick{width:3px;height:26px;border-radius:2px;flex-shrink:0;background:rgba(255,255,255,.12);}
+.jmb-tick.lead{background:linear-gradient(180deg,var(--red),var(--red2));box-shadow:0 0 10px rgba(255,30,60,.4);}
+.jmb-rkn{width:12px;flex-shrink:0;font-family:'Orbitron',ui-monospace,Menlo,monospace;font-size:11px;font-weight:700;color:var(--text3);text-align:center;}
+/* ══════════════════════════════════════════════════════════
+   ASSET TILES. 9 Aug 2026. Replaces the single storage bar.
+   Four tiles two by two, so a market with a small share keeps a readable
+   figure instead of being squeezed out of its own segment, and Indices has
+   somewhere to live rather than sitting greyed in the legend with no number.
+   The hairline, the bloom and the Orbitron figure are the Home price card
+   treatment, lifted rather than approximated.
+   ══════════════════════════════════════════════════════════ */
+.jam-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.jam-tile{position:relative;border-radius:10px;padding:10px 8px;text-align:center;background:var(--surface);border:1px solid var(--border);overflow:hidden;}
+.jam-tile.off{opacity:.42;}
+.jam-hair{position:absolute;left:0;right:0;top:0;height:2px;}
+.jam-p{font-family:'Orbitron',ui-monospace,Menlo,monospace;font-size:17px;font-weight:800;white-space:nowrap;}
+.jam-k{font-size:8.5px;color:var(--text3);letter-spacing:.4px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.jam-bloom{position:absolute;left:12%;right:12%;bottom:-14px;height:26px;border-radius:50%;filter:blur(10px);opacity:.5;}
 @media (prefers-reduced-motion: reduce){.jmb-sw,.jmb-f,.jwl-f{animation:none;}}
 .sg-chip { padding: 9px 0; border-radius: 10px; font-size: 12px; background: var(--surface); border: 1px solid var(--border); color: var(--text3); cursor: pointer; font-family: inherit; }
 .sg-chip.on { background: linear-gradient(135deg,#F0B232,#FF8C42); border-color: #F0B232; color: #2A1D02; font-weight: 700; }
@@ -2259,16 +2285,11 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 
           <div class="jsec" data-i18n="j.assetMix">ASSET MIX</div>
           <div class="jwl-c">
-            <!-- Storage style bar. Segments are drawn by jRenderAssetMix(); the
-                 percentage prints INSIDE its own segment and hides below 15%,
-                 where the label no longer fits. The legend names them either way. -->
-            <div class="jam-bar" id="j-asset-bar"></div>
-            <div style="display:flex;justify-content:space-between;">
-              <span class="jam-key"><span class="jam-dot" style="background:#8B5CF6;"></span><span data-i18n="j.crypto">Crypto</span></span>
-              <span class="jam-key"><span class="jam-dot" style="background:#F0B232;"></span><span data-i18n="j.gold">Gold</span></span>
-              <span class="jam-key"><span class="jam-dot" style="background:#3B82F6;"></span><span data-i18n="j.forex">Forex</span></span>
-              <span class="jam-key" style="opacity:.55;"><span class="jam-dot" style="background:rgba(255,255,255,.14);"></span><span data-i18n="j.indices">Indices</span></span>
-            </div>
+            <!-- Four tiles two by two, all of them drawn by jRenderAssetMix().
+                 The name lives inside its own tile now, so the separate legend
+                 that used to sit under the bar is gone. The id is unchanged, so
+                 the call site did not have to move. -->
+            <div class="jam-grid" id="j-asset-bar"></div>
             <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-top:10px;padding-top:9px;border-top:1px solid var(--border);">
               <span data-i18n="j.bestSession">Best Session</span><span id="j-best-session">-</span>
             </div>
@@ -14282,14 +14303,10 @@ function jRenderMethods(methods){
     smart:  { key:'j.tools',     dflt:'TOOLS' },
     auto:   { key:'j.autoWord',  dflt:'AUTO' }
   };
-  // Medal colours belong to the POSITION, not the method, so they move when the
-  // order does. That is the point of a leaderboard, but it means nobody should
-  // learn "gold = Smart Tool" from this card.
-  var MEDAL = [
-    { bg:'#F0B232', ink:'#2A1D02' },
-    { bg:'#B8BCC4', ink:'#1B1D21' },
-    { bg:'#B87333', ink:'#ffffff' }
-  ];
+  // 9 Aug 2026: the medal tiles were dropped. Gold, silver and bronze belong to
+  // the POSITION, so the colour moved to whichever method happened to be
+  // leading and nobody could learn anything from it. A thin tick marks the row
+  // instead and only the leader's is coloured.
 
   var rows = Object.keys(META).map(function(k){
     var arr = methods[k] || [];
@@ -14301,7 +14318,6 @@ function jRenderMethods(methods){
   var html = '';
   rows.forEach(function(r, idx){
     var m = META[r.k];
-    var medal = MEDAL[idx] || { bg:'rgba(255,255,255,.10)', ink:'var(--text3)' };
     var lead = (idx === 0 && r.n > 0);
     var pos = r.pnl >= 0;
     var money = (pos ? '+$' : '-$') + Math.round(Math.abs(r.pnl)).toLocaleString();
@@ -14311,7 +14327,8 @@ function jRenderMethods(methods){
     var wrInk = r.n === 0 ? 'var(--text3)'          : (r.wr >= 60 ? '#00d68f' : r.wr >= 40 ? '#FFD27A' : '#ff8fa0');
 
     html += '<div class="jmb-r' + (lead ? ' jmb-lead2' : '') + '">'
-         +  '<span class="jmb-blk" style="background:' + medal.bg + ';color:' + medal.ink + ';"><span style="position:relative;">' + (idx+1) + '</span></span>'
+         +  '<span class="jmb-tick' + (lead ? ' lead' : '') + '"></span>'
+         +  '<span class="jmb-rkn"' + (lead ? ' style="color:var(--red);"' : '') + '>' + (idx+1) + '</span>'
          +  '<span style="flex:1;min-width:0;">'
          +    '<span class="jmb-nm" data-i18n="' + m.key + '">' + mmT(m.key, m.dflt) + '</span>'
          +    '<span style="display:flex;align-items:center;gap:7px;margin-top:6px;">'
@@ -14331,24 +14348,29 @@ function jRenderMethods(methods){
 function jRenderAssetMix(counts, total){
   var bar = document.getElementById('j-asset-bar');
   if(!bar) return;
-  if(!total || total <= 0){ bar.innerHTML = ''; return; }
 
+  // Purple is out at Haikal's instruction, so crypto took the teal green and
+  // indices the cyan. Gold and forex are unchanged.
   var SEG = [
-    { k:'Crypto',  grad:'linear-gradient(90deg,#6D3FD6,#A78BFA,#6D3FD6)', ink:'#1B0A3D' },
-    { k:'Gold',    grad:'linear-gradient(90deg,#C98D14,#FFD27A,#C98D14)', ink:'#2A1D02' },
-    { k:'Forex',   grad:'linear-gradient(90deg,#2563EB,#93C5FD,#2563EB)', ink:'#04213F' },
-    { k:'Indices', grad:'linear-gradient(90deg,#3F4756,#7C879B,#3F4756)', ink:'#0C1017' }
+    { k:'Crypto',  col:'#34D399', i18n:'j.crypto',  dflt:'Crypto'  },
+    { k:'Gold',    col:'#F0B232', i18n:'j.gold',    dflt:'Gold'    },
+    { k:'Forex',   col:'#60A5FA', i18n:'j.forex',   dflt:'Forex'   },
+    { k:'Indices', col:'#22D3EE', i18n:'j.indices', dflt:'Indices' }
   ];
 
-  var html = '', d = 0;
+  // ALL FOUR TILES ARE ALWAYS DRAWN, including any at zero, which render
+  // dimmed. A grid that changes shape with the data would reflow the whole
+  // card every time a customer opens a new market, and a missing tile reads
+  // as a fault rather than as an empty figure.
+  var html = '';
   SEG.forEach(function(seg){
-    var pct = Math.round((counts[seg.k] || 0) / total * 100);
-    if(pct <= 0) return;
-    // Below 15% the label no longer fits inside its own segment. The legend
-    // still names every asset, so hiding it loses nothing.
-    var label = pct >= 15 ? '<span class="jam-st" style="color:' + seg.ink + ';">' + pct + '%</span>' : '';
-    html += '<div class="jam-seg" style="width:' + pct + '%;background:' + seg.grad + ';animation-delay:' + d.toFixed(2) + 's,0s;">' + label + '</div>';
-    d += 0.08;
+    var pct = (total && total > 0) ? Math.round((counts[seg.k] || 0) / total * 100) : 0;
+    html += '<div class="jam-tile' + (pct > 0 ? '' : ' off') + '">'
+         +    '<span class="jam-hair" style="background:linear-gradient(90deg,transparent,' + seg.col + ',transparent);"></span>'
+         +    '<div class="jam-p" style="color:' + seg.col + ';">' + pct + '%</div>'
+         +    '<div class="jam-k" data-i18n="' + seg.i18n + '">' + mmT(seg.i18n, seg.dflt) + '</div>'
+         +    '<span class="jam-bloom" style="background:' + seg.col + ';"></span>'
+         +  '</div>';
   });
   bar.innerHTML = html;
 }
