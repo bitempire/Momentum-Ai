@@ -1319,7 +1319,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 .sg-sel:focus { outline: none; }
 .sg-sel option { background: #12121a; color: var(--text); }
 .sg-dir { padding: 6px 14px; border-radius: 8px; font-size: 11px; font-weight: 700; letter-spacing: 0.4px; font-family: inherit; cursor: pointer; }
-.jr-hero{position:relative;overflow:hidden;border-radius:12px;padding:12px;margin-bottom:9px;background-size:280% 280%;animation:jrDrift 18s ease-in-out infinite;}
+.jr-hero{position:relative;overflow:hidden;border-radius:12px;padding:12px;margin-bottom:9px;}
 .jr-hero.warn{background:linear-gradient(115deg,#0B0810,#2A0610 26%,#4A0616 50%,#20070F 74%,#0B0810);}
 .jr-hero.imp{background:linear-gradient(115deg,#0C0A08,#2E1B08 26%,#54320C 50%,#281706 74%,#0C0A08);}
 .jr-hero.ok{background:linear-gradient(115deg,#070F0C,#062418 26%,#073D28 50%,#061E15 74%,#070F0C);}
@@ -1330,12 +1330,14 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 @keyframes jrAlert{0%,100%{opacity:.25}50%{opacity:.9}}
 @keyframes jrBreathe{0%,100%{transform:scale(1);opacity:.45}50%{transform:scale(1.06);opacity:.8}}
 @keyframes jrGrow{from{width:0}}
+@keyframes jrBlink{0%,100%{opacity:1}50%{opacity:.25}}
+.jr-hero.warn #jr-score{animation:jrBlink 1.2s ease-in-out infinite;}
 .jr-col{flex-shrink:0;width:88px;text-align:center;padding-right:12px;border-right:1px solid rgba(255,255,255,0.10);}
 .jr-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.07);}
 .jr-row:last-child{border-bottom:none;}
 .jr-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
-.jr-k{font-size:8.5px;letter-spacing:.4px;color:rgba(244,247,250,0.48);flex:1;white-space:nowrap;}
-.jr-bar{width:40px;height:4px;border-radius:2px;background:rgba(255,255,255,0.12);overflow:hidden;flex-shrink:0;}
+.jr-k{font-size:8.5px;letter-spacing:.4px;color:rgba(244,247,250,0.48);flex:0 0 74px;white-space:nowrap;}
+.jr-bar{flex:1;min-width:0;height:4px;border-radius:2px;background:rgba(255,255,255,0.12);overflow:hidden;}
 .jr-bar > div{height:4px;border-radius:2px;animation:jrGrow 1.2s cubic-bezier(.22,.61,.36,1) both;}
 .jr-n{font-size:12px;font-weight:700;font-family:'Orbitron',sans-serif;width:34px;text-align:right;white-space:nowrap;}
 .jr-pill{font-size:8px;letter-spacing:.5px;border-radius:20px;padding:2px 0;margin-top:1px;white-space:nowrap;}
@@ -2114,7 +2116,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
               <circle id="jr-march2" class="jr-march2" cx="50" cy="50" r="30" fill="none" stroke="rgba(255,240,210,0.4)" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="8 20" transform="rotate(-90 50 50)" style="display:none;"></circle>
               <g class="jr-inner"><circle id="jr-sweep" cx="50" cy="50" r="27" fill="none" stroke="rgba(255,30,60,0.45)" stroke-width="1.5" stroke-dasharray="26 144"></circle></g>
               <circle id="jr-core" cx="50" cy="50" r="21" fill="rgba(255,30,60,0.08)"></circle>
-              <text id="jr-score" x="50" y="53" text-anchor="middle" fill="#fff" font-size="23" font-weight="700" font-family="Orbitron,sans-serif">-</text>
+              <text id="jr-score" x="50" y="53" text-anchor="middle" fill="#fff" font-size="23" font-weight="700" font-family="Orbitron, ui-monospace, Menlo, monospace">0</text>
               <text x="50" y="65" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="6.5" letter-spacing="1.2">SCORE</text>
             </svg>
             <div class="jr-pill" id="jr-pill" style="color:#FF1E3C;border:1px solid rgba(255,30,60,0.45);">-</div>
@@ -14207,6 +14209,9 @@ function updateGauge(score){
   arc.setAttribute('stroke-dashoffset', (TOTAL - (v/100)*TOTAL).toFixed(1));
   arc.setAttribute('stroke', col);
   txt.textContent = Math.round(v);
+  // Red and blinking ONLY in the warning band. White everywhere else, so the
+  // blink means something rather than being decoration.
+  txt.setAttribute('fill', band === 'warn' ? '#FF1E3C' : '#ffffff');
 
   hero.classList.remove('warn','imp','ok');
   hero.classList.add(band);
