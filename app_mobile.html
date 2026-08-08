@@ -1410,6 +1410,37 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 .jam-k{font-size:8px;color:var(--text3);letter-spacing:.3px;white-space:nowrap;}
 .jsec{font-size:10px;letter-spacing:.7px;color:var(--text3);margin:12px 3px 6px;}
 /* ══════════════════════════════════════════════════════════
+   AI INSIGHT, ON DEMAND. 9 Aug 2026.
+   It used to fire an API call EVERY time the Journal was opened. Now nothing
+   is fetched until the button is pressed.
+   The card is a 1px gradient border: the wrapper carries the gradient and the
+   inner panel sits on top of it, which is why there are two elements rather
+   than a border-image. The ember mix stays inside the red family on purpose,
+   so nothing on this card can be mistaken for a status colour.
+   ══════════════════════════════════════════════════════════ */
+.jai{position:relative;border-radius:11px;padding:1px;margin-bottom:10px;background:linear-gradient(115deg,#FF1E3C,#C40024,#FF6A3D,#FF1E3C);background-size:300% 100%;animation:jaiHue 9s ease-in-out infinite;}
+.jai-in{background:#0b0709;border-radius:10px;padding:12px;}
+.jai-h{display:flex;align-items:center;gap:7px;margin-bottom:7px;}
+.jai-t{font-size:11px;font-weight:800;letter-spacing:.5px;color:#FF8A96;}
+.jai-b{font-size:12px;color:var(--text3);line-height:1.7;}
+.jai-b.done{color:var(--text2);}
+.jai-go{width:100%;margin-top:11px;padding:10px;border-radius:9px;border:none;color:#fff;cursor:pointer;
+  font-family:'Sora',sans-serif;font-size:11.5px;font-weight:800;letter-spacing:.4px;
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  background:linear-gradient(115deg,#FF1E3C,#C40024,#FF6A3D,#FF1E3C);background-size:300% 100%;
+  animation:jaiHue 6s ease-in-out infinite;box-shadow:0 3px 16px rgba(255,30,60,.30);}
+.jai-go:disabled{opacity:.82;cursor:default;}
+.jai-go.quiet{background:var(--surface);border:1px solid var(--border);color:var(--text2);
+  font-weight:700;font-size:11px;box-shadow:none;animation:none;padding:9px;}
+.jai-dots span{display:inline-block;width:4px;height:4px;border-radius:50%;background:currentColor;margin:0 1px;animation:jaiBlink 1.2s ease-in-out infinite;}
+.jai-dots span:nth-child(2){animation-delay:.2s;}
+.jai-dots span:nth-child(3){animation-delay:.4s;}
+.jai-sk{height:10px;border-radius:5px;margin-bottom:7px;background:linear-gradient(90deg,rgba(255,30,60,.06),rgba(255,106,61,.20),rgba(255,30,60,.06));background-size:200% 100%;animation:jaiShim 1.4s linear infinite;}
+@keyframes jaiHue{0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
+@keyframes jaiBlink{0%,80%,100%{opacity:.25;}40%{opacity:1;}}
+@keyframes jaiShim{0%{background-position:-200% 0;}100%{background-position:200% 0;}}
+@media (prefers-reduced-motion: reduce){.jai,.jai-go,.jai-sk,.jai-dots span{animation:none;}}
+/* ══════════════════════════════════════════════════════════
    BOTTOM BLOCK. 9 Aug 2026. "FEATURE AND THREE".
    Monthly return is the one figure worth reading first, so it takes a wide
    card with a large number and the other three sit under it as small cells.
@@ -2418,10 +2449,15 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         </div>
       </div>
 
-      <!-- AI INSIGHT -->
-      <div style="background:rgba(255,30,60,0.04);border:0.5px solid rgba(255,30,60,0.2);border-left:2px solid var(--red);border-radius:10px;padding:12px;margin-bottom:10px;">
-        <div style="display:flex;align-items:center;gap:7px;margin-bottom:6px;"><i class="ti ti-sparkles" style="color:var(--red);font-size:14px;"></i><div style="font-size:11px;font-weight:800;color:var(--red);letter-spacing:.5px;" data-i18n="j.insight">MOMENTUM AI INSIGHT</div></div>
-        <div id="j-ai-insight" style="font-size:12px;color:var(--text3);line-height:1.7;">Insights appear once you have trade history.</div>
+      <!-- AI INSIGHT. On demand since 9 Aug 2026: nothing is fetched until the
+           button is pressed. The wrapper holds the moving gradient and the
+           inner panel covers all but 1px of it, which is the border. -->
+      <div class="jai">
+        <div class="jai-in">
+          <div class="jai-h"><i class="ti ti-sparkles" style="color:#FF8A96;font-size:14px;"></i><div class="jai-t" data-i18n="j.insight">MOMENTUM AI INSIGHT</div></div>
+          <div id="j-ai-insight" class="jai-b" data-i18n="j.insightIdle">Get a short read on your recent trading from Momentum AI.</div>
+          <button id="j-ai-btn" class="jai-go" onclick="generateJournalInsight()" data-i18n="j.generateInsight">GENERATE INSIGHT</button>
+        </div>
       </div>
 
       <!-- RECENT TRADES -->
@@ -14997,30 +15033,85 @@ async function loadJournalData() {
       }
     }
     // AI Insight via Claude API
-    if(trades.length>=3){
-      // Tell the AI the truth about that pair. Handed the bare symbol, it read a
-      // losing pair with two trades as evidence of strength and said so on screen.
-      generateJournalInsight(winRate, avgWin, avgLoss, revCount, methods, maxStreak,
-        (bestPair && pairMap[bestPair] && pairMap[bestPair].pnl >= 0)
-          ? bestPair
-          : (bestPair ? ('none profitable yet, smallest loss on ' + bestPair) : 'none'));
+    // 9 Aug 2026: THE AUTOMATIC CALL IS GONE. Opening the Journal used to fire
+    // one Claude request every single time, with no cache and no minimum gap.
+    // The figures are parked here instead and the button uses them when pressed.
+    //
+    // Tell the AI the truth about that pair. Handed the bare symbol, it read a
+    // losing pair with two trades as evidence of strength and said so on screen.
+    window._mmInsight = (trades.length >= 3) ? {
+      winRate: winRate, avgWin: avgWin, avgLoss: avgLoss, revCount: revCount,
+      methods: methods, streak: maxStreak,
+      bestPair: (bestPair && pairMap[bestPair] && pairMap[bestPair].pnl >= 0)
+        ? bestPair
+        : (bestPair ? ('none profitable yet, smallest loss on ' + bestPair) : 'none')
+    } : null;
+    // A fresh load means the parked figures changed, so any answer already on
+    // screen is about the old ones. The card goes back to its resting state
+    // rather than leaving a stale reading sitting under a new set of numbers.
+    var aiEl = document.getElementById('j-ai-insight');
+    var aiBt = document.getElementById('j-ai-btn');
+    if(aiEl){
+      aiEl.className = 'jai-b';
+      aiEl.textContent = mmT('j.insightIdle','Get a short read on your recent trading from Momentum AI.');
+      aiEl.setAttribute('data-i18n','j.insightIdle');
+    }
+    if(aiBt && !aiBt.disabled){
+      aiBt.className = 'jai-go';
+      aiBt.textContent = mmT('j.generateInsight','GENERATE INSIGHT');
+      aiBt.setAttribute('data-i18n','j.generateInsight');
     }
     // Render chart
     renderJournalChart(trades);
   } catch(e) { console.warn('loadJournalData:', e.message); }
 }
-async function generateJournalInsight(winRate, avgWin, avgLoss, revCount, methods, streak, bestPair) {
+// ON DEMAND. Called by the button only. It takes NO ARGUMENTS: the figures
+// are parked on window._mmInsight by loadJournalData, so the button cannot
+// fire against a set of numbers that were never on screen.
+//
+// The button is disabled for the whole call. That is the only guard against a
+// second request, since two presses would otherwise mean two billed calls and
+// a race over which answer lands last.
+async function generateJournalInsight() {
   var insightEl = document.getElementById('j-ai-insight');
+  var btn = document.getElementById('j-ai-btn');
   if(!insightEl) return;
-  insightEl.textContent = mmT('j.analysing','Analysing your trades...');
+  var a = window._mmInsight;
+  if(!a){
+    insightEl.className = 'jai-b';
+    insightEl.removeAttribute('data-i18n');
+    insightEl.textContent = mmT('j.keepBuilding','Keep building your trade history for personalised AI insights.');
+    return;
+  }
+  if(btn && btn.disabled) return;
+  if(btn){
+    btn.disabled = true;
+    btn.className = 'jai-go';
+    btn.removeAttribute('data-i18n');
+    btn.innerHTML = mmT('j.analysingShort','ANALYSING') + ' <span class="jai-dots"><span></span><span></span><span></span></span>';
+  }
+  // Two shimmer lines stand in for the sentences that are coming, rather than
+  // a word that would have to be translated and would jump when replaced.
+  insightEl.removeAttribute('data-i18n');
+  insightEl.className = 'jai-b';
+  insightEl.innerHTML = '<div class="jai-sk" style="width:100%;"></div><div class="jai-sk" style="width:70%;"></div>';
   try {
-    var prompt = 'You are a trading coach. Give a 2-sentence personalised insight for a trader with these stats: Win Rate '+winRate+'%, Avg Win $'+avgWin.toFixed(2)+', Avg Loss $'+avgLoss.toFixed(2)+', Revenge trades '+revCount+', Current streak '+streak+', Best pair '+bestPair+', Manual trades '+methods.manual.length+', Smart Tool trades '+methods.smart.length+', Auto trades '+methods.auto.length+'. Be specific, actionable and encouraging. Max 40 words.' + mmAiLangNote();
+    var prompt = 'You are a trading coach. Give a 2-sentence personalised insight for a trader with these stats: Win Rate '+a.winRate+'%, Avg Win $'+a.avgWin.toFixed(2)+', Avg Loss $'+a.avgLoss.toFixed(2)+', Revenge trades '+a.revCount+', Current streak '+a.streak+', Best pair '+a.bestPair+', Manual trades '+a.methods.manual.length+', Smart Tool trades '+a.methods.smart.length+', Auto trades '+a.methods.auto.length+'. Be specific, actionable and encouraging. Max 40 words.' + mmAiLangNote();
     var r = await fetch('https://rhtworywcqcxkahlmezg.supabase.co/functions/v1/claude-proxy',{method:'POST',headers:{'Content-Type':'application/json','x-mmai-token':mmaiToken()},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:100,messages:[{role:'user',content:prompt}]})});
     var d = await r.json();
     var txt = d.content && d.content[0] ? d.content[0].text : null;
-    if(txt) insightEl.textContent = txt;
-    else insightEl.textContent = mmT('j.keepBuilding','Keep building your trade history for personalised AI insights.');
-  } catch(e) { insightEl.textContent = mmT('j.keepBuilding','Keep building your trade history for personalised AI insights.'); }
+    insightEl.className = txt ? 'jai-b done' : 'jai-b';
+    insightEl.textContent = txt || mmT('j.keepBuilding','Keep building your trade history for personalised AI insights.');
+  } catch(e) {
+    insightEl.className = 'jai-b';
+    insightEl.textContent = mmT('j.insightFailed','Could not reach Momentum AI. Try again in a moment.');
+  }
+  if(btn){
+    btn.disabled = false;
+    btn.className = 'jai-go quiet';
+    btn.removeAttribute('data-i18n');
+    btn.textContent = mmT('j.regenerate','REGENERATE');
+  }
 }
 
 // ═══════════════════════════════════════════════════
