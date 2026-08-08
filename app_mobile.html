@@ -1410,6 +1410,32 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 .jam-k{font-size:8px;color:var(--text3);letter-spacing:.3px;white-space:nowrap;}
 .jsec{font-size:10px;letter-spacing:.7px;color:var(--text3);margin:12px 3px 6px;}
 /* ══════════════════════════════════════════════════════════
+   RECENT TRADE CARDS. 9 Aug 2026.
+   Each trade is its own card with a solid edge in its result colour and a
+   FAINT WASH OF THE SAME COLOUR drifting across the card over 14 seconds, so
+   a losing row reads red before a single figure has been read.
+   The WIN and LOSS words were dropped: the colour and the sign already said
+   it twice. The method badge went at Haikal's instruction.
+   ══════════════════════════════════════════════════════════ */
+.jrt-c{position:relative;overflow:hidden;background:rgba(255,255,255,.028);border:1px solid var(--border);border-radius:10px;padding:9px 10px 9px 13px;display:flex;align-items:center;gap:9px;}
+.jrt-c + .jrt-c{margin-top:7px;}
+.jrt-edge{position:absolute;left:0;top:0;bottom:0;width:3px;}
+.jrt-wash{position:absolute;left:0;right:0;top:0;bottom:0;pointer-events:none;background-size:260% 100%;animation:jrtDrift 14s ease-in-out infinite;}
+.jrt-c.win .jrt-edge{background:linear-gradient(180deg,#00d68f,#00a06c);}
+.jrt-c.loss .jrt-edge{background:linear-gradient(180deg,#ff4d6a,#c4213c);}
+.jrt-c.win .jrt-wash{background-image:linear-gradient(100deg,rgba(0,214,143,.14),rgba(0,214,143,.02) 45%,rgba(255,255,255,.015) 70%,rgba(0,214,143,.11));}
+.jrt-c.loss .jrt-wash{background-image:linear-gradient(100deg,rgba(255,77,106,.14),rgba(255,77,106,.02) 45%,rgba(255,255,255,.015) 70%,rgba(255,77,106,.11));}
+.jrt-m{position:relative;flex:1;min-width:0;}
+.jrt-top{display:flex;align-items:center;gap:5px;flex-wrap:wrap;}
+.jrt-sym{font-size:12.5px;font-weight:700;white-space:nowrap;}
+.jrt-side{font-size:8.5px;font-weight:800;padding:2px 5px;border-radius:4px;letter-spacing:.3px;white-space:nowrap;}
+.jrt-meta{font-size:9.5px;color:var(--text3);margin-top:4px;font-family:'Orbitron',ui-monospace,Menlo,monospace;}
+.jrt-rt{position:relative;text-align:right;flex-shrink:0;}
+.jrt-v{display:block;font-family:'Orbitron',ui-monospace,Menlo,monospace;font-size:14px;font-weight:700;white-space:nowrap;}
+.jrt-d{display:block;font-size:9px;color:var(--text3);font-family:'Orbitron',ui-monospace,Menlo,monospace;margin-top:3px;}
+@keyframes jrtDrift{0%,100%{background-position:0% 50%;}50%{background-position:100% 50%;}}
+@media (prefers-reduced-motion: reduce){.jrt-wash{animation:none;}}
+/* ══════════════════════════════════════════════════════════
    DISCIPLINE RULE BARS. 9 Aug 2026.
    The three journal tabs are gone. Emotions was removed because NOTHING EVER
    WROTE TO IT - no code fills those five bars and there is no way to record an
@@ -2381,13 +2407,10 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <!-- RECENT TRADES -->
       <div class="section-card" style="margin-bottom:10px;padding:12px;">
         <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:8px;"><span data-i18n="dash.recent">Recent</span> <span style="color:var(--red);" data-i18n="w.trades">Trades</span></div>
-        <div style="display:flex;padding-bottom:5px;border-bottom:0.5px solid var(--border);margin-bottom:4px;">
-          <span style="font-size:10px;color:var(--text3);flex:0 0 55px;" data-i18n="j.date">DATE</span>
-          <span style="font-size:10px;color:var(--text3);flex:1;" data-i18n="j.asset">ASSET</span>
-          <span style="font-size:10px;color:var(--text3);text-align:right;" data-i18n="j.pnl">P&L</span>
-        </div>
+        <!-- The DATE / ASSET / P&L column header went with the row layout, and
+             the view all link was removed at Haikal's instruction: this list is
+             the latest five and nothing more. -->
         <div id="j-recent-trades"><div style="text-align:center;font-size:12px;color:var(--text3);padding:16px 0;" data-i18n="j.noTrades">No trades yet</div></div>
-        <div style="text-align:center;margin-top:8px;"><span id="j-view-all" style="display:none;font-size:11px;color:var(--red);cursor:pointer;font-weight:700;" data-i18n="j.viewAll">View all trades →</span></div>
       </div>
 
       <!-- BOTTOM 4 CARDS -->
@@ -14874,32 +14897,37 @@ async function loadJournalData() {
     el=document.getElementById('j-monthly-return'); if(el){el.textContent=(monthPnl>=0?'+':'')+monthPnl.toFixed(2)+' ('+monthRet+'%)';el.style.color=monthPnl>=0?'var(--green)':'var(--red)';}
     // Recent trades list
     var tradeList=document.getElementById('j-recent-trades');
-    var viewAll=document.getElementById('j-view-all');
     if(tradeList){
       if(!trades.length){ tradeList.innerHTML='<div style="text-align:center;font-size:12px;color:var(--text3);padding:16px 0;">'+mmT('ms.noClosed','No closed trades yet')+'</div>'; }
       else {
+        // LATEST FIVE ONLY. There is no view all link any more, so this list
+        // never grows and never links anywhere.
         var show=trades.slice(0,5);
         tradeList.innerHTML=show.map(function(t){
           var pnl=parseFloat(t.profit||0);
           var isWin=pnl>0;
           var d=new Date(t.close_time||t.created_at);
           var dateStr=(d.getMonth()+1)+'/'+(d.getDate());
-          var method=(t.method||'manual').toLowerCase();
-          var mBadge=method==='smart'?'<span style="font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;background:rgba(255,176,32,.1);color:#FFB020;" data-i18n="j.tools">'+mmT('ms.tools','TOOLS')+'</span>':method==='auto'?'<span style="font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;background:rgba(160,90,255,.1);color:#A05AFF;" data-i18n="j.autoWord">'+mmT('ms.auto','AUTO')+'</span>':'<span style="font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;background:rgba(77,158,255,.1);color:#4D9EFF;" data-i18n="j.manual">'+mmT('ms.manual','MANUAL')+'</span>';
-          var sideBadge=t.side==='BUY'?'<span style="font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;background:rgba(0,200,122,.12);color:#00C87A;">'+mmT('sig.buy','BUY')+'</span>':'<span style="font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;background:rgba(255,30,60,.1);color:#FF1E3C;">'+mmT('sig.sell','SELL')+'</span>';
-          return '<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:0.5px solid var(--border);">'+
-            '<div style="flex:0 0 40px;font-size:10px;color:var(--text3);">'+dateStr+'</div>'+
-            '<div style="flex:1;">'+
-              '<div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;"><span style="font-size:12px;font-weight:700;color:var(--text);">'+t.symbol+'</span>'+sideBadge+mBadge+'</div>'+
-              '<div style="font-size:10px;color:var(--text3);">'+parseFloat(t.volume||0).toFixed(2)+mmT('j.lotSuffix',' lot')+'</div>'+
-            '</div>'+
-            '<div style="text-align:right;">'+
-              '<div style="font-size:13px;font-weight:700;color:'+(isWin?'var(--green)':'var(--red)')+'">'+(isWin?'+$':'-$')+Math.abs(pnl).toFixed(2)+'</div>'+
-              '<div style="font-size:9px;color:'+(isWin?'var(--green)':'var(--red)')+'">'+(isWin?mmT('j.win','WIN'):mmT('j.loss','LOSS'))+'</div>'+
-            '</div>'+
+          // The method badge was removed at Haikal's instruction. The old AUTO
+          // badge was also the last purple left on this screen.
+          var sideBadge=t.side==='BUY'
+            ? '<span class="jrt-side" style="background:rgba(0,200,122,.12);color:#00C87A;">'+mmT('sig.buy','BUY')+'</span>'
+            : '<span class="jrt-side" style="background:rgba(255,30,60,.12);color:#ff4d6a;">'+mmT('sig.sell','SELL')+'</span>';
+          // The wash and the edge both hang off ONE class on the card, so the
+          // two can never end up disagreeing about whether this was a win.
+          return '<div class="jrt-c '+(isWin?'win':'loss')+'">'+
+            '<span class="jrt-wash"></span>'+
+            '<span class="jrt-edge"></span>'+
+            '<span class="jrt-m">'+
+              '<span class="jrt-top"><span class="jrt-sym">'+t.symbol+'</span>'+sideBadge+'</span>'+
+              '<span class="jrt-meta">'+parseFloat(t.volume||0).toFixed(2)+mmT('j.lotSuffix',' lot')+'</span>'+
+            '</span>'+
+            '<span class="jrt-rt">'+
+              '<span class="jrt-v" style="color:'+(isWin?'#00d68f':'#ff4d6a')+';">'+(isWin?'+$':'-$')+Math.abs(pnl).toFixed(2)+'</span>'+
+              '<span class="jrt-d">'+dateStr+'</span>'+
+            '</span>'+
           '</div>';
         }).join('');
-        if(viewAll) { viewAll.style.display=trades.length>5?'block':'none'; }
       }
     }
     // AI Insight via Claude API
