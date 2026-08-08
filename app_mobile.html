@@ -2449,16 +2449,6 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         </div>
       </div>
 
-      <!-- AI INSIGHT. On demand since 9 Aug 2026: nothing is fetched until the
-           button is pressed. The wrapper holds the moving gradient and the
-           inner panel covers all but 1px of it, which is the border. -->
-      <div class="jai">
-        <div class="jai-in">
-          <div class="jai-h"><i class="ti ti-sparkles" style="color:#FF8A96;font-size:14px;"></i><div class="jai-t" data-i18n="j.insight">MOMENTUM AI INSIGHT</div></div>
-          <div id="j-ai-insight" class="jai-b" data-i18n="j.insightIdle">Get a short read on your recent trading from Momentum AI.</div>
-          <button id="j-ai-btn" class="jai-go" onclick="generateJournalInsight()" data-i18n="j.generateInsight">GENERATE INSIGHT</button>
-        </div>
-      </div>
 
       <!-- RECENT TRADES -->
       <div class="section-card" style="margin-bottom:10px;padding:12px;">
@@ -2496,6 +2486,22 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         <div class="jbc">
           <div class="jbc-v" id="j-win-streak" style="color:#00d68f;">-</div>
           <div class="jbc-k" data-i18n="j.longestStreak">Longest Streak</div>
+        </div>
+      </div>
+
+      <!-- AI INSIGHT. Moved to the very bottom of the Journal on 9 Aug 2026, so
+           the customer has read every figure before being offered a reading of
+           them. On demand only: nothing is fetched until the button is pressed.
+           The wrapper holds the moving gradient and the inner panel covers all
+           but 1px of it, which is the border. -->
+      <!-- AI INSIGHT. On demand since 9 Aug 2026: nothing is fetched until the
+           button is pressed. The wrapper holds the moving gradient and the
+           inner panel covers all but 1px of it, which is the border. -->
+      <div class="jai">
+        <div class="jai-in">
+          <div class="jai-h"><i class="ti ti-sparkles" style="color:#FF8A96;font-size:14px;"></i><div class="jai-t" data-i18n="j.insight">MOMENTUM AI INSIGHT</div></div>
+          <div id="j-ai-insight" class="jai-b" data-i18n="j.insightIdle">Get a short read on your recent trading from Momentum AI.</div>
+          <button id="j-ai-btn" class="jai-go" onclick="generateJournalInsight()" data-i18n="j.generateInsight">GENERATE INSIGHT</button>
         </div>
       </div>
 
@@ -14308,18 +14314,12 @@ var SOON_SCREENS = {
   // so the sheet was telling customers the data was fake when it is now live.
   // sub-newsfeed stays: its headlines are still invented, and real headlines
   // are somebody else's copyrighted text so that one is not simply a build job.
-  // 7 Aug 2026. The Journal is a TAB, not a sub-screen, so switchTab calls
-  // soonMaybe as well as showSubScreen. Its data is REAL, unlike the other
-  // entries here, which is why it carries its own note line: saying "sample
-  // data inside" would be untrue on this screen. What is wrong is the
-  // COUNTING - every row in closed_trades is one LADDER ENTRY, so 184 rows are
-  // 81 actual trades, and the win rate, streak and averages all measure rungs.
-  "journal": {
-    title: "Trading Journal",
-    body: "Your full trade history, win rate and profit factor in one place. Right now the totals count every entry in a ladder as its own trade, so treat the figures as a preview while they are corrected.",
-    note: "Building now \u00b7 figures being corrected",
-    badge: "UPGRADING IN PROGRESS"
-  },
+  // 9 Aug 2026. THE JOURNAL ENTRY WAS REMOVED. It existed to warn customers
+  // that the totals counted every ladder entry as its own trade. That was
+  // fixed on 8 Aug - legs are grouped into baskets before anything is counted -
+  // so the sheet was still apologising for a defect that no longer exists.
+  // switchTab still calls soonMaybe for the journal tab; with no entry here it
+  // returns immediately, which is why no other change was needed.
   "sub-newsfeed": {
     title: "Market News",
     body: "Headlines that actually move gold, oil and the dollar, in one feed. What you can see now is sample content, not live data."
