@@ -1375,6 +1375,19 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 .jhm-sw{width:11px;height:11px;border-radius:3px;flex-shrink:0;}
 .jhm-kt{font-size:7.5px;color:var(--text3);font-family:ui-monospace,Menlo,monospace;white-space:nowrap;}
 @media (prefers-reduced-motion: reduce){.jhm-sweep,.jhm-d,.jhm-worst{animation:none;}}
+.jmb-blk{position:relative;width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;font-family:'Orbitron',ui-monospace,monospace;font-size:14px;font-weight:700;}
+.jmb-blk::after{content:'';position:absolute;left:0;right:0;top:0;height:48%;background:linear-gradient(180deg,rgba(255,255,255,.22),transparent);}
+.jmb-lead2{background:linear-gradient(100deg,rgba(0,214,143,.13),rgba(0,214,143,.03) 40%,rgba(255,255,255,.02) 70%,rgba(0,214,143,.10));background-size:260% 100%;animation:jmbDrift 16s ease-in-out infinite;}
+@keyframes jmbDrift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@keyframes jamFlow{0%{background-position:0% 50%}100%{background-position:200% 50%}}
+.jwl-cell{flex:1;text-align:center;}
+.jwl-dv{width:1px;background:var(--border);margin:1px 0;}
+.jam-bar{display:flex;border-radius:9px;overflow:hidden;height:18px;margin-bottom:11px;}
+.jam-seg{display:flex;align-items:center;justify-content:center;background-size:220% 100%;animation:jmbGrow 1s cubic-bezier(.22,.61,.36,1) both, jamFlow 7s linear infinite;}
+.jam-st{font-size:9px;font-weight:700;font-family:'Orbitron',ui-monospace,monospace;white-space:nowrap;}
+.jam-key{display:flex;align-items:center;gap:6px;font-size:10.5px;color:var(--text3);white-space:nowrap;}
+.jam-dot{width:8px;height:8px;border-radius:3px;flex-shrink:0;}
+@media (prefers-reduced-motion: reduce){.jmb-lead2,.jam-seg{animation:none;}}
 .jmb-c{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
 .jmb-r{position:relative;overflow:hidden;display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--border);}
 .jmb-r:last-child{border-bottom:none;}
@@ -2226,31 +2239,39 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 
           <div class="jsec" data-i18n="j.winLoss">WIN AGAINST LOSS</div>
           <div class="jwl-c">
-            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
               <span id="j-avg-win" style="font-family:'Orbitron',ui-monospace,monospace;font-size:11px;font-weight:700;color:#00d68f;white-space:nowrap;">-</span>
               <span style="font-size:10px;color:var(--text3);" data-i18n="j.average">average</span>
               <span id="j-avg-loss" style="font-family:'Orbitron',ui-monospace,monospace;font-size:11px;font-weight:700;color:#ff4d6a;white-space:nowrap;">-</span>
             </div>
-            <div style="display:flex;border-radius:5px;overflow:hidden;">
+            <div style="display:flex;border-radius:3px;overflow:hidden;height:6px;">
               <div class="jwl-f" id="jwl-win" style="width:50%;background:#00d68f;"></div>
               <div class="jwl-f" id="jwl-loss" style="width:50%;background:#ff4d6a;animation-delay:.1s;"></div>
             </div>
-            <div style="display:flex;justify-content:space-between;margin-top:9px;padding-top:8px;border-top:1px solid var(--border);">
-              <div><div id="j-rr2" style="font-family:'Orbitron',ui-monospace,monospace;font-size:12px;font-weight:700;color:#F0B232;white-space:nowrap;">-</div><div style="font-size:9px;color:var(--text3);" data-i18n="j.riskReward">Risk:Reward</div></div>
-              <div style="text-align:center;"><div id="j-hold" style="font-family:'Orbitron',ui-monospace,monospace;font-size:12px;font-weight:700;white-space:nowrap;">-</div><div style="font-size:9px;color:var(--text3);" data-i18n="j.avgHold">Avg Hold</div></div>
-              <div style="text-align:right;"><div id="j-streak" style="font-family:'Orbitron',ui-monospace,monospace;font-size:12px;font-weight:700;color:#8B5CF6;white-space:nowrap;">-</div><div style="font-size:9px;color:var(--text3);" data-i18n="j.winStreak">Win Streak</div></div>
+            <div style="display:flex;margin-top:12px;padding-top:11px;border-top:1px solid var(--border);">
+              <div class="jwl-cell"><div id="j-rr2" style="font-family:'Orbitron',ui-monospace,monospace;font-size:14px;font-weight:700;color:#F0B232;white-space:nowrap;">-</div><div style="font-size:8.5px;color:var(--text3);letter-spacing:.3px;margin-top:3px;" data-i18n="j.riskReward">Risk:Reward</div></div>
+              <div class="jwl-dv"></div>
+              <div class="jwl-cell"><div id="j-hold" style="font-family:'Orbitron',ui-monospace,monospace;font-size:14px;font-weight:700;white-space:nowrap;">-</div><div style="font-size:8.5px;color:var(--text3);letter-spacing:.3px;margin-top:3px;" data-i18n="j.avgHold">Avg Hold</div></div>
+              <div class="jwl-dv"></div>
+              <div class="jwl-cell"><div id="j-streak" style="font-family:'Orbitron',ui-monospace,monospace;font-size:14px;font-weight:700;color:#C4B0FF;white-space:nowrap;">-</div><div style="font-size:8.5px;color:var(--text3);letter-spacing:.3px;margin-top:3px;" data-i18n="j.winStreak">Win Streak</div></div>
             </div>
           </div>
 
           <div class="jsec" data-i18n="j.assetMix">ASSET MIX</div>
-          <div style="display:flex;gap:6px;">
-            <div class="jam-chip"><div class="jam-v" id="j-crypto-pct" style="color:#8B5CF6;">-</div><div class="jam-k" data-i18n="j.crypto">CRYPTO</div></div>
-            <div class="jam-chip"><div class="jam-v" id="j-gold-pct" style="color:#F0B232;">-</div><div class="jam-k" data-i18n="j.gold">GOLD</div></div>
-            <div class="jam-chip"><div class="jam-v" id="j-forex-pct" style="color:#3B82F6;">-</div><div class="jam-k" data-i18n="j.forex">FOREX</div></div>
-            <div class="jam-chip"><div class="jam-v" id="j-idx-pct" style="color:var(--text3);">-</div><div class="jam-k" data-i18n="j.indices">INDICES</div></div>
-          </div>
-          <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-top:7px;padding:0 3px;">
-            <span data-i18n="j.bestSession">Best Session</span><span id="j-best-session">-</span>
+          <div class="jwl-c">
+            <!-- Storage style bar. Segments are drawn by jRenderAssetMix(); the
+                 percentage prints INSIDE its own segment and hides below 15%,
+                 where the label no longer fits. The legend names them either way. -->
+            <div class="jam-bar" id="j-asset-bar"></div>
+            <div style="display:flex;justify-content:space-between;">
+              <span class="jam-key"><span class="jam-dot" style="background:#8B5CF6;"></span><span data-i18n="j.crypto">Crypto</span></span>
+              <span class="jam-key"><span class="jam-dot" style="background:#F0B232;"></span><span data-i18n="j.gold">Gold</span></span>
+              <span class="jam-key"><span class="jam-dot" style="background:#3B82F6;"></span><span data-i18n="j.forex">Forex</span></span>
+              <span class="jam-key" style="opacity:.55;"><span class="jam-dot" style="background:rgba(255,255,255,.14);"></span><span data-i18n="j.indices">Indices</span></span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-top:10px;padding-top:9px;border-top:1px solid var(--border);">
+              <span data-i18n="j.bestSession">Best Session</span><span id="j-best-session">-</span>
+            </div>
           </div>
         </div>
         <!-- DISCIPLINE -->
@@ -14257,47 +14278,79 @@ function jRenderMethods(methods){
   if(!box) return;
 
   var META = {
-    manual: { key:'j.manual', dflt:'MANUAL', colour:'#3B82F6', ink:'#ffffff',  icon:'ti-hand-finger' },
-    smart:  { key:'j.tools',  dflt:'TOOLS',  colour:'#F0B232', ink:'#2A1D02',  icon:'ti-wand' },
-    auto:   { key:'j.autoWord', dflt:'AUTO', colour:'#8B5CF6', ink:'#ffffff',  icon:'ti-bolt' }
+    manual: { key:'j.manual',    dflt:'MANUAL' },
+    smart:  { key:'j.tools',     dflt:'TOOLS' },
+    auto:   { key:'j.autoWord',  dflt:'AUTO' }
   };
+  // Medal colours belong to the POSITION, not the method, so they move when the
+  // order does. That is the point of a leaderboard, but it means nobody should
+  // learn "gold = Smart Tool" from this card.
+  var MEDAL = [
+    { bg:'#F0B232', ink:'#2A1D02' },
+    { bg:'#B8BCC4', ink:'#1B1D21' },
+    { bg:'#B87333', ink:'#ffffff' }
+  ];
 
   var rows = Object.keys(META).map(function(k){
     var arr = methods[k] || [];
     var pnl = arr.reduce(function(a,t){ return a + parseFloat(t.profit || 0); }, 0);
     var wins = arr.filter(function(t){ return parseFloat(t.profit || 0) > 0; }).length;
-    return {
-      k: k, n: arr.length, pnl: pnl,
-      wr: arr.length ? Math.round(wins / arr.length * 100) : 0
-    };
+    return { k:k, n:arr.length, pnl:pnl, wr: arr.length ? Math.round(wins/arr.length*100) : 0 };
   }).sort(function(a,b){ return b.pnl - a.pnl; });
 
   var html = '';
   rows.forEach(function(r, idx){
     var m = META[r.k];
+    var medal = MEDAL[idx] || { bg:'rgba(255,255,255,.10)', ink:'var(--text3)' };
     var lead = (idx === 0 && r.n > 0);
     var pos = r.pnl >= 0;
     var money = (pos ? '+$' : '-$') + Math.round(Math.abs(r.pnl)).toLocaleString();
-    var barCol = r.n === 0 ? 'rgba(255,255,255,.15)' : (r.wr >= 60 ? '#00d68f' : r.wr >= 40 ? '#F0B232' : '#ff4d6a');
+    // The bar and the percentage beside it take the SAME colour, so they can
+    // never disagree about whether a win rate is good.
+    var wrCol = r.n === 0 ? 'rgba(255,255,255,.15)' : (r.wr >= 60 ? '#00d68f' : r.wr >= 40 ? '#F0B232' : '#ff4d6a');
+    var wrInk = r.n === 0 ? 'var(--text3)'          : (r.wr >= 60 ? '#00d68f' : r.wr >= 40 ? '#FFD27A' : '#ff8fa0');
 
-    html += '<div class="jmb-r' + (lead ? ' jmb-lead' : '') + '">'
-         +  (lead ? '<span class="jmb-sw"></span>' : '')
-         +  '<span class="jmb-rk" style="' + (lead ? 'background:rgba(240,178,50,.9);color:#2A1D02;' : 'background:rgba(255,255,255,.10);color:var(--text3);') + '">' + (idx+1) + '</span>'
-         +  '<span class="jmb-ic" style="background:' + m.colour + ';"><i class="ti ' + m.icon + '" style="font-size:14px;color:' + m.ink + ';"></i></span>'
-         +  '<span style="flex:1;min-width:0;position:relative;">'
+    html += '<div class="jmb-r' + (lead ? ' jmb-lead2' : '') + '">'
+         +  '<span class="jmb-blk" style="background:' + medal.bg + ';color:' + medal.ink + ';"><span style="position:relative;">' + (idx+1) + '</span></span>'
+         +  '<span style="flex:1;min-width:0;">'
          +    '<span class="jmb-nm" data-i18n="' + m.key + '">' + mmT(m.key, m.dflt) + '</span>'
-         +    '<span style="display:flex;align-items:center;gap:6px;margin-top:4px;">'
-         +      '<span class="jmb-tr"><span class="jmb-f" style="width:' + r.wr + '%;background:' + barCol + ';animation-delay:' + (idx*0.08).toFixed(2) + 's;"></span></span>'
-         +      '<span class="jmb-wr">' + r.wr + mmT('j.wrSuffix','% WR') + '</span>'
+         +    '<span style="display:flex;align-items:center;gap:7px;margin-top:6px;">'
+         +      '<span class="jmb-tr"><span class="jmb-f" style="width:' + r.wr + '%;background:' + wrCol + ';animation-delay:' + (idx*0.08).toFixed(2) + 's;"></span></span>'
+         +      '<span class="jmb-wr" style="color:' + wrInk + ';font-weight:600;">' + r.wr + mmT('j.wrSuffix','% WR') + '</span>'
          +    '</span>'
          +  '</span>'
-         +  '<span style="text-align:right;position:relative;">'
+         +  '<span style="text-align:right;">'
          +    '<span class="jmb-v" style="display:block;color:' + (r.n === 0 ? 'var(--text3)' : (pos ? '#00d68f' : '#ff4d6a')) + ';">' + (r.n === 0 ? '-' : money) + '</span>'
          +    '<span class="jmb-ct">' + r.n + mmT('j.tradesSuffix',' trades') + '</span>'
          +  '</span>'
          +  '</div>';
   });
   box.innerHTML = html;
+}
+
+function jRenderAssetMix(counts, total){
+  var bar = document.getElementById('j-asset-bar');
+  if(!bar) return;
+  if(!total || total <= 0){ bar.innerHTML = ''; return; }
+
+  var SEG = [
+    { k:'Crypto',  grad:'linear-gradient(90deg,#6D3FD6,#A78BFA,#6D3FD6)', ink:'#1B0A3D' },
+    { k:'Gold',    grad:'linear-gradient(90deg,#C98D14,#FFD27A,#C98D14)', ink:'#2A1D02' },
+    { k:'Forex',   grad:'linear-gradient(90deg,#2563EB,#93C5FD,#2563EB)', ink:'#04213F' },
+    { k:'Indices', grad:'linear-gradient(90deg,#3F4756,#7C879B,#3F4756)', ink:'#0C1017' }
+  ];
+
+  var html = '', d = 0;
+  SEG.forEach(function(seg){
+    var pct = Math.round((counts[seg.k] || 0) / total * 100);
+    if(pct <= 0) return;
+    // Below 15% the label no longer fits inside its own segment. The legend
+    // still names every asset, so hiding it loses nothing.
+    var label = pct >= 15 ? '<span class="jam-st" style="color:' + seg.ink + ';">' + pct + '%</span>' : '';
+    html += '<div class="jam-seg" style="width:' + pct + '%;background:' + seg.grad + ';animation-delay:' + d.toFixed(2) + 's,0s;">' + label + '</div>';
+    d += 0.08;
+  });
+  bar.innerHTML = html;
 }
 
 function jrBand(score){
@@ -14660,12 +14713,7 @@ async function loadJournalData() {
     el=document.getElementById('j-avg-loss'); if(el) el.textContent='-$'+avgLoss.toFixed(2);
     el=document.getElementById('j-hold'); if(el) el.textContent=avgHoldStr;
     el=document.getElementById('j-streak'); if(el) el.textContent=maxStreak+mmT('j.tradesSuffix',' trades');
-    if(totalAssets>0){
-      el=document.getElementById('j-gold-pct'); if(el) el.textContent=Math.round(assetCounts.Gold/totalAssets*100)+'%';
-      el=document.getElementById('j-forex-pct'); if(el) el.textContent=Math.round(assetCounts.Forex/totalAssets*100)+'%';
-      el=document.getElementById('j-crypto-pct'); if(el) el.textContent=Math.round(assetCounts.Crypto/totalAssets*100)+'%';
-      el=document.getElementById('j-idx-pct'); if(el) el.textContent=Math.round(assetCounts.Indices/totalAssets*100)+'%';
-    }
+    jRenderAssetMix(assetCounts, totalAssets);
     // Method breakdown
     jRenderMethods(methods);
     // The bar is the RATIO of the two averages, not their values, so a
