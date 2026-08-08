@@ -1319,6 +1319,46 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 .sg-sel:focus { outline: none; }
 .sg-sel option { background: #12121a; color: var(--text); }
 .sg-dir { padding: 6px 14px; border-radius: 8px; font-size: 11px; font-weight: 700; letter-spacing: 0.4px; font-family: inherit; cursor: pointer; }
+.jr-hero{position:relative;overflow:hidden;border-radius:12px;padding:12px;margin-bottom:9px;background-size:280% 280%;animation:jrDrift 18s ease-in-out infinite;}
+.jr-hero.warn{background:linear-gradient(115deg,#0B0810,#2A0610 26%,#4A0616 50%,#20070F 74%,#0B0810);}
+.jr-hero.imp{background:linear-gradient(115deg,#0C0A08,#2E1B08 26%,#54320C 50%,#281706 74%,#0C0A08);}
+.jr-hero.ok{background:linear-gradient(115deg,#070F0C,#062418 26%,#073D28 50%,#061E15 74%,#070F0C);}
+@keyframes jrDrift{0%{background-position:0% 40%}50%{background-position:100% 60%}100%{background-position:0% 40%}}
+@keyframes jrBack{to{transform:rotate(-360deg)}}
+@keyframes jrFwd{to{transform:rotate(360deg)}}
+@keyframes jrMarch{to{stroke-dashoffset:-68}}
+@keyframes jrAlert{0%,100%{opacity:.25}50%{opacity:.9}}
+@keyframes jrBreathe{0%,100%{transform:scale(1);opacity:.45}50%{transform:scale(1.06);opacity:.8}}
+@keyframes jrGrow{from{width:0}}
+.jr-col{flex-shrink:0;width:88px;text-align:center;padding-right:12px;border-right:1px solid rgba(255,255,255,0.10);}
+.jr-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.07);}
+.jr-row:last-child{border-bottom:none;}
+.jr-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.jr-k{font-size:8.5px;letter-spacing:.4px;color:rgba(244,247,250,0.48);flex:1;white-space:nowrap;}
+.jr-bar{width:40px;height:4px;border-radius:2px;background:rgba(255,255,255,0.12);overflow:hidden;flex-shrink:0;}
+.jr-bar > div{height:4px;border-radius:2px;animation:jrGrow 1.2s cubic-bezier(.22,.61,.36,1) both;}
+.jr-n{font-size:12px;font-weight:700;font-family:'Orbitron',sans-serif;width:34px;text-align:right;white-space:nowrap;}
+.jr-pill{font-size:8px;letter-spacing:.5px;border-radius:20px;padding:2px 0;margin-top:1px;white-space:nowrap;}
+.jr-outer{transform-origin:50% 50%;}
+.jr-inner{transform-origin:50% 50%;}
+.jr-hero.warn .jr-outer{animation:jrFwd 9s linear infinite;}
+.jr-hero.warn .jr-inner{animation:jrBack 6s linear infinite;}
+.jr-hero.imp .jr-outer{animation:jrBack 30s linear infinite;}
+.jr-hero.imp .jr-inner{animation:jrBack 30s linear infinite;}
+.jr-hero.ok .jr-outer{animation:jrFwd 40s linear infinite;}
+.jr-hero.ok .jr-inner{animation:jrBack 30s linear infinite;}
+.jr-march{animation:jrMarch 3.4s linear infinite;}
+.jr-march2{animation:jrMarch 5s linear infinite reverse;}
+.jr-alert{animation:jrAlert 1.4s ease-in-out infinite;}
+.jr-halo{transform-origin:50% 50%;animation:jrBreathe 5s ease-in-out infinite;}
+.jstat{position:relative;overflow:hidden;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:8px 10px 15px;}
+.jstat::before{content:'';position:absolute;left:10px;right:10px;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);}
+.jstat-k{color:var(--text3);font-size:9px;letter-spacing:.06em;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.jstat-v{position:relative;z-index:1;font-size:15px;margin-top:2px;letter-spacing:-.3px;font-family:'Orbitron',sans-serif;white-space:nowrap;overflow:hidden;}
+.jstat-bloom{position:absolute;left:0;right:0;bottom:0;height:34px;pointer-events:none;filter:blur(9px);}
+.jstat-line{position:absolute;left:0;right:0;bottom:0;height:2px;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 22%,#000 78%,transparent);mask-image:linear-gradient(90deg,transparent,#000 22%,#000 78%,transparent);}
+.jstat-line > span{position:absolute;inset:0;background-size:220% 100%;animation:mmMktFlow 6s linear infinite;}
+@media (prefers-reduced-motion: reduce){.jr-hero,.jr-outer,.jr-inner,.jr-march,.jr-march2,.jr-alert,.jr-halo,.jr-bar > div,.jstat-line > span{animation:none;}}
 .sg-chip { padding: 9px 0; border-radius: 10px; font-size: 12px; background: var(--surface); border: 1px solid var(--border); color: var(--text3); cursor: pointer; font-family: inherit; }
 .sg-chip.on { background: linear-gradient(135deg,#F0B232,#FF8C42); border-color: #F0B232; color: #2A1D02; font-weight: 700; }
 .sg-card { background: var(--surface); border-radius: 12px; overflow: hidden; }
@@ -2061,73 +2101,46 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
     <div id="tab-journal" class="app-tab" style="display:none;">
 
       <!-- PERFORMANCE SCORE WITH GAUGE -->
-      <div class="section-card" style="margin-bottom:10px;padding:12px;">
-        <div style="display:flex;gap:10px;align-items:stretch;">
-          <!-- Gauge Box -->
-          <div style="flex:0 0 110px;background:rgba(255,30,60,0.03);border:0.5px solid rgba(255,30,60,0.2);border-radius:12px;padding:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;">
-            <svg id="perf-gauge-svg" width="100" height="70" viewBox="0 0 100 70" role="img" aria-label="Performance gauge" data-i18n-aria="aria.perfGauge">
-              <defs><linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#FF1E3C"/><stop offset="50%" stop-color="#FFB020"/><stop offset="100%" stop-color="#00C87A"/></linearGradient></defs>
-              <g stroke="#2a2a2a" stroke-width="1">
-                <line x1="50" y1="8" x2="50" y2="14" transform="rotate(-90 50 58)"/>
-                <line x1="50" y1="8" x2="50" y2="12" transform="rotate(-72 50 58)"/>
-                <line x1="50" y1="8" x2="50" y2="12" transform="rotate(-54 50 58)"/>
-                <line x1="50" y1="8" x2="50" y2="12" transform="rotate(-36 50 58)"/>
-                <line x1="50" y1="8" x2="50" y2="14" transform="rotate(-18 50 58)"/>
-                <line x1="50" y1="8" x2="50" y2="12" transform="rotate(0 50 58)"/>
-                <line x1="50" y1="8" x2="50" y2="12" transform="rotate(18 50 58)"/>
-                <line x1="50" y1="8" x2="50" y2="12" transform="rotate(36 50 58)"/>
-                <line x1="50" y1="8" x2="50" y2="14" transform="rotate(54 50 58)"/>
-                <line x1="50" y1="8" x2="50" y2="12" transform="rotate(72 50 58)"/>
-                <line x1="50" y1="8" x2="50" y2="14" transform="rotate(90 50 58)"/>
-              </g>
-              <path d="M 8 58 A 42 42 0 0 1 92 58" fill="none" stroke="#1e1e1e" stroke-width="6" stroke-linecap="round"/>
-              <path d="M 8 58 A 42 42 0 0 1 92 58" fill="none" stroke="url(#gaugeGrad)" stroke-width="6" stroke-linecap="round" stroke-dasharray="131.9" stroke-dashoffset="0" opacity="0.15"/>
-              <path id="gauge-fill" d="M 8 58 A 42 42 0 0 1 92 58" fill="none" stroke="url(#gaugeGrad)" stroke-width="6" stroke-linecap="round" stroke-dasharray="131.9" stroke-dashoffset="131.9"/>
-              <line id="gauge-needle" x1="50" y1="58" x2="50" y2="20" transform="rotate(-90 50 58)" stroke="#FF1E3C" stroke-width="1.5" stroke-linecap="round"/>
-              <circle cx="50" cy="58" r="3.5" fill="#FF1E3C"/>
-              <circle cx="50" cy="58" r="1.5" fill="#141414"/>
-              <text id="gauge-score" x="50" y="52" text-anchor="middle" font-size="18" font-weight="800" fill="#E0E0E0" font-family="monospace">—</text>
-              <text x="50" y="62" text-anchor="middle" font-size="8" fill="#444" font-family="monospace">/100</text>
-              <text x="8" y="68" text-anchor="middle" font-size="7" fill="#333">0</text>
-              <text x="50" y="16" text-anchor="middle" font-size="7" fill="#333">50</text>
-              <text x="92" y="68" text-anchor="middle" font-size="7" fill="#333">100</text>
+      <div class="section-card jr-hero warn" id="jr-hero" style="margin-bottom:10px;">
+        <div style="position:relative;display:flex;align-items:center;gap:13px;">
+          <div class="jr-col">
+            <svg viewBox="0 0 100 100" style="width:84px;height:84px;" role="img" aria-label="Performance meter" data-i18n-aria="aria.perfGauge">
+              <circle id="jr-halo" class="jr-halo" cx="50" cy="50" r="43" fill="rgba(0,214,143,0.10)" style="display:none;"></circle>
+              <circle id="jr-alert" class="jr-alert" cx="50" cy="50" r="45" fill="none" stroke="#FF1E3C" stroke-width="1"></circle>
+              <g class="jr-outer"><circle id="jr-dash" cx="50" cy="50" r="45" fill="none" stroke="rgba(255,30,60,0.32)" stroke-width="1.2" stroke-dasharray="3 6"></circle></g>
+              <circle id="jr-march" class="jr-march" cx="50" cy="50" r="41" fill="none" stroke="rgba(255,225,170,0.35)" stroke-width="2" stroke-linecap="round" stroke-dasharray="10 24" transform="rotate(-90 50 50)" style="display:none;"></circle>
+              <circle cx="50" cy="50" r="37" fill="none" stroke="rgba(0,0,0,0.30)" stroke-width="6"></circle>
+              <circle id="jr-arc" cx="50" cy="50" r="37" fill="none" stroke="#FF1E3C" stroke-width="6" stroke-linecap="round" stroke-dasharray="232" stroke-dashoffset="232" transform="rotate(-90 50 50)"></circle>
+              <circle id="jr-march2" class="jr-march2" cx="50" cy="50" r="30" fill="none" stroke="rgba(255,240,210,0.4)" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="8 20" transform="rotate(-90 50 50)" style="display:none;"></circle>
+              <g class="jr-inner"><circle id="jr-sweep" cx="50" cy="50" r="27" fill="none" stroke="rgba(255,30,60,0.45)" stroke-width="1.5" stroke-dasharray="26 144"></circle></g>
+              <circle id="jr-core" cx="50" cy="50" r="21" fill="rgba(255,30,60,0.08)"></circle>
+              <text id="jr-score" x="50" y="53" text-anchor="middle" fill="#fff" font-size="23" font-weight="700" font-family="Orbitron,sans-serif">-</text>
+              <text x="50" y="65" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="6.5" letter-spacing="1.2">SCORE</text>
             </svg>
-            <div style="font-size:9px;color:#555;letter-spacing:.8px;text-transform:uppercase;margin-top:2px;" data-i18n="j.performance">Performance</div>
-            <div id="perf-grade" style="font-size:10px;font-weight:700;color:#555;margin-top:1px;">● Awaiting Data</div>
+            <div class="jr-pill" id="jr-pill" style="color:#FF1E3C;border:1px solid rgba(255,30,60,0.45);">-</div>
           </div>
-          <!-- Divider -->
-          <div style="width:0.5px;background:rgba(255,255,255,0.06);flex-shrink:0;"></div>
-          <!-- Stats -->
-          <div style="flex:1;padding:6px 0 6px 10px;display:flex;flex-direction:column;justify-content:center;gap:7px;">
-            <div style="font-size:12px;font-weight:800;color:var(--text);margin-bottom:2px;"><span data-i18n="w.trader">Trader</span> <span style="color:var(--red);" data-i18n="w.score">Score</span></div>
-            <div style="display:flex;flex-direction:column;gap:3px;">
-              <div style="display:flex;justify-content:space-between;"><span style="font-size:9px;color:#444;letter-spacing:.8px;text-transform:uppercase;" data-i18n="j.winRate">Win Rate</span><span id="ps-winrate" style="font-size:11px;font-weight:700;color:#00C87A;">—</span></div>
-              <div style="height:3px;background:#1e1e1e;border-radius:2px;overflow:hidden;"><div id="pb-winrate" style="height:100%;width:0%;background:#00C87A;border-radius:2px;"></div></div>
-            </div>
-            <div style="display:flex;flex-direction:column;gap:3px;">
-              <div style="display:flex;justify-content:space-between;"><span style="font-size:9px;color:#444;letter-spacing:.8px;text-transform:uppercase;" data-i18n="j.discipline">Discipline</span><span id="ps-disc" style="font-size:11px;font-weight:700;color:#4D9EFF;">—</span></div>
-              <div style="height:3px;background:#1e1e1e;border-radius:2px;overflow:hidden;"><div id="pb-disc" style="height:100%;width:0%;background:#4D9EFF;border-radius:2px;"></div></div>
-            </div>
-            <div style="display:flex;flex-direction:column;gap:3px;">
-              <div style="display:flex;justify-content:space-between;"><span style="font-size:9px;color:#444;letter-spacing:.8px;text-transform:uppercase;" data-i18n="j.riskMgmt">Risk Mgmt</span><span id="ps-risk" style="font-size:11px;font-weight:700;color:#FFB020;">—</span></div>
-              <div style="height:3px;background:#1e1e1e;border-radius:2px;overflow:hidden;"><div id="pb-risk" style="height:100%;width:0%;background:#FFB020;border-radius:2px;"></div></div>
-            </div>
-            <div style="display:flex;flex-direction:column;gap:3px;">
-              <div style="display:flex;justify-content:space-between;"><span style="font-size:9px;color:#444;letter-spacing:.8px;text-transform:uppercase;" data-i18n="j.psychology">Psychology</span><span id="ps-psych" style="font-size:11px;font-weight:700;color:#A05AFF;">—</span></div>
-              <div style="height:3px;background:#1e1e1e;border-radius:2px;overflow:hidden;"><div id="pb-psych" style="height:100%;width:0%;background:#A05AFF;border-radius:2px;"></div></div>
-            </div>
+          <div style="flex:1;">
+            <div style="font-size:11px;font-weight:700;letter-spacing:.4px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,0.12);white-space:nowrap;"><span data-i18n="w.trader">Trader</span> <span data-i18n="w.score">Score</span></div>
+            <div class="jr-row"><span class="jr-dot" style="background:#00d68f;"></span><span class="jr-k" data-i18n="j.winRate">Win Rate</span><span class="jr-bar"><div id="pb-winrate" style="width:0%;background:#00d68f;"></div></span><span class="jr-n" id="ps-winrate" style="color:#00d68f;">-</span></div>
+            <div class="jr-row"><span class="jr-dot" style="background:#7DB8FF;"></span><span class="jr-k" data-i18n="j.discipline">Discipline</span><span class="jr-bar"><div id="pb-disc" style="width:0%;background:#7DB8FF;"></div></span><span class="jr-n" id="ps-disc" style="color:#7DB8FF;">-</span></div>
+            <div class="jr-row"><span class="jr-dot" style="background:#F0B232;"></span><span class="jr-k" data-i18n="j.riskMgmt">Risk Mgmt</span><span class="jr-bar"><div id="pb-risk" style="width:0%;background:#F0B232;"></div></span><span class="jr-n" id="ps-risk" style="color:#F0B232;">-</span></div>
+            <div class="jr-row"><span class="jr-dot" style="background:#C4B0FF;"></span><span class="jr-k" data-i18n="j.psychology">Psychology</span><span class="jr-bar"><div id="pb-psych" style="width:0%;background:#C4B0FF;"></div></span><span class="jr-n" id="ps-psych" style="color:#C4B0FF;">-</span></div>
           </div>
         </div>
       </div>
 
-      <!-- 6 STAT CARDS -->
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px;">
-        <div class="section-card" style="padding:8px;"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;" data-i18n="j.totalTrades">Total Trades</div><div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:800;color:var(--text);" id="j-total">—</div></div>
-        <div class="section-card" style="padding:8px;"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;" data-i18n="j.winRate">Win Rate</div><div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:800;" id="j-winrate">—</div></div>
-        <div class="section-card" style="padding:8px;"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;" data-i18n="j.netPnl">Net P&L</div><div style="font-family:'Orbitron',sans-serif;font-size:15px;font-weight:800;" id="j-netpnl">—</div></div>
-        <div class="section-card" style="padding:8px;"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;" data-i18n="j.profitFactor">Profit Factor</div><div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:800;color:var(--text);" id="j-pf">—</div></div>
-        <div class="section-card" style="padding:8px;"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;" data-i18n="j.maxDd">Max DD</div><div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:800;" id="j-maxdd">—</div></div>
-        <div class="section-card" style="padding:8px;"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;" data-i18n="j.avgRr">Avg R:R</div><div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:800;color:var(--text);" id="j-rr">—</div></div>
+      <!-- 6 STAT CARDS. Top row is neutral, bottom row is signed or banded and is
+           painted by jHeroPaint(). Both lines are nowrap on purpose: a card must
+           always be exactly one title line and one number line. -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:7px;">
+        <div class="jstat" id="jc-total"><div class="jstat-k" data-i18n="j.totalTrades">Total Trades</div><div class="jstat-v" id="j-total">-</div><span class="jstat-bloom"></span><span class="jstat-line"><span></span></span></div>
+        <div class="jstat" id="jc-pf"><div class="jstat-k" data-i18n="j.profitFactor">Profit Factor</div><div class="jstat-v" id="j-pf">-</div><span class="jstat-bloom"></span><span class="jstat-line"><span></span></span></div>
+        <div class="jstat" id="jc-rr"><div class="jstat-k" data-i18n="j.avgRr">Avg R:R</div><div class="jstat-v" id="j-rr">-</div><span class="jstat-bloom"></span><span class="jstat-line"><span></span></span></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:10px;">
+        <div class="jstat" id="jc-netpnl"><div class="jstat-k" data-i18n="j.netPnl">Net P&L</div><div class="jstat-v" id="j-netpnl">-</div><span class="jstat-bloom"></span><span class="jstat-line"><span></span></span></div>
+        <div class="jstat" id="jc-maxdd"><div class="jstat-k" data-i18n="j.maxDd">Max DD</div><div class="jstat-v" id="j-maxdd">-</div><span class="jstat-bloom"></span><span class="jstat-line"><span></span></span></div>
+        <div class="jstat" id="jc-winrate"><div class="jstat-k" data-i18n="j.winRate">Win Rate</div><div class="jstat-v" id="j-winrate">-</div><span class="jstat-bloom"></span><span class="jstat-line"><span></span></span></div>
       </div>
 
       <!-- ACCOUNT GROWTH CHART -->
@@ -14161,7 +14174,95 @@ function setJournalRange(range, el) {
   window._journalRange = range;
   renderJournalChart(window._journalTrades || []);
 }
-function updateGauge(score) {
+
+// ============================================================
+// JOURNAL HERO. 8 Aug 2026.
+//
+// The meter has THREE STATES and the SPEED carries the meaning as much as the
+// colour: under 35 is agitated with an alert ring, 35 to 75 marches steadily,
+// over 75 is nearly at rest and breathes. Muted of all colour you could still
+// tell them apart, which is the test of whether motion is doing a job.
+//
+// Boundaries are under 35 / 35 to 75 / over 75 so a decimal score always lands
+// somewhere. "36 to 75" would leave 35.4 undefined.
+// ============================================================
+function jrBand(score){
+  if(score > 75) return 'ok';
+  if(score >= 35) return 'imp';
+  return 'warn';
+}
+
+function updateGauge(score){
+  var hero = document.getElementById('jr-hero');
+  var arc  = document.getElementById('jr-arc');
+  var txt  = document.getElementById('jr-score');
+  var pill = document.getElementById('jr-pill');
+  if(!hero || !arc || !txt) return;
+
+  var v = Math.max(0, Math.min(100, Number(score) || 0));
+  var band = jrBand(v);
+
+  var col = band === 'ok' ? '#00d68f' : band === 'imp' ? '#FFD27A' : '#FF1E3C';
+  var TOTAL = 232;
+  arc.setAttribute('stroke-dashoffset', (TOTAL - (v/100)*TOTAL).toFixed(1));
+  arc.setAttribute('stroke', col);
+  txt.textContent = Math.round(v);
+
+  hero.classList.remove('warn','imp','ok');
+  hero.classList.add(band);
+
+  // Only the elements that belong to this state are shown, so a state never
+  // inherits another one's movement.
+  var show = function(id, on){ var e = document.getElementById(id); if(e) e.style.display = on ? '' : 'none'; };
+  show('jr-alert',  band === 'warn');
+  show('jr-halo',   band === 'ok');
+  show('jr-march',  band === 'imp');
+  show('jr-march2', band === 'imp');
+  show('jr-dash',   band !== 'imp');
+  show('jr-sweep',  band !== 'imp');
+
+  var dash = document.getElementById('jr-dash');
+  if(dash) dash.setAttribute('stroke', band === 'ok' ? 'rgba(0,214,143,0.22)' : 'rgba(255,30,60,0.32)');
+  var sweep = document.getElementById('jr-sweep');
+  if(sweep) sweep.setAttribute('stroke', band === 'ok' ? 'rgba(0,214,143,0.28)' : 'rgba(255,30,60,0.45)');
+  var core = document.getElementById('jr-core');
+  if(core) core.setAttribute('fill', band === 'ok' ? 'rgba(0,214,143,0.07)' : band === 'imp' ? 'rgba(14,9,6,0.55)' : 'rgba(255,30,60,0.08)');
+
+  if(pill){
+    pill.textContent = band === 'ok' ? mmT('j.gradeHealthy','Healthy')
+                     : band === 'imp' ? mmT('j.gradeImproving','Improving')
+                     : mmT('j.gradeNeedsWork','Needs Work');
+    pill.style.color = col;
+    pill.style.border = '1px solid ' + (band === 'ok' ? 'rgba(0,214,143,0.45)' : band === 'imp' ? 'rgba(255,210,122,0.5)' : 'rgba(255,30,60,0.45)');
+  }
+}
+
+// The three signed cards get their bloom and their flowing line coloured to
+// match the number. Green above zero, red below, and win rate follows the
+// meter's own bands so the card and the meter can never disagree.
+function jStatPaint(cardId, valueId, hex){
+  var card = document.getElementById(cardId);
+  var val  = document.getElementById(valueId);
+  if(!card || !val) return;
+  val.style.color = hex;
+  var rgb = hex === '#00d68f' ? '0,214,143' : hex === '#ff4d6a' ? '255,77,106' : hex === '#FFD27A' ? '255,210,122' : '255,255,255';
+  var bloom = card.querySelector('.jstat-bloom');
+  var line  = card.querySelector('.jstat-line > span');
+  if(bloom) bloom.style.background = 'radial-gradient(60% 100% at 50% 100%,rgba(' + rgb + ',0.26),transparent 70%)';
+  if(line)  line.style.background  = 'linear-gradient(90deg,rgba(' + rgb + ',0),rgba(' + rgb + ',.55) 38%,rgba(' + rgb + ',.95) 50%,rgba(' + rgb + ',.55) 62%,rgba(' + rgb + ',0))';
+}
+
+function jHeroPaint(winRate, netPnl, maxDD){
+  jStatPaint('jc-netpnl', 'j-netpnl', netPnl >= 0 ? '#00d68f' : '#ff4d6a');
+  // A drawdown is a distance from the peak, so it is zero or negative and this
+  // card is red in practice. The rule is written as a sign test anyway so a
+  // flat account reads green rather than being special-cased.
+  jStatPaint('jc-maxdd', 'j-maxdd', maxDD > 0 ? '#ff4d6a' : '#00d68f');
+  var band = jrBand(winRate);
+  jStatPaint('jc-winrate', 'j-winrate', band === 'ok' ? '#00d68f' : band === 'imp' ? '#FFD27A' : '#ff4d6a');
+}
+
+function updateGaugeOld(score) {
   var fill = document.getElementById('gauge-fill');
   var needle = document.getElementById('gauge-needle');
   var scoreEl = document.getElementById('gauge-score');
@@ -14347,11 +14448,12 @@ async function loadJournalData() {
     // Stat cards
     var el=document.getElementById('j-total'); if(el) el.textContent=total;
     el=document.getElementById('j-winrate'); if(el){el.textContent=winRate+'%';el.style.color=winRate>=50?'var(--green)':'var(--red)';}
-    el=document.getElementById('j-netpnl'); if(el){el.textContent=(totalPnl>=0?'+$':'-$')+Math.abs(totalPnl).toFixed(2);el.style.color=totalPnl>=0?'var(--green)':'var(--red)';}
+    el=document.getElementById('j-netpnl'); if(el){el.textContent=(totalPnl>=0?'+$':'-$')+Math.round(Math.abs(totalPnl)).toLocaleString();el.style.color=totalPnl>=0?'var(--green)':'var(--red)';}
     el=document.getElementById('j-pf'); if(el) el.textContent=profitFactor;
-    el=document.getElementById('j-maxdd'); if(el){el.textContent='-$'+maxDD.toFixed(2);el.style.color='var(--red)';}
+    el=document.getElementById('j-maxdd'); if(el){el.textContent='-$'+Math.round(maxDD).toLocaleString();el.style.color='var(--red)';}
     el=document.getElementById('j-rr'); if(el) el.textContent=rr;
     el=document.getElementById('j-rr2'); if(el) el.textContent=rr;
+    jHeroPaint(winRate, totalPnl, maxDD);
     // Analytics
     el=document.getElementById('j-avg-win'); if(el) el.textContent='+$'+avgWin.toFixed(2);
     el=document.getElementById('j-avg-loss'); if(el) el.textContent='-$'+avgLoss.toFixed(2);
