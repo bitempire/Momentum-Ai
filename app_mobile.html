@@ -2973,8 +2973,8 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
           <div class="sg-row" style="cursor:pointer;" onclick="atSetRisk(5)">
             <div class="sg-tile" style="background:#22C98A;"><i class="ti ti-leaf" style="font-size:16px;color:#04240F;"></i></div>
             <div style="flex:1;">
-              <div style="font-size:14px;">Conservative</div>
-              <div style="font-size:11px;color:var(--text3);margin-top:1px;">Smallest position, widest survival</div>
+              <div style="font-size:14px;" data-i18n="at.rkCons">Conservative</div>
+              <div style="font-size:11px;color:var(--text3);margin-top:1px;" data-i18n="at.rkConsSub">Smallest position, widest survival</div>
             </div>
             <i class="ti ti-check" id="at-rk-5" style="font-size:18px;color:#F0B232;visibility:hidden;"></i>
           </div>
@@ -2982,8 +2982,8 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
           <div class="sg-row" style="cursor:pointer;" onclick="atSetRisk(10)">
             <div class="sg-tile" style="background:#F0B232;"><i class="ti ti-flame" style="font-size:16px;color:#2A1D02;"></i></div>
             <div style="flex:1;">
-              <div style="font-size:14px;">Moderate</div>
-              <div style="font-size:11px;color:var(--text3);margin-top:1px;">Double the size, same shape</div>
+              <div style="font-size:14px;" data-i18n="at.rkMod">Moderate</div>
+              <div style="font-size:11px;color:var(--text3);margin-top:1px;" data-i18n="at.rkModSub">Double the size, same shape</div>
             </div>
             <i class="ti ti-check" id="at-rk-10" style="font-size:18px;color:#F0B232;visibility:hidden;"></i>
           </div>
@@ -2991,8 +2991,8 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
           <div class="sg-row" style="cursor:pointer;" onclick="atSetRisk(20)">
             <div class="sg-tile" style="background:#FF8C42;"><i class="ti ti-bolt" style="font-size:16px;color:#2A1402;"></i></div>
             <div style="flex:1;">
-              <div style="font-size:14px;">Aggressive</div>
-              <div style="font-size:11px;color:var(--text3);margin-top:1px;">A fifth of the account per trade</div>
+              <div style="font-size:14px;" data-i18n="at.rkAggr">Aggressive</div>
+              <div style="font-size:11px;color:var(--text3);margin-top:1px;" data-i18n="at.rkAggrSub">A fifth of the account per trade</div>
             </div>
             <i class="ti ti-check" id="at-rk-20" style="font-size:18px;color:#F0B232;visibility:hidden;"></i>
           </div>
@@ -3000,8 +3000,8 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
           <div class="sg-row" style="cursor:pointer;" onclick="atSetRisk(40)">
             <div class="sg-tile" style="background:#E03050;"><i class="ti ti-alert-triangle" style="font-size:16px;color:#ffffff;"></i></div>
             <div style="flex:1;">
-              <div style="font-size:14px;">Extreme</div>
-              <div style="font-size:11px;color:var(--text3);margin-top:1px;">Four losing trades would end the account</div>
+              <div style="font-size:14px;" data-i18n="at.rkExt">Extreme</div>
+              <div style="font-size:11px;color:var(--text3);margin-top:1px;" data-i18n="at.rkExtSub">Four losing trades would end the account</div>
             </div>
             <i class="ti ti-check" id="at-rk-40" style="font-size:18px;color:#F0B232;visibility:hidden;"></i>
           </div>
@@ -6360,7 +6360,7 @@ var MM_I18N = {
     'at.levelWord':'等級',
     'at.needRisk':'未選擇風險等級前，自動交易維持關閉。',
     'at.pickRiskFirst':'請先選擇風險等級。沒有風險等級，自動交易無法執行。',
-    'at.riskFoot':'區間由每個訊號決定。Moderate 在 100 pip 訊號使用 BETA，在 150 pip 訊號使用 SMART，因此您不需要挑選範本。',
+    'at.riskFoot':'區間由每個訊號決定。穩健在 100 pip 訊號使用 BETA，在 150 pip 訊號使用 SMART，因此您不需要挑選範本。',
     'at.riskWord':'風險',
     'at.safeMode':'安全模式',
     'at.safeModeSub':'提早結清淺層進場，保留一筆續抱',
@@ -6383,7 +6383,15 @@ var MM_I18N = {
     'j.target':'目標',
     'j.winLoss':'獲利與虧損對比',
     'j.worstDay':'最差',
-    'w.days':'天'
+    'w.days':'天',
+    'at.rkAggr':'積極',
+    'at.rkAggrSub':'每筆交易動用帳戶的五分之一',
+    'at.rkCons':'保守',
+    'at.rkConsSub':'最小部位，最大存活空間',
+    'at.rkExt':'極端',
+    'at.rkExtSub':'四筆虧損就會結束這個帳戶',
+    'at.rkMod':'穩健',
+    'at.rkModSub':'部位加倍，型態相同'
   },
   'zh-CN': {
     'sec.foot':'密码保护你的账户。双重验证即将推出。',
@@ -6888,7 +6896,7 @@ var MM_I18N = {
     'at.levelWord':'等级',
     'at.needRisk':'未选择风险等级前，自动交易保持关闭。',
     'at.pickRiskFirst':'请先选择风险等级。没有风险等级，自动交易无法执行。',
-    'at.riskFoot':'区间由每个信号决定。Moderate 在 100 pip 信号使用 BETA，在 150 pip 信号使用 SMART，因此您不需要挑选模板。',
+    'at.riskFoot':'区间由每个信号决定。稳健在 100 pip 信号使用 BETA，在 150 pip 信号使用 SMART，因此您不需要挑选模板。',
     'at.riskWord':'风险',
     'at.safeMode':'安全模式',
     'at.safeModeSub':'提早结清浅层进场，保留一笔续抱',
@@ -6911,7 +6919,15 @@ var MM_I18N = {
     'j.target':'目标',
     'j.winLoss':'获利与亏损对比',
     'j.worstDay':'最差',
-    'w.days':'天'
+    'w.days':'天',
+    'at.rkAggr':'积极',
+    'at.rkAggrSub':'每笔交易动用账户的五分之一',
+    'at.rkCons':'保守',
+    'at.rkConsSub':'最小仓位，最大存活空间',
+    'at.rkExt':'极端',
+    'at.rkExtSub':'四笔亏损就会结束这个账户',
+    'at.rkMod':'稳健',
+    'at.rkModSub':'仓位加倍，形态相同'
   },
   'ms': {
     'sec.foot':'Kata laluan melindungi akaun anda. Pengesahan dua faktor akan datang.',
@@ -7416,7 +7432,7 @@ var MM_I18N = {
     'at.levelWord':'Tahap',
     'at.needRisk':'Auto Trade kekal tutup sehingga tahap risiko dipilih.',
     'at.pickRiskFirst':'Pilih tahap risiko dahulu. Auto Trade tidak boleh berjalan tanpanya.',
-    'at.riskFoot':'Julat datang daripada setiap isyarat. Moderate menjalankan BETA pada isyarat 100 pip dan SMART pada 150 pip, jadi anda tidak perlu memilih templat.',
+    'at.riskFoot':'Julat datang daripada setiap isyarat. Sederhana menjalankan BETA pada isyarat 100 pip dan SMART pada 150 pip, jadi anda tidak perlu memilih templat.',
     'at.riskWord':'Risiko',
     'at.safeMode':'Mod selamat',
     'at.safeModeSub':'Tutup awal kemasukan cetek, biarkan satu berjalan',
@@ -7439,7 +7455,15 @@ var MM_I18N = {
     'j.target':'sasaran',
     'j.winLoss':'MENANG BERBANDING RUGI',
     'j.worstDay':'paling teruk',
-    'w.days':'Hari'
+    'w.days':'Hari',
+    'at.rkAggr':'Agresif',
+    'at.rkAggrSub':'Satu perlima daripada akaun bagi setiap dagangan',
+    'at.rkCons':'Konservatif',
+    'at.rkConsSub':'Kedudukan terkecil, ketahanan terluas',
+    'at.rkExt':'Ekstrem',
+    'at.rkExtSub':'Empat dagangan rugi akan menamatkan akaun ini',
+    'at.rkMod':'Sederhana',
+    'at.rkModSub':'Saiz digandakan, bentuk sama'
   },
   'ja': {
     'sec.foot':'パスワードがアカウントを守ります。二要素認証は近日公開です。',
@@ -7944,7 +7968,7 @@ var MM_I18N = {
     'at.levelWord':'レベル',
     'at.needRisk':'リスクレベルを選ぶまで Auto Trade はオフのままです。',
     'at.pickRiskFirst':'先にリスクレベルを選んでください。設定がないと Auto Trade は動きません。',
-    'at.riskFoot':'レンジは各シグナルから決まります。Moderate は 100 pip のシグナルで BETA、150 pip では SMART を使うため、テンプレートを選ぶ必要はありません。',
+    'at.riskFoot':'レンジは各シグナルから決まります。標準は 100 pip のシグナルで BETA、150 pip では SMART を使うため、テンプレートを選ぶ必要はありません。',
     'at.riskWord':'リスク',
     'at.safeMode':'セーフモード',
     'at.safeModeSub':'浅いエントリーを早めに利確し、一つだけ伸ばす',
@@ -7967,7 +7991,15 @@ var MM_I18N = {
     'j.target':'目標',
     'j.winLoss':'勝ちと負けの比較',
     'j.worstDay':'最悪',
-    'w.days':'日'
+    'w.days':'日',
+    'at.rkAggr':'積極的',
+    'at.rkAggrSub':'1 回の取引で口座の五分の一を使用',
+    'at.rkCons':'保守的',
+    'at.rkConsSub':'最小のポジション、最大の耐久力',
+    'at.rkExt':'極端',
+    'at.rkExtSub':'負け取引が四回で口座は終わります',
+    'at.rkMod':'標準',
+    'at.rkModSub':'サイズは二倍、形は同じ'
   },
   'ko': {
     'sec.foot':'비밀번호가 계정을 보호합니다. 2단계 인증은 곧 제공됩니다.',
@@ -8472,7 +8504,7 @@ var MM_I18N = {
     'at.levelWord':'레벨',
     'at.needRisk':'리스크 레벨을 선택할 때까지 Auto Trade는 꺼진 상태로 유지됩니다.',
     'at.pickRiskFirst':'먼저 리스크 레벨을 선택하세요. 없으면 Auto Trade가 실행되지 않습니다.',
-    'at.riskFoot':'범위는 각 시그널에서 정해집니다. Moderate는 100 pip 시그널에서 BETA를, 150 pip에서는 SMART를 사용하므로 템플릿을 고를 필요가 없습니다.',
+    'at.riskFoot':'범위는 각 시그널에서 정해집니다. 중간은 100 pip 시그널에서 BETA를, 150 pip에서는 SMART를 사용하므로 템플릿을 고를 필요가 없습니다.',
     'at.riskWord':'리스크',
     'at.safeMode':'세이프 모드',
     'at.safeModeSub':'얕은 진입은 일찍 정리하고 하나만 끌고 갑니다',
@@ -8495,7 +8527,15 @@ var MM_I18N = {
     'j.target':'목표',
     'j.winLoss':'이익 대비 손실',
     'j.worstDay':'최악',
-    'w.days':'일'
+    'w.days':'일',
+    'at.rkAggr':'공격적',
+    'at.rkAggrSub':'거래당 계좌의 5분의 1을 사용',
+    'at.rkCons':'보수적',
+    'at.rkConsSub':'가장 작은 포지션, 가장 넓은 생존 여력',
+    'at.rkExt':'극단적',
+    'at.rkExtSub':'네 번의 손실 거래로 계좌가 끝납니다',
+    'at.rkMod':'중간',
+    'at.rkModSub':'크기는 두 배, 형태는 동일'
   },
   'th': {
     'sec.foot':'รหัสผ่านปกป้องบัญชีของคุณ การยืนยันตัวตนสองชั้นกำลังจะมา',
@@ -9000,7 +9040,7 @@ var MM_I18N = {
     'at.levelWord':'ระดับ',
     'at.needRisk':'Auto Trade จะปิดอยู่จนกว่าจะเลือกระดับความเสี่ยง',
     'at.pickRiskFirst':'เลือกระดับความเสี่ยงก่อน หากไม่มี Auto Trade จะทำงานไม่ได้',
-    'at.riskFoot':'ช่วงราคามาจากแต่ละสัญญาณ Moderate ใช้ BETA กับสัญญาณ 100 pip และใช้ SMART กับ 150 pip คุณจึงไม่ต้องเลือกเทมเพลตเอง',
+    'at.riskFoot':'ช่วงราคามาจากแต่ละสัญญาณ ปานกลางใช้ BETA กับสัญญาณ 100 pip และใช้ SMART กับ 150 pip คุณจึงไม่ต้องเลือกเทมเพลตเอง',
     'at.riskWord':'ความเสี่ยง',
     'at.safeMode':'โหมดปลอดภัย',
     'at.safeModeSub':'ปิดไม้ตื้นก่อน แล้วปล่อยไม้เดียวให้วิ่งต่อ',
@@ -9023,7 +9063,15 @@ var MM_I18N = {
     'j.target':'เป้าหมาย',
     'j.winLoss':'กำไรเทียบกับขาดทุน',
     'j.worstDay':'แย่ที่สุด',
-    'w.days':'วัน'
+    'w.days':'วัน',
+    'at.rkAggr':'เชิงรุก',
+    'at.rkAggrSub':'ใช้หนึ่งในห้าของบัญชีต่อการเทรดหนึ่งครั้ง',
+    'at.rkCons':'อนุรักษ์นิยม',
+    'at.rkConsSub':'ขนาดสถานะเล็กที่สุด ทนทานได้กว้างที่สุด',
+    'at.rkExt':'สุดโต่ง',
+    'at.rkExtSub':'ขาดทุนสี่ครั้งบัญชีก็จบ',
+    'at.rkMod':'ปานกลาง',
+    'at.rkModSub':'ขนาดเพิ่มเป็นสองเท่า รูปแบบเดิม'
   },
   'vi': {
     'sec.foot':'Mật khẩu bảo vệ tài khoản của bạn. Xác thực hai lớp sắp có.',
@@ -9528,7 +9576,7 @@ var MM_I18N = {
     'at.levelWord':'Muc',
     'at.needRisk':'Auto Trade van tat cho den khi chon muc rui ro.',
     'at.pickRiskFirst':'Hay chon muc rui ro truoc. Khong co no thi Auto Trade khong chay duoc.',
-    'at.riskFoot':'Bien do lay tu tung tin hieu. Moderate chay BETA voi tin hieu 100 pip va SMART voi 150 pip, nen ban khong can chon mau.',
+    'at.riskFoot':'Bien do lay tu tung tin hieu. Vua phai chay BETA voi tin hieu 100 pip va SMART voi 150 pip, nen ban khong can chon mau.',
     'at.riskWord':'Rui ro',
     'at.safeMode':'Che do an toan',
     'at.safeModeSub':'Chot som cac lenh nong, giu lai mot lenh chay tiep',
@@ -9551,7 +9599,15 @@ var MM_I18N = {
     'j.target':'muc tieu',
     'j.winLoss':'THANG SO VOI THUA',
     'j.worstDay':'te nhat',
-    'w.days':'Ngay'
+    'w.days':'Ngay',
+    'at.rkAggr':'Manh tay',
+    'at.rkAggrSub':'Mot phan nam tai khoan cho moi lenh',
+    'at.rkCons':'Than trong',
+    'at.rkConsSub':'Vi the nho nhat, chiu dung rong nhat',
+    'at.rkExt':'Cuc doan',
+    'at.rkExtSub':'Bon lenh thua se ket thuc tai khoan nay',
+    'at.rkMod':'Vua phai',
+    'at.rkModSub':'Gap doi khoi luong, cung mot hinh dang'
   },
   'fil': {
     'sec.foot':'Pinoprotektahan ng password ang iyong account. Malapit na ang two factor authentication.',
@@ -10056,7 +10112,7 @@ var MM_I18N = {
     'at.levelWord':'Antas',
     'at.needRisk':'Nakapatay ang Auto Trade hangga at wala pang napipiling antas ng panganib.',
     'at.pickRiskFirst':'Pumili muna ng antas ng panganib. Hindi tatakbo ang Auto Trade kung wala nito.',
-    'at.riskFoot':'Ang range ay galing sa bawat signal. Ang Moderate ay gumagamit ng BETA sa 100 pip na signal at SMART sa 150 pip, kaya hindi ka na pipili ng template.',
+    'at.riskFoot':'Ang range ay galing sa bawat signal. Ang Katamtaman ay gumagamit ng BETA sa 100 pip na signal at SMART sa 150 pip, kaya hindi ka na pipili ng template.',
     'at.riskWord':'Panganib',
     'at.safeMode':'Safe mode',
     'at.safeModeSub':'Isara agad ang mababaw na entry, patakbuhin ang isa',
@@ -10079,7 +10135,15 @@ var MM_I18N = {
     'j.target':'target',
     'j.winLoss':'PANALO LABAN SA TALO',
     'j.worstDay':'pinakamasama',
-    'w.days':'Araw'
+    'w.days':'Araw',
+    'at.rkAggr':'Agresibo',
+    'at.rkAggrSub':'Ikalima ng account sa bawat trade',
+    'at.rkCons':'Konserbatibo',
+    'at.rkConsSub':'Pinakamaliit na posisyon, pinakamalawak na tagal',
+    'at.rkExt':'Sobrang tindi',
+    'at.rkExtSub':'Apat na talong trade ay tatapusin ang account',
+    'at.rkMod':'Katamtaman',
+    'at.rkModSub':'Doble ang laki, pareho ang hugis'
   },
   'hi': {
     'sec.foot':'आपका पासवर्ड खाते की सुरक्षा करता है। टू फैक्टर प्रमाणीकरण जल्द आ रहा है।',
@@ -10584,7 +10648,7 @@ var MM_I18N = {
     'at.levelWord':'स्तर',
     'at.needRisk':'जोखिम स्तर चुनने तक Auto Trade बंद रहेगा।',
     'at.pickRiskFirst':'पहले जोखिम स्तर चुनें। इसके बिना Auto Trade नहीं चल सकता।',
-    'at.riskFoot':'रेंज हर सिग्नल से तय होती है। Moderate 100 pip सिग्नल पर BETA और 150 pip पर SMART चलाता है, इसलिए आपको टेम्पलेट चुनने की जरूरत नहीं।',
+    'at.riskFoot':'रेंज हर सिग्नल से तय होती है। संतुलित 100 pip सिग्नल पर BETA और 150 pip पर SMART चलाता है, इसलिए आपको टेम्पलेट चुनने की जरूरत नहीं।',
     'at.riskWord':'जोखिम',
     'at.safeMode':'सुरक्षित मोड',
     'at.safeModeSub':'शुरुआती एंट्री जल्दी बंद करें, एक को चलने दें',
@@ -10607,7 +10671,15 @@ var MM_I18N = {
     'j.target':'लक्ष्य',
     'j.winLoss':'जीत बनाम हार',
     'j.worstDay':'सबसे खराब',
-    'w.days':'दिन'
+    'w.days':'दिन',
+    'at.rkAggr':'आक्रामक',
+    'at.rkAggrSub':'हर ट्रेड में खाते का पांचवां हिस्सा',
+    'at.rkCons':'रूढ़िवादी',
+    'at.rkConsSub':'सबसे छोटी पोजीशन, सबसे ज्यादा टिकाव',
+    'at.rkExt':'चरम',
+    'at.rkExtSub':'चार घाटे वाली ट्रेड इस खाते को खत्म कर देंगी',
+    'at.rkMod':'संतुलित',
+    'at.rkModSub':'आकार दोगुना, ढांचा वही'
   },
   'es': {
     'sec.foot':'Tu contraseña protege la cuenta. La autenticación en dos pasos llegará pronto.',
@@ -11112,7 +11184,7 @@ var MM_I18N = {
     'at.levelWord':'Nivel',
     'at.needRisk':'Auto Trade sigue apagado hasta elegir un nivel de riesgo.',
     'at.pickRiskFirst':'Elige primero un nivel de riesgo. Sin el, Auto Trade no puede funcionar.',
-    'at.riskFoot':'El rango viene de cada senal. Moderate usa BETA en una senal de 100 pip y SMART en una de 150 pip, asi que nunca eliges plantilla.',
+    'at.riskFoot':'El rango viene de cada senal. Moderado usa BETA en una senal de 100 pip y SMART en una de 150 pip, asi que nunca eliges plantilla.',
     'at.riskWord':'Riesgo',
     'at.safeMode':'Modo seguro',
     'at.safeModeSub':'Cierra pronto las entradas superficiales y deja correr una',
@@ -11135,7 +11207,15 @@ var MM_I18N = {
     'j.target':'objetivo',
     'j.winLoss':'GANANCIA FRENTE A PERDIDA',
     'j.worstDay':'peor',
-    'w.days':'Dias'
+    'w.days':'Dias',
+    'at.rkAggr':'Agresivo',
+    'at.rkAggrSub':'Un quinto de la cuenta por operacion',
+    'at.rkCons':'Conservador',
+    'at.rkConsSub':'La posicion mas pequena, la mayor resistencia',
+    'at.rkExt':'Extremo',
+    'at.rkExtSub':'Cuatro operaciones perdedoras acabarian con la cuenta',
+    'at.rkMod':'Moderado',
+    'at.rkModSub':'El doble de tamano, la misma forma'
   }
 };
 
