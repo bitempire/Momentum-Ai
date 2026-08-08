@@ -1320,9 +1320,9 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 .sg-sel option { background: #12121a; color: var(--text); }
 .sg-dir { padding: 6px 14px; border-radius: 8px; font-size: 11px; font-weight: 700; letter-spacing: 0.4px; font-family: inherit; cursor: pointer; }
 .jr-hero{position:relative;overflow:hidden;border-radius:12px;padding:12px;margin-bottom:9px;}
-.jr-hero.warn{background:radial-gradient(130% 110% at 18% 0%,rgba(196,0,32,.55),rgba(196,0,32,0) 62%),radial-gradient(110% 100% at 92% 100%,rgba(255,30,60,.24),rgba(255,30,60,0) 58%),#0B0810;}
-.jr-hero.imp{background:radial-gradient(130% 110% at 18% 0%,rgba(150,88,10,.60),rgba(150,88,10,0) 62%),radial-gradient(110% 100% at 92% 100%,rgba(240,178,50,.20),rgba(240,178,50,0) 58%),#0C0A08;}
-.jr-hero.ok{background:radial-gradient(130% 110% at 18% 0%,rgba(6,90,60,.60),rgba(6,90,60,0) 62%),radial-gradient(110% 100% at 92% 100%,rgba(0,214,143,.18),rgba(0,214,143,0) 58%),#070F0C;}
+.jr-hero.warn{background:linear-gradient(115deg,#0B0810,#2A0610 26%,#4A0616 50%,#20070F 74%,#0B0810);}
+.jr-hero.imp{background:linear-gradient(115deg,#0C0A08,#2E1B08 26%,#54320C 50%,#281706 74%,#0C0A08);}
+.jr-hero.ok{background:linear-gradient(115deg,#070F0C,#062418 26%,#073D28 50%,#061E15 74%,#070F0C);}
 @keyframes jrDrift{0%{background-position:0% 40%}50%{background-position:100% 60%}100%{background-position:0% 40%}}
 @keyframes jrBack{to{transform:rotate(-360deg)}}
 @keyframes jrFwd{to{transform:rotate(360deg)}}
@@ -2169,7 +2169,6 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         <div style="position:relative;display:flex;justify-content:space-between;align-items:center;margin-bottom:9px;">
           <div style="display:flex;align-items:baseline;gap:8px;">
             <div class="section-title" style="font-size:13px;margin-bottom:0;white-space:nowrap;"><span class="tw" data-i18n="w.trading">Trading </span><span data-i18n="w.days">Days</span></div>
-            <span id="jhm-total" style="font-size:11px;font-weight:700;font-family:'Orbitron',ui-monospace,monospace;white-space:nowrap;">-</span>
           </div>
           <div style="display:flex;gap:4px;">
             <button id="jbtn-7d" onclick="setJournalRange('7d',this)" style="padding:3px 7px;border-radius:4px;font-size:9px;font-weight:700;cursor:pointer;border:1px solid var(--border);color:var(--text3);background:transparent;">7D</button>
@@ -14316,7 +14315,6 @@ function renderJournalChart(trades) {
   var months= document.getElementById('jhm-months');
   var leg   = document.getElementById('jhm-legend');
   var sum   = document.getElementById('jhm-summary');
-  var totEl = document.getElementById('jhm-total');
   if(!grid) return;
 
   var range = window._journalRange || '30d';
@@ -14418,10 +14416,6 @@ function renderJournalChart(trades) {
       '<span style="color:#ff4d6a;">' + mmT('j.worstDay','worst') + ' ' + (worstKey ? money(worstVal) : '-') + '</span>';
   }
 
-  if(totEl){
-    totEl.textContent = money(total);
-    totEl.style.color = total >= 0 ? '#00d68f' : '#ff4d6a';
-  }
 }
 
 window._journalRange = '30d';
