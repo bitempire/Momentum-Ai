@@ -1357,6 +1357,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 .jstat::before{content:'';position:absolute;left:10px;right:10px;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);}
 .jstat-k{color:var(--text3);font-size:9px;letter-spacing:.06em;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .jstat-v{position:relative;z-index:1;font-size:15px;margin-top:2px;letter-spacing:-.3px;font-family:'Orbitron',sans-serif;white-space:nowrap;overflow:hidden;}
+.jstat-s{position:relative;z-index:1;font-size:9px;color:var(--text3);letter-spacing:.04em;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .jstat-bloom{position:absolute;left:0;right:0;bottom:0;height:34px;pointer-events:none;filter:blur(9px);}
 .jstat-line{position:absolute;left:0;right:0;bottom:0;height:2px;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 22%,#000 78%,transparent);mask-image:linear-gradient(90deg,transparent,#000 22%,#000 78%,transparent);}
 .jstat-line > span{position:absolute;inset:0;background-size:220% 100%;animation:mmMktFlow 6s linear infinite;}
@@ -2183,8 +2184,8 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       </div>
 
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px;">
-        <div class="jstat" id="jc-best"><div class="jstat-k" data-i18n="j.bestTrade">Best Trade</div><div class="jstat-v" id="j-best-trade" style="color:#00d68f;">-</div><span class="jstat-bloom" style="background:radial-gradient(60% 100% at 50% 100%,rgba(0,214,143,.26),transparent 70%);"></span><span class="jstat-line"><span style="background:linear-gradient(90deg,rgba(0,214,143,0),rgba(0,214,143,.55) 38%,rgba(0,214,143,.95) 50%,rgba(0,214,143,.55) 62%,rgba(0,214,143,0));"></span></span></div>
-        <div class="jstat" id="jc-worst"><div class="jstat-k" data-i18n="j.worstTrade">Worst Trade</div><div class="jstat-v" id="j-worst-trade" style="color:#ff4d6a;">-</div><span class="jstat-bloom" style="background:radial-gradient(60% 100% at 50% 100%,rgba(255,77,106,.26),transparent 70%);"></span><span class="jstat-line"><span style="background:linear-gradient(90deg,rgba(255,77,106,0),rgba(255,77,106,.55) 38%,rgba(255,77,106,.95) 50%,rgba(255,77,106,.55) 62%,rgba(255,77,106,0));"></span></span></div>
+        <div class="jstat" id="jc-best"><div class="jstat-k" data-i18n="j.bestTrade">Best Trade</div><div class="jstat-v" id="j-best-trade" style="color:#00d68f;">-</div><div class="jstat-s" id="j-best-sym">-</div><span class="jstat-bloom" style="background:radial-gradient(60% 100% at 50% 100%,rgba(0,214,143,.26),transparent 70%);"></span><span class="jstat-line"><span style="background:linear-gradient(90deg,rgba(0,214,143,0),rgba(0,214,143,.55) 38%,rgba(0,214,143,.95) 50%,rgba(0,214,143,.55) 62%,rgba(0,214,143,0));"></span></span></div>
+        <div class="jstat" id="jc-worst"><div class="jstat-k" data-i18n="j.worstTrade">Worst Trade</div><div class="jstat-v" id="j-worst-trade" style="color:#ff4d6a;">-</div><div class="jstat-s" id="j-worst-sym">-</div><span class="jstat-bloom" style="background:radial-gradient(60% 100% at 50% 100%,rgba(255,77,106,.26),transparent 70%);"></span><span class="jstat-line"><span style="background:linear-gradient(90deg,rgba(255,77,106,0),rgba(255,77,106,.55) 38%,rgba(255,77,106,.95) 50%,rgba(255,77,106,.55) 62%,rgba(255,77,106,0));"></span></span></div>
       </div>
 
       <!-- 3-TAB ANALYTICS -->
@@ -14592,8 +14593,10 @@ async function loadJournalData() {
     el=document.getElementById('j-t-stats'); if(el){el.textContent=methodStats(methods.smart);el.style.color=methods.smart.length?'var(--green)':'var(--text3)';}
     el=document.getElementById('j-a-stats'); if(el){el.textContent=methodStats(methods.auto);el.style.color=methods.auto.length?'var(--green)':'var(--text3)';}
     // Best/worst trade
-    el=document.getElementById('j-best-trade'); if(el){var bp=parseFloat(bestTrade.profit||0); el.textContent=(bp>=0?'+$':'-$')+Math.abs(bp).toFixed(2)+' '+bestTrade.symbol;}
-    el=document.getElementById('j-worst-trade'); if(el){var wp=parseFloat(worstTrade.profit||0); el.textContent=(wp>=0?'+$':'-$')+Math.abs(wp).toFixed(2)+' '+worstTrade.symbol;}
+    el=document.getElementById('j-best-trade'); if(el){var bp=parseFloat(bestTrade.profit||0); el.textContent=(bp>=0?'+':'-')+Math.abs(bp).toFixed(2)+' USD';}
+    el=document.getElementById('j-best-sym'); if(el) el.textContent=bestTrade.symbol||'-';
+    el=document.getElementById('j-worst-trade'); if(el){var wp=parseFloat(worstTrade.profit||0); el.textContent=(wp>=0?'+':'-')+Math.abs(wp).toFixed(2)+' USD';}
+    el=document.getElementById('j-worst-sym'); if(el) el.textContent=worstTrade.symbol||'-';
     // Performance score gauge
     updateGauge(perfScore);
     el=document.getElementById('ps-winrate'); if(el) el.textContent=winRate+'%';
