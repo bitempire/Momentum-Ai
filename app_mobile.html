@@ -1361,6 +1361,19 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 .jstat-line{position:absolute;left:0;right:0;bottom:0;height:2px;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 22%,#000 78%,transparent);mask-image:linear-gradient(90deg,transparent,#000 22%,#000 78%,transparent);}
 .jstat-line > span{position:absolute;inset:0;background-size:220% 100%;animation:mmMktFlow 6s linear infinite;}
 @media (prefers-reduced-motion: reduce){.jr-hero,.jr-outer,.jr-inner,.jr-march,.jr-march2,.jr-alert,.jr-halo,.jr-bar > div,.jstat-line > span{animation:none;}}
+.jhm-wrap{position:relative;overflow:hidden;}
+.jhm-sweep{position:absolute;top:0;bottom:0;width:70px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.045),transparent);animation:jhmSweep 7s linear infinite;pointer-events:none;}
+@keyframes jhmSweep{0%{transform:translateX(-70px)}100%{transform:translateX(340px)}}
+@keyframes jhmPop{from{opacity:0;transform:scale(.4)}}
+@keyframes jhmRing{0%{box-shadow:0 0 0 0 rgba(255,77,106,.75)}100%{box-shadow:0 0 0 9px rgba(255,77,106,0)}}
+.jhm-grid{display:grid;gap:3px;align-items:center;position:relative;}
+.jhm-d{height:13px;border-radius:3px;animation:jhmPop .45s ease-out both;}
+.jhm-worst{animation:jhmPop .45s ease-out both, jhmRing 2.2s ease-out infinite 1s;}
+.jhm-lb{font-size:7.5px;color:var(--text3);letter-spacing:.3px;white-space:nowrap;}
+.jhm-key{display:flex;align-items:center;gap:3px;}
+.jhm-sw{width:11px;height:11px;border-radius:3px;flex-shrink:0;}
+.jhm-kt{font-size:7.5px;color:var(--text3);font-family:ui-monospace,Menlo,monospace;white-space:nowrap;}
+@media (prefers-reduced-motion: reduce){.jhm-sweep,.jhm-d,.jhm-worst{animation:none;}}
 .sg-chip { padding: 9px 0; border-radius: 10px; font-size: 12px; background: var(--surface); border: 1px solid var(--border); color: var(--text3); cursor: pointer; font-family: inherit; }
 .sg-chip.on { background: linear-gradient(135deg,#F0B232,#FF8C42); border-color: #F0B232; color: #2A1D02; font-weight: 700; }
 .sg-card { background: var(--surface); border-radius: 12px; overflow: hidden; }
@@ -2145,21 +2158,33 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         <div class="jstat" id="jc-winrate"><div class="jstat-k" data-i18n="j.winRate">Win Rate</div><div class="jstat-v" id="j-winrate">-</div><span class="jstat-bloom"></span><span class="jstat-line"><span></span></span></div>
       </div>
 
-      <!-- ACCOUNT GROWTH CHART -->
-      <div class="section-card" style="margin-bottom:10px;padding:12px;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-          <div class="section-title" style="font-size:13px;margin-bottom:0;"><span class="tw" data-i18n="w.account">Account </span><span data-i18n="w.growth">Growth</span></div>
+      <!-- TRADING DAYS HEATMAP. Replaces the line chart. A curve shows where you
+           ended up; this shows WHICH DAYS did it, which is the question a journal
+           is for. Shading is RELATIVE TO THE BIGGEST DAY IN THE WINDOW, so it
+           reads the same on a small account as on a large one, and the legend
+           prints the real amounts at each band edge. -->
+      <div class="section-card jhm-wrap" style="margin-bottom:10px;padding:12px;">
+        <div class="jhm-sweep"></div>
+        <div style="position:relative;display:flex;justify-content:space-between;align-items:center;margin-bottom:9px;">
+          <div style="display:flex;align-items:baseline;gap:8px;">
+            <div class="section-title" style="font-size:13px;margin-bottom:0;white-space:nowrap;"><span class="tw" data-i18n="w.trading">Trading </span><span data-i18n="w.days">Days</span></div>
+            <span id="jhm-total" style="font-size:11px;font-weight:700;font-family:'Orbitron',ui-monospace,monospace;white-space:nowrap;">-</span>
+          </div>
           <div style="display:flex;gap:4px;">
-            <button id="jbtn-7d" onclick="setJournalRange('7d',this)" style="padding:3px 7px;border-radius:4px;font-size:9px;font-weight:700;border:1px solid var(--border);color:var(--text3);background:transparent;cursor:pointer;">7D</button>
-            <button id="jbtn-30d" onclick="setJournalRange('30d',this)" style="padding:3px 7px;border-radius:4px;font-size:9px;font-weight:700;border:1px solid var(--red);color:#fff;background:var(--red);cursor:pointer;">30D</button>
-            <button id="jbtn-all" onclick="setJournalRange('all',this)" style="padding:3px 7px;border-radius:4px;font-size:9px;font-weight:700;border:1px solid var(--border);color:var(--text3);background:transparent;cursor:pointer;">ALL</button>
+            <button id="jbtn-7d" onclick="setJournalRange('7d',this)" style="padding:3px 7px;border-radius:4px;font-size:9px;font-weight:700;cursor:pointer;border:1px solid var(--border);color:var(--text3);background:transparent;">7D</button>
+            <button id="jbtn-30d" onclick="setJournalRange('30d',this)" style="padding:3px 7px;border-radius:4px;font-size:9px;font-weight:700;cursor:pointer;border:1px solid var(--red);color:#fff;background:var(--red);">30D</button>
+            <button id="jbtn-all" onclick="setJournalRange('all',this)" style="padding:3px 7px;border-radius:4px;font-size:9px;font-weight:700;cursor:pointer;border:1px solid var(--border);color:var(--text3);background:transparent;">ALL</button>
           </div>
         </div>
-        <div style="position:relative;height:90px;"><canvas id="j-growth-chart" role="img" aria-label="Account P&L growth chart" data-i18n-aria="aria.pnlChart">Account growth over time.</canvas></div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px;">
-          <div style="background:rgba(0,200,122,0.06);border:0.5px solid rgba(0,200,122,0.15);border-radius:8px;padding:7px;"><div style="font-size:9px;color:#555;letter-spacing:.5px;text-transform:uppercase;margin-bottom:2px;" data-i18n="j.bestTrade">Best Trade</div><div id="j-best-trade" style="font-size:12px;font-weight:700;color:#00C87A;">—</div></div>
-          <div style="background:rgba(255,30,60,0.04);border:0.5px solid rgba(255,30,60,0.12);border-radius:8px;padding:7px;"><div style="font-size:9px;color:#555;letter-spacing:.5px;text-transform:uppercase;margin-bottom:2px;" data-i18n="j.worstTrade">Worst Trade</div><div id="j-worst-trade" style="font-size:12px;font-weight:700;color:#FF1E3C;">—</div></div>
-        </div>
+        <div id="jhm-months" class="jhm-grid" style="margin-bottom:4px;"></div>
+        <div id="jhm-grid" class="jhm-grid" role="img" aria-label="Daily result heatmap" data-i18n-aria="aria.pnlChart"></div>
+        <div id="jhm-legend" style="display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-top:11px;padding-top:9px;border-top:1px solid var(--border);"></div>
+        <div id="jhm-summary" style="display:flex;justify-content:space-between;font-size:8.5px;color:var(--text3);margin-top:8px;"></div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px;">
+        <div class="jstat" id="jc-best"><div class="jstat-k" data-i18n="j.bestTrade">Best Trade</div><div class="jstat-v" id="j-best-trade" style="color:#00d68f;">-</div><span class="jstat-bloom" style="background:radial-gradient(60% 100% at 50% 100%,rgba(0,214,143,.26),transparent 70%);"></span><span class="jstat-line"><span style="background:linear-gradient(90deg,rgba(0,214,143,0),rgba(0,214,143,.55) 38%,rgba(0,214,143,.95) 50%,rgba(0,214,143,.55) 62%,rgba(0,214,143,0));"></span></span></div>
+        <div class="jstat" id="jc-worst"><div class="jstat-k" data-i18n="j.worstTrade">Worst Trade</div><div class="jstat-v" id="j-worst-trade" style="color:#ff4d6a;">-</div><span class="jstat-bloom" style="background:radial-gradient(60% 100% at 50% 100%,rgba(255,77,106,.26),transparent 70%);"></span><span class="jstat-line"><span style="background:linear-gradient(90deg,rgba(255,77,106,0),rgba(255,77,106,.55) 38%,rgba(255,77,106,.95) 50%,rgba(255,77,106,.55) 62%,rgba(255,77,106,0));"></span></span></div>
       </div>
 
       <!-- 3-TAB ANALYTICS -->
@@ -14284,31 +14309,120 @@ function updateGaugeOld(score) {
   gradeEl.textContent = grade; gradeEl.style.color = col;
 }
 function renderJournalChart(trades) {
+  // Same name and same signature as the line chart it replaces, so
+  // setJournalRange and loadJournalData need no change.
+  var grid  = document.getElementById('jhm-grid');
+  var months= document.getElementById('jhm-months');
+  var leg   = document.getElementById('jhm-legend');
+  var sum   = document.getElementById('jhm-summary');
+  var totEl = document.getElementById('jhm-total');
+  if(!grid) return;
+
   var range = window._journalRange || '30d';
   var now = new Date();
   var cutoff = new Date();
-  if(range==='7d') cutoff.setDate(now.getDate()-7);
-  else if(range==='30d') cutoff.setDate(now.getDate()-30);
+  if(range === '7d') cutoff.setDate(now.getDate() - 7);
+  else if(range === '30d') cutoff.setDate(now.getDate() - 30);
   else cutoff = new Date(0);
-  var filtered = trades.filter(function(t){ return new Date(t.close_time||t.created_at) >= cutoff; });
-  filtered.sort(function(a,b){ return new Date(a.close_time||a.created_at)-new Date(b.close_time||b.created_at); });
-  var running=0, labels=[], data=[];
-  filtered.forEach(function(t){
-    running += parseFloat(t.profit||0);
-    var d = new Date(t.close_time||t.created_at);
-    labels.push((d.getMonth()+1)+'/'+d.getDate());
-    data.push(parseFloat(running.toFixed(2)));
+
+  // Day key in LOCAL time. Using the ISO string would push late-evening trades
+  // into the following day for anyone east of UTC, which is everyone here.
+  function key(d){ return d.getFullYear() + '-' + (d.getMonth()+1) + '-' + d.getDate(); }
+
+  var daily = {}, earliest = null, total = 0;
+  (trades || []).forEach(function(t){
+    var d = new Date(t.close_time || t.created_at);
+    if(isNaN(d) || d < cutoff) return;
+    var k = key(d);
+    daily[k] = (daily[k] || 0) + parseFloat(t.profit || 0);
+    total += parseFloat(t.profit || 0);
+    if(!earliest || d < earliest) earliest = d;
   });
-  if(!labels.length){ labels=['—']; data=[0]; }
-  var canvas = document.getElementById('j-growth-chart');
-  if(!canvas) return;
-  if(window._journalChart) { window._journalChart.destroy(); }
-  window._journalChart = new Chart(canvas, {
-    type:'line',
-    data:{labels:labels,datasets:[{data:data,borderColor:'#FF1E3C',backgroundColor:'rgba(255,30,60,0.06)',borderWidth:1.5,pointRadius:0,fill:true,tension:0.4}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{enabled:false}},scales:{x:{display:false},y:{display:false}}}
+
+  var start = (range === 'all') ? (earliest || new Date()) : cutoff;
+  // Back up to the Monday of that week so every column is a whole week.
+  var mon = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+  var back = (mon.getDay() + 6) % 7;
+  mon.setDate(mon.getDate() - back);
+
+  var weeks = Math.floor((new Date(now.getFullYear(), now.getMonth(), now.getDate()) - mon) / 604800000) + 1;
+  if(weeks < 1) weeks = 1;
+  if(weeks > 27) weeks = 27;
+
+  var maxAbs = 0, greenDays = 0, redDays = 0, worstVal = 0, worstKey = null;
+  Object.keys(daily).forEach(function(k){
+    var v = daily[k];
+    if(Math.abs(v) > maxAbs) maxAbs = Math.abs(v);
+    if(v > 0) greenDays++; else if(v < 0) redDays++;
+    if(v < worstVal){ worstVal = v; worstKey = k; }
   });
+  if(maxAbs <= 0) maxAbs = 1;
+
+  function shade(v){
+    if(v === 0) return 'rgba(255,255,255,.09)';
+    var a = 0.20 + 0.70 * Math.min(1, Math.abs(v) / maxAbs);
+    return (v > 0 ? 'rgba(0,214,143,' : 'rgba(255,77,106,') + a.toFixed(2) + ')';
+  }
+  function money(v){
+    var n = Math.round(Math.abs(v));
+    return (v < 0 ? '-' : '+') + '$' + n.toLocaleString();
+  }
+
+  var cols = '18px repeat(' + weeks + ',1fr)';
+  grid.style.gridTemplateColumns = cols;
+  months.style.gridTemplateColumns = cols;
+
+  // Month labels, printed once when the month of a column's Monday changes.
+  var MON_NAMES = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  var mh = '<span></span>', lastMon = -1;
+  for(var w = 0; w < weeks; w++){
+    var d0 = new Date(mon); d0.setDate(mon.getDate() + w*7);
+    if(d0.getMonth() !== lastMon){ lastMon = d0.getMonth(); mh += '<span class="jhm-lb" style="text-align:center;">' + MON_NAMES[lastMon] + '</span>'; }
+    else mh += '<span></span>';
+  }
+  months.innerHTML = mh;
+
+  var DAYS = ['MON','TUE','WED','THU','FRI','SAT','SUN'];
+  var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  var html = '';
+  for(var r = 0; r < 7; r++){
+    html += '<span class="jhm-lb">' + DAYS[r] + '</span>';
+    for(var c = 0; c < weeks; c++){
+      var d = new Date(mon); d.setDate(mon.getDate() + c*7 + r);
+      if(d > today){ html += '<span></span>'; continue; }
+      var k = key(d), has = daily.hasOwnProperty(k);
+      var bg = has ? shade(daily[k]) : 'rgba(255,255,255,.05)';
+      var cls = (worstKey && k === worstKey) ? 'jhm-worst' : 'jhm-d';
+      var delay = (((c + r) * 0.035).toFixed(3)) + 's';
+      var title = (d.getDate() + ' ' + MON_NAMES[d.getMonth()]) + (has ? ' ' + money(daily[k]) : '');
+      html += '<span class="' + cls + '" style="height:13px;border-radius:3px;background:' + bg + ';animation-delay:' + delay + ';" title="' + title + '"></span>';
+    }
+  }
+  grid.innerHTML = html;
+
+  if(leg){
+    var mid = maxAbs / 3;
+    leg.innerHTML =
+      '<div class="jhm-key"><span class="jhm-sw" style="background:rgba(255,77,106,.90);"></span><span class="jhm-kt">' + money(-maxAbs) + '</span></div>' +
+      '<div class="jhm-key"><span class="jhm-sw" style="background:rgba(255,77,106,.43);"></span><span class="jhm-kt">' + money(-mid) + '</span></div>' +
+      '<div class="jhm-key"><span class="jhm-sw" style="background:rgba(255,255,255,.05);"></span><span class="jhm-kt">' + mmT('j.noTrade','none') + '</span></div>' +
+      '<div class="jhm-key"><span class="jhm-sw" style="background:rgba(0,214,143,.43);"></span><span class="jhm-kt">' + money(mid) + '</span></div>' +
+      '<div class="jhm-key"><span class="jhm-sw" style="background:rgba(0,214,143,.90);"></span><span class="jhm-kt">' + money(maxAbs) + '</span></div>';
+  }
+
+  if(sum){
+    sum.innerHTML =
+      '<span>' + greenDays + ' ' + mmT('j.greenDays','green days') + '</span>' +
+      '<span>' + redDays + ' ' + mmT('j.redDays','red days') + '</span>' +
+      '<span style="color:#ff4d6a;">' + mmT('j.worstDay','worst') + ' ' + (worstKey ? money(worstVal) : '-') + '</span>';
+  }
+
+  if(totEl){
+    totEl.textContent = money(total);
+    totEl.style.color = total >= 0 ? '#00d68f' : '#ff4d6a';
+  }
 }
+
 window._journalRange = '30d';
 async function loadJournalData() {
   if(!activeAccount||!db) return;
