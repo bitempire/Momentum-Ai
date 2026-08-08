@@ -2370,8 +2370,6 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
             <span class="jd-mk at0" style="left:0%;"><span class="jd-mkl"><span data-i18n="j.target">target</span> 0</span></span>
           </div>
         </div>
-
-        <div id="j-disc-tip" style="display:none;margin-top:8px;padding:8px;background:rgba(255,176,32,0.06);border:0.5px solid rgba(255,176,32,0.2);border-radius:8px;font-size:11px;color:var(--text3);line-height:1.6;"></div>
       </div>
 
       <!-- AI INSIGHT -->
@@ -14848,13 +14846,6 @@ async function loadJournalData() {
     el=document.getElementById('jd-risk'); if(el){el.textContent=riskPct+'%';el.style.color=riskPct>=70?'var(--green)':'var(--amber)';}
     el=document.getElementById('jd-over'); if(el){el.textContent=overLev+mmT('j.tradesSuffix',' trades');el.style.color=overLev===0?'var(--green)':'var(--red)';}
     el=document.getElementById('jd-rev'); if(el){el.textContent=revCount===0?'✓ Clean':revCount+' detected';el.style.color=revCount===0?'var(--green)':'var(--red)';}
-    var tipEl=document.getElementById('j-disc-tip');
-    if(tipEl&&(overLev>0||revCount>0)){
-      var tips=[];
-      if(overLev>0) tips.push(overLev+' trades exceeded lot limit — reduce size on volatile sessions');
-      if(revCount>0) tips.push(revCount+' possible revenge trades — take a break after 2 consecutive losses');
-      tipEl.style.display='block'; tipEl.innerHTML='⚡ '+tips.join('<br>⚡ ');
-    }
     // Bottom cards
     var pairMap={};
     trades.forEach(function(t){ var s=t.symbol||'—'; if(!pairMap[s]) pairMap[s]={pnl:0,wins:0,total:0}; pairMap[s].pnl+=parseFloat(t.profit||0); pairMap[s].total++; if(parseFloat(t.profit||0)>0) pairMap[s].wins++; });
