@@ -1410,6 +1410,30 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 .jam-k{font-size:8px;color:var(--text3);letter-spacing:.3px;white-space:nowrap;}
 .jsec{font-size:10px;letter-spacing:.7px;color:var(--text3);margin:12px 3px 6px;}
 /* ══════════════════════════════════════════════════════════
+   DISCIPLINE RULE BARS. 9 Aug 2026.
+   The three journal tabs are gone. Emotions was removed because NOTHING EVER
+   WROTE TO IT - no code fills those five bars and there is no way to record an
+   emotion anywhere in the app, so it could only ever show dashes. Discipline
+   came out of the tab strip and sits as its own section instead.
+   Each rule carries a MARKER at the level it has to reach, so a customer can
+   see how far short they are rather than only that they failed.
+   ══════════════════════════════════════════════════════════ */
+.jd-head{display:flex;align-items:baseline;justify-content:space-between;padding-bottom:10px;border-bottom:1px solid var(--border);margin-bottom:6px;}
+.jd-big{font-family:'Orbitron',ui-monospace,Menlo,monospace;font-size:26px;font-weight:800;line-height:1;white-space:nowrap;}
+.jd-lbl{font-size:9px;letter-spacing:.9px;color:var(--text3);font-weight:700;margin-top:4px;}
+.jd-band{font-size:9px;font-weight:800;letter-spacing:.7px;padding:4px 9px;border-radius:6px;white-space:nowrap;}
+.jd-r{padding:9px 0 20px;}
+.jd-r + .jd-r{border-top:1px solid rgba(255,255,255,.045);}
+.jd-rt{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:6px;gap:8px;}
+.jd-rn{font-size:11.5px;color:var(--text);}
+.jd-rv{font-family:'Orbitron',ui-monospace,Menlo,monospace;font-size:11.5px;font-weight:700;white-space:nowrap;}
+.jd-tr{position:relative;height:6px;border-radius:3px;background:rgba(255,255,255,.07);}
+.jd-f{display:block;height:6px;border-radius:3px;transform-origin:left;animation:jmbGrow .9s cubic-bezier(.22,.61,.36,1) both;}
+.jd-mk{position:absolute;top:-3px;width:2px;height:12px;border-radius:1px;background:rgba(255,255,255,.45);}
+.jd-mkl{position:absolute;top:14px;left:50%;transform:translateX(-50%);font-size:7.5px;color:var(--text3);white-space:nowrap;}
+.jd-mk.at0 .jd-mkl{left:0;transform:none;}
+@media (prefers-reduced-motion: reduce){.jd-f{animation:none;}}
+/* ══════════════════════════════════════════════════════════
    RANK TICK. 9 Aug 2026. Replaces the medal block.
    The gold, silver and bronze tiles were dropped because a medal colour
    belongs to the POSITION, so it moved to whichever method happened to be
@@ -2250,12 +2274,10 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 
       <!-- 3-TAB ANALYTICS -->
       <div class="section-card" style="margin-bottom:10px;padding:12px;">
-        <div style="display:flex;gap:6px;margin-bottom:10px;">
-          <button class="j-tab-btn active" onclick="switchJournalTab('analytics',this)" style="flex:1;padding:7px;background:var(--red);border:1px solid var(--red);border-radius:8px;color:#fff;font-size:11px;font-weight:700;cursor:pointer;" data-i18n="app.analytics">Analytics</button>
-          <button class="j-tab-btn" onclick="switchJournalTab('discipline',this)" style="flex:1;padding:7px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;" data-i18n="j.discipline">Discipline</button>
-          <button class="j-tab-btn" onclick="switchJournalTab('emotions',this)" style="flex:1;padding:7px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;" data-i18n="j.emotions">Emotions</button>
-        </div>
-        <!-- ANALYTICS -->
+        <!-- 9 Aug 2026: the three tab buttons were removed. Emotions is gone
+             entirely and Discipline moved out into its own section below, so
+             only Analytics was left and a strip of one tab is not a choice. -->
+        <div class="jsec" style="margin-top:0;" data-i18n="app.analytics">ANALYTICS</div>
         <div id="jtab-analytics">
           <!-- METHOD BREAKDOWN is the hero of this tab. The rows are built by
                jRenderMethods() rather than written here, because they are RANKED
@@ -2295,25 +2317,61 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
             </div>
           </div>
         </div>
-        <!-- DISCIPLINE -->
-        <div id="jtab-discipline" style="display:none;">
-          <div style="display:flex;justify-content:flex-end;margin-bottom:8px;"><span style="font-size:11px;color:var(--text3);">Overall <span id="j-disc-score" style="color:#00C87A;font-weight:700;">—</span></span></div>
-          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;"><div id="jd-sl-dot" style="width:8px;height:8px;border-radius:50%;background:#555;flex-shrink:0;"></div><span style="flex:1;font-size:12px;color:var(--text);" data-i18n="j.usedSl">Used Stop Loss</span><span id="jd-sl" style="font-size:12px;font-weight:700;color:var(--text3);">—</span></div>
-          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;"><div id="jd-risk-dot" style="width:8px;height:8px;border-radius:50%;background:#555;flex-shrink:0;"></div><span style="flex:1;font-size:12px;color:var(--text);" data-i18n="j.riskUnder">Risk Under 2%</span><span id="jd-risk" style="font-size:12px;font-weight:700;color:var(--text3);">—</span></div>
-          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;"><div id="jd-over-dot" style="width:8px;height:8px;border-radius:50%;background:#555;flex-shrink:0;"></div><span style="flex:1;font-size:12px;color:var(--text);" data-i18n="j.overlev">Overleveraged</span><span id="jd-over" style="font-size:12px;font-weight:700;color:var(--text3);">—</span></div>
-          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;"><div id="jd-rev-dot" style="width:8px;height:8px;border-radius:50%;background:#555;flex-shrink:0;"></div><span style="flex:1;font-size:12px;color:var(--text);" data-i18n="j.noRevenge">No Revenge Trading</span><span id="jd-rev" style="font-size:12px;font-weight:700;color:var(--text3);">—</span></div>
-          <div id="j-disc-tip" style="display:none;margin-top:8px;padding:8px;background:rgba(255,176,32,0.06);border:0.5px solid rgba(255,176,32,0.2);border-radius:8px;font-size:11px;color:var(--text3);line-height:1.6;"></div>
+      </div>
+
+      <!-- ══════════════════════════════════════════════════
+           DISCIPLINE. Its own section since 9 Aug 2026, no longer a tab.
+           Each rule shows a bar plus a MARKER at the level it must reach.
+           The Overleveraged and Revenge bars show the SHARE OF TRADES that
+           broke the rule, since a raw count has no scale to sit against, and
+           the real figure is printed beside it either way.
+           Overleveraged is deliberately NOT part of the score, which stays
+           stop loss 40, risk 40 and revenge 20. Haikal chose to leave it
+           showing only.
+           ══════════════════════════════════════════════════ -->
+      <div class="jsec" data-i18n="j.discipline">DISCIPLINE</div>
+      <div class="section-card" style="margin-bottom:10px;padding:12px;">
+        <div class="jd-head">
+          <div>
+            <div class="jd-big" id="j-disc-score">-</div>
+            <div class="jd-lbl" data-i18n="j.discScore">DISCIPLINE SCORE</div>
+          </div>
+          <span class="jd-band" id="jd-band">-</span>
         </div>
-        <!-- EMOTIONS -->
-        <div id="jtab-emotions" style="display:none;">
-          <div style="display:flex;justify-content:flex-end;margin-bottom:8px;"><span style="font-size:11px;color:var(--text3);"><span data-i18n="app.emotionScore">Emotion Score</span> <span id="j-emo-score" style="color:#4D9EFF;font-weight:700;">—</span></span></div>
-          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;"><span style="font-size:15px;">😊</span><span style="flex:0 0 70px;font-size:12px;color:var(--text);" data-i18n="j.calm">Calm</span><div style="flex:1;height:4px;background:var(--surface2);border-radius:2px;overflow:hidden;"><div id="je-calm" style="height:100%;width:0%;background:#00C87A;border-radius:2px;"></div></div><span id="je-calm-v" style="font-size:11px;font-weight:700;color:#00C87A;margin-left:6px;min-width:30px;">—</span></div>
-          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;"><span style="font-size:15px;">😎</span><span style="flex:0 0 70px;font-size:12px;color:var(--text);" data-i18n="j.confident">Confident</span><div style="flex:1;height:4px;background:var(--surface2);border-radius:2px;overflow:hidden;"><div id="je-conf" style="height:100%;width:0%;background:#4D9EFF;border-radius:2px;"></div></div><span id="je-conf-v" style="font-size:11px;font-weight:700;color:#4D9EFF;margin-left:6px;min-width:30px;">—</span></div>
-          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;"><span style="font-size:15px;">😐</span><span style="flex:0 0 70px;font-size:12px;color:var(--text);" data-i18n="j.neutral">Neutral</span><div style="flex:1;height:4px;background:var(--surface2);border-radius:2px;overflow:hidden;"><div id="je-neu" style="height:100%;width:0%;background:#888;border-radius:2px;"></div></div><span id="je-neu-v" style="font-size:11px;font-weight:700;color:#888;margin-left:6px;min-width:30px;">—</span></div>
-          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;"><span style="font-size:15px;">😰</span><span style="flex:0 0 70px;font-size:12px;color:var(--text);" data-i18n="j.fear">Fear</span><div style="flex:1;height:4px;background:var(--surface2);border-radius:2px;overflow:hidden;"><div id="je-fear" style="height:100%;width:0%;background:#FFB020;border-radius:2px;"></div></div><span id="je-fear-v" style="font-size:11px;font-weight:700;color:#FFB020;margin-left:6px;min-width:30px;">—</span></div>
-          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;"><span style="font-size:15px;">😡</span><span style="flex:0 0 70px;font-size:12px;color:var(--text);" data-i18n="j.revenge">Revenge</span><div style="flex:1;height:4px;background:var(--surface2);border-radius:2px;overflow:hidden;"><div id="je-rev" style="height:100%;width:0%;background:#FF1E3C;border-radius:2px;"></div></div><span id="je-rev-v" style="font-size:11px;font-weight:700;color:#FF1E3C;margin-left:6px;min-width:30px;">—</span></div>
-          <div style="margin-top:8px;text-align:center;font-size:11px;color:var(--text3);" data-i18n="j.logEmotion">Log your emotion after each trade in Recent Trades</div>
+
+        <div class="jd-r">
+          <div class="jd-rt"><span class="jd-rn" data-i18n="j.usedSl">Used Stop Loss</span><span class="jd-rv" id="jd-sl">-</span></div>
+          <div class="jd-tr">
+            <span class="jd-f" id="jd-sl-bar" style="width:0%;"></span>
+            <span class="jd-mk" style="left:80%;"><span class="jd-mkl"><span data-i18n="j.target">target</span> 80%</span></span>
+          </div>
         </div>
+
+        <div class="jd-r">
+          <div class="jd-rt"><span class="jd-rn" data-i18n="j.riskUnder">Risk Under 2%</span><span class="jd-rv" id="jd-risk">-</span></div>
+          <div class="jd-tr">
+            <span class="jd-f" id="jd-risk-bar" style="width:0%;"></span>
+            <span class="jd-mk" style="left:70%;"><span class="jd-mkl"><span data-i18n="j.target">target</span> 70%</span></span>
+          </div>
+        </div>
+
+        <div class="jd-r">
+          <div class="jd-rt"><span class="jd-rn" data-i18n="j.overlev">Overleveraged</span><span class="jd-rv" id="jd-over">-</span></div>
+          <div class="jd-tr">
+            <span class="jd-f" id="jd-over-bar" style="width:0%;"></span>
+            <span class="jd-mk at0" style="left:0%;"><span class="jd-mkl"><span data-i18n="j.target">target</span> 0</span></span>
+          </div>
+        </div>
+
+        <div class="jd-r">
+          <div class="jd-rt"><span class="jd-rn" data-i18n="j.noRevenge">No Revenge Trading</span><span class="jd-rv" id="jd-rev">-</span></div>
+          <div class="jd-tr">
+            <span class="jd-f" id="jd-rev-bar" style="width:0%;"></span>
+            <span class="jd-mk at0" style="left:0%;"><span class="jd-mkl"><span data-i18n="j.target">target</span> 0</span></span>
+          </div>
+        </div>
+
+        <div id="j-disc-tip" style="display:none;margin-top:8px;padding:8px;background:rgba(255,176,32,0.06);border:0.5px solid rgba(255,176,32,0.2);border-radius:8px;font-size:11px;color:var(--text3);line-height:1.6;"></div>
       </div>
 
       <!-- AI INSIGHT -->
@@ -14763,15 +14821,33 @@ async function loadJournalData() {
     el=document.getElementById('ps-psych'); if(el) el.textContent=psychScore+'%';
     el=document.getElementById('pb-psych'); if(el) el.style.width=psychScore+'%';
     // Discipline tab
-    el=document.getElementById('j-disc-score'); if(el){el.textContent=discScore+'%';el.style.color=discScore>=70?'var(--green)':discScore>=50?'var(--amber)':'var(--red)';}
+    // DISCIPLINE. Colours are decided once here and used for the figure, the
+    // bar and the band together, so no two of them can ever disagree.
+    var dCol = discScore>=70?'var(--green)':discScore>=50?'var(--amber)':'var(--red)';
+    el=document.getElementById('j-disc-score'); if(el){el.textContent=discScore+'%';el.style.color=dCol;}
+    el=document.getElementById('jd-band');
+    if(el){
+      var bKey = discScore>=70 ? ['j.discOnTrack','ON TRACK'] : discScore>=50 ? ['j.discNeedsWork','NEEDS WORK'] : ['j.discPoor','POOR'];
+      el.textContent = mmT(bKey[0], bKey[1]);
+      el.setAttribute('data-i18n', bKey[0]);
+      el.style.color = dCol;
+      el.style.background = discScore>=70?'rgba(0,200,122,.14)':discScore>=50?'rgba(255,176,32,.14)':'rgba(255,30,60,.14)';
+    }
+    // The two count rules have no natural percentage, so their bar shows the
+    // SHARE OF TRADES that broke the rule. The count itself is printed beside
+    // it, so nothing is hidden behind the proportion.
+    var jdBar = function(id, pct, col){
+      var b = document.getElementById(id);
+      if(b){ b.style.width = Math.max(0, Math.min(100, pct)) + '%'; b.style.background = col; }
+    };
+    jdBar('jd-sl-bar',   slPct,   slPct>=80?'linear-gradient(90deg,#00a06c,#00d68f)':slPct>=50?'linear-gradient(90deg,#C98D14,#ffb020)':'linear-gradient(90deg,#c4213c,#ff4d6a)');
+    jdBar('jd-risk-bar', riskPct, riskPct>=70?'linear-gradient(90deg,#00a06c,#00d68f)':riskPct>=50?'linear-gradient(90deg,#C98D14,#ffb020)':'linear-gradient(90deg,#c4213c,#ff4d6a)');
+    jdBar('jd-over-bar', total>0?Math.round(overLev/total*100):0, overLev===0?'linear-gradient(90deg,#00a06c,#00d68f)':'linear-gradient(90deg,#c4213c,#ff4d6a)');
+    jdBar('jd-rev-bar',  total>0?Math.round(revCount/total*100):0, revCount===0?'linear-gradient(90deg,#00a06c,#00d68f)':'linear-gradient(90deg,#c4213c,#ff4d6a)');
     el=document.getElementById('jd-sl'); if(el){el.textContent=slPct+'%';el.style.color=slPct>=80?'var(--green)':'var(--red)';}
-    el=document.getElementById('jd-sl-dot'); if(el) el.style.background=slPct>=80?'var(--green)':'var(--red)';
     el=document.getElementById('jd-risk'); if(el){el.textContent=riskPct+'%';el.style.color=riskPct>=70?'var(--green)':'var(--amber)';}
-    el=document.getElementById('jd-risk-dot'); if(el) el.style.background=riskPct>=70?'var(--green)':'var(--amber)';
     el=document.getElementById('jd-over'); if(el){el.textContent=overLev+mmT('j.tradesSuffix',' trades');el.style.color=overLev===0?'var(--green)':'var(--red)';}
-    el=document.getElementById('jd-over-dot'); if(el) el.style.background=overLev===0?'var(--green)':'var(--red)';
     el=document.getElementById('jd-rev'); if(el){el.textContent=revCount===0?'✓ Clean':revCount+' detected';el.style.color=revCount===0?'var(--green)':'var(--red)';}
-    el=document.getElementById('jd-rev-dot'); if(el) el.style.background=revCount===0?'var(--green)':'var(--red)';
     var tipEl=document.getElementById('j-disc-tip');
     if(tipEl&&(overLev>0||revCount>0)){
       var tips=[];
