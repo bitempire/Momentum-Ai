@@ -1410,6 +1410,26 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 .jam-k{font-size:8px;color:var(--text3);letter-spacing:.3px;white-space:nowrap;}
 .jsec{font-size:10px;letter-spacing:.7px;color:var(--text3);margin:12px 3px 6px;}
 /* ══════════════════════════════════════════════════════════
+   BOTTOM BLOCK. 9 Aug 2026. "FEATURE AND THREE".
+   Monthly return is the one figure worth reading first, so it takes a wide
+   card with a large number and the other three sit under it as small cells.
+   The card, its border, the figure and the bar ALL FOLLOW ONE CLASS, win or
+   loss, so none of them can end up disagreeing about the month.
+   ══════════════════════════════════════════════════════════ */
+.jbf{position:relative;overflow:hidden;border-radius:12px;padding:12px;margin-bottom:8px;}
+.jbf.loss{background:linear-gradient(115deg,rgba(255,30,60,.15),rgba(255,30,60,.03) 55%,rgba(255,255,255,.02));border:1px solid rgba(255,30,60,.20);}
+.jbf.win{background:linear-gradient(115deg,rgba(0,214,143,.15),rgba(0,214,143,.03) 55%,rgba(255,255,255,.02));border:1px solid rgba(0,214,143,.22);}
+.jbf-k{font-size:9px;letter-spacing:.9px;color:var(--text3);font-weight:700;text-transform:uppercase;}
+.jbf-v{font-family:'Orbitron',ui-monospace,Menlo,monospace;font-size:24px;font-weight:800;line-height:1;margin-top:7px;white-space:nowrap;}
+.jbf-s{font-size:10px;color:var(--text3);margin-top:6px;white-space:nowrap;}
+.jbf-t{height:5px;border-radius:3px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:10px;}
+.jbf-f{display:block;height:5px;border-radius:3px;width:0%;transform-origin:left;animation:jmbGrow .9s cubic-bezier(.22,.61,.36,1) both;}
+.jbg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;}
+.jbc{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:9px 7px;text-align:center;}
+.jbc.off{opacity:.45;}
+.jbc-v{font-family:'Orbitron',ui-monospace,Menlo,monospace;font-size:13px;font-weight:800;white-space:nowrap;}
+.jbc-k{font-size:8px;color:var(--text3);letter-spacing:.4px;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+/* ══════════════════════════════════════════════════════════
    RECENT TRADE CARDS. 9 Aug 2026.
    Each trade is its own card with a solid edge in its result colour and a
    FAINT WASH OF THE SAME COLOUR drifting across the card over 14 seconds, so
@@ -2413,12 +2433,34 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         <div id="j-recent-trades"><div style="text-align:center;font-size:12px;color:var(--text3);padding:16px 0;" data-i18n="j.noTrades">No trades yet</div></div>
       </div>
 
-      <!-- BOTTOM 4 CARDS -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
-        <div class="section-card" style="padding:8px;"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;" id="j-best-pair-label" data-i18n="j.bestPair">Best Pair</div><div id="j-best-pair" style="font-family:'Orbitron',sans-serif;font-size:13px;font-weight:800;color:#FFB020;">—</div><div id="j-best-pair-sub" style="font-size:10px;color:var(--text3);margin-top:2px;">—</div></div>
-        <div class="section-card" style="padding:8px;"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;" data-i18n="j.bestSession">Best Session</div><div id="j-best-session2" style="font-family:'Orbitron',sans-serif;font-size:13px;font-weight:800;color:var(--text);">—</div><div style="font-size:10px;color:var(--text3);margin-top:2px;" data-i18n="j.byAvg">By avg profit</div></div>
-        <div class="section-card" style="padding:8px;"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;" data-i18n="j.winStreak">Win Streak</div><div id="j-win-streak" style="font-family:'Orbitron',sans-serif;font-size:13px;font-weight:800;color:#00C87A;">—</div><div style="font-size:10px;color:var(--text3);margin-top:2px;" data-i18n="j.curStreak">Current streak</div></div>
-        <div class="section-card" style="padding:8px;"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;" data-i18n="j.monthlyRet">Monthly Return</div><div id="j-monthly-return" style="font-family:'Orbitron',sans-serif;font-size:13px;font-weight:800;color:#00C87A;">—</div><div id="j-monthly-label" style="font-size:10px;color:var(--text3);margin-top:2px;" data-i18n="j.thisMonth">This month</div></div>
+      <!-- ══════════════════════════════════════════════════
+           BOTTOM BLOCK. Monthly return leads on the percentage rather than
+           the raw amount, because a percentage means the same thing on any
+           account size and the amount sits under it either way.
+           BEST SESSION IS LEFT EXACTLY AS IT WAS, dimmed and empty. Nothing
+           in the app computes it and nothing here pretends otherwise; what to
+           do about it is still Haikal's decision.
+           ══════════════════════════════════════════════════ -->
+      <div class="jbf loss" id="j-month-card">
+        <div class="jbf-k" data-i18n="j.monthlyRet">Monthly Return</div>
+        <div class="jbf-v" id="j-monthly-return">-</div>
+        <div class="jbf-s" id="j-monthly-label" data-i18n="j.thisMonth">This month</div>
+        <div class="jbf-t"><span class="jbf-f" id="j-month-bar"></span></div>
+      </div>
+      <div class="jbg">
+        <div class="jbc">
+          <div class="jbc-v" id="j-best-pair" style="color:#FFB020;">-</div>
+          <div class="jbc-k" id="j-best-pair-label" data-i18n="j.bestPair">Best Pair</div>
+          <div style="display:none;" id="j-best-pair-sub"></div>
+        </div>
+        <div class="jbc off">
+          <div class="jbc-v" id="j-best-session2" style="color:var(--text3);">-</div>
+          <div class="jbc-k" data-i18n="j.bestSession">Best Session</div>
+        </div>
+        <div class="jbc">
+          <div class="jbc-v" id="j-win-streak" style="color:#00d68f;">-</div>
+          <div class="jbc-k" data-i18n="j.longestStreak">Longest Streak</div>
+        </div>
       </div>
 
     </div>
@@ -14874,7 +14916,12 @@ async function loadJournalData() {
     trades.forEach(function(t){ var s=t.symbol||'—'; if(!pairMap[s]) pairMap[s]={pnl:0,wins:0,total:0}; pairMap[s].pnl+=parseFloat(t.profit||0); pairMap[s].total++; if(parseFloat(t.profit||0)>0) pairMap[s].wins++; });
     var bestPair=Object.keys(pairMap).sort(function(a,b){return pairMap[b].pnl-pairMap[a].pnl;})[0];
     if(bestPair){
-      el=document.getElementById('j-best-pair'); if(el) el.textContent=bestPair;
+      // The cell is a third of the old width, so the FIGURE takes the value slot
+      // and the symbol moves into the label beneath it. Two decimals, because
+      // rounding to zero printed "-$0" on a real -0.08 loss.
+      var bpPnl = pairMap[bestPair].pnl;
+      el=document.getElementById('j-best-pair');
+      if(el){ el.textContent=(bpPnl>=0?'+$':'-$')+Math.abs(bpPnl).toFixed(2); el.style.color = bpPnl>=0 ? '#00d68f' : '#FFB020'; }
       // 8 Aug 2026. The list is sorted by profit and the top one is taken, so
       // when EVERY pair is negative the least-bad one gets called "Best Pair".
       // That is arithmetically right and reads as nonsense. The number stays,
@@ -14885,16 +14932,35 @@ async function loadJournalData() {
       if(bpLab){
         if(pairMap[bestPair].pnl < 0){
           bpLab.removeAttribute('data-i18n');
-          bpLab.textContent = 'Least loss';
+          bpLab.textContent = mmT('j.leastLoss','Least loss') + ' ' + bestPair;
         } else {
           bpLab.setAttribute('data-i18n','j.bestPair');
-          bpLab.textContent = mmT('j.bestPair','Best Pair');
+          bpLab.textContent = mmT('j.bestPair','Best Pair') + ' ' + bestPair;
         }
       }
-      el=document.getElementById('j-best-pair-sub'); if(el) el.textContent=(pairMap[bestPair].pnl>=0?'+$':'-$')+Math.abs(pairMap[bestPair].pnl).toFixed(0)+' · '+Math.round(pairMap[bestPair].wins/pairMap[bestPair].total*100)+mmT('j.wrSuffix','% WR');
     }
-    el=document.getElementById('j-win-streak'); if(el) el.textContent=maxStreak+mmT('j.tradesSuffix',' trades');
-    el=document.getElementById('j-monthly-return'); if(el){el.textContent=(monthPnl>=0?'+':'')+monthPnl.toFixed(2)+' ('+monthRet+'%)';el.style.color=monthPnl>=0?'var(--green)':'var(--red)';}
+    // maxStreak is the LONGEST run, not the current one. The old card said
+    // "Current streak" underneath it, which was simply the wrong label.
+    el=document.getElementById('j-win-streak'); if(el) el.textContent=maxStreak;
+    // MONTHLY RETURN. The percentage leads because it means the same thing on
+    // any account size; the amount sits underneath. One class drives the card,
+    // the border, the figure and the bar together.
+    var mWin = monthPnl >= 0;
+    var mCard = document.getElementById('j-month-card');
+    if(mCard) mCard.className = 'jbf ' + (mWin ? 'win' : 'loss');
+    el=document.getElementById('j-monthly-return');
+    if(el){ el.textContent=(mWin?'+':'')+(monthRet==='—'?'—':monthRet+'%'); el.style.color=mWin?'#00d68f':'#ff4d6a'; }
+    el=document.getElementById('j-monthly-label');
+    if(el){ el.removeAttribute('data-i18n'); el.textContent=(mWin?'+$':'-$')+Math.abs(monthPnl).toFixed(2)+' '+mmT('j.thisMonth','This month'); }
+    // The bar has to fill against SOMETHING, and there is no natural ceiling on
+    // a return. Fifty percent is the scale in either direction, so a good month
+    // and a bad month of the same size draw the same length.
+    el=document.getElementById('j-month-bar');
+    if(el){
+      var mPct = monthRet==='—' ? 0 : Math.min(100, Math.abs(parseFloat(monthRet))/50*100);
+      el.style.width = mPct + '%';
+      el.style.background = mWin ? 'linear-gradient(90deg,#00a06c,#4bf0b6)' : 'linear-gradient(90deg,#c4213c,#ff4d6a)';
+    }
     // Recent trades list
     var tradeList=document.getElementById('j-recent-trades');
     if(tradeList){
