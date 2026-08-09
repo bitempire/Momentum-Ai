@@ -14040,9 +14040,28 @@ async function loadLivePositions(){
       var mid = ((p.volume!=null)?p.volume:'')+mmT('j.lotSuffix',' lot')+
                 ' \u00b7 '+fmtPrice(sym, now);
       var body;
-      if(lo === null || hi === null || lo === hi){
-        // Neither level set, or a degenerate range. Say so rather than drawing
-        // a track with invented ends.
+      if((lo === null || hi === null || lo === hi) && entry > 0){
+        // NEITHER LEVEL SET: no track is possible, so draw the TRAVEL BAR.
+        // Entry is the centre and the scale is a fixed half a percent of entry
+        // either way, labelled as a percentage so the ends cannot be mistaken
+        // for a stop or a target. The move is measured IN THE TRADE'S FAVOUR,
+        // so a sell travels right as price falls, matching the track's rule
+        // that right is always the good end.
+        var span = entry * 0.005;
+        var moved = isBuy ? (now - entry) : (entry - now);
+        var tp2 = 50 + (moved / span) * 50;
+        if(isNaN(tp2)) tp2 = 50;
+        tp2 = Math.max(0, Math.min(100, tp2));
+        var tfl = Math.min(50, tp2), tfw = Math.abs(tp2 - 50);
+        body = '<div class="mmlt-tv">'+
+            '<span class="mmlt-fill" style="left:'+tfl.toFixed(2)+'%;width:'+tfw.toFixed(2)+'%;background:'+(win?'rgba(0,214,143,.55)':'rgba(255,77,106,.55)')+';"></span>'+
+            '<span class="mmlt-mid"></span>'+
+            '<span class="mmlt-now" style="left:'+tp2.toFixed(2)+'%;"></span>'+
+          '</div>'+
+          '<div class="mmlt-l"><span>-0.5%</span><span class="mid">'+mid+'</span><span>+0.5%</span></div>';
+      } else if(lo === null || hi === null || lo === hi){
+        // No levels AND no usable entry price, so even the travel bar has no
+        // centre to anchor to. Fall back to plain text rather than guess one.
         body = '<div class="mmlt-flat">'+fmtPrice(sym, entry)+' \u2192 '+fmtPrice(sym, now)+
                ' \u00b7 '+((p.volume!=null)?p.volume:'')+mmT('j.lotSuffix',' lot')+
                ' \u00b7 SL \u2014 TP \u2014</div>';
@@ -20554,6 +20573,14 @@ function ntFlipLead(m){
    one is the one allowed to shrink. The two levels never truncate. */
 .mmlt-l .mid{color:var(--text2);text-align:center;min-width:0;overflow:hidden;text-overflow:ellipsis;}
 .mmlt-flat{font-size:9.5px;color:var(--text3);font-family:'Orbitron',ui-monospace,Menlo,monospace;margin-top:9px;}
+/* TRAVEL BAR: shown when a position has NEITHER a stop nor a target, so there
+   is no track to draw. Entry sits at the centre and the scale is a fixed
+   PLUS AND MINUS HALF A PERCENT OF ENTRY, labelled as a percentage precisely so
+   the ends cannot be read as levels. Same orientation rule as the track above:
+   RIGHT IS ALWAYS IN THE TRADE'S FAVOUR, so a sell moves right as price falls.
+   Two axis conventions on one screen would be worse than none. */
+.mmlt-tv{position:relative;height:6px;border-radius:3px;margin:14px 0 7px;background:rgba(255,255,255,.07);}
+.mmlt-tv .mmlt-mid{position:absolute;left:50%;top:-5px;width:2px;height:16px;margin-left:-1px;background:rgba(255,255,255,.45);border-radius:1px;}
 
 .mm-mkt-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
 .mm-mkt-card{position:relative;overflow:hidden;transform-style:preserve-3d;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:8px 10px 15px;}
