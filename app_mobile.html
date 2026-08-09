@@ -2233,14 +2233,25 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <div id="mob-tv-container" style="width:100%;min-height:320px;border-radius:10px;overflow:hidden;"></div>
 
       <!-- LIVE BALANCE / EQUITY STRIP -->
-      <div style="display:flex;gap:8px;margin-top:12px;">
-        <div style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px 12px;">
-          <div style="font-size:11px;color:var(--text2);margin-bottom:4px;" data-i18n="chart.balance">Balance</div>
-          <div id="mob-chart-balance" style="font-size:17px;font-weight:800;color:var(--text3);">—</div>
+      <!-- 9 Aug 2026: rebuilt on the Home price card treatment. IDLE IS BLUE on
+           both tiles. While a basket is open the equity tile goes green above
+           balance and red below, and it FLIPS ONLY WHEN THE FIGURE ACTUALLY
+           CHANGES, with a 4 second cooldown, which is the rule the Home market
+           cards already use. The balance tile stays blue in every state: a
+           balance has no direction of its own, only equity moves against it.
+           Both ids are unchanged so nothing else had to be touched. -->
+      <div class="mmb-strip">
+        <div class="mmb-card idle" id="mob-bal-card">
+          <div class="mmb-h"><span class="mmb-lbl" data-i18n="chart.balance">Balance</span></div>
+          <div class="mmb-v" id="mob-chart-balance">—</div>
+          <span class="mmb-bloom"></span>
+          <span class="mmb-line"><span></span></span>
         </div>
-        <div style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px 12px;">
-          <div style="font-size:11px;color:var(--text2);margin-bottom:4px;" data-i18n="chart.equity">Equity</div>
-          <div id="mob-chart-equity" style="font-size:17px;font-weight:800;color:var(--text3);">—</div>
+        <div class="mmb-card idle" id="mob-eq-card">
+          <div class="mmb-h"><span class="mmb-lbl" data-i18n="chart.equity">Equity</span><span class="mmb-chg" id="mob-eq-chg"></span></div>
+          <div class="mmb-v" id="mob-chart-equity">—</div>
+          <span class="mmb-bloom"></span>
+          <span class="mmb-line"><span></span></span>
         </div>
       </div>
 
@@ -13959,6 +13970,14 @@ async function loadAFTPrices() {
   return true;
 }
 
+// The Chart tab equity tile has to know whether a basket is genuinely open,
+// because equity can rest exactly on balance for a moment while one runs.
+// Set here from the row count rather than inferred from the numbers, and the
+// tile is repainted at once so its state never waits for the next balance poll.
+function mmSetOpenPos(n){
+  window._mmOpenPos = n;
+  if(typeof renderChartEquityStrip === 'function') renderChartEquityStrip();
+}
 // Reads real open positions from Supabase (data worker fills this).
 async function loadLivePositions(){
   if(!db) return;
@@ -13969,6 +13988,7 @@ async function loadLivePositions(){
   if(!mt5){
     box.innerHTML = '<div style="text-align:center;font-size:12px;color:var(--text3);padding:16px 0;">'+mmT('lp.connect','Connect your MT5 account')+'</div>';
     mmaiShowCloseAll(false);
+    mmSetOpenPos(0);
     if(totalEl){ totalEl.textContent='—'; totalEl.style.color='var(--text3)'; }
     return;
   }
@@ -13978,9 +13998,11 @@ async function loadLivePositions(){
     if(!rows.length){
       box.innerHTML = '<div style="text-align:center;font-size:12px;color:var(--text3);padding:16px 0;">'+mmT('lp.noPositions','No open positions')+'</div>';
       mmaiShowCloseAll(false);
+      mmSetOpenPos(0);
       if(totalEl){ totalEl.textContent='$0.00'; totalEl.style.color='var(--text3)'; }
       return;
     }
+    mmSetOpenPos(rows.length);
     var html=''; var total=0;
     rows.forEach(function(p){
       var profit = parseFloat(p.profit)||0; total += profit;
@@ -14417,23 +14439,36 @@ async function loadPastSignals(){
       box.innerHTML = '<div style="text-align:center;font-size:12px;color:var(--text3);padding:16px 0;">'+mmT('ps.none','No past signals yet')+'</div>';
       return;
     }
+    // 9 Aug 2026: these rows now use the JOURNAL RECENT TRADE CARD, .jrt-c,
+    // rather than the old trade-item row. The edge and the drifting wash both
+    // hang off one win/loss class so the two can never disagree. The query
+    // already carried .limit(10), so the last ten is what it always fetched.
     var html = '';
     rows.forEach(function(r){
       var side   = (r.side||'').toString().toUpperCase();
       var isBuy  = (side !== 'SELL');
-      var tint   = isBuy ? 'var(--green)' : 'var(--red)';
-      var bg     = isBuy ? 'rgba(0,200,122,0.12)' : 'rgba(255,30,60,0.10)';
       var profit = parseFloat(r.profit || 0);
-      var pColor = profit >= 0 ? 'var(--green)' : 'var(--red)';
+      var win    = profit > 0;
       var lot    = (r.lot != null) ? parseFloat(r.lot).toFixed(2) : '\u2014';
       var sym    = displaySymbol(r.symbol);
-      html += '<div class="trade-item">'+
-        '<div class="trade-icon" style="background:'+bg+';display:flex;align-items:center;justify-content:center;">'+signalArrowSvg(isBuy, tint)+'</div>'+
-        '<div class="trade-info">'+
-          '<div class="trade-pair">'+sym+' <span style="font-size:10px;color:'+tint+';font-weight:700;">'+(isBuy?mmT('sig.buy','BUY'):mmT('sig.sell','SELL'))+'</span></div>'+
-          '<div class="trade-meta">'+lot+' lot \u00b7 '+signalTimeAgo(r.closed_at)+'</div>'+
-        '</div>'+
-        '<div><div class="trade-pnl" style="color:'+pColor+';font-weight:800;">'+(profit>=0?'+':'')+'$'+profit.toFixed(2)+'</div></div>'+
+      // new Date(null) is the epoch, not an invalid date, so a missing
+      // closed_at would print 1/1 rather than nothing. Guard the value first.
+      var d      = r.closed_at ? new Date(r.closed_at) : null;
+      var dateStr= (d && !isNaN(d.getTime())) ? ((d.getMonth()+1)+'/'+d.getDate()) : '';
+      var badge  = isBuy
+        ? '<span class="jrt-side" style="background:rgba(0,200,122,.12);color:#00C87A;">'+mmT('sig.buy','BUY')+'</span>'
+        : '<span class="jrt-side" style="background:rgba(255,30,60,.12);color:#ff4d6a;">'+mmT('sig.sell','SELL')+'</span>';
+      html += '<div class="jrt-c '+(win?'win':'loss')+'">'+
+        '<span class="jrt-wash"></span>'+
+        '<span class="jrt-edge"></span>'+
+        '<span class="jrt-m">'+
+          '<span class="jrt-top"><span class="jrt-sym">'+sym+'</span>'+badge+'</span>'+
+          '<span class="jrt-meta">'+lot+mmT('j.lotSuffix',' lot')+'</span>'+
+        '</span>'+
+        '<span class="jrt-rt">'+
+          '<span class="jrt-v" style="color:'+(win?'#00d68f':'#ff4d6a')+';">'+(profit===0?'$':(win?'+$':'-$'))+Math.abs(profit).toFixed(2)+'</span>'+
+          '<span class="jrt-d">'+dateStr+'</span>'+
+        '</span>'+
       '</div>';
     });
     box.innerHTML = html;
@@ -14474,27 +14509,62 @@ function loadAccountStats() {
     bEl.textContent = '$'+parseFloat(activeAccount.balance).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2});
   }
 }
-// Chart tab: Balance + Equity tiles. Equity is white when equal to balance,
-// green when above (floating profit), red when below (floating loss). Strict to the cent.
+// Chart tab: Balance + Equity tiles, price-card treatment. 9 Aug 2026.
+// THREE STATES, all carried by one class per card:
+//   idle - no basket open. Both tiles blue.
+//   up   - basket open and equity above balance. Green.
+//   dn   - basket open and equity below balance. Red.
+// LIVE IS DECIDED BY window._mmOpenPos, which loadLivePositions sets, not by
+// comparing the numbers. Equity can sit exactly on balance for a moment with a
+// basket running, and reading that as idle would flicker the card.
+// THE FLIP FIRES ONLY WHEN THE FIGURE ACTUALLY CHANGED, with a 4 second
+// cooldown, and the new value lands at the 300ms midpoint so it appears on the
+// far side of the flip. Without the change test it would flip on every poll
+// forever; without the midpoint the number would change before the card turned.
 function renderChartEquityStrip() {
-  var balEl = document.getElementById('mob-chart-balance');
-  var eqEl  = document.getElementById('mob-chart-equity');
+  var balEl   = document.getElementById('mob-chart-balance');
+  var eqEl    = document.getElementById('mob-chart-equity');
   if(!balEl || !eqEl) return;
+  var balCard = document.getElementById('mob-bal-card');
+  var eqCard  = document.getElementById('mob-eq-card');
+  var chgEl   = document.getElementById('mob-eq-chg');
+  if(balCard) balCard.className = 'mmb-card idle';
   if(!activeAccount || activeAccount.balance==null || activeAccount.balance==='') {
-    balEl.textContent='—'; balEl.style.color='var(--text3)';
-    eqEl.textContent='—';  eqEl.style.color='var(--text3)';
+    balEl.textContent = '\u2014';
+    eqEl.textContent  = '\u2014';
+    if(chgEl) chgEl.textContent = '';
+    if(eqCard) eqCard.className = 'mmb-card idle';
     return;
   }
   var bal = parseFloat(activeAccount.balance)||0;
   var eq  = (activeAccount.equity!=null && activeAccount.equity!=='') ? (parseFloat(activeAccount.equity)||0) : bal;
   var fmt = function(n){ return '$'+n.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2}); };
   balEl.textContent = fmt(bal);
-  balEl.style.color = 'var(--text)';
-  eqEl.textContent = fmt(eq);
+  // Compare in whole cents, strict, the way this function always has.
   var balC = Math.round(bal*100), eqC = Math.round(eq*100);
-  if(eqC > balC)      eqEl.style.color = 'var(--green)';
-  else if(eqC < balC) eqEl.style.color = 'var(--red)';
-  else                eqEl.style.color = 'var(--text)';
+  var diff = (eqC - balC)/100;
+  var live = (window._mmOpenPos||0) > 0;
+  var state = !live ? 'idle' : (eqC > balC ? 'up' : (eqC < balC ? 'dn' : 'idle'));
+  // The sign is built from the sign of diff plus the absolute value. Gluing a
+  // '+' onto an already formatted negative printed a loss as a gain on the Home
+  // card on 1 Aug and must not be repeated here.
+  var chgTxt = !live ? '' : (diff === 0 ? fmt(0) : (diff < 0 ? '-' : '+') + fmt(Math.abs(diff)));
+  var apply = function(){
+    eqEl.textContent = fmt(eq);
+    if(chgEl) chgEl.textContent = chgTxt;
+    if(eqCard) eqCard.className = 'mmb-card ' + state;
+  };
+  var prev = window._mmLastEqC;
+  window._mmLastEqC = eqC;
+  // undefined prev means this is the first paint, which is not a change.
+  var changed = (prev !== undefined && prev !== eqC);
+  if(!live || !changed || !eqCard){ apply(); return; }
+  if(Date.now() - (window._mmLastEqFlip||0) < 4000){ apply(); return; }
+  window._mmLastEqFlip = Date.now();
+  eqCard.classList.remove('mmb-flip');
+  void eqCard.offsetWidth;
+  eqCard.classList.add('mmb-flip');
+  setTimeout(apply, 300);
 }
 
 // ── MORE TAB (member card + leaderboard) ──
@@ -20380,6 +20450,37 @@ function ntFlipLead(m){
 .mm-tile.t2.dn{border-left-color:#e03050;}
 .mm-tile.t2.dn i{color:#ff8fa3;}
 .mm-tile.t3{border-left:2px solid #ff8fa3;}
+/* CHART TAB balance + equity tiles. 9 Aug 2026.
+   Same treatment as the Home price card above: surface fill, top hairline,
+   9px letter-spaced label, Orbitron figure, blurred bloom and the 2px flowing
+   line with feathered ends. Three states carried by ONE class per card so the
+   bloom, the line and the figure can never disagree.
+     idle - nothing running. Blue.
+     up   - basket open, equity above balance. Green.
+     dn   - basket open, equity below balance. Red.
+   Reuses mmMktFlow and mmMktFlip from the market cards below rather than
+   declaring a second copy of either. */
+.mmb-strip{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;}
+.mmb-card{position:relative;overflow:hidden;transform-style:preserve-3d;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:8px 10px 15px;}
+.mmb-card::before{content:'';position:absolute;left:10px;right:10px;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);}
+.mmb-h{display:flex;align-items:center;justify-content:space-between;gap:6px;min-height:13px;}
+.mmb-lbl{color:var(--text3);font-size:9px;letter-spacing:.06em;font-weight:700;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mmb-chg{font-size:9px;font-weight:700;white-space:nowrap;font-family:'Orbitron',ui-monospace,Menlo,monospace;}
+.mmb-v{position:relative;z-index:1;color:var(--text);font-size:16px;margin-top:2px;letter-spacing:-.2px;font-family:'Orbitron',sans-serif;white-space:nowrap;}
+.mmb-bloom{position:absolute;left:0;right:0;bottom:0;height:34px;pointer-events:none;filter:blur(9px);}
+.mmb-line{position:absolute;left:0;right:0;bottom:0;height:2px;overflow:hidden;pointer-events:none;-webkit-mask-image:linear-gradient(90deg,transparent,#000 22%,#000 78%,transparent);mask-image:linear-gradient(90deg,transparent,#000 22%,#000 78%,transparent);}
+.mmb-line > span{position:absolute;inset:0;background-size:220% 100%;animation:mmMktFlow 6s linear infinite;}
+.mmb-card.idle .mmb-line > span{background:linear-gradient(90deg,rgba(59,130,246,0) 0%,rgba(59,130,246,.35) 18%,rgba(59,130,246,.75) 38%,rgba(59,130,246,.95) 50%,rgba(59,130,246,.75) 62%,rgba(59,130,246,.35) 82%,rgba(59,130,246,0) 100%);}
+.mmb-card.idle .mmb-bloom{background:linear-gradient(180deg,rgba(59,130,246,0) 0%,rgba(59,130,246,.10) 45%,rgba(59,130,246,.28) 100%);}
+.mmb-card.idle .mmb-chg{color:#7aa9f8;}
+.mmb-card.up .mmb-line > span{background:linear-gradient(90deg,rgba(0,214,143,0) 0%,rgba(0,214,143,.35) 18%,rgba(0,214,143,.75) 38%,rgba(0,214,143,.95) 50%,rgba(0,214,143,.75) 62%,rgba(0,214,143,.35) 82%,rgba(0,214,143,0) 100%);}
+.mmb-card.up .mmb-bloom{background:linear-gradient(180deg,rgba(0,214,143,0) 0%,rgba(0,214,143,.10) 45%,rgba(0,214,143,.30) 100%);}
+.mmb-card.up .mmb-v,.mmb-card.up .mmb-chg{color:#00d68f;}
+.mmb-card.dn .mmb-line > span{background:linear-gradient(90deg,rgba(255,77,106,0) 0%,rgba(255,77,106,.35) 18%,rgba(255,77,106,.75) 38%,rgba(255,77,106,.95) 50%,rgba(255,77,106,.75) 62%,rgba(255,77,106,.35) 82%,rgba(255,77,106,0) 100%);}
+.mmb-card.dn .mmb-bloom{background:linear-gradient(180deg,rgba(255,77,106,0) 0%,rgba(255,77,106,.10) 45%,rgba(255,77,106,.30) 100%);}
+.mmb-card.dn .mmb-v,.mmb-card.dn .mmb-chg{color:#ff4d6a;}
+.mmb-flip{animation:mmMktFlip .62s ease-in-out;}
+@media (prefers-reduced-motion: reduce){.mmb-flip{animation:none;}.mmb-line > span{animation:none;}}
 .mm-mkt-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
 .mm-mkt-card{position:relative;overflow:hidden;transform-style:preserve-3d;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:8px 10px 15px;}
 .mm-mkt-card::before{content:'';position:absolute;left:10px;right:10px;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);}
