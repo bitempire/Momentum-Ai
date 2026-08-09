@@ -14003,27 +14003,75 @@ async function loadLivePositions(){
       return;
     }
     mmSetOpenPos(rows.length);
+    // 9 Aug 2026: each position is now a STOP AND TARGET TRACK rather than a
+    // flat row. sl, tp and current_price have been arriving in this same query
+    // since bridge v1.21 and were never read - the select is select('*').
     var html=''; var total=0;
     rows.forEach(function(p){
       var profit = parseFloat(p.profit)||0; total += profit;
-      var win = profit>=0;
+      var win  = profit>=0;
       var side = (p.side||'').toString().toUpperCase();
-      var sideColor = (side==='SELL') ? 'var(--red)' : 'var(--green)';
-      var pColor = win ? 'var(--green)' : 'var(--red)';
-      var op = (p.open_price!=null) ? p.open_price : '';
-      var vol = (p.volume!=null) ? p.volume : '';
-      // CLOSE FEATURE: the ticket is already in the row object (select *),
-      // it just was never rendered. Carry it so a double-tap can name it.
-      var _tk = (p.ticket!=null) ? String(p.ticket) : '';
+      var isBuy = (side !== 'SELL');
+      var pColor = win ? '#00d68f' : '#ff4d6a';
+      var sym  = p.symbol || '';
+      var entry = parseFloat(p.open_price);
+      var now   = parseFloat(p.current_price);
+      var sl    = parseFloat(p.sl);
+      var tp    = parseFloat(p.tp);
+      // MT5 RETURNS 0 FOR POSITION_SL AND POSITION_TP WHEN NOTHING IS SET at
+      // the broker, so a zero here means "no level", not "a level at zero".
+      // Drawing it would put a stop at the far edge of the track and read as a
+      // trade about to be stopped out.
+      var hasSl = !isNaN(sl) && sl > 0;
+      var hasTp = !isNaN(tp) && tp > 0;
+      if(isNaN(entry) || entry <= 0) entry = 0;
+      if(isNaN(now)   || now   <= 0) now = entry;
+      // The axis: 0 is the stop end, 100 the target end, for a buy and a sell
+      // alike. When only one level exists the other end is EXTRAPOLATED FOR
+      // SCALE ONLY, never labelled, and that end of the bar fades out.
+      var lo = null, hi = null, tcls = '';
+      if(hasSl && hasTp){ lo = sl; hi = tp; }
+      else if(hasSl && entry > 0){ lo = sl; hi = sl + (entry - sl) * 4; tcls = ' noTp'; }
+      else if(hasTp && entry > 0){ hi = tp; lo = tp + (entry - tp) * 4; tcls = ' noSl'; }
+      var _tk  = (p.ticket!=null) ? String(p.ticket) : '';
       var _lbl = ((p.symbol||'')+' '+side).replace(/'/g,'');
-      html += '<div class="trade-item" data-ticket="'+_tk+'"'+
+      var sideStyle = isBuy ? 'background:rgba(0,200,122,.12);color:#00C87A;'
+                            : 'background:rgba(255,30,60,.12);color:#ff4d6a;';
+      var mid = ((p.volume!=null)?p.volume:'')+mmT('j.lotSuffix',' lot')+
+                ' \u00b7 '+fmtPrice(sym, now);
+      var body;
+      if(lo === null || hi === null || lo === hi){
+        // Neither level set, or a degenerate range. Say so rather than drawing
+        // a track with invented ends.
+        body = '<div class="mmlt-flat">'+fmtPrice(sym, entry)+' \u2192 '+fmtPrice(sym, now)+
+               ' \u00b7 '+((p.volume!=null)?p.volume:'')+mmT('j.lotSuffix',' lot')+
+               ' \u00b7 SL \u2014 TP \u2014</div>';
+      } else {
+        var pct = function(v){
+          var r = (v - lo) / (hi - lo) * 100;
+          if(isNaN(r)) r = 0;
+          return Math.max(0, Math.min(100, r));
+        };
+        var pe = pct(entry), pn = pct(now);
+        var fl = Math.min(pe, pn), fw = Math.abs(pn - pe);
+        body = '<div class="mmlt-track'+tcls+'">'+
+            '<span class="mmlt-fill" style="left:'+fl.toFixed(2)+'%;width:'+fw.toFixed(2)+'%;background:'+(win?'rgba(0,214,143,.55)':'rgba(255,77,106,.55)')+';"></span>'+
+            '<span class="mmlt-pin" style="left:'+pe.toFixed(2)+'%;"></span>'+
+            '<span class="mmlt-now" style="left:'+pn.toFixed(2)+'%;"></span>'+
+          '</div>'+
+          '<div class="mmlt-l">'+
+            '<span>SL '+(hasSl?fmtPrice(sym, sl):'\u2014')+'</span>'+
+            '<span class="mid">'+mid+'</span>'+
+            '<span>TP '+(hasTp?fmtPrice(sym, tp):'\u2014')+'</span>'+
+          '</div>';
+      }
+      html += '<div class="mmlt" data-ticket="'+_tk+'"'+
         (_tk ? ' onclick="mmaiTapPosition(\''+_tk+'\',\''+_lbl+'\')" style="cursor:pointer;"' : '')+'>'+
-        '<div class="trade-icon" style="background:'+(win?'rgba(0,200,122,0.12)':'rgba(255,30,60,0.10)')+';">'+(side==='SELL'?'\uD83D\uDCC9':'\uD83D\uDCC8')+'</div>'+
-        '<div class="trade-info">'+
-          '<div class="trade-pair">'+p.symbol+' <span style="font-size:10px;color:'+sideColor+';font-weight:700;">'+mmSide(side)+'</span></div>'+
-          '<div class="trade-meta">Entry: '+op+' \u00b7 '+vol+mmT('j.lotSuffix',' lot')+'</div>'+
+        '<div class="mmlt-h">'+
+          '<div><span class="mmlt-sym">'+sym+'</span><span class="mmlt-side" style="'+sideStyle+'">'+mmSide(side)+'</span></div>'+
+          '<div class="mmlt-p" style="color:'+pColor+';">'+(profit===0?'$':(win?'+$':'-$'))+Math.abs(profit).toFixed(2)+'</div>'+
         '</div>'+
-        '<div><div class="trade-pnl" style="color:'+pColor+';font-weight:800;">'+(win?'+':'')+'$'+profit.toFixed(2)+'</div></div>'+
+        body+
       '</div>';
     });
     box.innerHTML = html;
@@ -20481,6 +20529,32 @@ function ntFlipLead(m){
 .mmb-card.dn .mmb-v,.mmb-card.dn .mmb-chg{color:#ff4d6a;}
 .mmb-flip{animation:mmMktFlip .62s ease-in-out;}
 @media (prefers-reduced-motion: reduce){.mmb-flip{animation:none;}.mmb-line > span{animation:none;}}
+/* LIVE POSITION stop-and-target track. 9 Aug 2026.
+   The axis always runs STOP END on the left to TARGET END on the right, for a
+   buy and for a sell alike, because the percentage is computed as
+   (v - sl) / (tp - sl) and the sign cancels. So red is always the losing end.
+   MT5 REPORTS 0 FOR POSITION_SL AND POSITION_TP WHEN NOTHING IS SET at the
+   broker, so zero is treated as missing and that end of the track FADES OUT
+   rather than drawing a level that does not exist. */
+.mmlt{position:relative;background:rgba(255,255,255,.028);border:1px solid var(--border);border-radius:12px;padding:11px 12px 12px;}
+.mmlt + .mmlt{margin-top:8px;}
+.mmlt-h{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.mmlt-sym{font-size:13px;font-weight:700;}
+.mmlt-side{font-size:8.5px;font-weight:800;padding:2px 5px;border-radius:4px;margin-left:5px;letter-spacing:.3px;}
+.mmlt-p{font-family:'Orbitron',ui-monospace,Menlo,monospace;font-size:14px;font-weight:700;white-space:nowrap;}
+.mmlt-track{position:relative;height:6px;border-radius:3px;margin:14px 0 7px;background:linear-gradient(90deg,rgba(255,77,106,.35),rgba(255,255,255,.10) 45%,rgba(255,255,255,.10) 55%,rgba(0,214,143,.35));}
+.mmlt-track.noTp{background:linear-gradient(90deg,rgba(255,77,106,.35),rgba(255,255,255,.10) 45%,rgba(255,255,255,.05) 78%,rgba(255,255,255,0));}
+.mmlt-track.noSl{background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.05) 22%,rgba(255,255,255,.10) 55%,rgba(0,214,143,.35));}
+.mmlt-fill{position:absolute;top:0;bottom:0;border-radius:3px;}
+.mmlt-pin{position:absolute;top:-5px;width:2px;height:16px;background:rgba(255,255,255,.45);border-radius:1px;}
+.mmlt-now{position:absolute;top:-7px;width:10px;height:20px;margin-left:-5px;border-radius:5px;background:#fff;box-shadow:0 0 10px rgba(255,255,255,.45);}
+.mmlt-l{display:flex;justify-content:space-between;gap:8px;font-size:9px;color:var(--text3);font-family:'Orbitron',ui-monospace,Menlo,monospace;}
+.mmlt-l span{white-space:nowrap;}
+/* Five figure symbols put all three labels near the card width, so the middle
+   one is the one allowed to shrink. The two levels never truncate. */
+.mmlt-l .mid{color:var(--text2);text-align:center;min-width:0;overflow:hidden;text-overflow:ellipsis;}
+.mmlt-flat{font-size:9.5px;color:var(--text3);font-family:'Orbitron',ui-monospace,Menlo,monospace;margin-top:9px;}
+
 .mm-mkt-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
 .mm-mkt-card{position:relative;overflow:hidden;transform-style:preserve-3d;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:8px 10px 15px;}
 .mm-mkt-card::before{content:'';position:absolute;left:10px;right:10px;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);}
