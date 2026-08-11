@@ -19241,7 +19241,7 @@ function mmScanCore(){
   if(!css) return;
 
   var ctx = cv.getContext('2d');
-  var W, H, CX, CY, S, R, F, U, LINK, halo, nuc, band;
+  var W, H, CX, CY, S, R, F, U, LINK, halo, nuc, band, pat = null;
 
   var N = 1100, NODES = 80;
   var pts = [];
@@ -19282,13 +19282,32 @@ function mmScanCore(){
     nuc.addColorStop(0.3,'rgba(255,110,60,0.20)');
     nuc.addColorStop(1,'rgba(150,0,20,0)');
 
-    // THE BAND. Nineteen stops on a curve rather than three, so the light
+    // THE BAND. Thirty one stops on a curve rather than three, so the light
     // runs out instead of stopping. A short gradient over near black leaves a
     // visible edge no matter how faint the last stop is.
     band = ctx.createLinearGradient(0,0,0,H);
-    for(var b=0;b<=18;b++){
-      var q = b/18, a = Math.pow(Math.sin(Math.PI*q),2.5)*0.30;
+    for(var b=0;b<=30;b++){
+      var q = b/30, a = Math.pow(Math.sin(Math.PI*q),2.9)*0.30;
       band.addColorStop(q,'rgba(206,20,40,'+a.toFixed(4)+')');
+    }
+
+    // THE DITHER, and it is the only thing that removes the rings. A slow fade
+    // over near black lands on steps the display cannot sit between, because
+    // there are only 256 levels to work with, so NO number of gradient stops
+    // helps. A faint noise layer breaks the steps up. Built once, here.
+    // Wrapped, because this is decoration. If any of it fails the glow simply
+    // goes back to a plain fade rather than the whole core dying.
+    if(!pat){
+      try {
+        var nz = document.createElement('canvas'); nz.width = nz.height = 96;
+        var nx = nz.getContext('2d'), nd = nx.createImageData(96,96);
+        for(var p2=0;p2<nd.data.length;p2+=4){
+          var vv = (Math.random()*255)|0;
+          nd.data[p2]=vv; nd.data[p2+1]=vv; nd.data[p2+2]=vv; nd.data[p2+3]=255;
+        }
+        nx.putImageData(nd,0,0);
+        pat = ctx.createPattern(nz,'repeat');
+      } catch(e){ pat = null; }
     }
   }
   layout();
@@ -19325,6 +19344,15 @@ function mmScanCore(){
       ctx.globalAlpha = spread;
       ctx.fillStyle = band; ctx.fillRect(0,0,W,H);
       ctx.globalAlpha = 1;
+      // The noise drifts rather than sitting still, or it reads as a texture
+      // laid over the glow instead of disappearing into it.
+      if(pat){
+        ctx.save();
+        ctx.globalAlpha = 0.05*spread;
+        ctx.translate(-((t*40)%96), -((t*26)%96));
+        ctx.fillStyle = pat; ctx.fillRect(0,0,W+96,H+96);
+        ctx.restore();
+      }
     }
 
     var ry = t*SPIN, cy = Math.cos(ry), sy = Math.sin(ry);
