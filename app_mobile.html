@@ -4504,9 +4504,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
     <div class="sub-header">
       <button class="sub-back" onclick="hideSubScreen('sub-scanner')"><i class="ti ti-arrow-left"></i></button>
       <div class="sub-title" data-i18n="scr.scanner">MAI SCANNER</div>
-      <div id="scanner-status-badge" style="margin-left:auto;display:flex;align-items:center;gap:5px;font-size:10px;color:var(--amber);font-weight:700;">
-        <div style="width:6px;height:6px;border-radius:50%;background:var(--amber);"></div>READY
-      </div>
+      <div id="scanner-status-badge" style="margin-left:auto;display:flex;align-items:center;"><canvas id="scan-badge-core" style="display:block;width:22px;height:22px;"></canvas></div>
     </div>
     <div class="sub-content">
 
@@ -4722,7 +4720,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 
 
         <!-- GENERATE REPORT -->
-        <button onclick="generateMAIReport()" style="width:100%;padding:11px;background:transparent;border:1px solid var(--red);border-radius:10px;color:var(--red);font-family:'Orbitron',sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;cursor:pointer;margin-bottom:12px;" data-i18n="scan.genReport">⬇ GENERATE MAI FULL REPORT</button>
+        <button onclick="generateMAIReport()" class="sh-btn" style="margin-bottom:12px;font-family:'Orbitron',sans-serif;font-size:11px;letter-spacing:1.2px;" data-i18n="scan.genReport">GENERATE MAI FULL REPORT</button>
 
       </div>
     </div>
@@ -6548,7 +6546,7 @@ var MM_I18N = {
     'prof.risk3':'3. EA 會依據分析師訊號自動執行交易。', 'prof.risk4':'4. 您有責任隨時監控自己的帳戶。',
     'prof.risk5':'5. Momentum AI 不對任何交易虧損負責。', 'prof.risk6':'6. 啟用自動交易前請確保保證金充足。',
     'prof.risk7':'7. 若您變更 MT5 密碼，EA 將停止運作。', 'prof.riskTitle':'⚠️ 風險聲明',
-    'prof.tapPencil':'點擊鉛筆更換頭像', 'scan.genReport':'⬇ 產生 MAI 完整報告',
+    'prof.tapPencil':'點擊鉛筆更換頭像', 'scan.genReport':'產生 MAI 完整報告',
     'stn.apply':'套用', 'stn.breakeven':'保本',
     'stn.lossBudget':'虧損預算', 'stn.price':'價格',
     'stn.risk':'風險', 'stn.templates':'範本',
@@ -7175,7 +7173,7 @@ var MM_I18N = {
     'prof.risk3':'3. EA 会依据分析师讯号自动执行交易。', 'prof.risk4':'4. 您有责任随时监控自己的账户。',
     'prof.risk5':'5. Momentum AI 不对任何交易亏损负责。', 'prof.risk6':'6. 启用自动交易前请确保保证金充足。',
     'prof.risk7':'7. 若您变更 MT5 密码，EA 将停止运作。', 'prof.riskTitle':'⚠️ 风险声明',
-    'prof.tapPencil':'点击铅笔更换头像', 'scan.genReport':'⬇ 产生 MAI 完整报告',
+    'prof.tapPencil':'点击铅笔更换头像', 'scan.genReport':'产生 MAI 完整报告',
     'stn.apply':'套用', 'stn.breakeven':'保本',
     'stn.lossBudget':'亏损预算', 'stn.price':'价格',
     'stn.risk':'风险', 'stn.templates':'范本',
@@ -7711,7 +7709,7 @@ var MM_I18N = {
     'prof.risk3':'3. EA melaksanakan dagangan berdasarkan isyarat penganalisis secara automatik.', 'prof.risk4':'4. Anda bertanggungjawab memantau akaun anda pada setiap masa.',
     'prof.risk5':'5. Momentum AI tidak bertanggungjawab atas sebarang kerugian dagangan.', 'prof.risk6':'6. Pastikan margin mencukupi sebelum mengaktifkan dagangan automatik.',
     'prof.risk7':'7. EA akan berhenti berfungsi jika kata laluan MT5 anda ditukar.', 'prof.riskTitle':'⚠️ PENAFIAN RISIKO',
-    'prof.tapPencil':'Ketik pensel untuk tukar avatar', 'scan.genReport':'⬇ JANA LAPORAN PENUH MAI',
+    'prof.tapPencil':'Ketik pensel untuk tukar avatar', 'scan.genReport':'JANA LAPORAN PENUH MAI',
     'stn.apply':'Guna', 'stn.breakeven':'Pulang Modal',
     'stn.lossBudget':'Bajet Kerugian', 'stn.price':'Harga',
     'stn.risk':'Risiko', 'stn.templates':'Templat',
@@ -8247,7 +8245,7 @@ var MM_I18N = {
     'prof.risk3':'3. EAはアナリストのシグナルにもとづき自動で取引を執行します。', 'prof.risk4':'4. 口座の監視は常にお客様の責任で行っていただきます。',
     'prof.risk5':'5. Momentum AI は取引による損失について責任を負いません。', 'prof.risk6':'6. 自動売買を有効にする前に、証拠金が十分にあることをご確認ください。',
     'prof.risk7':'7. MT5のパスワードを変更するとEAは動作を停止します。', 'prof.riskTitle':'⚠️ リスク開示',
-    'prof.tapPencil':'鉛筆をタップしてアバターを変更', 'scan.genReport':'⬇ MAI 詳細レポートを作成',
+    'prof.tapPencil':'鉛筆をタップしてアバターを変更', 'scan.genReport':'MAI 詳細レポートを作成',
     'stn.apply':'適用', 'stn.breakeven':'建値',
     'stn.lossBudget':'損失予算', 'stn.price':'価格',
     'stn.risk':'リスク', 'stn.templates':'テンプレート',
@@ -8783,7 +8781,7 @@ var MM_I18N = {
     'prof.risk3':'3. EA는 애널리스트 시그널에 따라 자동으로 거래를 실행합니다.', 'prof.risk4':'4. 계좌 관리는 항상 본인의 책임입니다.',
     'prof.risk5':'5. Momentum AI는 거래 손실에 대해 책임지지 않습니다.', 'prof.risk6':'6. 자동 거래를 켜기 전에 증거금이 충분한지 확인하세요.',
     'prof.risk7':'7. MT5 비밀번호를 변경하면 EA가 작동을 멈춥니다.', 'prof.riskTitle':'⚠️ 리스크 고지',
-    'prof.tapPencil':'연필을 눌러 아바타 변경', 'scan.genReport':'⬇ MAI 전체 리포트 생성',
+    'prof.tapPencil':'연필을 눌러 아바타 변경', 'scan.genReport':'MAI 전체 리포트 생성',
     'stn.apply':'적용', 'stn.breakeven':'본전',
     'stn.lossBudget':'손실 예산', 'stn.price':'가격',
     'stn.risk':'리스크', 'stn.templates':'템플릿',
@@ -9319,7 +9317,7 @@ var MM_I18N = {
     'prof.risk3':'3. EA จะดำเนินการเทรดตามสัญญาณของนักวิเคราะห์โดยอัตโนมัติ', 'prof.risk4':'4. คุณมีหน้าที่ตรวจสอบบัญชีของคุณตลอดเวลา',
     'prof.risk5':'5. Momentum AI ไม่รับผิดชอบต่อการขาดทุนจากการเทรดใด ๆ', 'prof.risk6':'6. ตรวจสอบให้แน่ใจว่ามีมาร์จิ้นเพียงพอก่อนเปิดใช้การเทรดอัตโนมัติ',
     'prof.risk7':'7. EA จะหยุดทำงานหากคุณเปลี่ยนรหัสผ่าน MT5', 'prof.riskTitle':'⚠️ คำเตือนความเสี่ยง',
-    'prof.tapPencil':'แตะรูปดินสอเพื่อเปลี่ยนรูปโปรไฟล์', 'scan.genReport':'⬇ สร้างรายงานฉบับเต็ม MAI',
+    'prof.tapPencil':'แตะรูปดินสอเพื่อเปลี่ยนรูปโปรไฟล์', 'scan.genReport':'สร้างรายงานฉบับเต็ม MAI',
     'stn.apply':'ใช้', 'stn.breakeven':'จุดคุ้มทุน',
     'stn.lossBudget':'งบขาดทุน', 'stn.price':'ราคา',
     'stn.risk':'ความเสี่ยง', 'stn.templates':'เทมเพลต',
@@ -9855,7 +9853,7 @@ var MM_I18N = {
     'prof.risk3':'3. EA thực hiện giao dịch tự động dựa trên tín hiệu của nhà phân tích.', 'prof.risk4':'4. Bạn có trách nhiệm theo dõi tài khoản của mình mọi lúc.',
     'prof.risk5':'5. Momentum AI không chịu trách nhiệm cho bất kỳ khoản lỗ giao dịch nào.', 'prof.risk6':'6. Hãy đảm bảo đủ ký quỹ trước khi bật giao dịch tự động.',
     'prof.risk7':'7. EA sẽ ngừng hoạt động nếu bạn đổi mật khẩu MT5.', 'prof.riskTitle':'⚠️ CẢNH BÁO RỦI RO',
-    'prof.tapPencil':'Chạm biểu tượng bút để đổi ảnh đại diện', 'scan.genReport':'⬇ TẠO BÁO CÁO ĐẦY ĐỦ MAI',
+    'prof.tapPencil':'Chạm biểu tượng bút để đổi ảnh đại diện', 'scan.genReport':'TẠO BÁO CÁO ĐẦY ĐỦ MAI',
     'stn.apply':'Áp dụng', 'stn.breakeven':'Hòa vốn',
     'stn.lossBudget':'Ngân sách lỗ', 'stn.price':'Giá',
     'stn.risk':'Rủi ro', 'stn.templates':'Mẫu',
@@ -10391,7 +10389,7 @@ var MM_I18N = {
     'prof.risk3':'3. Awtomatikong nag-e-execute ang EA batay sa signal ng analyst.', 'prof.risk4':'4. Responsibilidad mong bantayan ang iyong account sa lahat ng oras.',
     'prof.risk5':'5. Hindi mananagot ang Momentum AI sa anumang pagkalugi sa trading.', 'prof.risk6':'6. Siguraduhing sapat ang margin bago i-enable ang automated trading.',
     'prof.risk7':'7. Titigil ang EA kapag pinalitan mo ang iyong MT5 password.', 'prof.riskTitle':'⚠️ RISK DISCLAIMER',
-    'prof.tapPencil':'Pindutin ang lapis para palitan ang avatar', 'scan.genReport':'⬇ GUMAWA NG BUONG ULAT NG MAI',
+    'prof.tapPencil':'Pindutin ang lapis para palitan ang avatar', 'scan.genReport':'GUMAWA NG BUONG ULAT NG MAI',
     'stn.apply':'Ilapat', 'stn.breakeven':'Breakeven',
     'stn.lossBudget':'Budget sa Lugi', 'stn.price':'Presyo',
     'stn.risk':'Panganib', 'stn.templates':'Mga Template',
@@ -10927,7 +10925,7 @@ var MM_I18N = {
     'prof.risk3':'3. EA विश्लेषक के सिग्नल के आधार पर स्वतः ट्रेड निष्पादित करता है।', 'prof.risk4':'4. अपने खाते की निगरानी हर समय आपकी ज़िम्मेदारी है।',
     'prof.risk5':'5. किसी भी ट्रेडिंग नुक़सान के लिए Momentum AI ज़िम्मेदार नहीं है।', 'prof.risk6':'6. स्वचालित ट्रेडिंग सक्षम करने से पहले पर्याप्त मार्जिन सुनिश्चित करें।',
     'prof.risk7':'7. आपका MT5 पासवर्ड बदलने पर EA काम करना बंद कर देगा।', 'prof.riskTitle':'⚠️ जोखिम अस्वीकरण',
-    'prof.tapPencil':'अवतार बदलने के लिए पेंसिल दबाएँ', 'scan.genReport':'⬇ MAI पूर्ण रिपोर्ट बनाएँ',
+    'prof.tapPencil':'अवतार बदलने के लिए पेंसिल दबाएँ', 'scan.genReport':'MAI पूर्ण रिपोर्ट बनाएँ',
     'stn.apply':'लागू करें', 'stn.breakeven':'ब्रेकईवन',
     'stn.lossBudget':'हानि बजट', 'stn.price':'क़ीमत',
     'stn.risk':'जोखिम', 'stn.templates':'टेम्पलेट',
@@ -11463,7 +11461,7 @@ var MM_I18N = {
     'prof.risk3':'3. El EA ejecuta operaciones automáticamente según las señales del analista.', 'prof.risk4':'4. Es tu responsabilidad vigilar tu cuenta en todo momento.',
     'prof.risk5':'5. Momentum AI no se hace responsable de ninguna pérdida por operar.', 'prof.risk6':'6. Asegúrate de tener margen suficiente antes de activar el trading automático.',
     'prof.risk7':'7. El EA dejará de funcionar si cambias tu contraseña de MT5.', 'prof.riskTitle':'⚠️ ADVERTENCIA DE RIESGO',
-    'prof.tapPencil':'Toca el lápiz para cambiar el avatar', 'scan.genReport':'⬇ GENERAR INFORME COMPLETO MAI',
+    'prof.tapPencil':'Toca el lápiz para cambiar el avatar', 'scan.genReport':'GENERAR INFORME COMPLETO MAI',
     'stn.apply':'Aplicar', 'stn.breakeven':'Punto de equilibrio',
     'stn.lossBudget':'Presupuesto de pérdida', 'stn.price':'Precio',
     'stn.risk':'Riesgo', 'stn.templates':'Plantillas',
@@ -12249,7 +12247,7 @@ function showSubScreen(id) {
     if(sh) sh.classList.remove('scanning','done');
     var sr = document.getElementById('scan-results');
     if(sr){ sr.classList.remove('shown'); sr.style.display = 'none'; }
-    mmScanCore(); mmScanSync();
+    mmScanCore(); mmScanSync(); mmBadgeCore();
     if(_mmCore && _mmCore.start) _mmCore.start();
   }, 60);
   var el = document.getElementById(id);
@@ -18926,6 +18924,61 @@ function mmScanPriceTick(app, isUp, priceTxt, chgTxt){
 // cheaper - a quarter of the particles at a third of the size - and started
 // only once results exist.
 var _mmVCore = null;
+// The header core. Same object as the others, tuned so the movement READS at
+// 22 pixels: it turns about three times faster and each point flickers, since
+// at this size rotation alone is almost invisible.
+var _mmBadgeCore = null;
+function mmBadgeCore(){
+  var cv = document.getElementById('scan-badge-core');
+  if(!cv || _mmBadgeCore) return;
+  var dpr = Math.min(3, window.devicePixelRatio || 1);
+  cv.width = Math.round(22*dpr); cv.height = Math.round(22*dpr);
+  var ctx = cv.getContext('2d');
+  var W = cv.width, C = W/2, R = W*0.36, F = W*1.8;
+  var N = 420, pts = [];
+  for(var i=0;i<N;i++){
+    pts.push({u:Math.random()*2-1, th:Math.random()*6.2832,
+              rad:0.2+0.85*Math.pow(Math.random(),0.42), s:Math.random(), k:Math.random()});
+  }
+  var halo = ctx.createRadialGradient(C,C,R*0.05,C,C,R*1.5);
+  halo.addColorStop(0,'rgba(255,150,110,0.26)'); halo.addColorStop(1,'rgba(0,0,0,0)');
+  var t = 0, raf = null, running = false;
+  function frame(){
+    t += 0.024;
+    ctx.clearRect(0,0,W,W);
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.fillStyle = halo; ctx.fillRect(0,0,W,W);
+    for(var i=0;i<N;i++){
+      var p = pts[i];
+      var a = p.th + t*(0.45 + 0.55*(1-Math.abs(p.u)));
+      var rr = Math.sqrt(1-p.u*p.u);
+      var bx = Math.cos(a)*rr, by = p.u, bz = Math.sin(a)*rr;
+      var d = p.rad*(1 + Math.sin(by*2.4 + t*2.2)*0.16);
+      var sc = F/(F + bz*d*R);
+      var sx = C + bx*d*R*sc, sy = C + by*d*R*sc, dp = (bz+1)/2;
+      var al = (0.06 + dp*0.55)*(0.35 + p.s*0.65)*(1 + 0.55*Math.sin(t*4.2 + p.k*30));
+      if(al < 0) al = 0; if(al > 1) al = 1;
+      ctx.fillStyle = dp>0.68 ? 'rgba(255,214,178,'+al.toFixed(3)+')' : 'rgba(255,46,60,'+al.toFixed(3)+')';
+      ctx.beginPath(); ctx.arc(sx,sy,(0.22+dp*0.42)*dpr,0,6.2832); ctx.fill();
+    }
+    ctx.globalCompositeOperation = 'source-over';
+    raf = requestAnimationFrame(frame);
+  }
+  function start(){ if(running) return; running = true; raf = requestAnimationFrame(frame); }
+  function stop(){ running = false; if(raf) cancelAnimationFrame(raf); raf = null; }
+  _mmBadgeCore = { start:start, stop:stop };
+  try {
+    if(window.IntersectionObserver){
+      new IntersectionObserver(function(es){
+        if(es[0] && es[0].isIntersecting && !document.hidden) start(); else stop();
+      }, { threshold: 0.01 }).observe(cv);
+    } else { start(); }
+  } catch(e){ start(); }
+  document.addEventListener('visibilitychange', function(){
+    if(document.hidden) stop(); else if(cv.getClientRects().length) start();
+  });
+}
+
 function mmVerdictCore(){
   var cv = document.getElementById('verdict-core');
   if(!cv || _mmVCore) return;
@@ -19153,7 +19206,8 @@ async function runMAIScanner() {
 
   btn.textContent = mmT('sc.scanning','\u27F3 SCANNING...');
   btn.style.background = '#333';
-  if(badge) { badge.innerHTML = '<div style="width:6px;height:6px;border-radius:50%;background:var(--amber);animation:pulse 1s infinite;"></div>'+mmT('sc.scanningCaps','SCANNING')+''; badge.style.color='var(--amber)'; }
+    // Badge writer retired: that element is now the live core canvas, and
+    // rewriting its innerHTML would destroy the canvas mid-scan.
 
   document.getElementById('scan-pair-label').innerHTML = symName+' <span style="color:var(--red);">'+tfName+'</span>';
   // THE RESULTS ARE NOT REVEALED HERE. They used to be shown at the START of
@@ -19213,7 +19267,8 @@ async function runMAIScanner() {
 
     // No data guard - never fake it
     if(!closes.length) {
-      if(badge){ badge.innerHTML='<div style="width:6px;height:6px;border-radius:50%;background:var(--red);"></div>'+mmT('sc.noData','NO DATA')+''; badge.style.color='var(--red)'; }
+    // Badge writer retired: that element is now the live core canvas, and
+    // rewriting its innerHTML would destroy the canvas mid-scan.
       btn.textContent=mmT('sc.initiate','INITIATE SCAN'); btn.style.background='';
       alert(mmT('sc.unavailable','Scanner: market data unavailable right now. Please try again in a moment.'));
       return;
@@ -19631,7 +19686,8 @@ Respond ONLY with valid JSON (no markdown):
   // point of the flight is that it is the same living thing that did the work.
   // The IntersectionObserver still stops it the moment the screen is hidden.
     btn.style.background = '#00C87A';
-    if(badge) { badge.innerHTML = '<div style="width:6px;height:6px;border-radius:50%;background:#00C87A;"></div>'+mmT('sc.live','LIVE')+''; badge.style.color='#00C87A'; }
+    // Badge writer retired: that element is now the live core canvas, and
+    // rewriting its innerHTML would destroy the canvas mid-scan.
     setTimeout(function(){ btn.textContent=mmT('sc.initiate','INITIATE SCAN'); btn.style.background=''; },2000);
 
   } catch(e) {
@@ -19642,7 +19698,8 @@ Respond ONLY with valid JSON (no markdown):
     if(shFail) shFail.classList.remove('scanning','done');
     btn.textContent = mmT('sc.failed','\u2715 SCAN FAILED');
     btn.style.background = '#FF1E3C';
-    if(badge) { badge.innerHTML = '<div style="width:6px;height:6px;border-radius:50%;background:var(--red);"></div>'+mmT('sc.error','ERROR')+''; badge.style.color='var(--red)'; }
+    // Badge writer retired: that element is now the live core canvas, and
+    // rewriting its innerHTML would destroy the canvas mid-scan.
     setTimeout(function(){ btn.textContent=mmT('sc.initiate','INITIATE SCAN'); btn.style.background=''; },2000);
     console.warn('Scanner error:', e.message);
   }
