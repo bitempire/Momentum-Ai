@@ -1559,7 +1559,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 .sct-l{position:absolute;left:0;top:0;font-size:7.5px;letter-spacing:.8px;color:var(--text3);font-family:'Orbitron',ui-monospace,monospace;}
 .sct-r{position:absolute;right:0;top:0;font-size:7.5px;letter-spacing:.8px;color:var(--text3);font-family:'Orbitron',ui-monospace,monospace;}
 .sct-lv{position:absolute;left:0;bottom:0;font-size:9.5px;font-family:'Orbitron',ui-monospace,monospace;font-weight:700;color:#4BE0A8;}
-.sct-rv{position:absolute;right:0;bottom:0;font-size:9.5px;font-family:'Orbitron',ui-monospace,monospace;font-weight:700;color:#FF8A96;}
+.sct-rv{position:absolute;right:0;bottom:0;font-size:9.5px;font-family:'Orbitron',ui-monospace,monospace;font-weight:700;color:#E63E4F;}
 .sct-p{position:absolute;top:-3px;transform:translateX(-50%);font-size:9px;font-family:'Orbitron',ui-monospace,monospace;font-weight:800;color:#fff;white-space:nowrap;}
 .sct-hl{display:flex;align-items:flex-end;justify-content:space-between;margin:11px 0 12px;gap:10px;}
 .sct-k{font-size:7.5px;letter-spacing:1px;color:var(--text3);margin-bottom:5px;white-space:nowrap;}
@@ -1616,12 +1616,18 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 /* THE TWO CASES SIDE BY SIDE. Flagged to Haikal and accepted: the sentences
    come from the model and will not always run the same length, so one long
    one leaves a column dangling below the other. */
-.sct-cases{display:grid;grid-template-columns:1fr 1px 1fr;gap:0 11px;margin-top:7px;padding-top:10px;
- border-top:1px solid rgba(255,255,255,.055);}
-.sct-cases .dv{background:rgba(255,255,255,.055);}
-.sct-cases .kk{font-size:7.5px;letter-spacing:1.1px;font-weight:800;font-family:'Orbitron',ui-monospace,monospace;margin-bottom:4px;}
-.sct-cases .vv{font-family:'Orbitron',ui-monospace,monospace;font-size:12px;font-weight:700;margin-bottom:6px;}
-.sct-cases .tx{font-size:10px;color:var(--text2);line-height:1.55;}
+/* STACKED, NOT SIDE BY SIDE. The two sentences come from the model and do not
+   run to the same length; in two columns one dangled below the other, stacked
+   they simply take the height they need. A 3px rule in each case's colour
+   separates them faster than a heading does. */
+.sct-case{display:flex;gap:10px;padding:9px 0;}
+.sct-case + .sct-case{border-top:1px solid rgba(255,255,255,.055);}
+.sct-rule{width:3px;border-radius:2px;flex-shrink:0;}
+.sct-cb{flex:1;min-width:0;}
+.sct-ch{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:4px;}
+.sct-ck2{font-size:8px;letter-spacing:1.1px;font-weight:800;font-family:'Orbitron',ui-monospace,monospace;}
+.sct-cv{font-family:'Orbitron',ui-monospace,monospace;font-size:11px;font-weight:700;white-space:nowrap;}
+.sct-cx{font-size:10.5px;color:var(--text2);line-height:1.6;}
 
 /* THE VERDICT CARD. Brand red whatever the reading says, at Haikal's
    instruction. The objection is on record: red also means bearish on this
@@ -1774,7 +1780,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
    set on the wrapper because those text colours read from it. */
 .scv-field{background:linear-gradient(155deg,rgba(255,30,60,.16) 0%,rgba(255,30,60,.085) 26%,rgba(255,70,45,.03) 55%,rgba(255,30,60,0) 88%);}
 .scv-b1{background:#FF1E3C;} .scv-b2{background:#FF6A3D;}
-.scv-eb{color:#FF8A96;}
+.scv-eb{color:#E63E4F;}
 .scv-beam{background:conic-gradient(from 0deg,transparent 0 48%,rgba(196,0,36,.30) 66%,rgba(255,30,60,.70) 80%,rgba(196,0,36,.30) 92%,transparent 100%);}
 .scv-neu .scv-word,.scv-neu .scv-pc,.scv-neu .scv-g .v{color:#FFD48A;}
 .scv-bul .scv-word,.scv-bul .scv-pc,.scv-bul .scv-g .v{color:#8FF0C6;}
@@ -4698,8 +4704,6 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 
           <div class="sct-sec" data-i18n="sc.indicators">INDICATORS</div>
           <div id="tech-indicators"></div>
-          <div class="sct-sec" data-i18n="sc.levels">LEVELS</div>
-          <div id="tech-levels"></div>
           <div class="sct-sec" data-i18n="sc.scenario">MAI SCENARIO</div>
           <div id="tech-scenario"></div>
           <div id="tech-verdict-box"></div>
@@ -18800,7 +18804,7 @@ function updateSentimentGauge(pct, direction) {
   var scoreEl = document.getElementById('sent-score');
   var leanEl  = document.getElementById('sent-lean');
   var glowEl  = document.getElementById('sent-glow');
-  var col = pct>=55 ? '#4BE0A8' : pct<45 ? '#FF8A96' : '#FFB020';
+  var col = pct>=55 ? '#4BE0A8' : pct<45 ? '#E63E4F' : '#FFB020';
   var rgb = pct>=55 ? '0,214,143' : pct<45 ? '255,30,60' : '255,176,32';
   var word = pct>=55 ? mmT('sc.leanBull','LEANING BULLISH')
            : pct<45  ? mmT('sc.leanBear','LEANING BEARISH')
@@ -18897,7 +18901,7 @@ function mmScanSync(){
     var hp = document.getElementById('price-' + app);
     var hc = document.getElementById('change-' + app);
     if(pEl && hp) pEl.textContent = hp.textContent;
-    if(cEl && hc){ cEl.textContent = hc.textContent; cEl.style.color = hc.className.indexOf('up')>=0 ? '#4BE0A8' : '#FF8A96'; }
+    if(cEl && hc){ cEl.textContent = hc.textContent; cEl.style.color = hc.className.indexOf('up')>=0 ? '#4BE0A8' : '#E63E4F'; }
   } else {
     if(pEl) pEl.textContent = '\u2014';
     if(cEl){ cEl.textContent = '\u2014'; cEl.style.color = ''; }
@@ -18912,7 +18916,7 @@ function mmScanPriceTick(app, isUp, priceTxt, chgTxt){
   var pEl = document.getElementById('scan-price');
   var cEl = document.getElementById('scan-change');
   if(pEl && priceTxt != null) pEl.textContent = priceTxt;
-  if(cEl && chgTxt != null){ cEl.textContent = chgTxt; cEl.style.color = isUp ? '#4BE0A8' : '#FF8A96'; }
+  if(cEl && chgTxt != null){ cEl.textContent = chgTxt; cEl.style.color = isUp ? '#4BE0A8' : '#E63E4F'; }
 }
 
 // The small core inside the verdict card. Separate from the hero's, much
@@ -19345,9 +19349,9 @@ async function runMAIScanner() {
     tset('tech-above-atr', atrTxt(above));
     tset('tech-range-atr', atrTxt(range));
     var tposEl = document.getElementById('tech-pos');
-    if(tposEl) tposEl.style.color = techDir==='Bullish'?'#4BE0A8':techDir==='Bearish'?'#FF8A96':'#FFB020';
+    if(tposEl) tposEl.style.color = techDir==='Bullish'?'#4BE0A8':techDir==='Bearish'?'#E63E4F':'#FFB020';
     (function(_e){ if(_e){ _e.setAttribute('data-en', techDir); _e.textContent = mmVerdict(techDir); } })(document.getElementById('tech-direction'));
-    document.getElementById('tech-direction').style.color = techDir==='Bullish'?'#4BE0A8':techDir==='Bearish'?'#FF8A96':'#FFB020';
+    document.getElementById('tech-direction').style.color = techDir==='Bullish'?'#4BE0A8':techDir==='Bearish'?'#E63E4F':'#FFB020';
     (function(_e){ if(_e){ _e.setAttribute('data-en', techMom); _e.textContent = mmVerdict(techMom); } })(document.getElementById('tech-momentum'));
     document.getElementById('tech-momentum').style.color = techMom==='Strong'?'#00C87A':techMom==='Moderate'?'#FFB020':'#FF1E3C';
 
@@ -19465,8 +19469,8 @@ Respond ONLY with valid JSON (no markdown):
     var factorsHTML = fRows.map(function(r, idx){
       var v = r.v;
       if(v>=55) nBull++; else if(v<45) nBear++;
-      var col = v>=55 ? '#4BF0B6' : v<45 ? '#FF8A96' : 'rgba(255,255,255,.5)';
-      var vcol = v>=55 ? '#4BE0A8' : v<45 ? '#FF8A96' : 'var(--text3)';
+      var col = v>=55 ? '#4BF0B6' : v<45 ? '#E63E4F' : 'rgba(255,255,255,.5)';
+      var vcol = v>=55 ? '#4BE0A8' : v<45 ? '#E63E4F' : 'var(--text3)';
       // Twenty segments, one per five percent, so a reading is legible as a
       // count of lit blocks without reading the number beside it.
       var lit = Math.round(v/5), seg = '';
@@ -19491,46 +19495,26 @@ Respond ONLY with valid JSON (no markdown):
     svEl.style.color = sentDir==='Bullish'?'#00C87A':sentDir==='Bearish'?'#FF1E3C':'#FFB020';
 
     // 6. RENDER TECHNICAL
-    // ---- LEVELS TABLE ----
-    // RANGE is where each level sits in its OWN range, so resistance is always
-    // 100 and support always 0. An earlier draft printed 49.5, 50.5, 50.5 down
-    // the three rows, which meant nothing.
-    var tlEl = document.getElementById('tech-levels');
-    if(tlEl){
-      tlEl.innerHTML =
-        '<table class="sct-tbl"><tr>'+
-          '<th>'+mmT('sc.levelCol','LEVEL')+'</th><th>'+mmT('sc.priceCol','PRICE')+'</th>'+
-          '<th>'+mmT('sc.distCol','DISTANCE')+'</th><th>'+mmT('sc.rangeCol','RANGE')+'</th></tr>'+
-        '<tr><td>'+mmT('sc.resistance','RESISTANCE')+'</td>'+
-          '<td style="color:#FF8A96">'+fmt(resistance)+'</td>'+
-          '<td style="color:#FF8A96">+'+fmt(Math.abs(above))+'</td><td>100%</td></tr>'+
-        '<tr class="now"><td>'+mmT('sc.priceRow','PRICE')+'</td><td>'+fmt(price)+'</td>'+
-          '<td>\u2014</td><td>'+Math.round(posPct)+'%</td></tr>'+
-        '<tr><td>'+mmT('sc.support','SUPPORT')+'</td>'+
-          '<td style="color:#4BE0A8">'+fmt(support)+'</td>'+
-          '<td style="color:#4BE0A8">-'+fmt(Math.abs(below))+'</td><td>0%</td></tr>'+
-        '</table>';
-    }
-
     // ---- THE TWO CASES ----
     var techScenario = document.getElementById('tech-scenario');
     if(techScenario) techScenario.innerHTML =
-      '<div class="sct-cases" style="border-top:none;padding-top:0;margin-top:0;">'+
-        '<div><div class="kk" style="color:#4BE0A8">'+mmT('sc.upside','UPSIDE')+'</div>'+
-        '<div class="vv" style="color:#4BE0A8">'+fmt(resistance)+'</div>'+
-        '<div class="tx">'+(ai.tech_scenario_bullish||'\u2014')+'</div></div>'+
-        '<div class="dv"></div>'+
-        '<div><div class="kk" style="color:#FF8A96">'+mmT('sc.downside','DOWNSIDE')+'</div>'+
-        '<div class="vv" style="color:#FF8A96">'+fmt(support)+'</div>'+
-        '<div class="tx">'+(ai.tech_scenario_bearish||'\u2014')+'</div></div>'+
-      '</div>';
+      '<div class="sct-case"><span class="sct-rule" style="background:#4BE0A8"></span>'+
+        '<div class="sct-cb"><div class="sct-ch">'+
+          '<span class="sct-ck2" style="color:#4BE0A8">'+mmVerdict('BULLISH')+'</span>'+
+          '<span class="sct-cv" style="color:#4BE0A8">'+fmt(resistance)+'</span></div>'+
+          '<div class="sct-cx">'+(ai.tech_scenario_bullish||'\u2014')+'</div></div></div>'+
+      '<div class="sct-case"><span class="sct-rule" style="background:#E63E4F"></span>'+
+        '<div class="sct-cb"><div class="sct-ch">'+
+          '<span class="sct-ck2" style="color:#E63E4F">'+mmVerdict('BEARISH')+'</span>'+
+          '<span class="sct-cv" style="color:#E63E4F">'+fmt(support)+'</span></div>'+
+          '<div class="sct-cx">'+(ai.tech_scenario_bearish||'\u2014')+'</div></div></div>';
 
     // ---- THE VERDICT CARD ----
     // The FRAME is brand red always. The PILL carries the reading, which is
     // the only thing on this card that changes colour with the verdict.
     var techVerdictBox = document.getElementById('tech-verdict-box');
     if(techVerdictBox){
-      var pc = techDir==='Bullish' ? '#4BE0A8' : techDir==='Bearish' ? '#FF8A96' : '#FFD48A';
+      var pc = techDir==='Bullish' ? '#4BE0A8' : techDir==='Bearish' ? '#E63E4F' : '#FFD48A';
       var pb = techDir==='Bullish' ? 'rgba(0,214,143,.14)' : techDir==='Bearish' ? 'rgba(255,30,60,.14)' : 'rgba(255,176,32,.14)';
       techVerdictBox.innerHTML =
         '<div class="sct-vw"><span class="sct-vbeam"></span><div class="sct-vc">'+
@@ -19586,7 +19570,7 @@ Respond ONLY with valid JSON (no markdown):
       var pxTxt = pxNow ? pxNow.textContent : '\u2014';
       var chTxt = chNow ? chNow.textContent : '';
       vStEl.innerHTML = pxTxt + (chTxt && chTxt !== '\u2014'
-        ? ' <span style="color:' + (chNow.style.color || '#FF8A96') + '">' + chTxt + '</span>' : '');
+        ? ' <span style="color:' + (chNow.style.color || '#E63E4F') + '">' + chTxt + '</span>' : '');
     }
     var omEl = document.getElementById('verdict-momentum'); if(omEl) omEl.textContent=mmVerdict(ai.overall_momentum)||'—';
     var ocEl = document.getElementById('verdict-confidence'); if(ocEl){ocEl.textContent=oc+'%';ocEl.style.color=oc>=65?'#00C87A':oc>=45?'#FFB020':'#FF1E3C';}
