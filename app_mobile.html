@@ -1410,6 +1410,58 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 .jam-k{font-size:8px;color:var(--text3);letter-spacing:.3px;white-space:nowrap;}
 .jsec{font-size:10px;letter-spacing:.7px;color:var(--text3);margin:12px 3px 6px;}
 /* ══════════════════════════════════════════════════════════
+   SCANNER HERO. 9 Aug 2026. Centred, full height, before a scan runs.
+   The screen used to be a header strip, two dropdowns and a flat red button
+   sitting at the top of an otherwise empty page. It is now a centred block
+   with a reactor core, and it FILLS THE VIEWPORT until results exist.
+   THE DROPDOWNS STAY DROPDOWNS at Haikal's instruction - a conversational
+   version with chips was mocked three ways and rejected.
+   THE BUTTON HAS NO ICON AND NO SWEEPING SHINE. The gradient itself drifts
+   through red, deep red and ember; the old white streak crossing a solid fill
+   is a shop-window treatment.
+   `.scan-hero.compact` DROPS THE MIN-HEIGHT once results are on screen, so a
+   customer rescanning does not have to scroll a full screen every time.
+   ══════════════════════════════════════════════════════════ */
+.scan-hero{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;
+ min-height:calc(100vh - 210px);padding:14px 0 18px;overflow:hidden;}
+.scan-hero.compact{min-height:0;padding:4px 0 14px;}
+.scan-hero.compact .sh-core,.scan-hero.compact .sh-rings,.scan-hero.compact .sh-glow{display:none;}
+.sh-rings{position:absolute;inset:0;pointer-events:none;display:flex;align-items:center;justify-content:center;}
+.sh-rings span{position:absolute;border-radius:50%;border:1px solid rgba(255,30,60,.07);}
+.sh-glow{position:absolute;left:50%;top:34%;width:340px;height:340px;margin:-170px 0 0 -170px;border-radius:50%;
+ background:radial-gradient(circle,rgba(255,60,40,.16),transparent 62%);filter:blur(28px);animation:shHalo 7s ease-in-out infinite;pointer-events:none;}
+.sh-core{position:relative;width:112px;height:112px;flex-shrink:0;margin-bottom:18px;}
+.sh-core .r1{position:absolute;inset:0;border-radius:50%;border:2px solid rgba(255,30,60,.42);border-top-color:var(--red);animation:shSpin 5s linear infinite;}
+.sh-core .r2{position:absolute;inset:11%;border-radius:50%;border:1px dashed rgba(255,255,255,.14);animation:shSpinR 11s linear infinite;}
+.sh-core .cc{position:absolute;inset:24%;border-radius:50%;
+ background:radial-gradient(circle at 50% 38%,#FFD9A8,#FF6A3D 42%,#C40024 80%);
+ box-shadow:0 0 40px rgba(255,60,40,.5);animation:shPulse 3.2s ease-in-out infinite;}
+.sh-sym{position:relative;font-family:'Orbitron',sans-serif;font-size:20px;font-weight:900;letter-spacing:1px;text-align:center;}
+.sh-px{position:relative;font-family:'Orbitron',sans-serif;font-size:13px;font-weight:800;text-align:center;margin-top:5px;}
+.sh-chg{position:relative;font-size:9.5px;text-align:center;margin-top:3px;}
+.sh-wrap{position:relative;width:100%;max-width:320px;margin-top:26px;}
+.scan-hero.compact .sh-wrap{margin-top:6px;}
+.sh-two{display:grid;grid-template-columns:1fr 108px;gap:9px;}
+.sh-lbl{font-size:7.5px;letter-spacing:1.2px;color:var(--text3);font-family:'Orbitron',sans-serif;margin-bottom:6px;text-align:center;}
+.sh-sel{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:11px;padding:12px 13px;
+ font-size:13.5px;color:var(--text);font-family:'Sora',sans-serif;text-align:center;
+ -webkit-appearance:none;appearance:none;cursor:pointer;
+ background-image:linear-gradient(45deg,transparent 50%,rgba(244,247,250,.35) 50%),linear-gradient(135deg,rgba(244,247,250,.35) 50%,transparent 50%);
+ background-position:calc(100% - 16px) 50%,calc(100% - 11px) 50%;background-size:5px 5px,5px 5px;background-repeat:no-repeat;}
+.sh-sel:focus{outline:none;border-color:rgba(255,30,60,.45);}
+.sh-btn{width:100%;border:none;border-radius:14px;padding:16px;cursor:pointer;overflow:hidden;
+ background:linear-gradient(115deg,#FF1E3C,#C40024,#FF6A3D,#FF1E3C);background-size:300% 100%;
+ animation:shHue 5s ease-in-out infinite;color:#fff;font-family:'Sora',sans-serif;font-size:14px;font-weight:800;
+ letter-spacing:1.6px;box-shadow:0 10px 30px rgba(255,30,60,.30);}
+.sh-btn:disabled{opacity:.7;cursor:default;}
+.sh-note{text-align:center;font-size:10px;color:var(--text3);margin-top:10px;}
+@keyframes shSpin{to{transform:rotate(360deg);}}
+@keyframes shSpinR{to{transform:rotate(-360deg);}}
+@keyframes shPulse{0%,100%{opacity:.72;transform:scale(1);}50%{opacity:1;transform:scale(1.07);}}
+@keyframes shHalo{0%,100%{opacity:.25;transform:scale(1);}50%{opacity:.5;transform:scale(1.08);}}
+@keyframes shHue{0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
+@media (prefers-reduced-motion: reduce){.sh-core .r1,.sh-core .r2,.sh-core .cc,.sh-glow,.sh-btn{animation:none;}}
+/* ══════════════════════════════════════════════════════════
    SCANNER TECHNICAL CARD. 9 Aug 2026.
    WHAT WAS WRONG WITH THE OLD ONE: four of its six bars were FAKE. Moving Avg
    drew 85% or 15%, EMA 200 drew 90% or 10%, MACD 70% or 30%, and ATR WAS
@@ -4267,41 +4319,60 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
     </div>
     <div class="sub-content">
 
-      <!-- HEADER PRICE -->
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-        <div>
-          <div style="font-family:'Orbitron',sans-serif;font-size:16px;font-weight:800;color:var(--text);" id="scan-pair-label">XAUUSD <span style="color:var(--red);" data-i18n="sc.h4">H4</span></div>
-          <div style="font-size:10px;color:var(--text3);" id="scan-last-time">Select pair and scan</div>
+      <!-- ══════════════════════════════════════════════════
+           HERO. Centred and full height until a scan has run, then
+           `.compact` is added and the core and rings come off so the results
+           are not a screen away on every rescan.
+           Every id is unchanged: scan-pair-label, scan-last-time, scan-price,
+           scan-change, scan-symbol, scan-tf, scan-btn.
+           ══════════════════════════════════════════════════ -->
+      <div class="scan-hero" id="scan-hero">
+        <div class="sh-rings">
+          <span style="width:230px;height:230px;"></span>
+          <span style="width:330px;height:330px;"></span>
+          <span style="width:440px;height:440px;"></span>
         </div>
-        <div style="text-align:right;">
-          <div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:800;color:var(--text);" id="scan-price">—</div>
-          <div style="font-size:10px;" id="scan-change">—</div>
+        <div class="sh-glow"></div>
+
+        <div class="sh-core"><span class="r1"></span><span class="r2"></span><span class="cc"></span></div>
+
+        <div class="sh-sym" id="scan-pair-label">XAUUSD <span style="color:var(--red);" data-i18n="sc.h4">H4</span></div>
+        <div class="sh-px" id="scan-price">&mdash;</div>
+        <div class="sh-chg" id="scan-change">&mdash;</div>
+        <div class="sh-chg" style="color:var(--text3);" id="scan-last-time" data-i18n="sc.selectPair">Select pair and scan</div>
+
+        <div class="sh-wrap">
+          <div class="sh-two">
+            <div>
+              <div class="sh-lbl" data-i18n="sc.instrument">INSTRUMENT</div>
+              <select id="scan-symbol" class="sh-sel">
+                <option value="GC=F" data-i18n="sc.gold">XAUUSD (Gold)</option>
+                <option value="BTC-USD">BTCUSD</option>
+                <option value="EURUSD=X">EURUSD</option>
+                <option value="GBPJPY=X">GBPJPY</option>
+                <option value="GBPUSD=X">GBPUSD</option>
+                <option value="^IXIC">NAS100</option>
+                <option value="^DJI">US30</option>
+                <option value="DX-Y.NYB">DXY</option>
+                <option value="CL=F">USOIL</option>
+              </select>
+            </div>
+            <div>
+              <div class="sh-lbl" data-i18n="sc.timeframe">TIMEFRAME</div>
+              <select id="scan-tf" class="sh-sel">
+                <option value="H1" data-i18n="sc.h1">H1</option>
+                <option value="H4" selected data-i18n="sc.h4">H4</option>
+                <option value="D1" data-i18n="sc.d1">D1</option>
+                <option value="W1" data-i18n="sc.w1">W1</option>
+              </select>
+            </div>
+          </div>
+          <div style="margin-top:16px;">
+            <button id="scan-btn" class="sh-btn" onclick="runMAIScanner()" data-i18n="sc.initiate">INITIATE SCAN</button>
+          </div>
+          <div class="sh-note" data-i18n="sc.reads">6 sentiment inputs &middot; 6 indicators</div>
         </div>
       </div>
-
-      <!-- FILTERS -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px;">
-        <select id="scan-symbol" class="auth-input" style="font-size:12px;padding:8px 10px;">
-          <option value="GC=F" data-i18n="sc.gold">XAUUSD (Gold)</option>
-          <option value="BTC-USD">BTCUSD</option>
-          <option value="EURUSD=X">EURUSD</option>
-          <option value="GBPJPY=X">GBPJPY</option>
-          <option value="GBPUSD=X">GBPUSD</option>
-          <option value="^IXIC">NAS100</option>
-          <option value="^DJI">US30</option>
-          <option value="DX-Y.NYB">DXY</option>
-          <option value="CL=F">USOIL</option>
-        </select>
-        <select id="scan-tf" class="auth-input" style="font-size:12px;padding:8px 10px;">
-          <option value="H1" data-i18n="sc.h1">H1</option>
-          <option value="H4" selected data-i18n="sc.h4">H4</option>
-          <option value="D1" data-i18n="sc.d1">D1</option>
-          <option value="W1" data-i18n="sc.w1">W1</option>
-        </select>
-      </div>
-
-      <!-- SCAN BUTTON -->
-      <button id="scan-btn" onclick="runMAIScanner()" style="width:100%;padding:11px;background:var(--red);border:none;border-radius:10px;color:#fff;font-family:'Orbitron',sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;cursor:pointer;margin-bottom:10px;">▶ INITIATE SCAN</button>
 
       <!-- RESULTS (hidden until scan) -->
       <div id="scan-results" style="display:none;">
@@ -6540,7 +6611,7 @@ var MM_I18N = {
     'sc.scanning':'掃描中...',
     'sc.complete':'✓ 掃描完成',
     'sc.failed':'✕ 掃描失敗',
-    'sc.initiate':'▶ 開始掃描',
+    'sc.initiate':'開始掃描',
     'w.premiumBadge':'尊榮',
     'w.basicBadge':'基本',
     't.s':'秒',
@@ -7080,7 +7151,7 @@ var MM_I18N = {
     'ph.newPw':'新密码', 'ph.confirmPw':'确认新密码',
     'sig.buy':'买入', 'sig.sell':'卖出',
     'sc.scanning':'扫描中...', 'sc.complete':'✓ 扫描完成',
-    'sc.failed':'✕ 扫描失败', 'sc.initiate':'▶ 开始扫描',
+    'sc.failed':'✕ 扫描失败', 'sc.initiate':'开始扫描',
     'w.premiumBadge':'尊荣', 'w.basicBadge':'基本',
     't.s':'秒', 't.m':'分钟',
     't.h':'小时', 't.d':'天',
@@ -7616,7 +7687,7 @@ var MM_I18N = {
     'ph.newPw':'Kata laluan baharu', 'ph.confirmPw':'Sahkan kata laluan baharu',
     'sig.buy':'BELI', 'sig.sell':'JUAL',
     'sc.scanning':'Mengimbas...', 'sc.complete':'\u2713 IMBASAN SELESAI',
-    'sc.failed':'\u2715 IMBASAN GAGAL', 'sc.initiate':'\u25B6 MULA IMBASAN',
+    'sc.failed':'\u2715 IMBASAN GAGAL', 'sc.initiate':'MULA IMBASAN',
     'w.premiumBadge':'PREMIUM', 'w.basicBadge':'ASAS',
     't.s':' saat', 't.m':' minit',
     't.h':' jam', 't.d':' hari',
@@ -8152,7 +8223,7 @@ var MM_I18N = {
     'ph.newPw':'新しいパスワード', 'ph.confirmPw':'新しいパスワードを再入力',
     'sig.buy':'買い', 'sig.sell':'売り',
     'sc.scanning':'スキャン中...', 'sc.complete':'\u2713 スキャン完了',
-    'sc.failed':'\u2715 スキャン失敗', 'sc.initiate':'\u25B6 スキャン開始',
+    'sc.failed':'\u2715 スキャン失敗', 'sc.initiate':'スキャン開始',
     'w.premiumBadge':'プレミアム', 'w.basicBadge':'ベーシック',
     't.s':'秒', 't.m':'分',
     't.h':'時間', 't.d':'日',
@@ -8688,7 +8759,7 @@ var MM_I18N = {
     'ph.newPw':'새 비밀번호', 'ph.confirmPw':'새 비밀번호 확인',
     'sig.buy':'매수', 'sig.sell':'매도',
     'sc.scanning':'스캔 중...', 'sc.complete':'\u2713 스캔 완료',
-    'sc.failed':'\u2715 스캔 실패', 'sc.initiate':'\u25B6 스캔 시작',
+    'sc.failed':'\u2715 스캔 실패', 'sc.initiate':'스캔 시작',
     'w.premiumBadge':'프리미엄', 'w.basicBadge':'베이직',
     't.s':'초', 't.m':'분',
     't.h':'시간', 't.d':'일',
@@ -9224,7 +9295,7 @@ var MM_I18N = {
     'ph.newPw':'รหัสผ่านใหม่', 'ph.confirmPw':'ยืนยันรหัสผ่านใหม่',
     'sig.buy':'ซื้อ', 'sig.sell':'ขาย',
     'sc.scanning':'กำลังสแกน...', 'sc.complete':'\u2713 สแกนเสร็จสิ้น',
-    'sc.failed':'\u2715 สแกนล้มเหลว', 'sc.initiate':'\u25B6 เริ่มสแกน',
+    'sc.failed':'\u2715 สแกนล้มเหลว', 'sc.initiate':'เริ่มสแกน',
     'w.premiumBadge':'พรีเมียม', 'w.basicBadge':'ทั่วไป',
     't.s':' วินาที', 't.m':' นาที',
     't.h':' ชม.', 't.d':' วัน',
@@ -9760,7 +9831,7 @@ var MM_I18N = {
     'ph.newPw':'Mật khẩu mới', 'ph.confirmPw':'Xác nhận mật khẩu mới',
     'sig.buy':'MUA', 'sig.sell':'BÁN',
     'sc.scanning':'Đang quét...', 'sc.complete':'\u2713 QUÉT XONG',
-    'sc.failed':'\u2715 QUÉT THẤT BẠI', 'sc.initiate':'\u25B6 BẮT ĐẦU QUÉT',
+    'sc.failed':'\u2715 QUÉT THẤT BẠI', 'sc.initiate':'BẮT ĐẦU QUÉT',
     'w.premiumBadge':'PREMIUM', 'w.basicBadge':'CƠ BẢN',
     't.s':' giây', 't.m':' phút',
     't.h':' giờ', 't.d':' ngày',
@@ -10296,7 +10367,7 @@ var MM_I18N = {
     'ph.newPw':'Bagong password', 'ph.confirmPw':'Kumpirmahin ang bagong password',
     'sig.buy':'BUY', 'sig.sell':'SELL',
     'sc.scanning':'Nagsi-scan...', 'sc.complete':'\u2713 TAPOS ANG SCAN',
-    'sc.failed':'\u2715 NABIGO ANG SCAN', 'sc.initiate':'\u25B6 SIMULAN ANG SCAN',
+    'sc.failed':'\u2715 NABIGO ANG SCAN', 'sc.initiate':'SIMULAN ANG SCAN',
     'w.premiumBadge':'PREMIUM', 'w.basicBadge':'BASIC',
     't.s':'s', 't.m':'m',
     't.h':'h', 't.d':'d',
@@ -10832,7 +10903,7 @@ var MM_I18N = {
     'ph.newPw':'नया पासवर्ड', 'ph.confirmPw':'नए पासवर्ड की पुष्टि करें',
     'sig.buy':'ख़रीद', 'sig.sell':'बिक्री',
     'sc.scanning':'स्कैन हो रहा है...', 'sc.complete':'\u2713 स्कैन पूर्ण',
-    'sc.failed':'\u2715 स्कैन विफल', 'sc.initiate':'\u25B6 स्कैन शुरू करें',
+    'sc.failed':'\u2715 स्कैन विफल', 'sc.initiate':'स्कैन शुरू करें',
     'w.premiumBadge':'प्रीमियम', 'w.basicBadge':'बेसिक',
     't.s':' सेकंड', 't.m':' मिनट',
     't.h':' घंटे', 't.d':' दिन',
@@ -11368,7 +11439,7 @@ var MM_I18N = {
     'ph.newPw':'Nueva contraseña', 'ph.confirmPw':'Confirma la nueva contraseña',
     'sig.buy':'COMPRA', 'sig.sell':'VENTA',
     'sc.scanning':'Analizando...', 'sc.complete':'\u2713 ANÁLISIS COMPLETADO',
-    'sc.failed':'\u2715 ANÁLISIS FALLIDO', 'sc.initiate':'\u25B6 INICIAR ANÁLISIS',
+    'sc.failed':'\u2715 ANÁLISIS FALLIDO', 'sc.initiate':'INICIAR ANÁLISIS',
     'w.premiumBadge':'PREMIUM', 'w.basicBadge':'BÁSICO',
     't.s':' s', 't.m':' min',
     't.h':' h', 't.d':' d',
@@ -18559,6 +18630,10 @@ async function runMAIScanner() {
 
   document.getElementById('scan-pair-label').innerHTML = symName+' <span style="color:var(--red);">'+tfName+'</span>';
   document.getElementById('scan-results').style.display = 'block';
+  // The hero gives up its full-screen height the moment there is something
+  // below it worth scrolling to.
+  var shEl = document.getElementById('scan-hero');
+  if(shEl) shEl.classList.add('compact');
 
   try {
     // 1. FETCH price data - try multiple sources
@@ -18609,7 +18684,7 @@ async function runMAIScanner() {
     // No data guard - never fake it
     if(!closes.length) {
       if(badge){ badge.innerHTML='<div style="width:6px;height:6px;border-radius:50%;background:var(--red);"></div>'+mmT('sc.noData','NO DATA')+''; badge.style.color='var(--red)'; }
-      btn.textContent=mmT('sc.initiate','\u25B6 INITIATE SCAN'); btn.style.background='var(--red)';
+      btn.textContent=mmT('sc.initiate','INITIATE SCAN'); btn.style.background='';
       alert(mmT('sc.unavailable','Scanner: market data unavailable right now. Please try again in a moment.'));
       return;
     }
@@ -18944,13 +19019,13 @@ Respond ONLY with valid JSON (no markdown):
     btn.textContent = mmT('sc.complete','\u2713 SCAN COMPLETE');
     btn.style.background = '#00C87A';
     if(badge) { badge.innerHTML = '<div style="width:6px;height:6px;border-radius:50%;background:#00C87A;"></div>'+mmT('sc.live','LIVE')+''; badge.style.color='#00C87A'; }
-    setTimeout(function(){ btn.textContent=mmT('sc.initiate','\u25B6 INITIATE SCAN'); btn.style.background='var(--red)'; },2000);
+    setTimeout(function(){ btn.textContent=mmT('sc.initiate','INITIATE SCAN'); btn.style.background=''; },2000);
 
   } catch(e) {
     btn.textContent = mmT('sc.failed','\u2715 SCAN FAILED');
     btn.style.background = '#FF1E3C';
     if(badge) { badge.innerHTML = '<div style="width:6px;height:6px;border-radius:50%;background:var(--red);"></div>'+mmT('sc.error','ERROR')+''; badge.style.color='var(--red)'; }
-    setTimeout(function(){ btn.textContent=mmT('sc.initiate','\u25B6 INITIATE SCAN'); btn.style.background='var(--red)'; },2000);
+    setTimeout(function(){ btn.textContent=mmT('sc.initiate','INITIATE SCAN'); btn.style.background=''; },2000);
     console.warn('Scanner error:', e.message);
   }
 }
