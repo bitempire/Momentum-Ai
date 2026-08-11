@@ -4712,11 +4712,12 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         </div>
 
         <!-- FUNDAMENTAL -->
-        <div class="section-card" style="margin-bottom:10px;padding:12px;">
-          <div style="font-size:10px;font-weight:800;color:var(--red);letter-spacing:1px;margin-bottom:8px;" data-i18n="sc.fundamental">FUNDAMENTAL ANALYSIS</div>
-          <div style="font-size:9px;color:var(--text3);letter-spacing:.5px;margin-bottom:6px;" data-i18n="sc.upcoming">UPCOMING HIGH IMPACT NEWS</div>
+        <div class="section-card sct-card" style="margin-bottom:10px;padding:12px;">
+          <div class="sct-glow"></div>
+          <div style="font-size:10px;font-weight:800;letter-spacing:1px;color:var(--text);"><em style="font-style:normal;color:var(--red);" data-i18n="sc.fundamentalWord">FUNDAMENTAL</em> <span data-i18n="sc.analysisWord">ANALYSIS</span></div>
+          <div style="font-size:9px;color:var(--text3);letter-spacing:.5px;margin:10px 0 8px;" data-i18n="sc.next5">NEXT 5 EVENTS &middot; HIGH AND MEDIUM IMPACT</div>
           <div id="fund-news"></div>
-          <div id="fund-verdict-box" style="margin-top:8px;padding:7px;border-left:2px solid var(--amber);border-radius:0 6px 6px 0;font-size:11px;color:var(--text3);line-height:1.5;background:rgba(255,176,32,0.04);"></div>
+          <div id="fund-verdict-box"></div>
         </div>
 
 
@@ -19533,16 +19534,30 @@ Respond ONLY with valid JSON (no markdown):
     }
 
     // 7. RENDER FUNDAMENTAL
-    var newsHTML = (ai.fund_news||[]).map(function(n){
-      var col = n.impact==='High'?'#FF1E3C':n.impact==='Medium'?'#FFB020':'#555';
-      return '<div style="display:flex;align-items:flex-start;gap:7px;padding:6px 0;border-bottom:0.5px solid var(--border);">'+
-        '<div style="width:7px;height:7px;border-radius:50%;background:'+col+';margin-top:3px;flex-shrink:0;"></div>'+
-        '<div><div style="font-size:11px;font-weight:700;color:var(--text);">'+n.name+'</div>'+
-        '<div style="font-size:10px;color:var(--text3);">'+n.time+' · F: '+n.forecast+' · P: '+n.previous+'</div></div>'+
-      '</div>';
-    }).join('');
-    document.getElementById('fund-news').innerHTML = newsHTML || '<div style="font-size:11px;color:var(--text3);padding:8px 0;">'+mmT('sc.noEvents','No major events found')+'</div>';
-    document.getElementById('fund-verdict-box').innerHTML = '<span style="color:#FFB020;font-weight:700;">'+mmT('sc.fundVerdict','Fundamental Verdict')+'</span><br>'+(ai.fund_verdict||'—');
+    // ══════════════════════════════════════════════════════
+    // THE REAL CALENDAR, NOT THE MODEL'S.
+    // `ai.fund_news` was written by Claude as part of the scan, so the events,
+    // their times and their forecasts were INVENTED. The same feed the News
+    // Calendar screen uses is real: MT5 publishes it through the bridge into
+    // `mmai_calendar`. The rows are drawn with the news screen's own helpers so
+    // the two screens cannot drift apart in formatting.
+    // ══════════════════════════════════════════════════════
+    mmFundNews();
+    // Same card as the technical verdict: brand red frame, turning beam. THERE
+    // IS NO FUNDAMENTAL DIRECTION IN THE MODEL'S RESPONSE, so the pill carries
+    // the only honest thing available - how many of the listed events are high
+    // impact and how many are medium.
+    var fundVerdictBox = document.getElementById('fund-verdict-box');
+    if(fundVerdictBox){
+      fundVerdictBox.innerHTML =
+        '<div class="sct-vw"><span class="sct-vbeam"></span><div class="sct-vc">'+
+          '<div class="sct-vfield"></div>'+
+          '<div class="sct-vk"><span>'+mmT('sc.fundVerdict','FUNDAMENTAL VERDICT')+'</span>'+
+          '<span class="sct-vpill" id="fund-count" style="color:var(--text2);background:rgba(255,255,255,.06);">&mdash;</span></div>'+
+          '<div class="sct-vt">'+(ai.fund_verdict||'\u2014')+'</div>'+
+        '</div></div>';
+      mmFundCount();
+    }
 
     // 8. RENDER OVERALL VERDICT
     var od = ai.overall_direction||'Neutral';
@@ -20955,6 +20970,108 @@ function mmNewsRender(){
          + '</div>';
   }
   list.innerHTML = html;
+}
+
+// ══════════════════════════════════════════════════════════
+// FUNDAMENTAL EVENTS ON THE SCANNER. 9 Aug 2026.
+// Five events, high and medium impact only, the next ones due AFTER the moment
+// the scan ran. Reuses the News Calendar's own helpers and row markup, so the
+// two screens format an event identically and always will.
+// IT DOES NOT REFETCH IF THE CALENDAR IS ALREADY FRESH. `MMNEWS.rows` is
+// loaded by the News screen and cached for five minutes; the scanner takes it
+// when it is there and only calls the RPC when it is not.
+// ══════════════════════════════════════════════════════════
+var _mmFundRows = [];
+
+function mmFundPick(){
+  var now = Date.now();
+  return (MMNEWS.rows || [])
+    .filter(function(x){
+      // 3 is high, 2 is medium. Anything lower is noise on a trading screen.
+      if(Number(x.importance) < 2) return false;
+      return new Date(x.event_time).getTime() >= now;
+    })
+    .sort(function(a,b){ return new Date(a.event_time) - new Date(b.event_time); })
+    .slice(0,5);
+}
+
+function mmFundRender(){
+  var host = document.getElementById('fund-news');
+  if(!host) return;
+  var rows = _mmFundRows;
+  if(!rows.length){
+    host.innerHTML = '<div style="font-size:11px;color:var(--text3);padding:8px 0;">'
+      + mmT('sc.noEvents','No high or medium impact events ahead.') + '</div>';
+    return;
+  }
+  var html = '';
+  for(var i=0;i<rows.length;i++){
+    var x = rows[i];
+    var d = new Date(x.event_time);
+    var imp = mmNewsImpact(x.importance);
+    var mins = mmNewsMins(d);
+    var soon = (mins >= 0 && mins <= 5);
+    var cd = mmNewsCountdown(mins);
+    var actualShown = mmNewsVal(x.actual, x.unit);
+    html += '<div style="border:1px solid ' + (soon ? 'rgba(255,30,60,.30)' : imp.bd)
+         + ';border-left:3px solid ' + imp.col
+         + ';border-radius:10px;padding:10px 12px;margin-bottom:7px;background:#0e111a;background-image:'
+         + imp.tint + ';">'
+         +   '<div style="display:flex;align-items:center;gap:8px;">'
+         +     '<div style="flex:1;min-width:0;color:var(--text);font-size:12px;font-weight:600;'
+         +          'white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + mmNewsEsc(x.name) + '</div>'
+         +     '<span style="flex:none;color:' + (imp.label === 'HIGH' ? '#fff' : imp.col)
+         +          ';font-size:9px;border:1px solid ' + imp.bd + ';border-radius:5px;padding:1px 6px;'
+         +          (imp.label === 'HIGH' ? 'background:var(--red);' : '') + '">' + imp.label + '</span>'
+         +   '</div>'
+         +   '<div style="display:flex;align-items:center;margin-top:4px;">'
+         +     '<span style="color:' + imp.col + ';font-size:9px;border-radius:4px;padding:1px 5px;'
+         +          'background:rgba(255,255,255,.06);">' + mmNewsEsc(x.currency || '--') + '</span>'
+         +     '<span style="color:#9aa0b4;font-size:10px;margin-left:6px;">' + mmNewsTimeStr(d) + '</span>'
+         +     '<span style="flex:1;"></span>'
+         +     (cd ? '<span style="color:#7c8494;font-size:10px;">' + cd + '</span>' : '')
+         +   '</div>'
+         +   '<div style="display:flex;gap:6px;margin-top:8px;">'
+         +     mmNewsBox('ACTUAL',   actualShown, actualShown !== '--')
+         +     mmNewsBox('FORECAST', mmNewsVal(x.forecast, x.unit), false)
+         +     mmNewsBox('PREVIOUS', mmNewsVal(x.previous, x.unit), false)
+         +   '</div>'
+         + '</div>';
+  }
+  host.innerHTML = html;
+  mmFundCount();
+}
+
+function mmFundCount(){
+  var el = document.getElementById('fund-count');
+  if(!el) return;
+  var hi = 0, md = 0;
+  for(var i=0;i<_mmFundRows.length;i++){
+    if(Number(_mmFundRows[i].importance) >= 3) hi++; else md++;
+  }
+  el.textContent = _mmFundRows.length
+    ? hi + ' ' + mmT('sc.highShort','HIGH') + ' \u00b7 ' + md + ' ' + mmT('sc.medShort','MED')
+    : '\u2014';
+}
+
+async function mmFundNews(){
+  var host = document.getElementById('fund-news');
+  if(!host) return;
+  try {
+    var age = Date.now() - (MMNEWS.fetched || 0);
+    if(!MMNEWS.rows || !MMNEWS.rows.length || age > 300000){
+      var r = await db.rpc('mmai_calendar', {});
+      if(r && r.error) throw new Error(r.error.message);
+      MMNEWS.rows = (r && r.data) ? r.data : [];
+      MMNEWS.fetched = Date.now();
+    }
+    _mmFundRows = mmFundPick();
+  } catch(e){
+    // A calendar that will not load must not take the scan down with it.
+    _mmFundRows = [];
+    console.warn('Fundamental calendar:', e.message);
+  }
+  mmFundRender();
 }
 
 function mmNewsBox(label, value, strong){
