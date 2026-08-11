@@ -1419,13 +1419,26 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
    THE BUTTON HAS NO ICON AND NO SWEEPING SHINE. The gradient itself drifts
    through red, deep red and ember; the old white streak crossing a solid fill
    is a shop-window treatment.
-   `.scan-hero.compact` DROPS THE MIN-HEIGHT once results are on screen, so a
-   customer rescanning does not have to scroll a full screen every time.
+   The hero collapses to a header row once results exist rather than staying
+   full height, so a customer is not scrolling a whole screen to reach them.
    ══════════════════════════════════════════════════════════ */
-.scan-hero{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;
- min-height:calc(100vh - 210px);padding:14px 0 18px;overflow:hidden;}
-.scan-hero.compact{min-height:0;padding:4px 0 14px;}
-.scan-hero.compact .sh-core,.scan-hero.compact .sh-rings,.scan-hero.compact .sh-glow{display:none;}
+/* ══════════════════════════════════════════════════════════
+   THE SCAN TRANSITION. 9 Aug 2026. "THE CORE FLIES".
+   Everything in the hero is ABSOLUTELY POSITIONED so the core can travel from
+   the middle of the screen into the header as one continuous object. If it
+   were destroyed there and recreated here, the eye would see two things
+   appear and disappear; moving one thing is what makes it read as smooth.
+   Three states on `#scan-hero`:
+     idle      - full screen, controls visible
+     .scanning - controls collapse, core grows, status line appears
+     .done     - hero shrinks to a 58px header row, core lands beside the pair
+   THE CONTROLS DO NOT COME BACK after a scan, at Haikal's instruction. To run
+   another the customer leaves and re-enters, which resets everything.
+   ══════════════════════════════════════════════════════════ */
+.scan-hero{position:relative;overflow:hidden;height:calc(100vh - 250px);min-height:520px;
+ transition:height .85s cubic-bezier(.32,.72,.24,1), min-height .85s cubic-bezier(.32,.72,.24,1);}
+.scan-hero.done{height:58px;min-height:0;}
+.sh-stage{position:absolute;inset:0;}
 .sh-rings{position:absolute;inset:0;pointer-events:none;display:flex;align-items:center;justify-content:center;}
 .sh-rings span{position:absolute;border-radius:50%;border:1px solid rgba(255,30,60,.07);}
 .sh-glow{position:absolute;left:50%;top:34%;width:340px;height:340px;margin:-170px 0 0 -170px;border-radius:50%;
@@ -1433,13 +1446,48 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 /* THE CORE IS A CANVAS as of 9 Aug 2026. A liquid particle cloud with a
    neuron network firing inside it, drawn in `mmScanCore`. The CSS rings it
    replaced could not do a network that rewires itself as the cloud moves. */
-.sh-core{position:relative;width:190px;height:190px;flex-shrink:0;margin-bottom:10px;}
+.sh-core{position:absolute;left:50%;top:16%;width:190px;height:190px;margin-left:-95px;z-index:3;
+ transition:left .85s cubic-bezier(.32,.72,.24,1), top .85s cubic-bezier(.32,.72,.24,1),
+            width .85s cubic-bezier(.32,.72,.24,1), height .85s cubic-bezier(.32,.72,.24,1),
+            margin-left .85s cubic-bezier(.32,.72,.24,1);}
 .sh-core canvas{display:block;width:100%;height:100%;}
+.scan-hero.scanning .sh-core{top:12%;width:250px;height:250px;margin-left:-125px;}
+.scan-hero.done .sh-core{left:14px;top:12px;width:34px;height:34px;margin-left:0;}
+/* The pair, price and change move together as one block and shrink into the
+   header line. font-size is animatable, which is why it is used rather than a
+   transform, so the text stays crisp at both ends. */
+.sh-info{position:absolute;left:0;right:0;top:calc(16% + 205px);text-align:center;z-index:3;
+ transition:left .85s cubic-bezier(.32,.72,.24,1), right .85s cubic-bezier(.32,.72,.24,1),
+            top .85s cubic-bezier(.32,.72,.24,1), text-align .85s;}
+.scan-hero.done .sh-info{left:58px;right:auto;top:11px;text-align:left;}
+.scan-hero.done .sh-sym{font-size:13px;}
+.scan-hero.done .sh-px{font-size:10.5px;margin-top:2px;display:inline;}
+.scan-hero.done .sh-chg{font-size:10.5px;margin-top:0;display:inline;}
+.scan-hero.done .sh-chg::before{content:' \00b7 ';color:var(--text3);}
+.scan-hero.done #scan-last-time{display:none;}
+.sh-status{position:absolute;left:0;right:0;top:calc(16% + 290px);text-align:center;z-index:3;
+ font-family:'Orbitron',ui-monospace,Menlo,monospace;font-size:10px;letter-spacing:2px;color:var(--amber);
+ opacity:0;transition:opacity .45s ease;pointer-events:none;}
+.scan-hero.scanning .sh-status{opacity:1;}
+.scan-hero.done .sh-status{opacity:0;}
 .sh-sym{position:relative;font-family:'Orbitron',sans-serif;font-size:20px;font-weight:900;letter-spacing:1px;text-align:center;}
 .sh-px{position:relative;font-family:'Orbitron',sans-serif;font-size:13px;font-weight:800;text-align:center;margin-top:5px;}
 .sh-chg{position:relative;font-size:9.5px;text-align:center;margin-top:3px;}
-.sh-wrap{position:relative;width:100%;max-width:320px;margin-top:26px;}
-.scan-hero.compact .sh-wrap{margin-top:6px;}
+.sh-wrap{position:absolute;left:50%;width:100%;max-width:320px;margin-left:-160px;top:calc(16% + 300px);z-index:3;
+ transition:opacity .45s ease, transform .45s ease;}
+.scan-hero.scanning .sh-wrap,.scan-hero.done .sh-wrap{opacity:0;transform:translateY(-12px);pointer-events:none;}
+.scan-hero.scanning .sh-rings,.scan-hero.done .sh-rings,
+.scan-hero.done .sh-glow{opacity:0;transition:opacity .5s ease;}
+/* THE STAGGER. Each card is a beat behind the one above it. 80ms reads as a
+   sequence; past about 120 it starts to feel slow by the third scan. */
+#scan-results > *{opacity:0;transform:translateY(16px);
+ transition:opacity .5s ease, transform .5s cubic-bezier(.32,.72,.24,1);}
+#scan-results.shown > *{opacity:1;transform:none;}
+#scan-results.shown > *:nth-child(1){transition-delay:.10s;}
+#scan-results.shown > *:nth-child(2){transition-delay:.18s;}
+#scan-results.shown > *:nth-child(3){transition-delay:.26s;}
+#scan-results.shown > *:nth-child(4){transition-delay:.34s;}
+#scan-results.shown > *:nth-child(5){transition-delay:.42s;}
 .sh-two{display:grid;grid-template-columns:1fr 108px;gap:9px;}
 .sh-lbl{font-size:7.5px;letter-spacing:1.2px;color:var(--text3);font-family:'Orbitron',sans-serif;margin-bottom:6px;text-align:center;}
 .sh-sel{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:11px;padding:12px 13px;
@@ -4333,8 +4381,8 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 
       <!-- ══════════════════════════════════════════════════
            HERO. Centred and full height until a scan has run, then
-           `.compact` is added and the core and rings come off so the results
-           are not a screen away on every rescan.
+           it collapses to a header row and the core flies into it, so the
+           results are not a screen away.
            Every id is unchanged: scan-pair-label, scan-last-time, scan-price,
            scan-change, scan-symbol, scan-tf, scan-btn.
            ══════════════════════════════════════════════════ -->
@@ -4348,10 +4396,13 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 
         <div class="sh-core"><canvas id="scan-core"></canvas></div>
 
-        <div class="sh-sym" id="scan-pair-label">XAUUSD <span style="color:var(--red);" data-i18n="sc.h4">H4</span></div>
-        <div class="sh-px" id="scan-price">&mdash;</div>
-        <div class="sh-chg" id="scan-change">&mdash;</div>
-        <div class="sh-chg" style="color:var(--text3);" id="scan-last-time" data-i18n="sc.selectPair">Select pair and scan</div>
+        <div class="sh-info">
+          <div class="sh-sym" id="scan-pair-label">XAUUSD <span style="color:var(--red);" data-i18n="sc.h4">H4</span></div>
+          <div class="sh-px" id="scan-price">&mdash;</div>
+          <div class="sh-chg" id="scan-change">&mdash;</div>
+          <div class="sh-chg" style="color:var(--text3);" id="scan-last-time" data-i18n="sc.selectPair">Select pair and scan</div>
+        </div>
+        <div class="sh-status" id="scan-status" data-i18n="sc.analysing">ANALYSING MARKET</div>
 
         <div class="sh-wrap">
           <div>
@@ -12046,7 +12097,16 @@ function showSubScreen(id) {
   // AFTER the premium gate, not before. A customer without entitlement never
   // reaches this screen, and building a canvas for a screen that was refused
   // would size it to zero and leave a dead object behind.
-  if(id === 'sub-scanner') setTimeout(function(){ mmScanCore(); mmScanSync(); }, 60);
+  if(id === 'sub-scanner') setTimeout(function(){
+    // Every visit starts clean: the controls are back, the results are gone.
+    // This is the only way to run a second scan, which is what Haikal wanted.
+    var sh = document.getElementById('scan-hero');
+    if(sh) sh.classList.remove('scanning','done');
+    var sr = document.getElementById('scan-results');
+    if(sr){ sr.classList.remove('shown'); sr.style.display = 'none'; }
+    mmScanCore(); mmScanSync();
+    if(_mmCore && _mmCore.start) _mmCore.start();
+  }, 60);
   var el = document.getElementById(id);
   if(el) { el.classList.add('active'); }
   soonMaybe(id);
@@ -18650,7 +18710,7 @@ function _unusedScale(pct) {
 // app by a wide margin, and a canvas loop left running in a hidden screen
 // drains a phone silently. Two guards, both needed:
 //   - IntersectionObserver: covers leaving the Scanner, scrolling it away,
-//     and the `.compact` state, which sets display:none on the core.
+//     and the collapsed header state after a scan.
 //   - visibilitychange: covers the app being backgrounded, which the
 //     observer does NOT report.
 //
@@ -18890,11 +18950,14 @@ async function runMAIScanner() {
   if(badge) { badge.innerHTML = '<div style="width:6px;height:6px;border-radius:50%;background:var(--amber);animation:pulse 1s infinite;"></div>'+mmT('sc.scanningCaps','SCANNING')+''; badge.style.color='var(--amber)'; }
 
   document.getElementById('scan-pair-label').innerHTML = symName+' <span style="color:var(--red);">'+tfName+'</span>';
-  document.getElementById('scan-results').style.display = 'block';
-  // The hero gives up its full-screen height the moment there is something
-  // below it worth scrolling to.
+  // THE RESULTS ARE NOT REVEALED HERE. They used to be shown at the START of
+  // the scan, which is why the screen filled with empty placeholders under a
+  // button that said SCANNING. They now appear only when there is something
+  // to put in them.
   var shEl = document.getElementById('scan-hero');
-  if(shEl) shEl.classList.add('compact');
+  if(shEl){ shEl.classList.remove('done'); shEl.classList.add('scanning'); }
+  var srEl = document.getElementById('scan-results');
+  if(srEl){ srEl.classList.remove('shown'); srEl.style.display = 'none'; }
 
   try {
     // 1. FETCH price data - try multiple sources
@@ -19278,11 +19341,30 @@ Respond ONLY with valid JSON (no markdown):
     window._lastScanData = {symbol:symName, direction:od, confidence:oc, timestamp:Date.now()};
 
     btn.textContent = mmT('sc.complete','\u2713 SCAN COMPLETE');
+  // THE HANDOFF. The hero collapses and the core flies to the header while the
+  // results are already fading up underneath, so the two states overlap and
+  // the screen is never empty for a frame.
+  var shDone = document.getElementById('scan-hero');
+  if(shDone){ shDone.classList.remove('scanning'); shDone.classList.add('done'); }
+  var res = document.getElementById('scan-results');
+  res.style.display = 'block';
+  // One frame between display and the class, or the browser has nothing to
+  // transition FROM and the cards simply appear.
+  requestAnimationFrame(function(){ requestAnimationFrame(function(){ res.classList.add('shown'); }); });
+  // The core has landed as a 34px badge by now. Sixty frames a second of a
+  // 380px canvas to fill a fingernail is not worth the battery on the screen
+  // customers spend the longest on, so it holds its last frame.
+  setTimeout(function(){ if(_mmCore && _mmCore.stop) _mmCore.stop(); }, 950);
     btn.style.background = '#00C87A';
     if(badge) { badge.innerHTML = '<div style="width:6px;height:6px;border-radius:50%;background:#00C87A;"></div>'+mmT('sc.live','LIVE')+''; badge.style.color='#00C87A'; }
     setTimeout(function(){ btn.textContent=mmT('sc.initiate','INITIATE SCAN'); btn.style.background=''; },2000);
 
   } catch(e) {
+    // A FAILED SCAN HANDS THE SCREEN BACK. Without this the hero stays in its
+    // scanning state with the controls collapsed, and the only way out is to
+    // leave the screen - which is a dead end, not an error message.
+    var shFail = document.getElementById('scan-hero');
+    if(shFail) shFail.classList.remove('scanning','done');
     btn.textContent = mmT('sc.failed','\u2715 SCAN FAILED');
     btn.style.background = '#FF1E3C';
     if(badge) { badge.innerHTML = '<div style="width:6px;height:6px;border-radius:50%;background:var(--red);"></div>'+mmT('sc.error','ERROR')+''; badge.style.color='var(--red)'; }
