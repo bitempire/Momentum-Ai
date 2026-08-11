@@ -1782,11 +1782,12 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 .scv-b1{background:#FF1E3C;} .scv-b2{background:#FF6A3D;}
 /* WHITE, not the bearish red. This label is not a reading, and on the red
    field a deep red at 10px letter-spaced is close to unreadable. */
-.scv-eb{color:#fff;}
+.scv-eb{font-family:'Orbitron',ui-monospace,Menlo,monospace;font-size:10px;font-weight:800;
+ letter-spacing:1.4px;color:rgba(255,255,255,.62);margin-top:5px;}
 .scv-beam{background:conic-gradient(from 0deg,transparent 0 48%,rgba(196,0,36,.30) 66%,rgba(255,30,60,.70) 80%,rgba(196,0,36,.30) 92%,transparent 100%);}
-.scv-neu .scv-word,.scv-neu .scv-pc,.scv-neu .scv-g .v{color:#FFD48A;}
-.scv-bul .scv-word,.scv-bul .scv-pc,.scv-bul .scv-g .v{color:#8FF0C6;}
-.scv-bear .scv-word,.scv-bear .scv-pc,.scv-bear .scv-g .v{color:#FF9AA6;}
+.scv-neu .scv-word,.scv-neu .scv-pc,.scv-neu .scv-g .v{color:#FFC53D;}
+.scv-bul .scv-word,.scv-bul .scv-pc,.scv-bul .scv-g .v{color:#4BFFB8;}
+.scv-bear .scv-word,.scv-bear .scv-pc,.scv-bear .scv-g .v{color:#FF6B80;}
 /* THE PAIR, PRICE AND CORE NOW LIVE IN THE CARD, hard right on the eyebrow's
    own line, which uses the empty space there and costs the card no height. */
 .scv-hd{align-items:flex-start;}
@@ -19658,9 +19659,9 @@ Respond ONLY with valid JSON (no markdown):
     var vbar = document.getElementById('verdict-bar');
     if(vbar){
       vbar.style.width = oc + '%';
-      vbar.style.background = oc>=65 ? 'linear-gradient(90deg,#00A06C,#00D68F)'
-                            : oc>=45 ? 'linear-gradient(90deg,#C98D14,#FFB020)'
-                                     : 'linear-gradient(90deg,#C4213C,#FF4D6A)';
+      vbar.style.background = oc>=65 ? 'linear-gradient(90deg,#00A06C,#4BFFB8)'
+                            : oc>=45 ? 'linear-gradient(90deg,#C98D14,#FFC53D)'
+                                     : 'linear-gradient(90deg,#C4213C,#FF6B80)';
     }
     var vsEl = document.getElementById('verdict-summary'); if(vsEl) vsEl.textContent=ai.overall_summary||'—';
 
