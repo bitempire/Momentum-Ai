@@ -1576,6 +1576,63 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 .sct-u > span{display:block;height:2px;border-radius:1px;transform-origin:left;animation:sctGrow .9s cubic-bezier(.22,.61,.36,1) both;}
 /* Wide and heavily blurred on purpose. At 70px with an 8px blur it read as a
    band with visible edges arriving at one border and leaving at the other. */
+/* THE INDICATOR CELLS ARE NOW THE SAME OBJECT AS THE ROOM CARDS ABOVE THEM.
+   They used to be painted #0b0b0f, the same solid colour as the card, while
+   every other panel on the screen is a translucent white lit from behind. Two
+   surfaces that are nominally the same colour do not look the same when one is
+   solid and the other is not, which is why they read as holes. */
+.sct-grid2{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+.sct-c2{position:relative;overflow:hidden;background:var(--surface);border:1px solid var(--border);
+ border-radius:10px;padding:8px 10px 14px;}
+.sct-c2::before{content:'';position:absolute;left:10px;right:10px;top:0;height:1px;
+ background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);}
+.sct-c2 .bl{position:absolute;left:0;right:0;bottom:0;height:26px;filter:blur(9px);pointer-events:none;}
+.sct-c2 .tk{position:absolute;top:5px;left:5px;width:5px;height:5px;
+ border-top:1px solid rgba(255,255,255,.18);border-left:1px solid rgba(255,255,255,.18);}
+.sct-c2 .dt{position:absolute;top:6px;right:7px;width:5px;height:5px;border-radius:50%;}
+.sct-c2 .v{position:relative;z-index:1;font-family:'Orbitron',ui-monospace,monospace;font-size:14px;font-weight:800;line-height:1;white-space:nowrap;}
+.sct-c2 .kk{position:relative;z-index:1;font-size:6.5px;letter-spacing:.9px;color:var(--text3);margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sct-c2 .u{position:relative;z-index:1;height:2px;border-radius:1px;background:rgba(255,255,255,.07);margin-top:7px;overflow:hidden;}
+.sct-c2 .u > span{display:block;height:2px;border-radius:1px;}
+
+/* LEVELS TABLE. Numbers right aligned in their own columns so the digits line
+   up under each other, which is the whole reason a table beats three cards for
+   comparing across levels. */
+.sct-tbl{width:100%;border-collapse:collapse;}
+.sct-tbl th{font-size:6.5px;letter-spacing:1.1px;color:var(--text3);font-weight:700;text-align:right;padding:0 0 7px;}
+.sct-tbl th:first-child{text-align:left;}
+.sct-tbl td{padding:8px 0;border-top:1px solid rgba(255,255,255,.055);font-family:'Orbitron',ui-monospace,monospace;
+ font-size:11px;font-weight:700;text-align:right;white-space:nowrap;}
+.sct-tbl td:first-child{text-align:left;font-family:'Sora',sans-serif;font-size:9px;letter-spacing:1px;color:var(--text3);font-weight:700;}
+.sct-tbl tr.now td{background:rgba(255,255,255,.035);}
+.sct-tbl tr.now td:first-child{color:var(--text);}
+
+/* THE TWO CASES SIDE BY SIDE. Flagged to Haikal and accepted: the sentences
+   come from the model and will not always run the same length, so one long
+   one leaves a column dangling below the other. */
+.sct-cases{display:grid;grid-template-columns:1fr 1px 1fr;gap:0 11px;margin-top:7px;padding-top:10px;
+ border-top:1px solid rgba(255,255,255,.055);}
+.sct-cases .dv{background:rgba(255,255,255,.055);}
+.sct-cases .kk{font-size:7.5px;letter-spacing:1.1px;font-weight:800;font-family:'Orbitron',ui-monospace,monospace;margin-bottom:4px;}
+.sct-cases .vv{font-family:'Orbitron',ui-monospace,monospace;font-size:12px;font-weight:700;margin-bottom:6px;}
+.sct-cases .tx{font-size:10px;color:var(--text2);line-height:1.55;}
+
+/* THE VERDICT CARD. Brand red whatever the reading says, at Haikal's
+   instruction. The objection is on record: red also means bearish on this
+   card, so a bullish verdict arrives in a red frame. */
+.sct-vw{position:relative;overflow:hidden;border-radius:12px;padding:1.5px;margin-top:12px;}
+.sct-vbeam{position:absolute;inset:-60%;pointer-events:none;animation:sctVspin 8s linear infinite;
+ background:conic-gradient(from 0deg,transparent 0 46%,rgba(196,0,36,.35) 62%,rgba(255,30,60,.85) 78%,rgba(255,106,61,.5) 88%,transparent 100%);}
+@keyframes sctVspin{to{transform:rotate(360deg)}}
+.sct-vc{position:relative;overflow:hidden;border-radius:10.5px;background:#08080b;padding:12px;}
+.sct-vfield{position:absolute;inset:0;pointer-events:none;mix-blend-mode:screen;
+ background:radial-gradient(140% 100% at 22% -10%,rgba(255,30,60,.20) 0%,rgba(255,30,60,.10) 30%,rgba(255,30,60,.035) 58%,rgba(255,30,60,0) 100%);}
+.sct-vk{position:relative;font-size:7.5px;letter-spacing:1.1px;color:var(--text3);margin-bottom:6px;
+ display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.sct-vt{position:relative;font-size:10.5px;color:var(--text2);line-height:1.62;}
+.sct-vpill{font-family:'Orbitron',ui-monospace,monospace;font-size:8.5px;font-weight:800;letter-spacing:.6px;
+ padding:3px 7px;border-radius:5px;white-space:nowrap;}
+@media (prefers-reduced-motion: reduce){.sct-vbeam{animation:none;}}
 .sct-sweep{position:absolute;top:-30%;bottom:-30%;width:150px;z-index:3;pointer-events:none;filter:blur(22px);
  background:linear-gradient(90deg,transparent,rgba(75,240,182,.075),transparent);animation:sctPan 9s ease-in-out infinite;}
 @keyframes sctMark{0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,.45);}70%{box-shadow:0 0 0 7px rgba(255,255,255,0);}}
@@ -4620,8 +4677,11 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 
           <div class="sct-sec" data-i18n="sc.indicators">INDICATORS</div>
           <div id="tech-indicators"></div>
-          <div id="tech-scenario" style="margin-top:8px;padding:8px;background:var(--surface);border-radius:8px;border:0.5px solid var(--border);font-size:11px;color:var(--text3);line-height:1.6;"></div>
-          <div id="tech-verdict-box" style="margin-top:8px;padding:7px;border-left:2px solid var(--green);border-radius:0 6px 6px 0;font-size:11px;color:var(--text3);line-height:1.5;background:rgba(0,200,122,0.04);"></div>
+          <div class="sct-sec" data-i18n="sc.levels">LEVELS</div>
+          <div id="tech-levels"></div>
+          <div class="sct-sec" data-i18n="sc.scenario">MAI SCENARIO</div>
+          <div id="tech-scenario"></div>
+          <div id="tech-verdict-box"></div>
         </div>
 
         <!-- FUNDAMENTAL -->
@@ -19151,13 +19211,21 @@ async function runMAIScanner() {
     // passed for a value that HAS a 0-100 scale. A yes-or-no gets a full bar in
     // its state colour, which is honest: it is not a measurement pretending to
     // be one, it is a filled indicator light.
-    var techHTML = '<span class="sct-sweep"></span>';
+    // No sweep: it crossed the fused panel, and the cells are separate objects
+    // again, so there is no single surface for a light to travel.
+    var techHTML = '';
+    // Same shape as the room cards above: surface, rounded, hairline across the
+    // top and a coloured bloom at the bottom. `hex2rgb` is needed because the
+    // bloom is a gradient to a transparent version of the same colour.
+    function hex2rgb(h){ return parseInt(h.slice(1,3),16)+','+parseInt(h.slice(3,5),16)+','+parseInt(h.slice(5,7),16); }
     function indCell(value, label, col, under) {
-      return '<div class="sct-c">'+
+      var rgb = hex2rgb(col);
+      return '<div class="sct-c2">'+
         '<span class="tk"></span><span class="dt" style="background:'+col+';"></span>'+
-        '<div class="sct-v" style="color:'+col+';">'+value+'</div>'+
-        '<div class="sct-ck">'+label+'</div>'+
-        '<div class="sct-u"><span style="width:'+under+'%;background:'+col+';"></span></div>'+
+        '<div class="v" style="color:'+col+';">'+value+'</div>'+
+        '<div class="kk">'+label+'</div>'+
+        '<div class="u"><span style="width:'+under+'%;background:'+col+';"></span></div>'+
+        '<span class="bl" style="background:linear-gradient(180deg,rgba('+rgb+',0),rgba('+rgb+',.20));"></span>'+
       '</div>';
     }
     var GRN='#4BF0B6', RED='#FF4D6A', AMB='#FFB020';
@@ -19172,7 +19240,7 @@ async function runMAIScanner() {
     // that moves, scaled against the range so it has something real to sit on.
     var atrPct = (range>0) ? Math.min(100, Math.round(atr/range*100)) : 0;
     techHTML += indCell(atr.toFixed(2), 'ATR', AMB, atrPct);
-    document.getElementById('tech-indicators').innerHTML = '<div class="sct-grid">'+techHTML+'</div>';
+    document.getElementById('tech-indicators').innerHTML = '<div class="sct-grid2">'+techHTML+'</div>';
 
     var fmt = price>100 ? function(v){return v.toFixed(2);} : function(v){return v.toFixed(4);};
     document.getElementById('tech-support').textContent = fmt(support);
@@ -19347,10 +19415,55 @@ Respond ONLY with valid JSON (no markdown):
     svEl.style.color = sentDir==='Bullish'?'#00C87A':sentDir==='Bearish'?'#FF1E3C':'#FFB020';
 
     // 6. RENDER TECHNICAL
+    // ---- LEVELS TABLE ----
+    // RANGE is where each level sits in its OWN range, so resistance is always
+    // 100 and support always 0. An earlier draft printed 49.5, 50.5, 50.5 down
+    // the three rows, which meant nothing.
+    var tlEl = document.getElementById('tech-levels');
+    if(tlEl){
+      tlEl.innerHTML =
+        '<table class="sct-tbl"><tr>'+
+          '<th>'+mmT('sc.levelCol','LEVEL')+'</th><th>'+mmT('sc.priceCol','PRICE')+'</th>'+
+          '<th>'+mmT('sc.distCol','DISTANCE')+'</th><th>'+mmT('sc.rangeCol','RANGE')+'</th></tr>'+
+        '<tr><td>'+mmT('sc.resistance','RESISTANCE')+'</td>'+
+          '<td style="color:#FF8A96">'+fmt(resistance)+'</td>'+
+          '<td style="color:#FF8A96">+'+fmt(Math.abs(above))+'</td><td>100%</td></tr>'+
+        '<tr class="now"><td>'+mmT('sc.priceRow','PRICE')+'</td><td>'+fmt(price)+'</td>'+
+          '<td>\u2014</td><td>'+Math.round(posPct)+'%</td></tr>'+
+        '<tr><td>'+mmT('sc.support','SUPPORT')+'</td>'+
+          '<td style="color:#4BE0A8">'+fmt(support)+'</td>'+
+          '<td style="color:#4BE0A8">-'+fmt(Math.abs(below))+'</td><td>0%</td></tr>'+
+        '</table>';
+    }
+
+    // ---- THE TWO CASES ----
     var techScenario = document.getElementById('tech-scenario');
-    if(techScenario) techScenario.innerHTML = '<span style="font-size:9px;color:var(--red);font-weight:700;letter-spacing:.5px;">'+mmT('sc.scenario',mmT('sc.scenario','MAI SCENARIO'))+'</span><br><span style="color:#00C87A;font-weight:700;">'+mmT('sc.bullishPrefix','Bullish:')+'</span> '+(ai.tech_scenario_bullish||'—')+'<br><span style="color:#FF1E3C;font-weight:700;">'+mmT('sc.bearishPrefix','Bearish:')+'</span> '+(ai.tech_scenario_bearish||'—');
+    if(techScenario) techScenario.innerHTML =
+      '<div class="sct-cases" style="border-top:none;padding-top:0;margin-top:0;">'+
+        '<div><div class="kk" style="color:#4BE0A8">'+mmT('sc.upside','UPSIDE')+'</div>'+
+        '<div class="vv" style="color:#4BE0A8">'+fmt(resistance)+'</div>'+
+        '<div class="tx">'+(ai.tech_scenario_bullish||'\u2014')+'</div></div>'+
+        '<div class="dv"></div>'+
+        '<div><div class="kk" style="color:#FF8A96">'+mmT('sc.downside','DOWNSIDE')+'</div>'+
+        '<div class="vv" style="color:#FF8A96">'+fmt(support)+'</div>'+
+        '<div class="tx">'+(ai.tech_scenario_bearish||'\u2014')+'</div></div>'+
+      '</div>';
+
+    // ---- THE VERDICT CARD ----
+    // The FRAME is brand red always. The PILL carries the reading, which is
+    // the only thing on this card that changes colour with the verdict.
     var techVerdictBox = document.getElementById('tech-verdict-box');
-    if(techVerdictBox) techVerdictBox.innerHTML = '<span style="color:#00C87A;font-weight:700;">'+mmT('sc.techVerdict','Technical Verdict')+'</span><br>'+(ai.tech_verdict||'—');
+    if(techVerdictBox){
+      var pc = techDir==='Bullish' ? '#4BE0A8' : techDir==='Bearish' ? '#FF8A96' : '#FFD48A';
+      var pb = techDir==='Bullish' ? 'rgba(0,214,143,.14)' : techDir==='Bearish' ? 'rgba(255,30,60,.14)' : 'rgba(255,176,32,.14)';
+      techVerdictBox.innerHTML =
+        '<div class="sct-vw"><span class="sct-vbeam"></span><div class="sct-vc">'+
+          '<div class="sct-vfield"></div>'+
+          '<div class="sct-vk"><span>'+mmT('sc.techVerdict','TECHNICAL VERDICT')+'</span>'+
+          '<span class="sct-vpill" style="color:'+pc+';background:'+pb+';">'+mmVerdict(techDir.toUpperCase())+'</span></div>'+
+          '<div class="sct-vt">'+(ai.tech_verdict||'\u2014')+'</div>'+
+        '</div></div>';
+    }
 
     // 7. RENDER FUNDAMENTAL
     var newsHTML = (ai.fund_news||[]).map(function(n){
