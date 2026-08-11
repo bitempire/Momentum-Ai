@@ -19025,6 +19025,28 @@ function mmBadgeCore(){
 var _mmPrinting = false;
 var _mmTravelTimers = [];
 
+// ══════════════════════════════════════════════════════════
+// THE CORE HAS TO LEAVE THE HERO, not just leave the scroll.
+// `.scan-hero.done` sets opacity:0 with no transition, and opacity applies to
+// every descendant INCLUDING a position:fixed one - fixed escapes scrolling
+// and ancestor overflow, but it does NOT escape ancestor opacity. So the whole
+// journey was being drawn at zero alpha. For the flight the core is moved to
+// document.body and put back afterwards. It is decorative while it travels, so
+// it also takes pointer-events:none rather than sitting over the page as an
+// invisible full width block that eats taps.
+// ══════════════════════════════════════════════════════════
+var _mmCoreHome = null;
+function mmCoreOut(el){
+  if(!el || el.parentNode === document.body) return;
+  _mmCoreHome = el.parentNode;
+  document.body.appendChild(el);
+}
+function mmCoreHome(el){
+  if(!el || !_mmCoreHome || el.parentNode !== document.body) return;
+  _mmCoreHome.appendChild(el);
+  _mmCoreHome = null;
+}
+
 function mmTravelClear(){
   _mmPrinting = false;
   _mmTravelTimers.forEach(clearTimeout);
@@ -19033,6 +19055,7 @@ function mmTravelClear(){
   if(el){
     el.classList.remove('mm-travel');
     el.style.cssText = '';
+    mmCoreHome(el);
     // The box is back to the hero's square, so the bitmap has to follow it.
     void el.offsetWidth;
     if(_mmCore && _mmCore.spr) _mmCore.spr(0, 1);
@@ -19086,7 +19109,9 @@ function mmScanTravel(){
   // measured from the box height, which has not moved. Only `top` animates
   // from here on. Widening it with a transition instead would have squashed
   // the drawing, since a canvas stretches its bitmap to whatever box it is in.
+  mmCoreOut(core);
   core.style.transition = 'none';
+  core.style.pointerEvents = 'none';
   core.style.left = '0px';
   core.style.top = r.top + 'px';
   core.style.width = vw + 'px';
@@ -19132,6 +19157,14 @@ function mmScanTravel(){
   T(4900, function(){
     core.style.opacity = '0';
     if(badge) badge.style.opacity = '1';
+    // Home before anything else touches it, so it is never left parked on the
+    // body as an invisible fixed block.
+    core.classList.remove('mm-travel');
+    core.style.cssText = '';
+    mmCoreHome(core);
+    void core.offsetWidth;
+    if(_mmCore && _mmCore.spr) _mmCore.spr(0, 1);
+    if(_mmCore && _mmCore.relayout) _mmCore.relayout();
   });
 }
 
