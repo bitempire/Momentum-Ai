@@ -1641,9 +1641,26 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
    so the field, both clouds, the eyebrow and the word can never disagree
    about what the verdict was.
    ══════════════════════════════════════════════════════════ */
-.scv{position:relative;overflow:hidden;border-radius:12px;border:1px solid var(--border);background:#0a0a0e;margin-bottom:10px;}
-.scv-field{position:absolute;inset:0;pointer-events:none;}
-.scv-blob{position:absolute;border-radius:50%;filter:blur(38px);pointer-events:none;}
+/* THE ROTATING BEAM, lifted from `.mm-bal-wrap` on Home: 1.5px of padding with
+   a conic gradient turning behind it, so a bright arc travels the border.
+   SLOWER AND DIMMER THAN HOME'S. The balance card is small and glanced at;
+   this one is tall and read carefully, and a bright edge racing around a block
+   of summary text is harder to read past than it looks in a mockup. 9 seconds
+   against Home's 4.5, and a wider, weaker arc.
+   THE STATE CLASS LIVES ON THE WRAPPER, not the card, because the beam is a
+   SIBLING of the card and CSS cannot reach backwards from one to the other.
+   Every `.scv-neu .scv-field` style still matches, since the field is a
+   descendant of the wrapper either way. */
+.scv-wrap{position:relative;overflow:hidden;border-radius:14px;padding:1.5px;margin-bottom:10px;}
+.scv-beam{position:absolute;inset:-60%;pointer-events:none;animation:scvBeam 9s linear infinite;}
+@keyframes scvBeam{to{transform:rotate(360deg)}}
+.scv{position:relative;overflow:hidden;border-radius:12.5px;background:#07070a;}
+/* SCREEN BLEND, not a translucent layer. A translucent tint over black never
+   quite reaches the background colour, so there is always a faint step where
+   it ends. Screen ADDS light, so at zero the result is exactly the background.
+   That is what removes the edge, not more gradient stops. */
+.scv-field{position:absolute;inset:0;pointer-events:none;mix-blend-mode:screen;}
+.scv-blob{position:absolute;border-radius:50%;filter:blur(60px);opacity:.30;pointer-events:none;}
 .scv-b1{width:210px;height:150px;left:-40px;top:-50px;animation:scvDrift1 19s ease-in-out infinite;}
 .scv-b2{width:170px;height:130px;right:-40px;top:10px;animation:scvDrift2 26s ease-in-out infinite;}
 .scv-in{position:relative;padding:14px 13px 0;}
@@ -1664,15 +1681,18 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 .scv-sumk{font-size:7.5px;letter-spacing:1px;color:var(--text3);margin-bottom:5px;}
 .scv-sum{font-size:11px;color:var(--text2);line-height:1.65;}
 /* neutral, and the resting state before any scan has run */
-.scv-neu .scv-field{background:linear-gradient(180deg,rgba(255,176,32,.20) 0%,rgba(255,176,32,.085) 26%,rgba(255,176,32,.022) 48%,rgba(10,10,14,0) 68%);}
+.scv-neu .scv-field{background:radial-gradient(150% 100% at 26% -4%,rgba(255,176,32,.20) 0%,rgba(255,176,32,.13) 22%,rgba(255,176,32,.075) 42%,rgba(255,176,32,.035) 62%,rgba(255,176,32,.012) 80%,rgba(255,176,32,0) 100%);}
 .scv-neu .scv-b1{background:#FFB020;} .scv-neu .scv-b2{background:#FF8A3D;}
 .scv-neu .scv-eb{color:#FFC96B;} .scv-neu .scv-word{color:#FFD48A;}
-.scv-bul .scv-field{background:linear-gradient(180deg,rgba(0,200,122,.20) 0%,rgba(0,200,122,.085) 26%,rgba(0,200,122,.022) 48%,rgba(10,10,14,0) 68%);}
+.scv-neu .scv-beam{background:conic-gradient(from 0deg,transparent 0 48%,rgba(224,150,30,.30) 66%,rgba(224,150,30,.70) 80%,rgba(224,150,30,.30) 92%,transparent 100%);}
+.scv-bul .scv-field{background:radial-gradient(150% 100% at 26% -4%,rgba(0,214,143,.20) 0%,rgba(0,214,143,.13) 22%,rgba(0,214,143,.075) 42%,rgba(0,214,143,.035) 62%,rgba(0,214,143,.012) 80%,rgba(0,214,143,0) 100%);}
 .scv-bul .scv-b1{background:#00D68F;} .scv-bul .scv-b2{background:#4BF0B6;}
 .scv-bul .scv-eb{color:#6FE3B4;} .scv-bul .scv-word{color:#8FF0C6;}
-.scv-bear .scv-field{background:linear-gradient(180deg,rgba(255,30,60,.20) 0%,rgba(255,30,60,.085) 26%,rgba(255,30,60,.022) 48%,rgba(10,10,14,0) 68%);}
+.scv-bul .scv-beam{background:conic-gradient(from 0deg,transparent 0 48%,rgba(0,190,125,.30) 66%,rgba(0,190,125,.70) 80%,rgba(0,190,125,.30) 92%,transparent 100%);}
+.scv-bear .scv-field{background:radial-gradient(150% 100% at 26% -4%,rgba(255,30,60,.20) 0%,rgba(255,30,60,.13) 22%,rgba(255,30,60,.075) 42%,rgba(255,30,60,.035) 62%,rgba(255,30,60,.012) 80%,rgba(255,30,60,0) 100%);}
 .scv-bear .scv-b1{background:#FF1E3C;} .scv-bear .scv-b2{background:#FF6A3D;}
 .scv-bear .scv-eb{color:#FF8A96;} .scv-bear .scv-word{color:#FF9AA6;}
+.scv-bear .scv-beam{background:conic-gradient(from 0deg,transparent 0 48%,rgba(224,48,80,.30) 66%,rgba(224,48,80,.70) 80%,rgba(224,48,80,.30) 92%,transparent 100%);}
 @keyframes scvDrift1{
   0%{transform:translate(0,0) scale(1);opacity:.55;}
   30%{transform:translate(150px,26px) scale(1.16);opacity:.8;}
@@ -1686,7 +1706,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 /* Two blurred layers moving forever is the most expensive thing a phone can
    be asked to draw, so the whole effect stops for anyone who has asked their
    device to reduce motion. The card still reads correctly without it. */
-@media (prefers-reduced-motion: reduce){.scv-blob{animation:none;}}
+@media (prefers-reduced-motion: reduce){.scv-blob,.scv-beam{animation:none;}}
 /* ══════════════════════════════════════════════════════════
    AI INSIGHT, ON DEMAND. 9 Aug 2026.
    It used to fire an API call EVERY time the Journal was opened. Now nothing
@@ -4464,7 +4484,9 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
              `verdict-bar` is now the confidence meter rather than a separate
              bar under a separate confidence figure.
              ══════════════════════════════════════════════════ -->
-        <div class="scv scv-neu" id="verdict-card">
+        <div class="scv-wrap scv-neu" id="verdict-wrap">
+          <span class="scv-beam"></span>
+          <div class="scv" id="verdict-card">
           <div class="scv-field"></div>
           <span class="scv-blob scv-b1"></span>
           <span class="scv-blob scv-b2"></span>
@@ -4489,6 +4511,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
           <div class="scv-body">
             <div class="scv-sumk" data-i18n="sc.summary">FINAL AI SUMMARY</div>
             <div class="scv-sum" id="verdict-summary">Run a scan to see the AI verdict.</div>
+          </div>
           </div>
         </div>
 
@@ -19323,8 +19346,12 @@ Respond ONLY with valid JSON (no markdown):
     // ONE CLASS DRIVES THE WHOLE CARD - the tint, both drifting clouds, the
     // eyebrow and the headline all come from it, so no two of them can end up
     // saying different things about the same verdict.
-    var vCard = document.getElementById('verdict-card');
-    if(vCard) vCard.className = 'scv ' + (od==='Bullish' ? 'scv-bul' : od==='Bearish' ? 'scv-bear' : 'scv-neu');
+    // THE STATE CLASS GOES ON THE WRAPPER. The beam is a sibling of the card,
+    // and CSS cannot style a preceding sibling, so the class has to sit on
+    // their shared parent for the border, the field, the clouds, the eyebrow
+    // and the headline to all agree about the verdict.
+    var vWrap = document.getElementById('verdict-wrap');
+    if(vWrap) vWrap.className = 'scv-wrap ' + (od==='Bullish' ? 'scv-bul' : od==='Bearish' ? 'scv-bear' : 'scv-neu');
     var odEl = document.getElementById('verdict-direction'); if(odEl){odEl.textContent=mmVerdict(od);odEl.style.color='';}
     // The stamp and the timeframe cell read the SELECTOR rather than a stored
     // value, so they always describe the scan that just ran.
