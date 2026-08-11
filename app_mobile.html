@@ -19033,6 +19033,10 @@ function mmTravelClear(){
   if(el){
     el.classList.remove('mm-travel');
     el.style.cssText = '';
+    // The box is back to the hero's square, so the bitmap has to follow it.
+    void el.offsetWidth;
+    if(_mmCore && _mmCore.spr) _mmCore.spr(0, 1);
+    if(_mmCore && _mmCore.relayout) _mmCore.relayout();
   }
   var bc = document.getElementById('scan-badge-core');
   if(bc) bc.style.opacity = '0';
@@ -19072,24 +19076,36 @@ function mmScanTravel(){
 
   mmTravelClear();
 
-  // Freeze the core exactly where it is before switching to fixed, or it jumps.
   var r = core.getBoundingClientRect();
-  core.style.left = r.left + 'px';
+  var vw = window.innerWidth, vh = window.innerHeight;
+
+  // THE BOX GOES FULL WIDTH IMMEDIATELY, with transitions off, and its height
+  // is left exactly as it is. Two things follow from that and both matter:
+  // the sphere does not change size, because every scale in the renderer comes
+  // off the short side; and the print head stays where it was, because it is
+  // measured from the box height, which has not moved. Only `top` animates
+  // from here on. Widening it with a transition instead would have squashed
+  // the drawing, since a canvas stretches its bitmap to whatever box it is in.
+  core.style.transition = 'none';
+  core.style.left = '0px';
   core.style.top = r.top + 'px';
-  core.style.width = r.width + 'px';
+  core.style.width = vw + 'px';
   core.style.height = r.height + 'px';
   core.style.marginLeft = '0';
   core.classList.add('mm-travel');
   void core.offsetWidth;   // force the browser to accept that as the start
+  core.style.transition = '';
+  void core.offsetWidth;
+  // The canvas bitmap has to follow the box or the drawing stretches.
+  if(_mmCore && _mmCore.relayout) _mmCore.relayout();
 
-  var vw = window.innerWidth, vh = window.innerHeight;
   function T(ms, fn){ _mmTravelTimers.push(setTimeout(fn, ms)); }
 
-  // 1. DROP to the foot of the screen. Nothing is revealed yet.
-  core.style.width = '300px'; core.style.height = '300px';
-  core.style.left = (vw/2 - 150) + 'px';
+  // 1. DROP to the foot of the screen, opening into a full width curtain on
+  //    the way down. Nothing is revealed yet.
   core.style.top = (vh - 130) + 'px';
   if(_mmCore && _mmCore.tune) _mmCore.tune(0.7, 1.0);
+  if(_mmCore && _mmCore.spr) _mmCore.spr(1, 950);
 
   // 2. RISE, printing each card as the leading edge passes it. The core
   //    brightens so it stays the brightest thing on screen rather than being
@@ -19110,6 +19126,7 @@ function mmScanTravel(){
     core.style.width = br.width + 'px';
     core.style.height = br.height + 'px';
     if(_mmCore && _mmCore.tune) _mmCore.tune(6, 1.0);
+    if(_mmCore && _mmCore.spr) _mmCore.spr(0, 900);
   });
 
   T(4900, function(){
@@ -19131,36 +19148,65 @@ function mmScanCore(){
   // NOT YET ON SCREEN. Bail without setting _mmCore so the next open retries,
   // rather than building a zero-sized canvas that can never be recovered.
   if(!css) return;
-  cv.width = Math.round(css * dpr);
-  cv.height = Math.round(css * dpr);
 
   var ctx = cv.getContext('2d');
-  var W = cv.width, H = cv.height, CX = W/2, CY = H/2;
-  var R = W*0.40, F = W*1.8, U = W/600;
+  var W, H, CX, CY, S, R, F, U, LINK, halo, nuc, band;
 
   var N = 1100, NODES = 80;
   var pts = [];
   for(var i=0;i<N;i++){
     pts.push({ u:Math.random()*2-1, th:Math.random()*6.2832,
                rad:0.18+0.92*Math.pow(Math.random(),0.42),
-               s:Math.random(), k:Math.random() });
+               s:Math.random(), k:Math.random(),
+               // Where this particle sits in the curtain. Fixed per particle so
+               // the cloud disperses to the same place every time rather than
+               // boiling, and so nothing is allocated while it spreads.
+               qx:Math.random()*2-1, qy:Math.random()*2-1 });
   }
-  var AMP=0.13, SPIN=0.22, DIFF=0.40, PULSE=0.11, FLICK=0.22, LINK=R*0.42;
+  var AMP=0.13, SPIN=0.22, DIFF=0.40, PULSE=0.11, FLICK=0.22;
 
-  // Built once. Creating a gradient every frame is what makes this stutter.
-  var halo = ctx.createRadialGradient(CX,CY,R*0.05,CX,CY,R*1.6);
-  halo.addColorStop(0,'rgba(255,150,110,0.17)');
-  halo.addColorStop(0.45,'rgba(255,40,60,0.085)');
-  halo.addColorStop(1,'rgba(0,0,0,0)');
-  var nuc = ctx.createRadialGradient(CX-R*0.10,CY-R*0.12,R*0.02,CX,CY,R*0.72);
-  nuc.addColorStop(0,'rgba(255,235,205,0.40)');
-  nuc.addColorStop(0.3,'rgba(255,110,60,0.20)');
-  nuc.addColorStop(1,'rgba(150,0,20,0)');
+  // ════════════════════════════════════════════════════════
+  // THE BOX IS NOT ALWAYS SQUARE. For the journey the core becomes a full
+  // width band, so every scale below derives from the SHORT side. At the
+  // hero's square box the short side IS the width, so nothing there changes.
+  // Gradients are rebuilt HERE and nowhere else. Building one per frame is
+  // what made this stutter the first time.
+  // ════════════════════════════════════════════════════════
+  function layout(){
+    var cw = host.clientWidth, ch = host.clientHeight || cw;
+    if(!cw || !ch) return;
+    var nw = Math.round(cw*dpr), nh = Math.round(ch*dpr);
+    if(nw === W && nh === H) return;
+    cv.width = nw; cv.height = nh;
+    W = cv.width; H = cv.height; CX = W/2; CY = H/2;
+    S = Math.min(W,H);
+    R = S*0.40; F = S*1.8; U = S/600; LINK = R*0.42;
+
+    halo = ctx.createRadialGradient(CX,CY,R*0.05,CX,CY,R*1.6);
+    halo.addColorStop(0,'rgba(255,150,110,0.17)');
+    halo.addColorStop(0.45,'rgba(255,40,60,0.085)');
+    halo.addColorStop(1,'rgba(0,0,0,0)');
+    nuc = ctx.createRadialGradient(CX-R*0.10,CY-R*0.12,R*0.02,CX,CY,R*0.72);
+    nuc.addColorStop(0,'rgba(255,235,205,0.40)');
+    nuc.addColorStop(0.3,'rgba(255,110,60,0.20)');
+    nuc.addColorStop(1,'rgba(150,0,20,0)');
+
+    // THE BAND. Nineteen stops on a curve rather than three, so the light
+    // runs out instead of stopping. A short gradient over near black leaves a
+    // visible edge no matter how faint the last stop is.
+    band = ctx.createLinearGradient(0,0,0,H);
+    for(var b=0;b<=18;b++){
+      var q = b/18, a = Math.pow(Math.sin(Math.PI*q),2.5)*0.30;
+      band.addColorStop(q,'rgba(206,20,40,'+a.toFixed(4)+')');
+    }
+  }
+  layout();
+  if(!W) return;
 
   var proj = new Float32Array(N*4);
   var fire = new Float32Array(NODES);
   var t = 0, raf = null, running = false;
-  var rate = 1, gain = 1;
+  var rate = 1, gain = 1, spread = 0;
 
   // lub-dub. A hard hit, a softer second, then a rest.
   function beat(x){
@@ -19175,8 +19221,20 @@ function mmScanCore(){
 
     ctx.clearRect(0,0,W,H);
     ctx.globalCompositeOperation = 'lighter';
-    ctx.fillStyle = halo; ctx.fillRect(0,0,W,H);
-    ctx.fillStyle = nuc; ctx.beginPath(); ctx.arc(CX,CY,R*0.72,0,6.2832); ctx.fill();
+    // The round glow hands over to the band as the cloud spreads. Both are
+    // added light, so where either reaches zero the result is exactly the
+    // background rather than a tint that never quite gets there.
+    if(spread < 0.995){
+      ctx.globalAlpha = 1 - spread;
+      ctx.fillStyle = halo; ctx.fillRect(0,0,W,H);
+      ctx.fillStyle = nuc; ctx.beginPath(); ctx.arc(CX,CY,R*0.72,0,6.2832); ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+    if(spread > 0.005){
+      ctx.globalAlpha = spread;
+      ctx.fillStyle = band; ctx.fillRect(0,0,W,H);
+      ctx.globalAlpha = 1;
+    }
 
     var ry = t*SPIN, cy = Math.cos(ry), sy = Math.sin(ry);
 
@@ -19195,6 +19253,15 @@ function mmScanCore(){
       var rx = X*cy-Z*sy, rz = X*sy+Z*cy;
       var sc = F/(F+rz*R);
       var sx = CX+rx*R*sc, sy2 = CY+Y*R*sc, depth = (rz+1)/2;
+      // THE CURTAIN. Each particle is pulled toward its own place across the
+      // full width. The links are computed from these same coordinates, so the
+      // network stays wired to the cloud as it opens out.
+      if(spread > 0.001){
+        var tx = CX + p.qx*(W*0.5 - 8*U);
+        var ty = CY + p.qy*(H*0.42) + Math.sin(t*1.9 + p.k*24)*H*0.035;
+        sx  = sx  + (tx  - sx )*spread;
+        sy2 = sy2 + (ty - sy2)*spread;
+      }
       var al = (0.05+depth*0.55)*(0.35+p.s*0.65)*(1.15-p.rad*0.5)*(1+FLICK*Math.sin(t*3.1+p.k*38))*gain;
       if(al<0) al=0; if(al>1) al=1;
       var k4 = i*4; proj[k4]=sx; proj[k4+1]=sy2; proj[k4+2]=depth; proj[k4+3]=al;
@@ -19264,7 +19331,18 @@ function mmScanCore(){
       if(p<1) requestAnimationFrame(step);
     })(t0);
   }
-  _mmCore = { start:start, stop:stop, tune:tune };
+  // Disperse into the curtain and gather back. Same easing as tune so the
+  // spread, the spin and the brightness all move on one curve.
+  function spr(to, ms){
+    ms = ms || 900;
+    var s0 = spread, t0 = performance.now();
+    (function step(now){
+      var p = Math.min(1,(now-t0)/ms), e = ease(p);
+      spread = s0 + (to-s0)*e;
+      if(p<1) requestAnimationFrame(step);
+    })(t0);
+  }
+  _mmCore = { start:start, stop:stop, tune:tune, spr:spr, relayout:layout };
 
   // Anything that hides the core stops the loop: leaving the Scanner,
   // scrolling it out of view, or the compact state after a scan.
