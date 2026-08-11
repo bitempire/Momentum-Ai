@@ -1441,31 +1441,40 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 .sh-stage{position:absolute;inset:0;}
 .sh-rings{position:absolute;inset:0;pointer-events:none;display:flex;align-items:center;justify-content:center;}
 .sh-rings span{position:absolute;border-radius:50%;border:1px solid rgba(255,30,60,.07);}
-.sh-glow{position:absolute;left:50%;top:34%;width:340px;height:340px;margin:-170px 0 0 -170px;border-radius:50%;
+.sh-glow{position:absolute;left:50%;top:calc(50% - 150px);width:340px;height:340px;margin:-170px 0 0 -170px;border-radius:50%;
  background:radial-gradient(circle,rgba(255,60,40,.16),transparent 62%);filter:blur(28px);animation:shHalo 7s ease-in-out infinite;pointer-events:none;}
 /* THE CORE IS A CANVAS as of 9 Aug 2026. A liquid particle cloud with a
    neuron network firing inside it, drawn in `mmScanCore`. The CSS rings it
    replaced could not do a network that rewires itself as the cloud moves. */
-.sh-core{position:absolute;left:50%;top:16%;width:190px;height:190px;margin-left:-95px;z-index:3;
+.sh-core{position:absolute;left:50%;top:calc(50% - 245px);width:190px;height:190px;margin-left:-95px;z-index:3;
  transition:left .85s cubic-bezier(.32,.72,.24,1), top .85s cubic-bezier(.32,.72,.24,1),
             width .85s cubic-bezier(.32,.72,.24,1), height .85s cubic-bezier(.32,.72,.24,1),
             margin-left .85s cubic-bezier(.32,.72,.24,1);}
 .sh-core canvas{display:block;width:100%;height:100%;}
-.scan-hero.scanning .sh-core{top:12%;width:250px;height:250px;margin-left:-125px;}
+.scan-hero.scanning .sh-core{top:calc(50% - 181px);width:250px;height:250px;margin-left:-125px;}
 .scan-hero.done .sh-core{left:14px;top:12px;width:34px;height:34px;margin-left:0;}
 /* The pair, price and change move together as one block and shrink into the
    header line. font-size is animatable, which is why it is used rather than a
    transform, so the text stays crisp at both ends. */
-.sh-info{position:absolute;left:0;right:0;top:calc(16% + 205px);text-align:center;z-index:3;
+.sh-info{position:absolute;left:0;right:0;top:calc(50% - 41px);text-align:center;z-index:3;display:block;
  transition:left .85s cubic-bezier(.32,.72,.24,1), right .85s cubic-bezier(.32,.72,.24,1),
             top .85s cubic-bezier(.32,.72,.24,1), text-align .85s;}
-.scan-hero.done .sh-info{left:58px;right:auto;top:11px;text-align:left;}
-.scan-hero.done .sh-sym{font-size:13px;}
-.scan-hero.done .sh-px{font-size:10.5px;margin-top:2px;display:inline;}
-.scan-hero.done .sh-chg{font-size:10.5px;margin-top:0;display:inline;}
+.scan-hero.scanning .sh-info{top:calc(50% + 83px);}
+/* The price and the change share one line, in their own wrapper, so the info
+   block has exactly TWO children and a flex column can align them both to the
+   same left edge. As two loose inline siblings their left edge depended on how
+   the text flowed, which is why they did not line up under the pair. */
+.sh-line{display:block;}
+.sh-line .sh-px, .sh-line .sh-chg{display:inline;margin-top:0;}
+.scan-hero.done .sh-info{left:58px;right:auto;top:0;bottom:0;text-align:left;
+ display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:2px;}
+.scan-hero.done .sh-sym{font-size:13px;line-height:1.15;}
+.scan-hero.done .sh-line{font-size:10.5px;line-height:1.15;}
+.scan-hero.done .sh-px{font-size:10.5px;}
+.scan-hero.done .sh-chg{font-size:10.5px;}
 .scan-hero.done .sh-chg::before{content:' \00b7 ';color:var(--text3);}
 .scan-hero.done #scan-last-time{display:none;}
-.sh-status{position:absolute;left:0;right:0;top:calc(16% + 290px);text-align:center;z-index:3;
+.sh-status{position:absolute;left:0;right:0;top:calc(50% + 167px);text-align:center;z-index:3;
  font-family:'Orbitron',ui-monospace,Menlo,monospace;font-size:10px;letter-spacing:2px;color:var(--amber);
  opacity:0;transition:opacity .45s ease;pointer-events:none;}
 .scan-hero.scanning .sh-status{opacity:1;}
@@ -1473,7 +1482,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 .sh-sym{position:relative;font-family:'Orbitron',sans-serif;font-size:20px;font-weight:900;letter-spacing:1px;text-align:center;}
 .sh-px{position:relative;font-family:'Orbitron',sans-serif;font-size:13px;font-weight:800;text-align:center;margin-top:5px;}
 .sh-chg{position:relative;font-size:9.5px;text-align:center;margin-top:3px;}
-.sh-wrap{position:absolute;left:50%;width:100%;max-width:320px;margin-left:-160px;top:calc(16% + 300px);z-index:3;
+.sh-wrap{position:absolute;left:50%;width:100%;max-width:320px;margin-left:-160px;top:calc(50% + 45px);z-index:3;
  transition:opacity .45s ease, transform .45s ease;}
 .scan-hero.scanning .sh-wrap,.scan-hero.done .sh-wrap{opacity:0;transform:translateY(-12px);pointer-events:none;}
 .scan-hero.scanning .sh-rings,.scan-hero.done .sh-rings,
@@ -4398,8 +4407,10 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 
         <div class="sh-info">
           <div class="sh-sym" id="scan-pair-label">XAUUSD <span style="color:var(--red);" data-i18n="sc.h4">H4</span></div>
-          <div class="sh-px" id="scan-price">&mdash;</div>
-          <div class="sh-chg" id="scan-change">&mdash;</div>
+          <div class="sh-line">
+            <span class="sh-px" id="scan-price">&mdash;</span>
+            <span class="sh-chg" id="scan-change">&mdash;</span>
+          </div>
           <div class="sh-chg" style="color:var(--text3);" id="scan-last-time" data-i18n="sc.selectPair">Select pair and scan</div>
         </div>
         <div class="sh-status" id="scan-status" data-i18n="sc.analysing">ANALYSING MARKET</div>
@@ -19351,10 +19362,10 @@ Respond ONLY with valid JSON (no markdown):
   // One frame between display and the class, or the browser has nothing to
   // transition FROM and the cards simply appear.
   requestAnimationFrame(function(){ requestAnimationFrame(function(){ res.classList.add('shown'); }); });
-  // The core has landed as a 34px badge by now. Sixty frames a second of a
-  // 380px canvas to fill a fingernail is not worth the battery on the screen
-  // customers spend the longest on, so it holds its last frame.
-  setTimeout(function(){ if(_mmCore && _mmCore.stop) _mmCore.stop(); }, 950);
+  // THE CORE KEEPS RUNNING as the header badge. Freezing it to save battery
+  // was tried and rejected: a still badge looks like a broken image, and the
+  // point of the flight is that it is the same living thing that did the work.
+  // The IntersectionObserver still stops it the moment the screen is hidden.
     btn.style.background = '#00C87A';
     if(badge) { badge.innerHTML = '<div style="width:6px;height:6px;border-radius:50%;background:#00C87A;"></div>'+mmT('sc.live','LIVE')+''; badge.style.color='#00C87A'; }
     setTimeout(function(){ btn.textContent=mmT('sc.initiate','INITIATE SCAN'); btn.style.background=''; },2000);
