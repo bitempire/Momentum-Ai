@@ -1780,7 +1780,9 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
    set on the wrapper because those text colours read from it. */
 .scv-field{background:linear-gradient(155deg,rgba(255,30,60,.16) 0%,rgba(255,30,60,.085) 26%,rgba(255,70,45,.03) 55%,rgba(255,30,60,0) 88%);}
 .scv-b1{background:#FF1E3C;} .scv-b2{background:#FF6A3D;}
-.scv-eb{color:#E63E4F;}
+/* WHITE, not the bearish red. This label is not a reading, and on the red
+   field a deep red at 10px letter-spaced is close to unreadable. */
+.scv-eb{color:#fff;}
 .scv-beam{background:conic-gradient(from 0deg,transparent 0 48%,rgba(196,0,36,.30) 66%,rgba(255,30,60,.70) 80%,rgba(196,0,36,.30) 92%,transparent 100%);}
 .scv-neu .scv-word,.scv-neu .scv-pc,.scv-neu .scv-g .v{color:#FFD48A;}
 .scv-bul .scv-word,.scv-bul .scv-pc,.scv-bul .scv-g .v{color:#8FF0C6;}
@@ -18926,18 +18928,23 @@ var _mmVCore = null;
 function mmVerdictCore(){
   var cv = document.getElementById('verdict-core');
   if(!cv || _mmVCore) return;
-  var dpr = Math.min(2, window.devicePixelRatio || 1);
+  // RATIO 3, NOT 2. The cap exists to stop a large canvas drawing 2.25x the
+  // pixels for nothing; on a 26px badge that argument does not apply, and the
+  // extra resolution is what stops it looking like scattered dots.
+  var dpr = Math.min(3, window.devicePixelRatio || 1);
   var css = 26;
   cv.width = Math.round(css * dpr); cv.height = Math.round(css * dpr);
   var ctx = cv.getContext('2d');
   var W = cv.width, C = W/2, R = W*0.36, F = W*1.8;
-  var N = 220, pts = [];
+  // Twice the points at roughly half the size. Same object, drawn at the
+  // density its canvas can actually resolve.
+  var N = 460, pts = [];
   for(var i=0;i<N;i++){
     pts.push({u:Math.random()*2-1, th:Math.random()*6.2832,
               rad:0.2+0.85*Math.pow(Math.random(),0.42), s:Math.random()});
   }
   var halo = ctx.createRadialGradient(C,C,R*0.05,C,C,R*1.5);
-  halo.addColorStop(0,'rgba(255,150,110,0.26)'); halo.addColorStop(1,'rgba(0,0,0,0)');
+  halo.addColorStop(0,'rgba(255,150,110,0.22)'); halo.addColorStop(1,'rgba(0,0,0,0)');
   var t = 0, raf = null, running = false;
   function frame(){
     t += 0.008;
@@ -18954,7 +18961,7 @@ function mmVerdictCore(){
       var sx = C + bx*d*R*sc, sy = C + by*d*R*sc, dp = (bz+1)/2;
       var al = (0.08 + dp*0.5)*(0.4 + p.s*0.6);
       ctx.fillStyle = dp>0.68 ? 'rgba(255,214,178,'+al.toFixed(3)+')' : 'rgba(255,46,60,'+al.toFixed(3)+')';
-      ctx.beginPath(); ctx.arc(sx,sy,(0.4+dp*0.85)*dpr,0,6.2832); ctx.fill();
+      ctx.beginPath(); ctx.arc(sx,sy,(0.22+dp*0.42)*dpr,0,6.2832); ctx.fill();
     }
     ctx.globalCompositeOperation = 'source-over';
     raf = requestAnimationFrame(frame);
