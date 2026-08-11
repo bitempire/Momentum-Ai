@@ -1603,7 +1603,26 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
    ══════════════════════════════════════════════════════════ */
 .scs{position:relative;overflow:hidden;background:#0b0b0f;border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:10px;}
 .scs > *{position:relative;z-index:1;}
-.scs-glow{position:absolute;left:0;right:0;top:0;height:78px;z-index:0;pointer-events:none;animation:scsBreathe 6s ease-in-out infinite;}
+/* BRAND RED ON EVERY SECTION CARD, not the reading's colour. Haikal's call:
+   the glow is now identity rather than meaning, and meaning lives entirely in
+   the bars, the figures and the words. That only holds while it is red on ALL
+   of them - the moment one section glows green and another red, the colour is
+   back to claiming something. */
+.scs-glow{position:absolute;left:0;right:0;top:0;height:78px;z-index:0;pointer-events:none;
+ background:linear-gradient(180deg,rgba(255,30,60,.16),rgba(255,30,60,.04) 55%,transparent);
+ animation:scsBreathe 6s ease-in-out infinite;}
+.sct-card{position:relative;overflow:hidden;}
+.sct-card > *{position:relative;z-index:1;}
+.sct-glow{position:absolute;left:0;right:0;top:0;height:78px;z-index:0;pointer-events:none;
+ background:linear-gradient(180deg,rgba(255,30,60,.16),rgba(255,30,60,.04) 55%,transparent);
+ animation:scsBreathe 6s ease-in-out infinite;}
+/* WITHOUT THIS THE LABELS WRAP. `.mm-mkt-sym` carries no nowrap on Home
+   because those cards are half width; here they are a third, and ROOM BELOW
+   breaks onto two lines. The figure is pinned too, since a long price would
+   do the same. */
+.mm-mkt-grid3 .mm-mkt-sym,.mm-mkt-grid3 .mm-mkt-price{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mm-mkt-grid3 .mm-mkt-sym{font-size:8px;letter-spacing:.04em;}
+.mm-mkt-grid3 .mm-mkt-price{font-size:15px;}
 .scs-eb{font-size:10px;font-weight:800;letter-spacing:1px;color:var(--text);}
 .scs-eb em{font-style:normal;color:var(--red);}
 .scs-hl{display:flex;align-items:flex-end;justify-content:space-between;margin:11px 0 12px;gap:10px;}
@@ -1618,10 +1637,13 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 .scs-n{width:96px;flex-shrink:0;font-size:9.5px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .scs-leds{display:flex;gap:2px;flex:1;min-width:0;}
 .scs-leds i{flex:1;height:11px;border-radius:2px;background:rgba(255,255,255,.055);}
-.scs-leds i.on{animation:scsLed 2.6s ease-in-out infinite;}
+/* THE LIT BLOCKS ARE STATIC. They used to breathe on staggered delays, which
+   read as a heartbeat across a panel of measurements that are not changing.
+   A reading that pulses implies it is live; these are fixed the moment the
+   scan lands. The renderer still writes an animation-delay on each block,
+   which now does nothing and is harmless. */
 .scs-v{width:32px;text-align:right;font-family:'Orbitron',ui-monospace,Menlo,monospace;font-size:9.5px;font-weight:700;flex-shrink:0;}
 .scs-foot{display:flex;justify-content:space-between;margin-top:9px;padding-top:9px;border-top:1px solid var(--border);font-size:8px;letter-spacing:.9px;color:var(--text3);font-family:'Orbitron',ui-monospace,Menlo,monospace;}
-@keyframes scsLed{0%,100%{opacity:.25;}50%{opacity:1;}}
 @keyframes scsBreathe{0%,100%{opacity:.55;}50%{opacity:1;}}
 @media (prefers-reduced-motion: reduce){.scs-leds i.on,.scs-glow{animation:none;}}
 /* ══════════════════════════════════════════════════════════
@@ -4549,7 +4571,8 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         </div>
 
         <!-- TECHNICAL -->
-        <div class="section-card" style="margin-bottom:10px;padding:12px;">
+        <div class="section-card sct-card" style="margin-bottom:10px;padding:12px;">
+          <div class="sct-glow"></div>
           <div style="font-size:10px;font-weight:800;letter-spacing:1px;color:var(--text);"><em style="font-style:normal;color:var(--red);" data-i18n="sc.technicalWord">TECHNICAL</em> <span data-i18n="sc.analysisWord">ANALYSIS</span></div>
 
           <div class="sct-hl">
@@ -18703,8 +18726,9 @@ function updateSentimentGauge(pct, direction) {
                      : mmT('sc.leanNeu','LEANING NEUTRAL');
   if(scoreEl){ scoreEl.textContent = Math.round(pct)+'%'; scoreEl.style.color = col; }
   if(leanEl){ leanEl.textContent = word; leanEl.style.color = col; }
-  if(glowEl) glowEl.style.background =
-    'linear-gradient(180deg,rgba('+rgb+',.16),rgba('+rgb+',.04) 55%,transparent)';
+  // THE GLOW IS NO LONGER REPAINTED PER STATE. It is brand red in the CSS and
+  // stays there; `rgb` is still used for the score and the leaning word.
+  if(glowEl) glowEl.style.background = '';
 }
 
 // SUPERSEDED 9 Aug 2026 and no longer called. The ten-segment bar it drove was
