@@ -19064,12 +19064,36 @@ function mmTravelClear(){
   var bc = document.getElementById('scan-badge-core');
   if(bc) bc.style.opacity = '0';
   var res = document.getElementById('scan-results');
-  if(res) [].forEach.call(res.children, function(c){ c.classList.remove('mm-lit'); });
+  if(res) [].forEach.call(res.children, function(c){
+    c.classList.remove('mm-lit');
+    c._mmOn = 0; c._mmDone = 0;
+    c.style.opacity = ''; c.style.filter = ''; c.style.transform = '';
+    c.style.webkitMaskImage = ''; c.style.maskImage = ''; c.style.transition = '';
+  });
 }
 
 // THE PRINT HEAD IS THE LEADING EDGE, a quarter into the sphere. With the
 // centre, the core stops rising before it passes the top cards and they never
 // print at all.
+//
+// THERE IS NO REVEAL ANIMATION ANY MORE, and that is the whole point. How far
+// a card has appeared IS how far the core has crossed it, read from real
+// geometry every frame. Two faults fall out of the fix rather than being
+// tuned away: a card cannot start before the core reaches it, and two cards
+// can never animate over each other, because a card the core has not reached
+// has nothing to draw. It also needs no numbers changed for a taller phone or
+// a taller card, which a timer always would.
+// THE CARD'S OWN TRANSITION IS TURNED OFF while it is being crossed, or the
+// browser would smooth every per-frame write and the whole thing would lag
+// behind the core it is supposed to be following.
+function mmCardDone(c){
+  if(!c || c._mmDone) return;
+  c._mmDone = 1;
+  c.style.opacity = ''; c.style.filter = ''; c.style.transform = '';
+  c.style.webkitMaskImage = ''; c.style.maskImage = '';
+  c.style.transition = '';
+  c.classList.add('mm-lit');   // final state is exactly what it is today
+}
 function mmPrinter(){
   var core = document.querySelector('.sh-core');
   var res = document.getElementById('scan-results');
@@ -19082,10 +19106,29 @@ function mmPrinter(){
     var head = o.top + o.height * 0.25;
     for(var i=0;i<cards.length;i++){
       var c = cards[i];
-      if(c.classList.contains('mm-lit')) continue;
+      if(c._mmDone) continue;
       var r = c.getBoundingClientRect();
-      if(r.top > window.innerHeight) continue;   // below the fold, not reached yet
-      if(head <= r.top + r.height * 0.55) c.classList.add('mm-lit');
+      // BELOW THE FOLD, skipped, and the test is the card's BOTTOM edge rather
+      // than its top. A card whose top is just on screen but whose bottom is
+      // under the fold reads as ALREADY fully crossed on the first frame, so it
+      // would appear instantly with no reveal at all. Anything skipped here is
+      // shown by the sweep at the end of the journey, as it is today.
+      if(r.top + r.height > window.innerHeight) continue;
+      var span = r.height * 0.92; if(span <= 0) span = 1;
+      var p = (r.top + r.height - head) / span;
+      if(p <= 0) continue;
+      if(p > 1) p = 1;
+      if(!c._mmOn){ c._mmOn = 1; c.style.transition = 'none'; c.classList.add('mm-lit'); }
+      if(p >= 1){ mmCardDone(c); continue; }
+      var e = p*p*(3-2*p);
+      c.style.opacity = e.toFixed(3);
+      c.style.filter = 'blur(' + ((1-e)*7).toFixed(2) + 'px)';
+      c.style.transform = 'translateY(' + ((1-e)*14).toFixed(1) + 'px)';
+      // The card is wiped in from its own bottom edge, and the soft top of
+      // that wipe sits where the core actually is.
+      var m = 'linear-gradient(to top,#000 0%,#000 ' + (p*100).toFixed(1)
+            + '%,rgba(0,0,0,0) ' + Math.min(100,p*100+16).toFixed(1) + '%)';
+      c.style.webkitMaskImage = m; c.style.maskImage = m;
     }
     requestAnimationFrame(step);
   })();
@@ -19119,7 +19162,7 @@ function mmScanTravel(){
   core.style.marginLeft = '0';
   core.classList.add('mm-travel');
   void core.offsetWidth;   // force the browser to accept that as the start
-  core.style.transition = '';
+  core.style.transition = 'top 1.05s cubic-bezier(.38,0,.28,1), opacity .5s ease';
   void core.offsetWidth;
   // The canvas bitmap has to follow the box or the drawing stretches.
   if(_mmCore && _mmCore.relayout) _mmCore.relayout();
@@ -19128,23 +19171,38 @@ function mmScanTravel(){
 
   // 1. DROP to the foot of the screen, opening into a full width curtain on
   //    the way down. Nothing is revealed yet.
-  core.style.top = (vh - 130) + 'px';
+  // THE DROP GOES LOWER THAN IT DID. At vh-130 the print head sat 70px above
+  // the fold, so the lowest visible card was already part crossed before the
+  // climb even started and jumped straight to that state. At vh-70 the head
+  // starts level with the bottom of the screen and every visible card is
+  // revealed from nothing.
+  core.style.top = (vh - 70) + 'px';
   if(_mmCore && _mmCore.tune) _mmCore.tune(0.7, 1.0);
   if(_mmCore && _mmCore.spr) _mmCore.spr(1, 950);
 
   // 2. RISE, printing each card as the leading edge passes it. The core
   //    brightens so it stays the brightest thing on screen rather than being
   //    outshone by the dust it is shedding.
-  T(1100, function(){
+  // 2. RISE. Four seconds rather than two, because the cards are
+  //    tall and the old climb crossed three of them inside a few hundred
+  //    milliseconds. The reveal follows the core, so the pace of the climb IS
+  //    the pace of the reveal - there is no second number to keep in step.
+  T(1250, function(){
+    core.style.transition = 'top 4.0s cubic-bezier(.32,0,.34,1), opacity .5s ease';
+    void core.offsetWidth;
     core.style.top = '-40px';
     if(_mmCore && _mmCore.tune) _mmCore.tune(2.2, 2.1);
     mmPrinter();
   });
 
   // 3. PARK. Winds up hard, shrinks, and carries on into the header.
-  T(3600, function(){
+  T(5450, function(){
     _mmPrinting = false;
-    [].forEach.call(res.children, function(c){ c.classList.add('mm-lit'); });
+    [].forEach.call(res.children, function(c){ mmCardDone(c); });
+    core.style.transition = 'top .95s cubic-bezier(.4,0,.2,1), left .95s cubic-bezier(.4,0,.2,1), '
+                          + 'width .95s cubic-bezier(.4,0,.2,1), height .95s cubic-bezier(.4,0,.2,1), '
+                          + 'opacity .5s ease';
+    void core.offsetWidth;
     var br = badge ? badge.getBoundingClientRect() : {left:vw-40, top:14, width:28, height:28};
     core.style.left = br.left + 'px';
     core.style.top = br.top + 'px';
@@ -19154,7 +19212,7 @@ function mmScanTravel(){
     if(_mmCore && _mmCore.spr) _mmCore.spr(0, 900);
   });
 
-  T(4900, function(){
+  T(6550, function(){
     core.style.opacity = '0';
     if(badge) badge.style.opacity = '1';
     // Home before anything else touches it, so it is never left parked on the
