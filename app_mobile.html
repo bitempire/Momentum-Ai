@@ -1410,6 +1410,59 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 .jam-k{font-size:8px;color:var(--text3);letter-spacing:.3px;white-space:nowrap;}
 .jsec{font-size:10px;letter-spacing:.7px;color:var(--text3);margin:12px 3px 6px;}
 /* ══════════════════════════════════════════════════════════
+   SCANNER TECHNICAL CARD. 9 Aug 2026.
+   WHAT WAS WRONG WITH THE OLD ONE: four of its six bars were FAKE. Moving Avg
+   drew 85% or 15%, EMA 200 drew 90% or 10%, MACD 70% or 30%, and ATR WAS
+   HARDCODED TO 55 and never moved whatever the reading. Only Bollinger and RSI
+   were real. A longer bar therefore meant nothing, and the card was spending
+   its whole width saying so.
+   WHAT REPLACED IT: the six indicators sit in one FUSED PANEL - a single
+   surface with 1px hairline gaps rather than six floating boxes - and only the
+   two with a genuine 0-100 scale get an underline that means anything.
+   THE SPACE THE FAKE BARS WERE WASTING went to the PRICE RAIL, which shows
+   where price sits between its own support and resistance. Both numbers were
+   already on the card as separate figures and nobody was subtracting them.
+   THE ROOM CARDS ARE THE HOME PRICE CARDS, lifted rather than approximated,
+   with a NEUTRAL variant added because Home only ever shows up or down.
+   ══════════════════════════════════════════════════════════ */
+.sct-rail{position:relative;height:38px;margin:2px 0 12px;}
+.sct-rt{position:absolute;left:0;right:0;top:13px;height:6px;border-radius:3px;
+ background:linear-gradient(90deg,rgba(0,200,122,.35),rgba(255,255,255,.10) 50%,rgba(255,30,60,.35));}
+.sct-mk{position:absolute;top:8px;width:3px;height:16px;border-radius:2px;background:#fff;z-index:2;animation:sctMark 2.8s ease-in-out infinite;}
+.sct-l{position:absolute;left:0;top:0;font-size:7.5px;letter-spacing:.8px;color:var(--text3);font-family:'Orbitron',ui-monospace,monospace;}
+.sct-r{position:absolute;right:0;top:0;font-size:7.5px;letter-spacing:.8px;color:var(--text3);font-family:'Orbitron',ui-monospace,monospace;}
+.sct-lv{position:absolute;left:0;bottom:0;font-size:9.5px;font-family:'Orbitron',ui-monospace,monospace;font-weight:700;color:#4BE0A8;}
+.sct-rv{position:absolute;right:0;bottom:0;font-size:9.5px;font-family:'Orbitron',ui-monospace,monospace;font-weight:700;color:#FF8A96;}
+.sct-p{position:absolute;top:-3px;transform:translateX(-50%);font-size:9px;font-family:'Orbitron',ui-monospace,monospace;font-weight:800;color:#fff;white-space:nowrap;}
+.sct-hl{display:flex;align-items:flex-end;justify-content:space-between;margin:11px 0 12px;gap:10px;}
+.sct-k{font-size:7.5px;letter-spacing:1px;color:var(--text3);margin-bottom:5px;white-space:nowrap;}
+.sct-big{font-family:'Orbitron',ui-monospace,monospace;font-size:22px;font-weight:900;line-height:1;white-space:nowrap;}
+.sct-w{font-family:'Orbitron',ui-monospace,monospace;font-size:11px;font-weight:800;text-align:right;white-space:nowrap;}
+.sct-ws{font-size:8.5px;color:var(--text3);text-align:right;margin-top:3px;white-space:nowrap;}
+.sct-sec{font-size:7.5px;letter-spacing:1px;color:var(--text3);margin:13px 0 7px;border-top:1px solid var(--border);padding-top:11px;}
+.mm-mkt-grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+.mm-mkt-sub{position:relative;z-index:1;font-size:8px;color:var(--text3);font-family:'Orbitron',sans-serif;margin-top:4px;white-space:nowrap;}
+.mm-mkt-card.nt .mm-mkt-line > span{background:linear-gradient(90deg,rgba(255,255,255,0) 0%,rgba(255,255,255,.18) 38%,rgba(255,255,255,.30) 50%,rgba(255,255,255,.18) 62%,rgba(255,255,255,0) 100%);}
+.mm-mkt-card.nt .mm-mkt-bloom{background:linear-gradient(180deg,rgba(255,255,255,0) 0%,rgba(255,255,255,.05) 45%,rgba(255,255,255,.12) 100%);}
+.sct-grid{position:relative;display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;
+ background:rgba(255,255,255,.07);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+.sct-c{position:relative;background:#0b0b0f;padding:11px 8px 9px;}
+.sct-c .tk{position:absolute;top:5px;left:5px;width:5px;height:5px;border-top:1px solid rgba(255,255,255,.18);border-left:1px solid rgba(255,255,255,.18);}
+.sct-c .dt{position:absolute;top:6px;right:7px;width:5px;height:5px;border-radius:50%;animation:sctDot 2.6s ease-in-out infinite;}
+.sct-v{font-family:'Orbitron',ui-monospace,monospace;font-size:14px;font-weight:800;line-height:1;white-space:nowrap;}
+.sct-ck{font-size:6.5px;letter-spacing:.9px;color:var(--text3);margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sct-u{height:2px;border-radius:1px;background:rgba(255,255,255,.07);margin-top:7px;overflow:hidden;}
+.sct-u > span{display:block;height:2px;border-radius:1px;transform-origin:left;animation:sctGrow .9s cubic-bezier(.22,.61,.36,1) both;}
+/* Wide and heavily blurred on purpose. At 70px with an 8px blur it read as a
+   band with visible edges arriving at one border and leaving at the other. */
+.sct-sweep{position:absolute;top:-30%;bottom:-30%;width:150px;z-index:3;pointer-events:none;filter:blur(22px);
+ background:linear-gradient(90deg,transparent,rgba(75,240,182,.075),transparent);animation:sctPan 9s ease-in-out infinite;}
+@keyframes sctMark{0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,.45);}70%{box-shadow:0 0 0 7px rgba(255,255,255,0);}}
+@keyframes sctDot{0%,100%{opacity:.35;}50%{opacity:1;}}
+@keyframes sctGrow{from{transform:scaleX(0);}to{transform:scaleX(1);}}
+@keyframes sctPan{0%{left:-30%;}60%,100%{left:112%;}}
+@media (prefers-reduced-motion: reduce){.sct-sweep,.sct-mk,.sct-c .dt,.mm-mkt-line > span{animation:none;}}
+/* ══════════════════════════════════════════════════════════
    SCANNER SENTIMENT CARD. 9 Aug 2026. "LED MATRIX".
    Each factor is a row of twenty segments, lit up to its reading, the way a
    studio meter works. The lit blocks breathe on staggered timing so the panel
@@ -4324,28 +4377,53 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 
         <!-- TECHNICAL -->
         <div class="section-card" style="margin-bottom:10px;padding:12px;">
-          <div style="font-size:10px;font-weight:800;color:var(--red);letter-spacing:1px;margin-bottom:10px;" data-i18n="sc.technical">TECHNICAL ANALYSIS</div>
+          <div style="font-size:10px;font-weight:800;letter-spacing:1px;color:var(--text);"><em style="font-style:normal;color:var(--red);" data-i18n="sc.technicalWord">TECHNICAL</em> <span data-i18n="sc.analysisWord">ANALYSIS</span></div>
+
+          <div class="sct-hl">
+            <div>
+              <div class="sct-k" data-i18n="sc.posInRange">POSITION IN RANGE</div>
+              <div class="sct-big" id="tech-pos">&mdash;</div>
+            </div>
+            <div>
+              <div class="sct-w" id="tech-direction">&mdash;</div>
+              <div class="sct-ws"><span id="tech-momentum">&mdash;</span> <span data-i18n="sc.momentumWord">momentum</span></div>
+            </div>
+          </div>
+
+          <div class="sct-rail">
+            <span class="sct-l" data-i18n="sc.support">SUPPORT</span>
+            <span class="sct-r" data-i18n="sc.resistance">RESISTANCE</span>
+            <div class="sct-rt"></div>
+            <span class="sct-p" id="tech-price" style="left:50%;">&mdash;</span>
+            <span class="sct-mk" id="tech-mark" style="left:50%;"></span>
+            <span class="sct-lv" id="tech-support">&mdash;</span>
+            <span class="sct-rv" id="tech-resistance">&mdash;</span>
+          </div>
+
+          <!-- The Home market cards, lifted rather than approximated. -->
+          <div class="mm-mkt-grid3">
+            <div class="mm-mkt-card up">
+              <div class="mm-mkt-h"><span class="mm-mkt-sym" data-i18n="sc.roomBelow">ROOM BELOW</span><span class="mm-mkt-chg up" id="tech-below-pct">&mdash;</span></div>
+              <div class="mm-mkt-price" id="tech-below">&mdash;</div>
+              <div class="mm-mkt-sub" id="tech-below-atr">&mdash;</div>
+              <span class="mm-mkt-bloom"></span><span class="mm-mkt-line"><span></span></span>
+            </div>
+            <div class="mm-mkt-card dn">
+              <div class="mm-mkt-h"><span class="mm-mkt-sym" data-i18n="sc.roomAbove">ROOM ABOVE</span><span class="mm-mkt-chg dn" id="tech-above-pct">&mdash;</span></div>
+              <div class="mm-mkt-price" id="tech-above">&mdash;</div>
+              <div class="mm-mkt-sub" id="tech-above-atr">&mdash;</div>
+              <span class="mm-mkt-bloom"></span><span class="mm-mkt-line"><span></span></span>
+            </div>
+            <div class="mm-mkt-card nt">
+              <div class="mm-mkt-h"><span class="mm-mkt-sym" data-i18n="sc.rangeWord">RANGE</span><span class="mm-mkt-chg"></span></div>
+              <div class="mm-mkt-price" id="tech-range">&mdash;</div>
+              <div class="mm-mkt-sub" id="tech-range-atr">&mdash;</div>
+              <span class="mm-mkt-bloom"></span><span class="mm-mkt-line"><span></span></span>
+            </div>
+          </div>
+
+          <div class="sct-sec" data-i18n="sc.indicators">INDICATORS</div>
           <div id="tech-indicators"></div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px;">
-            <div style="background:rgba(0,200,122,0.06);border:0.5px solid rgba(0,200,122,0.15);border-radius:8px;padding:7px;">
-              <div style="font-size:9px;color:var(--text3);margin-bottom:2px;" data-i18n="sc.support">KEY SUPPORT</div>
-              <div id="tech-support" style="font-size:12px;font-weight:700;color:var(--green);">—</div>
-            </div>
-            <div style="background:rgba(255,30,60,0.04);border:0.5px solid rgba(255,30,60,0.12);border-radius:8px;padding:7px;">
-              <div style="font-size:9px;color:var(--text3);margin-bottom:2px;" data-i18n="sc.resistance">KEY RESISTANCE</div>
-              <div id="tech-resistance" style="font-size:12px;font-weight:700;color:var(--red);">—</div>
-            </div>
-          </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px;">
-            <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:8px;padding:7px;text-align:center;">
-              <div style="font-size:9px;color:var(--text3);margin-bottom:2px;" data-i18n="sc.direction">DIRECTION</div>
-              <div id="tech-direction" style="font-size:13px;font-weight:800;color:var(--text3);">—</div>
-            </div>
-            <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:8px;padding:7px;text-align:center;">
-              <div style="font-size:9px;color:var(--text3);margin-bottom:2px;" data-i18n="sc.momentum">MOMENTUM</div>
-              <div id="tech-momentum" style="font-size:13px;font-weight:800;color:var(--text3);">—</div>
-            </div>
-          </div>
           <div id="tech-scenario" style="margin-top:8px;padding:8px;background:var(--surface);border-radius:8px;border:0.5px solid var(--border);font-size:11px;color:var(--text3);line-height:1.6;"></div>
           <div id="tech-verdict-box" style="margin-top:8px;padding:7px;border-left:2px solid var(--green);border-radius:0 6px 6px 0;font-size:11px;color:var(--text3);line-height:1.5;background:rgba(0,200,122,0.04);"></div>
         </div>
@@ -18603,29 +18681,72 @@ async function runMAIScanner() {
     var techDir = techBullPct>=60?'Bullish':techBullPct>=40?'Neutral':'Bearish';
     var techMom = rsi>60?'Strong':rsi>45?'Moderate':'Weak';
 
-    // Render technical indicators
-    var techHTML = '';
-    function indRow(name, val, label, col) {
-      var w = Math.min(100, Math.max(5, parseFloat(val)||50));
-      return '<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:0.5px solid var(--border);">'+
-        '<span style="flex:0 0 110px;font-size:11px;color:var(--text3);">'+name+'</span>'+
-        '<div style="flex:1;height:3px;background:#1e1e1e;border-radius:2px;overflow:hidden;"><div style="height:100%;width:'+w+'%;background:'+col+';border-radius:2px;"></div></div>'+
-        '<span style="font-size:10px;font-weight:700;color:'+col+';min-width:50px;text-align:right;">'+label+'</span>'+
+    // Support and resistance were already on this card as two loose figures. The
+    // distance between them, and where price sits inside it, is what a trader
+    // reads, and nothing was working it out. DECLARED HERE rather than beside
+    // the rail below, because the ATR cell needs the range as well - a `var`
+    // declared later is hoisted but UNDEFINED at this point, which would have
+    // left the ATR underline silently sitting at zero forever.
+    var range = resistance - support;
+    var below = price - support, above = resistance - price;
+
+    // ONE CELL BUILDER. `under` is the width of the underline and is only ever
+    // passed for a value that HAS a 0-100 scale. A yes-or-no gets a full bar in
+    // its state colour, which is honest: it is not a measurement pretending to
+    // be one, it is a filled indicator light.
+    var techHTML = '<span class="sct-sweep"></span>';
+    function indCell(value, label, col, under) {
+      return '<div class="sct-c">'+
+        '<span class="tk"></span><span class="dt" style="background:'+col+';"></span>'+
+        '<div class="sct-v" style="color:'+col+';">'+value+'</div>'+
+        '<div class="sct-ck">'+label+'</div>'+
+        '<div class="sct-u"><span style="width:'+under+'%;background:'+col+';"></span></div>'+
       '</div>';
     }
-    techHTML += indRow(mmT('sc.ma50','Moving Avg (50)'), aboveSMA50?85:15, aboveSMA50?mmT('sc.above','ABOVE'):mmT('sc.below','BELOW'), aboveSMA50?'#00C87A':'#FF1E3C');
-    techHTML += indRow('EMA 200', aboveEMA200?90:10, aboveEMA200?mmT('sc.above','ABOVE'):mmT('sc.below','BELOW'), aboveEMA200?'#00C87A':'#FF1E3C');
-    techHTML += indRow(mmT('sc.bb','Bollinger Bands'), bbPos*100, bbPos>0.7?mmT('sc.upper','UPPER'):bbPos>0.3?mmT('sc.midBand','MID'):mmT('sc.lower','LOWER'), bbPos>0.6?'#00C87A':bbPos>0.4?'#FFB020':'#FF1E3C');
-    techHTML += indRow('RSI (14)', rsi, rsi.toFixed(0), rsi>70?'#FF1E3C':rsi>50?'#00C87A':'#FFB020');
-    techHTML += indRow('MACD', macdBull?70:30, macdBull?mmVerdict('BULLISH'):mmVerdict('BEARISH'), macdBull?'#00C87A':'#FF1E3C');
-    techHTML += indRow('ATR', 55, atr.toFixed(2), '#FFB020');
-    document.getElementById('tech-indicators').innerHTML = techHTML;
+    var GRN='#4BF0B6', RED='#FF4D6A', AMB='#FFB020';
+    techHTML += indCell(aboveSMA50?mmT('sc.above','ABOVE'):mmT('sc.below','BELOW'), mmT('sc.ma50Short','MA 50'), aboveSMA50?GRN:RED, 100);
+    techHTML += indCell(aboveEMA200?mmT('sc.above','ABOVE'):mmT('sc.below','BELOW'), 'EMA 200', aboveEMA200?GRN:RED, 100);
+    techHTML += indCell(macdBull?mmT('sc.bullShort','BULL'):mmT('sc.bearShort','BEAR'), 'MACD', macdBull?GRN:RED, 100);
+    techHTML += indCell(rsi.toFixed(0), 'RSI 14', rsi>=55?GRN:rsi<45?RED:AMB, Math.round(rsi));
+    var bbPct = Math.round(bbPos*100);
+    techHTML += indCell(bbPct+'%', mmT('sc.bbShort','BOLLINGER'), bbPct>=55?GRN:bbPct<45?RED:AMB, bbPct);
+    // ATR STAYS AMBER IN EVERY STATE. Volatility is neither good nor bad, so it
+    // must not turn green on a bullish scan. Its underline is the only part
+    // that moves, scaled against the range so it has something real to sit on.
+    var atrPct = (range>0) ? Math.min(100, Math.round(atr/range*100)) : 0;
+    techHTML += indCell(atr.toFixed(2), 'ATR', AMB, atrPct);
+    document.getElementById('tech-indicators').innerHTML = '<div class="sct-grid">'+techHTML+'</div>';
 
     var fmt = price>100 ? function(v){return v.toFixed(2);} : function(v){return v.toFixed(4);};
     document.getElementById('tech-support').textContent = fmt(support);
     document.getElementById('tech-resistance').textContent = fmt(resistance);
+
+    // ---- PRICE RAIL AND ROOM CARDS ----
+    // range, below and above are computed further up, before the indicator
+    // cells, because the ATR underline needs the range too.
+    // CLAMPED, because price can and does trade OUTSIDE its own recent range.
+    // Without this the marker would slide off the end of the rail.
+    var posPct = (range > 0) ? Math.max(0, Math.min(100, (price - support) / range * 100)) : 50;
+    var tset = function(id, txt){ var e=document.getElementById(id); if(e) e.textContent = txt; };
+    tset('tech-pos', Math.round(posPct)+'%');
+    tset('tech-price', fmt(price));
+    var tp = document.getElementById('tech-price'); if(tp) tp.style.left = posPct.toFixed(1)+'%';
+    var tm = document.getElementById('tech-mark');  if(tm) tm.style.left = posPct.toFixed(1)+'%';
+    tset('tech-below', fmt(Math.abs(below)));
+    tset('tech-above', fmt(Math.abs(above)));
+    tset('tech-range', fmt(range));
+    tset('tech-below-pct', (range>0?Math.round(Math.abs(below)/range*100):0)+'%');
+    tset('tech-above-pct', (range>0?Math.round(Math.abs(above)/range*100):0)+'%');
+    // HOW MANY AVERAGE RANGES AWAY. 2.1x ATR to resistance says whether the
+    // level is even reachable in a session; the raw distance does not.
+    var atrTxt = function(d){ return (atr>0) ? (Math.abs(d)/atr).toFixed(2)+' \u00d7 ATR' : '\u2014'; };
+    tset('tech-below-atr', atrTxt(below));
+    tset('tech-above-atr', atrTxt(above));
+    tset('tech-range-atr', atrTxt(range));
+    var tposEl = document.getElementById('tech-pos');
+    if(tposEl) tposEl.style.color = techDir==='Bullish'?'#4BE0A8':techDir==='Bearish'?'#FF8A96':'#FFB020';
     (function(_e){ if(_e){ _e.setAttribute('data-en', techDir); _e.textContent = mmVerdict(techDir); } })(document.getElementById('tech-direction'));
-    document.getElementById('tech-direction').style.color = techDir==='Bullish'?'#00C87A':techDir==='Bearish'?'#FF1E3C':'#FFB020';
+    document.getElementById('tech-direction').style.color = techDir==='Bullish'?'#4BE0A8':techDir==='Bearish'?'#FF8A96':'#FFB020';
     (function(_e){ if(_e){ _e.setAttribute('data-en', techMom); _e.textContent = mmVerdict(techMom); } })(document.getElementById('tech-momentum'));
     document.getElementById('tech-momentum').style.color = techMom==='Strong'?'#00C87A':techMom==='Moderate'?'#FFB020':'#FF1E3C';
 
