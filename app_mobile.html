@@ -1410,6 +1410,69 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 .jam-k{font-size:8px;color:var(--text3);letter-spacing:.3px;white-space:nowrap;}
 .jsec{font-size:10px;letter-spacing:.7px;color:var(--text3);margin:12px 3px 6px;}
 /* ══════════════════════════════════════════════════════════
+   SCANNER VERDICT CARD. 9 Aug 2026. "DRIFT".
+   The old card was four equal boxes, a bar and a summary. Direction is now
+   the headline, confidence is the meter beneath it, and momentum and risk
+   drop to a strip. THE BAR AND THE CONFIDENCE FIGURE USED TO BE THE SAME
+   NUMBER SHOWN TWICE, one above the other; the meter is the only one left.
+   THE CARD IS ONE SURFACE, not a coloured band sitting on a dark body. The
+   tint fades to nothing around two thirds down, so there is no seam where a
+   border used to be.
+   TWO BLURRED CLOUDS WANDER INSIDE IT on different periods, 19s and 26s, so
+   they meet and separate without ever repeating a pattern the eye can lock
+   onto. Deliberately NOT a sweep across the card: Haikal asked for the light
+   to stay inside and play around.
+   EVERY COLOUR HANGS OFF ONE CLASS on the card - scv-neu, scv-bul, scv-bear -
+   so the field, both clouds, the eyebrow and the word can never disagree
+   about what the verdict was.
+   ══════════════════════════════════════════════════════════ */
+.scv{position:relative;overflow:hidden;border-radius:12px;border:1px solid var(--border);background:#0a0a0e;margin-bottom:10px;}
+.scv-field{position:absolute;inset:0;pointer-events:none;}
+.scv-blob{position:absolute;border-radius:50%;filter:blur(38px);pointer-events:none;}
+.scv-b1{width:210px;height:150px;left:-40px;top:-50px;animation:scvDrift1 19s ease-in-out infinite;}
+.scv-b2{width:170px;height:130px;right:-40px;top:10px;animation:scvDrift2 26s ease-in-out infinite;}
+.scv-in{position:relative;padding:14px 13px 0;}
+.scv-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.scv-eb{font-size:10px;font-weight:800;letter-spacing:1px;}
+.scv-stamp{font-size:8.5px;color:var(--text3);font-family:'Orbitron',ui-monospace,Menlo,monospace;white-space:nowrap;}
+.scv-word{font-family:'Orbitron',ui-monospace,Menlo,monospace;font-size:34px;font-weight:900;letter-spacing:1px;line-height:1;white-space:nowrap;}
+.scv-under{display:flex;align-items:center;gap:8px;margin-top:10px;}
+.scv-meter{flex:1;height:4px;border-radius:2px;background:rgba(255,255,255,.13);overflow:hidden;}
+.scv-meter > div{height:4px;width:0%;border-radius:2px;transition:width 1s;}
+.scv-pc{font-family:'Orbitron',ui-monospace,Menlo,monospace;font-size:12px;font-weight:800;white-space:nowrap;}
+.scv-strip{position:relative;display:flex;margin-top:14px;padding:11px 0;border-top:1px solid rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.06);}
+.scv-g{flex:1;text-align:center;min-width:0;}
+.scv-g .k{font-size:7.5px;letter-spacing:.8px;color:var(--text3);white-space:nowrap;}
+.scv-g .v{font-family:'Orbitron',ui-monospace,Menlo,monospace;font-size:12px;font-weight:800;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.scv-gdv{width:1px;background:rgba(255,255,255,.06);}
+.scv-body{position:relative;padding:12px 13px 13px;}
+.scv-sumk{font-size:7.5px;letter-spacing:1px;color:var(--text3);margin-bottom:5px;}
+.scv-sum{font-size:11px;color:var(--text2);line-height:1.65;}
+/* neutral, and the resting state before any scan has run */
+.scv-neu .scv-field{background:linear-gradient(180deg,rgba(255,176,32,.20) 0%,rgba(255,176,32,.085) 26%,rgba(255,176,32,.022) 48%,rgba(10,10,14,0) 68%);}
+.scv-neu .scv-b1{background:#FFB020;} .scv-neu .scv-b2{background:#FF8A3D;}
+.scv-neu .scv-eb{color:#FFC96B;} .scv-neu .scv-word{color:#FFD48A;}
+.scv-bul .scv-field{background:linear-gradient(180deg,rgba(0,200,122,.20) 0%,rgba(0,200,122,.085) 26%,rgba(0,200,122,.022) 48%,rgba(10,10,14,0) 68%);}
+.scv-bul .scv-b1{background:#00D68F;} .scv-bul .scv-b2{background:#4BF0B6;}
+.scv-bul .scv-eb{color:#6FE3B4;} .scv-bul .scv-word{color:#8FF0C6;}
+.scv-bear .scv-field{background:linear-gradient(180deg,rgba(255,30,60,.20) 0%,rgba(255,30,60,.085) 26%,rgba(255,30,60,.022) 48%,rgba(10,10,14,0) 68%);}
+.scv-bear .scv-b1{background:#FF1E3C;} .scv-bear .scv-b2{background:#FF6A3D;}
+.scv-bear .scv-eb{color:#FF8A96;} .scv-bear .scv-word{color:#FF9AA6;}
+@keyframes scvDrift1{
+  0%{transform:translate(0,0) scale(1);opacity:.55;}
+  30%{transform:translate(150px,26px) scale(1.16);opacity:.8;}
+  60%{transform:translate(70px,64px) scale(.94);opacity:.5;}
+  100%{transform:translate(0,0) scale(1);opacity:.55;}}
+@keyframes scvDrift2{
+  0%{transform:translate(0,0) scale(1);opacity:.42;}
+  35%{transform:translate(-120px,44px) scale(1.2);opacity:.68;}
+  70%{transform:translate(-40px,-12px) scale(.9);opacity:.38;}
+  100%{transform:translate(0,0) scale(1);opacity:.42;}}
+/* Two blurred layers moving forever is the most expensive thing a phone can
+   be asked to draw, so the whole effect stops for anyone who has asked their
+   device to reduce motion. The card still reads correctly without it. */
+@media (prefers-reduced-motion: reduce){.scv-blob{animation:none;}}
+/* ══════════════════════════════════════════════════════════
    AI INSIGHT, ON DEMAND. 9 Aug 2026.
    It used to fire an API call EVERY time the Journal was opened. Now nothing
    is fetched until the button is pressed.
@@ -2233,14 +2296,25 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <div id="mob-tv-container" style="width:100%;min-height:320px;border-radius:10px;overflow:hidden;"></div>
 
       <!-- LIVE BALANCE / EQUITY STRIP -->
-      <div style="display:flex;gap:8px;margin-top:12px;">
-        <div style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px 12px;">
-          <div style="font-size:11px;color:var(--text2);margin-bottom:4px;" data-i18n="chart.balance">Balance</div>
-          <div id="mob-chart-balance" style="font-size:17px;font-weight:800;color:var(--text3);">—</div>
+      <!-- 9 Aug 2026: rebuilt on the Home price card treatment. IDLE IS BLUE on
+           both tiles. While a basket is open the equity tile goes green above
+           balance and red below, and it FLIPS ONLY WHEN THE FIGURE ACTUALLY
+           CHANGES, with a 4 second cooldown, which is the rule the Home market
+           cards already use. The balance tile stays blue in every state: a
+           balance has no direction of its own, only equity moves against it.
+           Both ids are unchanged so nothing else had to be touched. -->
+      <div class="mmb-strip">
+        <div class="mmb-card idle" id="mob-bal-card">
+          <div class="mmb-h"><span class="mmb-lbl" data-i18n="chart.balance">Balance</span></div>
+          <div class="mmb-v" id="mob-chart-balance">—</div>
+          <span class="mmb-bloom"></span>
+          <span class="mmb-line"><span></span></span>
         </div>
-        <div style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px 12px;">
-          <div style="font-size:11px;color:var(--text2);margin-bottom:4px;" data-i18n="chart.equity">Equity</div>
-          <div id="mob-chart-equity" style="font-size:17px;font-weight:800;color:var(--text3);">—</div>
+        <div class="mmb-card idle" id="mob-eq-card">
+          <div class="mmb-h"><span class="mmb-lbl" data-i18n="chart.equity">Equity</span><span class="mmb-chg" id="mob-eq-chg"></span></div>
+          <div class="mmb-v" id="mob-chart-equity">—</div>
+          <span class="mmb-bloom"></span>
+          <span class="mmb-line"><span></span></span>
         </div>
       </div>
 
@@ -4138,6 +4212,42 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <!-- RESULTS (hidden until scan) -->
       <div id="scan-results" style="display:none;">
 
+        <!-- ══════════════════════════════════════════════════
+             OVERALL AI VERDICT. Moved to the TOP of the results on
+             9 Aug 2026 at Haikal's instruction, so the answer is read before
+             the evidence behind it. Every id is unchanged from the four-box
+             version, so nothing that fills them had to move.
+             `verdict-bar` is now the confidence meter rather than a separate
+             bar under a separate confidence figure.
+             ══════════════════════════════════════════════════ -->
+        <div class="scv scv-neu" id="verdict-card">
+          <div class="scv-field"></div>
+          <span class="scv-blob scv-b1"></span>
+          <span class="scv-blob scv-b2"></span>
+          <div class="scv-in">
+            <div class="scv-hd">
+              <span class="scv-eb" data-i18n="sc.verdict">OVERALL AI VERDICT</span>
+              <span class="scv-stamp" id="verdict-stamp">&mdash;</span>
+            </div>
+            <div class="scv-word" id="verdict-direction">&mdash;</div>
+            <div class="scv-under">
+              <div class="scv-meter"><div id="verdict-bar"></div></div>
+              <div class="scv-pc" id="verdict-confidence">&mdash;</div>
+            </div>
+            <div class="scv-strip">
+              <div class="scv-g"><div class="k" data-i18n="sc.momentum">MOMENTUM</div><div class="v" id="verdict-momentum">&mdash;</div></div>
+              <div class="scv-gdv"></div>
+              <div class="scv-g"><div class="k" data-i18n="sc.risk">RISK</div><div class="v" id="verdict-risk">&mdash;</div></div>
+              <div class="scv-gdv"></div>
+              <div class="scv-g"><div class="k" data-i18n="sc.timeframe">TIMEFRAME</div><div class="v" id="verdict-tf">&mdash;</div></div>
+            </div>
+          </div>
+          <div class="scv-body">
+            <div class="scv-sumk" data-i18n="sc.summary">FINAL AI SUMMARY</div>
+            <div class="scv-sum" id="verdict-summary">Run a scan to see the AI verdict.</div>
+          </div>
+        </div>
+
         <!-- SENTIMENT -->
         <div class="section-card" style="margin-bottom:10px;padding:12px;">
           <div style="font-size:10px;font-weight:800;color:var(--red);letter-spacing:1px;margin-bottom:10px;" data-i18n="sc.sentiment">SENTIMENT ANALYSIS</div>
@@ -4215,33 +4325,6 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
           <div id="fund-verdict-box" style="margin-top:8px;padding:7px;border-left:2px solid var(--amber);border-radius:0 6px 6px 0;font-size:11px;color:var(--text3);line-height:1.5;background:rgba(255,176,32,0.04);"></div>
         </div>
 
-        <!-- OVERALL VERDICT -->
-        <div style="background:rgba(255,30,60,0.04);border:0.5px solid rgba(255,30,60,0.2);border-radius:12px;padding:12px;margin-bottom:10px;">
-          <div style="font-size:10px;font-weight:800;color:var(--red);letter-spacing:1px;margin-bottom:8px;" data-i18n="sc.verdict">OVERALL AI VERDICT</div>
-          <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;margin-bottom:8px;">
-            <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:8px;padding:7px;text-align:center;">
-              <div style="font-size:9px;color:var(--text3);margin-bottom:2px;" data-i18n="sc.direction">DIRECTION</div>
-              <div id="verdict-direction" style="font-size:12px;font-weight:800;color:var(--text3);">—</div>
-            </div>
-            <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:8px;padding:7px;text-align:center;">
-              <div style="font-size:9px;color:var(--text3);margin-bottom:2px;" data-i18n="sc.momentum">MOMENTUM</div>
-              <div id="verdict-momentum" style="font-size:12px;font-weight:800;color:var(--text3);">—</div>
-            </div>
-            <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:8px;padding:7px;text-align:center;">
-              <div style="font-size:9px;color:var(--text3);margin-bottom:2px;" data-i18n="sc.confidence">CONFIDENCE</div>
-              <div id="verdict-confidence" style="font-size:12px;font-weight:800;color:var(--text3);">—</div>
-            </div>
-            <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:8px;padding:7px;text-align:center;">
-              <div style="font-size:9px;color:var(--text3);margin-bottom:2px;" data-i18n="sc.risk">RISK</div>
-              <div id="verdict-risk" style="font-size:12px;font-weight:800;color:var(--text3);">—</div>
-            </div>
-          </div>
-          <div style="height:4px;background:#1e1e1e;border-radius:2px;overflow:hidden;margin-bottom:8px;">
-            <div id="verdict-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#FF1E3C,#FFB020,#00C87A);border-radius:2px;transition:width 1s;"></div>
-          </div>
-          <div style="font-size:9px;color:var(--text3);letter-spacing:.5px;margin-bottom:5px;" data-i18n="sc.summary">FINAL AI SUMMARY</div>
-          <div id="verdict-summary" style="font-size:11px;color:var(--text3);line-height:1.7;">Run a scan to see the AI verdict.</div>
-        </div>
 
         <!-- GENERATE REPORT -->
         <button onclick="generateMAIReport()" style="width:100%;padding:11px;background:transparent;border:1px solid var(--red);border-radius:10px;color:var(--red);font-family:'Orbitron',sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;cursor:pointer;margin-bottom:12px;" data-i18n="scan.genReport">⬇ GENERATE MAI FULL REPORT</button>
@@ -13959,6 +14042,14 @@ async function loadAFTPrices() {
   return true;
 }
 
+// The Chart tab equity tile has to know whether a basket is genuinely open,
+// because equity can rest exactly on balance for a moment while one runs.
+// Set here from the row count rather than inferred from the numbers, and the
+// tile is repainted at once so its state never waits for the next balance poll.
+function mmSetOpenPos(n){
+  window._mmOpenPos = n;
+  if(typeof renderChartEquityStrip === 'function') renderChartEquityStrip();
+}
 // Reads real open positions from Supabase (data worker fills this).
 async function loadLivePositions(){
   if(!db) return;
@@ -13969,6 +14060,7 @@ async function loadLivePositions(){
   if(!mt5){
     box.innerHTML = '<div style="text-align:center;font-size:12px;color:var(--text3);padding:16px 0;">'+mmT('lp.connect','Connect your MT5 account')+'</div>';
     mmaiShowCloseAll(false);
+    mmSetOpenPos(0);
     if(totalEl){ totalEl.textContent='—'; totalEl.style.color='var(--text3)'; }
     return;
   }
@@ -13978,30 +14070,99 @@ async function loadLivePositions(){
     if(!rows.length){
       box.innerHTML = '<div style="text-align:center;font-size:12px;color:var(--text3);padding:16px 0;">'+mmT('lp.noPositions','No open positions')+'</div>';
       mmaiShowCloseAll(false);
+      mmSetOpenPos(0);
       if(totalEl){ totalEl.textContent='$0.00'; totalEl.style.color='var(--text3)'; }
       return;
     }
+    mmSetOpenPos(rows.length);
+    // 9 Aug 2026: each position is now a STOP AND TARGET TRACK rather than a
+    // flat row. sl, tp and current_price have been arriving in this same query
+    // since bridge v1.21 and were never read - the select is select('*').
     var html=''; var total=0;
     rows.forEach(function(p){
       var profit = parseFloat(p.profit)||0; total += profit;
-      var win = profit>=0;
+      var win  = profit>=0;
       var side = (p.side||'').toString().toUpperCase();
-      var sideColor = (side==='SELL') ? 'var(--red)' : 'var(--green)';
-      var pColor = win ? 'var(--green)' : 'var(--red)';
-      var op = (p.open_price!=null) ? p.open_price : '';
-      var vol = (p.volume!=null) ? p.volume : '';
-      // CLOSE FEATURE: the ticket is already in the row object (select *),
-      // it just was never rendered. Carry it so a double-tap can name it.
-      var _tk = (p.ticket!=null) ? String(p.ticket) : '';
+      var isBuy = (side !== 'SELL');
+      var pColor = win ? '#00d68f' : '#ff4d6a';
+      var sym  = p.symbol || '';
+      var entry = parseFloat(p.open_price);
+      var now   = parseFloat(p.current_price);
+      var sl    = parseFloat(p.sl);
+      var tp    = parseFloat(p.tp);
+      // MT5 RETURNS 0 FOR POSITION_SL AND POSITION_TP WHEN NOTHING IS SET at
+      // the broker, so a zero here means "no level", not "a level at zero".
+      // Drawing it would put a stop at the far edge of the track and read as a
+      // trade about to be stopped out.
+      var hasSl = !isNaN(sl) && sl > 0;
+      var hasTp = !isNaN(tp) && tp > 0;
+      if(isNaN(entry) || entry <= 0) entry = 0;
+      if(isNaN(now)   || now   <= 0) now = entry;
+      // The axis: 0 is the stop end, 100 the target end, for a buy and a sell
+      // alike. When only one level exists the other end is EXTRAPOLATED FOR
+      // SCALE ONLY, never labelled, and that end of the bar fades out.
+      var lo = null, hi = null, tcls = '';
+      if(hasSl && hasTp){ lo = sl; hi = tp; }
+      else if(hasSl && entry > 0){ lo = sl; hi = sl + (entry - sl) * 4; tcls = ' noTp'; }
+      else if(hasTp && entry > 0){ hi = tp; lo = tp + (entry - tp) * 4; tcls = ' noSl'; }
+      var _tk  = (p.ticket!=null) ? String(p.ticket) : '';
       var _lbl = ((p.symbol||'')+' '+side).replace(/'/g,'');
-      html += '<div class="trade-item" data-ticket="'+_tk+'"'+
+      var sideStyle = isBuy ? 'background:rgba(0,200,122,.12);color:#00C87A;'
+                            : 'background:rgba(255,30,60,.12);color:#ff4d6a;';
+      var mid = ((p.volume!=null)?p.volume:'')+mmT('j.lotSuffix',' lot')+
+                ' \u00b7 '+fmtPrice(sym, now);
+      var body;
+      if((lo === null || hi === null || lo === hi) && entry > 0){
+        // NEITHER LEVEL SET: no track is possible, so draw the TRAVEL BAR.
+        // Entry is the centre and the scale is a fixed half a percent of entry
+        // either way, labelled as a percentage so the ends cannot be mistaken
+        // for a stop or a target. The move is measured IN THE TRADE'S FAVOUR,
+        // so a sell travels right as price falls, matching the track's rule
+        // that right is always the good end.
+        var span = entry * 0.005;
+        var moved = isBuy ? (now - entry) : (entry - now);
+        var tp2 = 50 + (moved / span) * 50;
+        if(isNaN(tp2)) tp2 = 50;
+        tp2 = Math.max(0, Math.min(100, tp2));
+        var tfl = Math.min(50, tp2), tfw = Math.abs(tp2 - 50);
+        body = '<div class="mmlt-tv">'+
+            '<span class="mmlt-fill" style="left:'+tfl.toFixed(2)+'%;width:'+tfw.toFixed(2)+'%;background:'+(win?'rgba(0,214,143,.55)':'rgba(255,77,106,.55)')+';"></span>'+
+            '<span class="mmlt-mid"></span>'+
+            '<span class="mmlt-now" style="left:'+tp2.toFixed(2)+'%;"></span>'+
+          '</div>'+
+          '<div class="mmlt-l"><span>-0.5%</span><span class="mid">'+mid+'</span><span>+0.5%</span></div>';
+      } else if(lo === null || hi === null || lo === hi){
+        // No levels AND no usable entry price, so even the travel bar has no
+        // centre to anchor to. Fall back to plain text rather than guess one.
+        body = '<div class="mmlt-flat">'+fmtPrice(sym, entry)+' \u2192 '+fmtPrice(sym, now)+
+               ' \u00b7 '+((p.volume!=null)?p.volume:'')+mmT('j.lotSuffix',' lot')+
+               ' \u00b7 SL \u2014 TP \u2014</div>';
+      } else {
+        var pct = function(v){
+          var r = (v - lo) / (hi - lo) * 100;
+          if(isNaN(r)) r = 0;
+          return Math.max(0, Math.min(100, r));
+        };
+        var pe = pct(entry), pn = pct(now);
+        var fl = Math.min(pe, pn), fw = Math.abs(pn - pe);
+        body = '<div class="mmlt-track'+tcls+'">'+
+            '<span class="mmlt-fill" style="left:'+fl.toFixed(2)+'%;width:'+fw.toFixed(2)+'%;background:'+(win?'rgba(0,214,143,.55)':'rgba(255,77,106,.55)')+';"></span>'+
+            '<span class="mmlt-pin" style="left:'+pe.toFixed(2)+'%;"></span>'+
+            '<span class="mmlt-now" style="left:'+pn.toFixed(2)+'%;"></span>'+
+          '</div>'+
+          '<div class="mmlt-l">'+
+            '<span>SL '+(hasSl?fmtPrice(sym, sl):'\u2014')+'</span>'+
+            '<span class="mid">'+mid+'</span>'+
+            '<span>TP '+(hasTp?fmtPrice(sym, tp):'\u2014')+'</span>'+
+          '</div>';
+      }
+      html += '<div class="mmlt" data-ticket="'+_tk+'"'+
         (_tk ? ' onclick="mmaiTapPosition(\''+_tk+'\',\''+_lbl+'\')" style="cursor:pointer;"' : '')+'>'+
-        '<div class="trade-icon" style="background:'+(win?'rgba(0,200,122,0.12)':'rgba(255,30,60,0.10)')+';">'+(side==='SELL'?'\uD83D\uDCC9':'\uD83D\uDCC8')+'</div>'+
-        '<div class="trade-info">'+
-          '<div class="trade-pair">'+p.symbol+' <span style="font-size:10px;color:'+sideColor+';font-weight:700;">'+mmSide(side)+'</span></div>'+
-          '<div class="trade-meta">Entry: '+op+' \u00b7 '+vol+mmT('j.lotSuffix',' lot')+'</div>'+
+        '<div class="mmlt-h">'+
+          '<div><span class="mmlt-sym">'+sym+'</span><span class="mmlt-side" style="'+sideStyle+'">'+mmSide(side)+'</span></div>'+
+          '<div class="mmlt-p" style="color:'+pColor+';">'+(profit===0?'$':(win?'+$':'-$'))+Math.abs(profit).toFixed(2)+'</div>'+
         '</div>'+
-        '<div><div class="trade-pnl" style="color:'+pColor+';font-weight:800;">'+(win?'+':'')+'$'+profit.toFixed(2)+'</div></div>'+
+        body+
       '</div>';
     });
     box.innerHTML = html;
@@ -14417,23 +14578,36 @@ async function loadPastSignals(){
       box.innerHTML = '<div style="text-align:center;font-size:12px;color:var(--text3);padding:16px 0;">'+mmT('ps.none','No past signals yet')+'</div>';
       return;
     }
+    // 9 Aug 2026: these rows now use the JOURNAL RECENT TRADE CARD, .jrt-c,
+    // rather than the old trade-item row. The edge and the drifting wash both
+    // hang off one win/loss class so the two can never disagree. The query
+    // already carried .limit(10), so the last ten is what it always fetched.
     var html = '';
     rows.forEach(function(r){
       var side   = (r.side||'').toString().toUpperCase();
       var isBuy  = (side !== 'SELL');
-      var tint   = isBuy ? 'var(--green)' : 'var(--red)';
-      var bg     = isBuy ? 'rgba(0,200,122,0.12)' : 'rgba(255,30,60,0.10)';
       var profit = parseFloat(r.profit || 0);
-      var pColor = profit >= 0 ? 'var(--green)' : 'var(--red)';
+      var win    = profit > 0;
       var lot    = (r.lot != null) ? parseFloat(r.lot).toFixed(2) : '\u2014';
       var sym    = displaySymbol(r.symbol);
-      html += '<div class="trade-item">'+
-        '<div class="trade-icon" style="background:'+bg+';display:flex;align-items:center;justify-content:center;">'+signalArrowSvg(isBuy, tint)+'</div>'+
-        '<div class="trade-info">'+
-          '<div class="trade-pair">'+sym+' <span style="font-size:10px;color:'+tint+';font-weight:700;">'+(isBuy?mmT('sig.buy','BUY'):mmT('sig.sell','SELL'))+'</span></div>'+
-          '<div class="trade-meta">'+lot+' lot \u00b7 '+signalTimeAgo(r.closed_at)+'</div>'+
-        '</div>'+
-        '<div><div class="trade-pnl" style="color:'+pColor+';font-weight:800;">'+(profit>=0?'+':'')+'$'+profit.toFixed(2)+'</div></div>'+
+      // new Date(null) is the epoch, not an invalid date, so a missing
+      // closed_at would print 1/1 rather than nothing. Guard the value first.
+      var d      = r.closed_at ? new Date(r.closed_at) : null;
+      var dateStr= (d && !isNaN(d.getTime())) ? ((d.getMonth()+1)+'/'+d.getDate()) : '';
+      var badge  = isBuy
+        ? '<span class="jrt-side" style="background:rgba(0,200,122,.12);color:#00C87A;">'+mmT('sig.buy','BUY')+'</span>'
+        : '<span class="jrt-side" style="background:rgba(255,30,60,.12);color:#ff4d6a;">'+mmT('sig.sell','SELL')+'</span>';
+      html += '<div class="jrt-c '+(win?'win':'loss')+'">'+
+        '<span class="jrt-wash"></span>'+
+        '<span class="jrt-edge"></span>'+
+        '<span class="jrt-m">'+
+          '<span class="jrt-top"><span class="jrt-sym">'+sym+'</span>'+badge+'</span>'+
+          '<span class="jrt-meta">'+lot+mmT('j.lotSuffix',' lot')+'</span>'+
+        '</span>'+
+        '<span class="jrt-rt">'+
+          '<span class="jrt-v" style="color:'+(win?'#00d68f':'#ff4d6a')+';">'+(profit===0?'$':(win?'+$':'-$'))+Math.abs(profit).toFixed(2)+'</span>'+
+          '<span class="jrt-d">'+dateStr+'</span>'+
+        '</span>'+
       '</div>';
     });
     box.innerHTML = html;
@@ -14474,27 +14648,62 @@ function loadAccountStats() {
     bEl.textContent = '$'+parseFloat(activeAccount.balance).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2});
   }
 }
-// Chart tab: Balance + Equity tiles. Equity is white when equal to balance,
-// green when above (floating profit), red when below (floating loss). Strict to the cent.
+// Chart tab: Balance + Equity tiles, price-card treatment. 9 Aug 2026.
+// THREE STATES, all carried by one class per card:
+//   idle - no basket open. Both tiles blue.
+//   up   - basket open and equity above balance. Green.
+//   dn   - basket open and equity below balance. Red.
+// LIVE IS DECIDED BY window._mmOpenPos, which loadLivePositions sets, not by
+// comparing the numbers. Equity can sit exactly on balance for a moment with a
+// basket running, and reading that as idle would flicker the card.
+// THE FLIP FIRES ONLY WHEN THE FIGURE ACTUALLY CHANGED, with a 4 second
+// cooldown, and the new value lands at the 300ms midpoint so it appears on the
+// far side of the flip. Without the change test it would flip on every poll
+// forever; without the midpoint the number would change before the card turned.
 function renderChartEquityStrip() {
-  var balEl = document.getElementById('mob-chart-balance');
-  var eqEl  = document.getElementById('mob-chart-equity');
+  var balEl   = document.getElementById('mob-chart-balance');
+  var eqEl    = document.getElementById('mob-chart-equity');
   if(!balEl || !eqEl) return;
+  var balCard = document.getElementById('mob-bal-card');
+  var eqCard  = document.getElementById('mob-eq-card');
+  var chgEl   = document.getElementById('mob-eq-chg');
+  if(balCard) balCard.className = 'mmb-card idle';
   if(!activeAccount || activeAccount.balance==null || activeAccount.balance==='') {
-    balEl.textContent='—'; balEl.style.color='var(--text3)';
-    eqEl.textContent='—';  eqEl.style.color='var(--text3)';
+    balEl.textContent = '\u2014';
+    eqEl.textContent  = '\u2014';
+    if(chgEl) chgEl.textContent = '';
+    if(eqCard) eqCard.className = 'mmb-card idle';
     return;
   }
   var bal = parseFloat(activeAccount.balance)||0;
   var eq  = (activeAccount.equity!=null && activeAccount.equity!=='') ? (parseFloat(activeAccount.equity)||0) : bal;
   var fmt = function(n){ return '$'+n.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2}); };
   balEl.textContent = fmt(bal);
-  balEl.style.color = 'var(--text)';
-  eqEl.textContent = fmt(eq);
+  // Compare in whole cents, strict, the way this function always has.
   var balC = Math.round(bal*100), eqC = Math.round(eq*100);
-  if(eqC > balC)      eqEl.style.color = 'var(--green)';
-  else if(eqC < balC) eqEl.style.color = 'var(--red)';
-  else                eqEl.style.color = 'var(--text)';
+  var diff = (eqC - balC)/100;
+  var live = (window._mmOpenPos||0) > 0;
+  var state = !live ? 'idle' : (eqC > balC ? 'up' : (eqC < balC ? 'dn' : 'idle'));
+  // The sign is built from the sign of diff plus the absolute value. Gluing a
+  // '+' onto an already formatted negative printed a loss as a gain on the Home
+  // card on 1 Aug and must not be repeated here.
+  var chgTxt = !live ? '' : (diff === 0 ? fmt(0) : (diff < 0 ? '-' : '+') + fmt(Math.abs(diff)));
+  var apply = function(){
+    eqEl.textContent = fmt(eq);
+    if(chgEl) chgEl.textContent = chgTxt;
+    if(eqCard) eqCard.className = 'mmb-card ' + state;
+  };
+  var prev = window._mmLastEqC;
+  window._mmLastEqC = eqC;
+  // undefined prev means this is the first paint, which is not a change.
+  var changed = (prev !== undefined && prev !== eqC);
+  if(!live || !changed || !eqCard){ apply(); return; }
+  if(Date.now() - (window._mmLastEqFlip||0) < 4000){ apply(); return; }
+  window._mmLastEqFlip = Date.now();
+  eqCard.classList.remove('mmb-flip');
+  void eqCard.offsetWidth;
+  eqCard.classList.add('mmb-flip');
+  setTimeout(apply, 300);
 }
 
 // ── MORE TAB (member card + leaderboard) ──
@@ -18522,11 +18731,32 @@ Respond ONLY with valid JSON (no markdown):
     // 8. RENDER OVERALL VERDICT
     var od = ai.overall_direction||'Neutral';
     var oc = ai.overall_confidence||50;
-    var odEl = document.getElementById('verdict-direction'); if(odEl){odEl.textContent=mmVerdict(od);odEl.style.color=od==='Bullish'?'#00C87A':od==='Bearish'?'#FF1E3C':'#FFB020';}
+    // ONE CLASS DRIVES THE WHOLE CARD - the tint, both drifting clouds, the
+    // eyebrow and the headline all come from it, so no two of them can end up
+    // saying different things about the same verdict.
+    var vCard = document.getElementById('verdict-card');
+    if(vCard) vCard.className = 'scv ' + (od==='Bullish' ? 'scv-bul' : od==='Bearish' ? 'scv-bear' : 'scv-neu');
+    var odEl = document.getElementById('verdict-direction'); if(odEl){odEl.textContent=mmVerdict(od);odEl.style.color='';}
+    // The stamp and the timeframe cell read the SELECTOR rather than a stored
+    // value, so they always describe the scan that just ran.
+    var vTfSel = document.getElementById('scan-tf');
+    var vTf = vTfSel ? vTfSel.value : '';
+    var vTfEl = document.getElementById('verdict-tf'); if(vTfEl) vTfEl.textContent = vTf || '\u2014';
+    var vStEl = document.getElementById('verdict-stamp');
+    if(vStEl) vStEl.textContent = (vTf ? vTf + ' \u00b7 ' : '') + new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
     var omEl = document.getElementById('verdict-momentum'); if(omEl) omEl.textContent=mmVerdict(ai.overall_momentum)||'—';
     var ocEl = document.getElementById('verdict-confidence'); if(ocEl){ocEl.textContent=oc+'%';ocEl.style.color=oc>=65?'#00C87A':oc>=45?'#FFB020':'#FF1E3C';}
     var orEl = document.getElementById('verdict-risk'); if(orEl){orEl.textContent=mmVerdict(ai.overall_risk)||'—';orEl.style.color=ai.overall_risk==='Low'?'#00C87A':ai.overall_risk==='High'?'#FF1E3C':'#FFB020';}
-    var vbar = document.getElementById('verdict-bar'); if(vbar) vbar.style.width=oc+'%';
+    // The meter is the confidence, and it takes the same colour the figure
+    // beside it already has, rather than a fixed three-stop gradient that used
+    // to run red to green regardless of the reading.
+    var vbar = document.getElementById('verdict-bar');
+    if(vbar){
+      vbar.style.width = oc + '%';
+      vbar.style.background = oc>=65 ? 'linear-gradient(90deg,#00A06C,#00D68F)'
+                            : oc>=45 ? 'linear-gradient(90deg,#C98D14,#FFB020)'
+                                     : 'linear-gradient(90deg,#C4213C,#FF4D6A)';
+    }
     var vsEl = document.getElementById('verdict-summary'); if(vsEl) vsEl.textContent=ai.overall_summary||'—';
 
     // Save for scanner verification in auto trade
@@ -20380,6 +20610,71 @@ function ntFlipLead(m){
 .mm-tile.t2.dn{border-left-color:#e03050;}
 .mm-tile.t2.dn i{color:#ff8fa3;}
 .mm-tile.t3{border-left:2px solid #ff8fa3;}
+/* CHART TAB balance + equity tiles. 9 Aug 2026.
+   Same treatment as the Home price card above: surface fill, top hairline,
+   9px letter-spaced label, Orbitron figure, blurred bloom and the 2px flowing
+   line with feathered ends. Three states carried by ONE class per card so the
+   bloom, the line and the figure can never disagree.
+     idle - nothing running. Blue.
+     up   - basket open, equity above balance. Green.
+     dn   - basket open, equity below balance. Red.
+   Reuses mmMktFlow and mmMktFlip from the market cards below rather than
+   declaring a second copy of either. */
+.mmb-strip{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;}
+.mmb-card{position:relative;overflow:hidden;transform-style:preserve-3d;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:8px 10px 15px;}
+.mmb-card::before{content:'';position:absolute;left:10px;right:10px;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);}
+.mmb-h{display:flex;align-items:center;justify-content:space-between;gap:6px;min-height:13px;}
+.mmb-lbl{color:var(--text3);font-size:9px;letter-spacing:.06em;font-weight:700;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mmb-chg{font-size:9px;font-weight:700;white-space:nowrap;font-family:'Orbitron',ui-monospace,Menlo,monospace;}
+.mmb-v{position:relative;z-index:1;color:var(--text);font-size:16px;margin-top:2px;letter-spacing:-.2px;font-family:'Orbitron',sans-serif;white-space:nowrap;}
+.mmb-bloom{position:absolute;left:0;right:0;bottom:0;height:34px;pointer-events:none;filter:blur(9px);}
+.mmb-line{position:absolute;left:0;right:0;bottom:0;height:2px;overflow:hidden;pointer-events:none;-webkit-mask-image:linear-gradient(90deg,transparent,#000 22%,#000 78%,transparent);mask-image:linear-gradient(90deg,transparent,#000 22%,#000 78%,transparent);}
+.mmb-line > span{position:absolute;inset:0;background-size:220% 100%;animation:mmMktFlow 6s linear infinite;}
+.mmb-card.idle .mmb-line > span{background:linear-gradient(90deg,rgba(59,130,246,0) 0%,rgba(59,130,246,.35) 18%,rgba(59,130,246,.75) 38%,rgba(59,130,246,.95) 50%,rgba(59,130,246,.75) 62%,rgba(59,130,246,.35) 82%,rgba(59,130,246,0) 100%);}
+.mmb-card.idle .mmb-bloom{background:linear-gradient(180deg,rgba(59,130,246,0) 0%,rgba(59,130,246,.10) 45%,rgba(59,130,246,.28) 100%);}
+.mmb-card.idle .mmb-chg{color:#7aa9f8;}
+.mmb-card.up .mmb-line > span{background:linear-gradient(90deg,rgba(0,214,143,0) 0%,rgba(0,214,143,.35) 18%,rgba(0,214,143,.75) 38%,rgba(0,214,143,.95) 50%,rgba(0,214,143,.75) 62%,rgba(0,214,143,.35) 82%,rgba(0,214,143,0) 100%);}
+.mmb-card.up .mmb-bloom{background:linear-gradient(180deg,rgba(0,214,143,0) 0%,rgba(0,214,143,.10) 45%,rgba(0,214,143,.30) 100%);}
+.mmb-card.up .mmb-v,.mmb-card.up .mmb-chg{color:#00d68f;}
+.mmb-card.dn .mmb-line > span{background:linear-gradient(90deg,rgba(255,77,106,0) 0%,rgba(255,77,106,.35) 18%,rgba(255,77,106,.75) 38%,rgba(255,77,106,.95) 50%,rgba(255,77,106,.75) 62%,rgba(255,77,106,.35) 82%,rgba(255,77,106,0) 100%);}
+.mmb-card.dn .mmb-bloom{background:linear-gradient(180deg,rgba(255,77,106,0) 0%,rgba(255,77,106,.10) 45%,rgba(255,77,106,.30) 100%);}
+.mmb-card.dn .mmb-v,.mmb-card.dn .mmb-chg{color:#ff4d6a;}
+.mmb-flip{animation:mmMktFlip .62s ease-in-out;}
+@media (prefers-reduced-motion: reduce){.mmb-flip{animation:none;}.mmb-line > span{animation:none;}}
+/* LIVE POSITION stop-and-target track. 9 Aug 2026.
+   The axis always runs STOP END on the left to TARGET END on the right, for a
+   buy and for a sell alike, because the percentage is computed as
+   (v - sl) / (tp - sl) and the sign cancels. So red is always the losing end.
+   MT5 REPORTS 0 FOR POSITION_SL AND POSITION_TP WHEN NOTHING IS SET at the
+   broker, so zero is treated as missing and that end of the track FADES OUT
+   rather than drawing a level that does not exist. */
+.mmlt{position:relative;background:rgba(255,255,255,.028);border:1px solid var(--border);border-radius:12px;padding:11px 12px 12px;}
+.mmlt + .mmlt{margin-top:8px;}
+.mmlt-h{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.mmlt-sym{font-size:13px;font-weight:700;}
+.mmlt-side{font-size:8.5px;font-weight:800;padding:2px 5px;border-radius:4px;margin-left:5px;letter-spacing:.3px;}
+.mmlt-p{font-family:'Orbitron',ui-monospace,Menlo,monospace;font-size:14px;font-weight:700;white-space:nowrap;}
+.mmlt-track{position:relative;height:6px;border-radius:3px;margin:14px 0 7px;background:linear-gradient(90deg,rgba(255,77,106,.35),rgba(255,255,255,.10) 45%,rgba(255,255,255,.10) 55%,rgba(0,214,143,.35));}
+.mmlt-track.noTp{background:linear-gradient(90deg,rgba(255,77,106,.35),rgba(255,255,255,.10) 45%,rgba(255,255,255,.05) 78%,rgba(255,255,255,0));}
+.mmlt-track.noSl{background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.05) 22%,rgba(255,255,255,.10) 55%,rgba(0,214,143,.35));}
+.mmlt-fill{position:absolute;top:0;bottom:0;border-radius:3px;}
+.mmlt-pin{position:absolute;top:-5px;width:2px;height:16px;background:rgba(255,255,255,.45);border-radius:1px;}
+.mmlt-now{position:absolute;top:-7px;width:10px;height:20px;margin-left:-5px;border-radius:5px;background:#fff;box-shadow:0 0 10px rgba(255,255,255,.45);}
+.mmlt-l{display:flex;justify-content:space-between;gap:8px;font-size:9px;color:var(--text3);font-family:'Orbitron',ui-monospace,Menlo,monospace;}
+.mmlt-l span{white-space:nowrap;}
+/* Five figure symbols put all three labels near the card width, so the middle
+   one is the one allowed to shrink. The two levels never truncate. */
+.mmlt-l .mid{color:var(--text2);text-align:center;min-width:0;overflow:hidden;text-overflow:ellipsis;}
+.mmlt-flat{font-size:9.5px;color:var(--text3);font-family:'Orbitron',ui-monospace,Menlo,monospace;margin-top:9px;}
+/* TRAVEL BAR: shown when a position has NEITHER a stop nor a target, so there
+   is no track to draw. Entry sits at the centre and the scale is a fixed
+   PLUS AND MINUS HALF A PERCENT OF ENTRY, labelled as a percentage precisely so
+   the ends cannot be read as levels. Same orientation rule as the track above:
+   RIGHT IS ALWAYS IN THE TRADE'S FAVOUR, so a sell moves right as price falls.
+   Two axis conventions on one screen would be worse than none. */
+.mmlt-tv{position:relative;height:6px;border-radius:3px;margin:14px 0 7px;background:rgba(255,255,255,.07);}
+.mmlt-tv .mmlt-mid{position:absolute;left:50%;top:-5px;width:2px;height:16px;margin-left:-1px;background:rgba(255,255,255,.45);border-radius:1px;}
+
 .mm-mkt-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
 .mm-mkt-card{position:relative;overflow:hidden;transform-style:preserve-3d;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:8px 10px 15px;}
 .mm-mkt-card::before{content:'';position:absolute;left:10px;right:10px;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);}
