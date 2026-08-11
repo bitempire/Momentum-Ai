@@ -1437,7 +1437,13 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
    ══════════════════════════════════════════════════════════ */
 .scan-hero{position:relative;overflow:hidden;height:calc(100vh - 250px);min-height:520px;
  transition:height .85s cubic-bezier(.32,.72,.24,1), min-height .85s cubic-bezier(.32,.72,.24,1);}
-.scan-hero.done{height:58px;min-height:0;}
+/* THE COLLAPSED HEADER IS GONE, because the pair, price and core it carried
+   now live inside the verdict card. The hero simply leaves.
+   THE COST, STATED: the core no longer FLIES into the header, since there is
+   no header to fly to. It fades out as the hero collapses while the card's own
+   core fades in a little below. One object became two, which is exactly what
+   the flight was built to avoid - it is the price of the new layout. */
+.scan-hero.done{height:0;min-height:0;opacity:0;pointer-events:none;}
 .sh-stage{position:absolute;inset:0;}
 .sh-rings{position:absolute;inset:0;pointer-events:none;display:flex;align-items:center;justify-content:center;}
 .sh-rings span{position:absolute;border-radius:50%;border:1px solid rgba(255,30,60,.07);}
@@ -1728,8 +1734,8 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
    against Home's 4.5, and a wider, weaker arc.
    THE STATE CLASS LIVES ON THE WRAPPER, not the card, because the beam is a
    SIBLING of the card and CSS cannot reach backwards from one to the other.
-   Every `.scv-neu .scv-field` style still matches, since the field is a
-   descendant of the wrapper either way. */
+   The per-state text colours still match, since they are descendants of the
+   wrapper either way. */
 .scv-wrap{position:relative;overflow:hidden;border-radius:14px;padding:1.5px;margin-bottom:10px;}
 .scv-beam{position:absolute;inset:-60%;pointer-events:none;animation:scvBeam 9s linear infinite;}
 @keyframes scvBeam{to{transform:rotate(360deg)}}
@@ -1755,23 +1761,32 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 .scv-g{flex:1;text-align:center;min-width:0;}
 .scv-g .k{font-size:7.5px;letter-spacing:.8px;color:var(--text3);white-space:nowrap;}
 .scv-g .v{font-family:'Orbitron',ui-monospace,Menlo,monospace;font-size:12px;font-weight:800;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+/* The timeframe is not a reading, so it stays plain whatever the verdict. */
+.scv-g #verdict-tf{color:var(--text) !important;}
 .scv-gdv{width:1px;background:rgba(255,255,255,.06);}
 .scv-body{position:relative;padding:12px 13px 13px;}
 .scv-sumk{font-size:7.5px;letter-spacing:1px;color:var(--text3);margin-bottom:5px;}
 .scv-sum{font-size:11px;color:var(--text2);line-height:1.65;}
 /* neutral, and the resting state before any scan has run */
-.scv-neu .scv-field{background:radial-gradient(150% 100% at 26% -4%,rgba(255,176,32,.20) 0%,rgba(255,176,32,.13) 22%,rgba(255,176,32,.075) 42%,rgba(255,176,32,.035) 62%,rgba(255,176,32,.012) 80%,rgba(255,176,32,0) 100%);}
-.scv-neu .scv-b1{background:#FFB020;} .scv-neu .scv-b2{background:#FF8A3D;}
-.scv-neu .scv-eb{color:#FFC96B;} .scv-neu .scv-word{color:#FFD48A;}
-.scv-neu .scv-beam{background:conic-gradient(from 0deg,transparent 0 48%,rgba(224,150,30,.30) 66%,rgba(224,150,30,.70) 80%,rgba(224,150,30,.30) 92%,transparent 100%);}
-.scv-bul .scv-field{background:radial-gradient(150% 100% at 26% -4%,rgba(0,214,143,.20) 0%,rgba(0,214,143,.13) 22%,rgba(0,214,143,.075) 42%,rgba(0,214,143,.035) 62%,rgba(0,214,143,.012) 80%,rgba(0,214,143,0) 100%);}
-.scv-bul .scv-b1{background:#00D68F;} .scv-bul .scv-b2{background:#4BF0B6;}
-.scv-bul .scv-eb{color:#6FE3B4;} .scv-bul .scv-word{color:#8FF0C6;}
-.scv-bul .scv-beam{background:conic-gradient(from 0deg,transparent 0 48%,rgba(0,190,125,.30) 66%,rgba(0,190,125,.70) 80%,rgba(0,190,125,.30) 92%,transparent 100%);}
-.scv-bear .scv-field{background:radial-gradient(150% 100% at 26% -4%,rgba(255,30,60,.20) 0%,rgba(255,30,60,.13) 22%,rgba(255,30,60,.075) 42%,rgba(255,30,60,.035) 62%,rgba(255,30,60,.012) 80%,rgba(255,30,60,0) 100%);}
-.scv-bear .scv-b1{background:#FF1E3C;} .scv-bear .scv-b2{background:#FF6A3D;}
-.scv-bear .scv-eb{color:#FF8A96;} .scv-bear .scv-word{color:#FF9AA6;}
-.scv-bear .scv-beam{background:conic-gradient(from 0deg,transparent 0 48%,rgba(224,48,80,.30) 66%,rgba(224,48,80,.70) 80%,rgba(224,48,80,.30) 92%,transparent 100%);}
+/* RED IN EVERY STATE. Haikal's call: the card is brand, the WORDS are meaning.
+   The field, the beam and the two clouds no longer look at the verdict at all;
+   the headline, the percentage, momentum and risk do. The state class is still
+   set on the wrapper because those text colours read from it. */
+.scv-field{background:linear-gradient(155deg,rgba(255,30,60,.16) 0%,rgba(255,30,60,.085) 26%,rgba(255,70,45,.03) 55%,rgba(255,30,60,0) 88%);}
+.scv-b1{background:#FF1E3C;} .scv-b2{background:#FF6A3D;}
+.scv-eb{color:#FF8A96;}
+.scv-beam{background:conic-gradient(from 0deg,transparent 0 48%,rgba(196,0,36,.30) 66%,rgba(255,30,60,.70) 80%,rgba(196,0,36,.30) 92%,transparent 100%);}
+.scv-neu .scv-word,.scv-neu .scv-pc,.scv-neu .scv-g .v{color:#FFD48A;}
+.scv-bul .scv-word,.scv-bul .scv-pc,.scv-bul .scv-g .v{color:#8FF0C6;}
+.scv-bear .scv-word,.scv-bear .scv-pc,.scv-bear .scv-g .v{color:#FF9AA6;}
+/* THE PAIR, PRICE AND CORE NOW LIVE IN THE CARD, hard right on the eyebrow's
+   own line, which uses the empty space there and costs the card no height. */
+.scv-hd{align-items:flex-start;}
+.scv-pair{display:flex;align-items:center;gap:8px;}
+.scv-pair canvas{display:block;width:26px;height:26px;flex-shrink:0;}
+.scv-pt{font-family:'Orbitron',ui-monospace,monospace;font-size:12px;font-weight:900;letter-spacing:.4px;line-height:1.1;text-align:right;white-space:nowrap;}
+.scv-pt em{font-style:normal;color:var(--red);}
+.scv-pp{font-family:'Orbitron',ui-monospace,monospace;font-size:9.5px;font-weight:700;margin-top:2px;text-align:right;color:var(--text2);white-space:nowrap;}
 @keyframes scvDrift1{
   0%{transform:translate(0,0) scale(1);opacity:.55;}
   30%{transform:translate(150px,26px) scale(1.16);opacity:.8;}
@@ -4572,7 +4587,13 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
           <div class="scv-in">
             <div class="scv-hd">
               <span class="scv-eb" data-i18n="sc.verdict">OVERALL AI VERDICT</span>
-              <span class="scv-stamp" id="verdict-stamp">&mdash;</span>
+              <div class="scv-pair">
+                <canvas id="verdict-core"></canvas>
+                <div>
+                  <div class="scv-pt" id="verdict-pair">&mdash;</div>
+                  <div class="scv-pp" id="verdict-stamp">&mdash;</div>
+                </div>
+              </div>
             </div>
             <div class="scv-word" id="verdict-direction">&mdash;</div>
             <div class="scv-under">
@@ -18894,6 +18915,61 @@ function mmScanPriceTick(app, isUp, priceTxt, chgTxt){
   if(cEl && chgTxt != null){ cEl.textContent = chgTxt; cEl.style.color = isUp ? '#4BE0A8' : '#FF8A96'; }
 }
 
+// The small core inside the verdict card. Separate from the hero's, much
+// cheaper - a quarter of the particles at a third of the size - and started
+// only once results exist.
+var _mmVCore = null;
+function mmVerdictCore(){
+  var cv = document.getElementById('verdict-core');
+  if(!cv || _mmVCore) return;
+  var dpr = Math.min(2, window.devicePixelRatio || 1);
+  var css = 26;
+  cv.width = Math.round(css * dpr); cv.height = Math.round(css * dpr);
+  var ctx = cv.getContext('2d');
+  var W = cv.width, C = W/2, R = W*0.36, F = W*1.8;
+  var N = 220, pts = [];
+  for(var i=0;i<N;i++){
+    pts.push({u:Math.random()*2-1, th:Math.random()*6.2832,
+              rad:0.2+0.85*Math.pow(Math.random(),0.42), s:Math.random()});
+  }
+  var halo = ctx.createRadialGradient(C,C,R*0.05,C,C,R*1.5);
+  halo.addColorStop(0,'rgba(255,150,110,0.26)'); halo.addColorStop(1,'rgba(0,0,0,0)');
+  var t = 0, raf = null, running = false;
+  function frame(){
+    t += 0.008;
+    ctx.clearRect(0,0,W,W);
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.fillStyle = halo; ctx.fillRect(0,0,W,W);
+    for(var i=0;i<N;i++){
+      var p = pts[i];
+      var a = p.th + t*(0.35 + 0.40*(1-Math.abs(p.u)));
+      var rr = Math.sqrt(1-p.u*p.u);
+      var bx = Math.cos(a)*rr, by = p.u, bz = Math.sin(a)*rr;
+      var d = p.rad*(1 + Math.sin(by*2.4 + t*2)*0.12);
+      var sc = F/(F + bz*d*R);
+      var sx = C + bx*d*R*sc, sy = C + by*d*R*sc, dp = (bz+1)/2;
+      var al = (0.08 + dp*0.5)*(0.4 + p.s*0.6);
+      ctx.fillStyle = dp>0.68 ? 'rgba(255,214,178,'+al.toFixed(3)+')' : 'rgba(255,46,60,'+al.toFixed(3)+')';
+      ctx.beginPath(); ctx.arc(sx,sy,(0.4+dp*0.85)*dpr,0,6.2832); ctx.fill();
+    }
+    ctx.globalCompositeOperation = 'source-over';
+    raf = requestAnimationFrame(frame);
+  }
+  function start(){ if(running) return; running = true; raf = requestAnimationFrame(frame); }
+  function stop(){ running = false; if(raf) cancelAnimationFrame(raf); raf = null; }
+  _mmVCore = { start:start, stop:stop };
+  try {
+    if(window.IntersectionObserver){
+      new IntersectionObserver(function(es){
+        if(es[0] && es[0].isIntersecting && !document.hidden) start(); else stop();
+      }, { threshold: 0.01 }).observe(cv);
+    } else { start(); }
+  } catch(e){ start(); }
+  document.addEventListener('visibilitychange', function(){
+    if(document.hidden) stop(); else if(cv.getClientRects().length) start();
+  });
+}
+
 var _mmCore = null;
 function mmScanCore(){
   var cv = document.getElementById('scan-core');
@@ -19495,8 +19571,23 @@ Respond ONLY with valid JSON (no markdown):
     var vTfSel = document.getElementById('scan-tf');
     var vTf = vTfSel ? vTfSel.value : '';
     var vTfEl = document.getElementById('verdict-tf'); if(vTfEl) vTfEl.textContent = vTf || '\u2014';
+    // The pair line reads the hero's own elements rather than recomputing the
+    // symbol, so the card and the screen above it can never disagree.
+    var vpEl = document.getElementById('verdict-pair');
+    if(vpEl){
+      var symSel2 = document.getElementById('scan-symbol');
+      var symTxt = symSel2 ? symSel2.options[symSel2.selectedIndex].text.split(' ')[0] : '';
+      vpEl.innerHTML = symTxt + ' <em>' + (vTf || '') + '</em>';
+    }
     var vStEl = document.getElementById('verdict-stamp');
-    if(vStEl) vStEl.textContent = (vTf ? vTf + ' \u00b7 ' : '') + new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+    if(vStEl){
+      var pxNow = document.getElementById('scan-price');
+      var chNow = document.getElementById('scan-change');
+      var pxTxt = pxNow ? pxNow.textContent : '\u2014';
+      var chTxt = chNow ? chNow.textContent : '';
+      vStEl.innerHTML = pxTxt + (chTxt && chTxt !== '\u2014'
+        ? ' <span style="color:' + (chNow.style.color || '#FF8A96') + '">' + chTxt + '</span>' : '');
+    }
     var omEl = document.getElementById('verdict-momentum'); if(omEl) omEl.textContent=mmVerdict(ai.overall_momentum)||'—';
     var ocEl = document.getElementById('verdict-confidence'); if(ocEl){ocEl.textContent=oc+'%';ocEl.style.color=oc>=65?'#00C87A':oc>=45?'#FFB020':'#FF1E3C';}
     var orEl = document.getElementById('verdict-risk'); if(orEl){orEl.textContent=mmVerdict(ai.overall_risk)||'—';orEl.style.color=ai.overall_risk==='Low'?'#00C87A':ai.overall_risk==='High'?'#FF1E3C':'#FFB020';}
@@ -19525,7 +19616,10 @@ Respond ONLY with valid JSON (no markdown):
   res.style.display = 'block';
   // One frame between display and the class, or the browser has nothing to
   // transition FROM and the cards simply appear.
-  requestAnimationFrame(function(){ requestAnimationFrame(function(){ res.classList.add('shown'); }); });
+  requestAnimationFrame(function(){ requestAnimationFrame(function(){
+    res.classList.add('shown');
+    mmVerdictCore();
+  }); });
   // THE CORE KEEPS RUNNING as the header badge. Freezing it to save battery
   // was tried and rejected: a still badge looks like a broken image, and the
   // point of the flight is that it is the same living thing that did the work.
