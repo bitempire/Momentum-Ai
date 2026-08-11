@@ -1410,6 +1410,47 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 .jam-k{font-size:8px;color:var(--text3);letter-spacing:.3px;white-space:nowrap;}
 .jsec{font-size:10px;letter-spacing:.7px;color:var(--text3);margin:12px 3px 6px;}
 /* ══════════════════════════════════════════════════════════
+   SCANNER SENTIMENT CARD. 9 Aug 2026. "LED MATRIX".
+   Each factor is a row of twenty segments, lit up to its reading, the way a
+   studio meter works. The lit blocks breathe on staggered timing so the panel
+   is never completely still.
+   THIS CARD IS DELIBERATELY QUIETER THAN THE VERDICT CARD ABOVE IT. That one
+   has a full colour field and two drifting clouds; this has a single soft
+   wash along the top edge at roughly a fifth of the strength. The hero has to
+   stay the hero.
+   WHAT WAS REMOVED AND WHY:
+   - The six factor colours were fixed by POSITION in an array, so Technical
+     Trend was blue and DXY amber whatever they read. Colour now means the
+     reading and nothing else, which also removed the last purple in the file.
+   - The little gauge and the ten-segment bar were the same number twice.
+   - The SENTIMENT VERDICT row said the same word as the verdict card that now
+     sits at the top of the same screen. The element is KEPT BUT HIDDEN
+     because generateMAIReport reads its data-en attribute.
+   ══════════════════════════════════════════════════════════ */
+.scs{position:relative;overflow:hidden;background:#0b0b0f;border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:10px;}
+.scs > *{position:relative;z-index:1;}
+.scs-glow{position:absolute;left:0;right:0;top:0;height:78px;z-index:0;pointer-events:none;animation:scsBreathe 6s ease-in-out infinite;}
+.scs-eb{font-size:10px;font-weight:800;letter-spacing:1px;color:var(--text);}
+.scs-eb em{font-style:normal;color:var(--red);}
+.scs-hl{display:flex;align-items:flex-end;justify-content:space-between;margin:11px 0 12px;gap:10px;}
+.scs-k{font-size:7.5px;letter-spacing:1px;color:var(--text3);margin-bottom:5px;white-space:nowrap;}
+.scs-big{font-family:'Orbitron',ui-monospace,Menlo,monospace;font-size:24px;font-weight:900;line-height:1;white-space:nowrap;}
+.scs-w{font-family:'Orbitron',ui-monospace,Menlo,monospace;font-size:11.5px;font-weight:800;text-align:right;white-space:nowrap;}
+.scs-ws{font-size:8.5px;color:var(--text3);text-align:right;margin-top:3px;white-space:nowrap;}
+.scs-hd{display:flex;align-items:center;gap:8px;padding-bottom:6px;border-bottom:1px solid var(--border);margin-bottom:4px;}
+.scs-hd .scs-n{font-size:7.5px;letter-spacing:.9px;color:var(--text3);}
+.scs-scale{display:flex;flex:1;font-size:7px;color:var(--text3);font-family:'Orbitron',ui-monospace,Menlo,monospace;justify-content:space-between;}
+.scs-r{display:flex;align-items:center;gap:8px;padding:6px 0;}
+.scs-n{width:96px;flex-shrink:0;font-size:9.5px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.scs-leds{display:flex;gap:2px;flex:1;min-width:0;}
+.scs-leds i{flex:1;height:11px;border-radius:2px;background:rgba(255,255,255,.055);}
+.scs-leds i.on{animation:scsLed 2.6s ease-in-out infinite;}
+.scs-v{width:32px;text-align:right;font-family:'Orbitron',ui-monospace,Menlo,monospace;font-size:9.5px;font-weight:700;flex-shrink:0;}
+.scs-foot{display:flex;justify-content:space-between;margin-top:9px;padding-top:9px;border-top:1px solid var(--border);font-size:8px;letter-spacing:.9px;color:var(--text3);font-family:'Orbitron',ui-monospace,Menlo,monospace;}
+@keyframes scsLed{0%,100%{opacity:.25;}50%{opacity:1;}}
+@keyframes scsBreathe{0%,100%{opacity:.55;}50%{opacity:1;}}
+@media (prefers-reduced-motion: reduce){.scs-leds i.on,.scs-glow{animation:none;}}
+/* ══════════════════════════════════════════════════════════
    SCANNER VERDICT CARD. 9 Aug 2026. "DRIFT".
    The old card was four equal boxes, a bar and a summary. Direction is now
    the headline, confidence is the meter beneath it, and momentum and risk
@@ -4248,45 +4289,37 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
           </div>
         </div>
 
-        <!-- SENTIMENT -->
-        <div class="section-card" style="margin-bottom:10px;padding:12px;">
-          <div style="font-size:10px;font-weight:800;color:var(--red);letter-spacing:1px;margin-bottom:10px;" data-i18n="sc.sentiment">SENTIMENT ANALYSIS</div>
-          <div style="display:flex;align-items:center;gap:10px;background:rgba(255,30,60,0.03);border:0.5px solid rgba(255,30,60,0.12);border-radius:10px;padding:10px;margin-bottom:10px;">
-            <div style="flex-shrink:0;text-align:center;">
-              <svg id="sent-gauge-svg" width="80" height="55" viewBox="0 0 80 55" role="img" aria-label="Sentiment confidence gauge" data-i18n-aria="aria.sentGauge">
-                <defs><linearGradient id="sentGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#FF1E3C"/><stop offset="50%" stop-color="#FFB020"/><stop offset="100%" stop-color="#00C87A"/></linearGradient></defs>
-                <path d="M 6 48 A 34 34 0 0 1 74 48" fill="none" stroke="#1e1e1e" stroke-width="6" stroke-linecap="round"/>
-                <path d="M 6 48 A 34 34 0 0 1 74 48" fill="none" stroke="url(#sentGrad)" stroke-width="6" stroke-linecap="round" stroke-dasharray="106.8" stroke-dashoffset="106.8" opacity="0.15"/>
-                <path id="sent-gauge-fill" d="M 6 48 A 34 34 0 0 1 74 48" fill="none" stroke="url(#sentGrad)" stroke-width="6" stroke-linecap="round" stroke-dasharray="106.8" stroke-dashoffset="106.8"/>
-                <line id="sent-needle" x1="40" y1="48" x2="40" y2="18" transform="rotate(-90 40 48)" stroke="#555" stroke-width="1.5" stroke-linecap="round"/>
-                <circle cx="40" cy="48" r="3" fill="#555"/>
-                <circle cx="40" cy="48" r="1.2" fill="#141414"/>
-                <text id="sent-gauge-pct" x="40" y="42" text-anchor="middle" font-size="13" font-weight="800" fill="#E0E0E0" font-family="monospace">—</text>
-              </svg>
-              <div id="sent-verdict-label" style="font-size:11px;font-weight:800;color:var(--text3);margin-top:-2px;">—</div>
+        <!-- ══════════════════════════════════════════════════
+             SENTIMENT. Rebuilt 9 Aug 2026 as a segment meter panel.
+             `sent-verdict` is KEPT AND HIDDEN: generateMAIReport reads its
+             data-en attribute, so deleting it would break the report while
+             leaving the screen looking perfect.
+             ══════════════════════════════════════════════════ -->
+        <div class="scs" id="sent-card">
+          <div class="scs-glow" id="sent-glow"></div>
+          <div class="scs-eb"><em data-i18n="sc.sentimentWord">SENTIMENT</em> <span data-i18n="sc.analysisWord">ANALYSIS</span></div>
+          <div class="scs-hl">
+            <div>
+              <div class="scs-k" data-i18n="sc.sentScore">SENTIMENT SCORE</div>
+              <div class="scs-big" id="sent-score">&mdash;</div>
             </div>
-            <div style="flex:1;">
-              <div style="font-size:9px;color:var(--text3);margin-bottom:4px;" data-i18n="sc.bearBull">BEAR ←——————→ BULL</div>
-              <div id="sent-scale-bars" style="display:flex;gap:2px;margin-bottom:4px;">
-                <div style="flex:1;height:5px;background:#1e1e1e;border-radius:2px;"></div>
-                <div style="flex:1;height:5px;background:#1e1e1e;border-radius:2px;"></div>
-                <div style="flex:1;height:5px;background:#1e1e1e;border-radius:2px;"></div>
-                <div style="flex:1;height:5px;background:#1e1e1e;border-radius:2px;"></div>
-                <div style="flex:1;height:5px;background:#1e1e1e;border-radius:2px;"></div>
-                <div style="flex:1;height:5px;background:#1e1e1e;border-radius:2px;"></div>
-                <div style="flex:1;height:5px;background:#1e1e1e;border-radius:2px;"></div>
-                <div style="flex:1;height:5px;background:#1e1e1e;border-radius:2px;"></div>
-                <div style="flex:1;height:5px;background:#1e1e1e;border-radius:2px;"></div>
-                <div style="flex:1;height:5px;background:#1e1e1e;border-radius:2px;"></div>
-              </div>
-              <div id="sent-scale-label" style="font-size:11px;color:var(--text3);">—</div>
+            <div>
+              <div class="scs-w" id="sent-lean">&mdash;</div>
+              <div class="scs-ws" id="sent-counts">&nbsp;</div>
             </div>
+          </div>
+          <div class="scs-hd">
+            <span class="scs-n" data-i18n="sc.input">INPUT</span>
+            <span class="scs-scale"><span>0</span><span>50</span><span>100</span></span>
+            <span class="scs-v"></span>
           </div>
           <div id="sent-factors"></div>
-          <div style="display:flex;justify-content:space-between;margin-top:8px;padding-top:8px;border-top:0.5px solid var(--border);">
-            <span style="font-size:10px;color:var(--text3);" data-i18n="sc.sentVerdict">SENTIMENT VERDICT</span>
-            <span id="sent-verdict" style="font-size:11px;font-weight:800;color:var(--text3);">—</span>
+          <div class="scs-foot">
+            <span data-i18n="sc.bearish">BEARISH</span>
+            <span data-i18n="sc.neutral">NEUTRAL</span>
+            <span data-i18n="sc.bullish">BULLISH</span>
           </div>
+          <span id="sent-verdict" style="display:none;">&mdash;</span>
         </div>
 
         <!-- TECHNICAL -->
@@ -18387,27 +18420,32 @@ async function stnUseTpl(id){
   stnRender();
 }
 
+// THE SCORE AND THE WORD NOW COME FROM ONE BAND SET. Before this, the figure
+// was coloured on 65/45 while the word beside it came from the model and a
+// third line used 60/45, so the card could show 58% in amber, BULLISH beside
+// it and "Leaning neutral" underneath, all at once and all technically right.
+// Bullish is 55 and up, bearish under 45. `direction` is no longer used for
+// colour, only kept in the signature because the call site passes it.
 function updateSentimentGauge(pct, direction) {
-  var fill = document.getElementById('sent-gauge-fill');
-  var needle = document.getElementById('sent-needle');
-  var pctEl = document.getElementById('sent-gauge-pct');
-  var label = document.getElementById('sent-verdict-label');
-  if(!fill||!needle||!pctEl) return;
-  var total = 106.8;
-  var offset = total - (pct/100)*total;
-  fill.setAttribute('stroke-dashoffset', offset.toFixed(1));
-  var deg = -90 + (pct/100)*180;
-  needle.setAttribute('transform','rotate('+deg+' 40 48)');
-  var col = pct>=65?'#00C87A':pct>=45?'#FFB020':'#FF1E3C';
-  needle.setAttribute('stroke', col);
-  needle.nextElementSibling.setAttribute('fill', col);
-  pctEl.textContent = Math.round(pct)+'%';
-  pctEl.setAttribute('fill', col);
-  label.textContent = direction.toUpperCase();
-  label.style.color = col;
+  var scoreEl = document.getElementById('sent-score');
+  var leanEl  = document.getElementById('sent-lean');
+  var glowEl  = document.getElementById('sent-glow');
+  var col = pct>=55 ? '#4BE0A8' : pct<45 ? '#FF8A96' : '#FFB020';
+  var rgb = pct>=55 ? '0,214,143' : pct<45 ? '255,30,60' : '255,176,32';
+  var word = pct>=55 ? mmT('sc.leanBull','LEANING BULLISH')
+           : pct<45  ? mmT('sc.leanBear','LEANING BEARISH')
+                     : mmT('sc.leanNeu','LEANING NEUTRAL');
+  if(scoreEl){ scoreEl.textContent = Math.round(pct)+'%'; scoreEl.style.color = col; }
+  if(leanEl){ leanEl.textContent = word; leanEl.style.color = col; }
+  if(glowEl) glowEl.style.background =
+    'linear-gradient(180deg,rgba('+rgb+',.16),rgba('+rgb+',.04) 55%,transparent)';
 }
 
-function updateSentimentScale(pct) {
+// SUPERSEDED 9 Aug 2026 and no longer called. The ten-segment bar it drove was
+// showing the same number as the score above it. Left in place rather than
+// deleted because it is null-guarded and harmless.
+function updateSentimentScale(pct) { return; }
+function _unusedScale(pct) {
   var bars = document.getElementById('sent-scale-bars');
   var label = document.getElementById('sent-scale-label');
   if(!bars) return;
@@ -18690,22 +18728,42 @@ Respond ONLY with valid JSON (no markdown):
     var sentPct = ai.sentiment_score || 50;
     var sentDir = ai.sentiment_direction || 'Neutral';
     updateSentimentGauge(sentPct, sentDir);
-    updateSentimentScale(sentPct);
 
     var factors = ai.sentiment_factors || {};
-    var factorColors = ['#4D9EFF','#00C87A','#FFB020','#A05AFF','#FF6B9D','#FF1E3C'];
+    // THE SIX FIXED COLOURS ARE GONE. They were chosen by position in this
+    // array, so a factor's colour said nothing about its reading, and one of
+    // them was the last purple in the file. Colour is now the reading itself.
     var factorNames = [mmT('sc.fTech','Technical Trend'),mmT('sc.fNews','Economic News'),mmT('sc.fDxy','USD Index DXY'),mmT('sc.fBond','Bond Yield'),mmT('sc.fCot','COT Positioning'),mmT('sc.fVix','VIX Fear Index')];
     var factorKeys = ['technical_trend','economic_news','dxy_impact','bond_yield','cot_positioning','vix_fear'];
-    var factorsHTML = factorKeys.map(function(k,i){
-      var v = factors[k]||50;
-      return '<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:0.5px solid var(--border);">'+
-        '<div style="width:7px;height:7px;border-radius:50%;background:'+factorColors[i]+';flex-shrink:0;"></div>'+
-        '<span style="flex:0 0 110px;font-size:11px;color:var(--text3);">'+factorNames[i]+'</span>'+
-        '<div style="flex:1;height:3px;background:#1e1e1e;border-radius:2px;overflow:hidden;"><div style="height:100%;width:'+v+'%;background:'+factorColors[i]+';border-radius:2px;"></div></div>'+
-        '<span style="font-size:10px;font-weight:700;color:'+factorColors[i]+';min-width:28px;text-align:right;">'+v+'%</span>'+
+    // SORTED STRONGEST FIRST, so the factor doing the most work sits at the top
+    // instead of wherever it happens to appear in the key list.
+    var fRows = factorKeys.map(function(k,i){ return { v: factors[k]||50, n: factorNames[i] }; });
+    fRows.sort(function(a,b){ return b.v - a.v; });
+    var nBull = 0, nBear = 0;
+    var factorsHTML = fRows.map(function(r, idx){
+      var v = r.v;
+      if(v>=55) nBull++; else if(v<45) nBear++;
+      var col = v>=55 ? '#4BF0B6' : v<45 ? '#FF8A96' : 'rgba(255,255,255,.5)';
+      var vcol = v>=55 ? '#4BE0A8' : v<45 ? '#FF8A96' : 'var(--text3)';
+      // Twenty segments, one per five percent, so a reading is legible as a
+      // count of lit blocks without reading the number beside it.
+      var lit = Math.round(v/5), seg = '';
+      for(var b=0; b<20; b++){
+        seg += b < lit
+          ? '<i class="on" style="background:'+col+';animation-delay:'+(b*0.06).toFixed(2)+'s;"></i>'
+          : '<i></i>';
+      }
+      return '<div class="scs-r">'+
+        '<span class="scs-n">'+r.n+'</span>'+
+        '<span class="scs-leds">'+seg+'</span>'+
+        '<span class="scs-v" style="color:'+vcol+';">'+v+'</span>'+
       '</div>';
     }).join('');
     document.getElementById('sent-factors').innerHTML = factorsHTML;
+    var cEl = document.getElementById('sent-counts');
+    if(cEl) cEl.textContent = nBull+' '+mmT('sc.cBull','bullish')+' \u00b7 '+
+                              (6-nBull-nBear)+' '+mmT('sc.cFlat','flat')+' \u00b7 '+
+                              nBear+' '+mmT('sc.cBear','bearish');
     var svEl = document.getElementById('sent-verdict');
     svEl.setAttribute('data-en', sentDir.toUpperCase()); svEl.textContent = mmVerdict(sentDir.toUpperCase());
     svEl.style.color = sentDir==='Bullish'?'#00C87A':sentDir==='Bearish'?'#FF1E3C':'#FFB020';
