@@ -1454,6 +1454,19 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
  letter-spacing:1.6px;box-shadow:0 10px 30px rgba(255,30,60,.30);}
 .sh-btn:disabled{opacity:.7;cursor:default;}
 .sh-note{text-align:center;font-size:10px;color:var(--text3);margin-top:10px;}
+/* SEGMENTED TIMEFRAME. 9 Aug 2026. Four options that never grow, so four
+   buttons beat a dropdown: one tap instead of open, scroll, choose, close,
+   and all four choices are visible without opening anything.
+   THE TIMEFRAME SELECT IS STILL THERE, HIDDEN. Four separate places read
+   its `.value`, and two read `.options[selectedIndex].text`, so replacing it
+   with buttons outright would have broken the scan itself. The buttons drive
+   the select; nothing that reads it had to change. */
+.sh-seg{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(255,255,255,.07);
+ border:1px solid var(--border);border-radius:11px;overflow:hidden;margin-top:9px;}
+.sh-seg button{background:#0d0d12;border:none;padding:10px 0;color:var(--text3);cursor:pointer;
+ font-family:'Orbitron',ui-monospace,Menlo,monospace;font-size:11.5px;font-weight:800;letter-spacing:.5px;}
+.sh-seg button.on{background:linear-gradient(135deg,#FF1E3C,#C40024);color:#fff;}
+.sh-hide{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;}
 @keyframes shSpin{to{transform:rotate(360deg);}}
 @keyframes shSpinR{to{transform:rotate(-360deg);}}
 @keyframes shPulse{0%,100%{opacity:.72;transform:scale(1);}50%{opacity:1;transform:scale(1.07);}}
@@ -4341,10 +4354,10 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         <div class="sh-chg" style="color:var(--text3);" id="scan-last-time" data-i18n="sc.selectPair">Select pair and scan</div>
 
         <div class="sh-wrap">
-          <div class="sh-two">
+          <div>
             <div>
               <div class="sh-lbl" data-i18n="sc.instrument">INSTRUMENT</div>
-              <select id="scan-symbol" class="sh-sel">
+              <select id="scan-symbol" class="sh-sel" onchange="mmScanSync()">
                 <option value="GC=F" data-i18n="sc.gold">XAUUSD (Gold)</option>
                 <option value="BTC-USD">BTCUSD</option>
                 <option value="EURUSD=X">EURUSD</option>
@@ -4356,14 +4369,19 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
                 <option value="CL=F">USOIL</option>
               </select>
             </div>
-            <div>
-              <div class="sh-lbl" data-i18n="sc.timeframe">TIMEFRAME</div>
-              <select id="scan-tf" class="sh-sel">
-                <option value="H1" data-i18n="sc.h1">H1</option>
-                <option value="H4" selected data-i18n="sc.h4">H4</option>
-                <option value="D1" data-i18n="sc.d1">D1</option>
-                <option value="W1" data-i18n="sc.w1">W1</option>
-              </select>
+            <!-- Kept and hidden: four places read `.value` and two read
+                 `.options[selectedIndex].text`. The buttons below drive it. -->
+            <select id="scan-tf" class="sh-hide" tabindex="-1" aria-hidden="true">
+              <option value="H1" selected data-i18n="sc.h1">H1</option>
+              <option value="H4" data-i18n="sc.h4">H4</option>
+              <option value="D1" data-i18n="sc.d1">D1</option>
+              <option value="W1" data-i18n="sc.w1">W1</option>
+            </select>
+            <div class="sh-seg" id="scan-seg">
+              <button type="button" class="on" onclick="mmScanTf('H1',this)">H1</button>
+              <button type="button" onclick="mmScanTf('H4',this)">H4</button>
+              <button type="button" onclick="mmScanTf('D1',this)">D1</button>
+              <button type="button" onclick="mmScanTf('W1',this)">W1</button>
             </div>
           </div>
           <div style="margin-top:16px;">
@@ -12028,7 +12046,7 @@ function showSubScreen(id) {
   // AFTER the premium gate, not before. A customer without entitlement never
   // reaches this screen, and building a canvas for a screen that was refused
   // would size it to zero and leave a dead object behind.
-  if(id === 'sub-scanner') setTimeout(mmScanCore, 60);
+  if(id === 'sub-scanner') setTimeout(function(){ mmScanCore(); mmScanSync(); }, 60);
   var el = document.getElementById(id);
   if(el) { el.classList.add('active'); }
   soonMaybe(id);
@@ -12726,6 +12744,8 @@ function mmHomeBalance(){
 window._mmLastPx = window._mmLastPx || {};
 window._mmLastFlip = window._mmLastFlip || {};
 function mmMktApply(app, isUp, priceTxt, chgTxt){
+  // The scanner hero rides the same tick. No second poll, no second source.
+  if(typeof mmScanPriceTick === 'function') mmScanPriceTick(app, isUp, priceTxt, chgTxt);
   var pEl = document.getElementById('price-' + app);
   var cEl = document.getElementById('change-' + app);
   var mc  = document.getElementById('mkt-card-' + app);
@@ -18639,6 +18659,63 @@ function _unusedScale(pct) {
 // Nothing is allocated or freed as threads appear and vanish, which is what
 // keeps the frame rate flat while the network is rewiring.
 // ══════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
+// SCANNER HERO SYNC. 9 Aug 2026.
+// THE LIVE PRICE COSTS NOTHING EXTRA. `loadAFTPrices` already polls the
+// broker's own `live_quotes` every 2 seconds for the whole app, so the hero
+// mirrors the number the Home cards are already showing rather than opening a
+// second source of truth that could disagree with the first.
+// ONLY THREE OF THE NINE INSTRUMENTS HAVE A LIVE PRICE. `live_quotes` carries
+// XAUUSD, BITCOIN and WTI. For the other six the line falls back to a dash
+// until a scan fills it, because a stale number with no label is worse than
+// no number at all.
+// ══════════════════════════════════════════════════════════
+var MM_SCAN_LIVE = { 'GC=F':'XAUUSD', 'BTC-USD':'BTCUSD', 'CL=F':'USOIL' };
+
+function mmScanTf(tf, btn){
+  var sel = document.getElementById('scan-tf');
+  if(sel) sel.value = tf;
+  var seg = document.getElementById('scan-seg');
+  if(seg) [].forEach.call(seg.children, function(b){ b.classList.remove('on'); });
+  if(btn) btn.classList.add('on');
+  mmScanSync();
+}
+
+function mmScanSync(){
+  var symSel = document.getElementById('scan-symbol');
+  var tfSel  = document.getElementById('scan-tf');
+  if(!symSel || !tfSel) return;
+  var symName = symSel.options[symSel.selectedIndex].text.split(' ')[0];
+  var lab = document.getElementById('scan-pair-label');
+  if(lab) lab.innerHTML = symName + ' <span style="color:var(--red);">' + tfSel.value + '</span>';
+
+  // Take whatever the Home card is showing for this instrument right now, so
+  // the hero is never a poll behind on first open.
+  var app = MM_SCAN_LIVE[symSel.value];
+  var pEl = document.getElementById('scan-price');
+  var cEl = document.getElementById('scan-change');
+  if(app){
+    var hp = document.getElementById('price-' + app);
+    var hc = document.getElementById('change-' + app);
+    if(pEl && hp) pEl.textContent = hp.textContent;
+    if(cEl && hc){ cEl.textContent = hc.textContent; cEl.style.color = hc.className.indexOf('up')>=0 ? '#4BE0A8' : '#FF8A96'; }
+  } else {
+    if(pEl) pEl.textContent = '\u2014';
+    if(cEl){ cEl.textContent = '\u2014'; cEl.style.color = ''; }
+  }
+}
+
+// Called from mmMktApply on every price tick, so the hero updates on the same
+// 2 second beat as Home without a second timer.
+function mmScanPriceTick(app, isUp, priceTxt, chgTxt){
+  var symSel = document.getElementById('scan-symbol');
+  if(!symSel || MM_SCAN_LIVE[symSel.value] !== app) return;
+  var pEl = document.getElementById('scan-price');
+  var cEl = document.getElementById('scan-change');
+  if(pEl && priceTxt != null) pEl.textContent = priceTxt;
+  if(cEl && chgTxt != null){ cEl.textContent = chgTxt; cEl.style.color = isUp ? '#4BE0A8' : '#FF8A96'; }
+}
+
 var _mmCore = null;
 function mmScanCore(){
   var cv = document.getElementById('scan-core');
