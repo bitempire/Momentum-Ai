@@ -823,19 +823,74 @@ html[data-theme="light"] .nav-btn.active span:not(.nav-ico-wrap) { color: #fff; 
   color: var(--red);
 }
 .sig-card {
-  background: linear-gradient(160deg, #15151b, #0d0d10);
+  position: relative;
+  overflow: hidden;
+  background: #0a0b10;
   border: 1px solid rgba(255,255,255,0.08);
   border-radius: 14px;
   padding: 14px;
   margin-bottom: 10px;
 }
+.sig-card > *:not(.sig-fx) { position: relative; z-index: 1; }
+
+/* ══════════════════════════════════════════════════════════
+   THE FIELD. ONE gradient whose ANGLE swings, so the light LEANS rather
+   than travels. Anything that travels eventually passes behind a number,
+   and on a card read carefully that is worse than being still. On screen
+   blend, so where it reaches zero the result is exactly the card colour
+   rather than the faint step a plain tint leaves.
+   ══════════════════════════════════════════════════════════ */
+.sig-fx { position:absolute; inset:0; pointer-events:none; mix-blend-mode:screen; overflow:hidden; }
+.sig-fx i { position:absolute; left:-40%; top:-90%; width:180%; height:280%; display:block;
+  transform-origin:50% 50%; animation: sigTilt 40s ease-in-out infinite; }
+.sig-card.sell .sig-fx i { background: linear-gradient(180deg, rgba(255,46,63,.26), rgba(255,46,63,.05) 46%, transparent 70%); }
+.sig-card.buy  .sig-fx i { background: linear-gradient(180deg, rgba(34,211,154,.21), rgba(34,211,154,.05) 46%, transparent 70%); }
+@keyframes sigTilt { 0%,100%{transform:rotate(-9deg)} 50%{transform:rotate(9deg)} }
+
+/* the badge: strength runs along the icon's OWN edge and breaks at the
+   bottom, so the number sits in the break instead of on a plate over it */
+.sig-bg { position:relative; width:50px; height:50px; flex:none; }
+.sig-bg svg.sig-trace { position:absolute; inset:0; }
+.sig-tile { position:absolute; left:5px; top:5px; width:40px; height:40px; border-radius:12px; }
+.sig-face { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; border-radius:12px; }
+.sig-card.sell .sig-face { background: linear-gradient(150deg,#C4152A,#7A0A18); }
+.sig-card.buy  .sig-face { background: linear-gradient(150deg,#12A874,#0A6A49); }
+.sig-face svg { width:22px; height:22px; display:block; }
+.sig-face .sig-num { font-size:14.5px; font-weight:800; color:#fff; letter-spacing:-.02em;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
+/* arrow 4s, number 1s, a fifth of a second to change each way */
+.sig-face.f-a { animation: sigFaceA 5.4s linear infinite; }
+.sig-face.f-b { animation: sigFaceB 5.4s linear infinite; }
+@keyframes sigFaceA { 0%,72%{opacity:1} 78%,95%{opacity:0} 100%{opacity:1} }
+@keyframes sigFaceB { 0%,72%{opacity:0} 78%,95%{opacity:1} 100%{opacity:0} }
+
+/* the tag: see-through, so the card's own light passes behind it and it can
+   never disagree with a background that moves */
+.sig-tag { margin-left:auto; flex:none; font-size:10px; letter-spacing:.16em; font-weight:800;
+  line-height:1; padding:8px 13px; border-radius:9px; font-family:'Orbitron',sans-serif;
+  -webkit-backdrop-filter:blur(3px); backdrop-filter:blur(3px); }
+.sig-tag.sell { background:rgba(255,46,63,.14); border:1px solid rgba(255,90,105,.45); color:#FF8A96;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.14); }
+.sig-tag.buy  { background:rgba(34,211,154,.13); border:1px solid rgba(70,235,180,.42); color:#5CEFC0;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.14); }
+
+/* the rail: stop, zone and target at their true distances from each other */
+.sig-rail { flex:1; min-width:0; height:40px; position:relative; }
+.sig-rail .rl-base { position:absolute; left:2px; right:2px; top:20px; height:2px;
+  background:rgba(255,255,255,.10); border-radius:1px; }
+.sig-rail .rl-zone { position:absolute; top:16px; height:10px; border-radius:2px;
+  background:linear-gradient(90deg, rgba(76,125,255,.5), rgba(76,125,255,.2));
+  border:1px solid rgba(76,125,255,.55); }
+.sig-rail .rl-tick { position:absolute; top:13px; width:2px; height:16px; border-radius:1px; }
+.sig-rail .rl-tick.sl { background:var(--red); box-shadow:0 0 8px rgba(255,71,87,.85); }
+.sig-rail .rl-tick.tp { background:var(--green); box-shadow:0 0 8px rgba(34,211,154,.85); }
+.sig-rail .rl-lg { position:absolute; bottom:1px; font-size:7.5px; letter-spacing:.14em; color:var(--text3); }
+
 .sig-card-top {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 12px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid rgba(255,255,255,0.07);
+  gap: 11px;
+  margin-bottom: 11px;
 }
 .sig-card-icon {
   width: 40px; height: 40px;
@@ -889,8 +944,14 @@ html[data-theme="light"] .nav-btn.active span:not(.nav-ico-wrap) { color: #fff; 
 .sig-level-wide { border-left: 2px solid var(--blue); }
 .sig-level.lv-sl { border-left: 2px solid var(--red); }
 .sig-level.lv-tp { border-left: 2px solid var(--green); }
-html[data-theme="light"] .sig-card { background: linear-gradient(160deg, #ffffff, #f3f4f7); border-color: rgba(0,0,0,0.08); }
-html[data-theme="light"] .sig-card-top { border-bottom-color: rgba(0,0,0,0.07); }
+html[data-theme="light"] .sig-card { background: #ffffff; border-color: rgba(0,0,0,0.08); }
+/* LIGHT THEME. The field is added light, which does nothing on white, so it is
+   turned off rather than left as an invisible layer. The tag keeps its shape
+   but takes readable ink. */
+html[data-theme="light"] .sig-fx { display:none; }
+html[data-theme="light"] .sig-tag.sell { background:rgba(255,46,63,.10); color:#C4152A; border-color:rgba(196,21,42,.35); }
+html[data-theme="light"] .sig-tag.buy  { background:rgba(16,160,116,.10); color:#0A6A49; border-color:rgba(10,106,73,.32); }
+html[data-theme="light"] .sig-rail .rl-base { background:rgba(0,0,0,.12); }
 html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,0,0,0.08); }
 .sig-level-lbl { font-size: 8px; color: var(--text3); letter-spacing: 0.6px; text-transform: uppercase; margin-bottom: 4px; }
 .sig-level-val { font-size: 13px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -12337,6 +12398,93 @@ async function loadDashboardSignals() {
   } catch(e) { container.innerHTML = '<div class="empty-state">'+mmT('ds.error','Error loading signals')+'</div>'; }
 }
 
+// ══════════════════════════════════════════════════════════
+// THE SIGNAL BADGE AND THE RAIL. 12 Aug 2026.
+// The badge carries BOTH things a trader checks first as one object: the
+// direction and the analyst's strength. The strength runs along the icon's own
+// edge and the trace BREAKS at the bottom, so the number sits in the break
+// instead of on a plate over it - a solid plate is a second surface over a card
+// whose background moves, and any fixed colour it takes is right for about half
+// the drift cycle and slightly wrong for the rest.
+// THE COLOUR FOLLOWS THE SCORE, NOT THE SIDE. On the side colour a weak analyst
+// on a buy arrives wrapped in green and reads as good news before the number is
+// read.
+// ══════════════════════════════════════════════════════════
+var MM_SIG_W = 44, MM_SIG_R = 13;
+var MM_SIG_STRAIGHT = MM_SIG_W - 2*MM_SIG_R;
+var MM_SIG_ARC = Math.PI*MM_SIG_R/2;
+var MM_SIG_PER = 4*MM_SIG_STRAIGHT + 4*MM_SIG_ARC;
+var MM_SIG_GAP = 40;                       // room for the number at the bottom
+var MM_SIG_TRACK = MM_SIG_PER - MM_SIG_GAP;
+var MM_SIG_START = (MM_SIG_STRAIGHT + MM_SIG_ARC + MM_SIG_STRAIGHT + MM_SIG_ARC + MM_SIG_STRAIGHT/2) + MM_SIG_GAP/2;
+
+function mmSigBand(v){ return v>=70 ? 'var(--green)' : v>=55 ? '#ffb020' : 'var(--red)'; }
+
+function mmSigChevron(isBuy){
+  // Drawn, not a text character. The old arrow was a glyph, so the phone's own
+  // font decided how it looked and it could not be weighted or aligned.
+  var g = isBuy ? '<g transform="scale(1,-1) translate(0,-22)"' : '<g';
+  return '<svg viewBox="0 0 22 22">' + g + ' fill="none" stroke="rgba(255,255,255,.97)" '
+    + 'stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">'
+    + '<path d="M4.5 6.5 L11 12.5 L17.5 6.5"/>'
+    + '<path d="M4.5 12.5 L11 18.5 L17.5 12.5" opacity=".55"/></g></svg>';
+}
+
+function mmSigBadge(dir, conf, idx){
+  var isBuy = dir === 'buy';
+  var pct = Math.max(0, Math.min(100, Number(conf) || 0));
+  var len = MM_SIG_TRACK * pct / 100;
+  var col = mmSigBand(pct);
+  // EVERY ROW IS OFFSET. Without this the whole list changes on one beat and the
+  // eye goes to the changing rather than to the signals.
+  var delay = '-' + ((idx || 0) * 1.35).toFixed(2) + 's';
+  var wrap = document.createElement('div');
+  wrap.className = 'sig-bg';
+  wrap.innerHTML =
+    '<svg class="sig-trace" viewBox="0 0 50 50">'
+    + '<rect x="3" y="3" width="44" height="44" rx="13" fill="none" stroke="rgba(255,255,255,.10)" '
+    + 'stroke-width="2.5" stroke-linecap="round" stroke-dasharray="' + MM_SIG_TRACK.toFixed(2) + ' ' + MM_SIG_GAP.toFixed(2) + '" '
+    + 'stroke-dashoffset="' + (-MM_SIG_START).toFixed(2) + '"/>'
+    + '<rect x="3" y="3" width="44" height="44" rx="13" fill="none" stroke="' + col + '" '
+    + 'stroke-width="2.5" stroke-linecap="round" stroke-dasharray="' + len.toFixed(2) + ' ' + (MM_SIG_PER-len).toFixed(2) + '" '
+    + 'stroke-dashoffset="' + (-MM_SIG_START).toFixed(2) + '"/>'
+    + '</svg>'
+    + '<div class="sig-tile">'
+    + '<div class="sig-face f-a" style="animation-delay:' + delay + '">' + mmSigChevron(isBuy) + '</div>'
+    + '<div class="sig-face f-b" style="animation-delay:' + delay + '"><div class="sig-num">' + pct + '</div></div>'
+    + '</div>';
+  return wrap;
+}
+
+// THE RAIL. Four numbers in boxes say nothing about how far apart they are.
+// This places stop, entry zone and target at their true distances, so a close
+// stop and a far target can be seen without arithmetic.
+function mmSigRail(sig, dir){
+  // Number(null) is ZERO, not NaN, so a missing target would otherwise be placed
+  // as a real level at 0 and the rail would be drawn against nonsense.
+  function num(v){ return (v === null || v === undefined || v === '') ? NaN : Number(v); }
+  var sl = num(sig.sl), tp = num(sig.tp1);
+  var z1 = num(sig.entry_from), z2 = num(sig.entry_to);
+  if(!isFinite(sl) || !isFinite(tp) || sl === tp) return null;      // nothing to place
+  if(!isFinite(z1)) z1 = sl; if(!isFinite(z2)) z2 = tp;
+  var lo = Math.min(sl, tp), hi = Math.max(sl, tp), pad = (hi-lo) * 0.14;
+  var span = (hi + pad) - (lo - pad);
+  if(!(span > 0)) return null;
+  function pos(v){ return Math.max(0, Math.min(100, ((v - (lo-pad)) / span) * 100)); }
+  var zl = Math.min(z1, z2), zh = Math.max(z1, z2);
+  var isBuy = dir === 'buy';
+  var el = document.createElement('div');
+  el.className = 'sig-rail';
+  el.innerHTML =
+    '<div class="rl-base"></div>'
+    + '<div class="rl-zone" style="left:' + pos(zl).toFixed(2) + '%;width:' + Math.max(1.5,(pos(zh)-pos(zl))).toFixed(2) + '%"></div>'
+    + '<div class="rl-tick tp" style="left:' + pos(tp).toFixed(2) + '%"></div>'
+    + '<div class="rl-tick sl" style="left:' + pos(sl).toFixed(2) + '%"></div>'
+    + '<div class="rl-lg" style="left:0">' + (isBuy ? 'SL' : 'TP') + '</div>'
+    + '<div class="rl-lg" style="right:0">' + (isBuy ? 'TP' : 'SL') + '</div>';
+  return el;
+}
+
 // ── LOAD SIGNALS FEED ──
 async function loadSignalsFeed() {
   var container = document.getElementById('mob-signals-list');
@@ -12347,53 +12495,55 @@ async function loadSignalsFeed() {
     window._signalStore = {};
     res.data.forEach(function(s) { window._signalStore[s.id]=s; });
     container.innerHTML = '';
-    res.data.forEach(function(sig) {
+    res.data.forEach(function(sig, idx) {
       var dir = sig.direction.toLowerCase();
-      var r = (sig.strength||70)/100;
-      var circ = 2*Math.PI*15;
-      var dash = r*circ;
-      var fillClass = dir==='buy' ? 'sig-ring-fill-buy' : 'sig-ring-fill-sell';
+      var conf = (sig.strength == null ? 70 : sig.strength);
 
       // Create card wrapper
       var card = document.createElement('div');
-      card.className = 'sig-card';
+      card.className = 'sig-card ' + dir;
       card.setAttribute('data-sigid', sig.id);
       card.setAttribute('data-pair', sig.pair.toLowerCase());
       card.setAttribute('data-dir', sig.direction);
       card.setAttribute('data-tf', sig.timeframe||'');
       card.setAttribute('data-analyst', (sig.analyst_name||'').toLowerCase());
 
+      var fx = document.createElement('div');
+      fx.className = 'sig-fx';
+      fx.innerHTML = '<i></i>';
+      card.appendChild(fx);
+
       // Top row
       var top = document.createElement('div');
       top.className = 'sig-card-top';
-      var icon = document.createElement('div');
-      icon.className = 'sig-card-icon ' + dir;
-      icon.innerHTML = '<i class="ti ti-trending-'+(dir==='buy'?'up':'down')+'" style="color:#fff;font-size:20px;"></i>';
+      top.appendChild(mmSigBadge(dir, conf, idx));
       var info = document.createElement('div');
+      info.style.cssText = 'flex:1;min-width:0';
       var pairEl = document.createElement('div');
       pairEl.className = 'sig-card-pair';
       pairEl.textContent = sig.pair;
       var timeEl = document.createElement('div');
       timeEl.className = 'sig-card-time';
-      timeEl.textContent = timeAgo(sig.created_at) + ' · ' + (sig.timeframe||'H4');
+      // THE ANALYST MOVED HERE. Putting the strength on the icon left the name
+      // with nowhere to sit, and this line already had room.
+      timeEl.style.cssText = 'white-space:nowrap;overflow:hidden;text-overflow:ellipsis';
+      timeEl.textContent = timeAgo(sig.created_at) + ' \u00b7 ' + (sig.timeframe||'H4')
+                         + (sig.analyst_name ? ' \u00b7 ' + sig.analyst_name : '');
       info.appendChild(pairEl);
       info.appendChild(timeEl);
       var dirEl = document.createElement('div');
-      dirEl.className = 'sig-card-dir ' + dir;
+      dirEl.className = 'sig-tag ' + dir;
       dirEl.textContent = (dir==='buy')?mmT('sig.buy','BUY'):mmT('sig.sell','SELL');
-      var sBadge=document.createElement('div');
-      var isAct=sig.status==='active';
-      sBadge.textContent=isAct?mmT('sig.active','ACTIVE'):mmT('sig.inactive','INACTIVE');
-      sBadge.style.cssText='padding:4px 9px;border-radius:6px;font-family:Orbitron,sans-serif;font-size:9px;font-weight:800;letter-spacing:.8px;margin-right:5px;flex-shrink:0;'+(isAct?'background:rgba(0,200,122,0.12);color:#00c87a;border:1px solid rgba(0,200,122,0.25);':'background:rgba(255,176,32,0.12);color:#ffb020;border:1px solid rgba(255,176,32,0.25);');
-      top.appendChild(icon);
       top.appendChild(info);
-      top.appendChild(sBadge);
+      // NO STATUS BADGE. The query above is already .eq('status','active'), so an
+      // inactive signal never reaches this list and the pill only ever said the
+      // same word.
       top.appendChild(dirEl);
 
       // Levels row
       var levels = document.createElement('div');
       levels.className = 'sig-card-levels';
-      var _entryZone = fmtPrice(sig.pair, sig.entry_from) + ' – ' + fmtPrice(sig.pair, sig.entry_to);
+      var _entryZone = fmtPrice(sig.pair, sig.entry_from) + ' \u2013 ' + fmtPrice(sig.pair, sig.entry_to);
       function _mkLevel(lbl, val, cls){
         var lbox=document.createElement('div'); lbox.className='sig-level'+(cls===' sl'?' lv-sl':cls===' tp'?' lv-tp':'');
         var llbl=document.createElement('div'); llbl.className='sig-level-lbl'; llbl.textContent=lbl;
@@ -12407,19 +12557,11 @@ async function loadSignalsFeed() {
       _row2.appendChild(_mkLevel(mmT('sig.takeProfit','Take Profit'), fmtPrice(sig.pair, sig.tp1), ' tp'));
       levels.appendChild(_row2);
 
-      // Footer row
+      // Footer row: the rail, then Trade Now
       var footer = document.createElement('div');
       footer.className = 'sig-card-footer';
-      var strengthWrap = document.createElement('div');
-      strengthWrap.className = 'sig-strength-wrap';
-      var ringDiv = document.createElement('div');
-      ringDiv.className = 'sig-strength-ring';
-      ringDiv.innerHTML = '<svg viewBox="0 0 36 36"><circle class="sig-ring-track" cx="18" cy="18" r="15"/><circle class="' + fillClass + '" cx="18" cy="18" r="15" stroke-dasharray="' + dash.toFixed(1) + ' ' + circ.toFixed(1) + '"/></svg><div class="sig-ring-text">' + (sig.strength||70) + '%</div>';
-      var analystEl = document.createElement('div');
-      analystEl.className = 'sig-analyst';
-      analystEl.textContent = sig.analyst_name || 'Analyst';
-      strengthWrap.appendChild(ringDiv);
-      strengthWrap.appendChild(analystEl);
+      var rail = mmSigRail(sig, dir);
+      if(rail) footer.appendChild(rail);
 
       // Trade Now button
       var tradeBtn = document.createElement('button');
@@ -12429,7 +12571,6 @@ async function loadSignalsFeed() {
         tradeBtn.addEventListener('click', function() { openTradePopup(id); });
       })(sig.id);
 
-      footer.appendChild(strengthWrap);
       footer.appendChild(tradeBtn);
 
       card.appendChild(top);
