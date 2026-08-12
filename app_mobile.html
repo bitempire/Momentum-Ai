@@ -13550,6 +13550,165 @@ function initiateScan() {
   }, 2000);
 }
 
+// ══════════════════════════════════════════════════════════
+// THE REPORT CORE. The same cloud of points that makes the scanner sphere
+// gathers into a brain and opens back out, over and over. NOTHING DRAWS A
+// BRAIN - the brain is what the core makes when it concentrates, which is the
+// whole reason this is one object rather than a sphere with an icon next to it.
+// ══════════════════════════════════════════════════════════
+var _mmBrain = null;
+function mmBrainPoints(){
+  if(_mmBrain) return _mmBrain;
+  var S = 200;
+  var c = document.createElement('canvas'); c.width = c.height = S;
+  var x = c.getContext('2d');
+  x.fillStyle = '#fff';
+  // arc with a scale rather than ellipse(), which older Safari does not have
+  function oval(cx,cy,rx,ry){
+    x.save(); x.translate(cx,cy); x.scale(1,ry/rx);
+    x.beginPath(); x.arc(0,0,rx,0,6.2832); x.fill(); x.restore();
+  }
+  oval(100,86,60,48);
+  // The bumps overlap heavily on purpose. Smaller or further apart and the
+  // outline spikes instead of undulating.
+  var bump=[[-52,-22,18],[-44,-46,19],[-22,-58,19],[0,-62,18],[22,-58,19],[44,-46,19],
+            [52,-22,18],[56,2,17],[50,24,17],[34,40,17],[-56,2,17],[-50,24,17],[-34,40,17]];
+  for(var i=0;i<bump.length;i++){
+    x.beginPath(); x.arc(100+bump[i][0],86+bump[i][1],bump[i][2],0,6.2832); x.fill();
+  }
+  oval(100,132,26,17);   // cerebellum
+  oval(100,152,8,13);    // stem
+  // Carve the division and the folds back out as CURVES. A joined polyline
+  // leaves a corner at every joint, and corners are what read as rough once
+  // the shape is only points.
+  x.globalCompositeOperation = 'destination-out';
+  x.lineWidth = 4.4; x.lineCap = 'round'; x.lineJoin = 'round'; x.strokeStyle = '#000';
+  function curve(p0,p1,p2){
+    x.beginPath(); x.moveTo(p0[0],p0[1]);
+    x.quadraticCurveTo(p1[0],p1[1],p2[0],p2[1]); x.stroke();
+  }
+  curve([100,26],[100,60],[100,116]);
+  var folds=[[[-14,-40],[-36,-26],[-22,-8]],
+             [[-18,-4],[-40,10],[-22,24]],
+             [[-14,26],[-34,38],[-18,48]]];
+  for(var g=0;g<2;g++){
+    var sg = g ? -1 : 1;
+    for(var f=0;f<folds.length;f++){
+      var q = folds[f];
+      curve([100+sg*q[0][0],86+q[0][1]],[100+sg*q[1][0],86+q[1][1]],[100+sg*q[2][0],86+q[2][1]]);
+    }
+  }
+  x.globalCompositeOperation = 'source-over';
+  // SOFTEN IT. Redrawn through a blur and re-thresholded, so every join between
+  // a bump and the body becomes one continuous curve rather than two circles
+  // meeting. Wrapped, because a browser without canvas filters should get the
+  // unsmoothed shape rather than no brain at all.
+  var src = c;
+  try {
+    var c2 = document.createElement('canvas'); c2.width = c2.height = S;
+    var x2 = c2.getContext('2d');
+    if('filter' in x2) x2.filter = 'blur(3px)';
+    x2.drawImage(c,0,0);
+    src = c2;
+  } catch(e){}
+  var d = src.getContext('2d').getImageData(0,0,S,S).data, pts = [];
+  function on(xx,yy){ return xx>=0 && yy>=0 && xx<S && yy<S && d[(yy*S+xx)*4+3] > 128; }
+  for(var yy=0; yy<S; yy+=2){
+    for(var xx=0; xx<S; xx+=2){
+      if(!on(xx,yy)) continue;
+      // thinned inside, so the outline and the folds carry the shape
+      var edge = !on(xx,yy-3) || !on(xx,yy+3) || !on(xx-3,yy) || !on(xx+3,yy);
+      if(edge || Math.random() < 0.22) pts.push([(xx-100)/100,(yy-95)/100,edge?1:0]);
+    }
+  }
+  _mmBrain = pts;
+  return pts;
+}
+
+var _mmRepRaf = null;
+function mmReportCore(){
+  if(_mmRepRaf){ cancelAnimationFrame(_mmRepRaf); _mmRepRaf = null; }
+  var cv = document.getElementById('mai-rep-core');
+  if(!cv) return;
+  var brain = mmBrainPoints();
+  if(!brain || !brain.length) return;
+  var ctx = cv.getContext('2d');
+  var dpr = Math.min(2, window.devicePixelRatio || 1);
+  var CSS = 150;
+  cv.width = Math.round(CSS*dpr); cv.height = Math.round(CSS*dpr);
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  var W = CSS, H = CSS, CX = W/2, CY = H/2, R = W*0.30;
+
+  var N = Math.min(420, brain.length), p = [];
+  for(var i=0;i<N;i++){
+    var u = Math.random()*2-1, th = Math.random()*6.2832;
+    var rr = Math.pow(Math.random(),1/3), sq = Math.sqrt(1-u*u);
+    var b = brain[(i*7) % brain.length];
+    p.push({ x:sq*Math.cos(th)*rr, y:u*rr, z:sq*Math.sin(th)*rr,
+             bx:b[0], by:b[1], edge:b[2], ph:Math.random()*6.2832 });
+  }
+  // Built once. A gradient per frame is what makes this stutter.
+  var halo = ctx.createRadialGradient(CX,CY,0,CX,CY,R*2.4);
+  for(var k=0;k<=16;k++){
+    var uu = k/16;
+    halo.addColorStop(uu,'rgba('+(226+29*(1-uu)|0)+','+(26+120*Math.pow(1-uu,2)|0)+','
+      +(42+110*Math.pow(1-uu,2)|0)+','+(0.22*Math.pow(1-uu,3)).toFixed(4)+')');
+  }
+  var spin = 0, t0 = performance.now();
+  function morph(t){
+    var cyc = 5200, q = (t % cyc)/cyc;
+    function io(v){ return .5-.5*Math.cos(Math.PI*Math.min(1,Math.max(0,v))); }
+    if(q < 0.30) return io(q/0.30);
+    if(q < 0.62) return 1;
+    if(q < 0.86) return 1 - io((q-0.62)/0.24);
+    return 0;
+  }
+  function frame(now){
+    // STOPS ITSELF once the report has replaced this canvas or the sheet is
+    // closed, rather than leaving a loop running behind a hidden screen.
+    if(!cv.isConnected || cv.offsetParent === null){ _mmRepRaf = null; return; }
+    var t = now - t0, mo = morph(t), pulse = 0.5+0.5*Math.sin(t/560);
+    ctx.clearRect(0,0,W,H);
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.fillStyle = halo; ctx.fillRect(0,0,W,H);
+    spin += 0.016*(2.2-1.2*mo);
+    var cs = Math.cos(spin), sn = Math.sin(spin), pts = [];
+    for(var n=0;n<N;n++){
+      var q2 = p[n];
+      var X = q2.x*cs - q2.z*sn, Z = q2.x*sn + q2.z*cs, per = 1/(1.9-Z*0.55);
+      var sx = CX + X*per*1.55*R, sy = CY + q2.y*per*1.55*R, d = per;
+      if(mo > 0){
+        var tx = CX + q2.bx*R*1.05, ty = CY + q2.by*R*1.05;
+        sx = sx + (tx-sx)*mo; sy = sy + (ty-sy)*mo;
+        if(mo > 0.98){ sx += Math.sin(t/430+q2.ph)*1.1; sy += Math.cos(t/510+q2.ph)*1.1; }
+        d = d*(1-mo) + (q2.edge?1.05:0.75)*mo;
+      }
+      pts.push({x:sx,y:sy,d:d,e:q2.edge});
+    }
+    ctx.lineWidth = 0.7;
+    var maxd = 9 + 6*(1-mo);
+    for(var a=0;a<pts.length;a++){
+      for(var b2=a+1;b2<a+4 && b2<pts.length;b2++){
+        var dx = pts[a].x-pts[b2].x, dy = pts[a].y-pts[b2].y;
+        var dd = Math.sqrt(dx*dx+dy*dy);
+        if(dd < maxd){
+          ctx.strokeStyle = 'rgba(255,95,105,'+((1-dd/maxd)*0.26).toFixed(3)+')';
+          ctx.beginPath(); ctx.moveTo(pts[a].x,pts[a].y); ctx.lineTo(pts[b2].x,pts[b2].y); ctx.stroke();
+        }
+      }
+    }
+    for(var z=0;z<pts.length;z++){
+      var P = pts[z];
+      var al = (0.42+0.28*P.e)*P.d*(0.85+0.3*pulse);
+      ctx.fillStyle = 'rgba(255,'+(95+90*P.d|0)+','+(105+80*P.d|0)+','+al.toFixed(3)+')';
+      ctx.beginPath(); ctx.arc(P.x,P.y,1.25*P.d,0,6.2832); ctx.fill();
+    }
+    ctx.globalCompositeOperation = 'source-over';
+    _mmRepRaf = requestAnimationFrame(frame);
+  }
+  _mmRepRaf = requestAnimationFrame(frame);
+}
+
 function closeMAIReport() {
   var popup = document.getElementById('mai-report-popup');
   if(popup) popup.style.display = 'none';
@@ -13566,9 +13725,23 @@ async function generateMAIReport() {
   var now = new Date();
   var dateStr = now.toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric'});
   
-  if(subtitle) subtitle.textContent = symbol + ' · ' + tf + ' · ' + dateStr;
+  // THE HEADER SHOWED THE RAW YAHOO TICKER, `GC=F`, which is the gold FUTURES
+  // contract and not the XAUUSD spot the customer scanned. The dropdown already
+  // carries the trader-facing name, so use that and keep the ticker for the
+  // data layer where it belongs.
+  var symSel = document.getElementById('scan-symbol');
+  var symLabel = symbol;
+  if(symSel && symSel.selectedIndex >= 0 && symSel.options[symSel.selectedIndex]){
+    symLabel = symSel.options[symSel.selectedIndex].text.replace(/\s*\(.*\)\s*$/,'').trim() || symbol;
+  } else if(typeof MM_SCAN_LIVE !== 'undefined' && MM_SCAN_LIVE[symbol]){
+    symLabel = MM_SCAN_LIVE[symbol];
+  }
+  if(subtitle) subtitle.textContent = symLabel + ' · ' + tf + ' · ' + dateStr;
   popup.style.display = 'flex';
-  content.innerHTML = '<div style="text-align:center;padding:30px;"><i class="ti ti-brain" style="font-size:36px;color:var(--red);display:block;margin-bottom:10px;animation:pulse 1.5s infinite;"></i>'+mmT('rep.generating','Generating intelligence report...')+'</div>';
+  content.innerHTML = '<div style="text-align:center;padding:16px 30px 30px;">'
+    + '<canvas id="mai-rep-core" style="width:150px;height:150px;display:block;margin:0 auto 2px;"></canvas>'
+    + '<div style="font-size:13px;">'+mmT('rep.generating','Generating intelligence report...')+'</div></div>';
+  mmReportCore();
   
   // Gather real scan data if available
   var scanPrice = document.getElementById('scan-price') ? document.getElementById('scan-price').textContent : '—';
