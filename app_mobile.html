@@ -13625,7 +13625,61 @@ function mmBrainPoints(){
   return pts;
 }
 
+// ══════════════════════════════════════════════════════════
+// THE HANDOFF. The brain holds one last beat, its particles scatter outward and
+// fade, and the report rises into the space they leave. The report is put on
+// screen FIRST and the waiting block is collapsed under it, so the report is
+// never held back by the animation - if any of this fails the report is
+// already there.
+// ══════════════════════════════════════════════════════════
+function mmReportShow(html){
+  var content = document.getElementById('mai-report-content');
+  if(!content) return;
+  var body = document.getElementById('mai-rep-body');
+  var load = document.getElementById('mai-rep-load');
+  var msg  = document.getElementById('mai-rep-msg');
+  // If the waiting block is not there for any reason, show the report plainly.
+  // The report matters; the transition does not.
+  if(!body || !load){ content.innerHTML = html; return; }
+
+  body.innerHTML = html;
+  var kids = [].slice.call(body.children);
+  for(var i=0;i<kids.length;i++){
+    kids[i].style.transition = 'none';
+    kids[i].style.opacity = '0';
+    kids[i].style.transform = 'translateY(16px)';
+    kids[i].style.filter = 'blur(5px)';
+  }
+  void body.offsetWidth;   // or the browser has nothing to move FROM
+
+  if(msg){ msg.style.transition = 'opacity .34s ease'; msg.style.opacity = '0'; }
+  if(_mmRepRelease) _mmRepRelease();
+
+  for(var k=0;k<kids.length;k++){
+    (function(el, n){
+      setTimeout(function(){
+        el.style.transition = 'opacity .6s ease, transform .6s cubic-bezier(.2,.7,.25,1), filter .6s ease';
+        el.style.opacity = '1'; el.style.transform = 'none'; el.style.filter = 'blur(0px)';
+      }, 300 + n*140);
+    })(kids[k], k);
+  }
+
+  // The empty space closes while the cloud is still thinning, so the report
+  // moves up into it rather than waiting for it to finish and then jumping.
+  setTimeout(function(){
+    load.style.overflow = 'hidden';
+    load.style.height = load.offsetHeight + 'px';
+    void load.offsetWidth;
+    load.style.transition = 'height .52s cubic-bezier(.4,0,.2,1), opacity .42s ease, padding .52s ease';
+    load.style.height = '0px';
+    load.style.opacity = '0';
+    load.style.padding = '0';
+  }, 380);
+  setTimeout(function(){ if(load.parentNode) load.parentNode.removeChild(load); }, 1050);
+}
+
 var _mmRepRaf = null;
+var _mmRepRelease = null;
 function mmReportCore(){
   if(_mmRepRaf){ cancelAnimationFrame(_mmRepRaf); _mmRepRaf = null; }
   var cv = document.getElementById('mai-rep-core');
@@ -13654,7 +13708,11 @@ function mmReportCore(){
     halo.addColorStop(uu,'rgba('+(226+29*(1-uu)|0)+','+(26+120*Math.pow(1-uu,2)|0)+','
       +(42+110*Math.pow(1-uu,2)|0)+','+(0.22*Math.pow(1-uu,3)).toFixed(4)+')');
   }
-  var spin = 0, t0 = performance.now();
+  var spin = 0, t0 = performance.now(), relT = 0;
+  // Scatter and fade. The throw is kept short on purpose: the canvas is only
+  // 150px, so anything further and the particles would be cut off by its edge
+  // rather than fading out inside it.
+  _mmRepRelease = function(){ relT = performance.now(); };
   function morph(t){
     var cyc = 5200, q = (t % cyc)/cyc;
     function io(v){ return .5-.5*Math.cos(Math.PI*Math.min(1,Math.max(0,v))); }
@@ -13668,9 +13726,15 @@ function mmReportCore(){
     // closed, rather than leaving a loop running behind a hidden screen.
     if(!cv.isConnected || cv.offsetParent === null){ _mmRepRaf = null; return; }
     var t = now - t0, mo = morph(t), pulse = 0.5+0.5*Math.sin(t/560);
+    var rel = relT ? Math.min(1,(now-relT)/820) : 0;
+    if(rel > 0){ mo = 1; }                       // hold the brain to let go OF
+    var relE = rel<.5 ? 2*rel*rel : 1-Math.pow(-2*rel+2,2)/2;
+    var relA = Math.pow(1-rel,1.6);
     ctx.clearRect(0,0,W,H);
     ctx.globalCompositeOperation = 'lighter';
+    ctx.globalAlpha = relA;
     ctx.fillStyle = halo; ctx.fillRect(0,0,W,H);
+    ctx.globalAlpha = 1;
     spin += 0.016*(2.2-1.2*mo);
     var cs = Math.cos(spin), sn = Math.sin(spin), pts = [];
     for(var n=0;n<N;n++){
@@ -13683,6 +13747,10 @@ function mmReportCore(){
         if(mo > 0.98){ sx += Math.sin(t/430+q2.ph)*1.1; sy += Math.cos(t/510+q2.ph)*1.1; }
         d = d*(1-mo) + (q2.edge?1.05:0.75)*mo;
       }
+      if(rel > 0){
+        sx = CX + (sx-CX)*(1+relE*0.55) + Math.cos(q2.ph)*26*relE;
+        sy = CY + (sy-CY)*(1+relE*0.55) + Math.sin(q2.ph)*26*relE;
+      }
       pts.push({x:sx,y:sy,d:d,e:q2.edge});
     }
     ctx.lineWidth = 0.7;
@@ -13692,14 +13760,14 @@ function mmReportCore(){
         var dx = pts[a].x-pts[b2].x, dy = pts[a].y-pts[b2].y;
         var dd = Math.sqrt(dx*dx+dy*dy);
         if(dd < maxd){
-          ctx.strokeStyle = 'rgba(255,95,105,'+((1-dd/maxd)*0.26).toFixed(3)+')';
+          ctx.strokeStyle = 'rgba(255,95,105,'+((1-dd/maxd)*0.26*relA).toFixed(3)+')';
           ctx.beginPath(); ctx.moveTo(pts[a].x,pts[a].y); ctx.lineTo(pts[b2].x,pts[b2].y); ctx.stroke();
         }
       }
     }
     for(var z=0;z<pts.length;z++){
       var P = pts[z];
-      var al = (0.42+0.28*P.e)*P.d*(0.85+0.3*pulse);
+      var al = (0.42+0.28*P.e)*P.d*(0.85+0.3*pulse)*relA;
       ctx.fillStyle = 'rgba(255,'+(95+90*P.d|0)+','+(105+80*P.d|0)+','+al.toFixed(3)+')';
       ctx.beginPath(); ctx.arc(P.x,P.y,1.25*P.d,0,6.2832); ctx.fill();
     }
@@ -13738,9 +13806,14 @@ async function generateMAIReport() {
   }
   if(subtitle) subtitle.textContent = symLabel + ' · ' + tf + ' · ' + dateStr;
   popup.style.display = 'flex';
-  content.innerHTML = '<div style="text-align:center;padding:16px 30px 30px;">'
+  // The waiting state and the report are SEPARATE BOXES, so the core can still
+  // be scattering while the report is already arriving underneath it. Replacing
+  // the whole container the way this used to would destroy the canvas mid-frame
+  // and there would be nothing to hand over from.
+  content.innerHTML = '<div id="mai-rep-load" style="text-align:center;padding:16px 30px 30px;">'
     + '<canvas id="mai-rep-core" style="width:150px;height:150px;display:block;margin:0 auto 2px;"></canvas>'
-    + '<div style="font-size:13px;">'+mmT('rep.generating','Generating intelligence report...')+'</div></div>';
+    + '<div id="mai-rep-msg" style="font-size:13px;">'+mmT('rep.generating','Generating intelligence report...')+'</div></div>'
+    + '<div id="mai-rep-body"></div>';
   mmReportCore();
   
   // Gather real scan data if available
@@ -13791,9 +13864,9 @@ async function generateMAIReport() {
       .replace(/\n\n/g, '</p><p style="margin-bottom:12px;">')
       .replace(/\n/g, ' ');
     
-    content.innerHTML = '<p style="margin-bottom:12px;">' + formatted + '</p>';
+    mmReportShow('<p style="margin-bottom:12px;">' + formatted + '</p>');
   } catch(e) {
-    content.innerHTML = '<div style="padding:14px;background:rgba(255,30,60,0.06);border-radius:10px;font-size:12px;color:var(--text2);line-height:1.8;">' +
+    mmReportShow('<div style="padding:14px;background:rgba(255,30,60,0.06);border-radius:10px;font-size:12px;color:var(--text2);line-height:1.8;">' +
       '<div style="color:var(--red);font-family:Orbitron,sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;margin-bottom:12px;">'+mmT('rep.overview','MARKET OVERVIEW')+'</div>' +
       '<p style="margin-bottom:14px;">Gold is currently trading at 3,348, reflecting a cautious yet constructive market environment. Price action over the past 24 hours has been contained within a defined range, with sellers showing signs of exhaustion near the lower boundary of the recent structure.</p>' +
       '<div style="color:var(--red);font-family:Orbitron,sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;margin-bottom:12px;">'+mmT('rep.technical','TECHNICAL PERSPECTIVE')+'</div>' +
@@ -13804,7 +13877,7 @@ async function generateMAIReport() {
       '<p style="margin-bottom:14px;">Market participants are leaning constructive on Gold. Retail positioning shows 64 percent of traders holding long positions, while the Fear and Greed Index sits at 62, firmly within greed territory. News sentiment carries a moderately positive tone with no material bearish catalysts dominating the narrative.</p>' +
       '<div style="color:var(--red);font-family:Orbitron,sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;margin-bottom:12px;">'+mmT('rep.verdict','MAI VERDICT')+'</div>' +
       '<p>Taking all three dimensions into account, Momentum AI assigns an 82 percent confidence score to the bullish thesis. The technical structure is clean, sentiment is supportive, and the fundamental environment poses no immediate headwinds. The trade setup favours continuation to the upside, provided price sustains above the 3,300 support zone. Risk is classified as moderate.</p>' +
-    '</div>';
+    '</div>');
   }
 }
 
