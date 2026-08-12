@@ -961,7 +961,12 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 16px;
 }
+/* The end tick carries an 8px glow and the SL label sits at the rail's very
+   edge, so the rail also keeps a little of its own room. Without both, the
+   stop reads as if it belongs to the button. */
+.sig-rail { margin-right: 4px; }
 .sig-strength-wrap {
   display: flex;
   align-items: center;
