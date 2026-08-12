@@ -1501,7 +1501,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
    THE CONTROLS DO NOT COME BACK after a scan, at Haikal's instruction. To run
    another the customer leaves and re-enters, which resets everything.
    ══════════════════════════════════════════════════════════ */
-.scan-hero{position:relative;overflow:hidden;height:calc(100vh - 250px);min-height:520px;
+.scan-hero{position:relative;overflow:hidden;height:100%;min-height:520px;
  transition:height .85s cubic-bezier(.32,.72,.24,1), min-height .85s cubic-bezier(.32,.72,.24,1);}
 /* THE COLLAPSED HEADER IS GONE, because the pair, price and core it carried
    now live inside the verdict card. The hero simply leaves.
@@ -1557,12 +1557,12 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 .sh-stage{position:absolute;inset:0;}
 .sh-rings{position:absolute;inset:0;pointer-events:none;display:flex;align-items:center;justify-content:center;}
 .sh-rings span{position:absolute;border-radius:50%;border:1px solid rgba(255,30,60,.07);}
-.sh-glow{position:absolute;left:50%;top:calc(50% - 150px);width:340px;height:340px;margin:-170px 0 0 -170px;border-radius:50%;
+.sh-glow{position:absolute;left:50%;top:calc(50% - 145px);width:340px;height:340px;margin:-170px 0 0 -170px;border-radius:50%;
  background:radial-gradient(circle,rgba(255,60,40,.16),transparent 62%);filter:blur(28px);animation:shHalo 7s ease-in-out infinite;pointer-events:none;}
 /* THE CORE IS A CANVAS as of 9 Aug 2026. A liquid particle cloud with a
    neuron network firing inside it, drawn in `mmScanCore`. The CSS rings it
    replaced could not do a network that rewires itself as the cloud moves. */
-.sh-core{position:absolute;left:50%;top:calc(50% - 245px);width:190px;height:190px;margin-left:-95px;z-index:3;
+.sh-core{position:absolute;left:50%;top:calc(50% - 240px);width:190px;height:190px;margin-left:-95px;z-index:3;
  transition:left .85s cubic-bezier(.32,.72,.24,1), top .85s cubic-bezier(.32,.72,.24,1),
             width .85s cubic-bezier(.32,.72,.24,1), height .85s cubic-bezier(.32,.72,.24,1),
             margin-left .85s cubic-bezier(.32,.72,.24,1);}
@@ -1572,7 +1572,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 /* The pair, price and change move together as one block and shrink into the
    header line. font-size is animatable, which is why it is used rather than a
    transform, so the text stays crisp at both ends. */
-.sh-info{position:absolute;left:0;right:0;top:calc(50% - 41px);text-align:center;z-index:3;display:block;
+.sh-info{position:absolute;left:0;right:0;top:calc(50% - 36px);text-align:center;z-index:3;display:block;
  transition:left .85s cubic-bezier(.32,.72,.24,1), right .85s cubic-bezier(.32,.72,.24,1),
             top .85s cubic-bezier(.32,.72,.24,1), text-align .85s;}
 .scan-hero.scanning .sh-info{top:calc(50% + 83px);}
@@ -1598,7 +1598,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 .sh-sym{position:relative;font-family:'Orbitron',sans-serif;font-size:20px;font-weight:900;letter-spacing:1px;text-align:center;}
 .sh-px{position:relative;font-family:'Orbitron',sans-serif;font-size:13px;font-weight:800;text-align:center;margin-top:5px;}
 .sh-chg{position:relative;font-size:9.5px;text-align:center;margin-top:3px;}
-.sh-wrap{position:absolute;left:50%;width:100%;max-width:320px;margin-left:-160px;top:calc(50% + 45px);z-index:3;
+.sh-wrap{position:absolute;left:50%;width:100%;max-width:320px;margin-left:-160px;top:calc(50% + 75px);z-index:3;
  transition:opacity .45s ease, transform .45s ease;}
 .scan-hero.scanning .sh-wrap,.scan-hero.done .sh-wrap{opacity:0;transform:translateY(-12px);pointer-events:none;}
 .scan-hero.scanning .sh-rings,.scan-hero.done .sh-rings,
@@ -1608,18 +1608,18 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 /* The stagger was replaced by the printer; see .mm-lit above. */
 .sh-two{display:grid;grid-template-columns:1fr 108px;gap:9px;}
 .sh-lbl{font-size:7.5px;letter-spacing:1.2px;color:var(--text3);font-family:'Orbitron',sans-serif;margin-bottom:6px;text-align:center;}
-.sh-sel{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:11px;padding:12px 13px;
- font-size:13.5px;color:var(--text);font-family:'Sora',sans-serif;text-align:center;
+.sh-sel{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:11px;padding:10px 13px;
+ font-size:13px;color:var(--text);font-family:'Sora',sans-serif;text-align:center;
  -webkit-appearance:none;appearance:none;cursor:pointer;
  background-image:linear-gradient(45deg,transparent 50%,rgba(244,247,250,.35) 50%),linear-gradient(135deg,rgba(244,247,250,.35) 50%,transparent 50%);
  background-position:calc(100% - 16px) 50%,calc(100% - 11px) 50%;background-size:5px 5px,5px 5px;background-repeat:no-repeat;}
 .sh-sel:focus{outline:none;border-color:rgba(255,30,60,.45);}
-.sh-btn{width:100%;border:none;border-radius:14px;padding:16px;cursor:pointer;overflow:hidden;
+.sh-btn{width:100%;border:none;border-radius:14px;padding:13px;cursor:pointer;overflow:hidden;
  background:linear-gradient(115deg,#FF1E3C,#C40024,#FF6A3D,#FF1E3C);background-size:300% 100%;
  animation:shHue 5s ease-in-out infinite;color:#fff;font-family:'Sora',sans-serif;font-size:14px;font-weight:800;
  letter-spacing:1.6px;box-shadow:0 10px 30px rgba(255,30,60,.30);}
 .sh-btn:disabled{opacity:.7;cursor:default;}
-.sh-note{text-align:center;font-size:10px;color:var(--text3);margin-top:10px;}
+.sh-note{text-align:center;font-size:10px;color:var(--text3);margin-top:8px;}
 /* SEGMENTED TIMEFRAME. 9 Aug 2026. Four options that never grow, so four
    buttons beat a dropdown: one tap instead of open, scroll, choose, close,
    and all four choices are visible without opening anything.
@@ -1629,7 +1629,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
    the select; nothing that reads it had to change. */
 .sh-seg{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(255,255,255,.07);
  border:1px solid var(--border);border-radius:11px;overflow:hidden;margin-top:9px;}
-.sh-seg button{background:#0d0d12;border:none;padding:10px 0;color:var(--text3);cursor:pointer;
+.sh-seg button{background:#0d0d12;border:none;padding:8px 0;color:var(--text3);cursor:pointer;
  font-family:'Orbitron',ui-monospace,Menlo,monospace;font-size:11.5px;font-weight:800;letter-spacing:.5px;}
 .sh-seg button.on{background:linear-gradient(135deg,#FF1E3C,#C40024);color:#fff;}
 .sh-hide{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;}
@@ -4673,7 +4673,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
               <button type="button" onclick="mmScanTf('W1',this)">W1</button>
             </div>
           </div>
-          <div style="margin-top:16px;">
+          <div style="margin-top:13px;">
             <button id="scan-btn" class="sh-btn" onclick="runMAIScanner()" data-i18n="sc.initiate">INITIATE SCAN</button>
           </div>
           <div class="sh-note" data-i18n="sc.reads">6 sentiment inputs &middot; 6 indicators</div>
