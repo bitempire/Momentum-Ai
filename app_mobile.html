@@ -12803,9 +12803,18 @@ async function executeTradeInner(method) {
       // Passed all checks: price IS in zone, signal active, SL not hit -> proceed to fire
     }
     // === END ENTRY ZONE GATE ===
-    if(currentUser && !_armed) {
-      await db.from('trades').insert([{user_id:currentUser.id,signal_id:currentSignal.id,method,volume,pair:currentSignal.pair,direction:currentSignal.direction,entry:currentSignal.entry_to,sl:currentSignal.sl,tp:currentSignal.tp1,status:'executed',executed_at:new Date().toISOString()}]);
-    }
+    // 13 Aug 2026. THE `trades` ROW USED TO BE WRITTEN HERE, saying
+    // status 'executed' with a timestamp, BEFORE the command object below was
+    // even built and before anything was sent. Two consequences, both real:
+    //   1. If the send threw, the row stayed and claimed a trade had executed.
+    //   2. Worse, and the common case - every command that WAS accepted and
+    //      then failed, expired or was cancelled downstream also kept its
+    //      'executed' row. 198 failed and 49 expired commands exist, and each
+    //      one left a trades row saying it executed.
+    // It is now written by pollTradeCommand ONLY when the command actually
+    // reaches 'filled' or 'executed'. It also carries the volume that was
+    // really sent, after the lot multiplier below, and the account it went to,
+    // neither of which the old row recorded.
     // Apply the per-account lot multiplier to BOTH the entry volume and every
     // ladder layer, so the REAL fired trade scales exactly like the preview.
     // Smart method only: manual uses the volume the user typed; auto is produced
@@ -12880,7 +12889,23 @@ async function executeTradeInner(method) {
     } else {
       note.innerHTML = '<i class="ti ti-loader"></i>'+mmT('ex.placing','Placing trade\u2026 confirming with MT5.')+'';
       if(btn){ btn.textContent=mmT('trade.placing','Placing\u2026'); btn.disabled=true; }
-      if(cid) { pollTradeCommand(cid, btn, origText); }
+      if(cid) {
+        // Only build this when it would have been built before - armed orders
+        // never wrote a trades row and still do not.
+        var _tradeRow = (currentUser && !_armed) ? {
+          user_id:    currentUser.id,
+          account_id: activeAccount.id,
+          signal_id:  currentSignal.id,
+          method:     method,
+          volume:     cmd.volume,
+          pair:       currentSignal.pair,
+          direction:  currentSignal.direction,
+          entry:      currentSignal.entry_to,
+          sl:         currentSignal.sl,
+          tp:         currentSignal.tp1
+        } : null;
+        pollTradeCommand(cid, btn, origText, _tradeRow);
+      }
       else { if(btn){ btn.textContent=origText; btn.disabled=false; } }
     }
   } catch(e) { alert(mmT('err.generic','Error: ')+e.message); if(btn){ btn.textContent=origText; btn.disabled=false; } }
@@ -12890,7 +12915,7 @@ function mtTradeBtn(method){
   if(method==='smart') return document.querySelector('button[onclick="checkMT5ThenExecute()"]');
   return null;
 }
-async function pollTradeCommand(id, btn, origText){
+async function pollTradeCommand(id, btn, origText, tradeRow){
   // Queue-aware polling.
   // The EA manages ONE BASKET AT A TIME and will not claim a command while a
   // basket is live, so a healthy worker can legitimately leave a row pending
@@ -12922,6 +12947,20 @@ async function pollTradeCommand(id, btn, origText){
       }
       if(row && (row.status==='filled'||row.status==='executed')){
         stop(); resetBtn();
+        // THE ONLY PLACE A `trades` ROW IS WRITTEN. The command has reached
+        // filled, so this is the first moment it is true. `stop()` above has
+        // already cleared the timer and this branch returns, so it cannot run
+        // twice. Wrapped, because the history is worth less than the customer
+        // seeing their fill - if this throws they still get told.
+        if(tradeRow){
+          try{
+            await db.from('trades').insert([Object.assign({}, tradeRow, {
+              status: 'executed',
+              executed_at: new Date().toISOString()
+            })]).minimal();
+          }catch(_e){}
+          tradeRow = null;
+        }
         show('<i class="ti ti-circle-check"></i>'+mmT('tk.filled','Trade filled on MT5! Manage it in your terminal.')+'','rgba(40,200,120,0.12)','#1a9d5a');
         return;
       }
