@@ -6041,6 +6041,19 @@ async function mmaiHashPassword(pw) {
   return 'pbkdf2$210000$' + b64(salt) + '$' + b64(new Uint8Array(bits));
 }
 
+// THE ACCOUNT THE CUSTOMER IS ACTUALLY TRADING, which is the active row in
+// `mt5_accounts` and NOT `users.mt5_id`. That column holds the number typed at
+// registration and drifts from reality the moment an account is connected. It
+// still carries the ANALYST_ and SUBADMIN_ role markers, so it is read here and
+// nowhere else changed.
+function mmActiveMt5Id(){
+  try{
+    if(typeof activeAccount !== 'undefined' && activeAccount && activeAccount.mt5_id)
+      return String(activeAccount.mt5_id);
+  }catch(e){}
+  return '';
+}
+
 // ── ROUTE USER ──
 function routeUser(user) {
   if(user.role === 'admin') {
@@ -6104,7 +6117,12 @@ function enterApp(user) {
     if(profRole) profRole.textContent = user.role === 'admin' ? mmT('pa.superAdmin','Super Admin') : user.role === 'analyst' ? mmT('pa.analyst','Analyst') : (isPremiumUser() ? mmT('pa.premiumUser','Premium User') : mmT('pa.basicUser','Basic User'));
     if(profUser) profUser.textContent = '@' + (user.username || '--');
     if(profEmail) profEmail.textContent = user.email || '--';
-    if(profMt5) profMt5.textContent = user.mt5_id || '--';
+    // 13 Aug 2026. This used to print `users.mt5_id`, which is whatever was
+    // TYPED AT REGISTRATION and is not one of the accounts the customer trades
+    // - Test01's says 510226, which matches none of his five. The account that
+    // matters is the active one in `mt5_accounts`. Registration value only as a
+    // fallback, for a customer who has not connected anything yet.
+    if(profMt5) profMt5.textContent = mmActiveMt5Id() || user.mt5_id || '--';
     if(profBroker) profBroker.textContent = user.broker || 'AFTT Markets';
     if(profStatus) profStatus.textContent = user.status || 'Active';
   }
@@ -12882,9 +12900,25 @@ async function executeTradeInner(method) {
     note.style.color = '#c98a00';
     var _row = ins.data ? (Array.isArray(ins.data) ? ins.data[0] : ins.data) : null;
     var cid = (_row && _row.id) ? _row.id : null;
+    // 13 Aug 2026. ARMED ORDERS USED TO RECORD NOTHING AT ALL, even when they
+    // filled, because the old insert was guarded by `!_armed`. An armed order
+    // that reaches the zone and fills is as real as any other trade, so it now
+    // gets the same row, written at the same moment - when it actually fills.
+    var _armedRow = currentUser ? {
+      user_id:    currentUser.id,
+      account_id: activeAccount.id,
+      signal_id:  currentSignal.id,
+      method:     method,
+      volume:     cmd.volume,
+      pair:       currentSignal.pair,
+      direction:  currentSignal.direction,
+      entry:      currentSignal.entry_to,
+      sl:         currentSignal.sl,
+      tp:         currentSignal.tp1
+    } : null;
     if(_armed){
       // Step 3: full armed UI - countdown + Cancel + auto-resolve
-      if(cid){ armedCountdown(cid, btn, origText); }
+      if(cid){ armedCountdown(cid, btn, origText, _armedRow); }
       else { note.innerHTML = '<i class="ti ti-clock"></i>'+mmT('ex.armed','Armed \u2014 waiting for price to enter the entry zone.')+''; if(btn){ btn.textContent=origText; btn.disabled=false; } }
     } else {
       note.innerHTML = '<i class="ti ti-loader"></i>'+mmT('ex.placing','Placing trade\u2026 confirming with MT5.')+'';
@@ -12991,7 +13025,7 @@ async function pollTradeCommand(id, btn, origText, tradeRow){
 
 // ── ARMED ORDER UI (Step 3): 5-min countdown + Cancel + auto-resolve ──
 function cancelArmed(id){ var f = window._armedCancels && window._armedCancels[id]; if(f) f(); }
-function armedCountdown(id, btn, origText){
+function armedCountdown(id, btn, origText, tradeRow){
   var note=document.getElementById('trade-success-note');
   if(btn){ btn.textContent=origText||'EXECUTE TRADE'; btn.disabled=false; }
   var deadline = Date.now() + 5*60*1000;
@@ -13024,7 +13058,21 @@ function armedCountdown(id, btn, origText){
       var r=await db.from('trade_commands').select('status,result').eq('id',id).single();
       var row=(r&&r.data)?(Array.isArray(r.data)?r.data[0]:r.data):null;
       if(!row) return;
-      if(row.status==='filled'||row.status==='executed'){ clearAll(); show('<i class="ti ti-circle-check"></i>'+mmT('ex.hitZone','Price hit the zone \u2014 trade filled on MT5!')+'','rgba(40,200,120,0.12)','#1a9d5a'); }
+      if(row.status==='filled'||row.status==='executed'){
+        clearAll();
+        // Same rule as pollTradeCommand: the row is written ONLY here, at the
+        // fill. clearAll() has stopped both timers, and tradeRow is nulled, so
+        // it cannot be written twice.
+        if(tradeRow){
+          try{
+            await db.from('trades').insert([Object.assign({}, tradeRow, {
+              status: 'executed',
+              executed_at: new Date().toISOString()
+            })]).minimal();
+          }catch(_e){}
+          tradeRow = null;
+        }
+        show('<i class="ti ti-circle-check"></i>'+mmT('ex.hitZone','Price hit the zone \u2014 trade filled on MT5!')+'','rgba(40,200,120,0.12)','#1a9d5a'); }
       else if(row.status==='failed'){ clearAll(); var _d=(row.result||'').toLowerCase(); if(_d.indexOf('dry run')>=0||_d.indexOf('not armed')>=0){ show('<i class="ti ti-flask"></i>'+mmT('ex.simOnly','Simulated only \u2014 account not armed for live trading, no order sent. Contact support to go live.')+'','rgba(230,160,30,0.12)','#c9821a'); } else { show('<i class="ti ti-alert-circle"></i>'+mmT('tk.failed','Trade failed:')+' '+(row.result||'unknown error'),'rgba(255,60,60,0.12)','#d33'); } }
       else if(row.status==='cancelled'){ clearAll(); show('<i class="ti ti-circle-x"></i>'+mmT('ex.cancelled','Armed order cancelled.')+'','rgba(255,60,60,0.10)','#d33'); }
       else if(row.status==='expired'){ clearAll(); show('<i class="ti ti-circle-x"></i>'+mmT('ex.notReached','Entry zone not reached \u2014 order expired.')+'','rgba(150,150,150,0.15)','#777'); }
@@ -14189,7 +14237,7 @@ function loadProfileData() {
   var emailEl = document.getElementById('profile-email');
   if(emailEl) emailEl.textContent = currentUser.email || '--';
   var mt5El = document.getElementById('profile-mt5');
-  if(mt5El) mt5El.textContent = currentUser.mt5_id || '--';
+  if(mt5El) mt5El.textContent = mmActiveMt5Id() || currentUser.mt5_id || '--';
   var brokerEl = document.getElementById('profile-broker');
   if(brokerEl) brokerEl.textContent = currentUser.broker || 'AFTT Markets';
   var statusEl = document.getElementById('profile-status');
