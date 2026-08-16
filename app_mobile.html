@@ -14532,52 +14532,82 @@ function mmSupportHours(){
   txt.textContent = open ? mmT('sup.openNow','Open now') : mmT('sup.closedNow','Closed now');
 }
 
+// How long ago something happened, in the shortest honest form.
+function mmTkAgo(iso) {
+  if(!iso) return '';
+  var d = new Date(iso);
+  if(isNaN(d.getTime())) return '';
+  var m = Math.round((new Date() - d) / 60000);
+  if(m < 1) return mmT('sup.justNow','just now');
+  if(m < 60) return m + mmT('sup.mAgo','m ago');
+  if(m < 1440) return Math.round(m/60) + mmT('sup.hAgo','h ago');
+  if(m < 2880) return mmT('sup.yesterday','Yesterday');
+  return d.toLocaleDateString();
+}
+
+// The three states the card draws. Colour carries the edge, the bloom and the
+// thread at once, so the state reads before the words do.
+function mmTkCard(t) {
+  if(t.closed_at || t.status === 'done') return { txt:mmT('sup.stClosed','CLOSED'),   col:'#6A7280', pb:'rgba(255,255,255,0.05)', pc:'var(--text3)',  pd:'rgba(255,255,255,0.10)' };
+  if(t.status === 'pending')             return { txt:mmT('sup.stAnswered','ANSWERED'), col:'#00c87a', pb:'rgba(0,200,122,0.12)',  pc:'var(--green)', pd:'rgba(0,200,122,0.30)' };
+  return { txt:mmT('sup.stOpen','OPEN'), col:'#ffb020', pb:'rgba(255,176,32,0.12)', pc:'var(--amber)', pd:'rgba(255,176,32,0.30)' };
+}
+
 async function loadMyTickets() {
   try{ mmSupportHours(); }catch(e){}
   if(!currentUser || !db) return;
   var el = document.getElementById('my-tickets');
   if(!el) return;
+  var empty = '<div class="empty-state" style="padding:20px;"><i class="ti ti-ticket"></i>' +
+    mmT('misc.noTickets','No tickets yet') + '</div>';
   try {
-    var res = await db.from('support_tickets').select('*').eq('user_id', currentUser.id).order('created_at', {ascending:false}).limit(10);
-    if(!res.data || !res.data.length) { el.innerHTML = '<div class="empty-state" style="padding:20px;"><i class="ti ti-ticket"></i>'+mmT('misc.noTickets','No tickets yet')+'</div>'; return; }
-    // ONE ROW PER TICKET. The old row carried a status reading PENDING beside a
-    // button reading Open, which are two different meanings of the same word.
-    // The pill now carries the status and the row itself opens the ticket.
-    var wrap = document.createElement('div');
-    wrap.className = 'sp-tks';
-    res.data.forEach(function(t) {
-      // 17 Aug 2026. This used to key off replied_at, so a ticket that was
-      // answered and never closed vanished from the customer list anyway.
-      // It now follows the close, which is the only thing that ends a case.
-      if(!mmTkVisible(t)) return;
-      var st = (t.status || 'open');
-      var sc = {open:'var(--amber)',pending:'var(--red)',done:'var(--green)'}[st] || 'var(--text3)';
-      var sb = {open:'rgba(255,176,32,0.12)',pending:'rgba(255,30,60,0.10)',done:'rgba(0,200,122,0.12)'}[st] || 'rgba(255,255,255,0.05)';
-      var sd = {open:'rgba(255,176,32,0.30)',pending:'rgba(255,30,60,0.30)',done:'rgba(0,200,122,0.30)'}[st] || 'rgba(255,255,255,0.10)';
-      var row = document.createElement('div');
-      row.className = 'sp-tk';
-      var tn = document.createElement('div');
-      tn.className = 'sp-tn';
-      var sub = document.createElement('b'); sub.textContent = t.subject || '';
-      var msg = document.createElement('span'); msg.textContent = (t.message || '');
-      tn.appendChild(sub); tn.appendChild(msg);
-      var pill = document.createElement('span');
-      pill.className = 'sp-pill';
-      pill.style.cssText = 'background:'+sb+';color:'+sc+';border:1px solid '+sd+';';
-      pill.textContent = st.toUpperCase();
-      var chev = document.createElement('span');
-      chev.className = 'sp-chev'; chev.textContent = '\u203A';
-      row.appendChild(tn); row.appendChild(pill); row.appendChild(chev);
-      row.addEventListener('click', function(){ openTicketDetail(t); });
-      wrap.appendChild(row);
-    });
-    if(!wrap.children.length){
-      el.innerHTML = '<div class="empty-state" style="padding:20px;"><i class="ti ti-ticket"></i>'+mmT('misc.noTickets','No tickets yet')+'</div>';
-      return;
-    }
+    var res = await db.from('support_tickets').select('*').eq('user_id', currentUser.id)
+      .order('created_at', {ascending:false}).limit(10);
+    var rows = (res && res.data && Array.isArray(res.data)) ? res.data : [];
+    // A closed ticket leaves the list 24 hours after it was closed.
+    rows = rows.filter(mmTkVisible);
+    if(!rows.length) { el.innerHTML = empty; return; }
+
+    // The newest message of each ticket, one small query per ticket in
+    // parallel. There is no .in() on the query builder, and the ticket row on
+    // its own cannot say who spoke last - `admin_reply` survives a later
+    // customer message, so reading it would put the wrong name on the card.
+    var lasts = await Promise.all(rows.map(function(t) {
+      return db.from('ticket_messages').select('sender,body,created_at')
+        .eq('ticket_id', t.id).order('created_at', {ascending:false}).limit(1)
+        .then(function(r) {
+          var d = (r && r.data && Array.isArray(r.data)) ? r.data : [];
+          return d.length ? d[0] : null;
+        })
+        .catch(function() { return null; });
+    }));
+
     el.innerHTML = '';
-    el.appendChild(wrap);
-  } catch(e) {}
+    rows.forEach(function(t, i) {
+      var st = mmTkCard(t);
+      var last = lasts[i];
+      var who = last ? (last.sender === 'user' ? mmT('sup.lblYouShort','You') : mmT('sup.lblSupportShort','Support'))
+                     : mmT('sup.lblYouShort','You');
+      var body = last ? last.body : (t.message || '');
+      var when = last ? last.created_at : (t.replied_at || t.created_at);
+      var right = t.closed_at
+        ? (mmT('sup.clearsIn','Clears in ') + mmTkLeft(t.closed_at))
+        : mmTkAgo(when);
+      var card = document.createElement('div');
+      card.className = 'tkr';
+      card.innerHTML =
+        '<span class="tkr-edge" style="background:' + st.col + '"></span>' +
+        '<span class="sp-bloom" style="background:linear-gradient(180deg,' + st.col + '00,' + st.col + '2b)"></span>' +
+        '<span class="sp-thr"><i style="background:linear-gradient(90deg,' + st.col + '00,' + st.col + 'f2 40%,' + st.col + ' 50%,' + st.col + '00)"></i></span>' +
+        '<span class="tkr-r1"><span class="tkr-sj">' + mmTkEsc(t.subject || '') + '</span>' +
+          '<span class="sp-pill" style="background:' + st.pb + ';color:' + st.pc + ';border:1px solid ' + st.pd + ';">' + st.txt + '</span></span>' +
+        '<span class="tkr-pv">' + mmTkEsc(who) + ': ' + mmTkEsc(body) + '</span>' +
+        '<span class="tkr-ft"><span><i class="ti ti-id"></i>' + mmTkEsc(t.mt5_id || '-') + '</span>' +
+          '<u></u><span>' + mmTkEsc(right) + '</span></span>';
+      card.addEventListener('click', function() { openTicketDetail(t); });
+      el.appendChild(card);
+    });
+  } catch(e) { try { el.innerHTML = empty; } catch(e2) {} }
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -23625,6 +23655,25 @@ html[data-theme="light"] .sp-tk,html[data-theme="light"] .sp-hours{border-color:
 .sup-cnt{margin-top:6px;font-size:9.5px;color:var(--text3);text-align:right;}
 
 html[data-theme="light"] .sp-one,html[data-theme="light"] .sup-acard{border-color:rgba(0,0,0,.10);}
+/* MY TICKETS, 17 Aug 2026. The rows are cards now, drawn in the same language
+   as the Telegram, WhatsApp and ticket cells above them: an Orbitron subject,
+   a bloom and a moving thread along the bottom. The status drives the edge, the
+   bloom and the thread together, so the state is readable before a word is.
+   `.sp-thr`, `.sp-bloom` and `.sp-pill` are reused rather than redefined. */
+.tkr{position:relative;overflow:hidden;padding:13px 13px 16px 15px;
+ border:1px solid #23252F;border-radius:12px;margin-bottom:9px;cursor:pointer;}
+.tkr > *{position:relative;z-index:2;}
+.tkr-edge{position:absolute;left:0;top:0;bottom:0;width:3px;z-index:2;}
+.tkr-r1{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.tkr-sj{font-family:'Orbitron',sans-serif;font-size:13px;letter-spacing:-.2px;
+ color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tkr-pv{display:block;font-size:10.5px;color:var(--text3);margin-top:5px;
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tkr-ft{display:flex;align-items:center;gap:9px;margin-top:10px;font-size:9.5px;color:var(--text3);}
+.tkr-ft i{font-size:11px;vertical-align:-1px;margin-right:3px;}
+.tkr-ft u{flex:1;text-decoration:none;background:none;}
+html[data-theme="light"] .tkr{border-color:rgba(0,0,0,.10);}
+
 
 
 .fu-frame{border:1px solid #23252F;border-radius:12px;overflow:hidden;}
