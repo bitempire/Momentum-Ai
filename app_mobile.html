@@ -4565,27 +4565,9 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         <i class="ti ti-external-link more-menu-arrow"></i>
       </div>
 
-      <div class="more-menu-item" onclick="openSocial('twitter')" style="margin-bottom:8px;">
-        <div class="more-menu-icon" style="background:rgba(29,161,242,0.12);border-color:rgba(29,161,242,0.2);"><i class="ti ti-brand-twitter" style="color:#1DA1F2;"></i></div>
-        <div class="more-menu-text"><div class="more-menu-label">Twitter</div><div class="more-menu-sub" data-i18n="fu.twSub">Latest updates</div></div>
-        <i class="ti ti-external-link more-menu-arrow"></i>
-      </div>
-
       <div class="more-menu-item" onclick="openSocial('x')" style="margin-bottom:8px;">
         <div class="more-menu-icon" style="background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.12);"><i class="ti ti-brand-x" style="color:var(--text);"></i></div>
         <div class="more-menu-text"><div class="more-menu-label">X</div><div class="more-menu-sub" data-i18n="fu.twSub">Latest updates</div></div>
-        <i class="ti ti-external-link more-menu-arrow"></i>
-      </div>
-
-      <div class="more-menu-item" onclick="openSocial('telegram')" style="margin-bottom:8px;">
-        <div class="more-menu-icon" style="background:rgba(0,136,204,0.15);border-color:rgba(0,136,204,0.2);"><i class="ti ti-brand-telegram" style="color:#0088CC;"></i></div>
-        <div class="more-menu-text"><div class="more-menu-label" data-i18n="sup.telegram">Telegram</div><div class="more-menu-sub" data-i18n="fu.tgSub">Join our channel</div></div>
-        <i class="ti ti-external-link more-menu-arrow"></i>
-      </div>
-
-      <div class="more-menu-item" onclick="openSocial('linkedin')" style="margin-bottom:8px;">
-        <div class="more-menu-icon" style="background:rgba(10,102,194,0.12);border-color:rgba(10,102,194,0.2);"><i class="ti ti-brand-linkedin" style="color:#0A66C2;"></i></div>
-        <div class="more-menu-text"><div class="more-menu-label">LinkedIn</div><div class="more-menu-sub" data-i18n="fu.liSub">Company updates</div></div>
         <i class="ti ti-external-link more-menu-arrow"></i>
       </div>
 
@@ -13789,16 +13771,17 @@ function applySignalFilters() {
 }
 
 // ── SOCIAL LINKS (fill these in to activate Follow Us) ──
+// 13 Aug 2026. The six accounts that exist, taken from the MAI APP Social Media
+// sheet. Twitter, Telegram and LinkedIn were removed from the screen because
+// there are no such accounts - an empty entry showed "Link coming soon", which
+// tells a customer to keep checking for something that is never coming.
 var SOCIAL_LINKS = {
-  instagram: '',
-  threads:   '',
-  facebook:  '',
-  tiktok:    '',
-  youtube:   '',
-  twitter:   '',
-  x:         '',
-  telegram:  '',
-  linkedin:  '',
+  instagram: 'https://www.instagram.com/momentum_ai_official?igsh=dzhtbGFlcDE0YXpx&utm_source=qr',
+  threads:   'https://www.threads.com/@momentum_ai_official?igshid=NTc4MTIwNjQ2YQ==',
+  facebook:  'https://www.facebook.com/share/18gGavKD6n/?mibextid=wwXIfr',
+  tiktok:    'https://www.tiktok.com/@momentumm.ai?_r=1&_t=ZS-97drWkaEtuK',
+  youtube:   'https://youtube.com/@momentumofficial7?si=WAmpssr_L5K5yE4E',
+  x:         'https://x.com/momentummai?s=11',
   partner_website:   '',
   partner_instagram: '',
   partner_facebook:  '',
