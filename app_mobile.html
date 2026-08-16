@@ -3028,16 +3028,26 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
     <!-- ── TAB: MORE ── -->
     <div id="tab-more" class="app-tab" style="display:none;">
 
-      <!-- Header chip -->
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
-        <div style="display:flex;align-items:center;gap:12px;">
-          <span id="more-avatar" style="width:48px;height:48px;border-radius:15px;background:linear-gradient(135deg,#3a2226,#1a1015);border:1px solid rgba(255,30,60,0.45);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:var(--red);">--</span>
-          <div>
-            <div id="more-name" style="font-size:16px;color:var(--text);font-weight:700;margin-bottom:5px;">Trader</div>
-            <span id="more-tier-badge" style="display:inline-flex;align-items:center;gap:4px;font-size:9px;letter-spacing:.5px;color:#3A2A05;background:var(--gold);padding:3px 8px;border-radius:6px;font-weight:700;"><i class="ti ti-crown" style="font-size:10px;"></i> PREMIUM</span>
+      <!-- HEADER. 13 Aug 2026. Was an avatar, a name and a badge stacked under
+           it with the whole middle of the strip empty. It is now a cell of the
+           same lattice as the section below, and the line that was empty carries
+           the ACTIVE ACCOUNT - a customer with several accounts previously had no
+           way to see which one the app was showing them without opening My
+           Account, which is exactly the confusion that cost an afternoon on
+           13 Aug. -->
+      <div class="mm-hdr">
+        <span class="mm-hdr-fx"><i></i></span>
+        <div class="mm-hdr-main">
+          <span id="more-avatar" class="mm-hdr-av">--</span>
+          <div class="mm-hdr-who">
+            <div class="mm-hdr-k"><span data-i18n="hdr.signedIn">SIGNED IN</span><em id="more-hdr-acct"></em></div>
+            <div id="more-name" class="mm-hdr-name">Trader</div>
           </div>
+          <span id="more-tier-badge" class="mm-hdr-badge"><i class="ti ti-crown" style="font-size:10px;"></i> PREMIUM</span>
         </div>
-        <span style="width:40px;height:40px;border-radius:50%;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;"><i class="ti ti-bell" style="font-size:19px;color:var(--text2);"></i></span>
+        <div class="mm-hdr-end">
+          <span class="mm-hdr-bell"><i class="ti ti-bell"></i></span>
+        </div>
       </div>
 
       <!-- Banners. Replaced the leaderboard on 13 Aug 2026. The whole block
@@ -6769,7 +6779,7 @@ var MM_I18N = {
     'more.smartTool':'智能工具', 'more.tradeSettings':'交易設定', 'more.autoTrade':'自動交易',
     'more.academy':'交易學院', 'more.news':'財經日曆', 'more.aiAnalyst':'AI 圖表分析',
     'more.support':'客戶服務', 'more.followUs':'追蹤我們', 'more.admin':'管理後台', 'more.signOut':'登出',
-    'more.services':'更多服務', 'more.others':'其他', 'more.leaderboard':'排行榜', 'more.viewAll':'查看全部',
+    'more.services':'更多服務', 'more.others':'其他', 'hdr.signedIn':'已登入', 'more.leaderboard':'排行榜', 'more.viewAll':'查看全部',
     'q.scanner':'MAI 掃描器', 'q.manager':'MAI 基金經理', 'q.smartTools':'MAI 智能工具', 'q.account':'我的帳戶',
     'dash.welcome':'歡迎回來', 'dash.sub':'今天一起加速您的財富', 'dash.market':'市場','dash.overview':'總覽',
     'dash.recent':'最新','dash.signals':'訊號','dash.viewAll':'查看所有訊號 →',
@@ -7401,7 +7411,7 @@ var MM_I18N = {
     'more.news':'财经日历', 'more.aiAnalyst':'AI 图表分析',
     'more.support':'客户服务', 'more.followUs':'追踪我们',
     'more.admin':'管理后台', 'more.signOut':'登出',
-    'more.services':'更多服务', 'more.others':'其他',
+    'more.services':'更多服务', 'more.others':'其他', 'hdr.signedIn':'已登录',
     'more.leaderboard':'排行榜', 'more.viewAll':'查看全部',
     'q.scanner':'MAI 扫描器', 'q.manager':'MAI 基金经理',
     'q.smartTools':'MAI 智能工具', 'q.account':'我的账户',
@@ -7937,7 +7947,7 @@ var MM_I18N = {
     'more.news':'Kalendar Berita', 'more.aiAnalyst':'Penganalisis Carta AI',
     'more.support':'Sokongan Pelanggan', 'more.followUs':'Ikuti Kami',
     'more.admin':'Panel Admin', 'more.signOut':'Log Keluar',
-    'more.services':'Perkhidmatan lain', 'more.others':'Lain-lain',
+    'more.services':'Perkhidmatan lain', 'more.others':'Lain-lain', 'hdr.signedIn':'LOG MASUK',
     'more.leaderboard':'Papan Pendahulu', 'more.viewAll':'Lihat semua',
     'q.scanner':'MAI Scanner', 'q.manager':'MAI Manager',
     'q.smartTools':'MAI Smart Tools', 'q.account':'Akaun Saya',
@@ -8473,7 +8483,7 @@ var MM_I18N = {
     'more.news':'経済カレンダー', 'more.aiAnalyst':'AIチャート分析',
     'more.support':'カスタマーサポート', 'more.followUs':'フォローする',
     'more.admin':'管理パネル', 'more.signOut':'ログアウト',
-    'more.services':'その他のサービス', 'more.others':'その他',
+    'more.services':'その他のサービス', 'more.others':'その他', 'hdr.signedIn':'ログイン中',
     'more.leaderboard':'ランキング', 'more.viewAll':'すべて見る',
     'q.scanner':'MAI Scanner', 'q.manager':'MAI Manager',
     'q.smartTools':'MAI Smart Tools', 'q.account':'マイアカウント',
@@ -9009,7 +9019,7 @@ var MM_I18N = {
     'more.news':'경제 캘린더', 'more.aiAnalyst':'AI 차트 분석',
     'more.support':'고객 지원', 'more.followUs':'팔로우하기',
     'more.admin':'관리자 패널', 'more.signOut':'로그아웃',
-    'more.services':'기타 서비스', 'more.others':'기타',
+    'more.services':'기타 서비스', 'more.others':'기타', 'hdr.signedIn':'로그인됨',
     'more.leaderboard':'리더보드', 'more.viewAll':'전체 보기',
     'q.scanner':'MAI Scanner', 'q.manager':'MAI Manager',
     'q.smartTools':'MAI Smart Tools', 'q.account':'내 계정',
@@ -9545,7 +9555,7 @@ var MM_I18N = {
     'more.news':'ปฏิทินข่าว', 'more.aiAnalyst':'AI วิเคราะห์กราฟ',
     'more.support':'ฝ่ายบริการลูกค้า', 'more.followUs':'ติดตามเรา',
     'more.admin':'แผงผู้ดูแล', 'more.signOut':'ออกจากระบบ',
-    'more.services':'บริการอื่น ๆ', 'more.others':'อื่น ๆ',
+    'more.services':'บริการอื่น ๆ', 'more.others':'อื่น ๆ', 'hdr.signedIn':'เข้าสู่ระบบ',
     'more.leaderboard':'กระดานอันดับ', 'more.viewAll':'ดูทั้งหมด',
     'q.scanner':'MAI Scanner', 'q.manager':'MAI Manager',
     'q.smartTools':'MAI Smart Tools', 'q.account':'บัญชีของฉัน',
@@ -10081,7 +10091,7 @@ var MM_I18N = {
     'more.news':'Lịch kinh tế', 'more.aiAnalyst':'Phân tích biểu đồ AI',
     'more.support':'Hỗ trợ khách hàng', 'more.followUs':'Theo dõi chúng tôi',
     'more.admin':'Bảng quản trị', 'more.signOut':'Đăng xuất',
-    'more.services':'Dịch vụ khác', 'more.others':'Khác',
+    'more.services':'Dịch vụ khác', 'more.others':'Khác', 'hdr.signedIn':'ĐÃ ĐĂNG NHẬP',
     'more.leaderboard':'Bảng xếp hạng', 'more.viewAll':'Xem tất cả',
     'q.scanner':'MAI Scanner', 'q.manager':'MAI Manager',
     'q.smartTools':'MAI Smart Tools', 'q.account':'Tài khoản của tôi',
@@ -10617,7 +10627,7 @@ var MM_I18N = {
     'more.news':'News Calendar', 'more.aiAnalyst':'AI Chart Analyst',
     'more.support':'Customer Support', 'more.followUs':'Sundan Kami',
     'more.admin':'Admin Panel', 'more.signOut':'Mag-log out',
-    'more.services':'Iba pang serbisyo', 'more.others':'Iba pa',
+    'more.services':'Iba pang serbisyo', 'more.others':'Iba pa', 'hdr.signedIn':'NAKA-SIGN IN',
     'more.leaderboard':'Leaderboard', 'more.viewAll':'Tingnan lahat',
     'q.scanner':'MAI Scanner', 'q.manager':'MAI Manager',
     'q.smartTools':'MAI Smart Tools', 'q.account':'Aking Account',
@@ -11153,7 +11163,7 @@ var MM_I18N = {
     'more.news':'समाचार कैलेंडर', 'more.aiAnalyst':'AI चार्ट विश्लेषक',
     'more.support':'ग्राहक सहायता', 'more.followUs':'हमें फ़ॉलो करें',
     'more.admin':'एडमिन पैनल', 'more.signOut':'लॉग आउट',
-    'more.services':'अन्य सेवाएँ', 'more.others':'अन्य',
+    'more.services':'अन्य सेवाएँ', 'more.others':'अन्य', 'hdr.signedIn':'साइन इन',
     'more.leaderboard':'लीडरबोर्ड', 'more.viewAll':'सभी देखें',
     'q.scanner':'MAI Scanner', 'q.manager':'MAI Manager',
     'q.smartTools':'MAI Smart Tools', 'q.account':'मेरा खाता',
@@ -11689,7 +11699,7 @@ var MM_I18N = {
     'more.news':'Calendario económico', 'more.aiAnalyst':'Analista de gráficos con IA',
     'more.support':'Atención al cliente', 'more.followUs':'Síguenos',
     'more.admin':'Panel de administración', 'more.signOut':'Cerrar sesión',
-    'more.services':'Otros servicios', 'more.others':'Otros',
+    'more.services':'Otros servicios', 'more.others':'Otros', 'hdr.signedIn':'SESIÓN INICIADA',
     'more.leaderboard':'Clasificación', 'more.viewAll':'Ver todo',
     'q.scanner':'MAI Scanner', 'q.manager':'MAI Manager',
     'q.smartTools':'MAI Smart Tools', 'q.account':'Mi cuenta',
@@ -15950,6 +15960,9 @@ function comingSoonToast(label){
 function loadMoreTab(){
   var nm = (currentUser && (currentUser.name || currentUser.username)) || 'Trader';
   var nmEl = document.getElementById('more-name'); if(nmEl) nmEl.textContent = nm;
+  // The account being traded, not users.mt5_id, which is the registration value.
+  var acEl = document.getElementById('more-hdr-acct');
+  if(acEl) acEl.textContent = mmActiveMt5Id() || '';
   var av = document.getElementById('more-avatar'); if(av) av.textContent = initialsFrom(nm);
   if(typeof applyAvatarEverywhere==='function') applyAvatarEverywhere();
   var prem = (typeof isPremiumUser === 'function') ? isPremiumUser() : false;
@@ -22817,6 +22830,41 @@ function ntFlipLead(m){
    1.5px instead of 2 and a second slower, so four of them do not compete with
    a banner that is also moving.
    ══════════════════════════════════════════════════════════ */
+
+/* THE MORE HEADER. A lattice cell matching the section below it, with a slow
+   field leaning across on a 34 second cycle. The field is on SCREEN BLEND, so
+   where it fades out the result is exactly the card colour rather than the
+   faint step a plain tint leaves - the same reason the signal card uses it. */
+.mm-hdr{position:relative;display:flex;border:1px solid #23252F;border-radius:12px;
+ overflow:hidden;margin-bottom:18px;background:#0B0C10;}
+.mm-hdr-fx{position:absolute;inset:0;z-index:1;pointer-events:none;mix-blend-mode:screen;overflow:hidden;}
+.mm-hdr-fx i{position:absolute;left:-30%;top:-120%;width:160%;height:340%;display:block;
+ transform-origin:50% 50%;animation:mmHdrTilt 34s ease-in-out infinite;
+ background:linear-gradient(180deg,rgba(255,46,63,.22),rgba(255,106,43,.05) 45%,transparent 70%);}
+@keyframes mmHdrTilt{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(8deg)}}
+.mm-hdr-main{position:relative;z-index:2;flex:1;min-width:0;display:flex;align-items:center;
+ gap:11px;padding:11px 12px;}
+.mm-hdr-av{width:38px;height:38px;border-radius:12px;flex:none;display:flex;align-items:center;
+ justify-content:center;font-size:15px;font-weight:800;color:#fff;
+ background:linear-gradient(100deg,#FF6A2B,#FF1E3C);}
+.mm-hdr-who{flex:1;min-width:0;}
+.mm-hdr-k{font-size:8.5px;letter-spacing:.18em;color:var(--text3);font-weight:700;}
+.mm-hdr-k em{font-style:normal;font-family:ui-monospace,Menlo,monospace;letter-spacing:.06em;}
+.mm-hdr-k em:not(:empty)::before{content:" \00b7 ";}
+.mm-hdr-name{font-size:14px;color:var(--text);margin-top:2px;
+ font-family:'Orbitron',sans-serif;letter-spacing:-.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mm-hdr-badge{align-self:center;flex:none;display:inline-flex;align-items:center;gap:4px;
+ font-size:8px;letter-spacing:.08em;color:#3A2A05;background:var(--gold);padding:3px 7px;
+ border-radius:5px;font-weight:800;}
+.mm-hdr-end{position:relative;z-index:2;flex:none;display:flex;align-items:center;
+ justify-content:center;padding:0 14px;border-left:1px solid #23252F;}
+.mm-hdr-bell{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;
+ justify-content:center;color:var(--text2);}
+.mm-hdr-bell i{font-size:18px;}
+html[data-theme="light"] .mm-hdr{background:#fff;border-color:rgba(0,0,0,.10);}
+html[data-theme="light"] .mm-hdr-end{border-left-color:rgba(0,0,0,.10);}
+html[data-theme="light"] .mm-hdr-fx{display:none;}
+@media (prefers-reduced-motion: reduce){ .mm-hdr-fx i{animation:none;} }
 .mm-act-frame{border:1px solid #23252F;border-radius:12px;overflow:hidden;margin-bottom:16px;}
 .mm-acts{display:grid;grid-template-columns:1fr 1fr;}
 .mm-act{position:relative;overflow:hidden;padding:9px 11px 15px;cursor:pointer;
