@@ -2330,10 +2330,40 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
   content: ''; position: absolute; left: -19px; top: 15px; width: 7px; height: 7px;
   border-radius: 50%; background: var(--text2);
 }
-.tkc-body.tl .tkc-m.me { border-color: rgba(255,30,60,0.28); }
+/* 17 Aug 2026. Who is talking is carried by COLOUR, not by the label.
+   The customer block takes the brand gradient and leans 9 degrees over 26s,
+   the same trick as the signal card: light that leans rather than travels,
+   so nothing ever passes behind a word. Support takes steel blue, which is
+   the furthest thing from red on the wheel and the only one of the three
+   tried that cannot be misread as the same speaker. */
+.tkc-body.tl .tkc-m.me {
+  background: linear-gradient(126deg, #FF1E3C, #C40024);
+  border-color: rgba(255,255,255,0.10);
+  color: #fff;
+  animation: tkcTilt 26s ease-in-out infinite;
+}
+.tkc-body.tl .tkc-m.me .tkc-w { color: rgba(255,255,255,0.85); }
+.tkc-body.tl .tkc-m.me .tkc-t { color: rgba(255,255,255,0.80); opacity: 1; }
 .tkc-body.tl .tkc-m.me:before {
   background: var(--red); box-shadow: 0 0 0 3px rgba(255,30,60,0.18);
 }
+@keyframes tkcTilt {
+  0%   { background: linear-gradient(126deg, #FF1E3C, #C40024); }
+  50%  { background: linear-gradient(144deg, #FF1E3C, #C40024); }
+  100% { background: linear-gradient(126deg, #FF1E3C, #C40024); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tkc-body.tl .tkc-m.me { animation: none; }
+}
+.tkc-body.tl .tkc-m.them {
+  background: linear-gradient(135deg, rgba(59,130,246,0.16), rgba(59,130,246,0.06));
+  border-color: rgba(59,130,246,0.28);
+}
+.tkc-body.tl .tkc-m.them .tkc-w { color: #7FB0FF; }
+.tkc-body.tl .tkc-m.them:before {
+  background: var(--blue); box-shadow: 0 0 0 3px rgba(59,130,246,0.18);
+}
+[data-theme="light"] .tkc-body.tl .tkc-m.them .tkc-w { color: #2563EB; }
 .tkc-m .tkc-w {
   display: block; font-family: 'Orbitron', sans-serif; font-size: 8.5px;
   font-weight: 800; letter-spacing: .8px; margin-bottom: 5px; color: var(--text3);
