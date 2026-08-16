@@ -2230,6 +2230,170 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
   margin-bottom: 12px;
 }
 .divider-line { height: 1px; background: var(--border); margin: 14px 0; }
+/* ══════════════════════════════════════════════════════════════
+   SUPPORT CHAT (17 Aug 2026)
+   Customer side is a TIMELINE: full width blocks down a rail, each
+   labelled with who wrote it. Admin side is a queue that opens a
+   thread with the customer's account fixed under the header.
+   A ticket is closed by admin only. `closed_at` is set, and both
+   lists stop showing it once that is more than 24 hours old, so it
+   drops off on its own with no cron job and the row survives.
+   A customer message clears `closed_at`, which reopens the case.
+   ══════════════════════════════════════════════════════════════ */
+.tkc-ov {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.86);
+  z-index: 9999; display: flex; align-items: flex-end;
+  opacity: 0; transition: opacity .25s;
+}
+.tkc-ov.on { opacity: 1; }
+.tkc-sheet {
+  background: var(--bg); width: 100%; height: 92vh;
+  border-radius: 20px 20px 0 0; display: flex; flex-direction: column;
+  overflow: hidden; transform: translateY(5%);
+  transition: transform .28s cubic-bezier(.22,.61,.36,1);
+}
+.tkc-ov.on .tkc-sheet { transform: none; }
+.tkc-ov.tkc-fs { align-items: stretch; }
+.tkc-ov.tkc-fs .tkc-sheet { height: 100%; border-radius: 0; }
+
+.tkc-hd {
+  flex: 0 0 auto; display: flex; align-items: center; gap: 10px;
+  padding: 12px 14px; border-bottom: 1px solid var(--border); position: relative;
+}
+.tkc-x {
+  width: 30px; height: 30px; flex: 0 0 30px; border-radius: 9px;
+  background: var(--surface); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; color: var(--text2); cursor: pointer;
+}
+.tkc-who { flex: 1; min-width: 0; }
+.tkc-who b { display: block; font-size: 12.5px; font-weight: 700; color: var(--text); }
+.tkc-who span { font-size: 9.5px; color: var(--text3); }
+.tkc-pill {
+  font-size: 8.5px; font-weight: 700; letter-spacing: .5px; padding: 4px 8px;
+  border-radius: 5px; text-transform: uppercase; cursor: default; white-space: nowrap;
+}
+.tkc-pill.tap { cursor: pointer; }
+.tkc-p-open { background: rgba(255,176,32,0.14); color: var(--amber); }
+.tkc-p-pend { background: rgba(255,30,60,0.14); color: var(--red); }
+.tkc-p-done { background: rgba(0,200,122,0.14); color: var(--green); }
+
+.tkc-menu {
+  position: absolute; right: 12px; top: 48px; background: #12111a;
+  border: 1px solid var(--border); border-radius: 12px; padding: 5px;
+  z-index: 20; box-shadow: 0 16px 30px -12px #000; display: none;
+}
+.tkc-menu.on { display: block; }
+.tkc-menu div {
+  font-size: 11px; padding: 9px 14px; border-radius: 8px;
+  color: var(--text2); white-space: nowrap; cursor: pointer;
+}
+.tkc-menu div:active { background: var(--surface2); }
+.tkc-menu div.dg { color: var(--red); }
+
+.tkc-note {
+  flex: 0 0 auto; padding: 8px 14px; border-bottom: 1px solid var(--border);
+  background: rgba(0,200,122,0.06); font-size: 10px; color: var(--text2); line-height: 1.5;
+}
+.tkc-note b { color: var(--green); font-weight: 700; }
+
+.tkc-ctx {
+  flex: 0 0 auto; padding: 9px 12px; border-bottom: 1px solid var(--border);
+  background: linear-gradient(180deg,rgba(255,255,255,0.05),rgba(255,255,255,0.02));
+  display: grid; grid-template-columns: 1fr 1fr; gap: 5px 10px;
+}
+.tkc-ctx div {
+  font-size: 9.5px; color: var(--text3); white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis;
+}
+.tkc-ctx b { color: var(--text); font-weight: 600; }
+.tkc-ctx .fu { grid-column: 1 / 3; color: var(--red); }
+
+.tkc-body {
+  flex: 1; overflow-y: auto; padding: 14px 14px 8px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.tkc-body.tl { padding-left: 28px; position: relative; }
+.tkc-rail {
+  position: absolute; left: 14px; top: 14px; bottom: 8px; width: 1px;
+  background: var(--border);
+}
+
+.tkc-m { font-size: 11.5px; line-height: 1.55; }
+.tkc-m .tkc-t { display: block; font-size: 8.5px; margin-top: 5px; opacity: .55; }
+
+.tkc-body.tl .tkc-m {
+  align-self: stretch; padding: 10px 12px 11px; border-radius: 12px;
+  background: var(--surface); border: 1px solid var(--border); position: relative;
+}
+.tkc-body.tl .tkc-m:before {
+  content: ''; position: absolute; left: -19px; top: 15px; width: 7px; height: 7px;
+  border-radius: 50%; background: var(--text2);
+}
+.tkc-body.tl .tkc-m.me { border-color: rgba(255,30,60,0.28); }
+.tkc-body.tl .tkc-m.me:before {
+  background: var(--red); box-shadow: 0 0 0 3px rgba(255,30,60,0.18);
+}
+.tkc-m .tkc-w {
+  display: block; font-family: 'Orbitron', sans-serif; font-size: 8.5px;
+  font-weight: 800; letter-spacing: .8px; margin-bottom: 5px; color: var(--text3);
+}
+.tkc-m.me .tkc-w { color: var(--red); }
+
+.tkc-body.bub .tkc-m { max-width: 82%; padding: 9px 12px; border-radius: 15px; }
+.tkc-body.bub .tkc-m.them {
+  align-self: flex-start; background: var(--surface2); border-bottom-left-radius: 5px;
+}
+.tkc-body.bub .tkc-m.me {
+  align-self: flex-end; background: var(--grad); color: #fff;
+  border-bottom-right-radius: 5px; font-weight: 500;
+}
+
+.tkc-quick { flex: 0 0 auto; display: flex; gap: 6px; padding: 8px 12px 0; overflow-x: auto; }
+.tkc-quick span {
+  font-size: 9.5px; padding: 6px 10px; border-radius: 16px; background: var(--surface);
+  border: 1px solid var(--border); color: var(--text2); white-space: nowrap; cursor: pointer;
+}
+.tkc-quick span:active { background: rgba(255,30,60,0.14); color: var(--red); }
+
+.tkc-comp {
+  flex: 0 0 auto; padding: 9px 12px 14px; border-top: 1px solid var(--border);
+  display: flex; gap: 8px; align-items: flex-end;
+}
+.tkc-in {
+  flex: 1; min-height: 36px; max-height: 90px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 18px; padding: 9px 13px;
+  font-size: 12px; color: var(--text); font-family: 'Sora', sans-serif;
+  resize: none; outline: none;
+}
+.tkc-send {
+  width: 36px; height: 36px; flex: 0 0 36px; border: none; border-radius: 50%;
+  background: var(--grad); color: #fff; display: flex; align-items: center;
+  justify-content: center; font-size: 15px; cursor: pointer;
+}
+.tkc-send[disabled] { background: var(--surface2); color: var(--text3); }
+.tkc-empty { text-align: center; padding: 26px 10px; color: var(--text3); font-size: 12px; }
+
+.tkc-row {
+  padding: 12px; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; margin-bottom: 8px; display: flex; gap: 10px;
+  align-items: flex-start; cursor: pointer;
+}
+.tkc-row .av {
+  width: 30px; height: 30px; flex: 0 0 30px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; color: #07070a; background: var(--red);
+}
+.tkc-row .bd { flex: 1; min-width: 0; }
+.tkc-row .r1 { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+.tkc-row .nm { font-size: 12.5px; font-weight: 700; color: var(--text); }
+.tkc-row .tm { font-size: 9.5px; color: var(--text3); white-space: nowrap; }
+.tkc-row .pv {
+  font-size: 11px; color: var(--text2); margin-top: 3px; white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis;
+}
+.tkc-row .r3 { margin-top: 7px; }
+
 .empty-state {
   text-align: center;
   padding: 40px 20px;
@@ -14227,10 +14391,10 @@ async function loadMyTickets() {
     var wrap = document.createElement('div');
     wrap.className = 'sp-tks';
     res.data.forEach(function(t) {
-      if(t.status === 'done' && t.replied_at) {
-        var age = (new Date() - new Date(t.replied_at)) / (1000*60*60);
-        if(age > 24) return;
-      }
+      // 17 Aug 2026. This used to key off replied_at, so a ticket that was
+      // answered and never closed vanished from the customer list anyway.
+      // It now follows the close, which is the only thing that ends a case.
+      if(!mmTkVisible(t)) return;
       var st = (t.status || 'open');
       var sc = {open:'var(--amber)',pending:'var(--red)',done:'var(--green)'}[st] || 'var(--text3)';
       var sb = {open:'rgba(255,176,32,0.12)',pending:'rgba(255,30,60,0.10)',done:'rgba(0,200,122,0.12)'}[st] || 'rgba(255,255,255,0.05)';
@@ -14261,60 +14425,230 @@ async function loadMyTickets() {
   } catch(e) {}
 }
 
-function openTicketDetail(ticket) {
-  var existing = document.getElementById('ticket-detail-popup');
-  if(existing) existing.remove();
-  var popup = document.createElement('div');
-  popup.id = 'ticket-detail-popup';
-  popup.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;display:flex;align-items:flex-end;';
-  var sheet = document.createElement('div');
-  sheet.style.cssText = 'background:var(--bg2);border-radius:20px 20px 0 0;padding:20px;width:100%;max-height:80vh;overflow-y:auto;';
-  var sc = {done:'var(--green)',pending:'var(--red)'}[ticket.status] || 'var(--amber)';
-  var closeBtn = document.createElement('button');
-  closeBtn.innerHTML = '&times;';
-  closeBtn.style.cssText = 'float:right;background:transparent;border:none;color:var(--text2);font-size:22px;cursor:pointer;line-height:1;';
-  closeBtn.addEventListener('click', function() { popup.remove(); });
-  var title = document.createElement('div');
-  title.style.cssText = 'font-size:13px;font-weight:800;color:var(--text);margin-bottom:12px;clear:both;';
-  title.textContent = ticket.subject;
-  var badge = document.createElement('div');
-  badge.style.cssText = 'font-size:10px;font-weight:700;padding:3px 10px;border-radius:4px;background:rgba(255,255,255,0.07);color:'+sc+';display:inline-block;margin-bottom:12px;';
-  badge.textContent = (ticket.status||'open').toUpperCase();
-  var msg = document.createElement('div');
-  msg.style.cssText = 'font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:14px;';
-  msg.textContent = ticket.message;
-  sheet.appendChild(closeBtn);
-  sheet.appendChild(title);
-  sheet.appendChild(badge);
-  sheet.appendChild(msg);
-  if(ticket.admin_reply) {
-    var rep = document.createElement('div');
-    rep.style.cssText = 'padding:12px;background:rgba(0,200,122,0.06);border:1px solid rgba(0,200,122,0.15);border-radius:10px;';
-    var repTitle = document.createElement('div');
-    repTitle.style.cssText = 'font-size:10px;color:var(--text3);margin-bottom:6px;font-weight:700;';
-    repTitle.textContent = mmT('sup.adminReply','ADMIN REPLY');
-    var repMsg = document.createElement('div');
-    repMsg.style.cssText = 'font-size:12px;color:var(--green);line-height:1.7;';
-    repMsg.textContent = ticket.admin_reply;
-    rep.appendChild(repTitle); rep.appendChild(repMsg);
-    sheet.appendChild(rep);
-  } else {
-    var waiting = document.createElement('div');
-    waiting.style.cssText = 'font-size:12px;color:var(--text3);font-style:italic;';
-    waiting.textContent = mmT('sup.awaiting','Awaiting admin reply...');
-    sheet.appendChild(waiting);
+// ══════════════════════════════════════════════════════════════
+// SUPPORT CHAT (17 Aug 2026). Shared state, then the CUSTOMER side.
+//
+// One overlay id is used by both sides, `ticket-detail-popup`, so only one
+// thread can ever be open. The admin version adds the class `tkc-fs`.
+//
+// THE STATE RULES, all enforced in the database by the trigger
+// `trg_ticket_messages_sync`, never here:
+//   a message from `user`  -> ticket goes status open and closed_at is cleared
+//   a message from `admin` -> ticket goes status pending, replied_at and
+//                             admin_reply are written
+// So the app INSERTS A MESSAGE and never has to update the ticket. A customer
+// cannot update support_tickets under RLS, which is why the trigger exists.
+//
+// Closing is the ONE thing admin updates directly: status done plus closed_at.
+// Both lists then drop the ticket 24 hours after that, in JavaScript, because
+// the query builder has no .gt(). Nothing is deleted and no cron job runs.
+// ══════════════════════════════════════════════════════════════
+var MMTK = { id:null, admin:false, poll:null, sig:'', ticket:null };
+
+var MMTK_QUICK = [
+  { k:'Algo off',   v:'Algo Trading was switched off on your terminal. I have turned it back on, so the next signal will fire.' },
+  { k:'Balance',    v:'Your balance is below what this template needs to open the full ladder. Topping up will let it run.' },
+  { k:'Ask MT5 ID', v:'Could you send me your MT5 account number so I can look at it from this side.' }
+];
+
+function mmTkEsc(s) {
+  var d = document.createElement('div');
+  d.textContent = (s === null || s === undefined) ? '' : String(s);
+  return d.innerHTML;
+}
+
+function mmTkClock(iso) {
+  try {
+    var d = new Date(iso);
+    if(isNaN(d.getTime())) return '';
+    return ('0'+d.getHours()).slice(-2) + ':' + ('0'+d.getMinutes()).slice(-2);
+  } catch(e) { return ''; }
+}
+
+function mmTkAgeH(iso) {
+  if(!iso) return null;
+  var d = new Date(iso);
+  if(isNaN(d.getTime())) return null;
+  return (new Date() - d) / 3600000;
+}
+
+// A closed ticket leaves BOTH lists 24 hours after it was closed.
+function mmTkVisible(t) {
+  if(!t || !t.closed_at) return true;
+  var a = mmTkAgeH(t.closed_at);
+  return (a === null) ? true : (a <= 24);
+}
+
+function mmTkLeft(closedAt) {
+  var a = mmTkAgeH(closedAt);
+  if(a === null) return '';
+  var mins = Math.max(0, Math.round((24 - a) * 60));
+  var h = Math.floor(mins / 60), m = mins % 60;
+  return (h > 0) ? (h + 'h ' + m + 'm') : (m + 'm');
+}
+
+function mmTkStatus(t, admin) {
+  if(t && (t.closed_at || t.status === 'done')) return { txt:mmT('sup.stClosed','Closed'), cls:'tkc-p-done' };
+  if(t && t.status === 'pending') return { txt:mmT('sup.stAnswered','Answered'), cls:'tkc-p-done' };
+  return admin
+    ? { txt:mmT('sup.stWaiting','Waiting on us'), cls:'tkc-p-pend' }
+    : { txt:mmT('sup.stOpen','Open'), cls:'tkc-p-open' };
+}
+
+async function mmTkMsgs(id) {
+  try {
+    var r = await db.from('ticket_messages').select('*').eq('ticket_id', id).order('created_at').limit(300);
+    return (r && r.data && Array.isArray(r.data)) ? r.data : [];
+  } catch(e) { return []; }
+}
+
+async function mmTkOne(id) {
+  try {
+    var r = await db.from('support_tickets').select('*').eq('id', id).single();
+    return r && r.data ? (Array.isArray(r.data) ? r.data[0] : r.data) : null;
+  } catch(e) { return null; }
+}
+
+function mmTkStop() {
+  if(MMTK.poll) { clearInterval(MMTK.poll); MMTK.poll = null; }
+}
+
+function mmTkCloseSheet() {
+  mmTkStop();
+  var ov = document.getElementById('ticket-detail-popup');
+  if(ov) ov.remove();
+  MMTK.id = null; MMTK.ticket = null; MMTK.sig = ''; MMTK.admin = false;
+}
+
+function mmTkRender(msgs) {
+  var body = document.getElementById('tkc-body');
+  if(!body) return;
+  var admin = MMTK.admin;
+  var html = admin ? '' : '<span class="tkc-rail"></span>';
+  if(!msgs.length) {
+    html += '<div class="tkc-empty">' + mmT('sup.noMsgs','No messages yet.') + '</div>';
   }
-  popup.appendChild(sheet);
-  document.body.appendChild(popup);
-  var goBtn = popup.querySelector('#go-smart-tool-btn');
-  if(goBtn) goBtn.addEventListener('click', function(){
-    closeTradePopup();
-    switchTab('more');
-    setTimeout(function(){
-      openSmartTool('plain');
-    }, 400);
-    popup.remove();
+  for(var i = 0; i < msgs.length; i++) {
+    var m = msgs[i];
+    var mine = admin ? (m.sender === 'admin') : (m.sender === 'user');
+    var lbl = '';
+    if(!admin) {
+      lbl = '<span class="tkc-w">' +
+        (m.sender === 'user' ? mmT('sup.lblYou','YOU') : mmT('sup.lblSupport','SUPPORT')) + '</span>';
+    }
+    html += '<div class="tkc-m ' + (mine ? 'me' : 'them') + '">' + lbl +
+      mmTkEsc(m.body) + '<span class="tkc-t">' + mmTkClock(m.created_at) + '</span></div>';
+  }
+  body.innerHTML = html;
+  body.scrollTop = body.scrollHeight;
+}
+
+function mmTkHead(t) {
+  var p = document.getElementById('tkc-pill');
+  if(p) {
+    var st = mmTkStatus(t, MMTK.admin);
+    p.className = 'tkc-pill ' + st.cls + (MMTK.admin ? ' tap' : '');
+    p.textContent = st.txt;
+  }
+  var n = document.getElementById('tkc-note');
+  if(!n) return;
+  if(t && t.closed_at) {
+    n.className = 'tkc-note';
+    n.innerHTML = '<b>' + mmT('sup.caseClosed','Case closed.') + '</b> ' +
+      (MMTK.admin ? mmT('sup.clearsAdm','Leaves your list in ') : mmT('sup.clearsCus','Clears from your tickets in ')) +
+      mmTkLeft(t.closed_at) + '. ' +
+      (MMTK.admin ? mmT('sup.reopenAdm','A reply from the customer brings it back.')
+                  : mmT('sup.reopenCus','Reply below and it comes straight back to us.'));
+  } else {
+    n.className = '';
+    n.innerHTML = '';
+  }
+}
+
+async function mmTkRefresh() {
+  if(!MMTK.id) return;
+  var id = MMTK.id;
+  var t = await mmTkOne(id);
+  var msgs = await mmTkMsgs(id);
+  if(MMTK.id !== id) return;
+  if(t) MMTK.ticket = t;
+  mmTkHead(MMTK.ticket);
+  var sig = (MMTK.ticket ? ((MMTK.ticket.status||'') + '|' + (MMTK.ticket.closed_at||'')) : '') +
+            '|' + msgs.length + '|' + (msgs.length ? msgs[msgs.length-1].id : '');
+  if(sig !== MMTK.sig) { MMTK.sig = sig; mmTkRender(msgs); }
+}
+
+async function mmTkSend() {
+  var el = document.getElementById('tkc-in');
+  var btn = document.getElementById('tkc-send');
+  if(!el || !MMTK.id) return;
+  var body = (el.value || '').trim();
+  if(!body) return;
+  if(btn) btn.disabled = true;
+  try {
+    var r = await db.from('ticket_messages').insert({
+      ticket_id: MMTK.id,
+      sender: MMTK.admin ? 'admin' : 'user',
+      body: body
+    }).minimal();
+    if(r && r.error) throw r.error;
+    el.value = '';
+    MMTK.sig = '';
+    await mmTkRefresh();
+    if(MMTK.admin) { try { loadAdminTickets(); } catch(e) {} }
+    else { try { loadMyTickets(); } catch(e) {} }
+  } catch(e) {
+    alert(mmT('sup.sendFailed','Could not send: ') + (e.message || 'Unknown error'));
+  }
+  if(btn) btn.disabled = false;
+}
+
+function mmTkWireCommon(ov, after) {
+  var x = document.getElementById('tkc-x');
+  if(x) x.addEventListener('click', function() { mmTkCloseSheet(); if(after) after(); });
+  ov.addEventListener('click', function(ev) {
+    if(ev.target === ov) { mmTkCloseSheet(); if(after) after(); }
   });
+  var s = document.getElementById('tkc-send');
+  if(s) s.addEventListener('click', mmTkSend);
+  var i = document.getElementById('tkc-in');
+  if(i) i.addEventListener('keydown', function(ev) {
+    if(ev.key === 'Enter' && !ev.shiftKey) { ev.preventDefault(); mmTkSend(); }
+  });
+  // Two frames, or the browser has nothing to transition from.
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() { ov.classList.add('on'); });
+  });
+  mmTkRefresh();
+  MMTK.poll = setInterval(mmTkRefresh, 6000);
+}
+
+// ── CUSTOMER SIDE. The timeline. ──────────────────────────────
+function openTicketDetail(ticket) {
+  if(!ticket || !db) return;
+  mmTkCloseSheet();
+  MMTK.admin = false; MMTK.id = ticket.id; MMTK.ticket = ticket; MMTK.sig = '';
+  var st = mmTkStatus(ticket, false);
+  var ov = document.createElement('div');
+  ov.id = 'ticket-detail-popup';
+  ov.className = 'tkc-ov';
+  ov.innerHTML =
+    '<div class="tkc-sheet">' +
+      '<div class="tkc-hd">' +
+        '<span class="tkc-x" id="tkc-x"><i class="ti ti-chevron-down"></i></span>' +
+        '<span class="tkc-who"><b>' + mmTkEsc(ticket.subject || mmT('scr.support','CUSTOMER SUPPORT')) + '</b>' +
+          '<span>' + mmT('sup.window','Replies in 5 minutes to 24 hours') + '</span></span>' +
+        '<span class="tkc-pill ' + st.cls + '" id="tkc-pill">' + st.txt + '</span>' +
+      '</div>' +
+      '<div id="tkc-note"></div>' +
+      '<div class="tkc-body tl" id="tkc-body"></div>' +
+      '<div class="tkc-comp">' +
+        '<textarea class="tkc-in" id="tkc-in" rows="1" placeholder="' + mmT('sup.writeMsg','Write a message') + '"></textarea>' +
+        '<button class="tkc-send" id="tkc-send"><i class="ti ti-send"></i></button>' +
+      '</div>' +
+    '</div>';
+  document.body.appendChild(ov);
+  mmTkWireCommon(ov, function() { try { loadMyTickets(); } catch(e) {} });
 }
 
 
@@ -14560,6 +14894,10 @@ async function loadAdminDashboard() {
 }
 
 // ── ADMIN TICKETS ──
+// ── ADMIN SIDE. The queue, then the thread with the customer strip. ──
+// The status filter select still drives this. On top of it, a closed ticket
+// leaves the list 24 hours after closing - filtered here because the query
+// builder has no .gt().
 async function loadAdminTickets() {
   var el = document.getElementById('admin-tickets-list');
   if(!el || !db) return;
@@ -14567,55 +14905,187 @@ async function loadAdminTickets() {
   try {
     var filter = document.getElementById('ticket-filter');
     var status = filter ? filter.value : 'all';
-    var q = db.from('support_tickets').select('*').order('created_at', {ascending:false}).limit(20);
+    var q = db.from('support_tickets').select('*').order('created_at', {ascending:false}).limit(40);
     if(status !== 'all') q = q.eq('status', status);
     var res = await q;
-    if(!res.data || !res.data.length) { el.innerHTML = '<div class="empty-state" style="padding:16px;"><i class="ti ti-ticket"></i>No tickets found</div>'; return; }
+    var rows = (res && res.data && Array.isArray(res.data)) ? res.data : [];
+    rows = rows.filter(mmTkVisible);
+    if(!rows.length) {
+      el.innerHTML = '<div class="empty-state" style="padding:16px;"><i class="ti ti-ticket"></i>No tickets found</div>';
+      return;
+    }
     el.innerHTML = '';
-    res.data.forEach(function(t) {
-      var sc = {open:'var(--amber)',pending:'var(--red)',done:'var(--green)'}[t.status] || 'var(--text3)';
-      var div = document.createElement('div');
-      div.style.cssText = 'padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;';
-      div.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">' +
-        '<div style="font-size:12px;font-weight:700;color:var(--text);">' + t.subject + '</div>' +
-        '<div style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;background:rgba(255,255,255,0.06);color:'+sc+';">' + (t.status||'open').toUpperCase() + '</div>' +
-        '</div>' +
-        '<div style="font-size:11px;color:var(--text3);margin-bottom:8px;">' + (t.user_name||'User') + ' · ' + new Date(t.created_at).toLocaleDateString() + '</div>' +
-        '<div style="font-size:11px;color:var(--text2);margin-bottom:10px;">' + (t.message||'').substring(0,100) + '...</div>';
-      // Reply form
-      var replyDiv = document.createElement('div');
-      replyDiv.innerHTML = '<div style="display:flex;gap:6px;margin-bottom:6px;">' +
-        '<input id="reply-' + t.id + '" class="auth-input" type="text" placeholder="Type reply..." style="flex:1;padding:8px 10px;font-size:12px;">' +
-        '<button class="reply-btn-' + t.id + '" style="padding:8px 12px;background:var(--grad);border:none;border-radius:8px;color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;flex-shrink:0;">Reply</button>' +
-        '</div>' +
-        '<div style="display:flex;gap:6px;">' +
-        '<button class="done-btn-' + t.id + '" style="flex:1;padding:7px;background:rgba(0,200,122,0.1);border:1px solid rgba(0,200,122,0.2);border-radius:7px;color:var(--green);font-size:11px;font-weight:700;cursor:pointer;">' + (t.status==='done'?'Reopen':'Mark Done') + '</button>' +
-        '<button class="del-btn-' + t.id + '" style="flex:1;padding:7px;background:rgba(255,30,60,0.08);border:1px solid rgba(255,30,60,0.15);border-radius:7px;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;">Delete</button>' +
+    rows.forEach(function(t) {
+      var st = mmTkStatus(t, true);
+      var nm = t.user_name || 'User';
+      var last = (t.admin_reply || t.message || '');
+      var row = document.createElement('div');
+      row.className = 'tkc-row';
+      row.innerHTML =
+        '<div class="av">' + mmTkEsc(nm.substring(0,2).toUpperCase()) + '</div>' +
+        '<div class="bd">' +
+          '<div class="r1"><div class="nm">' + mmTkEsc(nm) + '</div>' +
+            '<div class="tm">' + mmTkEsc(new Date(t.created_at).toLocaleDateString()) + '</div></div>' +
+          '<div class="pv">' + mmTkEsc(t.subject || '') + '</div>' +
+          '<div class="pv" style="color:var(--text3);">' + mmTkEsc(last.substring(0,70)) + '</div>' +
+          '<div class="r3"><span class="tkc-pill ' + st.cls + '">' + st.txt + '</span></div>' +
         '</div>';
-      replyDiv.querySelector('.reply-btn-' + t.id).addEventListener('click', function() { adminReplyTicket(t.id); });
-      replyDiv.querySelector('.done-btn-' + t.id).addEventListener('click', function() { adminToggleTicketDone(t.id, t.status); });
-      replyDiv.querySelector('.del-btn-' + t.id).addEventListener('click', function() { adminDeleteTicket(t.id); });
-      div.appendChild(replyDiv);
-      el.appendChild(div);
+      row.addEventListener('click', function() { mmAdmTkOpen(t); });
+      el.appendChild(row);
     });
-  } catch(e) { el.innerHTML = '<div class="empty-state" style="padding:16px;"><i class="ti ti-alert-circle"></i>Error loading tickets</div>'; }
+  } catch(e) {
+    el.innerHTML = '<div class="empty-state" style="padding:16px;"><i class="ti ti-alert-circle"></i>Error loading tickets</div>';
+  }
 }
 
+// The strip that answers the first question of every ticket: who is this and
+// what is their account doing. Every part of it is wrapped, because a customer
+// with no MT5 account is normal and must not break the thread.
+async function mmAdmTkCtx(ticket) {
+  var el = document.getElementById('tkc-ctx');
+  if(!el) return;
+  var acct = null, fail = null;
+  try {
+    var r = await db.from('mt5_accounts').select('*').eq('user_id', ticket.user_id).limit(1);
+    var rows = (r && r.data && Array.isArray(r.data)) ? r.data : [];
+    acct = rows.length ? rows[0] : null;
+  } catch(e) {}
+  if(acct && acct.mt5_id) {
+    try {
+      var f = await db.from('trade_commands').select('result,created_at')
+        .eq('mt5_id', String(acct.mt5_id)).eq('status','failed')
+        .order('created_at', {ascending:false}).limit(1);
+      var fr = (f && f.data && Array.isArray(f.data)) ? f.data : [];
+      fail = fr.length ? fr[0] : null;
+    } catch(e) {}
+  }
+  function money(v) {
+    var n = Number(v);
+    if(v === null || v === undefined || v === '' || isNaN(n)) return '-';
+    return n.toFixed(2);
+  }
+  function seen(v) {
+    if(!v) return '-';
+    var s = Math.round((new Date() - new Date(v)) / 1000);
+    if(isNaN(s)) return '-';
+    if(s < 90) return s + 's ago';
+    if(s < 5400) return Math.round(s/60) + 'm ago';
+    return Math.round(s/3600) + 'h ago';
+  }
+  el.innerHTML =
+    '<div>Account <b>' + mmTkEsc(acct ? (acct.mt5_id || '-') : 'none') + '</b></div>' +
+    '<div>Balance <b>' + (acct ? money(acct.balance) : '-') + '</b></div>' +
+    '<div>Risk <b>' + (acct && acct.auto_risk_pct ? (acct.auto_risk_pct + '%') : '-') + '</b></div>' +
+    '<div>EA seen <b>' + (acct ? seen(acct.ea_last_seen) : '-') + '</b></div>' +
+    (fail ? '<div class="fu">Last fail: ' + mmTkEsc(fail.result || '') + '</div>' : '');
+}
+
+// Closing is the only thing admin writes onto the ticket itself.
+async function mmAdmTkSet(kind) {
+  if(!MMTK.id) return;
+  var patch = null;
+  if(kind === 'open')     patch = { status:'open', closed_at:null };
+  if(kind === 'answered') patch = { status:'pending' };
+  if(kind === 'closed')   patch = { status:'done', closed_at:new Date().toISOString() };
+  if(!patch) return;
+  var menu = document.getElementById('tkc-menu');
+  if(menu) menu.classList.remove('on');
+  try {
+    var r = await db.from('support_tickets').update(patch).eq('id', MMTK.id);
+    if(r && r.error) throw r.error;
+    MMTK.sig = '';
+    await mmTkRefresh();
+    try { loadAdminTickets(); } catch(e) {}
+  } catch(e) {
+    alert(mmT('err.generic','Error: ') + (e.message || 'Unknown error'));
+  }
+}
+
+async function mmAdmTkOpen(ticket) {
+  if(!ticket || !db) return;
+  mmTkCloseSheet();
+  MMTK.admin = true; MMTK.id = ticket.id; MMTK.ticket = ticket; MMTK.sig = '';
+  var st = mmTkStatus(ticket, true);
+  var chips = '';
+  for(var i = 0; i < MMTK_QUICK.length; i++) {
+    chips += '<span data-q="' + i + '">' + mmTkEsc(MMTK_QUICK[i].k) + '</span>';
+  }
+  var ov = document.createElement('div');
+  ov.id = 'ticket-detail-popup';
+  ov.className = 'tkc-ov tkc-fs';
+  ov.innerHTML =
+    '<div class="tkc-sheet">' +
+      '<div class="tkc-hd">' +
+        '<span class="tkc-x" id="tkc-x"><i class="ti ti-arrow-left"></i></span>' +
+        '<span class="tkc-who"><b>' + mmTkEsc(ticket.user_name || 'Customer') + '</b>' +
+          '<span>' + mmTkEsc(ticket.subject || '') + '</span></span>' +
+        '<span class="tkc-pill tap ' + st.cls + '" id="tkc-pill">' + st.txt + '</span>' +
+        '<div class="tkc-menu" id="tkc-menu">' +
+          '<div data-s="open">Mark open</div>' +
+          '<div data-s="answered">Mark answered</div>' +
+          '<div data-s="closed">Close case</div>' +
+          '<div class="dg" data-s="delete">Delete permanently</div>' +
+        '</div>' +
+      '</div>' +
+      '<div id="tkc-note"></div>' +
+      '<div class="tkc-ctx" id="tkc-ctx"><div>Account <b>...</b></div><div>Balance <b>...</b></div></div>' +
+      '<div class="tkc-body bub" id="tkc-body"></div>' +
+      '<div class="tkc-quick" id="tkc-quick">' + chips + '</div>' +
+      '<div class="tkc-comp">' +
+        '<textarea class="tkc-in" id="tkc-in" rows="1" placeholder="Write a reply"></textarea>' +
+        '<button class="tkc-send" id="tkc-send"><i class="ti ti-send"></i></button>' +
+      '</div>' +
+    '</div>';
+  document.body.appendChild(ov);
+
+  var pill = document.getElementById('tkc-pill');
+  var menu = document.getElementById('tkc-menu');
+  if(pill && menu) {
+    pill.addEventListener('click', function(ev) {
+      ev.stopPropagation();
+      menu.classList.toggle('on');
+    });
+    menu.addEventListener('click', function(ev) {
+      var d = ev.target.getAttribute('data-s');
+      if(!d) return;
+      if(d === 'delete') {
+        var id = MMTK.id;
+        menu.classList.remove('on');
+        mmTkCloseSheet();
+        adminDeleteTicket(id);
+        return;
+      }
+      mmAdmTkSet(d);
+    });
+    document.getElementById('tkc-body').addEventListener('click', function() {
+      menu.classList.remove('on');
+    });
+  }
+  var qk = document.getElementById('tkc-quick');
+  if(qk) qk.addEventListener('click', function(ev) {
+    var n = ev.target.getAttribute('data-q');
+    if(n === null) return;
+    var box = document.getElementById('tkc-in');
+    if(box) { box.value = MMTK_QUICK[Number(n)].v; box.focus(); }
+  });
+
+  mmTkWireCommon(ov, function() { try { loadAdminTickets(); } catch(e) {} });
+  mmAdmTkCtx(ticket);
+}
+
+// Kept so the old call sites still work. The thread is the normal way in now.
 async function adminReplyTicket(ticketId) {
   var input = document.getElementById('reply-' + ticketId);
   if(!input || !input.value.trim()) return;
   var reply = input.value.trim();
   try {
-    await db.from('support_tickets').update({
-      admin_reply: reply,
-      status: 'pending',
-      replied_at: new Date().toISOString()
-    }).eq('id', ticketId);
+    var r = await db.from('ticket_messages').insert({
+      ticket_id: ticketId, sender: 'admin', body: reply
+    }).minimal();
+    if(r && r.error) throw r.error;
     input.value = '';
-    input.placeholder = 'Reply sent ✓';
-    input.style.color = 'var(--green)';
-    setTimeout(function() { loadAdminTickets(); }, 1000);
-  } catch(e) { alert('Error sending reply'); }
+    setTimeout(function() { loadAdminTickets(); }, 800);
+  } catch(e) { alert(mmT('sup.sendFailed','Could not send: ') + (e.message || 'Unknown error')); }
 }
 
 // ── ADMIN FUND REQUESTS ──
