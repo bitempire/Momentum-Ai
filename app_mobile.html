@@ -4538,37 +4538,37 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
             <div class="fu-frame">
         <div class="fu-cell" onclick="openSocial('instagram')">
           <span class="fu-name">Instagram</span>
-          <span class="fu-go">&#8599;</span>
+          <span class="fu-go"><i class="ti ti-external-link"></i></span>
           <span class="fu-bloom"></span>
           <span class="fu-thr"><i></i></span>
         </div>
         <div class="fu-cell" onclick="openSocial('threads')">
           <span class="fu-name">Threads</span>
-          <span class="fu-go">&#8599;</span>
+          <span class="fu-go"><i class="ti ti-external-link"></i></span>
           <span class="fu-bloom"></span>
           <span class="fu-thr"><i></i></span>
         </div>
         <div class="fu-cell" onclick="openSocial('facebook')">
           <span class="fu-name">Facebook</span>
-          <span class="fu-go">&#8599;</span>
+          <span class="fu-go"><i class="ti ti-external-link"></i></span>
           <span class="fu-bloom"></span>
           <span class="fu-thr"><i></i></span>
         </div>
         <div class="fu-cell" onclick="openSocial('tiktok')">
           <span class="fu-name">TikTok</span>
-          <span class="fu-go">&#8599;</span>
+          <span class="fu-go"><i class="ti ti-external-link"></i></span>
           <span class="fu-bloom"></span>
           <span class="fu-thr"><i></i></span>
         </div>
         <div class="fu-cell" onclick="openSocial('youtube')">
           <span class="fu-name">YouTube</span>
-          <span class="fu-go">&#8599;</span>
+          <span class="fu-go"><i class="ti ti-external-link"></i></span>
           <span class="fu-bloom"></span>
           <span class="fu-thr"><i></i></span>
         </div>
         <div class="fu-cell" onclick="openSocial('x')">
           <span class="fu-name">X</span>
-          <span class="fu-go">&#8599;</span>
+          <span class="fu-go"><i class="ti ti-external-link"></i></span>
           <span class="fu-bloom"></span>
           <span class="fu-thr"><i></i></span>
         </div>
@@ -4579,25 +4579,25 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <div class="fu-frame partner">
         <div class="fu-cell" onclick="openSocial('partner_website')">
           <span class="fu-name" data-i18n="fu.website">Website</span>
-          <span class="fu-go">&#8599;</span>
+          <span class="fu-go"><i class="ti ti-external-link"></i></span>
           <span class="fu-bloom"></span>
           <span class="fu-thr"><i></i></span>
         </div>
         <div class="fu-cell" onclick="openSocial('partner_instagram')">
           <span class="fu-name">Instagram</span>
-          <span class="fu-go">&#8599;</span>
+          <span class="fu-go"><i class="ti ti-external-link"></i></span>
           <span class="fu-bloom"></span>
           <span class="fu-thr"><i></i></span>
         </div>
         <div class="fu-cell" onclick="openSocial('partner_facebook')">
           <span class="fu-name">Facebook</span>
-          <span class="fu-go">&#8599;</span>
+          <span class="fu-go"><i class="ti ti-external-link"></i></span>
           <span class="fu-bloom"></span>
           <span class="fu-thr"><i></i></span>
         </div>
         <div class="fu-cell" onclick="openSocial('partner_linkedin')">
           <span class="fu-name">LinkedIn</span>
-          <span class="fu-go">&#8599;</span>
+          <span class="fu-go"><i class="ti ti-external-link"></i></span>
           <span class="fu-bloom"></span>
           <span class="fu-thr"><i></i></span>
         </div>
@@ -22889,7 +22889,12 @@ function ntFlipLead(m){
  letter-spacing:-.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
  background:linear-gradient(90deg,#FFFFFF,#C9CFD8 55%,#9AA2AE);
  -webkit-background-clip:text;background-clip:text;color:transparent;}
-.fu-go{font-size:12px;flex:none;color:#FF3B4C;}
+/* A DRAWN ICON, NOT A CHARACTER. The arrow was U+2197, which iOS and Android
+   give EMOJI PRESENTATION by default, so the phone painted its own blue tile
+   instead of honouring the colour set here. Anything that must take a colour
+   has to be an icon font glyph or an SVG, never a symbol character. */
+.fu-go{flex:none;color:#FF3B4C;display:flex;align-items:center;}
+.fu-go i{font-size:15px;}
 .fu-thr{position:absolute;left:0;right:0;bottom:0;height:2px;z-index:1;overflow:hidden;
  pointer-events:none;
  -webkit-mask-image:linear-gradient(90deg,transparent,#000 22%,#000 78%,transparent);
