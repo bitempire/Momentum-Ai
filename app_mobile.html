@@ -6131,13 +6131,28 @@ function mmActiveMt5Id(){
 }
 
 // ── ROUTE USER ──
+// 13 Aug 2026. STAFF LAND ON THE ADMIN PANEL. An admin or sub admin used to
+// arrive in the customer app with an Admin Panel item added to the menu, so
+// they saw every customer screen first and the panel only if they went looking.
+// They now go straight to it.
+//
+// IT IS NOT A HARD LOCK, deliberately. Closing the panel still gives the app,
+// because the only person who can test this product on a real phone is an
+// admin, and locking that out would cost more than it protects. What IS blocked
+// is connecting an MT5 account - see mmApplyStaffLimits below.
+var _mmStaffRouted = false;
+function mmIsStaff(u){ return !!u && (u.role === 'admin' || u.role === 'sub_admin'); }
+
 function routeUser(user) {
   if(user.role === 'admin') {
     loadAdminUsers();
     document.getElementById('admin-menu-item').style.display = 'flex';
     enterApp(user);
+    mmStaffLand();
   } else if(user.role === 'sub_admin') {
+    document.getElementById('admin-menu-item').style.display = 'flex';
     enterApp(user);
+    mmStaffLand();
   } else if(user.role === 'analyst') {
     showScreen('screen-analyst');
     loadAnalystScreen(user);
@@ -6199,6 +6214,8 @@ function enterApp(user) {
     // matters is the active one in `mt5_accounts`. Registration value only as a
     // fallback, for a customer who has not connected anything yet.
     if(profMt5) profMt5.textContent = mmActiveMt5Id() || user.mt5_id || '--';
+  // Re-applied here because the profile screen is rebuilt each time it opens.
+  try{ mmApplyStaffLimits(); }catch(e){}
     if(profBroker) profBroker.textContent = user.broker || 'AFTT Markets';
     if(profStatus) profStatus.textContent = user.status || 'Active';
   }
@@ -21317,6 +21334,28 @@ async function mt5SaveEdit(userId){
 function openAdminPanel(){
   showSubScreen('sub-admin');
   applyAdminTabAccess();
+}
+
+// ONCE PER SESSION, not on every routeUser call. `refreshCurrentUser` re-routes
+// whenever the row changes, and without this guard the panel would slam open
+// again while the admin was in the middle of something else.
+function mmStaffLand(){
+  if(_mmStaffRouted) return;
+  _mmStaffRouted = true;
+  mmApplyStaffLimits();
+  setTimeout(function(){ try{ openAdminPanel(); }catch(e){} }, 120);
+}
+
+// WHAT STAFF CANNOT DO. Connecting an MT5 account is the one customer action a
+// member of staff has no business taking from their own login, so the whole
+// block is removed rather than disabled - a disabled form still invites a try.
+function mmApplyStaffLimits(){
+  if(!mmIsStaff(currentUser)) return;
+  var ids = ['mt5-connect-section'];
+  for(var i=0;i<ids.length;i++){
+    var el = document.getElementById(ids[i]);
+    if(el) el.style.display = 'none';
+  }
 }
 
 function applyAdminTabAccess(){
