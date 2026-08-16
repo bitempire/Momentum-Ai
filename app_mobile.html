@@ -3042,12 +3042,6 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
 
       <!-- Quick actions — G2 red grid tiles (2x2, icon left) -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:18px;">
-        <div onclick="showSubScreen('sub-scanner')" style="position:relative;overflow:hidden;display:flex;align-items:center;gap:10px;background:linear-gradient(180deg,#FF2D46,#B00018);border-radius:14px;padding:13px;box-shadow:0 4px 12px rgba(176,0,24,0.3);cursor:pointer;"><div style="position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.13) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.13) 1px,transparent 1px);background-size:14px 14px;opacity:0.5;"></div><i class="ti ti-sparkles" style="position:relative;font-size:20px;color:#fff;flex-shrink:0;"></i><span style="position:relative;font-size:12px;color:#fff;font-weight:600;white-space:nowrap;" data-i18n="q.scanner">MAI Scanner</span></div>
-        <div onclick="showSubScreen('sub-fund'); setTimeout(mamInit,20);" style="position:relative;overflow:hidden;display:flex;align-items:center;gap:10px;background:linear-gradient(180deg,#FF2D46,#B00018);border-radius:14px;padding:13px;box-shadow:0 4px 12px rgba(176,0,24,0.3);cursor:pointer;"><div style="position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.13) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.13) 1px,transparent 1px);background-size:14px 14px;opacity:0.5;"></div><i class="ti ti-user-star" style="position:relative;font-size:20px;color:#fff;flex-shrink:0;"></i><span style="position:relative;font-size:12px;color:#fff;font-weight:600;white-space:nowrap;" data-i18n="q.manager">MAI Manager</span></div>
-        <div onclick="showSubScreen('sub-trade-settings')" style="position:relative;overflow:hidden;display:flex;align-items:center;gap:10px;background:linear-gradient(180deg,#FF2D46,#B00018);border-radius:14px;padding:13px;box-shadow:0 4px 12px rgba(176,0,24,0.3);cursor:pointer;"><div style="position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.13) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.13) 1px,transparent 1px);background-size:14px 14px;opacity:0.5;"></div><i class="ti ti-settings-bolt" style="position:relative;font-size:20px;color:#fff;flex-shrink:0;"></i><span style="position:relative;font-size:12px;color:#fff;font-weight:600;white-space:nowrap;" data-i18n="q.smartTools">MAI Smart Tools</span></div>
-        <div onclick="showSubScreen('sub-profile')" style="position:relative;overflow:hidden;display:flex;align-items:center;gap:10px;background:linear-gradient(180deg,#FF2D46,#B00018);border-radius:14px;padding:13px;box-shadow:0 4px 12px rgba(176,0,24,0.3);cursor:pointer;"><div style="position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.13) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.13) 1px,transparent 1px);background-size:14px 14px;opacity:0.5;"></div><i class="ti ti-user-circle" style="position:relative;font-size:20px;color:#fff;flex-shrink:0;"></i><span style="position:relative;font-size:12px;color:#fff;font-weight:600;white-space:nowrap;" data-i18n="q.account">My Account</span></div>
-      </div>
-
       <!-- Banners. Replaced the leaderboard on 13 Aug 2026. The whole block
            REMOVES ITSELF when no banner is active, rather than leaving an
            empty box on the screen. -->
@@ -3058,22 +3052,62 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         </div>
       </div>
 
-      <!-- More services -->
-      <div style="font-size:14px;color:var(--text);font-weight:700;margin-bottom:10px;" data-i18n="more.services">More services</div>
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:4px 14px;margin-bottom:18px;">
-        <div onclick="showSubScreen('sub-academy')" style="display:flex;align-items:center;gap:13px;padding:13px 0;border-bottom:1px solid var(--border);cursor:pointer;"><span style="width:38px;height:38px;border-radius:11px;background:rgba(255,30,60,0.12);display:flex;align-items:center;justify-content:center;"><i class="ti ti-school" style="font-size:19px;color:var(--red);"></i></span><div style="flex:1;font-size:14px;color:var(--text);font-weight:600;" data-i18n="more.academy">Trading Academy</div><i class="ti ti-chevron-right" style="font-size:17px;color:var(--text3);"></i></div>
-        <div onclick="showSubScreen('sub-news')" style="display:flex;align-items:center;gap:13px;padding:13px 0;border-bottom:1px solid var(--border);cursor:pointer;"><span style="width:38px;height:38px;border-radius:11px;background:rgba(255,30,60,0.12);display:flex;align-items:center;justify-content:center;"><i class="ti ti-calendar" style="font-size:19px;color:var(--red);"></i></span><div style="flex:1;font-size:14px;color:var(--text);font-weight:600;" data-i18n="more.news">News Calendar</div><i class="ti ti-chevron-right" style="font-size:17px;color:var(--text3);"></i></div>
-        <div onclick="showSubScreen('sub-ai-analyst'); setTimeout(aiLoadTVChart,80);" style="display:flex;align-items:center;gap:13px;padding:13px 0;cursor:pointer;"><span style="width:38px;height:38px;border-radius:11px;background:rgba(255,30,60,0.12);display:flex;align-items:center;justify-content:center;"><i class="ti ti-sparkles" style="font-size:19px;color:var(--red);"></i></span><div style="flex:1;font-size:14px;color:var(--text);font-weight:600;" data-i18n="more.aiAnalyst">AI Chart Analyst</div><span style="font-size:9px;font-weight:700;letter-spacing:.5px;color:#fff;background:linear-gradient(135deg,#FF1E3C,#C40024);padding:3px 8px;border-radius:6px;" data-i18n="w.premiumBadge">PREMIUM</span></div>
+      <div class="mm-act-frame"><div class="mm-acts">
+        <div class="mm-act" onclick="showSubScreen('sub-scanner')">
+          <div class="ah"><span class="ak">SCANNER</span><span class="ag">&#8250;</span></div>
+          <span class="an" data-i18n="q.scanner">MAI Scanner</span>
+          <span class="athread"><i></i></span>
+        </div>
+        <div class="mm-act" onclick="showSubScreen('sub-fund'); setTimeout(mamInit,20);">
+          <div class="ah"><span class="ak">MANAGER</span><span class="ag">&#8250;</span></div>
+          <span class="an" data-i18n="q.manager">MAI Manager</span>
+          <span class="athread"><i></i></span>
+        </div>
+        <div class="mm-act" onclick="showSubScreen('sub-trade-settings')">
+          <div class="ah"><span class="ak">TOOLS</span><span class="ag">&#8250;</span></div>
+          <span class="an" data-i18n="q.smartTools">MAI Smart Tools</span>
+          <span class="athread"><i></i></span>
+        </div>
+        <div class="mm-act" onclick="showSubScreen('sub-profile')">
+          <div class="ah"><span class="ak">ACCOUNT</span><span class="ag">&#8250;</span></div>
+          <span class="an" data-i18n="q.account">My Account</span>
+          <span class="athread"><i></i></span>
+        </div>
+      </div></div>
+
+      <div class="mm-cat"><span data-i18n="more.services">MORE SERVICES</span><u></u></div>
+      <div class="mm-rows">
+        <div class="mm-row" onclick="showSubScreen('sub-academy')">
+          <span class="rl"><span class="ric"><i class="ti ti-school"></i></span><span data-i18n="more.academy">Trading Academy</span></span>
+          <i class="ti ti-chevron-right rch"></i>
+        </div>
+        <div class="mm-row" onclick="showSubScreen('sub-news')">
+          <span class="rl"><span class="ric"><i class="ti ti-calendar"></i></span><span data-i18n="more.news">News Calendar</span></span>
+          <i class="ti ti-chevron-right rch"></i>
+        </div>
+        <div class="mm-row" onclick="showSubScreen('sub-ai-analyst'); setTimeout(aiLoadTVChart,80);">
+          <span class="rl"><span class="ric"><i class="ti ti-sparkles"></i></span><span data-i18n="more.aiAnalyst">AI Chart Analyst</span></span>
+          <span class="rpr" data-i18n="w.premiumBadge">PREMIUM</span>
+        </div>
       </div>
 
-      <!-- Others -->
-      <div style="font-size:14px;color:var(--text);font-weight:700;margin-bottom:10px;" data-i18n="more.others">Others</div>
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:4px 14px;">
-        <div onclick="showSubScreen('sub-support')" style="display:flex;align-items:center;gap:13px;padding:13px 0;border-bottom:1px solid var(--border);cursor:pointer;"><span style="width:38px;height:38px;border-radius:11px;background:rgba(255,30,60,0.12);display:flex;align-items:center;justify-content:center;"><i class="ti ti-headset" style="font-size:19px;color:var(--red);"></i></span><div style="flex:1;font-size:14px;color:var(--text);font-weight:600;" data-i18n="more.support">Customer Support</div><i class="ti ti-chevron-right" style="font-size:17px;color:var(--text3);"></i></div>
-        <div onclick="showSubScreen('sub-followus')" style="display:flex;align-items:center;gap:13px;padding:13px 0;border-bottom:1px solid var(--border);cursor:pointer;"><span style="width:38px;height:38px;border-radius:11px;background:rgba(255,30,60,0.12);display:flex;align-items:center;justify-content:center;"><i class="ti ti-share" style="font-size:19px;color:var(--red);"></i></span><div style="flex:1;font-size:14px;color:var(--text);font-weight:600;" data-i18n="more.followUs">Follow Us</div><i class="ti ti-chevron-right" style="font-size:17px;color:var(--text3);"></i></div>
-        <div id="admin-menu-item" style="display:none;align-items:center;gap:13px;padding:13px 0;border-bottom:1px solid var(--border);cursor:pointer;" onclick="openAdminPanel()"><span style="width:38px;height:38px;border-radius:11px;background:rgba(255,30,60,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ti ti-shield-lock" style="font-size:19px;color:var(--red);"></i></span><div style="flex:1;font-size:14px;color:var(--text);font-weight:600;" data-i18n="more.admin">Admin Panel</div><i class="ti ti-chevron-right" style="font-size:17px;color:var(--text3);"></i></div>
-        <div onclick="handleLogout()" style="display:flex;align-items:center;gap:13px;padding:13px 0;cursor:pointer;"><span style="width:38px;height:38px;border-radius:11px;background:rgba(255,30,60,0.18);display:flex;align-items:center;justify-content:center;"><i class="ti ti-logout" style="font-size:19px;color:var(--red);"></i></span><div style="flex:1;font-size:14px;color:var(--red);font-weight:600;" data-i18n="more.signOut">Sign Out</div></div>
+      <div class="mm-cat"><span data-i18n="more.others">OTHERS</span><u></u></div>
+      <div class="mm-rows">
+        <div class="mm-row" onclick="showSubScreen('sub-support')">
+          <span class="rl"><span class="ric"><i class="ti ti-headset"></i></span><span data-i18n="more.support">Customer Support</span></span>
+          <i class="ti ti-chevron-right rch"></i>
+        </div>
+        <div class="mm-row" onclick="showSubScreen('sub-followus')">
+          <span class="rl"><span class="ric"><i class="ti ti-share"></i></span><span data-i18n="more.followUs">Follow Us</span></span>
+          <i class="ti ti-chevron-right rch"></i>
+        </div>
+        <div class="mm-row" id="admin-menu-item" style="display:none;" onclick="openAdminPanel()">
+          <span class="rl"><span class="ric"><i class="ti ti-shield-lock"></i></span><span data-i18n="more.admin">Admin Panel</span></span>
+          <i class="ti ti-chevron-right rch"></i>
+        </div>
       </div>
+
+      <div class="mm-signout" onclick="handleLogout()"><i class="ti ti-logout"></i><span data-i18n="more.signOut">SIGN OUT</span></div>
     </div>
 
   </div><!-- end app-content -->
@@ -22772,6 +22806,57 @@ function ntFlipLead(m){
 .mmlt-tv .mmlt-mid{position:absolute;left:50%;top:-5px;width:2px;height:16px;margin-left:-1px;background:rgba(255,255,255,.45);border-radius:1px;}
 
 .mm-mkt-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+
+/* ══════════════════════════════════════════════════════════
+   THE MORE SCREEN. 13 Aug 2026. The four actions were four saturated red
+   slabs that shouted louder than the banner they sit above. They are now one
+   lattice of cells, and the red survives as a THREAD along the bottom of each
+   cell - the same masked flowing gradient the market overview cards use, at
+   1.5px instead of 2 and a second slower, so four of them do not compete with
+   a banner that is also moving.
+   ══════════════════════════════════════════════════════════ */
+.mm-act-frame{border:1px solid #23252F;border-radius:12px;overflow:hidden;margin-bottom:16px;}
+.mm-acts{display:grid;grid-template-columns:1fr 1fr;}
+.mm-act{position:relative;overflow:hidden;padding:9px 11px 15px;cursor:pointer;
+ border-right:1px solid #23252F;border-bottom:1px solid #23252F;}
+.mm-act:nth-child(2n){border-right:0;}
+.mm-act:nth-child(n+3){border-bottom:0;}
+.mm-act .ah{display:flex;align-items:center;justify-content:space-between;}
+.mm-act .ak{color:var(--text3);font-size:8.5px;letter-spacing:.18em;font-weight:700;}
+.mm-act .ag{font-size:11px;color:var(--orange-sig,#FF6A2B);}
+.mm-act .an{display:block;color:var(--text);font-size:14px;margin-top:3px;
+ font-family:'Orbitron',sans-serif;letter-spacing:-.2px;}
+.mm-act .athread{position:absolute;left:11px;right:11px;bottom:8px;height:1.5px;border-radius:2px;
+ overflow:hidden;pointer-events:none;
+ -webkit-mask-image:linear-gradient(90deg,transparent,#000 18%,#000 82%,transparent);
+ mask-image:linear-gradient(90deg,transparent,#000 18%,#000 82%,transparent);}
+.mm-act .athread i{position:absolute;inset:0;background-size:240% 100%;
+ animation:mmMktFlow 7s linear infinite;
+ background:linear-gradient(90deg,rgba(255,106,43,0),rgba(255,106,43,.75) 42%,rgba(255,30,60,.9) 52%,rgba(255,30,60,0));}
+
+.mm-cat{display:flex;align-items:center;gap:8px;margin:0 2px 8px;}
+.mm-cat span{font-size:8.5px;letter-spacing:.24em;color:var(--text3);font-weight:800;}
+.mm-cat u{flex:1;height:1px;text-decoration:none;background:#23252F;}
+.mm-rows{border:1px solid #23252F;border-radius:12px;overflow:hidden;margin-bottom:14px;}
+.mm-row{display:flex;align-items:center;border-bottom:1px solid #23252F;cursor:pointer;}
+.mm-row:last-child{border-bottom:0;}
+.mm-row .rl{flex:1;display:flex;align-items:center;gap:11px;font-size:12.5px;color:var(--text);
+ font-weight:600;padding:11px 13px;}
+.mm-row .ric{width:28px;height:28px;border-radius:9px;display:flex;align-items:center;
+ justify-content:center;color:#fff;flex:none;
+ background:linear-gradient(100deg,#FF6A2B,#FF1E3C);}
+.mm-row .ric i{font-size:15px;}
+.mm-row .rch{color:#4A505A;font-size:15px;padding-right:12px;}
+.mm-row .rpr{font-size:7.5px;font-weight:800;color:#fff;padding:3px 6px;border-radius:4px;
+ margin-right:10px;background:linear-gradient(100deg,#FF6A2B,#FF1E3C);letter-spacing:.06em;}
+.mm-signout{display:flex;align-items:center;justify-content:center;gap:9px;padding:12px;
+ border:1px solid #2A1D22;border-radius:12px;color:#8A5560;font-size:11.5px;font-weight:700;
+ letter-spacing:.14em;cursor:pointer;}
+html[data-theme="light"] .mm-act-frame,html[data-theme="light"] .mm-rows{border-color:rgba(0,0,0,.10);}
+html[data-theme="light"] .mm-act{border-color:rgba(0,0,0,.10);}
+html[data-theme="light"] .mm-row{border-color:rgba(0,0,0,.10);}
+html[data-theme="light"] .mm-cat u{background:rgba(0,0,0,.10);}
+
 .mm-mkt-card{position:relative;overflow:hidden;transform-style:preserve-3d;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:8px 10px 15px;}
 .mm-mkt-card::before{content:'';position:absolute;left:10px;right:10px;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);}
 .mm-mkt-h{display:flex;align-items:center;justify-content:space-between;}
