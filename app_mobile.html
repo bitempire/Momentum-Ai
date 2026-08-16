@@ -3054,21 +3054,25 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         <div class="mm-act" onclick="showSubScreen('sub-scanner')">
           <div class="ah"><span class="ak">SCANNER</span><span class="ag">&#8250;</span></div>
           <span class="an" data-i18n="q.scanner">MAI Scanner</span>
+          <span class="abloom"></span>
           <span class="athread"><i></i></span>
         </div>
         <div class="mm-act" onclick="showSubScreen('sub-fund'); setTimeout(mamInit,20);">
           <div class="ah"><span class="ak">MANAGER</span><span class="ag">&#8250;</span></div>
           <span class="an" data-i18n="q.manager">MAI Manager</span>
+          <span class="abloom"></span>
           <span class="athread"><i></i></span>
         </div>
         <div class="mm-act" onclick="showSubScreen('sub-trade-settings')">
           <div class="ah"><span class="ak">TOOLS</span><span class="ag">&#8250;</span></div>
           <span class="an" data-i18n="q.smartTools">MAI Smart Tools</span>
+          <span class="abloom"></span>
           <span class="athread"><i></i></span>
         </div>
         <div class="mm-act" onclick="showSubScreen('sub-profile')">
           <div class="ah"><span class="ak">ACCOUNT</span><span class="ag">&#8250;</span></div>
           <span class="an" data-i18n="q.account">My Account</span>
+          <span class="abloom"></span>
           <span class="athread"><i></i></span>
         </div>
       </div></div>
@@ -22824,13 +22828,22 @@ function ntFlipLead(m){
 .mm-act .ag{font-size:11px;color:var(--orange-sig,#FF6A2B);}
 .mm-act .an{display:block;color:var(--text);font-size:14px;margin-top:3px;
  font-family:'Orbitron',sans-serif;letter-spacing:-.2px;}
-.mm-act .athread{position:absolute;left:11px;right:11px;bottom:8px;height:1.5px;border-radius:2px;
+.mm-act .athread{position:absolute;left:0;right:0;bottom:0;height:2px;
  overflow:hidden;pointer-events:none;
- -webkit-mask-image:linear-gradient(90deg,transparent,#000 18%,#000 82%,transparent);
- mask-image:linear-gradient(90deg,transparent,#000 18%,#000 82%,transparent);}
-.mm-act .athread i{position:absolute;inset:0;background-size:240% 100%;
- animation:mmMktFlow 7s linear infinite;
- background:linear-gradient(90deg,rgba(255,106,43,0),rgba(255,106,43,.75) 42%,rgba(255,30,60,.9) 52%,rgba(255,30,60,0));}
+ -webkit-mask-image:linear-gradient(90deg,transparent,#000 22%,#000 78%,transparent);
+ mask-image:linear-gradient(90deg,transparent,#000 22%,#000 78%,transparent);}
+/* Inset and lifted, the line read as a rule under the text rather than the edge
+   of the box, and at 0.9 peak it never got bright enough to register as a
+   gradient at all. It now sits ON the edge at the market card's own strength. */
+.mm-act .athread i{position:absolute;inset:0;background-size:220% 100%;
+ animation:mmMktFlow 6s linear infinite;
+ background:linear-gradient(90deg,rgba(255,106,43,0),rgba(255,106,43,.55) 18%,rgba(255,106,43,.95) 38%,
+ rgba(255,30,60,1) 50%,rgba(255,30,60,.95) 62%,rgba(255,30,60,.55) 82%,rgba(255,30,60,0));}
+/* The bloom is the third cue the market card uses and the one that makes a line
+   look lit rather than drawn. It DOES soften the lattice divider it sits under,
+   which was raised before this was chosen. */
+.mm-act .abloom{position:absolute;left:0;right:0;bottom:0;height:30px;pointer-events:none;
+ filter:blur(9px);background:linear-gradient(180deg,rgba(255,106,43,0),rgba(255,60,50,.20));}
 
 .mm-cat{display:flex;align-items:center;gap:8px;margin:0 2px 8px;}
 .mm-cat span{font-size:8.5px;letter-spacing:.24em;color:var(--text3);font-weight:800;}
