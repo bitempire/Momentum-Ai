@@ -3048,17 +3048,14 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         <div onclick="showSubScreen('sub-profile')" style="position:relative;overflow:hidden;display:flex;align-items:center;gap:10px;background:linear-gradient(180deg,#FF2D46,#B00018);border-radius:14px;padding:13px;box-shadow:0 4px 12px rgba(176,0,24,0.3);cursor:pointer;"><div style="position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.13) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.13) 1px,transparent 1px);background-size:14px 14px;opacity:0.5;"></div><i class="ti ti-user-circle" style="position:relative;font-size:20px;color:#fff;flex-shrink:0;"></i><span style="position:relative;font-size:12px;color:#fff;font-weight:600;white-space:nowrap;" data-i18n="q.account">My Account</span></div>
       </div>
 
-      <!-- Leaderboard -->
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-        <span style="font-size:14px;color:var(--text);font-weight:700;" data-i18n="more.leaderboard">Leaderboard</span>
-        <span onclick="showSubScreen('sub-leaderboard')" style="font-size:11px;color:var(--red);cursor:pointer;" data-i18n="more.viewAll">View all</span>
-      </div>
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:14px;margin-bottom:18px;">
-        <div style="display:flex;gap:5px;background:var(--bg3);border-radius:12px;padding:4px;margin-bottom:15px;">
-          <div id="more-leader-tab-profit" onclick="switchLeaderTab('profit')" style="flex:1;text-align:center;font-size:12px;font-weight:700;color:#fff;background:var(--red);border-radius:9px;padding:8px 0;cursor:pointer;transition:all .2s;" data-i18n="more.topProfit">Top Profit</div>
-          <div id="more-leader-tab-volume" onclick="switchLeaderTab('volume')" style="flex:1;text-align:center;font-size:12px;font-weight:700;color:var(--text3);background:transparent;border-radius:9px;padding:8px 0;cursor:pointer;transition:all .2s;" data-i18n="more.topVolume">Top Volume</div>
+      <!-- Banners. Replaced the leaderboard on 13 Aug 2026. The whole block
+           REMOVES ITSELF when no banner is active, rather than leaving an
+           empty box on the screen. -->
+      <div id="more-banner-wrap" style="display:none;margin-bottom:18px;">
+        <div id="more-banner" style="position:relative;width:100%;border-radius:18px;overflow:hidden;background:var(--bg3);aspect-ratio:16/7;">
+          <div id="more-banner-track" style="display:flex;height:100%;width:100%;transition:transform .55s cubic-bezier(.4,0,.2,1);"></div>
+          <div id="more-banner-dots" style="position:absolute;left:0;right:0;bottom:9px;display:flex;gap:5px;justify-content:center;z-index:3;"></div>
         </div>
-        <div id="more-leader-body"></div>
       </div>
 
       <!-- More services -->
@@ -3794,6 +3791,7 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <button class="admin-tab-btn" data-tab="templates" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Template</button>
       <button class="admin-tab-btn" data-tab="mt5" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">MT5</button>
       <button class="admin-tab-btn" data-tab="analyst" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Administrator</button>
+      <button class="admin-tab-btn" data-tab="banners" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Banners</button>
       <button class="admin-tab-btn" data-tab="academy" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Academy</button>
       <button class="admin-tab-btn" data-tab="promo" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;display:none;" data-i18n="prof.promoWord">Promo</button>
     </div>
@@ -4104,6 +4102,38 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
           <button onclick="loadAdminAcademy()" style="background:transparent;border:none;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;">↻ Refresh</button>
         </div>
         <div id="admin-academy-list"><div class="empty-state" style="padding:16px;"><i class="ti ti-book"></i> Loading...</div></div>
+      </div>
+    </div>
+
+    <div id="atab-content-banners" style="display:none;">
+      <div class="section-card">
+        <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:14px;">ADD BANNER</div>
+
+        <div id="ban-drop" style="border:1.5px dashed var(--border);border-radius:14px;padding:24px 16px;text-align:center;cursor:pointer;">
+          <div style="font-size:24px;color:var(--text3);">&#8681;</div>
+          <div style="font-size:13px;color:var(--text);font-weight:700;margin-top:8px;">Drop an image here, or tap to choose</div>
+          <div style="font-size:11.5px;color:var(--text3);margin-top:5px;">JPG, PNG or WebP &middot; 1200 x 525 &middot; up to 300 KB</div>
+          <input type="file" id="ban-file" accept="image/jpeg,image/png,image/webp" style="display:none;">
+        </div>
+
+        <div id="ban-spec" style="margin-top:14px;border:1px solid var(--border);border-radius:11px;overflow:hidden;"></div>
+        <div id="ban-verdict" style="display:none;margin-top:12px;border-radius:11px;padding:11px 13px;font-size:12.5px;line-height:1.6;"></div>
+        <div id="ban-prev" style="margin-top:14px;border-radius:12px;overflow:hidden;border:1px solid var(--border);aspect-ratio:16/7;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:11.5px;color:var(--text3);">Preview appears here</div>
+
+        <div class="auth-field" style="margin-top:13px;"><label class="auth-label">Link when tapped (optional)</label>
+          <input type="text" id="ban-link" class="auth-input" placeholder="https://"></div>
+
+        <button id="ban-save" onclick="saveBanner()" class="auth-btn" style="margin-top:14px;opacity:.45;" disabled>Add banner</button>
+        <div style="font-size:11px;color:var(--text3);margin-top:9px;line-height:1.6;">The button stays off until every check passes, so a wrong file never reaches storage.</div>
+      </div>
+
+      <div class="section-card" style="margin-top:14px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.5px;">LIVE BANNERS</div>
+          <button onclick="loadAdminBanners()" style="background:transparent;border:none;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;">Refresh</button>
+        </div>
+        <div id="admin-banner-list"><div class="empty-state" style="padding:16px;">Loading...</div></div>
+        <div style="font-size:11px;color:var(--text3);margin-top:10px;line-height:1.6;">Order here is the order customers swipe through. Switching one off keeps it here but takes it out of the app.</div>
       </div>
     </div>
 
@@ -14364,7 +14394,7 @@ async function admDeleteTpl(id, name){
 }
 
 function switchAdminTab(tab) {
-  var tabs = ['dashboard','users','tickets','funds','announce','signals','templates','mt5','analyst','academy','promo'];
+  var tabs = ['dashboard','users','tickets','funds','announce','signals','templates','mt5','analyst','academy','banners','promo'];
   tabs.forEach(function(t) {
     // Support both old id-based and new data-tab-based buttons
     var btn = document.getElementById('atab-' + t) ||
@@ -14387,6 +14417,7 @@ function switchAdminTab(tab) {
   if(tab === 'analyst') { loadAdminAnalysts(); loadAdminSubAdmins(); }
   if(tab === 'templates') loadAdminTemplates();
   if(tab === 'academy') loadAdminAcademy();
+  if(tab === 'banners') { loadAdminBanners(); wireBannerPicker(); }
   if(tab === 'promo') loadAdminPromos();
   if(tab === 'announce') loadAdminAnnouncements();
   if(tab === 'signals') loadAdminSignals();
@@ -15899,7 +15930,7 @@ function loadMoreTab(){
     }
   }
   updateMoreBalance();
-  switchLeaderTab('profit');
+  loadMoreBanners();
 }
 async function refreshActiveBalance() {
   if(!db || !activeAccount || !activeAccount.id) return;
@@ -16703,7 +16734,7 @@ async function loadAdminSubAdmins(){
     var subs=(res.data||[]).filter(function(u){return u.role==='sub_admin';});
     if(!subs.length){el.innerHTML='<div class="empty-state" style="padding:12px;"><i class="ti ti-users"></i> No sub-admins yet</div>';return;}
     el.innerHTML='';
-    var map={dashboard:'Dashboard',users:'Users',tickets:'Support',funds:'Fund Management',announce:'Announcements',signals:'Signals',analyst:'Administrator',academy:'Academy'};
+    var map={dashboard:'Dashboard',users:'Users',tickets:'Support',funds:'Fund Management',announce:'Announcements',signals:'Signals',analyst:'Administrator',academy:'Academy',banners:'Banners'};
     subs.forEach(function(sub){
       var card=document.createElement('div');card.style.cssText='padding:10px 12px;background:var(--bg3);border-radius:9px;margin-bottom:8px;border:1px solid var(--border);';
       var tabs=(sub.allowed_tabs||'').split(',').map(function(t){return map[t]||t;}).join(' · ');
@@ -16719,8 +16750,8 @@ function openEditSubAdminPopup(sub){
   var ex=document.getElementById('edit-subadmin-popup');if(ex)ex.remove();
   var popup=document.createElement('div');popup.id='edit-subadmin-popup';popup.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(4px);z-index:9100;display:flex;align-items:flex-end;';
   var sheet=document.createElement('div');sheet.style.cssText='width:100%;background:var(--bg2);border-radius:20px 20px 0 0;border-top:1px solid var(--border);padding:20px 18px 36px;max-height:90vh;overflow-y:auto;';
-  var allTabs=['dashboard','users','tickets','funds','announce','signals','mt5','analyst','academy'];
-  var tabLabels={dashboard:'Dashboard',users:'Users',tickets:'Support',funds:'Fund Management',announce:'Announcements',signals:'Signals',mt5:'MT5',analyst:'Administrator',academy:'Academy'};
+  var allTabs=['dashboard','users','tickets','funds','announce','signals','mt5','analyst','academy','banners'];
+  var tabLabels={dashboard:'Dashboard',users:'Users',tickets:'Support',funds:'Fund Management',announce:'Announcements',signals:'Signals',mt5:'MT5',analyst:'Administrator',academy:'Academy',banners:'Banners'};
   var saved=(sub.allowed_tabs||'').split(',');
   var th=allTabs.map(function(t){var c=saved.indexOf(t)>-1?'checked':'';return '<label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="'+t+'" class="esa-tab-check" '+c+' style="accent-color:var(--red);width:15px;height:15px;"> '+tabLabels[t]+'</label>';}).join('');
   sheet.innerHTML='<div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 18px;"></div><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;"><div style="font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);">EDIT SUB-ADMIN</div><button id="esa-x" style="width:32px;height:32px;border-radius:50%;background:var(--surface);border:1px solid var(--border);color:var(--text2);font-size:18px;cursor:pointer;">×</button></div><div class="auth-field"><label class="auth-label">Full Name</label><input id="esa-name" class="auth-input" type="text" value="'+(sub.name||'')+'"></div><div class="auth-field"><label class="auth-label">New Password</label><input id="esa-pw" class="auth-input" type="password" placeholder="Leave blank to keep"></div><div class="auth-field"><label class="auth-label">Status</label><select id="esa-status" class="auth-input"><option value="active"'+(sub.status==='active'?' selected':'')+'>Active</option><option value="suspended"'+(sub.status==='suspended'?' selected':'')+'>Suspended</option></select></div><div class="auth-field"><label class="auth-label">Panel Access</label><div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px 12px;"><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">'+th+'</div></div></div><div id="esa-error" class="error-msg"></div><div id="esa-success" class="success-msg"></div>';
@@ -16745,7 +16776,7 @@ function enterSubAdmin(user){
   showScreen('screen-app');
   setTimeout(function(){
     showSubScreen('sub-admin');
-    var allTabs=['dashboard','users','tickets','funds','announce','signals','mt5','analyst','academy'];
+    var allTabs=['dashboard','users','tickets','funds','announce','signals','mt5','analyst','academy','banners'];
     var allowed=(user.allowed_tabs||'').split(',');
     allTabs.forEach(function(t){var b=document.querySelector('[data-tab="'+t+'"]');if(b)b.style.display=allowed.indexOf(t)>-1?'':'none';});
     if(allowed.length) switchAdminTab(allowed[0]);
@@ -16826,6 +16857,250 @@ function academySnippet(content){
   var txt=secs.map(function(s){return (s.h?s.h+' ':'')+(s.d||'');}).join(' ').trim();
   return txt.substring(0,80)+(txt.length>80?'...':'');
 }
+// ══════════════════════════════════════════════════════════
+// BANNERS. 13 Aug 2026, replacing the leaderboard on the More screen.
+//
+// THE RULES ARE CHECKED IN THE BROWSER FOR CONVENIENCE AND ON THE SERVER FOR
+// REAL. The bucket itself carries the 300 KB limit and the allowed types, so an
+// oversized file is refused even if this screen is bypassed. DIMENSIONS CANNOT
+// BE ENFORCED SERVER SIDE - the database cannot see inside a JPEG - so the
+// 1200 x 525 check lives here only.
+// ══════════════════════════════════════════════════════════
+var BAN_SPEC = { w:1200, h:525, maxKB:300, types:['image/jpeg','image/png','image/webp'] };
+var _banFile = null, _banDims = null, _banWired = false;
+
+function banRow(k, label, val, state){
+  var col = state==='ok' ? 'var(--green)' : state==='bad' ? 'var(--red)' : 'var(--text3)';
+  var mark = state==='ok' ? '&#10003;' : state==='bad' ? '&#10007;' : '&#9675;';
+  return '<div style="display:flex;align-items:center;gap:10px;padding:9px 12px;font-size:12px;'
+    + 'border-bottom:1px solid var(--border);">'
+    + '<span style="width:16px;text-align:center;color:'+col+'">'+mark+'</span>'
+    + '<span style="flex:1;color:var(--text)">'+label+'</span>'
+    + '<span style="font-family:ui-monospace,Menlo,monospace;font-size:11.5px;color:'+col+'">'+val+'</span></div>';
+}
+function banResetForm(){
+  _banFile=null; _banDims=null;
+  var sp=document.getElementById('ban-spec');
+  if(sp) sp.innerHTML = banRow('type','File type','JPG, PNG or WebP','')
+                      + banRow('dim','Dimensions',BAN_SPEC.w+' x '+BAN_SPEC.h,'')
+                      + banRow('size','File size','300 KB or less','');
+  var v=document.getElementById('ban-verdict'); if(v){ v.style.display='none'; v.innerHTML=''; }
+  var p=document.getElementById('ban-prev'); if(p) p.innerHTML='Preview appears here';
+  var b=document.getElementById('ban-save'); if(b){ b.disabled=true; b.style.opacity='.45'; }
+  var l=document.getElementById('ban-link'); if(l) l.value='';
+  var f=document.getElementById('ban-file'); if(f) f.value='';
+}
+function banCheck(f){
+  if(!f) return;
+  banResetForm();
+  var fails=[];
+  var typeOk = BAN_SPEC.types.indexOf(f.type) >= 0;
+  var kb = Math.round(f.size/1024);
+  var sizeOk = kb <= BAN_SPEC.maxKB;
+  if(!typeOk) fails.push('it is not a JPG, PNG or WebP');
+  if(!sizeOk) fails.push('it is '+kb+' KB, over the 300 KB limit');
+
+  var url = URL.createObjectURL(f);
+  var img = new Image();
+  img.onload = function(){
+    var w=img.naturalWidth, h=img.naturalHeight;
+    var dimOk = (w===BAN_SPEC.w && h===BAN_SPEC.h);
+    if(!dimOk) fails.push('it is '+w+' x '+h+', not '+BAN_SPEC.w+' x '+BAN_SPEC.h);
+    var sp=document.getElementById('ban-spec');
+    if(sp) sp.innerHTML = banRow('type','File type', (f.type||'unknown').replace('image/',''), typeOk?'ok':'bad')
+                        + banRow('dim','Dimensions', w+' x '+h, dimOk?'ok':'bad')
+                        + banRow('size','File size', kb.toLocaleString()+' KB', sizeOk?'ok':'bad');
+    var p=document.getElementById('ban-prev');
+    if(p) p.innerHTML='<img src="'+url+'" style="width:100%;height:100%;object-fit:cover;display:block;">';
+    var v=document.getElementById('ban-verdict'), b=document.getElementById('ban-save');
+    if(fails.length){
+      if(v){ v.style.display='block';
+        v.style.cssText+=';background:rgba(255,30,60,.07);border:1px solid rgba(255,46,63,.4);color:#ff9aa6;';
+        v.innerHTML='<b>Rejected.</b> '+fails.join(', and ')+'. Fix it and drop it again.'; }
+      if(b){ b.disabled=true; b.style.opacity='.45'; }
+    }else{
+      _banFile=f; _banDims=w+'x'+h;
+      if(v){ v.style.display='block';
+        v.style.cssText+=';background:rgba(34,211,154,.08);border:1px solid rgba(34,211,154,.35);color:#7df0c4;';
+        v.innerHTML='<b>Looks right.</b> '+w+' x '+h+', '+kb+' KB. Ready to add.'; }
+      if(b){ b.disabled=false; b.style.opacity='1'; }
+    }
+  };
+  img.onerror = function(){
+    var v=document.getElementById('ban-verdict');
+    if(v){ v.style.display='block';
+      v.style.cssText+=';background:rgba(255,30,60,.07);border:1px solid rgba(255,46,63,.4);color:#ff9aa6;';
+      v.innerHTML='<b>Rejected.</b> That file could not be read as an image.'; }
+  };
+  img.src=url;
+}
+function wireBannerPicker(){
+  if(_banWired) return;
+  var drop=document.getElementById('ban-drop'), file=document.getElementById('ban-file');
+  if(!drop || !file) return;
+  _banWired = true;
+  drop.addEventListener('click', function(){ file.click(); });
+  file.addEventListener('change', function(){ banCheck(this.files && this.files[0]); });
+  ['dragenter','dragover'].forEach(function(e){
+    drop.addEventListener(e, function(ev){ ev.preventDefault(); drop.style.borderColor='var(--red)'; });
+  });
+  ['dragleave','drop'].forEach(function(e){
+    drop.addEventListener(e, function(ev){ ev.preventDefault(); drop.style.borderColor='var(--border)'; });
+  });
+  drop.addEventListener('drop', function(ev){
+    banCheck(ev.dataTransfer && ev.dataTransfer.files && ev.dataTransfer.files[0]);
+  });
+  banResetForm();
+}
+async function uploadBannerImage(file){
+  var ext=((file.name||'img').split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'')||'jpg';
+  var path=Date.now()+'_'+Math.random().toString(36).slice(2,8)+'.'+ext;
+  // Storage has its own RLS. Send the user JWT, same as the academy upload.
+  var _js = await mmaiAuthJwtFresh();
+  var _hs = {'apikey':SUPABASE_ANON_KEY,'Content-Type':file.type||'image/jpeg','x-upsert':'true'};
+  if(_js) _hs['Authorization'] = 'Bearer ' + _js;
+  var res=await fetch(SUPABASE_URL+'/storage/v1/object/banners/'+path,{method:'POST',headers:_hs,body:file});
+  if(!res.ok){ var t=''; try{t=await res.text();}catch(e){} throw new Error((res.status||'')+' '+(t||'upload failed')); }
+  return path;
+}
+function bannerPublicUrl(path){ return SUPABASE_URL+'/storage/v1/object/public/banners/'+path; }
+
+// ── THE CAROUSEL ON THE MORE SCREEN ───────────────────────────────────────
+// Four things here are deliberate and each is a defect if removed. The block
+// HIDES ITSELF when nothing is active rather than leaving an empty box. The
+// aspect ratio is LOCKED in CSS so the layout does not jump as images load.
+// Auto advance PAUSES ON TOUCH and does not resume, so a customer reading a
+// banner is never yanked to the next one. And the timer STOPS when the screen
+// is hidden, because a loop running behind a closed app costs battery.
+var _banTimer=null, _banAt=0, _banRows=[], _banPaused=false, _banVisWired=false;
+
+function banStop(){ if(_banTimer){ clearInterval(_banTimer); _banTimer=null; } }
+function banPaint(){
+  var track=document.getElementById('more-banner-track');
+  var dots=document.getElementById('more-banner-dots');
+  if(!track) return;
+  track.style.transform='translateX(-'+(_banAt*100)+'%)';
+  if(dots){
+    [].forEach.call(dots.children, function(u,i){
+      u.style.width = (i===_banAt) ? '16px' : '5px';
+      u.style.background = (i===_banAt) ? '#fff' : 'rgba(255,255,255,.42)';
+    });
+  }
+}
+function banGo(i){ if(!_banRows.length) return; _banAt=(i+_banRows.length)%_banRows.length; banPaint(); }
+function banStart(){
+  banStop();
+  if(_banRows.length<2) return;
+  _banTimer=setInterval(function(){ if(!_banPaused) banGo(_banAt+1); }, 4000);
+}
+async function loadMoreBanners(){
+  var wrap=document.getElementById('more-banner-wrap');
+  var track=document.getElementById('more-banner-track');
+  var dots=document.getElementById('more-banner-dots');
+  if(!wrap || !track) return;
+  try{
+    var r=await db.from('banners').select('*').eq('active',true).order('sort_order',{ascending:true});
+    if(r.error) throw r.error;
+    _banRows=r.data||[];
+  }catch(e){ _banRows=[]; }
+  if(!_banRows.length){ wrap.style.display='none'; banStop(); return; }
+  track.innerHTML=_banRows.map(function(b){
+    var safe=String(b.link_url||'').replace(/'/g,'').replace(/"/g,'');
+    return '<div style="flex:0 0 100%;height:100%;position:relative;overflow:hidden;'
+      + (safe?'cursor:pointer;':'') + '"'
+      + (safe?" onclick=\"window.open('"+safe+"','_blank')\"":'')
+      + '><div style="position:absolute;inset:0;background-size:cover;background-position:center;'
+      + "background-image:url('"+bannerPublicUrl(b.image_path)+"');\"></div></div>";
+  }).join('');
+  if(dots){
+    dots.innerHTML=_banRows.map(function(){ return '<u style="height:5px;border-radius:3px;display:block;transition:all .3s;"></u>'; }).join('');
+    dots.style.display = _banRows.length>1 ? 'flex' : 'none';
+  }
+  wrap.style.display='block';
+  _banAt=0; _banPaused=false; banPaint(); banStart();
+
+  var ban=document.getElementById('more-banner');
+  if(ban && !ban._banWired){
+    ban._banWired=true;
+    ['pointerdown','touchstart'].forEach(function(ev){
+      ban.addEventListener(ev, function(){ _banPaused=true; }, {passive:true});
+    });
+  }
+  if(!_banVisWired){
+    _banVisWired=true;
+    document.addEventListener('visibilitychange', function(){
+      if(document.hidden) banStop(); else banStart();
+    });
+  }
+}
+
+async function saveBanner(){
+  if(!_banFile){ return; }
+  var btn=document.getElementById('ban-save');
+  var link=(document.getElementById('ban-link')||{}).value||'';
+  link=link.trim();
+  // A banner is the one place in the app that can send a customer anywhere.
+  if(link && !/^https:\/\//i.test(link)){
+    alert('The link must start with https://'); return;
+  }
+  if(btn){ btn.disabled=true; btn.textContent='Uploading...'; }
+  try{
+    var path=await uploadBannerImage(_banFile);
+    var maxr=await db.from('banners').select('sort_order').order('sort_order',{ascending:false}).limit(1);
+    var next=(maxr.data && maxr.data[0] && typeof maxr.data[0].sort_order==='number') ? maxr.data[0].sort_order+1 : 0;
+    var r=await db.from('banners').insert([{image_path:path, link_url:link||null, sort_order:next, active:true}]);
+    if(r.error) throw r.error;
+    banResetForm();
+    loadAdminBanners();
+  }catch(e){ alert('Could not add the banner: '+(e.message||e)); }
+  if(btn){ btn.textContent='Add banner'; }
+}
+
+async function loadAdminBanners(){
+  var wrap=document.getElementById('admin-banner-list'); if(!wrap) return;
+  try{
+    var r=await db.from('banners').select('*').order('sort_order',{ascending:true});
+    if(r.error) throw r.error;
+    var rows=r.data||[];
+    if(!rows.length){ wrap.innerHTML='<div class="empty-state" style="padding:16px;">No banners yet.</div>'; return; }
+    wrap.innerHTML=rows.map(function(b,i){
+      return '<div style="display:flex;gap:11px;align-items:center;padding:10px;border:1px solid var(--border);'
+       +'border-radius:12px;margin-bottom:9px;background:var(--bg3);">'
+       +'<div style="width:88px;flex:none;border-radius:8px;overflow:hidden;aspect-ratio:16/7;background:#000;">'
+       +'<img src="'+bannerPublicUrl(b.image_path)+'" style="width:100%;height:100%;object-fit:cover;display:block;"></div>'
+       +'<div style="flex:1;min-width:0;">'
+       +'<div style="font-size:12.5px;color:var(--text);font-weight:700;">'+(b.link_url?'Links out':'No link')+'</div>'
+       +'<div style="font-size:11px;color:var(--text3);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+(b.link_url||b.image_path)+'</div></div>'
+       +'<button onclick="moveBanner(\''+b.id+'\',-1)" style="background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:14px;"'+(i===0?' disabled':'')+'>&#8593;</button>'
+       +'<button onclick="moveBanner(\''+b.id+'\',1)" style="background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:14px;"'+(i===rows.length-1?' disabled':'')+'>&#8595;</button>'
+       +'<button onclick="toggleBanner(\''+b.id+'\','+(b.active?'false':'true')+')" style="background:'+(b.active?'var(--green)':'rgba(255,255,255,.12)')+';border:none;color:#fff;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:700;cursor:pointer;">'+(b.active?'ON':'OFF')+'</button>'
+       +'</div>';
+    }).join('');
+  }catch(e){ wrap.innerHTML='<div class="empty-state" style="padding:16px;">Could not load: '+(e.message||e)+'</div>'; }
+}
+// Switching off, not deleting. A banner can always be put back.
+async function toggleBanner(id, on){
+  try{
+    var r=await db.from('banners').update({active:on}).eq('id',id);
+    if(r.error) throw r.error;
+    loadAdminBanners();
+  }catch(e){ alert('Could not change that: '+(e.message||e)); }
+}
+async function moveBanner(id, dir){
+  try{
+    var r=await db.from('banners').select('*').order('sort_order',{ascending:true});
+    if(r.error) throw r.error;
+    var rows=r.data||[], i=-1;
+    for(var k=0;k<rows.length;k++){ if(rows[k].id===id) i=k; }
+    var j=i+dir;
+    if(i<0 || j<0 || j>=rows.length) return;
+    var a=rows[i], b=rows[j];
+    await db.from('banners').update({sort_order:b.sort_order}).eq('id',a.id);
+    await db.from('banners').update({sort_order:a.sort_order}).eq('id',b.id);
+    loadAdminBanners();
+  }catch(e){ alert('Could not reorder: '+(e.message||e)); }
+}
+
 async function uploadAcademyImage(file){
   var ext=((file.name||'img').split('.').pop()||'png').toLowerCase().replace(/[^a-z0-9]/g,'')||'png';
   var path='sections/'+Date.now()+'_'+Math.random().toString(36).slice(2,8)+'.'+ext;
@@ -21001,7 +21276,7 @@ function applyAdminTabAccess(){
   var isSuper = currentUser.role === 'admin';
   if(promoBtn) promoBtn.style.display = isSuper ? '' : 'none';
   if(isSuper) return;
-  var allTabs = ['dashboard','users','tickets','funds','announce','signals','mt5','analyst','academy'];
+  var allTabs = ['dashboard','users','tickets','funds','announce','signals','mt5','analyst','academy','banners'];
   var allowed = (currentUser.allowed_tabs||'').split(',').map(function(x){ return x.trim(); }).filter(Boolean);
   allTabs.forEach(function(t){ var bb=document.querySelector('[data-tab="'+t+'"]'); if(bb) bb.style.display = allowed.indexOf(t) > -1 ? '' : 'none'; });
   if(allowed.length) switchAdminTab(allowed[0]);
