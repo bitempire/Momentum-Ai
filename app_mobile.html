@@ -22840,13 +22840,13 @@ function ntFlipLead(m){
 .mm-hdr-fx{position:absolute;inset:0;z-index:1;pointer-events:none;mix-blend-mode:screen;overflow:hidden;}
 .mm-hdr-fx i{position:absolute;left:-30%;top:-120%;width:160%;height:340%;display:block;
  transform-origin:50% 50%;animation:mmHdrTilt 34s ease-in-out infinite;
- background:linear-gradient(180deg,rgba(255,46,63,.22),rgba(255,106,43,.05) 45%,transparent 70%);}
+ background:linear-gradient(180deg,rgba(255,46,63,.22),rgba(255,46,63,.05) 45%,transparent 70%);}
 @keyframes mmHdrTilt{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(8deg)}}
 .mm-hdr-main{position:relative;z-index:2;flex:1;min-width:0;display:flex;align-items:center;
  gap:11px;padding:11px 12px;}
 .mm-hdr-av{width:38px;height:38px;border-radius:12px;flex:none;display:flex;align-items:center;
  justify-content:center;font-size:15px;font-weight:800;color:#fff;
- background:linear-gradient(100deg,#FF6A2B,#FF1E3C);}
+ background:linear-gradient(100deg,#FF3B4C,#C40024);}
 .mm-hdr-who{flex:1;min-width:0;}
 .mm-hdr-k{font-size:8.5px;letter-spacing:.18em;color:var(--text3);font-weight:700;}
 .mm-hdr-k em{font-style:normal;font-family:ui-monospace,Menlo,monospace;letter-spacing:.06em;}
@@ -22873,7 +22873,7 @@ html[data-theme="light"] .mm-hdr-fx{display:none;}
 .mm-act:nth-child(n+3){border-bottom:0;}
 .mm-act .ah{display:flex;align-items:center;justify-content:space-between;}
 .mm-act .ak{color:var(--text3);font-size:8.5px;letter-spacing:.18em;font-weight:700;}
-.mm-act .ag{font-size:11px;color:var(--orange-sig,#FF6A2B);}
+.mm-act .ag{font-size:11px;color:#FF3B4C;}
 .mm-act .an{display:block;color:var(--text);font-size:14px;margin-top:3px;
  font-family:'Orbitron',sans-serif;letter-spacing:-.2px;}
 .mm-act .athread{position:absolute;left:0;right:0;bottom:0;height:2px;
@@ -22885,13 +22885,18 @@ html[data-theme="light"] .mm-hdr-fx{display:none;}
    gradient at all. It now sits ON the edge at the market card's own strength. */
 .mm-act .athread i{position:absolute;inset:0;background-size:220% 100%;
  animation:mmMktFlow 6s linear infinite;
- background:linear-gradient(90deg,rgba(255,106,43,0),rgba(255,106,43,.55) 18%,rgba(255,106,43,.95) 38%,
- rgba(255,30,60,1) 50%,rgba(255,30,60,.95) 62%,rgba(255,30,60,.55) 82%,rgba(255,30,60,0));}
+ /* 13 Aug 2026. Was orange into red, which was the only orange left on the
+    screen once the icons dropped it. Now the icons' own two reds, running the
+    same way they do - lighter on the left, deeper on the right. The mask
+    already fades both ends, so the darker stop sits at 62% rather than at the
+    edge, or the right half of the thread would disappear. */
+ background:linear-gradient(90deg,rgba(255,59,76,0),rgba(255,59,76,.55) 18%,rgba(255,59,76,.95) 38%,
+ rgba(255,30,60,1) 50%,rgba(196,0,36,.95) 62%,rgba(196,0,36,.55) 82%,rgba(196,0,36,0));}
 /* The bloom is the third cue the market card uses and the one that makes a line
    look lit rather than drawn. It DOES soften the lattice divider it sits under,
    which was raised before this was chosen. */
 .mm-act .abloom{position:absolute;left:0;right:0;bottom:0;height:30px;pointer-events:none;
- filter:blur(9px);background:linear-gradient(180deg,rgba(255,106,43,0),rgba(255,60,50,.20));}
+ filter:blur(9px);background:linear-gradient(180deg,rgba(255,30,60,0),rgba(255,45,60,.20));}
 
 .mm-cat{display:flex;align-items:center;gap:8px;margin:0 2px 8px;}
 .mm-cat span{font-size:8.5px;letter-spacing:.24em;color:var(--text3);font-weight:800;}
