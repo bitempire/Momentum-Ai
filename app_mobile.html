@@ -22903,18 +22903,20 @@ html[data-theme="light"] .mm-hdr-fx{display:none;}
  font-weight:600;padding:11px 13px;}
 .mm-row .ric{width:28px;height:28px;border-radius:9px;display:flex;align-items:center;
  justify-content:center;color:#fff;flex:none;
- background:linear-gradient(100deg,#FF6A2B,#FF1E3C);}
+ /* No orange. It was the only orange on the screen and it did not sit with
+    anything else. Same chip, same weight, brand red top to bottom. */
+ background:linear-gradient(100deg,#FF3B4C,#C40024);}
 .mm-row .ric i{font-size:15px;}
 .mm-row .rch{color:#4A505A;font-size:15px;padding-right:12px;}
 .mm-row .rpr{font-size:7.5px;font-weight:800;color:#fff;padding:3px 6px;border-radius:4px;
- margin-right:10px;background:linear-gradient(100deg,#FF6A2B,#FF1E3C);letter-spacing:.06em;}
+ margin-right:10px;background:linear-gradient(100deg,#FF3B4C,#C40024);letter-spacing:.06em;}
 /* SIGN OUT, 13 Aug 2026. Filled and drifting, the same idiom as the scan
    button, in a much darker red so it does not read as a primary action. The
    palette is doing the work the outline used to do. */
 .mm-signout{display:flex;align-items:center;justify-content:center;gap:9px;padding:13px;
- border:0;border-radius:12px;color:#FFD9DE;font-size:11.5px;font-weight:700;
+ border:0;border-radius:12px;color:#FFF3F5;font-size:11.5px;font-weight:700;
  letter-spacing:.14em;cursor:pointer;
- background:linear-gradient(100deg,#3A0A12,#8E1122 45%,#3A0A12);
+ background:linear-gradient(100deg,#7A1826,#E62846 45%,#7A1826);
  background-size:220% 100%;animation:mmSoDrift 5.5s linear infinite;}
 @keyframes mmSoDrift{0%{background-position:0% 50%}100%{background-position:220% 50%}}
 html[data-theme="light"] .mm-signout{color:#FFEAEE;}
