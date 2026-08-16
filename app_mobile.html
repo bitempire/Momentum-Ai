@@ -4853,8 +4853,9 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
               <div class="sup-acard" id="sup-acard">
                 <span class="ic"><i class="ti ti-id"></i></span>
                 <span class="bd"><b id="sup-acc-id">-</b><span id="sup-acc-sub">-</span></span>
-                <span class="sw" id="sup-acc-sw" onclick="mmSupNextAcct()" data-i18n="sup.change">Change</span>
+                <span class="sw" id="sup-acc-sw" onclick="mmSupToggleAcct()" data-i18n="sup.change">Change</span>
               </div>
+              <div class="sup-exp" id="sup-exp"></div>
             </div>
             <div class="auth-field">
               <label class="auth-label" data-i18n="sup.subject">Subject</label>
@@ -5591,20 +5592,58 @@ function mmSupPaintAcct() {
     idEl.textContent = mmT('sup.noAcct','No MT5 account linked');
     subEl.textContent = mmT('sup.noAcctSub','You can still send us a ticket');
     if(swEl) swEl.style.display = 'none';
+    mmSupPaintList();
     return;
   }
   idEl.textContent = a.mt5_id || '-';
+  subEl.textContent = mmSupAcctSub(a);
+  if(swEl) swEl.style.display = (list.length > 1) ? '' : 'none';
+  mmSupPaintList();
+}
+
+function mmSupAcctSub(a) {
   // Number(null) is ZERO, not NaN, so a missing balance would print 0.00 and
   // read as an empty account. Same trap the signal rail hit in August.
   var bal = (a.balance === null || a.balance === undefined || a.balance === '') ? NaN : Number(a.balance);
-  subEl.textContent = (a.broker || 'MT5') + (isNaN(bal) ? '' : (', ' + mmT('sup.balance','balance ') + bal.toFixed(2)));
-  if(swEl) swEl.style.display = (list.length > 1) ? '' : 'none';
+  return (a.broker || 'MT5') + (isNaN(bal) ? '' : (', ' + mmT('sup.balance','balance ') + bal.toFixed(2)));
 }
 
-function mmSupNextAcct() {
+// The list under the card. Rebuilt on every paint, which is cheap at this size
+// and means the tick can never disagree with the card above it.
+function mmSupPaintList() {
+  var box = document.getElementById('sup-exp');
+  if(!box) return;
   var list = mmSupAccts();
-  if(list.length < 2) return;
-  _supAcctIdx = (_supAcctIdx + 1) % list.length;
+  box.innerHTML = '';
+  list.forEach(function(a, i) {
+    var row = document.createElement('div');
+    row.className = 'sup-erow' + (i === _supAcctIdx ? ' sel' : '');
+    row.innerHTML = '<span class="bd"><b>' + mmTkEsc(a.mt5_id || '-') + '</b>' +
+      '<span>' + mmTkEsc(mmSupAcctSub(a)) + '</span></span>' +
+      '<span class="tk"><i class="ti ti-circle-check-filled"></i></span>';
+    row.addEventListener('click', function() { mmSupPickAcct(i); });
+    box.appendChild(row);
+  });
+  if(box.classList.contains('on')) box.style.maxHeight = box.scrollHeight + 'px';
+}
+
+function mmSupToggleAcct() {
+  var box = document.getElementById('sup-exp');
+  if(!box) return;
+  if(mmSupAccts().length < 2) return;
+  if(box.classList.contains('on')) {
+    box.classList.remove('on');
+    box.style.maxHeight = '';
+  } else {
+    box.classList.add('on');
+    box.style.maxHeight = box.scrollHeight + 'px';
+  }
+}
+
+function mmSupPickAcct(i) {
+  _supAcctIdx = i;
+  var box = document.getElementById('sup-exp');
+  if(box) { box.classList.remove('on'); box.style.maxHeight = ''; }
   mmSupPaintAcct();
 }
 
@@ -5626,6 +5665,8 @@ function mmSupOpenForm() {
   if(sub) sub.value = '';
   if(msg) msg.value = '';
   _supAcctIdx = 0;
+  var exp = document.getElementById('sup-exp');
+  if(exp) { exp.classList.remove('on'); exp.style.maxHeight = ''; }
   mmSupPaintAcct();
   mmSupCount();
   ov.classList.add('on');
@@ -23647,6 +23688,19 @@ html[data-theme="light"] .sp-tk,html[data-theme="light"] .sp-hours{border-color:
 .sup-acard .bd b{display:block;font-size:12.5px;font-weight:700;color:var(--text);}
 .sup-acard .bd span{display:block;font-size:10px;color:var(--text3);margin-top:2px;}
 .sup-acard .sw{font-size:10px;color:var(--red);font-weight:700;flex:none;cursor:pointer;}
+/* Change opens the card downward in place. The height is set from the real
+   scrollHeight when it opens rather than guessed, so it fits two accounts or
+   six without a magic number in the stylesheet. */
+.sup-exp{max-height:0;overflow:hidden;transition:max-height .32s ease;}
+.sup-erow{display:flex;align-items:center;gap:11px;padding:11px 12px;border:1px solid #23252F;
+ border-radius:12px;margin-top:8px;cursor:pointer;transition:border-color .22s,background .22s;}
+.sup-erow.sel{border-color:rgba(255,30,60,.45);background:rgba(255,30,60,.05);}
+.sup-erow .bd{flex:1;min-width:0;}
+.sup-erow .bd b{display:block;font-size:12.5px;font-weight:700;color:var(--text);}
+.sup-erow .bd span{display:block;font-size:10px;color:var(--text3);margin-top:2px;}
+.sup-erow .tk{font-size:16px;color:var(--red);flex:none;opacity:0;transition:opacity .2s;}
+.sup-erow.sel .tk{opacity:1;}
+html[data-theme="light"] .sup-erow{border-color:rgba(0,0,0,.10);}
 
 /* The message box takes every pixel left between the subject and the button,
    so the form has no dead space on any handset. */
