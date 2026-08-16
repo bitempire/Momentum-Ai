@@ -4613,31 +4613,28 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
       <div class="sub-title" data-i18n="scr.support">CUSTOMER SUPPORT</div>
     </div>
     <div class="sub-content">
-      <!-- Quick Contact Options -->
-      <div class="more-menu-item" onclick="window.open('https://t.me/momentumai','_blank')" style="margin-bottom:8px;">
-        <div class="more-menu-icon" style="background:rgba(0,136,204,0.15);border-color:rgba(0,136,204,0.2);"><i class="ti ti-brand-telegram" style="color:#0088CC;"></i></div>
-        <div class="more-menu-text">
-          <div class="more-menu-label" data-i18n="sup.telegram">Telegram</div>
-          <div class="more-menu-sub" data-i18n="sup.tgHours">1PM – 1AM · @momentumai</div>
+      <div class="sp-cat"><span data-i18n="sup.talkToUs">TALK TO US</span><u></u></div>
+      <div class="sp-pair">
+        <div class="sp-cell" onclick="window.open('https://t.me/momentumai','_blank')">
+          <div class="sp-h"><span class="sp-k">CHAT</span><span class="sp-go" style="color:#2AABEE"><i class="ti ti-external-link"></i></span></div>
+          <span class="sp-nm" data-i18n="sup.telegram">Telegram</span>
+          <span class="sp-meta" data-i18n="sup.tgHandle">@momentumai</span>
+          <span class="sp-bloom" style="background:linear-gradient(180deg,rgba(42,171,238,0),rgba(42,171,238,.16))"></span>
+          <span class="sp-thr"><i style="background:linear-gradient(90deg,rgba(42,171,238,0),rgba(42,171,238,.95) 40%,rgba(42,171,238,1) 50%,rgba(42,171,238,0))"></i></span>
         </div>
-        <i class="ti ti-chevron-right more-menu-arrow"></i>
-      </div>
-      <div class="more-menu-item" onclick="window.open('https://wa.me/601234567890','_blank')" style="margin-bottom:14px;">
-        <div class="more-menu-icon" style="background:rgba(37,211,102,0.12);border-color:rgba(37,211,102,0.2);"><i class="ti ti-brand-whatsapp" style="color:#25D366;"></i></div>
-        <div class="more-menu-text">
-          <div class="more-menu-label" data-i18n="sup.whatsapp">WhatsApp</div>
-          <div class="more-menu-sub" data-i18n="sup.respHours">1PM – 1AM · Response within 1 hour</div>
+        <div class="sp-cell" onclick="window.open('https://wa.me/601234567890','_blank')">
+          <div class="sp-h"><span class="sp-k">CHAT</span><span class="sp-go" style="color:#25D366"><i class="ti ti-external-link"></i></span></div>
+          <span class="sp-nm" data-i18n="sup.whatsapp">WhatsApp</span>
+          <span class="sp-meta" data-i18n="sup.waReply">Within the hour</span>
+          <span class="sp-bloom" style="background:linear-gradient(180deg,rgba(37,211,102,0),rgba(37,211,102,.16))"></span>
+          <span class="sp-thr"><i style="background:linear-gradient(90deg,rgba(37,211,102,0),rgba(37,211,102,.95) 40%,rgba(37,211,102,1) 50%,rgba(37,211,102,0))"></i></span>
         </div>
-        <i class="ti ti-chevron-right more-menu-arrow"></i>
       </div>
-      <!-- Support hours notice -->
-      <div style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:rgba(255,30,60,0.08);border:1px solid rgba(255,30,60,0.2);border-radius:8px;margin-bottom:14px;">
-        <i class="ti ti-clock" style="color:var(--red);font-size:16px;flex-shrink:0;"></i>
-        <div style="font-size:11px;color:var(--red);" data-i18n="sup.hours">Support hours: 1:00 PM – 1:00 AM (MYT) · Mon – Sun</div>
-      </div>
+      <div class="sp-hours"><span id="sup-dot" class="sp-dot"></span><span id="sup-open-txt" data-i18n="sup.openNow">Open now</span> &middot; <b>1:00 PM to 1:00 AM MYT</b>, <span data-i18n="sup.sevenDays">seven days</span></div>
+
       <!-- Ticket Form -->
-      <div class="section-card">
-        <div class="section-title" style="font-size:13px;margin-bottom:12px;"><span class="tw" data-i18n="w.submitA">Submit a </span><span data-i18n="w.ticket">Ticket</span></div>
+      <div class="sp-cat"><span data-i18n="w.ticket">SUBMIT A TICKET</span><u></u></div>
+      <div class="sp-panel">
         <div class="auth-field">
           <label class="auth-label" data-i18n="sup.subject">Subject</label>
           <select id="support-subject" class="auth-input">
@@ -4657,11 +4654,11 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
         </div>
         <div id="support-error" class="error-msg"></div>
         <div id="support-success" class="success-msg"></div>
-        <button class="red-btn" onclick="handleSupportTicket()" data-i18n="sup.submit">SUBMIT TICKET</button>
+        <button class="sp-send" onclick="handleSupportTicket()" data-i18n="sup.submit">SUBMIT TICKET</button>
       </div>
       <!-- My Tickets -->
-      <div class="section-card" style="margin-top:12px;">
-        <div class="section-title" style="font-size:13px;margin-bottom:12px;"><span class="tw" data-i18n="w.my">My </span><span data-i18n="w.tickets">Tickets</span></div>
+      <div class="sp-cat"><span data-i18n="w.tickets">MY TICKETS</span><u></u></div>
+      <div>
         <div id="my-tickets">
           <div class="empty-state" style="padding:20px;"><i class="ti ti-ticket"></i><span data-i18n="sup.noTickets">No tickets yet</span></div>
         </div>
@@ -6783,7 +6780,7 @@ var MM_I18N = {
     'more.smartTool':'智能工具', 'more.tradeSettings':'交易設定', 'more.autoTrade':'自動交易',
     'more.academy':'交易學院', 'more.news':'財經日曆', 'more.aiAnalyst':'AI 圖表分析',
     'more.support':'客戶服務', 'more.followUs':'追蹤我們', 'more.admin':'管理後台', 'more.signOut':'登出',
-    'more.services':'更多服務', 'more.others':'其他', 'hdr.signedIn':'已登入', 'more.leaderboard':'排行榜', 'more.viewAll':'查看全部',
+    'more.services':'更多服務', 'more.others':'其他', 'sup.talkToUs':'聯絡我們', 'sup.tgHandle':'@momentumai', 'sup.waReply':'一小時內回覆', 'sup.openNow':'現在營業', 'sup.closedNow':'目前休息', 'sup.sevenDays':'每日', 'hdr.signedIn':'已登入', 'more.leaderboard':'排行榜', 'more.viewAll':'查看全部',
     'q.scanner':'MAI 掃描器', 'q.manager':'MAI 基金經理', 'q.smartTools':'MAI 智能工具', 'q.account':'我的帳戶',
     'dash.welcome':'歡迎回來', 'dash.sub':'今天一起加速您的財富', 'dash.market':'市場','dash.overview':'總覽',
     'dash.recent':'最新','dash.signals':'訊號','dash.viewAll':'查看所有訊號 →',
@@ -7415,7 +7412,7 @@ var MM_I18N = {
     'more.news':'财经日历', 'more.aiAnalyst':'AI 图表分析',
     'more.support':'客户服务', 'more.followUs':'追踪我们',
     'more.admin':'管理后台', 'more.signOut':'登出',
-    'more.services':'更多服务', 'more.others':'其他', 'hdr.signedIn':'已登录',
+    'more.services':'更多服务', 'more.others':'其他', 'sup.talkToUs':'联系我们', 'sup.tgHandle':'@momentumai', 'sup.waReply':'一小时内回复', 'sup.openNow':'现在营业', 'sup.closedNow':'目前休息', 'sup.sevenDays':'每日', 'hdr.signedIn':'已登录',
     'more.leaderboard':'排行榜', 'more.viewAll':'查看全部',
     'q.scanner':'MAI 扫描器', 'q.manager':'MAI 基金经理',
     'q.smartTools':'MAI 智能工具', 'q.account':'我的账户',
@@ -7951,7 +7948,7 @@ var MM_I18N = {
     'more.news':'Kalendar Berita', 'more.aiAnalyst':'Penganalisis Carta AI',
     'more.support':'Sokongan Pelanggan', 'more.followUs':'Ikuti Kami',
     'more.admin':'Panel Admin', 'more.signOut':'Log Keluar',
-    'more.services':'Perkhidmatan lain', 'more.others':'Lain-lain', 'hdr.signedIn':'LOG MASUK',
+    'more.services':'Perkhidmatan lain', 'more.others':'Lain-lain', 'sup.talkToUs':'HUBUNGI KAMI', 'sup.tgHandle':'@momentumai', 'sup.waReply':'Dalam sejam', 'sup.openNow':'Buka sekarang', 'sup.closedNow':'Tutup', 'sup.sevenDays':'tujuh hari', 'hdr.signedIn':'LOG MASUK',
     'more.leaderboard':'Papan Pendahulu', 'more.viewAll':'Lihat semua',
     'q.scanner':'MAI Scanner', 'q.manager':'MAI Manager',
     'q.smartTools':'MAI Smart Tools', 'q.account':'Akaun Saya',
@@ -8487,7 +8484,7 @@ var MM_I18N = {
     'more.news':'経済カレンダー', 'more.aiAnalyst':'AIチャート分析',
     'more.support':'カスタマーサポート', 'more.followUs':'フォローする',
     'more.admin':'管理パネル', 'more.signOut':'ログアウト',
-    'more.services':'その他のサービス', 'more.others':'その他', 'hdr.signedIn':'ログイン中',
+    'more.services':'その他のサービス', 'more.others':'その他', 'sup.talkToUs':'お問い合わせ', 'sup.tgHandle':'@momentumai', 'sup.waReply':'1時間以内に返信', 'sup.openNow':'営業中', 'sup.closedNow':'営業時間外', 'sup.sevenDays':'年中無休', 'hdr.signedIn':'ログイン中',
     'more.leaderboard':'ランキング', 'more.viewAll':'すべて見る',
     'q.scanner':'MAI Scanner', 'q.manager':'MAI Manager',
     'q.smartTools':'MAI Smart Tools', 'q.account':'マイアカウント',
@@ -9023,7 +9020,7 @@ var MM_I18N = {
     'more.news':'경제 캘린더', 'more.aiAnalyst':'AI 차트 분석',
     'more.support':'고객 지원', 'more.followUs':'팔로우하기',
     'more.admin':'관리자 패널', 'more.signOut':'로그아웃',
-    'more.services':'기타 서비스', 'more.others':'기타', 'hdr.signedIn':'로그인됨',
+    'more.services':'기타 서비스', 'more.others':'기타', 'sup.talkToUs':'문의하기', 'sup.tgHandle':'@momentumai', 'sup.waReply':'1시간 이내 답변', 'sup.openNow':'영업 중', 'sup.closedNow':'영업 종료', 'sup.sevenDays':'연중무휴', 'hdr.signedIn':'로그인됨',
     'more.leaderboard':'리더보드', 'more.viewAll':'전체 보기',
     'q.scanner':'MAI Scanner', 'q.manager':'MAI Manager',
     'q.smartTools':'MAI Smart Tools', 'q.account':'내 계정',
@@ -9559,7 +9556,7 @@ var MM_I18N = {
     'more.news':'ปฏิทินข่าว', 'more.aiAnalyst':'AI วิเคราะห์กราฟ',
     'more.support':'ฝ่ายบริการลูกค้า', 'more.followUs':'ติดตามเรา',
     'more.admin':'แผงผู้ดูแล', 'more.signOut':'ออกจากระบบ',
-    'more.services':'บริการอื่น ๆ', 'more.others':'อื่น ๆ', 'hdr.signedIn':'เข้าสู่ระบบ',
+    'more.services':'บริการอื่น ๆ', 'more.others':'อื่น ๆ', 'sup.talkToUs':'ติดต่อเรา', 'sup.tgHandle':'@momentumai', 'sup.waReply':'ภายใน 1 ชั่วโมง', 'sup.openNow':'เปิดอยู่', 'sup.closedNow':'ปิดอยู่', 'sup.sevenDays':'ทุกวัน', 'hdr.signedIn':'เข้าสู่ระบบ',
     'more.leaderboard':'กระดานอันดับ', 'more.viewAll':'ดูทั้งหมด',
     'q.scanner':'MAI Scanner', 'q.manager':'MAI Manager',
     'q.smartTools':'MAI Smart Tools', 'q.account':'บัญชีของฉัน',
@@ -10095,7 +10092,7 @@ var MM_I18N = {
     'more.news':'Lịch kinh tế', 'more.aiAnalyst':'Phân tích biểu đồ AI',
     'more.support':'Hỗ trợ khách hàng', 'more.followUs':'Theo dõi chúng tôi',
     'more.admin':'Bảng quản trị', 'more.signOut':'Đăng xuất',
-    'more.services':'Dịch vụ khác', 'more.others':'Khác', 'hdr.signedIn':'ĐÃ ĐĂNG NHẬP',
+    'more.services':'Dịch vụ khác', 'more.others':'Khác', 'sup.talkToUs':'LIÊN HỆ', 'sup.tgHandle':'@momentumai', 'sup.waReply':'Trong vòng 1 giờ', 'sup.openNow':'Đang mở', 'sup.closedNow':'Đã đóng', 'sup.sevenDays':'bảy ngày', 'hdr.signedIn':'ĐÃ ĐĂNG NHẬP',
     'more.leaderboard':'Bảng xếp hạng', 'more.viewAll':'Xem tất cả',
     'q.scanner':'MAI Scanner', 'q.manager':'MAI Manager',
     'q.smartTools':'MAI Smart Tools', 'q.account':'Tài khoản của tôi',
@@ -10631,7 +10628,7 @@ var MM_I18N = {
     'more.news':'News Calendar', 'more.aiAnalyst':'AI Chart Analyst',
     'more.support':'Customer Support', 'more.followUs':'Sundan Kami',
     'more.admin':'Admin Panel', 'more.signOut':'Mag-log out',
-    'more.services':'Iba pang serbisyo', 'more.others':'Iba pa', 'hdr.signedIn':'NAKA-SIGN IN',
+    'more.services':'Iba pang serbisyo', 'more.others':'Iba pa', 'sup.talkToUs':'MAKIPAG-UGNAYAN', 'sup.tgHandle':'@momentumai', 'sup.waReply':'Sa loob ng 1 oras', 'sup.openNow':'Bukas ngayon', 'sup.closedNow':'Sarado', 'sup.sevenDays':'pitong araw', 'hdr.signedIn':'NAKA-SIGN IN',
     'more.leaderboard':'Leaderboard', 'more.viewAll':'Tingnan lahat',
     'q.scanner':'MAI Scanner', 'q.manager':'MAI Manager',
     'q.smartTools':'MAI Smart Tools', 'q.account':'Aking Account',
@@ -11167,7 +11164,7 @@ var MM_I18N = {
     'more.news':'समाचार कैलेंडर', 'more.aiAnalyst':'AI चार्ट विश्लेषक',
     'more.support':'ग्राहक सहायता', 'more.followUs':'हमें फ़ॉलो करें',
     'more.admin':'एडमिन पैनल', 'more.signOut':'लॉग आउट',
-    'more.services':'अन्य सेवाएँ', 'more.others':'अन्य', 'hdr.signedIn':'साइन इन',
+    'more.services':'अन्य सेवाएँ', 'more.others':'अन्य', 'sup.talkToUs':'संपर्क करें', 'sup.tgHandle':'@momentumai', 'sup.waReply':'1 घंटे के भीतर', 'sup.openNow':'अभी खुला', 'sup.closedNow':'अभी बंद', 'sup.sevenDays':'सातों दिन', 'hdr.signedIn':'साइन इन',
     'more.leaderboard':'लीडरबोर्ड', 'more.viewAll':'सभी देखें',
     'q.scanner':'MAI Scanner', 'q.manager':'MAI Manager',
     'q.smartTools':'MAI Smart Tools', 'q.account':'मेरा खाता',
@@ -11703,7 +11700,7 @@ var MM_I18N = {
     'more.news':'Calendario económico', 'more.aiAnalyst':'Analista de gráficos con IA',
     'more.support':'Atención al cliente', 'more.followUs':'Síguenos',
     'more.admin':'Panel de administración', 'more.signOut':'Cerrar sesión',
-    'more.services':'Otros servicios', 'more.others':'Otros', 'hdr.signedIn':'SESIÓN INICIADA',
+    'more.services':'Otros servicios', 'more.others':'Otros', 'sup.talkToUs':'CONTÁCTANOS', 'sup.tgHandle':'@momentumai', 'sup.waReply':'En menos de 1 hora', 'sup.openNow':'Abierto ahora', 'sup.closedNow':'Cerrado', 'sup.sevenDays':'siete días', 'hdr.signedIn':'SESIÓN INICIADA',
     'more.leaderboard':'Clasificación', 'more.viewAll':'Ver todo',
     'q.scanner':'MAI Scanner', 'q.manager':'MAI Manager',
     'q.smartTools':'MAI Smart Tools', 'q.account':'Mi cuenta',
@@ -14201,36 +14198,66 @@ async function generateMAIReport() {
 }
 
 // ── SUPPORT TICKETS ──
+// OPEN NOW, computed from the 1PM to 1AM MYT window rather than stored, so
+// there is nothing to keep in sync. MYT is UTC+8 all year, no daylight saving.
+function mmSupportOpen(d){
+  var h = ((d || new Date()).getUTCHours() + 8) % 24;   // hour in MYT
+  return (h >= 13) || (h < 1);
+}
+function mmSupportHours(){
+  var dot = document.getElementById('sup-dot');
+  var txt = document.getElementById('sup-open-txt');
+  if(!dot || !txt) return;
+  var open = mmSupportOpen();
+  dot.className = 'sp-dot' + (open ? '' : ' shut');
+  txt.textContent = open ? mmT('sup.openNow','Open now') : mmT('sup.closedNow','Closed now');
+}
+
 async function loadMyTickets() {
+  try{ mmSupportHours(); }catch(e){}
   if(!currentUser || !db) return;
   var el = document.getElementById('my-tickets');
   if(!el) return;
   try {
     var res = await db.from('support_tickets').select('*').eq('user_id', currentUser.id).order('created_at', {ascending:false}).limit(10);
     if(!res.data || !res.data.length) { el.innerHTML = '<div class="empty-state" style="padding:20px;"><i class="ti ti-ticket"></i>'+mmT('misc.noTickets','No tickets yet')+'</div>'; return; }
-    el.innerHTML = '';
+    // ONE ROW PER TICKET. The old row carried a status reading PENDING beside a
+    // button reading Open, which are two different meanings of the same word.
+    // The pill now carries the status and the row itself opens the ticket.
+    var wrap = document.createElement('div');
+    wrap.className = 'sp-tks';
     res.data.forEach(function(t) {
       if(t.status === 'done' && t.replied_at) {
         var age = (new Date() - new Date(t.replied_at)) / (1000*60*60);
         if(age > 24) return;
       }
-      var sc = {open:'var(--amber)',pending:'var(--red)',done:'var(--green)'}[t.status] || 'var(--text3)';
-      var sb = {open:'rgba(255,176,32,0.1)',pending:'rgba(255,30,60,0.08)',done:'rgba(0,200,122,0.1)'}[t.status] || 'rgba(255,255,255,0.05)';
-      var div = document.createElement('div');
-      div.style.cssText = 'padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;';
-      var hdr = document.createElement('div');
-      hdr.style.cssText = 'display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;';
-      hdr.innerHTML = '<div style="font-size:12px;font-weight:700;color:var(--text);">' + t.subject + '</div><div style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;background:'+sb+';color:'+sc+';">' + (t.status||'open').toUpperCase() + '</div>';
-      var msg = document.createElement('div');
-      msg.style.cssText = 'font-size:11px;color:var(--text3);margin-bottom:8px;';
-      msg.textContent = t.message.substring(0,80) + (t.message.length > 80 ? '...' : '');
-      var btn = document.createElement('button');
-      btn.textContent = mmT('common.open','Open');
-      btn.style.cssText = 'padding:6px 14px;background:linear-gradient(135deg,#FF1E3C,#C40024);border:none;border-radius:7px;color:#fff;font-size:11px;font-weight:700;cursor:pointer;';
-      btn.addEventListener('click', function() { openTicketDetail(t); });
-      div.appendChild(hdr); div.appendChild(msg); div.appendChild(btn);
-      el.appendChild(div);
+      var st = (t.status || 'open');
+      var sc = {open:'var(--amber)',pending:'var(--red)',done:'var(--green)'}[st] || 'var(--text3)';
+      var sb = {open:'rgba(255,176,32,0.12)',pending:'rgba(255,30,60,0.10)',done:'rgba(0,200,122,0.12)'}[st] || 'rgba(255,255,255,0.05)';
+      var sd = {open:'rgba(255,176,32,0.30)',pending:'rgba(255,30,60,0.30)',done:'rgba(0,200,122,0.30)'}[st] || 'rgba(255,255,255,0.10)';
+      var row = document.createElement('div');
+      row.className = 'sp-tk';
+      var tn = document.createElement('div');
+      tn.className = 'sp-tn';
+      var sub = document.createElement('b'); sub.textContent = t.subject || '';
+      var msg = document.createElement('span'); msg.textContent = (t.message || '');
+      tn.appendChild(sub); tn.appendChild(msg);
+      var pill = document.createElement('span');
+      pill.className = 'sp-pill';
+      pill.style.cssText = 'background:'+sb+';color:'+sc+';border:1px solid '+sd+';';
+      pill.textContent = st.toUpperCase();
+      var chev = document.createElement('span');
+      chev.className = 'sp-chev'; chev.textContent = '\u203A';
+      row.appendChild(tn); row.appendChild(pill); row.appendChild(chev);
+      row.addEventListener('click', function(){ openTicketDetail(t); });
+      wrap.appendChild(row);
     });
+    if(!wrap.children.length){
+      el.innerHTML = '<div class="empty-state" style="padding:20px;"><i class="ti ti-ticket"></i>'+mmT('misc.noTickets','No tickets yet')+'</div>';
+      return;
+    }
+    el.innerHTML = '';
+    el.appendChild(wrap);
   } catch(e) {}
 }
 
@@ -22879,6 +22906,59 @@ function ntFlipLead(m){
    accounts, and the broker's purple for the partner block, so a customer can
    see at a glance which four are not ours. Scoped with `fu-` because
    `more-menu-item` is shared with five other screens. */
+
+/* CUSTOMER SUPPORT, 13 Aug 2026. Rebuilt in the app's own cells. Three faults
+   went with the old version: the support hours appeared THREE TIMES, twice in
+   the contact rows and again in a banner; that banner was RED, which everywhere
+   else in this app means something is wrong, when hours are only information;
+   and a ticket row said PENDING beside a button marked Open, two meanings of
+   one word sitting together. */
+.sp-pair{display:grid;grid-template-columns:1fr 1fr;border:1px solid #23252F;
+ border-radius:12px;overflow:hidden;}
+.sp-cell{position:relative;overflow:hidden;padding:12px 12px 15px;cursor:pointer;
+ border-right:1px solid #23252F;}
+.sp-cell:last-child{border-right:0;}
+.sp-cell > *{position:relative;z-index:2;}
+.sp-h{display:flex;align-items:center;justify-content:space-between;}
+.sp-k{font-size:8.5px;letter-spacing:.18em;color:var(--text3);font-weight:700;}
+.sp-go{flex:none;display:flex;align-items:center;}
+.sp-go i{font-size:15px;}
+.sp-nm{display:block;color:var(--text);font-size:14px;margin-top:3px;
+ font-family:'Orbitron',sans-serif;letter-spacing:-.2px;}
+.sp-meta{display:block;font-size:10px;color:var(--text3);margin-top:4px;}
+.sp-thr{position:absolute;left:0;right:0;bottom:0;height:2px;z-index:1;overflow:hidden;
+ pointer-events:none;
+ -webkit-mask-image:linear-gradient(90deg,transparent,#000 22%,#000 78%,transparent);
+ mask-image:linear-gradient(90deg,transparent,#000 22%,#000 78%,transparent);}
+.sp-thr i{position:absolute;inset:0;background-size:220% 100%;animation:mmMktFlow 6s linear infinite;}
+.sp-bloom{position:absolute;left:0;right:0;bottom:0;height:24px;z-index:1;filter:blur(9px);pointer-events:none;}
+.sp-hours{display:flex;align-items:center;gap:8px;font-size:10.5px;color:var(--text3);
+ padding:9px 12px;border:1px solid #23252F;border-radius:10px;margin-top:9px;}
+.sp-dot{width:6px;height:6px;border-radius:50%;flex:none;background:var(--green);}
+.sp-dot.shut{background:var(--text3);}
+.sp-hours b{color:var(--text2);font-weight:600;}
+.sp-cat{display:flex;align-items:center;gap:8px;margin:16px 2px 8px;}
+.sp-cat span{font-size:8.5px;letter-spacing:.24em;color:var(--text3);font-weight:800;}
+.sp-cat u{flex:1;height:1px;text-decoration:none;background:#23252F;}
+.sp-panel{border:1px solid #23252F;border-radius:12px;padding:13px;}
+/* FLAT RED. No gradient and nothing animated, as asked. */
+.sp-send{width:100%;margin-top:12px;padding:13px;border-radius:11px;border:0;color:#fff;
+ font-size:11.5px;font-weight:700;letter-spacing:.14em;background:var(--red);cursor:pointer;
+ font-family:'Orbitron',sans-serif;}
+.sp-tks{border:1px solid #23252F;border-radius:12px;overflow:hidden;}
+.sp-tk{display:flex;align-items:center;gap:10px;padding:11px 13px;
+ border-bottom:1px solid #23252F;cursor:pointer;}
+.sp-tk:last-child{border-bottom:0;}
+.sp-tn{flex:1;min-width:0;}
+.sp-tn b{display:block;font-size:12.5px;color:var(--text);font-weight:600;}
+.sp-tn span{display:block;font-size:10.5px;color:var(--text3);margin-top:2px;
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sp-pill{font-size:7.5px;font-weight:800;letter-spacing:.1em;padding:3px 7px;border-radius:5px;flex:none;}
+.sp-chev{color:#4A505A;font-size:15px;flex:none;}
+html[data-theme="light"] .sp-pair,html[data-theme="light"] .sp-cell,
+html[data-theme="light"] .sp-panel,html[data-theme="light"] .sp-tks,
+html[data-theme="light"] .sp-tk,html[data-theme="light"] .sp-hours{border-color:rgba(0,0,0,.10);}
+
 .fu-frame{border:1px solid #23252F;border-radius:12px;overflow:hidden;}
 .fu-cell{position:relative;overflow:hidden;display:flex;align-items:center;gap:10px;
  padding:13px 13px 16px;border-bottom:1px solid #23252F;cursor:pointer;}
