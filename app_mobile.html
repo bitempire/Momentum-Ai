@@ -12042,6 +12042,11 @@ else mmApplyLang();
 function handleLogout() {
   currentUser = null;
   sessionStorage.clear();
+  // THE PAGE IS NOT RELOADED ON SIGN OUT, so anything remembered for the life
+  // of the page survives into the next sign in. The staff landing guard is one
+  // of those: without this reset it stayed set, and an admin who signed out and
+  // back in landed in the customer app while a refresh worked fine.
+  _mmStaffRouted = false;
   showScreen('screen-auth');
 }
 
@@ -21333,7 +21338,12 @@ function mmStaffLand(){
 // member of staff has no business taking from their own login, so the whole
 // block is removed rather than disabled - a disabled form still invites a try.
 function mmApplyStaffLimits(){
-  if(!mmIsStaff(currentUser)) return;
+  if(!mmIsStaff(currentUser)){
+    // A customer signing in after an admin on the same page must get it back.
+    var back = document.getElementById('mt5-connect-section');
+    if(back && back.style.display === 'none') back.style.display = '';
+    return;
+  }
   var ids = ['mt5-connect-section'];
   for(var i=0;i<ids.length;i++){
     var el = document.getElementById(ids[i]);
