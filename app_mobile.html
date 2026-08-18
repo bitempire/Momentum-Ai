@@ -833,7 +833,37 @@ html[data-theme="light"] .amt-ov{background:#fff;}
    numbers as 2 BY 2 rather than four across, and A1's explained actions with
    the delete as a moving gradient warning - the same `mmCtaFlow` the Home
    button already uses - with no icon and no sub-line. */
-.amt-hero{position:relative;overflow:hidden;}
+/* E1, TINTED GLASS (18 Aug 2026). The header carries the back button, the
+   customer sits INSIDE the same panel as the four numbers, and the flat grey
+   cards become lit glass: a white gradient that is lighter at the top, so a
+   card looks lit from above rather than filled with grey.
+   The hero wash takes the HEALTH colour, so an account that has gone quiet
+   tints its own hero without anyone reading a word. */
+.amt-hdr{height:46px;flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:0 14px;
+ border-bottom:1px solid var(--border);}
+.amt-htitle{font-family:'Orbitron',sans-serif;font-size:11.5px;font-weight:800;letter-spacing:.5px;}
+.amt-hero{position:relative;overflow:hidden;border:1px solid var(--border);border-radius:14px;
+ margin:12px 14px 0;}
+.amt-hero > *{position:relative;z-index:2;}
+.amt-mesh{position:absolute;inset:0;z-index:1;opacity:.35;pointer-events:none;
+ background-image:linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),
+                  linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px);
+ background-size:24px 24px;}
+.amt-who{display:flex;align-items:center;gap:10px;padding:11px 12px;
+ border-bottom:1px solid var(--border);}
+.amt-glass{background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.02));}
+.amt-chips{display:flex;flex-direction:column;gap:7px;}
+.amt-chip{position:relative;overflow:hidden;display:flex;align-items:center;gap:10px;
+ border:1px solid var(--border);border-radius:11px;padding:10px 12px;}
+.amt-chip > *{position:relative;z-index:2;}
+.amt-chip .ic{width:24px;height:24px;flex:none;border-radius:8px;display:flex;align-items:center;
+ justify-content:center;font-size:12px;color:var(--text3);background:rgba(255,255,255,.05);}
+.amt-chip .k{font-size:8px;color:var(--text3);letter-spacing:.5px;}
+.amt-chip .v{font-family:'Orbitron',sans-serif;font-size:11.5px;margin-top:3px;word-break:break-all;}
+.amt-chip .rv{margin-left:auto;font-size:9px;font-weight:700;color:var(--text3);cursor:pointer;}
+.amt-ring{width:28px;height:28px;flex:none;border-radius:50%;border:1.5px solid;
+ display:flex;align-items:center;justify-content:center;font-size:13px;background:transparent;}
+
 .amt-idr{display:flex;align-items:center;gap:10px;padding:12px 14px 13px;}
 .amt-av2{width:36px;height:36px;flex:none;border-radius:12px;display:flex;align-items:center;
  justify-content:center;font-family:'Orbitron',sans-serif;font-size:12px;position:relative;}
@@ -856,10 +886,10 @@ html[data-theme="light"] .amt-ov{background:#fff;}
 .amt-krow .k{font-size:9.5px;color:var(--text3);width:80px;flex:none;letter-spacing:.4px;}
 .amt-krow .v{flex:1;font-size:12px;font-weight:600;word-break:break-all;}
 
-.amt-alist{border-radius:12px;overflow:hidden;border:1px solid var(--border);background:var(--surface);}
-.amt-act{display:flex;align-items:center;gap:11px;padding:11px 13px;cursor:pointer;
- border-bottom:1px solid rgba(255,255,255,.05);}
-.amt-act:last-child{border-bottom:0;}
+.amt-alist{display:flex;flex-direction:column;gap:7px;}
+.amt-act{position:relative;overflow:hidden;display:flex;align-items:center;gap:11px;
+ padding:10px 12px;cursor:pointer;border:1px solid var(--border);border-radius:11px;}
+.amt-act > *{position:relative;z-index:2;}
 .amt-act:active{background:var(--surface2);}
 .amt-act .ic{width:29px;height:29px;flex:none;border-radius:9px;display:flex;align-items:center;
  justify-content:center;font-size:14px;}
@@ -22408,8 +22438,8 @@ function mmMtOpen(id) {
   };
   var actHtml = acts.map(function(x) {
     var c = C[x[1]];
-    return '<div class="amt-act" onclick="mmMtClose(); ' + x[4] + ';">' +
-      '<span class="ic" style="background:' + c[0] + ';color:' + c[1] + '"><i class="ti ' + x[2] + '"></i></span>' +
+    return '<div class="amt-act amt-glass" onclick="mmMtClose(); ' + x[4] + ';">' +
+      '<span class="amt-ring" style="border-color:' + c[1] + ';color:' + c[1] + '"><i class="ti ' + x[2] + '"></i></span>' +
       '<span class="tx"><b>' + x[0] + '</b><s>' + x[3] + '</s></span>' +
       '<span class="ch"><i class="ti ti-chevron-right"></i></span></div>';
   }).join('');
@@ -22418,13 +22448,17 @@ function mmMtOpen(id) {
   ov.id = 'amt-ov';
   ov.className = 'amt-ov on';
   ov.innerHTML =
-    '<div class="amt-hero">' +
-      '<div class="amt-idr">' +
-        '<span class="amt-bk" onclick="mmMtClose()"><i class="ti ti-arrow-left"></i></span>' +
+    '<div class="amt-hdr">' +
+      '<span class="amt-bk" onclick="mmMtClose()"><i class="ti ti-arrow-left"></i></span>' +
+      '<span class="amt-htitle">MT5 ACCOUNT</span>' +
+      '<span class="amt-pill" style="margin-left:auto;background:' + b[1] + ';color:' + b[2] + '">' + b[0] + '</span>' +
+    '</div>' +
+    '<div class="amt-hero" style="background:linear-gradient(150deg,' + h.c + '2e,' + h.c + '08 55%,rgba(255,255,255,.02))">' +
+      '<span class="amt-mesh"></span>' +
+      '<div class="amt-who">' +
         '<span class="amt-av2" style="background:' + h.c + '26;color:' + h.c + '">' + mmTkEsc(mmMtInitials(nm)) + '</span>' +
         '<span class="amt-dwho"><b>' + mmTkEsc(nm) + '</b><s>' + mmTkEsc(a.mt5_id || '--') + ' \u00b7 ' +
           mmTkEsc(a.worker_group || 'Unassigned') + '</s></span>' +
-        '<span class="amt-pill" style="background:' + b[1] + ';color:' + b[2] + '">' + b[0] + '</span>' +
       '</div>' +
       '<div class="amt-m2">' +
         '<div><i class="ti ti-activity-heartbeat" style="color:' + h.c + '"></i>' +
@@ -22445,14 +22479,21 @@ function mmMtOpen(id) {
           '<div class="v" style="font-family:Sora,sans-serif;font-size:11px;color:var(--amber)">' +
           mmTkEsc(a.status_reason || a.rejection_reason) + '</div></div>' : '') +
       '<div class="amt-sect">CREDENTIALS</div>' +
-      '<div class="amt-krow"><span class="k">MT5 ID</span><span class="v">' + mmTkEsc(a.mt5_id || '--') + '</span></div>' +
-      '<div class="amt-krow"><span class="k">SERVER</span><span class="v">' + mmTkEsc(a.broker || a.mt5_server || '--') + '</span></div>' +
-      '<div class="amt-krow"><span class="k">PASSWORD</span>' +
-        '<span class="v" id="amt-pw" style="font-family:monospace">\u25cf\u25cf\u25cf\u25cf\u25cf\u25cf</span>' +
-        (a.mt5_credential ? '<span class="amt-rev" id="amt-rev" onclick="mmMtReveal(\'' + a.id + '\')">Reveal</span>'
-                          : '<span style="font-size:9.5px;color:var(--text3)">Not set</span>') + '</div>' +
-      '<div class="amt-krow"><span class="k">PLAN</span><span class="v" style="color:' +
-        (prem ? 'var(--gold)' : 'var(--blue)') + '">' + (prem ? 'PREMIUM' : 'BASIC') + '</span></div>' +
+      '<div class="amt-chips">' +
+        '<div class="amt-chip amt-glass"><span class="ic"><i class="ti ti-id"></i></span>' +
+          '<span><div class="k">MT5 ID</div><div class="v">' + mmTkEsc(a.mt5_id || '--') + '</div></span></div>' +
+        '<div class="amt-chip amt-glass"><span class="ic"><i class="ti ti-building-bank"></i></span>' +
+          '<span><div class="k">SERVER</div><div class="v" style="font-family:Sora,sans-serif;font-size:11px">' +
+          mmTkEsc(a.broker || a.mt5_server || '--') + '</div></span></div>' +
+        '<div class="amt-chip amt-glass"><span class="ic"><i class="ti ti-key"></i></span>' +
+          '<span><div class="k">PASSWORD</div><div class="v" id="amt-pw" style="font-family:monospace">' +
+          '\u25cf\u25cf\u25cf\u25cf\u25cf\u25cf</div></span>' +
+          (a.mt5_credential ? '<span class="rv" id="amt-rev" onclick="mmMtReveal(\'' + a.id + '\')">Reveal</span>'
+                            : '<span class="rv">Not set</span>') + '</div>' +
+        '<div class="amt-chip amt-glass"><span class="ic"><i class="ti ti-crown"></i></span>' +
+          '<span><div class="k">PLAN</div><div class="v" style="color:' + (prem ? 'var(--gold)' : 'var(--blue)') + '">' +
+          (prem ? 'PREMIUM' : 'BASIC') + '</div></span></div>' +
+      '</div>' +
       '<div class="amt-sect">ACTIONS</div>' +
       '<div class="amt-alist">' + actHtml + '</div>' +
       '<button class="amt-del" onclick="mmMtDelete(\'' + a.id + '\')">DELETE ACCOUNT</button>' +
