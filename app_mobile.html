@@ -911,6 +911,60 @@ html[data-theme="light"] .amt-ov{background:#fff;}
  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .aus-pill{font-size:8px;font-weight:700;letter-spacing:.4px;padding:3px 7px;border-radius:5px;flex:none;}
 .aus-ch{color:var(--text3);font-size:13px;flex:none;}
+/* ══ SUPPORT QUEUE (18 Aug 2026) ═══════════════════════════════
+   Waiting first, everything else quiet underneath - the third screen to use
+   that shape after the dashboard and Users. The card now shows the LAST line
+   of the conversation and who wrote it, because `admin_reply` survives a later
+   customer message and reading it alone puts the wrong name on the card.
+   The chat keeps the FULL account panel rather than a collapsed line. */
+.atk-chips{display:flex;gap:6px;margin-bottom:11px;}
+.atk-chip{flex:1;text-align:center;font-size:9px;font-weight:700;padding:6px 3px;border-radius:8px;
+ background:var(--surface);border:1px solid var(--border);color:var(--text3);white-space:nowrap;
+ cursor:pointer;font-family:'Sora',sans-serif;}
+.atk-chip.on{background:rgba(255,30,60,.14);border-color:rgba(255,30,60,.4);color:var(--red);}
+
+.atk-wait{position:relative;overflow:hidden;border:1px solid rgba(255,30,60,.28);border-radius:13px;
+ background:linear-gradient(150deg,rgba(255,30,60,.14),rgba(255,30,60,.02) 60%);
+ padding:9px;margin-bottom:12px;}
+.atk-wh{display:flex;align-items:center;gap:7px;margin:1px 3px 9px;}
+.atk-wh i{font-size:12px;color:var(--red);}
+.atk-wh b{font-family:'Orbitron',sans-serif;font-size:9.5px;letter-spacing:1px;color:var(--red);}
+.atk-wh u{flex:1;height:1px;background:rgba(255,30,60,.25);text-decoration:none;}
+.atk-sect{font-family:'Orbitron',sans-serif;font-size:8.5px;letter-spacing:1.1px;color:var(--text3);
+ margin:12px 0 8px;}
+
+.atk-card{position:relative;overflow:hidden;display:flex;gap:10px;padding:10px 11px;
+ border:1px solid var(--border);border-radius:12px;margin-bottom:7px;cursor:pointer;
+ background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.02));}
+.atk-card > *{position:relative;z-index:2;}
+.atk-card:active{background:var(--surface2);}
+.atk-wait .atk-card{background:rgba(0,0,0,.30);}
+.atk-card .edge{position:absolute;left:0;top:0;bottom:0;width:3px;}
+.atk-card .av{width:30px;height:30px;flex:none;border-radius:10px;display:flex;align-items:center;
+ justify-content:center;font-size:10px;font-weight:800;color:#07070a;}
+.atk-card .bd{flex:1;min-width:0;}
+.atk-card .r1{display:flex;justify-content:space-between;gap:8px;align-items:baseline;}
+.atk-card .nm{font-size:11.5px;font-weight:700;color:var(--text);}
+.atk-card .ag{font-size:8.5px;color:var(--text3);flex:none;}
+.atk-card .sj{display:block;font-size:11px;color:var(--text);margin-top:3px;
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.atk-card .pv{display:block;font-size:9px;color:var(--text3);margin-top:3px;
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.atk-card .r3{display:flex;align-items:center;gap:6px;margin-top:7px;}
+.atk-card .acct{font-size:8px;color:var(--text3);}
+
+/* the account panel at the top of the chat */
+.atk-panel{position:relative;overflow:hidden;margin:10px 12px 0;border:1px solid var(--border);
+ border-radius:12px;background:linear-gradient(150deg,rgba(59,130,246,.15),rgba(59,130,246,.02) 60%);}
+.atk-panel > *{position:relative;z-index:2;}
+.atk-pg{display:grid;grid-template-columns:1fr 1fr;}
+.atk-pg > div{padding:8px 10px;border-right:1px solid var(--border);border-top:1px solid var(--border);}
+.atk-pg > div:nth-child(2n){border-right:0;}
+.atk-pg > div:nth-child(-n+2){border-top:0;}
+.atk-pg .k{font-size:7px;color:var(--text3);letter-spacing:.5px;}
+.atk-pg .v{font-family:'Orbitron',sans-serif;font-size:10.5px;margin-top:3px;}
+.atk-fail{padding:7px 10px;border-top:1px solid var(--border);font-size:8.5px;color:var(--red);}
+
 
 /* The user detail is four figures and two or three actions, which is not a
    screenful, so it opens as a CENTRE CARD over the dimmed list rather than as
@@ -4539,14 +4593,7 @@ html[data-theme="light"] .adm-nb.on i,html[data-theme="light"] .adm-nb.on span{c
 
       <!-- ── SUPPORT TICKETS TAB ── -->
       <div id="atab-content-tickets" style="display:none;">
-        <div style="display:flex;gap:6px;margin-bottom:12px;">
-          <select id="ticket-filter" class="auth-input" style="font-size:12px;padding:8px 10px;" onchange="loadAdminTickets()">
-            <option value="all">All Tickets</option>
-            <option value="open">Open</option>
-            <option value="pending">Pending</option>
-            <option value="done">Done</option>
-          </select>
-        </div>
+        <!-- Filter chips are rendered into the list itself now. -->
         <div id="admin-tickets-list">
           <div class="empty-state"><i class="ti ti-ticket"></i>Loading tickets...</div>
         </div>
@@ -15946,43 +15993,122 @@ async function loadAdminDashboard() {
 // The status filter select still drives this. On top of it, a closed ticket
 // leaves the list 24 hours after closing - filtered here because the query
 // builder has no .gt().
+// ── SUPPORT QUEUE (rebuilt 18 Aug 2026) ───────────────────────
+// Waiting on us first, everything else quiet underneath.
+// `status` here means: open = waiting on US, pending = we replied and it is
+// with the customer, done = closed. That is what the app has always written,
+// so nothing about the data changed.
+var MMQ_ROWS = [];
+var MMQ_LAST = {};
+var MMQ_FILTER = 'all';
+
+function mmQSetFilter(f) { MMQ_FILTER = f; mmQRender(); }
+
+function mmQCard(t) {
+  var st = mmTkStatus(t, true);
+  var col = (t.closed_at || t.status === 'done') ? '#6A7280'
+          : (t.status === 'pending' ? '#00c87a' : '#FF1E3C');
+  var nm = t.user_name || 'User';
+  var last = MMQ_LAST[t.id];
+  var who = last ? (last.sender === 'user' ? 'Customer' : 'You') : 'Customer';
+  var body = last ? last.body : (t.message || '');
+  var when = last ? last.created_at : (t.replied_at || t.created_at);
+  var right = t.closed_at ? (mmT('sup.clearsIn','Clears in ') + mmTkLeft(t.closed_at)) : mmTkAgo(when);
+
+  return '<div class="atk-card" onclick="mmQOpen(\'' + t.id + '\')">' +
+    '<span class="edge" style="background:' + col + '"></span>' +
+    '<span class="av" style="background:' + col + '">' + mmTkEsc(nm.substring(0,2).toUpperCase()) + '</span>' +
+    '<span class="bd">' +
+      '<span class="r1"><span class="nm">' + mmTkEsc(nm) + '</span>' +
+        '<span class="ag">' + mmTkEsc(right) + '</span></span>' +
+      '<span class="sj">' + mmTkEsc(t.subject || '') + '</span>' +
+      '<span class="pv">' + mmTkEsc(who) + ': ' + mmTkEsc(body) + '</span>' +
+      '<span class="r3"><span class="tkc-pill ' + st.cls + '">' + st.txt + '</span>' +
+        '<span class="acct">' + mmTkEsc(t.mt5_id || '') + '</span></span>' +
+    '</span></div>';
+}
+
+function mmQRender() {
+  var el = document.getElementById('admin-tickets-list');
+  if(!el) return;
+
+  var counts = { all:MMQ_ROWS.length, open:0, pending:0, done:0 };
+  MMQ_ROWS.forEach(function(t) {
+    var k = (t.closed_at || t.status === 'done') ? 'done' : (t.status === 'pending' ? 'pending' : 'open');
+    counts[k]++;
+  });
+
+  var chips = [['all','All'],['open','Waiting'],['pending','Answered'],['done','Closed']]
+    .map(function(c) {
+      return '<span class="atk-chip' + (MMQ_FILTER === c[0] ? ' on' : '') +
+        '" onclick="mmQSetFilter(\'' + c[0] + '\')">' + c[1] + ' ' + counts[c[0]] + '</span>';
+    }).join('');
+
+  var rows = MMQ_ROWS.filter(function(t) {
+    if(MMQ_FILTER === 'all') return true;
+    var k = (t.closed_at || t.status === 'done') ? 'done' : (t.status === 'pending' ? 'pending' : 'open');
+    return k === MMQ_FILTER;
+  });
+
+  var waiting = rows.filter(function(t) { return !t.closed_at && t.status !== 'done' && t.status !== 'pending'; });
+  var rest    = rows.filter(function(t) { return waiting.indexOf(t) < 0; });
+
+  var head = '<div class="atk-chips">' + chips + '</div>';
+  if(!rows.length) {
+    el.innerHTML = head + '<div class="empty-state" style="padding:16px;"><i class="ti ti-ticket"></i>No tickets in this filter</div>';
+    return;
+  }
+
+  var html = head;
+  if(waiting.length) {
+    html += '<div class="atk-wait"><div class="atk-wh"><i class="ti ti-alert-circle"></i>' +
+      '<b>WAITING ON US &middot; ' + waiting.length + '</b><u></u></div>' +
+      waiting.map(mmQCard).join('') + '</div>';
+  }
+  if(rest.length) {
+    if(waiting.length) html += '<div class="atk-sect">EVERYTHING ELSE</div>';
+    html += rest.map(mmQCard).join('');
+  }
+  el.innerHTML = html;
+}
+
 async function loadAdminTickets() {
   var el = document.getElementById('admin-tickets-list');
   if(!el || !db) return;
   el.innerHTML = '<div class="empty-state" style="padding:16px;"><i class="ti ti-ticket"></i>Loading...</div>';
   try {
-    var filter = document.getElementById('ticket-filter');
-    var status = filter ? filter.value : 'all';
-    var q = db.from('support_tickets').select('*').order('created_at', {ascending:false}).limit(40);
-    if(status !== 'all') q = q.eq('status', status);
-    var res = await q;
+    var res = await db.from('support_tickets').select('*').order('created_at', {ascending:false}).limit(40);
     var rows = (res && res.data && Array.isArray(res.data)) ? res.data : [];
-    rows = rows.filter(mmTkVisible);
-    if(!rows.length) {
+    // A closed ticket leaves this list 24 hours after it was closed.
+    MMQ_ROWS = rows.filter(mmTkVisible);
+
+    // Who spoke last, one small query per ticket. The ticket row cannot answer
+    // it: `admin_reply` survives a later customer message.
+    MMQ_LAST = {};
+    var lasts = await Promise.all(MMQ_ROWS.map(function(t) {
+      return db.from('ticket_messages').select('sender,body,created_at')
+        .eq('ticket_id', t.id).order('created_at', {ascending:false}).limit(1)
+        .then(function(r) {
+          var d = (r && r.data && Array.isArray(r.data)) ? r.data : [];
+          return d.length ? d[0] : null;
+        })
+        .catch(function() { return null; });
+    }));
+    MMQ_ROWS.forEach(function(t, i) { if(lasts[i]) MMQ_LAST[t.id] = lasts[i]; });
+
+    if(!MMQ_ROWS.length) {
       el.innerHTML = '<div class="empty-state" style="padding:16px;"><i class="ti ti-ticket"></i>No tickets found</div>';
       return;
     }
-    el.innerHTML = '';
-    rows.forEach(function(t) {
-      var st = mmTkStatus(t, true);
-      var nm = t.user_name || 'User';
-      var last = (t.admin_reply || t.message || '');
-      var row = document.createElement('div');
-      row.className = 'tkc-row';
-      row.innerHTML =
-        '<div class="av">' + mmTkEsc(nm.substring(0,2).toUpperCase()) + '</div>' +
-        '<div class="bd">' +
-          '<div class="r1"><div class="nm">' + mmTkEsc(nm) + '</div>' +
-            '<div class="tm">' + mmTkEsc(new Date(t.created_at).toLocaleDateString()) + '</div></div>' +
-          '<div class="pv">' + mmTkEsc(t.subject || '') + '</div>' +
-          '<div class="pv" style="color:var(--text3);">' + mmTkEsc(last.substring(0,70)) + '</div>' +
-          '<div class="r3"><span class="tkc-pill ' + st.cls + '">' + st.txt + '</span></div>' +
-        '</div>';
-      row.addEventListener('click', function() { mmAdmTkOpen(t); });
-      el.appendChild(row);
-    });
+    mmQRender();
   } catch(e) {
     el.innerHTML = '<div class="empty-state" style="padding:16px;"><i class="ti ti-alert-circle"></i>Error loading tickets</div>';
+  }
+}
+
+function mmQOpen(id) {
+  for (var i = 0; i < MMQ_ROWS.length; i++) {
+    if(String(MMQ_ROWS[i].id) === String(id)) { mmAdmTkOpen(MMQ_ROWS[i]); return; }
   }
 }
 
@@ -16024,12 +16150,18 @@ async function mmAdmTkCtx(ticket) {
     if(s < 5400) return Math.round(s/60) + 'm ago';
     return Math.round(s/3600) + 'h ago';
   }
+  var cur = (acct && acct.currency) ? acct.currency : '';
   el.innerHTML =
-    '<div>Account <b>' + mmTkEsc(acct ? (acct.mt5_id || '-') : 'none') + '</b></div>' +
-    '<div>Balance <b>' + (acct ? money(acct.balance) : '-') + '</b></div>' +
-    '<div>Risk <b>' + (acct && acct.auto_risk_pct ? (acct.auto_risk_pct + '%') : '-') + '</b></div>' +
-    '<div>EA seen <b>' + (acct ? seen(acct.ea_last_seen) : '-') + '</b></div>' +
-    (fail ? '<div class="fu">Last fail: ' + mmTkEsc(fail.result || '') + '</div>' : '');
+    '<div class="atk-pg">' +
+      '<div><div class="k">ACCOUNT</div><div class="v">' + mmTkEsc(acct ? (acct.mt5_id || '-') : 'none') + '</div></div>' +
+      '<div><div class="k">BALANCE</div><div class="v">' + mmTkEsc(cur) + ' ' + (acct ? money(acct.balance) : '-') + '</div></div>' +
+      '<div><div class="k">EA SEEN</div><div class="v"' +
+        (acct && acct.ea_last_seen ? ' style="color:var(--green)"' : ' style="color:var(--text3)"') + '>' +
+        (acct ? seen(acct.ea_last_seen) : '-') + '</div></div>' +
+      '<div><div class="k">RISK</div><div class="v">' +
+        (acct && acct.auto_risk_pct ? (acct.auto_risk_pct + '%') : '-') + '</div></div>' +
+    '</div>' +
+    (fail ? '<div class="atk-fail">Last fail: ' + mmTkEsc(fail.result || '') + '</div>' : '');
 }
 
 // Closing is the only thing admin writes onto the ticket itself.
@@ -16080,7 +16212,7 @@ async function mmAdmTkOpen(ticket) {
         '</div>' +
       '</div>' +
       '<div id="tkc-note"></div>' +
-      '<div class="tkc-ctx" id="tkc-ctx"><div>Account <b>...</b></div><div>Balance <b>...</b></div></div>' +
+      '<div class="atk-panel" id="tkc-ctx"></div>' +
       '<div class="tkc-body bub" id="tkc-body"></div>' +
       '<div class="tkc-quick" id="tkc-quick">' + chips + '</div>' +
       '<div class="tkc-comp">' +
