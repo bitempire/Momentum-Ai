@@ -829,6 +829,53 @@ html[data-theme="light"] .adash-deck{background:#fff;}
  border:1px solid;cursor:pointer;font-family:'Sora',sans-serif;}
 .amt-wide{grid-column:1/3;}
 html[data-theme="light"] .amt-ov{background:#fff;}
+/* 18 Aug 2026, his picks: H2's identity row and moving thread, but the four
+   numbers as 2 BY 2 rather than four across, and A1's explained actions with
+   the delete as a moving gradient warning - the same `mmCtaFlow` the Home
+   button already uses - with no icon and no sub-line. */
+.amt-hero{position:relative;overflow:hidden;}
+.amt-idr{display:flex;align-items:center;gap:10px;padding:12px 14px 13px;}
+.amt-av2{width:36px;height:36px;flex:none;border-radius:12px;display:flex;align-items:center;
+ justify-content:center;font-family:'Orbitron',sans-serif;font-size:12px;position:relative;}
+.amt-av2:before{content:'';position:absolute;inset:-3px;border-radius:14px;border:2px solid currentColor;
+ opacity:.28;animation:amtPing 2.6s ease-out infinite;}
+@keyframes amtPing{0%{transform:scale(.94);opacity:.42}70%{transform:scale(1.1);opacity:0}100%{opacity:0}}
+@media (prefers-reduced-motion: reduce){ .amt-av2:before{animation:none;} }
+.amt-m2{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);
+ margin:0 14px;border-radius:12px;overflow:hidden;}
+.amt-m2 > div{background:#0A0B10;padding:10px 11px;display:flex;align-items:center;gap:9px;}
+.amt-m2 i{font-size:15px;color:var(--text3);flex:none;}
+.amt-m2 .k{font-size:7.5px;color:var(--text3);letter-spacing:.6px;}
+.amt-m2 .v{font-family:'Orbitron',sans-serif;font-size:12px;margin-top:3px;
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.amt-m2 .amt-thr{bottom:0;}
+
+.amt-krow{display:flex;align-items:center;gap:10px;padding:10px 0;
+ border-bottom:1px solid rgba(255,255,255,.05);}
+.amt-krow:last-child{border-bottom:0;}
+.amt-krow .k{font-size:9.5px;color:var(--text3);width:80px;flex:none;letter-spacing:.4px;}
+.amt-krow .v{flex:1;font-size:12px;font-weight:600;word-break:break-all;}
+
+.amt-alist{border-radius:12px;overflow:hidden;border:1px solid var(--border);background:var(--surface);}
+.amt-act{display:flex;align-items:center;gap:11px;padding:11px 13px;cursor:pointer;
+ border-bottom:1px solid rgba(255,255,255,.05);}
+.amt-act:last-child{border-bottom:0;}
+.amt-act:active{background:var(--surface2);}
+.amt-act .ic{width:29px;height:29px;flex:none;border-radius:9px;display:flex;align-items:center;
+ justify-content:center;font-size:14px;}
+.amt-act .tx{flex:1;min-width:0;}
+.amt-act .tx b{display:block;font-size:12px;font-weight:600;color:var(--text);}
+.amt-act .tx s{display:block;font-size:9px;color:var(--text3);text-decoration:none;margin-top:2px;
+ line-height:1.4;}
+.amt-act .ch{color:var(--text3);font-size:13px;}
+
+.amt-del{margin-top:11px;width:100%;text-align:center;padding:13px;border-radius:12px;
+ font-family:'Sora',sans-serif;font-size:11.5px;font-weight:800;letter-spacing:.06em;cursor:pointer;
+ border:0;color:#fff;background-color:var(--red);
+ background-image:linear-gradient(90deg,#8f0019,#FF1E3C,#ff7285,#FF1E3C,#8f0019);
+ background-size:200% 100%;animation:mmCtaFlow 3.5s linear infinite;}
+@media (prefers-reduced-motion: reduce){ .amt-del{animation:none;} }
+
 
 html[data-theme="light"] .adash-page{color:#101018;}
 
@@ -22328,78 +22375,87 @@ function mmMtOpen(id) {
   var bal = (a.balance === null || a.balance === undefined || a.balance === '')
             ? '--' : Number(a.balance).toFixed(2);
 
+  // Each row says what it actually DOES. The team is not technical and the
+  // difference between Suspend and Disconnect is not guessable from the word.
   var acts = [];
   if(st === 'pending') {
-    acts.push(['Activate','green','mt5ActivateWithNode(\'' + a.id + '\')']);
-    acts.push(['Reject','red','openMT5ReasonSheet(\'rejected\',\'' + a.id + '\')']);
+    acts.push(['Activate','green','ti-plug-connected','Puts it on a node and launches the terminal','mt5ActivateWithNode(\'' + a.id + '\')']);
+    acts.push(['Reject','red','ti-x','Refuses the request. The customer is told why','openMT5ReasonSheet(\'rejected\',\'' + a.id + '\')']);
   } else if(st === 'connected') {
-    acts.push(['Edit','blue','mmMtEdit(\'' + a.id + '\')']);
-    acts.push(['Suspend','amber','openMT5ReasonSheet(\'suspended\',\'' + a.id + '\')']);
-    acts.push(['Disconnect','red','openMT5ReasonSheet(\'disconnected\',\'' + a.id + '\')']);
+    acts.push(['Edit credentials','blue','ti-pencil','Change the MT5 password or server','mmMtEdit(\'' + a.id + '\')']);
+    acts.push(['Suspend','amber','ti-player-pause','Stops trading, keeps the terminal and the data','openMT5ReasonSheet(\'suspended\',\'' + a.id + '\')']);
+    acts.push(['Disconnect','red','ti-plug-off','Cuts the account off. The customer must reconnect','openMT5ReasonSheet(\'disconnected\',\'' + a.id + '\')']);
   } else if(st === 'suspended') {
-    acts.push(['Resume','green','mt5Resume(\'' + a.id + '\')']);
-    acts.push(['Disconnect','red','openMT5ReasonSheet(\'disconnected\',\'' + a.id + '\')']);
-    acts.push(['Edit','blue','mmMtEdit(\'' + a.id + '\')']);
+    acts.push(['Resume','green','ti-player-play','Lets it trade again from the next signal','mt5Resume(\'' + a.id + '\')']);
+    acts.push(['Edit credentials','blue','ti-pencil','Change the MT5 password or server','mmMtEdit(\'' + a.id + '\')']);
+    acts.push(['Disconnect','red','ti-plug-off','Cuts the account off. The customer must reconnect','openMT5ReasonSheet(\'disconnected\',\'' + a.id + '\')']);
   } else if(st === 'rejected') {
-    acts.push(['Re-allow','green','mt5Reallow(\'' + a.id + '\')']);
-    acts.push(['Edit','blue','mmMtEdit(\'' + a.id + '\')']);
+    acts.push(['Re-allow','green','ti-check','Lets the customer request a connection again','mt5Reallow(\'' + a.id + '\')']);
+    acts.push(['Edit credentials','blue','ti-pencil','Change the MT5 password or server','mmMtEdit(\'' + a.id + '\')']);
   } else {
-    acts.push(['Edit','blue','mmMtEdit(\'' + a.id + '\')']);
+    acts.push(['Edit credentials','blue','ti-pencil','Change the MT5 password or server','mmMtEdit(\'' + a.id + '\')']);
   }
-  acts.push(prem ? ['Change to Basic','amber','mt5SetBasic(\'' + a.id + '\')']
-                 : ['Make Premium','gold','mt5SetPremium(\'' + a.id + '\')']);
+  acts.push(prem
+    ? ['Change to Basic','amber','ti-crown-off','Drops premium features at the next check','mt5SetBasic(\'' + a.id + '\')']
+    : ['Make Premium','gold','ti-crown','Gives premium features immediately','mt5SetPremium(\'' + a.id + '\')']);
 
   var C = {
-    green:['rgba(0,200,122,0.10)','rgba(0,200,122,0.28)','var(--green)'],
-    red:['rgba(255,30,60,0.10)','rgba(255,30,60,0.28)','var(--red)'],
-    amber:['rgba(255,176,32,0.10)','rgba(255,176,32,0.28)','var(--amber)'],
-    blue:['rgba(59,130,246,0.10)','rgba(59,130,246,0.28)','#7FB0FF'],
-    gold:['rgba(240,178,50,0.12)','rgba(240,178,50,0.30)','var(--gold)']
+    green:['rgba(0,200,122,0.14)','var(--green)'],
+    red:['rgba(255,30,60,0.14)','var(--red)'],
+    amber:['rgba(255,176,32,0.14)','var(--amber)'],
+    blue:['rgba(59,130,246,0.14)','#7FB0FF'],
+    gold:['rgba(240,178,50,0.14)','var(--gold)']
   };
   var actHtml = acts.map(function(x) {
     var c = C[x[1]];
-    return '<div class="amt-btn" style="background:' + c[0] + ';border-color:' + c[1] + ';color:' + c[2] +
-      '" onclick="mmMtClose(); ' + x[2] + ';">' + x[0] + '</div>';
-  }).join('') +
-  '<div class="amt-btn amt-wide" style="background:rgba(255,30,60,0.10);border-color:rgba(255,30,60,0.28);color:var(--red)"' +
-    ' onclick="mmMtDelete(\'' + a.id + '\')">Delete account</div>';
+    return '<div class="amt-act" onclick="mmMtClose(); ' + x[4] + ';">' +
+      '<span class="ic" style="background:' + c[0] + ';color:' + c[1] + '"><i class="ti ' + x[2] + '"></i></span>' +
+      '<span class="tx"><b>' + x[0] + '</b><s>' + x[3] + '</s></span>' +
+      '<span class="ch"><i class="ti ti-chevron-right"></i></span></div>';
+  }).join('');
 
   var ov = document.createElement('div');
   ov.id = 'amt-ov';
   ov.className = 'amt-ov on';
   ov.innerHTML =
-    '<div class="amt-dh">' +
-      '<span class="amt-bk" onclick="mmMtClose()"><i class="ti ti-arrow-left"></i></span>' +
-      '<span class="amt-dwho"><b>' + mmTkEsc(nm) + '</b><s>' + mmTkEsc(a.mt5_id || '--') + '</s></span>' +
-      '<span class="amt-pill" style="background:' + b[1] + ';color:' + b[2] + '">' + b[0] + '</span>' +
+    '<div class="amt-hero">' +
+      '<div class="amt-idr">' +
+        '<span class="amt-bk" onclick="mmMtClose()"><i class="ti ti-arrow-left"></i></span>' +
+        '<span class="amt-av2" style="background:' + h.c + '26;color:' + h.c + '">' + mmTkEsc(mmMtInitials(nm)) + '</span>' +
+        '<span class="amt-dwho"><b>' + mmTkEsc(nm) + '</b><s>' + mmTkEsc(a.mt5_id || '--') + ' \u00b7 ' +
+          mmTkEsc(a.worker_group || 'Unassigned') + '</s></span>' +
+        '<span class="amt-pill" style="background:' + b[1] + ';color:' + b[2] + '">' + b[0] + '</span>' +
+      '</div>' +
+      '<div class="amt-m2">' +
+        '<div><i class="ti ti-activity-heartbeat" style="color:' + h.c + '"></i>' +
+          '<span><div class="k">HEARTBEAT</div><div class="v" style="color:' + h.c + '">' + h.s + '</div></span></div>' +
+        '<div><i class="ti ti-wallet"></i>' +
+          '<span><div class="k">BALANCE</div><div class="v">' + mmTkEsc(cur) + ' ' + bal + '</div></span></div>' +
+        '<div><i class="ti ti-server-bolt"></i>' +
+          '<span><div class="k">NODE</div><div class="v">' + mmTkEsc(a.worker_group || 'Unassigned') + '</div></span></div>' +
+        '<div><i class="ti ti-lock"></i>' +
+          '<span><div class="k">ARMED</div><div class="v" style="color:' + (a.armed ? 'var(--green)' : 'var(--text3)') + '">' +
+          (a.armed ? 'Yes' : 'No') + '</div></span></div>' +
+        '<span class="amt-thr"><span style="background:linear-gradient(90deg,' + h.c + '00,' + h.c + 'f2 40%,' + h.c + ' 50%,' + h.c + '00)"></span></span>' +
+      '</div>' +
     '</div>' +
     '<div class="amt-db">' +
-      '<div class="amt-hs">' +
-        '<div class="amt-h"><div class="k">HEARTBEAT</div><div class="v" style="color:' + h.c + '">' + h.s + '</div></div>' +
-        '<div class="amt-h"><div class="k">BALANCE</div><div class="v">' + mmTkEsc(cur) + ' ' + bal + '</div></div>' +
-        '<div class="amt-h"><div class="k">NODE</div><div class="v">' + mmTkEsc(a.worker_group || 'Unassigned') + '</div></div>' +
-        '<div class="amt-h"><div class="k">ARMED</div><div class="v" style="color:' + (a.armed ? 'var(--green)' : 'var(--text3)') + '">' +
-          (a.armed ? 'Yes' : 'No') + '</div></div>' +
-      '</div>' +
       ((a.status_reason || a.rejection_reason)
         ? '<div class="amt-h" style="margin-bottom:11px;border-color:rgba(255,176,32,.2)"><div class="k">REASON</div>' +
           '<div class="v" style="font-family:Sora,sans-serif;font-size:11px;color:var(--amber)">' +
           mmTkEsc(a.status_reason || a.rejection_reason) + '</div></div>' : '') +
       '<div class="amt-sect">CREDENTIALS</div>' +
-      '<div class="amt-kv">' +
-        '<div class="amt-c"><div class="k">MT5 ID</div><div class="v">' + mmTkEsc(a.mt5_id || '--') + '</div></div>' +
-        '<div class="amt-c"><div class="k">SERVER</div><div class="v">' + mmTkEsc(a.broker || a.mt5_server || '--') + '</div></div>' +
-        '<div class="amt-c"><div class="k">PASSWORD</div>' +
-          '<div class="v" style="display:flex;align-items:center;justify-content:space-between;gap:6px">' +
-            '<span id="amt-pw" style="font-family:monospace">\u25cf\u25cf\u25cf\u25cf\u25cf\u25cf</span>' +
-            (a.mt5_credential ? '<span class="amt-rev" id="amt-rev" onclick="mmMtReveal(\'' + a.id + '\')">Reveal</span>'
-                              : '<span style="font-size:9.5px;color:var(--text3)">Not set</span>') +
-          '</div></div>' +
-        '<div class="amt-c"><div class="k">PLAN</div><div class="v" style="color:' + (prem ? 'var(--gold)' : 'var(--blue)') + '">' +
-          (prem ? 'PREMIUM' : 'BASIC') + '</div></div>' +
-      '</div>' +
+      '<div class="amt-krow"><span class="k">MT5 ID</span><span class="v">' + mmTkEsc(a.mt5_id || '--') + '</span></div>' +
+      '<div class="amt-krow"><span class="k">SERVER</span><span class="v">' + mmTkEsc(a.broker || a.mt5_server || '--') + '</span></div>' +
+      '<div class="amt-krow"><span class="k">PASSWORD</span>' +
+        '<span class="v" id="amt-pw" style="font-family:monospace">\u25cf\u25cf\u25cf\u25cf\u25cf\u25cf</span>' +
+        (a.mt5_credential ? '<span class="amt-rev" id="amt-rev" onclick="mmMtReveal(\'' + a.id + '\')">Reveal</span>'
+                          : '<span style="font-size:9.5px;color:var(--text3)">Not set</span>') + '</div>' +
+      '<div class="amt-krow"><span class="k">PLAN</span><span class="v" style="color:' +
+        (prem ? 'var(--gold)' : 'var(--blue)') + '">' + (prem ? 'PREMIUM' : 'BASIC') + '</span></div>' +
       '<div class="amt-sect">ACTIONS</div>' +
-      '<div class="amt-acts">' + actHtml + '</div>' +
+      '<div class="amt-alist">' + actHtml + '</div>' +
+      '<button class="amt-del" onclick="mmMtDelete(\'' + a.id + '\')">DELETE ACCOUNT</button>' +
     '</div>';
   document.body.appendChild(ov);
 }
