@@ -731,12 +731,11 @@ html[data-theme="light"] .nav-btn.active span:not(.nav-ico-wrap) { color: #fff; 
 .adash-go{color:var(--text3);font-size:13px;}
 .adash-clear{padding:15px 12px;text-align:center;font-size:11.5px;color:var(--green);}
 
-.adash-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
-.adash-sc{position:relative;overflow:hidden;background:var(--surface);border:1px solid var(--border);
- border-radius:11px;padding:9px 3px 11px;text-align:center;}
-.adash-sn{font-family:'Orbitron',sans-serif;font-size:14px;position:relative;z-index:2;display:block;}
-.adash-sk{font-size:7px;color:var(--text3);letter-spacing:.5px;margin-top:3px;position:relative;z-index:2;
- display:block;}
+/* TWO ACROSS, and the box IS the Home price card - same `.mm-mkt-card`,
+   its hairline, its 34px blurred bloom and its flowing 2px line - rather than
+   a lookalike, so the two screens can never drift apart. */
+.adash-strip{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
+.adash-strip .mm-mkt-price{font-size:18px;}
 html[data-theme="light"] .adash-deck{background:#fff;}
 html[data-theme="light"] .adash-page{color:#101018;}
 
@@ -4251,14 +4250,34 @@ html[data-theme="light"] .adm-nb.on i,html[data-theme="light"] .adm-nb.on span{c
 
         <div class="adash-sect">TODAY<u></u></div>
         <div class="adash-strip">
-          <div class="adash-sc"><span class="adash-hair"></span>
-            <span class="adash-sn" id="astat-total">--</span><span class="adash-sk">USERS</span></div>
-          <div class="adash-sc"><span class="adash-hair"></span>
-            <span class="adash-sn" style="color:var(--green)" id="astat-signals">--</span><span class="adash-sk">SIGNALS</span></div>
-          <div class="adash-sc"><span class="adash-hair"></span>
-            <span class="adash-sn" id="adash-accounts">--</span><span class="adash-sk">MT5</span></div>
-          <div class="adash-sc"><span class="adash-hair"></span>
-            <span class="adash-sn" style="color:#3B82F6" id="astat-funds">--</span><span class="adash-sk">FUNDS</span></div>
+          <div class="mm-mkt-card nt">
+            <div class="mm-mkt-h"><span class="mm-mkt-sym">USERS</span></div>
+            <div class="mm-mkt-price" id="astat-total">--</div>
+            <div class="mm-mkt-sub">registered</div>
+            <span class="mm-mkt-bloom"></span>
+            <span class="mm-mkt-line"><span></span></span>
+          </div>
+          <div class="mm-mkt-card up">
+            <div class="mm-mkt-h"><span class="mm-mkt-sym">SIGNALS</span></div>
+            <div class="mm-mkt-price" id="astat-signals">--</div>
+            <div class="mm-mkt-sub">active now</div>
+            <span class="mm-mkt-bloom"></span>
+            <span class="mm-mkt-line"><span></span></span>
+          </div>
+          <div class="mm-mkt-card nt">
+            <div class="mm-mkt-h"><span class="mm-mkt-sym">MT5</span></div>
+            <div class="mm-mkt-price" id="adash-accounts">--</div>
+            <div class="mm-mkt-sub">accounts</div>
+            <span class="mm-mkt-bloom"></span>
+            <span class="mm-mkt-line"><span></span></span>
+          </div>
+          <div class="mm-mkt-card nt">
+            <div class="mm-mkt-h"><span class="mm-mkt-sym">FUNDS</span></div>
+            <div class="mm-mkt-price" style="color:#3B82F6" id="astat-funds">--</div>
+            <div class="mm-mkt-sub">requests</div>
+            <span class="mm-mkt-bloom"></span>
+            <span class="mm-mkt-line"><span></span></span>
+          </div>
         </div>
 
         <!-- Kept because loadAdminDashboard writes to them; the figures they
