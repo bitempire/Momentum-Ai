@@ -863,6 +863,55 @@ html[data-theme="light"] .amt-ov{background:#fff;}
 .amt-chip .rv{margin-left:auto;font-size:9px;font-weight:700;color:var(--text3);cursor:pointer;}
 .amt-ring{width:28px;height:28px;flex:none;border-radius:50%;border:1.5px solid;
  display:flex;align-items:center;justify-content:center;font-size:13px;background:transparent;}
+/* ══ USERS TAB (18 Aug 2026) ═══════════════════════════════════
+   Twenty users meant forty buttons, and thirty eight of them were for people
+   nobody was acting on. Anyone WAITING is lifted into an amber block at the
+   top with Approve and Delete right there, because approving is the only
+   action here with a clock on it. Everyone else is a quiet row, and their
+   actions live in the same detail sheet the MT5 tab uses - the `.amt-*`
+   classes are reused deliberately so the two screens cannot drift apart. */
+.aus-search{display:flex;align-items:center;gap:8px;background:var(--surface);
+ border:1px solid var(--border);border-radius:10px;padding:0 11px;margin-bottom:10px;}
+.aus-search i{font-size:14px;color:var(--text3);}
+.aus-search input{flex:1;background:transparent;border:0;outline:none;color:var(--text);
+ font-family:'Sora',sans-serif;font-size:11.5px;padding:9px 0;}
+.aus-search input::placeholder{color:var(--text3);}
+.aus-chips{display:flex;gap:6px;margin-bottom:11px;}
+.aus-chip{flex:1;text-align:center;font-size:9.5px;font-weight:700;padding:7px 4px;border-radius:9px;
+ background:var(--surface);border:1px solid var(--border);color:var(--text3);white-space:nowrap;
+ cursor:pointer;font-family:'Sora',sans-serif;}
+.aus-chip.on{background:rgba(255,30,60,.14);border-color:rgba(255,30,60,.4);color:var(--red);}
+
+.aus-pend{position:relative;overflow:hidden;border:1px solid rgba(255,176,32,.28);border-radius:13px;
+ background:linear-gradient(150deg,rgba(255,176,32,.14),rgba(255,176,32,.02) 60%);
+ padding:9px;margin-bottom:12px;}
+.aus-ph{display:flex;align-items:center;gap:7px;margin:1px 3px 9px;}
+.aus-ph i{font-size:12px;color:var(--amber);}
+.aus-ph b{font-family:'Orbitron',sans-serif;font-size:9.5px;letter-spacing:1px;color:var(--amber);}
+.aus-ph u{flex:1;height:1px;background:rgba(255,176,32,.25);text-decoration:none;}
+.aus-prow{background:rgba(0,0,0,.30);border:1px solid var(--border);border-radius:11px;
+ padding:9px 10px;margin-bottom:7px;}
+.aus-prow:last-child{margin-bottom:0;}
+.aus-ptop{display:flex;align-items:center;gap:10px;}
+.aus-pbtns{display:flex;gap:6px;margin-top:8px;}
+.aus-pbtns span{flex:1;text-align:center;font-size:10px;font-weight:700;padding:8px;border-radius:9px;
+ cursor:pointer;}
+.aus-ok{background:rgba(0,200,122,.14);border:1px solid rgba(0,200,122,.3);color:var(--green);}
+.aus-no{background:rgba(255,30,60,.10);border:1px solid rgba(255,30,60,.25);color:var(--red);}
+
+.aus-rw{display:flex;align-items:center;gap:10px;padding:9px 11px;background:var(--surface);
+ border:1px solid var(--border);border-radius:11px;margin-bottom:6px;cursor:pointer;}
+.aus-rw:active{background:var(--surface2);}
+.aus-av{width:29px;height:29px;flex:none;border-radius:10px;display:flex;align-items:center;
+ justify-content:center;font-size:10px;font-weight:800;color:#07070a;}
+.aus-bd{flex:1;min-width:0;}
+.aus-bd b{display:block;font-size:11.5px;font-weight:600;color:var(--text);
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.aus-bd s{display:block;font-size:9px;color:var(--text3);text-decoration:none;margin-top:3px;
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.aus-pill{font-size:8px;font-weight:700;letter-spacing:.4px;padding:3px 7px;border-radius:5px;flex:none;}
+.aus-ch{color:var(--text3);font-size:13px;flex:none;}
+
 
 .amt-idr{display:flex;align-items:center;gap:10px;padding:12px 14px 13px;}
 .amt-av2{width:36px;height:36px;flex:none;border-radius:12px;display:flex;align-items:center;
@@ -4458,14 +4507,8 @@ html[data-theme="light"] .adm-nb.on i,html[data-theme="light"] .adm-nb.on span{c
 
       <!-- ── USERS TAB ── -->
       <div id="atab-content-users" style="display:none;">
-        <div style="display:flex;gap:6px;margin-bottom:12px;">
-          <select id="user-filter" class="auth-input" style="font-size:12px;padding:8px 10px;" onchange="loadAdminUsers()">
-            <option value="all">All Users</option>
-            <option value="pending">Pending</option>
-            <option value="active">Active</option>
-            <option value="premium" data-i18n="w.premiumWord">Premium</option>
-          </select>
-        </div>
+        <!-- The old filter select was never read by the loader. Search and
+             chips are rendered into the list itself now. -->
         <div id="mob-admin-users">
           <div class="empty-state"><i class="ti ti-users"></i>Loading users...</div>
         </div>
@@ -14450,34 +14493,194 @@ async function handlePostSignal() {
 }
 
 // ── ADMIN ──
+// ── USERS TAB (rebuilt 18 Aug 2026) ───────────────────────────
+// Pending users first with Approve and Delete on the row, everyone else quiet
+// with their actions in a detail sheet built from the SAME classes as the MT5
+// sheet, so the two screens stay identical without being written twice.
+var MMU_ROWS = [];
+var MMU_FILTER = 'all';
+var MMU_SEARCH = '';
+
+function mmUsInitials(n) {
+  var p = String(n || '').replace(/[^A-Za-z ]/g, '').trim().split(' ');
+  if(!p[0]) return 'US';
+  return ((p.length > 1) ? (p[0][0] + p[1][0]) : p[0].slice(0,2)).toUpperCase();
+}
+
+function mmUsPill(s) {
+  if(s === 'active')    return ['ACTIVE','rgba(0,200,122,.14)','var(--green)'];
+  if(s === 'pending')   return ['PENDING','rgba(255,176,32,.14)','var(--amber)'];
+  if(s === 'suspended') return ['SUSPENDED','rgba(255,30,60,.14)','var(--red)'];
+  return [String(s || '--').toUpperCase(),'rgba(255,255,255,.05)','var(--text3)'];
+}
+
+function mmUsColour(u) {
+  var s = String(u.id || u.email || '');
+  var n = 0;
+  for (var i = 0; i < s.length; i++) n = (n + s.charCodeAt(i)) % 5;
+  return ['#FF1E3C','#3B82F6','#00c87a','#F0B232','#ffb020'][n];
+}
+
+function mmUsSetFilter(f) { MMU_FILTER = f; mmUsRender(); }
+function mmUsSearch(v) { MMU_SEARCH = String(v || '').toLowerCase(); mmUsRender(); }
+
+function mmUsRender() {
+  var el = document.getElementById('mob-admin-users');
+  if(!el) return;
+
+  var counts = { all:MMU_ROWS.length, pending:0, active:0, suspended:0 };
+  MMU_ROWS.forEach(function(u) { if(counts[u.status] !== undefined) counts[u.status]++; });
+
+  var rows = MMU_ROWS.filter(function(u) {
+    if(MMU_FILTER !== 'all' && u.status !== MMU_FILTER) return false;
+    if(!MMU_SEARCH) return true;
+    var hay = ((u.name || '') + ' ' + (u.username || '') + ' ' + (u.email || '') + ' ' + (u.mt5_id || '')).toLowerCase();
+    return hay.indexOf(MMU_SEARCH) >= 0;
+  });
+
+  var chips = [['all','All'],['pending','Pending'],['active','Active'],['suspended','Suspended']]
+    .map(function(c) {
+      return '<span class="aus-chip' + (MMU_FILTER === c[0] ? ' on' : '') + '" onclick="mmUsSetFilter(\'' + c[0] + '\')">' +
+        c[1] + ' ' + counts[c[0]] + '</span>';
+    }).join('');
+
+  var head = '<div class="aus-search"><i class="ti ti-search"></i>' +
+    '<input id="aus-q" type="text" placeholder="Search name, email or MT5 ID" ' +
+    'oninput="mmUsSearch(this.value)" value="' + mmTkEsc(MMU_SEARCH) + '"></div>' +
+    '<div class="aus-chips">' + chips + '</div>';
+
+  var pend = rows.filter(function(u) { return u.status === 'pending'; });
+  var rest = rows.filter(function(u) { return u.status !== 'pending'; });
+
+  var pendHtml = '';
+  if(pend.length) {
+    pendHtml = '<div class="aus-pend"><div class="aus-ph"><i class="ti ti-user-plus"></i>' +
+      '<b>NEEDS APPROVAL &middot; ' + pend.length + '</b><u></u></div>' +
+      pend.map(function(u) {
+        var nm = u.name || u.username || '--';
+        return '<div class="aus-prow"><div class="aus-ptop">' +
+          '<span class="aus-av" style="background:' + mmUsColour(u) + '">' + mmTkEsc(mmUsInitials(nm)) + '</span>' +
+          '<span class="aus-bd" onclick="mmUsOpen(\'' + u.id + '\')"><b>' + mmTkEsc(nm) + '</b>' +
+          '<s>' + mmTkEsc(u.email || '--') + ' &middot; ' + mmTkEsc(u.mt5_id || '--') + '</s></span></div>' +
+          '<div class="aus-pbtns">' +
+            '<span class="aus-ok" onclick="approveUser(\'' + u.id + '\')">Approve</span>' +
+            '<span class="aus-no" onclick="deleteUser(\'' + u.id + '\')">Delete</span>' +
+          '</div></div>';
+      }).join('') + '</div>';
+  }
+
+  var restHtml = rest.map(function(u) {
+    var nm = u.name || u.username || '--';
+    var p = mmUsPill(u.status);
+    return '<div class="aus-rw" onclick="mmUsOpen(\'' + u.id + '\')">' +
+      '<span class="aus-av" style="background:' + mmUsColour(u) + '">' + mmTkEsc(mmUsInitials(nm)) + '</span>' +
+      '<span class="aus-bd"><b>' + mmTkEsc(nm) + '</b>' +
+      '<s>' + mmTkEsc(u.email || '--') + ' &middot; ' + mmTkEsc(u.mt5_id || '--') + '</s></span>' +
+      '<span class="aus-pill" style="background:' + p[1] + ';color:' + p[2] + '">' + p[0] + '</span>' +
+      '<span class="aus-ch"><i class="ti ti-chevron-right"></i></span></div>';
+  }).join('');
+
+  if(!pendHtml && !restHtml) {
+    el.innerHTML = head + '<div class="empty-state" style="padding:16px;"><i class="ti ti-users"></i>No users in this filter</div>';
+    return;
+  }
+  el.innerHTML = head + pendHtml + restHtml;
+
+  // Keep the caret where it was, or typing one letter would end the search.
+  var q = document.getElementById('aus-q');
+  if(q && MMU_SEARCH) { q.focus(); q.setSelectionRange(q.value.length, q.value.length); }
+}
+
 async function loadAdminUsers() {
   if(!db) return;
   var container = document.getElementById('mob-admin-users');
   if(!container) return;
   try {
-    var res = await db.from('users').select('*').order('created_at',{ascending:false});
-    if(res.error||!res.data) return;
-    res.data = res.data.filter(function(u){ return u.role === 'user' || (!u.role && u.mt5_id && !u.mt5_id.startsWith('ANALYST_') && !u.mt5_id.startsWith('SUBADMIN_')); });
-    var total=res.data.length, active=res.data.filter(function(u){return u.status==='active';}).length, pending=res.data.filter(function(u){return u.status==='pending';}).length;
-    var t=document.getElementById('mob-stat-total'), a=document.getElementById('mob-stat-active'), p=document.getElementById('mob-stat-pending');
-    if(t) t.textContent=total; if(a) a.textContent=active; if(p) p.textContent=pending;
-    container.innerHTML = res.data.map(function(user) {
-      var actions = '';
-      if(user.status==='pending') actions+='<button class="admin-action-btn admin-approve" onclick="approveUser(\''+user.id+'\')">Approve</button>';
-      if(user.status==='active') actions+='<button class="admin-action-btn admin-suspend" onclick="suspendUser(\''+user.id+'\')">Suspend</button>';
-      if(user.status==='suspended') actions+='<button class="admin-action-btn admin-approve" onclick="unsuspendUser(\''+user.id+'\')">Unsuspend</button>';
-      actions+='<button class="admin-action-btn admin-delete" onclick="deleteUser(\''+user.id+'\')">Delete</button>';
-      return '<div class="admin-user-row">' +
-        '<div class="admin-user-av">'+(user.name||user.username||'?').substring(0,2).toUpperCase()+'</div>' +
-        '<div class="admin-user-info">' +
-          '<div class="admin-user-name">'+(user.name||user.username||'-')+'</div>' +
-          '<div class="admin-user-meta">'+(user.email||'-')+' · MT5: '+(user.mt5_id||'-')+'</div>' +
-          '<div class="admin-action-row">'+actions+'</div>' +
-        '</div>' +
-        '<div class="admin-status '+user.status+'">'+user.status+'</div>' +
-      '</div>';
-    }).join('');
+    var res = await db.from('users').select('*').order('created_at', {ascending:false});
+    if(res.error || !res.data) return;
+    MMU_ROWS = res.data.filter(function(u) {
+      return u.role === 'user' || (!u.role && u.mt5_id && !u.mt5_id.startsWith('ANALYST_') && !u.mt5_id.startsWith('SUBADMIN_'));
+    });
+    var total = MMU_ROWS.length,
+        active = MMU_ROWS.filter(function(u) { return u.status === 'active'; }).length,
+        pending = MMU_ROWS.filter(function(u) { return u.status === 'pending'; }).length;
+    var t = document.getElementById('mob-stat-total'),
+        a = document.getElementById('mob-stat-active'),
+        p = document.getElementById('mob-stat-pending');
+    if(t) t.textContent = total;
+    if(a) a.textContent = active;
+    if(p) p.textContent = pending;
+    mmUsRender();
   } catch(e) { console.error(e); }
+}
+
+// ── THE USER SHEET ────────────────────────────────────────────
+function mmUsClose() {
+  var ov = document.getElementById('aus-ov');
+  if(ov) ov.remove();
+}
+
+function mmUsOpen(id) {
+  var u = null;
+  for (var i = 0; i < MMU_ROWS.length; i++) { if(String(MMU_ROWS[i].id) === String(id)) { u = MMU_ROWS[i]; break; } }
+  if(!u) return;
+  mmUsClose();
+
+  var nm = u.name || u.username || '--';
+  var p = mmUsPill(u.status);
+  var col = mmUsColour(u);
+  var joined = u.created_at ? new Date(u.created_at).toLocaleDateString() : '--';
+  // Their MT5 accounts, counted from what the MT5 tab already loaded. If that
+  // tab has not been opened yet this reads a dash rather than a wrong zero.
+  var accts = (typeof MMT_ROWS !== 'undefined' && MMT_ROWS.length)
+    ? String(MMT_ROWS.filter(function(a) { return String(a.user_id) === String(u.id); }).length)
+    : '--';
+
+  var acts = [];
+  if(u.status === 'pending')   acts.push(['Approve user','green','ti-check','Lets them sign in and connect an account','approveUser(\'' + u.id + '\')']);
+  if(u.status === 'active')    acts.push(['Suspend user','amber','ti-player-pause','Blocks sign in. Nothing is deleted','suspendUser(\'' + u.id + '\')']);
+  if(u.status === 'suspended') acts.push(['Unsuspend user','green','ti-player-play','Lets them sign in again','unsuspendUser(\'' + u.id + '\')']);
+  acts.push(['View MT5 accounts','blue','ti-server-bolt','Opens the MT5 tab','mmAdmNav(\'mt5\')']);
+
+  var C = {
+    green:'var(--green)', red:'var(--red)', amber:'var(--amber)', blue:'#7FB0FF', gold:'var(--gold)'
+  };
+  var actHtml = acts.map(function(x) {
+    return '<div class="amt-act amt-glass" onclick="mmUsClose(); ' + x[4] + ';">' +
+      '<span class="amt-ring" style="border-color:' + C[x[1]] + ';color:' + C[x[1]] + '"><i class="ti ' + x[2] + '"></i></span>' +
+      '<span class="tx"><b>' + x[0] + '</b><s>' + x[3] + '</s></span>' +
+      '<span class="ch"><i class="ti ti-chevron-right"></i></span></div>';
+  }).join('');
+
+  var ov = document.createElement('div');
+  ov.id = 'aus-ov';
+  ov.className = 'amt-ov on';
+  ov.innerHTML =
+    '<div class="amt-hdr">' +
+      '<span class="amt-bk" onclick="mmUsClose()"><i class="ti ti-arrow-left"></i></span>' +
+      '<span class="amt-htitle">USER</span>' +
+      '<span class="amt-pill" style="margin-left:auto;background:' + p[1] + ';color:' + p[2] + '">' + p[0] + '</span>' +
+    '</div>' +
+    '<div class="amt-hero" style="background:linear-gradient(150deg,' + col + '2e,' + col + '08 55%,rgba(255,255,255,.02))">' +
+      '<span class="amt-mesh"></span>' +
+      '<div class="amt-who">' +
+        '<span class="amt-av2" style="background:' + col + '26;color:' + col + '">' + mmTkEsc(mmUsInitials(nm)) + '</span>' +
+        '<span class="amt-dwho"><b>' + mmTkEsc(nm) + '</b><s>' + mmTkEsc(u.email || '--') + '</s></span>' +
+      '</div>' +
+      '<div class="amt-m2">' +
+        '<div><i class="ti ti-server-bolt"></i><span><div class="k">MT5 ACCOUNTS</div><div class="v">' + accts + '</div></span></div>' +
+        '<div><i class="ti ti-id"></i><span><div class="k">MT5 ID</div><div class="v">' + mmTkEsc(u.mt5_id || '--') + '</div></span></div>' +
+        '<div><i class="ti ti-calendar"></i><span><div class="k">JOINED</div><div class="v">' + joined + '</div></span></div>' +
+        '<div><i class="ti ti-user"></i><span><div class="k">USERNAME</div><div class="v" style="font-family:Sora,sans-serif;font-size:11px">' +
+          mmTkEsc(u.username || '--') + '</div></span></div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="amt-db">' +
+      '<div class="amt-sect">ACTIONS</div>' +
+      '<div class="amt-alist">' + actHtml + '</div>' +
+      '<button class="amt-del" onclick="mmUsClose(); deleteUser(\'' + u.id + '\');">DELETE USER</button>' +
+    '</div>';
+  document.body.appendChild(ov);
 }
 async function approveUser(id) {
   var r=await db.from('users').update({status:'active'}).eq('id',id);
