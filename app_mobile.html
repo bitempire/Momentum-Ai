@@ -1332,6 +1332,51 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
   overflow-y: auto;
   padding: 16px;
 }
+
+/* ══ ADMIN PANEL NAVIGATION (18 Aug 2026) ══════════════════════
+   Twelve tabs in a horizontally scrolling strip put eight of them off
+   screen on a phone. They now sit in the app's OWN floating pill:
+   Dashboard, Users, MT5, Support, More. The old `#admin-tab-bar` is
+   HIDDEN rather than deleted, so `switchAdminTab` keeps finding its
+   buttons and nothing it does had to change.
+   The back button is gone, so EXIT ADMIN lives at the foot of More. */
+#sub-admin .sub-content{padding-bottom:96px;}
+
+.adm-nav{position:absolute;left:16px;right:16px;bottom:20px;height:46px;
+ background:rgba(18,18,24,.55);backdrop-filter:blur(18px) saturate(1.3);
+ -webkit-backdrop-filter:blur(18px) saturate(1.3);
+ border:1px solid rgba(255,255,255,.13);border-radius:999px;display:flex;
+ align-items:center;justify-content:space-around;z-index:120;}
+.adm-nb{display:flex;align-items:center;justify-content:center;gap:0;min-width:44px;
+ padding:9px 0;border-radius:999px;background:transparent;border:none;cursor:pointer;
+ transition:background .28s ease,padding .28s ease,gap .28s ease;}
+.adm-nb i{font-size:20px;color:#fff;line-height:1;}
+.adm-nb span{font-size:11px;font-weight:700;color:#fff;max-width:0;overflow:hidden;
+ white-space:nowrap;transition:max-width .28s ease;font-family:'Sora',sans-serif;}
+.adm-nb.on{gap:8px;padding:9px 15px;background:var(--red);box-shadow:0 6px 18px rgba(255,45,74,.55);}
+.adm-nb.on span{max-width:110px;}
+
+.adm-more{position:absolute;inset:0;background:var(--bg);z-index:115;
+ padding:16px 16px 96px;overflow-y:auto;transform:translateX(100%);
+ transition:transform .32s cubic-bezier(.22,.61,.36,1);}
+.adm-more.on{transform:none;}
+.adm-more-t{font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;
+ letter-spacing:.5px;margin-bottom:14px;}
+.adm-sect{font-family:'Orbitron',sans-serif;font-size:9px;letter-spacing:1.2px;
+ color:var(--text3);margin:0 0 9px;}
+.adm-group{background:var(--surface);border:1px solid var(--border);border-radius:13px;
+ overflow:hidden;margin-bottom:14px;}
+.adm-mrow{display:flex;align-items:center;gap:11px;padding:12px 13px;cursor:pointer;
+ border-bottom:1px solid rgba(255,255,255,.05);}
+.adm-mrow:last-child{border-bottom:0;}
+.adm-mrow:active{background:var(--surface2);}
+.adm-mrow i{font-size:17px;color:var(--text2);width:22px;text-align:center;}
+.adm-mrow b{flex:1;font-size:12.5px;font-weight:600;color:var(--text);}
+.adm-mrow .ch{color:var(--text3);font-size:14px;}
+.adm-mrow.exit i,.adm-mrow.exit b{color:var(--red);}
+html[data-theme="light"] .adm-nav{background:rgba(255,255,255,.75);border-color:rgba(0,0,0,.10);}
+html[data-theme="light"] .adm-nb i,html[data-theme="light"] .adm-nb span{color:#101018;}
+html[data-theme="light"] .adm-nb.on i,html[data-theme="light"] .adm-nb.on span{color:#fff;}
 .sub-content::-webkit-scrollbar { display: none; }
 
 /* EA SETTINGS */
@@ -4017,11 +4062,10 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
   <!-- Admin Panel -->
   <div id="sub-admin" class="sub-screen">
     <div class="sub-header">
-      <button class="sub-back" onclick="hideSubScreen('sub-admin')"><i class="ti ti-arrow-left"></i></button>
       <div class="sub-title" data-i18n="scr.admin">ADMIN PANEL</div>
     </div>
     <!-- Admin Tab Bar -->
-    <div id="admin-tab-bar" style="display:flex;gap:0;padding:0 14px;background:var(--bg2);border-bottom:1px solid var(--border);overflow-x:auto;flex-shrink:0;-webkit-overflow-scrolling:touch;">
+    <div id="admin-tab-bar" style="display:none;gap:0;padding:0 14px;background:var(--bg2);border-bottom:1px solid var(--border);overflow-x:auto;flex-shrink:0;-webkit-overflow-scrolling:touch;">
       <button class="admin-tab-btn" data-tab="dashboard" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid var(--red);color:var(--red);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Dashboard</button>
       <button class="admin-tab-btn" data-tab="users" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Users</button>
       <button class="admin-tab-btn" data-tab="tickets" style="padding:10px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;white-space:nowrap;flex-shrink:0;">Support</button>
@@ -4378,7 +4422,38 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
     </div>
 
     </div>
-  </div>
+  
+    <!-- MORE: the eight tabs that are not on the pill -->
+    <div class="adm-more" id="adm-more">
+      <div class="adm-more-t">MORE</div>
+      <div class="adm-sect">CONTENT</div>
+      <div class="adm-group">
+      <div class="adm-mrow" onclick="mmAdmNav('announce')"><i class="ti ti-speakerphone"></i><b>Announce</b><span class="ch"><i class="ti ti-chevron-right"></i></span></div>
+      <div class="adm-mrow" onclick="mmAdmNav('banners')"><i class="ti ti-photo"></i><b>Banners</b><span class="ch"><i class="ti ti-chevron-right"></i></span></div>
+      <div class="adm-mrow" onclick="mmAdmNav('academy')"><i class="ti ti-school"></i><b>Academy</b><span class="ch"><i class="ti ti-chevron-right"></i></span></div>
+      <div class="adm-mrow" onclick="mmAdmNav('promo')"><i class="ti ti-ticket"></i><b>Promo</b><span class="ch"><i class="ti ti-chevron-right"></i></span></div>
+      </div>
+      <div class="adm-sect">SYSTEM</div>
+      <div class="adm-group">
+      <div class="adm-mrow" onclick="mmAdmNav('funds')"><i class="ti ti-briefcase"></i><b>Fund Man</b><span class="ch"><i class="ti ti-chevron-right"></i></span></div>
+      <div class="adm-mrow" onclick="mmAdmNav('signals')"><i class="ti ti-activity"></i><b>Signals</b><span class="ch"><i class="ti ti-chevron-right"></i></span></div>
+      <div class="adm-mrow" onclick="mmAdmNav('templates')"><i class="ti ti-template"></i><b>Template</b><span class="ch"><i class="ti ti-chevron-right"></i></span></div>
+      <div class="adm-mrow" onclick="mmAdmNav('analyst')"><i class="ti ti-shield-lock"></i><b>Administrator</b><span class="ch"><i class="ti ti-chevron-right"></i></span></div>
+      </div>
+      <div class="adm-group">
+        <div class="adm-mrow exit" onclick="mmAdmExit()"><i class="ti ti-logout"></i><b>Exit admin panel</b></div>
+      </div>
+    </div>
+
+    <!-- The five that live at the foot -->
+    <nav class="adm-nav">
+      <button class="adm-nb on" id="adm-nb-dashboard" onclick="mmAdmNav('dashboard')"><i class="ti ti-layout-dashboard"></i><span>Dashboard</span></button>
+      <button class="adm-nb" id="adm-nb-users" onclick="mmAdmNav('users')"><i class="ti ti-users"></i><span>Users</span></button>
+      <button class="adm-nb" id="adm-nb-mt5" onclick="mmAdmNav('mt5')"><i class="ti ti-server-bolt"></i><span>MT5</span></button>
+      <button class="adm-nb" id="adm-nb-tickets" onclick="mmAdmNav('tickets')"><i class="ti ti-headset"></i><span>Support</span></button>
+      <button class="adm-nb" id="adm-nb-more" onclick="mmAdmMore(true)"><i class="ti ti-dots"></i><span>More</span></button>
+    </nav>
+</div>
 
 
   <!-- Profile -->
@@ -15065,6 +15140,40 @@ function switchAdminTab(tab) {
   if(tab === 'announce') loadAdminAnnouncements();
   if(tab === 'signals') loadAdminSignals();
   if(tab === 'mt5') loadAdminMT5();
+  try { mmAdmPaintNav(tab); } catch(e) {}
+}
+
+// ── ADMIN NAVIGATION (18 Aug 2026) ────────────────────────────
+// Four tabs sit on the pill; everything else is reached through More and
+// lights the More button instead, so the pill always shows where you are.
+var MMADM_PILL = ['dashboard','users','mt5','tickets'];
+
+function mmAdmPaintNav(tab) {
+  var onPill = MMADM_PILL.indexOf(tab) >= 0;
+  MMADM_PILL.forEach(function(x) {
+    var el = document.getElementById('adm-nb-' + x);
+    if(el) el.classList.toggle('on', x === tab);
+  });
+  var more = document.getElementById('adm-nb-more');
+  if(more) more.classList.toggle('on', !onPill);
+}
+
+function mmAdmMore(open) {
+  var el = document.getElementById('adm-more');
+  if(!el) return;
+  el.classList.toggle('on', !!open);
+  if(open) { el.scrollTop = 0; var m = document.getElementById('adm-nb-more'); if(m) m.classList.add('on'); }
+}
+
+function mmAdmNav(tab) {
+  mmAdmMore(false);
+  switchAdminTab(tab);
+}
+
+// The back button is gone, so this is the only way out of the panel.
+function mmAdmExit() {
+  mmAdmMore(false);
+  hideSubScreen('sub-admin');
 }
 
 // Wire up admin tab buttons via event delegation
