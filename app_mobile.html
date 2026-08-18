@@ -650,6 +650,96 @@ html[data-theme="light"] .nav-btn.active span:not(.nav-ico-wrap) { color: #fff; 
   padding: 14px;
   margin-bottom: 12px;
 }
+/* ══ ADMIN DASHBOARD (18 Aug 2026) ═════════════════════════════
+   Welcome card in steel blue so the admin panel is never mistaken for
+   the customer app at a glance, one balance card carrying BOTH books
+   with a USD / USC toggle, then what needs doing, then the counts.
+   Every class here is prefixed `adash-`. The last mockup shipped a 2px
+   bar called `.bar`, which collided with a `.bar` already on the page
+   and drew a fat box. In a stylesheet this size, prefix everything. */
+.adash-wel{position:relative;overflow:hidden;border-radius:14px;padding:12px 14px 13px;
+ margin-bottom:10px;background:linear-gradient(120deg,#3B82F6,#1D4ED8);color:#fff;}
+.adash-wel > *{position:relative;z-index:2;}
+.adash-mesh{position:absolute;inset:0;z-index:1;opacity:.5;
+ background-image:linear-gradient(rgba(255,255,255,.10) 1px,transparent 1px),
+                  linear-gradient(90deg,rgba(255,255,255,.10) 1px,transparent 1px);
+ background-size:26px 26px;}
+.adash-wk{font-size:8.5px;font-weight:800;letter-spacing:1.4px;opacity:.85;}
+.adash-wn{font-family:'Orbitron',sans-serif;font-size:17px;margin-top:3px;}
+.adash-wl{font-size:10px;margin-top:4px;opacity:.85;}
+.adash-wp{position:absolute;top:12px;right:12px;z-index:3;font-size:8.5px;font-weight:800;
+ letter-spacing:.6px;padding:5px 9px;border-radius:999px;background:rgba(255,255,255,.18);
+ color:#fff;display:flex;align-items:center;gap:5px;}
+
+.adash-deck{position:relative;overflow:hidden;border-radius:14px;border:1px solid var(--border);
+ background:#0B0C12;margin-bottom:12px;}
+.adash-track{display:flex;width:200%;transition:transform .42s cubic-bezier(.22,.61,.36,1);}
+.adash-track.p2{transform:translateX(-50%);}
+.adash-page{width:50%;flex:none;position:relative;overflow:hidden;padding:12px 13px 0;}
+.adash-page > *{position:relative;z-index:2;}
+
+.adash-seg{position:absolute;top:11px;right:12px;z-index:5;display:flex;
+ background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:999px;padding:2px;}
+.adash-seg button{font-family:'Sora',sans-serif;font-size:8.5px;font-weight:800;letter-spacing:.5px;
+ padding:4px 9px;border-radius:999px;color:var(--text3);background:transparent;border:none;
+ cursor:pointer;transition:background .25s,color .25s;}
+.adash-seg button.on{background:var(--red);color:#fff;}
+
+.adash-radar{position:absolute;right:-46px;top:-42px;width:186px;height:186px;z-index:1;
+ border-radius:50%;overflow:hidden;opacity:.55;pointer-events:none;}
+.adash-radar i{display:block;position:absolute;}
+.adash-ring{border-radius:50%;border:1px solid rgba(255,255,255,.10);}
+.adash-cross{background:rgba(255,255,255,.07);}
+.adash-sweep{inset:0;border-radius:50%;animation:adashSpin 4.5s linear infinite;}
+@keyframes adashSpin{to{transform:rotate(360deg)}}
+.adash-blip{width:4px;height:4px;border-radius:50%;animation:adashBlip 4.5s linear infinite;}
+@keyframes adashBlip{0%,72%{opacity:0}76%{opacity:1}100%{opacity:0}}
+@media (prefers-reduced-motion: reduce){
+  .adash-sweep,.adash-blip{animation:none;}
+}
+
+.adash-lab{font-size:10px;color:var(--text2);}
+.adash-big{font-family:'Orbitron',sans-serif;font-size:21px;margin-top:3px;letter-spacing:-.4px;}
+.adash-big em{font-style:normal;font-size:12px;color:var(--text2);margin-right:6px;}
+.adash-sub{font-size:9px;color:var(--text3);margin-top:3px;}
+.adash-cells{display:flex;margin:11px -13px 0;border-top:1px solid var(--border);}
+.adash-cell{flex:1;padding:9px 10px;border-right:1px solid var(--border);position:relative;}
+.adash-cell:last-child{border-right:0;}
+.adash-cbar{position:absolute;left:0;top:9px;bottom:9px;width:2px;border-radius:2px;display:block;}
+.adash-ck{font-size:8px;color:var(--text3);letter-spacing:.5px;display:block;}
+.adash-cv{font-family:'Orbitron',sans-serif;font-size:12px;margin-top:4px;display:block;}
+.adash-note{font-size:8px;color:var(--text3);padding:0 0 11px;margin-top:8px;}
+
+.adash-sect{font-family:'Orbitron',sans-serif;font-size:9px;letter-spacing:1.2px;color:var(--text3);
+ margin:14px 0 8px;display:flex;align-items:center;gap:8px;}
+.adash-sect u{flex:1;height:1px;background:var(--border);text-decoration:none;}
+
+.adash-group{position:relative;overflow:hidden;background:var(--surface);
+ border:1px solid var(--border);border-radius:13px;}
+.adash-hair{position:absolute;left:0;right:0;top:0;height:1px;z-index:2;
+ background:linear-gradient(90deg,transparent,rgba(255,255,255,.22),transparent);}
+.adash-act{position:relative;display:flex;align-items:center;gap:10px;padding:10px 12px;
+ border-bottom:1px solid rgba(255,255,255,.05);cursor:pointer;}
+.adash-act:last-child{border-bottom:0;}
+.adash-act:active{background:var(--surface2);}
+.adash-edge{position:absolute;left:0;top:0;bottom:0;width:3px;}
+.adash-ic{width:28px;height:28px;flex:none;border-radius:9px;display:flex;align-items:center;
+ justify-content:center;font-size:14px;}
+.adash-tx{flex:1;min-width:0;}
+.adash-tx b{display:block;font-size:11.5px;font-weight:600;color:var(--text);}
+.adash-tx s{display:block;font-size:9px;color:var(--text3);text-decoration:none;margin-top:2px;}
+.adash-go{color:var(--text3);font-size:13px;}
+.adash-clear{padding:15px 12px;text-align:center;font-size:11.5px;color:var(--green);}
+
+.adash-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
+.adash-sc{position:relative;overflow:hidden;background:var(--surface);border:1px solid var(--border);
+ border-radius:11px;padding:9px 3px 11px;text-align:center;}
+.adash-sn{font-family:'Orbitron',sans-serif;font-size:14px;position:relative;z-index:2;display:block;}
+.adash-sk{font-size:7px;color:var(--text3);letter-spacing:.5px;margin-top:3px;position:relative;z-index:2;
+ display:block;}
+html[data-theme="light"] .adash-deck{background:#fff;}
+html[data-theme="light"] .adash-page{color:#101018;}
+
 .section-title {
   font-family: 'Orbitron', sans-serif;
   font-size: 14px;
@@ -4083,36 +4173,98 @@ html[data-theme="light"] .adm-nb.on i,html[data-theme="light"] .adm-nb.on span{c
 
       <!-- ── DASHBOARD TAB ── -->
       <div id="atab-content-dashboard">
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;">
-          <div class="section-card" style="padding:10px;text-align:center;">
-            <div style="font-size:22px;font-weight:800;color:var(--text);" id="astat-total">--</div>
-            <div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-top:2px;">Users</div>
+
+        <!-- WELCOME. Steel blue, so this is never mistaken for the customer app. -->
+        <div class="adash-wel">
+          <span class="adash-mesh"></span>
+          <span class="adash-wp"><i class="ti ti-shield-lock"></i>ADMIN</span>
+          <div class="adash-wk">WELCOME BACK</div>
+          <div class="adash-wn" id="adash-name">Admin</div>
+          <div class="adash-wl" id="adash-fleetline">Loading fleet...</div>
+        </div>
+
+        <!-- ONE balance card, two books. Swipe, or use the toggle. -->
+        <div class="adash-deck" id="adash-deck">
+          <div class="adash-seg">
+            <button id="adash-seg1" onclick="mmAdashPage(1)" class="on">USD</button>
+            <button id="adash-seg2" onclick="mmAdashPage(2)">USC</button>
           </div>
-          <div class="section-card" style="padding:10px;text-align:center;">
-            <div style="font-size:22px;font-weight:800;color:var(--amber);" id="astat-pending">--</div>
-            <div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-top:2px;">Pending</div>
-          </div>
-          <div class="section-card" style="padding:10px;text-align:center;">
-            <div style="font-size:22px;font-weight:800;color:var(--red);" id="astat-tickets">--</div>
-            <div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-top:2px;">Tickets</div>
+          <div class="adash-track" id="adash-track">
+
+            <div class="adash-page">
+              <span class="adash-radar">
+                <i class="adash-ring" style="inset:0"></i><i class="adash-ring" style="inset:24px"></i>
+                <i class="adash-ring" style="inset:48px"></i><i class="adash-ring" style="inset:72px"></i>
+                <i class="adash-cross" style="left:50%;top:0;bottom:0;width:1px"></i>
+                <i class="adash-cross" style="top:50%;left:0;right:0;height:1px"></i>
+                <i class="adash-sweep" style="background:conic-gradient(from 0deg,rgba(255,30,60,0) 0deg,rgba(255,30,60,0) 300deg,rgba(255,30,60,.30) 352deg,rgba(255,30,60,.80) 360deg)"></i>
+                <i class="adash-blip" style="left:64%;top:34%;background:#FF1E3C"></i>
+                <i class="adash-blip" style="left:38%;top:66%;background:#FF1E3C;animation-delay:.5s"></i>
+              </span>
+              <div class="adash-lab">Funds under management</div>
+              <div class="adash-big"><em>USD</em><span id="adash-usd-bal">--</span></div>
+              <div class="adash-sub" id="adash-usd-sub">standard accounts</div>
+              <div class="adash-cells">
+                <div class="adash-cell"><span class="adash-cbar" style="background:var(--red)"></span>
+                  <span class="adash-ck">EQUITY</span><span class="adash-cv" id="adash-usd-eq">--</span></div>
+                <div class="adash-cell"><span class="adash-cbar" style="background:var(--green)"></span>
+                  <span class="adash-ck">OPEN P&amp;L</span><span class="adash-cv" id="adash-usd-pl">--</span></div>
+                <div class="adash-cell"><span class="adash-cbar" style="background:#3B82F6"></span>
+                  <span class="adash-ck">ARMED</span><span class="adash-cv" id="adash-usd-armed">--</span></div>
+              </div>
+              <div class="adash-note">Standard accounts, in USD.</div>
+            </div>
+
+            <div class="adash-page">
+              <span class="adash-radar">
+                <i class="adash-ring" style="inset:0"></i><i class="adash-ring" style="inset:24px"></i>
+                <i class="adash-ring" style="inset:48px"></i><i class="adash-ring" style="inset:72px"></i>
+                <i class="adash-cross" style="left:50%;top:0;bottom:0;width:1px"></i>
+                <i class="adash-cross" style="top:50%;left:0;right:0;height:1px"></i>
+                <i class="adash-sweep" style="background:conic-gradient(from 0deg,rgba(59,130,246,0) 0deg,rgba(59,130,246,0) 300deg,rgba(59,130,246,.30) 352deg,rgba(59,130,246,.80) 360deg)"></i>
+                <i class="adash-blip" style="left:64%;top:34%;background:#3B82F6"></i>
+                <i class="adash-blip" style="left:38%;top:66%;background:#3B82F6;animation-delay:.5s"></i>
+              </span>
+              <div class="adash-lab">Cent book</div>
+              <div class="adash-big"><em>USC</em><span id="adash-usc-bal">--</span></div>
+              <div class="adash-sub" id="adash-usc-sub">cent accounts</div>
+              <div class="adash-cells">
+                <div class="adash-cell"><span class="adash-cbar" style="background:#3B82F6"></span>
+                  <span class="adash-ck">EQUITY</span><span class="adash-cv" id="adash-usc-eq">--</span></div>
+                <div class="adash-cell"><span class="adash-cbar" style="background:var(--green)"></span>
+                  <span class="adash-ck">OPEN P&amp;L</span><span class="adash-cv" id="adash-usc-pl">--</span></div>
+                <div class="adash-cell"><span class="adash-cbar" style="background:#3B82F6"></span>
+                  <span class="adash-ck">ARMED</span><span class="adash-cv" id="adash-usc-armed">--</span></div>
+              </div>
+              <div class="adash-note">Cent accounts, in their own units.</div>
+            </div>
+
           </div>
         </div>
-        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px;">
-          <div class="section-card" style="padding:10px;text-align:center;">
-            <div style="font-size:22px;font-weight:800;color:var(--green);" id="astat-signals">--</div>
-            <div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-top:2px;">Active Signals</div>
-          </div>
-          <div class="section-card" style="padding:10px;text-align:center;">
-            <div style="font-size:22px;font-weight:800;color:#4D9EFF;" id="astat-funds">--</div>
-            <div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-top:2px;">Fund Requests</div>
-          </div>
-        </div>
-        <div class="section-card">
-          <div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.5px;margin-bottom:10px;">RECENT ACTIVITY</div>
+
+        <div class="adash-sect">NEEDS YOU<u></u></div>
+        <div class="adash-group"><span class="adash-hair"></span>
           <div id="admin-activity">
-            <div class="empty-state" style="padding:16px;"><i class="ti ti-activity"></i>Loading...</div>
+            <div class="adash-clear">Loading...</div>
           </div>
         </div>
+
+        <div class="adash-sect">TODAY<u></u></div>
+        <div class="adash-strip">
+          <div class="adash-sc"><span class="adash-hair"></span>
+            <span class="adash-sn" id="astat-total">--</span><span class="adash-sk">USERS</span></div>
+          <div class="adash-sc"><span class="adash-hair"></span>
+            <span class="adash-sn" style="color:var(--green)" id="astat-signals">--</span><span class="adash-sk">SIGNALS</span></div>
+          <div class="adash-sc"><span class="adash-hair"></span>
+            <span class="adash-sn" id="adash-accounts">--</span><span class="adash-sk">MT5</span></div>
+          <div class="adash-sc"><span class="adash-hair"></span>
+            <span class="adash-sn" style="color:#3B82F6" id="astat-funds">--</span><span class="adash-sk">FUNDS</span></div>
+        </div>
+
+        <!-- Kept because loadAdminDashboard writes to them; the figures they
+             carry are shown inside the NEEDS YOU rows instead. -->
+        <span id="astat-pending" style="display:none"></span>
+        <span id="astat-tickets" style="display:none"></span>
       </div>
 
       <!-- ── USERS TAB ── -->
@@ -15188,42 +15340,172 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // ── ADMIN DASHBOARD ──
+// ── ADMIN DASHBOARD (rebuilt 18 Aug 2026) ─────────────────────
+// Two jobs: say what needs doing, and say how much money is on the system.
+// The two books are kept APART rather than converted, because a cent balance
+// added to a dollar balance overstates the book a hundredfold.
+function mmAdashMoney(n) {
+  var v = Number(n);
+  if(!isFinite(v)) return '--';
+  return v.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+function mmAdashPage(n) {
+  var tr = document.getElementById('adash-track');
+  if(tr) tr.classList.toggle('p2', n === 2);
+  var a = document.getElementById('adash-seg1'), b = document.getElementById('adash-seg2');
+  if(a) a.classList.toggle('on', n === 1);
+  if(b) b.classList.toggle('on', n === 2);
+}
+
+// Swipe. The axis is decided once after 8px and then committed, so a vertical
+// scroll can never be mistaken for a page change - same rule as the app's own
+// gesture layer.
+function mmAdashSwipe() {
+  var deck = document.getElementById('adash-deck');
+  if(!deck || deck._mmWired || !('ontouchstart' in window)) return;
+  deck._mmWired = true;
+  var x0 = 0, y0 = 0, axis = '';
+  deck.addEventListener('touchstart', function(e) {
+    if(e.touches.length !== 1) return;
+    x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; axis = '';
+  }, {passive:true});
+  deck.addEventListener('touchmove', function(e) {
+    if(axis === 'y' || e.touches.length !== 1) return;
+    var dx = e.touches[0].clientX - x0, dy = e.touches[0].clientY - y0;
+    if(!axis && (Math.abs(dx) > 8 || Math.abs(dy) > 8)) axis = (Math.abs(dx) > Math.abs(dy)) ? 'x' : 'y';
+    if(axis === 'x' && Math.abs(dx) > 40) {
+      mmAdashPage(dx < 0 ? 2 : 1);
+      axis = 'y';
+    }
+  }, {passive:true});
+}
+
 async function loadAdminDashboard() {
   if(!db) return;
+  mmAdashSwipe();
   try {
-    var [users, signals, tickets, funds] = await Promise.all([
+    var nm = document.getElementById('adash-name');
+    if(nm && typeof currentUser !== 'undefined' && currentUser) {
+      nm.textContent = currentUser.name || currentUser.username || 'Admin';
+    }
+
+    var res = await Promise.all([
       db.from('users').select('id,status,role'),
       db.from('signals').select('id,status').eq('status','active'),
       db.from('support_tickets').select('id,status').eq('status','open'),
-      db.from('fund_requests').select('id,status').eq('status','pending')
+      db.from('fund_requests').select('id,status').eq('status','pending'),
+      db.from('mt5_accounts').select('*'),
+      db.from('positions').select('mt5_id,profit')
     ]);
-    var allUsers = users.data || [];
-    var pending = allUsers.filter(function(u) { return u.status === 'pending'; });
-    document.getElementById('astat-total').textContent = allUsers.length;
-    document.getElementById('astat-pending').textContent = pending.length;
-    document.getElementById('astat-tickets').textContent = (tickets.data||[]).length;
-    document.getElementById('astat-signals').textContent = (signals.data||[]).length;
-    document.getElementById('astat-funds').textContent = (funds.data||[]).length;
-    // Also update old stat elements if they exist
-    var tot = document.getElementById('mob-stat-total');
-    var act = document.getElementById('mob-stat-active');
-    var pend = document.getElementById('mob-stat-pending');
-    if(tot) tot.textContent = allUsers.length;
-    if(act) act.textContent = allUsers.filter(function(u){return u.status==='active';}).length;
-    if(pend) pend.textContent = pending.length;
-    // Recent activity
-    var actEl = document.getElementById('admin-activity');
-    if(actEl) {
-      var items = [];
-      if(pending.length > 0) items.push({icon:'ti-user-plus',color:'var(--amber)',text: pending.length + ' user(s) awaiting approval'});
-      if((tickets.data||[]).length > 0) items.push({icon:'ti-ticket',color:'var(--red)',text: (tickets.data||[]).length + ' open support ticket(s)'});
-      if((funds.data||[]).length > 0) items.push({icon:'ti-chart-pie',color:'#4D9EFF',text: (funds.data||[]).length + ' fund request(s) pending'});
-      if(items.length === 0) items.push({icon:'ti-check',color:'var(--green)',text:'All clear — no pending actions'});
-      actEl.innerHTML = items.map(function(item) {
-        return '<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">' +
-          '<i class="ti ' + item.icon + '" style="font-size:18px;color:' + item.color + ';flex-shrink:0;"></i>' +
-          '<div style="font-size:12px;color:var(--text);">' + item.text + '</div></div>';
-      }).join('');
+    var users = res[0], signals = res[1], tickets = res[2], funds = res[3],
+        accts = res[4], poss = res[5];
+
+    var allUsers = (users && users.data) ? users.data : [];
+    var pending  = allUsers.filter(function(u) { return u.status === 'pending'; });
+    var openTk   = (tickets && tickets.data) ? tickets.data : [];
+    var fundReq  = (funds && funds.data) ? funds.data : [];
+    var rows     = (accts && accts.data && Array.isArray(accts.data)) ? accts.data : [];
+    var posRows  = (poss && poss.data && Array.isArray(poss.data)) ? poss.data : [];
+
+    // Open profit per account, so each book only counts its own.
+    var plBy = {};
+    posRows.forEach(function(p) {
+      var k = String(p.mt5_id);
+      plBy[k] = (plBy[k] || 0) + (Number(p.profit) || 0);
+    });
+
+    // A cent account is one whose currency says so. Anything else counts as the
+    // standard book, including a null currency, which is what an account that
+    // has never reported carries.
+    var book = { usd:{bal:0,eq:0,pl:0,n:0,armed:0}, usc:{bal:0,eq:0,pl:0,n:0,armed:0} };
+    var never = [], quiet = [];
+    rows.forEach(function(a) {
+      var isCent = String(a.currency || '').toUpperCase() === 'USC';
+      var b = isCent ? book.usc : book.usd;
+      b.n++;
+      b.bal += Number(a.balance) || 0;
+      b.eq  += Number(a.equity)  || 0;
+      b.pl  += plBy[String(a.mt5_id)] || 0;
+      if(a.armed) b.armed++;
+      var seen = a.ea_last_seen ? (new Date() - new Date(a.ea_last_seen)) / 1000 : null;
+      if(seen === null) {
+        var age = a.created_at ? (new Date() - new Date(a.created_at)) / 3600000 : 0;
+        if(age > 1) never.push(a);
+      } else if(seen > 600) { quiet.push(a); }
+    });
+
+    function put(id, txt) { var el = document.getElementById(id); if(el) el.textContent = txt; }
+    put('astat-total',   allUsers.length);
+    put('astat-pending', pending.length);
+    put('astat-tickets', openTk.length);
+    put('astat-signals', (signals && signals.data ? signals.data : []).length);
+    put('astat-funds',   fundReq.length);
+    put('adash-accounts', rows.length);
+
+    put('adash-usd-bal', mmAdashMoney(book.usd.bal));
+    put('adash-usd-eq',  mmAdashMoney(book.usd.eq));
+    put('adash-usd-pl',  (book.usd.pl >= 0 ? '+' : '') + mmAdashMoney(book.usd.pl));
+    put('adash-usd-armed', book.usd.armed);
+    put('adash-usd-sub', book.usd.n + ' standard account' + (book.usd.n === 1 ? '' : 's'));
+
+    put('adash-usc-bal', mmAdashMoney(book.usc.bal));
+    put('adash-usc-eq',  mmAdashMoney(book.usc.eq));
+    put('adash-usc-pl',  (book.usc.pl >= 0 ? '+' : '') + mmAdashMoney(book.usc.pl));
+    put('adash-usc-armed', book.usc.armed);
+    put('adash-usc-sub', book.usc.n + ' cent account' + (book.usc.n === 1 ? '' : 's') +
+        ' \u00b7 about USD ' + mmAdashMoney(book.usc.bal / 100));
+
+    var plEl = document.getElementById('adash-usd-pl');
+    if(plEl) plEl.style.color = (book.usd.pl >= 0) ? 'var(--green)' : 'var(--red)';
+    var plEl2 = document.getElementById('adash-usc-pl');
+    if(plEl2) plEl2.style.color = (book.usc.pl >= 0) ? 'var(--green)' : 'var(--red)';
+
+    var live = rows.length - never.length - quiet.length;
+    put('adash-fleetline', live + ' of ' + rows.length + ' accounts reporting');
+
+    // What needs doing, worst first. Each row jumps to the tab that fixes it.
+    var items = [];
+    if(openTk.length) items.push({
+      c:'#FF1E3C', ic:'ti-headset', tab:'tickets',
+      t: openTk.length + ' open support ticket' + (openTk.length === 1 ? '' : 's'),
+      s: 'Waiting on us'
+    });
+    if(never.length) items.push({
+      c:'#FF1E3C', ic:'ti-plug-connected-x', tab:'mt5',
+      t: never.length + ' account' + (never.length === 1 ? ' has' : 's have') + ' never reported',
+      s: never.slice(0,3).map(function(a){ return a.mt5_id; }).join(', ')
+    });
+    if(quiet.length) items.push({
+      c:'#ffb020', ic:'ti-antenna-bars-off', tab:'mt5',
+      t: quiet.length + ' account' + (quiet.length === 1 ? '' : 's') + ' gone quiet',
+      s: quiet.slice(0,3).map(function(a){ return a.mt5_id; }).join(', ')
+    });
+    if(pending.length) items.push({
+      c:'#ffb020', ic:'ti-user-plus', tab:'users',
+      t: pending.length + ' user' + (pending.length === 1 ? '' : 's') + ' awaiting approval',
+      s: 'Approve or reject in Users'
+    });
+    if(fundReq.length) items.push({
+      c:'#3B82F6', ic:'ti-briefcase', tab:'funds',
+      t: fundReq.length + ' fund request' + (fundReq.length === 1 ? '' : 's') + ' pending',
+      s: 'Review in Fund Man'
+    });
+
+    var el = document.getElementById('admin-activity');
+    if(el) {
+      if(!items.length) {
+        el.innerHTML = '<div class="adash-clear">All clear. Nothing waiting on you.</div>';
+      } else {
+        el.innerHTML = items.map(function(x) {
+          return '<div class="adash-act" onclick="mmAdmNav(\'' + x.tab + '\')">' +
+            '<span class="adash-edge" style="background:' + x.c + '"></span>' +
+            '<span class="adash-ic" style="background:' + x.c + '1f;color:' + x.c + '">' +
+              '<i class="ti ' + x.ic + '"></i></span>' +
+            '<span class="adash-tx"><b>' + mmTkEsc(x.t) + '</b><s>' + mmTkEsc(x.s) + '</s></span>' +
+            '<span class="adash-go"><i class="ti ti-chevron-right"></i></span></div>';
+        }).join('');
+      }
     }
   } catch(e) { console.error('Admin dashboard error:', e); }
 }
