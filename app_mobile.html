@@ -1021,6 +1021,59 @@ html[data-theme="light"] .amt-ov{background:#fff;}
 .ann-two{display:flex;gap:8px;}
 .ann-two > div{flex:1;min-width:0;}
 .ann-foot{flex:0 0 auto;padding:10px 14px 16px;border-top:1px solid var(--border);}
+/* ══ BANNERS AND PROMO (18 Aug 2026) ═══════════════════════════
+   Both tabs now work like Announcements: what is LIVE fills the screen and the
+   creator lifts over it full screen. The `.ann-seg`, `.ann-new`, `.ann-cmp`,
+   `.ann-body` and `.ann-foot` classes are reused rather than copied, so all
+   three creator screens stay identical by construction.
+   Colour carries a fact: a banner switched off goes grey and visibly leaves the
+   swipe order; a promo code is green while live, amber once used up, grey once
+   expired, and its bar fills as it is redeemed. */
+.bpr-bn{position:relative;overflow:hidden;display:flex;gap:10px;align-items:center;padding:9px;
+ border:1px solid var(--border);border-radius:12px;margin-bottom:8px;background:var(--surface);}
+.bpr-bn .edge{position:absolute;left:0;top:0;bottom:0;width:3px;}
+.bpr-th{width:86px;flex:none;border-radius:8px;overflow:hidden;aspect-ratio:16/7;background:#000;}
+.bpr-th img{width:100%;height:100%;object-fit:cover;display:block;}
+.bpr-bd{flex:1;min-width:0;}
+.bpr-bd b{display:block;font-size:11.5px;font-weight:700;color:var(--text);}
+.bpr-bd s{display:block;font-size:9px;color:var(--text3);text-decoration:none;margin-top:3px;
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.bpr-ord{font-family:'Orbitron',sans-serif;font-size:10px;color:var(--text3);flex:none;width:14px;
+ text-align:center;}
+.bpr-arrows{display:flex;flex-direction:column;gap:2px;flex:none;}
+.bpr-arrows button{background:transparent;border:0;color:var(--text3);font-size:12px;cursor:pointer;
+ padding:1px 3px;line-height:1;}
+.bpr-arrows button[disabled]{opacity:.25;}
+.bpr-tog{width:40px;height:22px;border-radius:999px;flex:none;position:relative;cursor:pointer;
+ border:0;transition:background .25s;}
+.bpr-tog i{position:absolute;top:2px;width:18px;height:18px;border-radius:50%;background:#fff;
+ transition:left .25s;display:block;}
+.bpr-tog.on{background:var(--green);}
+.bpr-tog.on i{left:20px;}
+.bpr-tog.off{background:rgba(255,255,255,.14);}
+.bpr-tog.off i{left:2px;}
+
+.bpr-pc{position:relative;overflow:hidden;padding:11px 12px;border:1px solid var(--border);
+ border-radius:12px;margin-bottom:8px;background:var(--surface);cursor:pointer;}
+.bpr-pc > *{position:relative;z-index:2;}
+.bpr-pc:active{background:var(--surface2);}
+.bpr-pc .edge{position:absolute;left:0;top:0;bottom:0;width:3px;z-index:3;}
+.bpr-r1{display:flex;align-items:center;gap:9px;}
+.bpr-code{font-family:'Orbitron',sans-serif;font-size:14px;letter-spacing:.5px;color:var(--text);}
+.bpr-st{margin-left:auto;font-size:7.5px;font-weight:800;letter-spacing:.5px;padding:3px 7px;
+ border-radius:5px;white-space:nowrap;}
+.bpr-img{width:34px;height:34px;flex:none;border-radius:9px;object-fit:cover;}
+.bpr-meta{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
+.bpr-chip{font-size:8px;padding:3px 7px;border-radius:5px;background:rgba(255,255,255,.05);
+ color:var(--text2);}
+.bpr-bar{height:5px;border-radius:3px;background:rgba(255,255,255,.07);margin-top:9px;overflow:hidden;}
+.bpr-bar i{display:block;height:5px;border-radius:3px;}
+.bpr-used{font-size:8px;color:var(--text3);margin-top:5px;}
+
+.bpr-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+ color:var(--text3);font-size:11px;padding:40px 20px;text-align:center;}
+.bpr-hint{font-size:9.5px;color:var(--text3);line-height:1.6;margin-top:10px;}
+
 
 
 
@@ -4829,43 +4882,56 @@ html[data-theme="light"] .adm-nb.on i,html[data-theme="light"] .adm-nb.on span{c
       </div>
     </div>
     <div id="atab-content-promo" style="display:none;">
-      <div class="section-card" style="margin-bottom:12px;">
-        <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:14px;">CREATE PROMO CODE</div>
-        <div class="auth-field"><label class="auth-label" data-i18n="prof.codeWord">Code</label>
-          <input id="promo-f-code" class="auth-input" placeholder="e.g. RAYA2026" style="text-transform:uppercase;" />
+        <div class="ann-seg">
+          <button onclick="mmPromoOpen()">Create</button>
+          <button id="promo-seg-live" class="on" onclick="mmPromoClose()">Codes</button>
         </div>
-        <div class="auth-field"><label class="auth-label">Access days</label>
-          <select id="promo-f-days" class="auth-input">
-            <option value="3">3 days</option>
-            <option value="7">7 days</option>
-            <option value="14">14 days</option>
-            <option value="30">30 days</option>
-          </select>
+        <button class="ann-new" onclick="mmPromoOpen()">NEW PROMO CODE</button>
+        <div id="admin-promo-list"><div class="bpr-empty">Loading...</div></div>
+
+        <!-- The creator. Same ids as before, so createPromoCode and the image
+             picker still find their fields. -->
+        <div class="ann-cmp" id="promo-cmp">
+          <div class="hd">
+            <button class="sub-back" onclick="mmPromoClose()"><i class="ti ti-arrow-left"></i></button>
+            <div class="t">NEW PROMO CODE</div>
+          </div>
+          <div class="ann-body">
+            <div class="auth-field"><label class="auth-label" data-i18n="prof.codeWord">Code</label>
+              <input id="promo-f-code" class="auth-input" placeholder="e.g. RAYA2026" style="text-transform:uppercase;" />
+            </div>
+            <div class="ann-two">
+              <div class="auth-field"><label class="auth-label">Access days</label>
+                <select id="promo-f-days" class="auth-input" style="padding:10px 12px;font-size:12.5px;">
+                  <option value="3">3 days</option>
+                  <option value="7">7 days</option>
+                  <option value="14">14 days</option>
+                  <option value="30">30 days</option>
+                </select>
+              </div>
+              <div class="auth-field"><label class="auth-label">Max uses</label>
+                <input id="promo-f-max" type="number" min="1" class="auth-input" placeholder="Unlimited" />
+              </div>
+            </div>
+            <div class="ann-two">
+              <div class="auth-field"><label class="auth-label">Expiry date</label>
+                <input id="promo-f-expiry" type="date" class="auth-input" />
+              </div>
+              <div class="auth-field"><label class="auth-label">Campaign name</label>
+                <input id="promo-f-campaign" class="auth-input" placeholder="Optional" />
+              </div>
+            </div>
+            <div class="auth-field"><label class="auth-label">Campaign image, square, under 300KB</label>
+              <input id="promo-f-image" type="file" accept="image/png,image/jpeg,image/webp" onchange="onPromoImagePick(event)" class="auth-input" style="padding:7px;font-size:11px;" />
+              <div id="promo-img-preview" style="display:none;margin-top:10px;"><img id="promo-img-preview-el" alt="preview" style="width:88px;height:88px;object-fit:cover;border-radius:10px;border:1px solid var(--border);" /></div>
+            </div>
+            <div id="promo-f-msg" style="display:none;font-size:12px;margin:6px 0;line-height:1.4;"></div>
+          </div>
+          <div class="ann-foot">
+            <button class="auth-btn" id="promo-create-btn" onclick="mmPromoCreate()">Create code</button>
+          </div>
         </div>
-        <div class="auth-field"><label class="auth-label">Expiry date (optional)</label>
-          <input id="promo-f-expiry" type="date" class="auth-input" />
-        </div>
-        <div class="auth-field"><label class="auth-label">Max uses (blank = unlimited)</label>
-          <input id="promo-f-max" type="number" min="1" class="auth-input" placeholder="Unlimited" />
-        </div>
-        <div class="auth-field"><label class="auth-label">Campaign name (optional)</label>
-          <input id="promo-f-campaign" class="auth-input" placeholder="e.g. RAYA2026" />
-        </div>
-        <div class="auth-field"><label class="auth-label">Campaign image (square 1:1, under 300KB)</label>
-          <input id="promo-f-image" type="file" accept="image/png,image/jpeg,image/webp" onchange="onPromoImagePick(event)" class="auth-input" style="padding:8px;" />
-          <div id="promo-img-preview" style="display:none;margin-top:10px;"><img id="promo-img-preview-el" alt="preview" style="width:100px;height:100px;object-fit:cover;border-radius:10px;border:1px solid var(--border);" /></div>
-        </div>
-        <div id="promo-f-msg" style="display:none;font-size:12px;margin:6px 0;line-height:1.4;"></div>
-        <button class="auth-btn" id="promo-create-btn" onclick="createPromoCode()">Create code</button>
       </div>
-      <div class="section-card">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-          <div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.5px;">PROMO CODES</div>
-          <button onclick="loadAdminPromos()" style="background:transparent;border:none;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;">↻ Refresh</button>
-        </div>
-        <div id="admin-promo-list"><div class="empty-state" style="padding:16px;"><i class="ti ti-loader"></i> Loading...</div></div>
-      </div>
-    </div>
 
     <div id="atab-content-templates" style="display:none;">
       <div class="section-card">
@@ -4932,36 +4998,40 @@ html[data-theme="light"] .adm-nb.on i,html[data-theme="light"] .adm-nb.on span{c
     </div>
 
     <div id="atab-content-banners" style="display:none;">
-      <div class="section-card">
-        <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:14px;">ADD BANNER</div>
-
-        <div id="ban-drop" style="border:1.5px dashed var(--border);border-radius:14px;padding:24px 16px;text-align:center;cursor:pointer;">
-          <div style="font-size:24px;color:var(--text3);">&#8681;</div>
-          <div style="font-size:13px;color:var(--text);font-weight:700;margin-top:8px;">Drop an image here, or tap to choose</div>
-          <div style="font-size:11.5px;color:var(--text3);margin-top:5px;">JPG, PNG or WebP &middot; 1200 x 525 &middot; up to 300 KB</div>
-          <input type="file" id="ban-file" accept="image/jpeg,image/png,image/webp" style="display:none;">
+        <div class="ann-seg">
+          <button onclick="mmBanOpen()">Create</button>
+          <button id="ban-seg-live" class="on" onclick="mmBanClose()">Live</button>
         </div>
+        <button class="ann-new" onclick="mmBanOpen()">ADD BANNER</button>
+        <div id="admin-banner-list"><div class="bpr-empty">Loading...</div></div>
+        <div class="bpr-hint">Order here is the order customers swipe through. Switching one off keeps it here but takes it out of the app.</div>
 
-        <div id="ban-spec" style="margin-top:14px;border:1px solid var(--border);border-radius:11px;overflow:hidden;"></div>
-        <div id="ban-verdict" style="display:none;margin-top:12px;border-radius:11px;padding:11px 13px;font-size:12.5px;line-height:1.6;"></div>
-        <div id="ban-prev" style="margin-top:14px;border-radius:12px;overflow:hidden;border:1px solid var(--border);aspect-ratio:16/7;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:11.5px;color:var(--text3);">Preview appears here</div>
-
-        <div class="auth-field" style="margin-top:13px;"><label class="auth-label">Link when tapped (optional)</label>
-          <input type="text" id="ban-link" class="auth-input" placeholder="https://"></div>
-
-        <button id="ban-save" onclick="saveBanner()" class="auth-btn" style="margin-top:14px;opacity:.45;" disabled>Add banner</button>
-        <div style="font-size:11px;color:var(--text3);margin-top:9px;line-height:1.6;">The button stays off until every check passes, so a wrong file never reaches storage.</div>
-      </div>
-
-      <div class="section-card" style="margin-top:14px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-          <div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.5px;">LIVE BANNERS</div>
-          <button onclick="loadAdminBanners()" style="background:transparent;border:none;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;">Refresh</button>
+        <!-- The creator. Same ids as before, so saveBanner and every check
+             still find their elements. -->
+        <div class="ann-cmp" id="ban-cmp">
+          <div class="hd">
+            <button class="sub-back" onclick="mmBanClose()"><i class="ti ti-arrow-left"></i></button>
+            <div class="t">ADD BANNER</div>
+          </div>
+          <div class="ann-body">
+            <div id="ban-drop" style="border:1.5px dashed rgba(255,255,255,.18);border-radius:14px;padding:22px 16px;text-align:center;cursor:pointer;background:linear-gradient(150deg,rgba(255,30,60,.10),rgba(255,255,255,.01));">
+              <div style="font-size:22px;color:var(--red);"><i class="ti ti-cloud-upload"></i></div>
+              <div style="font-size:12.5px;color:var(--text);font-weight:700;margin-top:8px;">Drop an image here, or tap to choose</div>
+              <div style="font-size:10.5px;color:var(--text3);margin-top:5px;">JPG, PNG or WebP &middot; 1200 x 525 &middot; up to 300 KB</div>
+              <input type="file" id="ban-file" accept="image/jpeg,image/png,image/webp" style="display:none;">
+            </div>
+            <div id="ban-spec" style="margin-top:12px;border:1px solid var(--border);border-radius:11px;overflow:hidden;"></div>
+            <div id="ban-verdict" style="display:none;margin-top:10px;border-radius:11px;padding:11px 13px;font-size:12px;line-height:1.6;"></div>
+            <div id="ban-prev" style="margin-top:12px;border-radius:12px;overflow:hidden;border:1px solid var(--border);aspect-ratio:16/7;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--text3);">Preview appears here</div>
+            <div class="auth-field" style="margin-top:12px;"><label class="auth-label">Link when tapped, optional</label>
+              <input type="text" id="ban-link" class="auth-input" placeholder="https://"></div>
+          </div>
+          <div class="ann-foot">
+            <button id="ban-save" onclick="mmBanSave()" class="auth-btn" style="opacity:.45;" disabled>Add banner</button>
+            <div style="font-size:10px;color:var(--text3);margin-top:8px;line-height:1.5;">The button stays off until every check passes, so a wrong file never reaches storage.</div>
+          </div>
         </div>
-        <div id="admin-banner-list"><div class="empty-state" style="padding:16px;">Loading...</div></div>
-        <div style="font-size:11px;color:var(--text3);margin-top:10px;line-height:1.6;">Order here is the order customers swipe through. Switching one off keeps it here but takes it out of the app.</div>
       </div>
-    </div>
 
     </div>
   
@@ -18970,27 +19040,178 @@ async function saveBanner(){
   if(btn){ btn.textContent='Add banner'; }
 }
 
-async function loadAdminBanners(){
-  var wrap=document.getElementById('admin-banner-list'); if(!wrap) return;
-  try{
-    var r=await db.from('banners').select('*').order('sort_order',{ascending:true});
+// ── BANNERS (rebuilt 18 Aug 2026) ─────────────────────────────
+function mmBanOpen() { var c = document.getElementById('ban-cmp'); if(c) c.classList.add('on'); }
+function mmBanClose() { var c = document.getElementById('ban-cmp'); if(c) c.classList.remove('on'); }
+
+// Save, then close only if the button actually did its job. saveBanner writes
+// its own verdict into `ban-verdict`, so a failure stays on screen.
+function mmBanSave() {
+  var r;
+  try { r = saveBanner(); } catch(e) { return; }
+  var done = function() { mmBanClose(); try { loadAdminBanners(); } catch(e) {} };
+  if(r && typeof r.then === 'function') r.then(function() { setTimeout(done, 700); });
+  else setTimeout(done, 1400);
+}
+
+async function loadAdminBanners() {
+  var wrap = document.getElementById('admin-banner-list');
+  if(!wrap || !db) return;
+  try {
+    var r = await db.from('banners').select('*').order('sort_order', {ascending:true});
     if(r.error) throw r.error;
-    var rows=r.data||[];
-    if(!rows.length){ wrap.innerHTML='<div class="empty-state" style="padding:16px;">No banners yet.</div>'; return; }
-    wrap.innerHTML=rows.map(function(b,i){
-      return '<div style="display:flex;gap:11px;align-items:center;padding:10px;border:1px solid var(--border);'
-       +'border-radius:12px;margin-bottom:9px;background:var(--bg3);">'
-       +'<div style="width:88px;flex:none;border-radius:8px;overflow:hidden;aspect-ratio:16/7;background:#000;">'
-       +'<img src="'+bannerPublicUrl(b.image_path)+'" style="width:100%;height:100%;object-fit:cover;display:block;"></div>'
-       +'<div style="flex:1;min-width:0;">'
-       +'<div style="font-size:12.5px;color:var(--text);font-weight:700;">'+(b.link_url?'Links out':'No link')+'</div>'
-       +'<div style="font-size:11px;color:var(--text3);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+(b.link_url||b.image_path)+'</div></div>'
-       +'<button onclick="moveBanner(\''+b.id+'\',-1)" style="background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:14px;"'+(i===0?' disabled':'')+'>&#8593;</button>'
-       +'<button onclick="moveBanner(\''+b.id+'\',1)" style="background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:14px;"'+(i===rows.length-1?' disabled':'')+'>&#8595;</button>'
-       +'<button onclick="toggleBanner(\''+b.id+'\','+(b.active?'false':'true')+')" style="background:'+(b.active?'var(--green)':'rgba(255,255,255,.12)')+';border:none;color:#fff;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:700;cursor:pointer;">'+(b.active?'ON':'OFF')+'</button>'
-       +'</div>';
+    var rows = r.data || [];
+    var seg = document.getElementById('ban-seg-live');
+    if(seg) seg.textContent = 'Live ' + rows.filter(function(b) { return b.active; }).length;
+    if(!rows.length) {
+      wrap.innerHTML = '<div class="bpr-empty"><span class="ann-ring"><i class="ti ti-photo"></i></span>' +
+        'No banners yet<span style="font-size:9.5px;color:var(--text3)">These are what customers swipe through on Home</span></div>';
+      return;
+    }
+    wrap.innerHTML = rows.map(function(b, i) {
+      var on = !!b.active;
+      var col = on ? '#00c87a' : '#6A7280';
+      return '<div class="bpr-bn"><span class="edge" style="background:' + col + '"></span>' +
+        '<span class="bpr-ord">' + (i + 1) + '</span>' +
+        '<span class="bpr-th"><img src="' + bannerPublicUrl(b.image_path) + '" alt=""></span>' +
+        '<span class="bpr-bd"><b>' + (b.link_url ? 'Links out' : 'No link') + '</b>' +
+          '<s>' + mmTkEsc(b.link_url || b.image_path || '') + '</s></span>' +
+        '<span class="bpr-arrows">' +
+          '<button onclick="moveBanner(\'' + b.id + '\',-1)"' + (i === 0 ? ' disabled' : '') + '>&#9650;</button>' +
+          '<button onclick="moveBanner(\'' + b.id + '\',1)"' + (i === rows.length - 1 ? ' disabled' : '') + '>&#9660;</button>' +
+        '</span>' +
+        '<button class="bpr-tog ' + (on ? 'on' : 'off') + '" onclick="toggleBanner(\'' + b.id + '\',' + (!on) + ')"><i></i></button>' +
+      '</div>';
     }).join('');
-  }catch(e){ wrap.innerHTML='<div class="empty-state" style="padding:16px;">Could not load: '+(e.message||e)+'</div>'; }
+  } catch(e) {
+    wrap.innerHTML = '<div class="bpr-empty">Could not load: ' + (e.message || e) + '</div>';
+  }
+}
+
+// ── PROMO CODES (rebuilt 18 Aug 2026) ─────────────────────────
+function mmPromoOpen() { var c = document.getElementById('promo-cmp'); if(c) c.classList.add('on'); }
+function mmPromoClose() { var c = document.getElementById('promo-cmp'); if(c) c.classList.remove('on'); }
+
+function mmPromoCreate() {
+  var r;
+  try { r = createPromoCode(); } catch(e) { return; }
+  var done = function() {
+    var msg = document.getElementById('promo-f-msg');
+    if(msg && msg.style.display !== 'none' && /error|already|invalid|failed/i.test(msg.textContent || '')) return;
+    mmPromoClose();
+    try { loadAdminPromos(); } catch(e) {}
+  };
+  if(r && typeof r.then === 'function') r.then(function() { setTimeout(done, 800); });
+  else setTimeout(done, 1400);
+}
+
+function mmPromoState(c) {
+  var expired = c.expiry && new Date(c.expiry) < new Date();
+  var usedUp = (c.max_uses != null && c.max_uses > 0 && (c.used_count || 0) >= c.max_uses);
+  if(c.active === false) return { t:'OFF',      col:'#6A7280' };
+  if(expired)            return { t:'EXPIRED',  col:'#6A7280' };
+  if(usedUp)             return { t:'USED UP',  col:'#ffb020' };
+  return { t:'LIVE', col:'#00c87a' };
+}
+
+function mmPromoActionsClose() {
+  var ov = document.getElementById('promo-act-ov');
+  if(ov) ov.remove();
+}
+
+function mmPromoActions(id) {
+  var c = (window._adminPromos || []).filter(function(x) { return String(x.id) === String(id); })[0];
+  if(!c) return;
+  mmPromoActionsClose();
+  var st = mmPromoState(c);
+  var isBanner = !!c.is_campaign;
+  var off = (c.active === false);
+  var ov = document.createElement('div');
+  ov.id = 'promo-act-ov';
+  ov.className = 'aus-ov on';
+  ov.onclick = function(e) { if(e.target === ov) mmPromoActionsClose(); };
+  ov.innerHTML =
+    '<div class="aus-card">' +
+      '<span class="aus-x" onclick="mmPromoActionsClose()"><i class="ti ti-x"></i></span>' +
+      '<div class="amt-hero" style="background:linear-gradient(150deg,' + st.col + '2e,' + st.col + '08 55%,rgba(255,255,255,.02))">' +
+        '<span class="amt-mesh"></span>' +
+        '<div class="amt-who">' +
+          '<span class="amt-av2" style="background:' + st.col + '26;color:' + st.col + '"><i class="ti ti-ticket"></i></span>' +
+          '<span class="amt-dwho"><b>' + mmTkEsc(c.code || '') + '</b><s>' +
+            mmTkEsc((c.access_days || 0) + ' days access' + (c.campaign ? (' \u00b7 ' + c.campaign) : '')) + '</s></span>' +
+          '<span class="amt-pill" style="margin-right:30px;background:' + st.col + '1f;color:' + st.col + '">' + st.t + '</span>' +
+        '</div>' +
+        '<div class="amt-m2">' +
+          '<div><i class="ti ti-users"></i><span><div class="k">REDEEMED</div><div class="v">' +
+            (c.used_count || 0) + (c.max_uses ? ' / ' + c.max_uses : '') + '</div></span></div>' +
+          '<div><i class="ti ti-calendar"></i><span><div class="k">EXPIRES</div><div class="v">' +
+            (c.expiry ? new Date(c.expiry).toLocaleDateString() : 'never') + '</div></span></div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="amt-db">' +
+        '<div class="amt-sect">ACTIONS</div>' +
+        '<div class="amt-alist">' +
+          '<div class="amt-act amt-glass" onclick="mmPromoActionsClose(); setCampaignBanner(\'' + c.id + '\',' + (!isBanner) + ');">' +
+            '<span class="amt-ring" style="border-color:var(--gold);color:var(--gold)"><i class="ti ti-star"></i></span>' +
+            '<span class="tx"><b>' + (isBanner ? 'Remove from login screen' : 'Set as login banner') + '</b>' +
+            '<s>' + (isBanner ? 'Stops showing this campaign before sign in' : 'Shows this campaign before sign in') + '</s></span>' +
+            '<span class="ch"><i class="ti ti-chevron-right"></i></span></div>' +
+          '<div class="amt-act amt-glass" onclick="mmPromoActionsClose(); togglePromoActive(\'' + c.id + '\',' + off + ');">' +
+            '<span class="amt-ring" style="border-color:' + (off ? 'var(--green);color:var(--green)' : 'var(--amber);color:var(--amber)') + '">' +
+              '<i class="ti ' + (off ? 'ti-player-play' : 'ti-player-pause') + '"></i></span>' +
+            '<span class="tx"><b>' + (off ? 'Activate' : 'Deactivate') + '</b>' +
+            '<s>' + (off ? 'Lets customers redeem it again' : 'Stops new redemptions, keeps the record') + '</s></span>' +
+            '<span class="ch"><i class="ti ti-chevron-right"></i></span></div>' +
+        '</div>' +
+        '<button class="amt-del" onclick="mmPromoActionsClose(); deletePromoCode(\'' + c.id + '\',\'' + mmTkEsc(c.code || '') + '\');">DELETE CODE</button>' +
+      '</div>' +
+    '</div>';
+  document.body.appendChild(ov);
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() { ov.classList.add('show'); });
+  });
+}
+
+async function loadAdminPromos() {
+  var el = document.getElementById('admin-promo-list');
+  if(!el || !db) return;
+  el.innerHTML = '<div class="bpr-empty">Loading...</div>';
+  try {
+    var res = await db.from('promo_codes').select('*').order('created_at', {ascending:false});
+    if(res.error) throw res.error;
+    var codes = res.data || [];
+    window._adminPromos = codes;
+    var seg = document.getElementById('promo-seg-live');
+    if(seg) seg.textContent = 'Codes ' + codes.length;
+    if(!codes.length) {
+      el.innerHTML = '<div class="bpr-empty"><span class="ann-ring"><i class="ti ti-ticket"></i></span>' +
+        'No promo codes yet<span style="font-size:9.5px;color:var(--text3)">A code gives free premium days when redeemed</span></div>';
+      return;
+    }
+    el.innerHTML = codes.map(function(c) {
+      var st = mmPromoState(c);
+      var used = c.used_count || 0;
+      var pct = (c.max_uses && c.max_uses > 0) ? Math.min(100, Math.round(used / c.max_uses * 100)) : (used ? 100 : 8);
+      var img = c.image_url ? '<img class="bpr-img" src="' + mmTkEsc(c.image_url) + '" alt="">' : '';
+      return '<div class="bpr-pc" onclick="mmPromoActions(\'' + c.id + '\')">' +
+        '<span class="edge" style="background:' + st.col + '"></span>' +
+        '<div class="bpr-r1">' + img +
+          '<span class="bpr-code">' + mmTkEsc(c.code || '') + '</span>' +
+          (c.is_campaign ? '<span class="bpr-chip" style="background:rgba(240,178,50,.14);color:var(--gold)">LOGIN</span>' : '') +
+          '<span class="bpr-st" style="background:' + st.col + '1f;color:' + st.col + '">' + st.t + '</span></div>' +
+        '<div class="bpr-meta">' +
+          '<span class="bpr-chip">' + (c.access_days || 0) + ' days access</span>' +
+          '<span class="bpr-chip">' + (c.max_uses ? c.max_uses + ' uses' : 'unlimited') + '</span>' +
+          (c.expiry ? '<span class="bpr-chip">to ' + new Date(c.expiry).toLocaleDateString() + '</span>' : '') +
+          (c.campaign ? '<span class="bpr-chip">' + mmTkEsc(c.campaign) + '</span>' : '') +
+        '</div>' +
+        '<div class="bpr-bar"><i style="width:' + pct + '%;background:linear-gradient(90deg,' + st.col + '66,' + st.col + ')"></i></div>' +
+        '<div class="bpr-used">' + used + (c.max_uses ? ' of ' + c.max_uses : '') + ' redeemed</div>' +
+      '</div>';
+    }).join('');
+  } catch(e) {
+    el.innerHTML = '<div class="bpr-empty">Error: ' + (e.message || 'failed') + '</div>';
+  }
 }
 // Switching off, not deleting. A banner can always be put back.
 async function toggleBanner(id, on){
@@ -23451,57 +23672,7 @@ async function createPromoCode(){
     show('Could not create: '+m, false);
   } finally { if(btn){ btn.textContent='Create code'; btn.disabled=false; } }
 }
-async function loadAdminPromos(){
-  var el = document.getElementById('admin-promo-list');
-  if(!el || !db) return;
-  el.innerHTML = '<div style="padding:12px;color:var(--text2);font-size:12px;">Loading...</div>';
-  try {
-    var res = await db.from('promo_codes').select('*').order('created_at',{ascending:false});
-    if(res.error) throw res.error;
-    var codes = res.data||[];
-    if(!codes.length){ el.innerHTML='<div class="empty-state" style="padding:16px;"><i class="ti ti-ticket"></i> No promo codes yet</div>'; return; }
-    el.innerHTML='';
-    var now=new Date();
-    codes.forEach(function(c){
-      var expired = c.expiry && new Date(c.expiry) < now;
-      var usedTxt = (c.used_count||0) + (c.max_uses!=null && c.max_uses>0 ? ' / '+c.max_uses : ' used');
-      var statusTxt = c.active===false ? 'OFF' : (expired ? 'EXPIRED' : 'LIVE');
-      var statusCol = c.active===false ? 'var(--text3)' : (expired ? 'var(--red)' : 'var(--green)');
-      var statusBg = c.active===false ? 'rgba(255,255,255,0.05)' : (expired ? 'rgba(255,30,60,0.1)' : 'rgba(0,200,122,0.12)');
-      var img = c.image_url ? '<img src="'+c.image_url+'" alt="" style="width:42px;height:42px;border-radius:8px;object-fit:cover;flex-shrink:0;" />' : '';
-      var card=document.createElement('div');
-      card.style.cssText='padding:12px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;';
-      card.innerHTML =
-        '<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">' +
-          img +
-          '<div style="flex:1;">' +
-            '<div style="font-size:14px;font-weight:700;color:var(--text);font-family:monospace;">' + c.code + '</div>' +
-            '<div style="font-size:11px;color:var(--text3);">' + c.access_days + ' days &middot; ' + usedTxt + (c.campaign?(' &middot; '+c.campaign):'') + '</div>' +
-            (c.expiry?'<div style="font-size:10px;color:var(--text3);">Expires '+new Date(c.expiry).toLocaleDateString()+'</div>':'') +
-          '</div>' +
-          '<div style="font-size:9px;font-weight:700;padding:3px 9px;border-radius:5px;background:'+statusBg+';color:'+statusCol+';">'+statusTxt+'</div>' +
-        '</div>';
-      var bBanner=document.createElement('button');
-      bBanner.textContent = c.is_campaign ? '\u2605 Login banner: ON' : 'Set as login banner';
-      bBanner.style.cssText='width:100%;font-size:11px;font-weight:700;padding:9px;border-radius:8px;cursor:pointer;margin-bottom:6px;'+(c.is_campaign?'background:rgba(240,178,50,0.13);border:1px solid rgba(240,178,50,0.3);color:var(--gold);':'background:rgba(77,158,255,0.1);border:1px solid rgba(77,158,255,0.2);color:#4D9EFF;');
-      bBanner.addEventListener('click', function(){ setCampaignBanner(c.id, !c.is_campaign); });
-      card.appendChild(bBanner);
-      var row=document.createElement('div');
-      row.style.cssText='display:flex;gap:6px;';
-      var bT=document.createElement('button');
-      bT.textContent = c.active===false ? 'Activate' : 'Deactivate';
-      bT.style.cssText = mt5BtnStyle(c.active===false?'green':'amber');
-      bT.addEventListener('click', function(){ togglePromoActive(c.id, c.active===false); });
-      var bD=document.createElement('button');
-      bD.textContent='Delete';
-      bD.style.cssText = mt5BtnStyle('red');
-      bD.addEventListener('click', function(){ deletePromoCode(c.id, c.code); });
-      row.appendChild(bT); row.appendChild(bD);
-      card.appendChild(row);
-      el.appendChild(card);
-    });
-  } catch(e){ el.innerHTML='<div style="padding:12px;color:var(--red);">Error: '+(e.message||'failed')+'</div>'; }
-}
+// loadAdminPromos now lives beside the banner code above.
 async function togglePromoActive(id, makeActive){
   try {
     var r=await db.from('promo_codes').update({active:!!makeActive}).eq('id',id);
