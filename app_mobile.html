@@ -1140,6 +1140,55 @@ html[data-theme="light"] .amt-ov{background:#fff;}
 .bpr-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
  color:var(--text3);font-size:11px;padding:40px 20px;text-align:center;}
 .bpr-hint{font-size:9.5px;color:var(--text3);line-height:1.6;margin-top:10px;}
+/* ══ ACADEMY (19 Aug 2026) ═════════════════════════════════════
+   Two pages. Lessons first as one-line tiles, the publisher over the top.
+   The publisher FOLDS every finished section down to a single line so the one
+   being written owns the screen and its detail box is roughly three times the
+   height it used to get. Folding is CSS only - the section block keeps every
+   class and every input it already had, so `gatherAcademySections` and the
+   image upload work untouched. */
+.acad-tile{display:flex;align-items:center;gap:10px;padding:9px 11px;background:var(--surface);
+ border:1px solid var(--border);border-radius:11px;margin-bottom:6px;cursor:pointer;}
+.acad-tile:active{background:var(--surface2);}
+.acad-ic{width:26px;height:26px;flex:none;border-radius:8px;display:flex;align-items:center;
+ justify-content:center;font-size:12px;}
+.acad-t{flex:1;min-width:0;font-size:11.5px;font-weight:600;color:var(--text);
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.acad-lv{font-size:7.5px;font-weight:800;letter-spacing:.4px;padding:3px 6px;border-radius:5px;flex:none;}
+.acad-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+ color:var(--text3);font-size:11px;padding:40px 20px;text-align:center;}
+
+/* the composer fills the screen, the section list takes what is left */
+.acad-cmp .ann-body{padding-bottom:0;}
+.acad-scroll{flex:1;min-height:0;overflow-y:auto;}
+.acad-head{transition:max-height .3s ease,opacity .3s ease;overflow:hidden;max-height:300px;}
+.acad-head.tuck{max-height:0;opacity:0;}
+.acad-crumb{display:none;align-items:center;gap:8px;font-size:9.5px;color:var(--text3);
+ padding:7px 10px;border:1px solid var(--border);border-radius:9px;margin-bottom:8px;cursor:pointer;}
+.acad-crumb.on{display:flex;}
+.acad-crumb b{color:var(--text);font-size:10.5px;font-weight:600;flex:1;min-width:0;
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+/* a folded section is one line: its title and how much is written */
+.academy-section-block{transition:padding .2s ease;}
+.academy-section-block.acad-fold{padding:8px 10px !important;cursor:pointer;}
+.academy-section-block.acad-fold > *{display:none !important;}
+.academy-section-block.acad-fold > .acad-line{display:flex !important;}
+.acad-line{display:none;align-items:center;gap:9px;}
+.acad-line .n{width:20px;height:20px;flex:none;border-radius:6px;background:rgba(255,30,60,.16);
+ color:var(--red);display:flex;align-items:center;justify-content:center;
+ font-family:'Orbitron',sans-serif;font-size:8.5px;}
+.acad-line b{flex:1;min-width:0;font-size:10.5px;font-weight:600;color:var(--text);
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.acad-line s{font-size:8px;color:var(--text3);text-decoration:none;flex:none;}
+.acad-line i{color:var(--text3);font-size:12px;flex:none;}
+
+/* the open section: red edge and a detail box that fills */
+.academy-section-block:not(.acad-fold){border-color:rgba(255,30,60,.32) !important;
+ background:linear-gradient(150deg,rgba(255,30,60,.09),rgba(255,255,255,.01)) !important;}
+.academy-section-block:not(.acad-fold) .acad-sec-d{min-height:200px !important;font-size:12.5px;
+ line-height:1.6;}
+
 
 
 
@@ -5036,48 +5085,67 @@ html[data-theme="light"] .adm-nb.on i,html[data-theme="light"] .adm-nb.on span{c
     </div>
 
     <div id="atab-content-academy" style="display:none;">
-      <div class="section-card">
-        <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:14px;">PUBLISH ACADEMY CONTENT</div>
-        <div class="auth-field"><label class="auth-label">Category</label>
-          <select id="academy-category" class="auth-input">
-            <option value="basics" data-i18n="ac.basics">Trading Basics</option>
-            <option value="technical" data-i18n="ac.technical">Technical Analysis</option>
-            <option value="fundamental">Fundamental Analysis</option>
-            <option value="risk" data-i18n="ac.risk">Risk Management</option>
-            <option value="psychology" data-i18n="ac.psych">Trading Psychology</option>
-            <option value="strategy">Strategies</option>
-            <option value="mt5">MT5 Platform Guide</option>
-            <option value="app_tutorial">MAI App Tutorial</option>
-          </select>
+        <div class="ann-seg">
+          <button onclick="mmAcOpen()">Publish</button>
+          <button id="acad-seg-list" class="on" onclick="mmAcClose()">Lessons</button>
         </div>
-        <input type="hidden" id="academy-edit-id" value="">
-        <div class="auth-field"><label class="auth-label">Title</label><input id="academy-title" class="auth-input" type="text" placeholder="Lesson title"></div>
-        <div class="auth-field"><label class="auth-label">Summary <span style="color:var(--text3);font-size:10px;">(shown on lesson card)</span></label><input id="academy-summary" class="auth-input" type="text" placeholder="Short one-line summary"></div>
-        <div class="auth-field"><label class="auth-label">Article Sections</label>
-          <div id="academy-sections"></div>
-          <button type="button" onclick="addAcademySection()" style="width:100%;padding:10px;background:rgba(77,158,255,0.1);border:1px solid rgba(77,158,255,0.2);border-radius:9px;color:#4D9EFF;font-size:12px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;margin-top:4px;">+ Add Section</button>
+        <button class="ann-new" onclick="mmAcOpen()">NEW LESSON</button>
+        <div id="admin-academy-list"><div class="acad-empty">Loading...</div></div>
+
+        <!-- The publisher. Same ids as before, so addAcademySection,
+             gatherAcademySections, editAcademyLesson, resetAcademyForm and
+             handlePublishAcademy all still find their fields. -->
+        <div class="ann-cmp acad-cmp" id="acad-cmp">
+          <div class="hd">
+            <button class="sub-back" onclick="mmAcClose()"><i class="ti ti-arrow-left"></i></button>
+            <div class="t">NEW LESSON</div>
+          </div>
+          <div class="ann-body">
+            <div class="acad-crumb" id="acad-crumb" onclick="mmAcHeadShow()"></div>
+            <div class="acad-head" id="acad-head">
+              <div class="ann-two">
+                <div class="auth-field"><label class="auth-label">Category</label>
+                  <select id="academy-category" class="auth-input" style="padding:9px 11px;font-size:12px;" onchange="mmAcFold()">
+                    <option value="basics" data-i18n="ac.basics">Trading Basics</option>
+                    <option value="technical" data-i18n="ac.technical">Technical Analysis</option>
+                    <option value="fundamental">Fundamental Analysis</option>
+                    <option value="risk" data-i18n="ac.risk">Risk Management</option>
+                    <option value="psychology" data-i18n="ac.psych">Trading Psychology</option>
+                    <option value="strategy">Strategies</option>
+                    <option value="mt5">MT5 Platform Guide</option>
+                    <option value="app_tutorial">MAI App Tutorial</option>
+                  </select>
+                </div>
+                <div class="auth-field"><label class="auth-label">Level</label>
+                  <select id="academy-level" class="auth-input" style="padding:9px 11px;font-size:12px;" onchange="mmAcFold()">
+                    <option value="beginner">Beginner</option>
+                    <option value="intermediate">Intermediate</option>
+                    <option value="advanced">Advanced</option>
+                  </select>
+                </div>
+              </div>
+              <input type="hidden" id="academy-edit-id" value="">
+              <div class="auth-field"><label class="auth-label">Title</label>
+                <input id="academy-title" class="auth-input" type="text" placeholder="Lesson title" oninput="mmAcFold()"></div>
+              <div class="auth-field"><label class="auth-label">Summary, shown on the lesson card</label>
+                <input id="academy-summary" class="auth-input" type="text" placeholder="Short one-line summary"></div>
+              <div class="auth-field"><label class="auth-label">Video URL, optional</label>
+                <input id="academy-video" class="auth-input" type="text" placeholder="https://youtube.com/..."></div>
+            </div>
+            <div class="acad-scroll">
+              <label class="auth-label">Sections</label>
+              <div id="academy-sections"></div>
+              <button type="button" onclick="addAcademySection(); mmAcFold();" style="width:100%;padding:9px;background:transparent;border:1px dashed rgba(59,130,246,.4);border-radius:9px;color:#7FB0FF;font-size:10.5px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;margin-top:6px;">+ Add section</button>
+              <div id="academy-error" class="error-msg"></div>
+              <div id="academy-success" class="success-msg"></div>
+            </div>
+          </div>
+          <div class="ann-foot">
+            <button class="red-btn" id="academy-publish-btn" onclick="handlePublishAcademy()">PUBLISH LESSON</button>
+            <button type="button" id="academy-cancel-edit" onclick="resetAcademyForm(); mmAcClose();" style="display:none;width:100%;margin-top:6px;padding:9px;background:transparent;border:1px solid var(--border);border-radius:10px;color:var(--text2);font-size:11.5px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;">Cancel edit</button>
+          </div>
         </div>
-        <div class="auth-field"><label class="auth-label">Video URL <span style="color:var(--text3);font-size:10px;">(optional)</span></label><input id="academy-video" class="auth-input" type="text" placeholder="https://youtube.com/..."></div>
-        <div class="auth-field"><label class="auth-label">Level</label>
-          <select id="academy-level" class="auth-input">
-            <option value="beginner">Beginner</option>
-            <option value="intermediate">Intermediate</option>
-            <option value="advanced">Advanced</option>
-          </select>
-        </div>
-        <div id="academy-error" class="error-msg"></div>
-        <div id="academy-success" class="success-msg"></div>
-        <button class="red-btn" id="academy-publish-btn" onclick="handlePublishAcademy()">PUBLISH LESSON</button>
-        <button type="button" id="academy-cancel-edit" onclick="resetAcademyForm()" style="display:none;width:100%;margin-top:8px;padding:11px;background:transparent;border:1px solid var(--border);border-radius:12px;color:var(--text2);font-size:12px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;">Cancel Edit</button>
       </div>
-      <div class="section-card" style="margin-top:14px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-          <div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.5px;">PUBLISHED LESSONS</div>
-          <button onclick="loadAdminAcademy()" style="background:transparent;border:none;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;">↻ Refresh</button>
-        </div>
-        <div id="admin-academy-list"><div class="empty-state" style="padding:16px;"><i class="ti ti-book"></i> Loading...</div></div>
-      </div>
-    </div>
 
     <div id="atab-content-banners" style="display:none;">
         <div class="ann-seg">
@@ -18896,26 +18964,177 @@ async function handlePublishAcademy(){
     setTimeout(function(){sucEl.style.display='none';loadAdminAcademy();},1200);
   }catch(e){errEl.textContent=mmT('err.generic','Error: ')+(e.message||'Failed');errEl.style.display='block';}
 }
-async function loadAdminAcademy(){
-  var el=document.getElementById('admin-academy-list');if(!el)return;
-  var secWrap=document.getElementById('academy-sections');
+// ── ACADEMY (rebuilt 19 Aug 2026) ─────────────────────────────
+// Lessons first, publisher over the top, and only ONE section open at a time.
+var MMAC_ROWS = [];
+var MMAC_CATS = {
+  basics:{n:'Trading Basics', c:'#FF1E3C', i:'ti-school'},
+  technical:{n:'Technical Analysis', c:'#3B82F6', i:'ti-chart-line'},
+  fundamental:{n:'Fundamental Analysis', c:'#00c87a', i:'ti-news'},
+  risk:{n:'Risk Management', c:'#ffb020', i:'ti-shield-half'},
+  psychology:{n:'Trading Psychology', c:'#A78BFA', i:'ti-brain'},
+  strategy:{n:'Strategies', c:'#F0B232', i:'ti-target-arrow'},
+  mt5:{n:'MT5 Platform Guide', c:'#3B82F6', i:'ti-device-desktop'},
+  app_tutorial:{n:'MAI App Tutorial', c:'#FF1E3C', i:'ti-device-mobile'}
+};
+function mmAcCat(k) {
+  return MMAC_CATS[k] || {n:String(k || 'Lesson'), c:'#6A7280', i:'ti-book'};
+}
+
+function mmAcOpen() {
+  var c = document.getElementById('acad-cmp');
+  if(c) c.classList.add('on');
+  var wrap = document.getElementById('academy-sections');
+  if(wrap && !wrap.children.length) addAcademySection();
+  mmAcFold();
+}
+
+function mmAcClose() {
+  var c = document.getElementById('acad-cmp');
+  if(c) c.classList.remove('on');
+}
+
+// Every section except the open one becomes a single line carrying its title
+// and how much has been written. The line is INSERTED into the existing block,
+// so nothing about the block's own inputs changes.
+function mmAcFold(openIdx) {
+  var wrap = document.getElementById('academy-sections');
+  if(!wrap) return;
+  var blocks = wrap.querySelectorAll('.academy-section-block');
+  if(!blocks.length) return;
+  if(openIdx === undefined || openIdx === null) openIdx = blocks.length - 1;
+
+  for (var i = 0; i < blocks.length; i++) {
+    var b = blocks[i];
+    var line = b.querySelector('.acad-line');
+    if(!line) {
+      line = document.createElement('div');
+      line.className = 'acad-line';
+      b.insertBefore(line, b.firstChild);
+      (function(n) {
+        line.addEventListener('click', function() { mmAcFold(n); });
+      })(i);
+    }
+    var t = b.querySelector('.acad-sec-t'), d = b.querySelector('.acad-sec-d');
+    var title = (t && t.value.trim()) ? t.value.trim() : ('Section ' + (i + 1));
+    var chars = (d && d.value) ? d.value.length : 0;
+    line.innerHTML = '<span class="n">' + (i + 1) + '</span><b>' + mmTkEsc(title) + '</b>' +
+      '<s>' + (chars ? (chars + ' chars') : 'empty') + '</s>' +
+      '<i class="ti ti-chevron-down"></i>';
+    b.classList.toggle('acad-fold', i !== openIdx);
+  }
+
+  // With a section open, the lesson title and summary tuck away into one line.
+  var head = document.getElementById('acad-head'), crumb = document.getElementById('acad-crumb');
+  var ti = document.getElementById('academy-title');
+  var filled = !!(ti && ti.value.trim());
+  if(head) head.classList.toggle('tuck', filled);
+  if(crumb) {
+    crumb.classList.toggle('on', filled);
+    var cat = mmAcCat((document.getElementById('academy-category') || {}).value);
+    var lv = (document.getElementById('academy-level') || {}).value || '';
+    crumb.innerHTML = '<i class="ti ' + cat.i + '" style="color:' + cat.c + '"></i>' +
+      '<b>' + mmTkEsc(ti ? ti.value : '') + '</b>' +
+      '<span>' + mmTkEsc(cat.n + ' \u00b7 ' + lv) + '</span>' +
+      '<i class="ti ti-pencil"></i>';
+  }
+}
+
+function mmAcHeadShow() {
+  var head = document.getElementById('acad-head'), crumb = document.getElementById('acad-crumb');
+  if(head) head.classList.remove('tuck');
+  if(crumb) crumb.classList.remove('on');
+}
+
+function mmAcActionsClose() {
+  var ov = document.getElementById('acad-act-ov');
+  if(ov) ov.remove();
+}
+
+function mmAcActions(id) {
+  var l = MMAC_ROWS.filter(function(x) { return String(x.id) === String(id); })[0];
+  if(!l) return;
+  mmAcActionsClose();
+  var cat = mmAcCat(l.category);
+  var ov = document.createElement('div');
+  ov.id = 'acad-act-ov';
+  ov.className = 'aus-ov on';
+  ov.onclick = function(e) { if(e.target === ov) mmAcActionsClose(); };
+  ov.innerHTML =
+    '<div class="aus-card">' +
+      '<span class="aus-x" onclick="mmAcActionsClose()"><i class="ti ti-x"></i></span>' +
+      '<div class="amt-hero" style="background:linear-gradient(150deg,' + cat.c + '2e,' + cat.c + '08 55%,rgba(255,255,255,.02))">' +
+        '<span class="amt-mesh"></span>' +
+        '<div class="amt-who">' +
+          '<span class="amt-av2" style="background:' + cat.c + '26;color:' + cat.c + '"><i class="ti ' + cat.i + '"></i></span>' +
+          '<span class="amt-dwho"><b>' + mmTkEsc(l.title || 'Lesson') + '</b>' +
+            '<s>' + mmTkEsc(cat.n + ' \u00b7 ' + (l.level || '')) + '</s></span>' +
+        '</div>' +
+      '</div>' +
+      '<div class="amt-db">' +
+        '<div class="amt-sect">ACTIONS</div>' +
+        '<div class="amt-alist">' +
+          '<div class="amt-act amt-glass" onclick="mmAcEdit(\'' + l.id + '\')">' +
+            '<span class="amt-ring" style="border-color:#7FB0FF;color:#7FB0FF"><i class="ti ti-pencil"></i></span>' +
+            '<span class="tx"><b>Edit lesson</b><s>Opens it in the publisher</s></span>' +
+            '<span class="ch"><i class="ti ti-chevron-right"></i></span></div>' +
+        '</div>' +
+        '<button class="amt-del" onclick="mmAcDelete(\'' + l.id + '\')">DELETE LESSON</button>' +
+      '</div>' +
+    '</div>';
+  document.body.appendChild(ov);
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() { ov.classList.add('show'); });
+  });
+}
+
+function mmAcEdit(id) {
+  mmAcActionsClose();
+  try { editAcademyLesson(id); } catch(e) {}
+  mmAcOpen();
+  mmAcHeadShow();
+}
+
+async function mmAcDelete(id) {
+  if(!confirm('Delete this lesson? Customers lose it from the Academy.')) return;
+  mmAcActionsClose();
+  try {
+    var r = await db.from('academy').delete().eq('id', id);
+    if(r && r.error) throw r.error;
+    loadAdminAcademy();
+  } catch(e) { alert('Error: ' + (e.message || 'failed')); }
+}
+
+async function loadAdminAcademy() {
+  var el = document.getElementById('admin-academy-list');
+  if(!el || !db) return;
+  var secWrap = document.getElementById('academy-sections');
   if(secWrap && !secWrap.children.length) addAcademySection();
-  el.innerHTML='<div style="padding:12px;color:var(--text2);font-size:12px;">Loading...</div>';
-  try{
-    var res=await db.from('academy').select('*').order('created_at',{ascending:false});if(res.error)throw res.error;
-    if(!res.data||!res.data.length){el.innerHTML='<div class="empty-state" style="padding:16px;"><i class="ti ti-book"></i> No lessons yet</div>';return;}
-    var lc={beginner:'var(--green)',intermediate:'var(--amber)',advanced:'var(--red)'};
-    el.innerHTML='';
-    res.data.forEach(function(ls){
-      var snippet=ls.summary || academySnippet(ls.content);
-      var card=document.createElement('div');card.style.cssText='padding:11px 13px;background:var(--bg3);border-radius:9px;margin-bottom:8px;border:1px solid var(--border);';
-      card.innerHTML='<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><div style="flex:1;font-size:13px;font-weight:700;color:var(--text);">'+ls.title+'</div><div style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;background:rgba(255,30,60,0.1);color:var(--red);">'+ls.category+'</div><div style="font-size:9px;padding:2px 7px;border-radius:4px;color:'+(lc[ls.level]||'var(--text3)')+';background:rgba(255,255,255,0.05);">'+(ls.level||'')+'</div></div><div style="font-size:11px;color:var(--text3);margin-bottom:8px;">'+snippet+'</div>';
-      var row=document.createElement('div');row.style.cssText='display:flex;gap:6px;';
-      var eb=document.createElement('button');eb.style.cssText='flex:1;padding:7px;background:rgba(77,158,255,0.1);border:1px solid rgba(77,158,255,0.2);border-radius:7px;color:#4D9EFF;font-size:11px;font-weight:700;cursor:pointer;';eb.textContent='Edit';eb.addEventListener('click',function(){editAcademyLesson(ls);});
-      var db2=document.createElement('button');db2.style.cssText='flex:1;padding:7px;background:rgba(255,30,60,0.08);border:1px solid rgba(255,30,60,0.15);border-radius:7px;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;';db2.textContent='Delete';db2.addEventListener('click',function(){deleteLesson(ls.id);});
-      row.appendChild(eb);row.appendChild(db2);card.appendChild(row);el.appendChild(card);
-    });
-  }catch(e){el.innerHTML='<div style="padding:12px;color:var(--red);">Error: '+(e.message||'failed')+'</div>';}
+  el.innerHTML = '<div class="acad-empty">Loading...</div>';
+  try {
+    var res = await db.from('academy').select('*').order('created_at', {ascending:false});
+    if(res.error) throw res.error;
+    MMAC_ROWS = res.data || [];
+    var seg = document.getElementById('acad-seg-list');
+    if(seg) seg.textContent = 'Lessons ' + MMAC_ROWS.length;
+    if(!MMAC_ROWS.length) {
+      el.innerHTML = '<div class="acad-empty"><span class="ann-ring"><i class="ti ti-book"></i></span>' +
+        'No lessons yet<span style="font-size:9.5px;color:var(--text3)">Lessons appear in the customer Academy</span></div>';
+      return;
+    }
+    var LV = {beginner:'#00c87a', intermediate:'#ffb020', advanced:'#FF1E3C'};
+    el.innerHTML = MMAC_ROWS.map(function(l) {
+      var cat = mmAcCat(l.category);
+      var lc = LV[l.level] || '#6A7280';
+      return '<div class="acad-tile" onclick="mmAcActions(\'' + l.id + '\')">' +
+        '<span class="acad-ic" style="background:' + cat.c + '26;color:' + cat.c + '"><i class="ti ' + cat.i + '"></i></span>' +
+        '<span class="acad-t">' + mmTkEsc(l.title || 'Lesson') + '</span>' +
+        '<span class="acad-lv" style="background:' + lc + '1f;color:' + lc + '">' +
+          mmTkEsc(String(l.level || '').toUpperCase()) + '</span></div>';
+    }).join('');
+  } catch(e) {
+    el.innerHTML = '<div class="acad-empty">Error: ' + (e.message || 'failed') + '</div>';
+  }
 }
 async function deleteLesson(id){if(!confirm('Delete lesson?'))return;var r=await db.from('academy').delete().eq('id',id);if(r.error){alert(r.error.message);return;}loadAdminAcademy();}
 
@@ -19371,7 +19590,27 @@ function addAcademySection(t,h,d,img){
   });
   if(img) imgInput.value=img;
   renderImg();
-  block.querySelector('.acad-sec-remove').addEventListener('click',function(){ block.remove(); if(!wrap.children.length) addAcademySection(); });
+  block.querySelector('.acad-sec-remove').addEventListener('click',function(){ block.remove(); if(!wrap.children.length) addAcademySection(); try{ mmAcFold(); }catch(e){} });
+  // The folded line shows the section's title and its length, so it has to be
+  // rebuilt as those are typed.
+  var tEl=block.querySelector('.acad-sec-t'), dEl=block.querySelector('.acad-sec-d');
+  if(tEl) tEl.addEventListener('input', function(){ try{ mmAcFoldLabels(); }catch(e){} });
+  if(dEl) dEl.addEventListener('input', function(){ try{ mmAcFoldLabels(); }catch(e){} });
+}
+
+// Refresh the folded lines WITHOUT changing which section is open.
+function mmAcFoldLabels(){
+  var wrap=document.getElementById('academy-sections'); if(!wrap) return;
+  var blocks=wrap.querySelectorAll('.academy-section-block');
+  for(var i=0;i<blocks.length;i++){
+    if(!blocks[i].classList.contains('acad-fold')) continue;
+    var line=blocks[i].querySelector('.acad-line'); if(!line) continue;
+    var t=blocks[i].querySelector('.acad-sec-t'), d=blocks[i].querySelector('.acad-sec-d');
+    var title=(t&&t.value.trim())?t.value.trim():('Section '+(i+1));
+    var chars=(d&&d.value)?d.value.length:0;
+    line.innerHTML='<span class="n">'+(i+1)+'</span><b>'+mmTkEsc(title)+'</b>'+
+      '<s>'+(chars?(chars+' chars'):'empty')+'</s><i class="ti ti-chevron-down"></i>';
+  }
 }
 function gatherAcademySections(){
   var blocks=document.querySelectorAll('#academy-sections .academy-section-block');
