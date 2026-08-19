@@ -5043,6 +5043,9 @@ html[data-theme="light"] .adm-nb.on i,html[data-theme="light"] .adm-nb.on span{c
           <label><input type="checkbox" value="analyst" class="subadmin-tab-check"></label>
           <label><input type="checkbox" value="academy" class="subadmin-tab-check"></label>
           <label><input type="checkbox" value="mt5" class="subadmin-tab-check"></label>
+          <label><input type="checkbox" value="templates" class="subadmin-tab-check"></label>
+          <label><input type="checkbox" value="banners" class="subadmin-tab-check"></label>
+          <label><input type="checkbox" value="promo" class="subadmin-tab-check"></label>
         </div>
       </div>
 
@@ -18859,6 +18862,9 @@ var MMTM_TABS = [
   {k:'signals',   n:'Signals',   i:'ti-activity'},
   {k:'announce',  n:'Announcements', i:'ti-speakerphone'},
   {k:'academy',   n:'Academy',   i:'ti-school'},
+  {k:'templates', n:'Templates', i:'ti-template'},
+  {k:'banners',   n:'Banners',   i:'ti-photo'},
+  {k:'promo',     n:'Promo',     i:'ti-ticket'},
   {k:'analyst',   n:'Administrator', i:'ti-shield-lock'}
 ];
 var MMTM_ROWS = [];
@@ -19091,6 +19097,39 @@ async function loadAdminAnalysts() {
 
 function loadAdminSubAdmins() { return loadAdminAnalysts(); }
 
+// ── EDIT SHEETS (19 Aug 2026) ─────────────────────────────────
+// Both edit sheets now use the same toggle rows as the create screen. The
+// checkboxes are still there, hidden, so `saveSubAdminEdit` and
+// `saveAnalystEdit` keep reading `:checked` exactly as they did.
+function mmTmEditSync(box) {
+  var row = box.closest ? box.closest('.tm-pr') : box.parentNode;
+  if(row) row.classList.toggle('on', box.checked);
+  mmTmEditCount();
+}
+
+function mmTmEditCount() {
+  var boxes = document.querySelectorAll('.esa-tab-check, .ea-pair-check');
+  if(!boxes.length) return;
+  var on = 0;
+  for (var i = 0; i < boxes.length; i++) if(boxes[i].checked) on++;
+  var el = document.getElementById('esa-cnt');
+  if(el) el.textContent = on + ' of ' + boxes.length;
+}
+
+function mmTmEditAll() {
+  var boxes = document.querySelectorAll('.esa-tab-check, .ea-pair-check');
+  if(!boxes.length) return;
+  var on = 0;
+  for (var i = 0; i < boxes.length; i++) if(boxes[i].checked) on++;
+  var turnOn = (on !== boxes.length);
+  for (var k = 0; k < boxes.length; k++) {
+    boxes[k].checked = turnOn;
+    var row = boxes[k].closest ? boxes[k].closest('.tm-pr') : boxes[k].parentNode;
+    if(row) row.classList.toggle('on', turnOn);
+  }
+  mmTmEditCount();
+}
+
 
 // Edit opens whichever popup already exists for that role, with the row the
 // list already holds - no second copy of either editor.
@@ -19108,12 +19147,23 @@ function openEditAnalystPopup(analyst){
   var sheet=document.createElement('div');sheet.style.cssText='width:100%;background:var(--bg2);border-radius:20px 20px 0 0;border-top:1px solid var(--border);padding:20px 18px 36px;max-height:85vh;overflow-y:auto;';
   var pairs=['XAUUSD','NAS100','BTCUSD','EURUSD','GBPUSD','GBPJPY','USDJPY','US30'];
   var saved=(analyst.trading_pairs&&analyst.trading_pairs!=='all')?analyst.trading_pairs.split(','):[];
-  var ph=pairs.map(function(p){var c=(!analyst.trading_pairs||analyst.trading_pairs==='all'||saved.indexOf(p)>-1)?'checked':'';return '<label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="'+p+'" class="ea-pair-check" '+c+' style="accent-color:var(--red);width:15px;height:15px;"> '+p+'</label>';}).join('');
-  sheet.innerHTML='<div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 18px;"></div><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;"><div style="font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);">EDIT ANALYST</div><button id="ea-x" style="width:32px;height:32px;border-radius:50%;background:var(--surface);border:1px solid var(--border);color:var(--text2);font-size:18px;cursor:pointer;">×</button></div><div class="auth-field"><label class="auth-label">Full Name</label><input id="ea-name" class="auth-input" type="text" value="'+(analyst.name||'')+'"></div><div class="auth-field"><label class="auth-label">New Password</label><input id="ea-pw" class="auth-input" type="password" placeholder="Leave blank to keep"></div><div class="auth-field"><label class="auth-label">Trading Pairs</label><div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px 12px;"><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">'+ph+'</div></div></div><div class="auth-field"><label class="auth-label">Status</label><select id="ea-status" class="auth-input"><option value="active"'+(analyst.status==='active'?' selected':'')+'>Active</option><option value="suspended"'+(analyst.status==='suspended'?' selected':'')+'>Suspended</option></select></div><div id="ea-error" class="error-msg"></div><div id="ea-success" class="success-msg"></div>';
+  // Same control as the sub-admin sheet and the create screen: one row per
+  // instrument, with a toggle. The checkbox is kept, hidden, so
+  // `saveAnalystEdit` still reads `.ea-pair-check:checked` unchanged.
+  var ph=pairs.map(function(p){
+    var on = (!analyst.trading_pairs || analyst.trading_pairs === 'all' || saved.indexOf(p) > -1);
+    return '<label class="tm-pr' + (on ? ' on' : '') + '" style="cursor:pointer;">' +
+      '<span class="ic"><i class="ti ti-chart-candle"></i></span><b>' + p + '</b>' +
+      '<input type="checkbox" value="' + p + '" class="ea-pair-check" ' + (on ? 'checked' : '') +
+      ' style="display:none;" onchange="mmTmEditSync(this)">' +
+      '<span class="tm-tog"><i></i></span></label>';
+  }).join('');
+  sheet.innerHTML='<div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 18px;"></div><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;"><div style="font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);">EDIT ANALYST</div><button id="ea-x" style="width:32px;height:32px;border-radius:50%;background:var(--surface);border:1px solid var(--border);color:var(--text2);font-size:18px;cursor:pointer;">×</button></div><div class="auth-field"><label class="auth-label">Full Name</label><input id="ea-name" class="auth-input" type="text" value="'+(analyst.name||'')+'"></div><div class="auth-field"><label class="auth-label">New Password</label><input id="ea-pw" class="auth-input" type="password" placeholder="Leave blank to keep"></div><div class="auth-field"><div class="tm-permhd"><b>Trading pairs</b><span class="cnt" id="esa-cnt"></span><span class="all" onclick="mmTmEditAll()">All pairs</span></div><div class="tm-perms">'+ph+'</div></div><div class="auth-field"><label class="auth-label">Status</label><select id="ea-status" class="auth-input"><option value="active"'+(analyst.status==='active'?' selected':'')+'>Active</option><option value="suspended"'+(analyst.status==='suspended'?' selected':'')+'>Suspended</option></select></div><div id="ea-error" class="error-msg"></div><div id="ea-success" class="success-msg"></div>';
   var sb=document.createElement('button');sb.className='red-btn';sb.textContent=mmT('common.saveChanges','SAVE CHANGES');sb.addEventListener('click',function(){saveAnalystEdit(analyst.id);});sheet.appendChild(sb);
   var cb=document.createElement('button');cb.className='ghost-btn';cb.style.marginTop='10px';cb.textContent=mmT('common.cancel','Cancel');cb.addEventListener('click',function(){popup.remove();});sheet.appendChild(cb);
   popup.appendChild(sheet);popup.addEventListener('click',function(e){if(e.target===popup)popup.remove();});document.body.appendChild(popup);
   sheet.querySelector('#ea-x').addEventListener('click',function(){popup.remove();});
+  mmTmEditCount();
 }
 async function saveAnalystEdit(id){
   var name=document.getElementById('ea-name').value.trim(),pw=document.getElementById('ea-pw').value,status=document.getElementById('ea-status').value;
@@ -19169,15 +19219,28 @@ function openEditSubAdminPopup(sub){
   var ex=document.getElementById('edit-subadmin-popup');if(ex)ex.remove();
   var popup=document.createElement('div');popup.id='edit-subadmin-popup';popup.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(4px);z-index:9100;display:flex;align-items:flex-end;';
   var sheet=document.createElement('div');sheet.style.cssText='width:100%;background:var(--bg2);border-radius:20px 20px 0 0;border-top:1px solid var(--border);padding:20px 18px 36px;max-height:90vh;overflow-y:auto;';
-  var allTabs=['dashboard','users','tickets','funds','announce','signals','mt5','analyst','academy','banners'];
-  var tabLabels={dashboard:'Dashboard',users:'Users',tickets:'Support',funds:'Fund Management',announce:'Announcements',signals:'Signals',mt5:'MT5',analyst:'Administrator',academy:'Academy',banners:'Banners'};
+  // ONE list for creating and editing, taken from MMTM_TABS. The two lists used
+  // to differ: create offered nine, edit offered ten, so Banners could only be
+  // granted by editing somebody afterwards, and Promo and Templates by nobody.
+  var allTabs = MMTM_TABS.map(function(x){ return x.k; });
+  var tabLabels = {}; MMTM_TABS.forEach(function(x){ tabLabels[x.k] = x.n; });
+  var tabIcons  = {}; MMTM_TABS.forEach(function(x){ tabIcons[x.k]  = x.i; });
   var saved=(sub.allowed_tabs||'').split(',');
-  var th=allTabs.map(function(t){var c=saved.indexOf(t)>-1?'checked':'';return '<label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="'+t+'" class="esa-tab-check" '+c+' style="accent-color:var(--red);width:15px;height:15px;"> '+tabLabels[t]+'</label>';}).join('');
-  sheet.innerHTML='<div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 18px;"></div><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;"><div style="font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);">EDIT SUB-ADMIN</div><button id="esa-x" style="width:32px;height:32px;border-radius:50%;background:var(--surface);border:1px solid var(--border);color:var(--text2);font-size:18px;cursor:pointer;">×</button></div><div class="auth-field"><label class="auth-label">Full Name</label><input id="esa-name" class="auth-input" type="text" value="'+(sub.name||'')+'"></div><div class="auth-field"><label class="auth-label">New Password</label><input id="esa-pw" class="auth-input" type="password" placeholder="Leave blank to keep"></div><div class="auth-field"><label class="auth-label">Status</label><select id="esa-status" class="auth-input"><option value="active"'+(sub.status==='active'?' selected':'')+'>Active</option><option value="suspended"'+(sub.status==='suspended'?' selected':'')+'>Suspended</option></select></div><div class="auth-field"><label class="auth-label">Panel Access</label><div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px 12px;"><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">'+th+'</div></div></div><div id="esa-error" class="error-msg"></div><div id="esa-success" class="success-msg"></div>';
+  var th=allTabs.map(function(t){
+    var on = saved.indexOf(t) > -1;
+    return '<label class="tm-pr' + (on ? ' on' : '') + '" style="cursor:pointer;">' +
+      '<span class="ic"><i class="ti ' + (tabIcons[t] || 'ti-square') + '"></i></span>' +
+      '<b>' + tabLabels[t] + '</b>' +
+      '<input type="checkbox" value="' + t + '" class="esa-tab-check" ' + (on ? 'checked' : '') +
+      ' style="display:none;" onchange="mmTmEditSync(this)">' +
+      '<span class="tm-tog"><i></i></span></label>';
+  }).join('');
+  sheet.innerHTML='<div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 18px;"></div><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;"><div style="font-family:Orbitron,sans-serif;font-size:14px;font-weight:800;color:var(--text);">EDIT SUB-ADMIN</div><button id="esa-x" style="width:32px;height:32px;border-radius:50%;background:var(--surface);border:1px solid var(--border);color:var(--text2);font-size:18px;cursor:pointer;">×</button></div><div class="auth-field"><label class="auth-label">Full Name</label><input id="esa-name" class="auth-input" type="text" value="'+(sub.name||'')+'"></div><div class="auth-field"><label class="auth-label">New Password</label><input id="esa-pw" class="auth-input" type="password" placeholder="Leave blank to keep"></div><div class="auth-field"><label class="auth-label">Status</label><select id="esa-status" class="auth-input"><option value="active"'+(sub.status==='active'?' selected':'')+'>Active</option><option value="suspended"'+(sub.status==='suspended'?' selected':'')+'>Suspended</option></select></div><div class="auth-field"><div class="tm-permhd"><b>Panel access</b><span class="cnt" id="esa-cnt"></span><span class="all" onclick="mmTmEditAll()">All access</span></div><div class="tm-perms">'+th+'</div></div><div id="esa-error" class="error-msg"></div><div id="esa-success" class="success-msg"></div>';
   var sb=document.createElement('button');sb.className='red-btn';sb.textContent=mmT('common.saveChanges','SAVE CHANGES');sb.addEventListener('click',function(){saveSubAdminEdit(sub.id);});sheet.appendChild(sb);
   var cb=document.createElement('button');cb.className='ghost-btn';cb.style.marginTop='10px';cb.textContent=mmT('common.cancel','Cancel');cb.addEventListener('click',function(){popup.remove();});sheet.appendChild(cb);
   popup.appendChild(sheet);popup.addEventListener('click',function(e){if(e.target===popup)popup.remove();});document.body.appendChild(popup);
   sheet.querySelector('#esa-x').addEventListener('click',function(){popup.remove();});
+  mmTmEditCount();
 }
 async function saveSubAdminEdit(id){
   var name=document.getElementById('esa-name').value.trim(),pw=document.getElementById('esa-pw').value,status=document.getElementById('esa-status').value;
