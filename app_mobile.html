@@ -1018,8 +1018,42 @@ html[data-theme="light"] .amt-ov{background:#fff;}
 .ann-body{flex:1;min-height:0;display:flex;flex-direction:column;padding:12px 14px 0;overflow-y:auto;}
 .ann-grow{flex:1;min-height:0;display:flex;flex-direction:column;}
 .ann-grow textarea{flex:1;min-height:110px;resize:none;}
-.ann-two{display:flex;gap:8px;}
-.ann-two > div{flex:1;min-width:0;}
+/* A GRID, not a flex pair. A flex child's minimum width is its CONTENT, so a
+   date input with its own picker refuses to shrink and shoves its neighbour off
+   the screen - which is exactly what put Campaign name under Expiry date on a
+   phone. `minmax(0,1fr)` lets both columns actually give way. */
+.ann-two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;}
+.ann-two > div{min-width:0;}
+.ann-two input,.ann-two select,.ann-two .auth-input{width:100%;min-width:0;max-width:100%;}
+
+/* ══ PROMO CREATOR AS A CENTRE CARD (19 Aug 2026) ══════════════ */
+.promo-ov{position:fixed;inset:0;z-index:9996;display:none;align-items:center;justify-content:center;
+ padding:0 12px;background:rgba(0,0,0,.62);opacity:0;transition:opacity .28s;}
+.promo-ov.on{display:flex;}
+.promo-ov.show{opacity:1;}
+.promo-card{position:relative;width:100%;max-width:420px;background:#0C0D13;
+ border:1px solid var(--border);border-radius:16px;overflow:hidden;max-height:88vh;
+ display:flex;flex-direction:column;transform:scale(.93);opacity:0;
+ box-shadow:0 30px 60px -20px #000;
+ transition:transform .28s cubic-bezier(.22,.61,.36,1),opacity .28s;}
+.promo-ov.show .promo-card{transform:none;opacity:1;}
+.promo-h{display:flex;align-items:center;gap:9px;padding:11px 12px;border-bottom:1px solid var(--border);
+ flex:0 0 auto;}
+.promo-h .ic{width:28px;height:28px;flex:none;border-radius:9px;background:rgba(255,30,60,.16);
+ color:var(--red);display:flex;align-items:center;justify-content:center;font-size:14px;}
+.promo-h b{flex:1;font-family:'Orbitron',sans-serif;font-size:11.5px;}
+.promo-h .x{width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,.06);display:flex;
+ align-items:center;justify-content:center;color:var(--text2);font-size:12px;cursor:pointer;}
+.promo-b{flex:1;min-height:0;overflow-y:auto;padding:11px 12px 0;}
+.promo-f{flex:0 0 auto;padding:9px 12px 12px;}
+.promo-sum{display:flex;align-items:center;gap:8px;border:1px solid rgba(0,200,122,.25);
+ border-radius:10px;padding:9px 11px;background:rgba(0,200,122,.07);font-size:10px;
+ color:var(--text2);margin-bottom:10px;line-height:1.5;}
+.promo-sum i{color:var(--green);font-size:13px;flex:none;}
+.promo-sum b{color:var(--text);font-weight:700;}
+@media (prefers-reduced-motion: reduce){
+  .promo-card{transition:opacity .2s;transform:none;}
+}
 .ann-foot{flex:0 0 auto;padding:10px 14px 16px;border-top:1px solid var(--border);}
 /* ══ ADMIN SIGNALS (18 Aug 2026) ═══════════════════════════════
    The list shows the CUSTOMER's own card, so what you check is exactly what
@@ -5172,49 +5206,53 @@ html[data-theme="light"] .adm-nb.on i,html[data-theme="light"] .adm-nb.on span{c
 
         <!-- The creator. Same ids as before, so createPromoCode and the image
              picker still find their fields. -->
-        <div class="ann-cmp" id="promo-cmp">
-          <div class="hd">
-            <button class="sub-back" onclick="mmPromoClose()"><i class="ti ti-arrow-left"></i></button>
-            <div class="t">NEW PROMO CODE</div>
-          </div>
-          <div class="ann-body">
-            <div class="auth-field"><label class="auth-label" data-i18n="prof.codeWord">Code</label>
-              <input id="promo-f-code" class="auth-input" placeholder="e.g. RAYA2026" style="text-transform:uppercase;" />
+        <div class="promo-ov" id="promo-cmp" onclick="mmPromoBackdrop(event)">
+          <div class="promo-card">
+            <div class="promo-h">
+              <span class="ic"><i class="ti ti-ticket"></i></span>
+              <b>NEW PROMO CODE</b>
+              <span class="x" onclick="mmPromoClose()"><i class="ti ti-x"></i></span>
             </div>
-            <div class="ann-two">
-              <div class="auth-field"><label class="auth-label">Access days</label>
-                <select id="promo-f-days" class="auth-input" style="padding:10px 12px;font-size:12.5px;">
-                  <option value="3">3 days</option>
-                  <option value="7">7 days</option>
-                  <option value="14">14 days</option>
-                  <option value="30">30 days</option>
-                </select>
+            <div class="promo-b">
+              <div class="auth-field"><label class="auth-label" data-i18n="prof.codeWord">Code</label>
+                <input id="promo-f-code" class="auth-input" placeholder="e.g. RAYA2026" style="text-transform:uppercase;" oninput="mmPromoSummary()" />
               </div>
-              <div class="auth-field"><label class="auth-label">Max uses</label>
-                <input id="promo-f-max" type="number" min="1" class="auth-input" placeholder="Unlimited" />
+              <div class="ann-two">
+                <div class="auth-field"><label class="auth-label">Access days</label>
+                  <select id="promo-f-days" class="auth-input" style="padding:10px 12px;font-size:12.5px;" onchange="mmPromoSummary()">
+                    <option value="3">3 days</option>
+                    <option value="7">7 days</option>
+                    <option value="14">14 days</option>
+                    <option value="30">30 days</option>
+                  </select>
+                </div>
+                <div class="auth-field"><label class="auth-label">Max uses</label>
+                  <input id="promo-f-max" type="number" min="1" class="auth-input" placeholder="Unlimited" oninput="mmPromoSummary()" />
+                </div>
               </div>
+              <div class="ann-two">
+                <div class="auth-field"><label class="auth-label">Expiry date</label>
+                  <input id="promo-f-expiry" type="date" class="auth-input" onchange="mmPromoSummary()" />
+                </div>
+                <div class="auth-field"><label class="auth-label">Campaign name</label>
+                  <input id="promo-f-campaign" class="auth-input" placeholder="Optional" />
+                </div>
+              </div>
+              <div class="auth-field"><label class="auth-label">Campaign image, square, under 300KB</label>
+                <input id="promo-f-image" type="file" accept="image/png,image/jpeg,image/webp" onchange="onPromoImagePick(event)" class="auth-input" style="padding:7px;font-size:11px;" />
+                <div id="promo-img-preview" style="display:none;margin-top:10px;"><img id="promo-img-preview-el" alt="preview" style="width:88px;height:88px;object-fit:cover;border-radius:10px;border:1px solid var(--border);" /></div>
+              </div>
+              <div id="promo-f-msg" style="display:none;font-size:12px;margin:6px 0;line-height:1.4;"></div>
             </div>
-            <div class="ann-two">
-              <div class="auth-field"><label class="auth-label">Expiry date</label>
-                <input id="promo-f-expiry" type="date" class="auth-input" />
-              </div>
-              <div class="auth-field"><label class="auth-label">Campaign name</label>
-                <input id="promo-f-campaign" class="auth-input" placeholder="Optional" />
-              </div>
+            <div class="promo-f">
+              <div class="promo-sum"><i class="ti ti-gift"></i><span id="promo-sum-line">Gives <b>3 days</b> of premium, <b>unlimited uses</b>, no expiry</span></div>
+              <button class="auth-btn" id="promo-create-btn" onclick="mmPromoCreate()">Create code</button>
             </div>
-            <div class="auth-field"><label class="auth-label">Campaign image, square, under 300KB</label>
-              <input id="promo-f-image" type="file" accept="image/png,image/jpeg,image/webp" onchange="onPromoImagePick(event)" class="auth-input" style="padding:7px;font-size:11px;" />
-              <div id="promo-img-preview" style="display:none;margin-top:10px;"><img id="promo-img-preview-el" alt="preview" style="width:88px;height:88px;object-fit:cover;border-radius:10px;border:1px solid var(--border);" /></div>
-            </div>
-            <div id="promo-f-msg" style="display:none;font-size:12px;margin:6px 0;line-height:1.4;"></div>
-          </div>
-          <div class="ann-foot">
-            <button class="auth-btn" id="promo-create-btn" onclick="mmPromoCreate()">Create code</button>
           </div>
         </div>
       </div>
 
-    <div id="atab-content-templates" style="display:none;">
+      <div id="atab-content-templates" style="display:none;">
       <div class="section-card">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
           <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;">MAI PRESETS</div>
@@ -20036,8 +20074,44 @@ async function loadAdminBanners() {
 }
 
 // ── PROMO CODES (rebuilt 18 Aug 2026) ─────────────────────────
-function mmPromoOpen() { var c = document.getElementById('promo-cmp'); if(c) c.classList.add('on'); }
-function mmPromoClose() { var c = document.getElementById('promo-cmp'); if(c) c.classList.remove('on'); }
+function mmPromoOpen() {
+  var c = document.getElementById('promo-cmp');
+  if(!c) return;
+  c.classList.add('on');
+  mmPromoSummary();
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() { c.classList.add('show'); });
+  });
+}
+function mmPromoClose() {
+  var c = document.getElementById('promo-cmp');
+  if(!c) return;
+  c.classList.remove('show');
+  setTimeout(function() { c.classList.remove('on'); }, 200);
+}
+// Tapping the dark area closes it, tapping the card does not.
+function mmPromoBackdrop(e) {
+  var c = document.getElementById('promo-cmp');
+  if(e && e.target === c) mmPromoClose();
+}
+
+// A promo code is a promise to a customer, so the card says the promise in
+// plain words and keeps saying it as the fields change.
+function mmPromoSummary() {
+  var el = document.getElementById('promo-sum-line');
+  if(!el) return;
+  function val(id) { var x = document.getElementById(id); return x ? x.value : ''; }
+  var days = val('promo-f-days') || '3';
+  var max  = String(val('promo-f-max') || '').trim();
+  var exp  = val('promo-f-expiry');
+  var uses = max ? ('the first <b>' + mmTkEsc(max) + ' people</b>') : '<b>unlimited uses</b>';
+  var when = 'no expiry';
+  if(exp) {
+    var d = new Date(exp);
+    if(!isNaN(d)) when = 'until <b>' + d.toLocaleDateString() + '</b>';
+  }
+  el.innerHTML = 'Gives <b>' + mmTkEsc(days) + ' days</b> of premium, ' + uses + ', ' + when;
+}
 
 function mmPromoCreate() {
   var r;
