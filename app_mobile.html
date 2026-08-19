@@ -5236,10 +5236,10 @@ html[data-theme="light"] .adm-nb.on i,html[data-theme="light"] .adm-nb.on span{c
 
     <div id="atab-content-academy" style="display:none;">
         <div class="ann-seg">
-          <button onclick="mmAcOpen()">Publish</button>
+          <button onclick="mmAcNew()">Publish</button>
           <button id="acad-seg-list" class="on" onclick="mmAcClose()">Lessons</button>
         </div>
-        <button class="ann-new" onclick="mmAcOpen()">NEW LESSON</button>
+        <button class="ann-new" onclick="mmAcNew()">NEW LESSON</button>
         <div id="admin-academy-list"><div class="acad-empty">Loading...</div></div>
 
         <!-- The publisher. Same ids as before, so addAcademySection,
@@ -5248,7 +5248,7 @@ html[data-theme="light"] .adm-nb.on i,html[data-theme="light"] .adm-nb.on span{c
         <div class="ann-cmp acad-cmp" id="acad-cmp">
           <div class="hd">
             <button class="sub-back" onclick="mmAcClose()"><i class="ti ti-arrow-left"></i></button>
-            <div class="t">NEW LESSON</div>
+            <div class="t" id="acad-cmp-title">NEW LESSON</div>
           </div>
           <div class="ann-body">
             <div class="acad-crumb" id="acad-crumb" onclick="mmAcHeadShow()"></div>
@@ -19708,9 +19708,29 @@ function mmAcActions(id) {
   });
 }
 
+// `editAcademyLesson` takes the LESSON ROW, not an id. Passing the id gave it
+// an object with no fields, so every input filled with undefined and the sheet
+// opened blank - which is exactly what a new lesson looks like.
 function mmAcEdit(id) {
   mmAcActionsClose();
-  try { editAcademyLesson(id); } catch(e) {}
+  var row = MMAC_ROWS.filter(function(x) { return String(x.id) === String(id); })[0];
+  if(!row) { alert('Lesson not found. Pull the list again.'); return; }
+  var c = document.getElementById('acad-cmp');
+  if(c) c.classList.add('on');
+  try { editAcademyLesson(row); } catch(e) {}
+  var t = document.getElementById('acad-cmp-title');
+  if(t) t.textContent = 'EDIT LESSON';
+  mmAcHeadShow();
+  mmAcFold(0);
+}
+
+// New always starts clean. Without this, opening New straight after an edit
+// kept `academy-edit-id`, so the next Publish would have OVERWRITTEN the lesson
+// you had just been editing.
+function mmAcNew() {
+  try { resetAcademyForm(); } catch(e) {}
+  var t = document.getElementById('acad-cmp-title');
+  if(t) t.textContent = 'NEW LESSON';
   mmAcOpen();
   mmAcHeadShow();
 }
