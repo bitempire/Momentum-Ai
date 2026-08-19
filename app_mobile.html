@@ -1221,6 +1221,67 @@ html[data-theme="light"] .amt-ov{background:#fff;}
 .tm-pr.on{border-color:rgba(0,200,122,.30);}
 .tm-pr.on b{color:var(--text);}
 .tm-pr.on .ic{background:rgba(0,200,122,.14);color:var(--green);}
+/* ══ FUND REQUESTS (19 Aug 2026) ═══════════════════════════════
+   Somebody asking you to manage their money is the highest value message in
+   this panel and it looked like a grey box. Now: a totals panel, filter chips,
+   anything waiting lifted into its own block with the actions on the card,
+   and the decided ones quiet underneath. Amounts are FORMATTED - $123456 with
+   no separators could be twelve thousand or a hundred and twenty three. */
+.fnd-panel{position:relative;overflow:hidden;border:1px solid var(--border);border-radius:13px;
+ background:var(--surface);display:flex;margin-bottom:10px;}
+.fnd-panel > div{flex:1;padding:11px 12px;border-right:1px solid var(--border);position:relative;
+ min-width:0;}
+.fnd-panel > div:last-child{border-right:0;}
+.fnd-panel .k{font-size:7.5px;color:var(--text3);letter-spacing:.6px;}
+.fnd-panel .v{font-family:'Orbitron',sans-serif;font-size:14px;margin-top:5px;
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.fnd-panel .bar{position:absolute;left:0;top:11px;bottom:11px;width:2px;border-radius:2px;display:block;}
+.fnd-hair{position:absolute;left:0;right:0;top:0;height:1px;z-index:3;
+ background:linear-gradient(90deg,transparent,rgba(255,255,255,.20),transparent);}
+
+.fnd-chips{display:flex;gap:5px;margin-bottom:11px;}
+.fnd-chip{flex:1;text-align:center;font-size:9px;font-weight:700;padding:6px 3px;border-radius:8px;
+ background:var(--surface);border:1px solid var(--border);color:var(--text3);cursor:pointer;
+ font-family:'Sora',sans-serif;}
+.fnd-chip.on{background:rgba(255,30,60,.14);border-color:rgba(255,30,60,.4);color:var(--red);}
+
+.fnd-wait{position:relative;overflow:hidden;border:1px solid rgba(59,130,246,.28);border-radius:13px;
+ background:linear-gradient(150deg,rgba(59,130,246,.14),rgba(59,130,246,.02) 60%);
+ padding:9px;margin-bottom:11px;}
+.fnd-wh{display:flex;align-items:center;gap:7px;margin:1px 3px 8px;}
+.fnd-wh i{font-size:12px;color:#7FB0FF;}
+.fnd-wh b{font-family:'Orbitron',sans-serif;font-size:9px;letter-spacing:1px;color:#7FB0FF;}
+.fnd-wh u{flex:1;height:1px;background:rgba(59,130,246,.25);text-decoration:none;}
+
+.fnd-rq{position:relative;overflow:hidden;border:1px solid var(--border);border-radius:12px;
+ padding:10px 11px;margin-bottom:7px;background:var(--surface);}
+.fnd-wait .fnd-rq{background:rgba(0,0,0,.30);}
+.fnd-rq .edge{position:absolute;left:0;top:0;bottom:0;width:3px;}
+.fnd-top{display:flex;align-items:center;gap:9px;}
+.fnd-av{width:28px;height:28px;flex:none;border-radius:9px;display:flex;align-items:center;
+ justify-content:center;font-size:9.5px;font-weight:800;color:#07070a;}
+.fnd-bd{flex:1;min-width:0;}
+.fnd-bd b{display:block;font-size:11.5px;font-weight:700;color:var(--text);
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.fnd-bd s{display:block;font-size:8.5px;color:var(--text3);text-decoration:none;margin-top:3px;}
+.fnd-amt{text-align:right;flex:none;}
+.fnd-amt b{display:block;font-family:'Orbitron',sans-serif;font-size:13px;color:var(--green);}
+.fnd-amt s{display:block;font-size:7px;color:var(--text3);text-decoration:none;margin-top:2px;
+ letter-spacing:.5px;}
+.fnd-meta{display:flex;gap:5px;margin-top:9px;flex-wrap:wrap;}
+.fnd-tag{font-size:7.5px;font-weight:700;padding:3px 7px;border-radius:5px;
+ background:rgba(255,255,255,.05);color:var(--text2);}
+.fnd-btns{display:flex;gap:6px;margin-top:9px;}
+.fnd-btns button{flex:1;text-align:center;font-size:10px;font-weight:700;padding:9px 4px;
+ border-radius:9px;cursor:pointer;font-family:'Sora',sans-serif;border:1px solid;}
+.fnd-ok{background:rgba(0,200,122,.14);border-color:rgba(0,200,122,.3);color:var(--green);}
+.fnd-no{background:rgba(255,30,60,.10);border-color:rgba(255,30,60,.25);color:var(--red);}
+.fnd-call{flex:0 0 44px !important;background:rgba(59,130,246,.10);
+ border-color:rgba(59,130,246,.25);color:#7FB0FF;}
+.fnd-empty{padding:26px 16px;text-align:center;font-size:11px;color:var(--text3);}
+.fnd-sect{font-family:'Orbitron',sans-serif;font-size:8.5px;letter-spacing:1.1px;color:var(--text3);
+ margin:12px 0 8px;}
+
 
 
 /* the composer fills the screen, the section list takes what is left */
@@ -16638,46 +16699,129 @@ async function adminReplyTicket(ticketId) {
 }
 
 // ── ADMIN FUND REQUESTS ──
+// ── FUND REQUESTS (rebuilt 19 Aug 2026) ───────────────────────
+// Waiting first, with the decision on the card. The totals panel answers the
+// only question that matters before you scroll: how much is sitting on you.
+var MMFR_ROWS = [];
+var MMFR_FILTER = 'all';
+
+function mmFrMoney(n) {
+  var v = Number(n);
+  if(!isFinite(v)) return '--';
+  return '$' + v.toLocaleString(undefined, {maximumFractionDigits:2});
+}
+function mmFrState(s) {
+  if(s === 'approved') return {t:'APPROVED', c:'#00c87a'};
+  if(s === 'rejected') return {t:'REJECTED', c:'#FF1E3C'};
+  return {t:'PENDING', c:'#3B82F6'};
+}
+function mmFrRisk(r) {
+  var k = String(r || '').toLowerCase();
+  return (k === 'high') ? '#FF1E3C' : (k === 'medium') ? '#ffb020' : (k === 'low') ? '#00c87a' : 'var(--text2)';
+}
+function mmFrSetFilter(f) { MMFR_FILTER = f; mmFrRender(); }
+
+function mmFrCard(r) {
+  var st = mmFrState(r.status);
+  var nm = r.user_name || 'User';
+  var when = r.created_at ? mmTkAgo(r.created_at) : '';
+  var pending = (String(r.status || 'pending') === 'pending');
+  var phone = String(r.phone || '').replace(/[^0-9+]/g, '');
+  return '<div class="fnd-rq"><span class="edge" style="background:' + st.c + '"></span>' +
+    '<div class="fnd-top">' +
+      '<span class="fnd-av" style="background:' + st.c + '">' +
+        mmTkEsc(nm.substring(0,2).toUpperCase()) + '</span>' +
+      '<span class="fnd-bd"><b>' + mmTkEsc(nm) + '</b>' +
+        '<s>MT5 ' + mmTkEsc(r.mt5_id || '--') + (when ? (' \u00b7 ' + mmTkEsc(when)) : '') + '</s></span>' +
+      '<span class="fnd-amt"><b>' + mmFrMoney(r.allocation) + '</b><s>REQUESTED</s></span>' +
+    '</div>' +
+    '<div class="fnd-meta">' +
+      '<span class="fnd-tag" style="color:' + mmFrRisk(r.risk_level) + '">' +
+        mmTkEsc(String(r.risk_level || 'unknown').toUpperCase()) + ' RISK</span>' +
+      '<span class="fnd-tag">' + mmTkEsc(r.phone || 'no phone') + '</span>' +
+      '<span class="fnd-tag" style="color:' + st.c + '">' + st.t + '</span>' +
+    '</div>' +
+    (pending
+      ? '<div class="fnd-btns">' +
+          '<button class="fnd-ok" onclick="adminUpdateFund(\'' + r.id + '\',\'approved\')">Approve</button>' +
+          '<button class="fnd-no" onclick="adminUpdateFund(\'' + r.id + '\',\'rejected\')">Reject</button>' +
+          (phone ? '<button class="fnd-call" onclick="window.location.href=\'tel:' + phone + '\'">' +
+            '<i class="ti ti-phone"></i></button>' : '') +
+        '</div>'
+      : '') +
+  '</div>';
+}
+
+function mmFrRender() {
+  var el = document.getElementById('admin-funds-list');
+  if(!el) return;
+
+  var counts = {all:MMFR_ROWS.length, pending:0, approved:0, rejected:0};
+  var waitingSum = 0, approvedSum = 0;
+  MMFR_ROWS.forEach(function(r) {
+    var k = String(r.status || 'pending');
+    if(counts[k] !== undefined) counts[k]++;
+    var v = Number(r.allocation) || 0;
+    if(k === 'pending') waitingSum += v;
+    if(k === 'approved') approvedSum += v;
+  });
+
+  var panel = '<div class="fnd-panel"><span class="fnd-hair"></span>' +
+    '<div><span class="bar" style="background:#3B82F6"></span>' +
+      '<div class="k">WAITING</div><div class="v" style="color:#7FB0FF">' + mmFrMoney(waitingSum) + '</div></div>' +
+    '<div><span class="bar" style="background:var(--green)"></span>' +
+      '<div class="k">APPROVED</div><div class="v" style="color:var(--green)">' + mmFrMoney(approvedSum) + '</div></div>' +
+    '<div><span class="bar" style="background:var(--text3)"></span>' +
+      '<div class="k">REQUESTS</div><div class="v">' + MMFR_ROWS.length + '</div></div>' +
+  '</div>';
+
+  var chips = '<div class="fnd-chips">' +
+    [['all','All'],['pending','Pending'],['approved','Approved'],['rejected','Rejected']].map(function(c) {
+      return '<span class="fnd-chip' + (MMFR_FILTER === c[0] ? ' on' : '') +
+        '" onclick="mmFrSetFilter(\'' + c[0] + '\')">' + c[1] + ' ' + counts[c[0]] + '</span>';
+    }).join('') + '</div>';
+
+  var rows = MMFR_ROWS.filter(function(r) {
+    return MMFR_FILTER === 'all' || String(r.status || 'pending') === MMFR_FILTER;
+  });
+  if(!rows.length) {
+    el.innerHTML = panel + chips + '<div class="fnd-empty">No requests in this filter</div>';
+    return;
+  }
+
+  var wait = rows.filter(function(r) { return String(r.status || 'pending') === 'pending'; });
+  var rest = rows.filter(function(r) { return String(r.status || 'pending') !== 'pending'; });
+
+  var html = panel + chips;
+  if(wait.length) {
+    html += '<div class="fnd-wait"><div class="fnd-wh"><i class="ti ti-clock-dollar"></i>' +
+      '<b>WAITING ON YOU &middot; ' + wait.length + '</b><u></u></div>' +
+      wait.map(mmFrCard).join('') + '</div>';
+  }
+  if(rest.length) {
+    if(wait.length) html += '<div class="fnd-sect">DECIDED</div>';
+    html += rest.map(mmFrCard).join('');
+  }
+  el.innerHTML = html;
+}
+
 async function loadAdminFunds() {
   var el = document.getElementById('admin-funds-list');
   if(!el || !db) return;
-  el.innerHTML = '<div class="empty-state" style="padding:16px;"><i class="ti ti-chart-pie"></i>Loading...</div>';
+  el.innerHTML = '<div class="fnd-empty">Loading...</div>';
   try {
-    var res = await db.from('fund_requests').select('*').order('created_at',{ascending:false}).limit(20);
-    if(!res.data || !res.data.length) { el.innerHTML = '<div class="empty-state" style="padding:16px;"><i class="ti ti-chart-pie"></i>No fund requests yet</div>'; return; }
-    el.innerHTML = '';
-    res.data.forEach(function(r) {
-      var sc = {pending:'var(--amber)',approved:'var(--green)',rejected:'var(--red)'}[r.status] || 'var(--text3)';
-      var div = document.createElement('div');
-      div.style.cssText = 'padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;';
-      div.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">' +
-        '<div style="font-size:13px;font-weight:800;color:var(--text);">' + (r.user_name||'User') + '</div>' +
-        '<div style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;background:rgba(255,255,255,0.06);color:'+sc+';">' + (r.status||'pending').toUpperCase() + '</div>' +
-        '</div>' +
-        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;">' +
-        '<div style="font-size:11px;color:var(--text3);">MT5: <span style="color:var(--text);">' + (r.mt5_id||'--') + '</span></div>' +
-        '<div style="font-size:11px;color:var(--text3);">Amount: <span style="color:var(--green);">$' + (r.allocation||'--') + '</span></div>' +
-        '<div style="font-size:11px;color:var(--text3);">Risk: <span style="color:var(--text);">' + (r.risk_level||'--') + '</span></div>' +
-        '<div style="font-size:11px;color:var(--text3);">Phone: <span style="color:var(--text);">' + (r.phone||'--') + '</span></div>' +
-        '</div>';
-      if(r.status === 'pending') {
-        var btnRow = document.createElement('div');
-        btnRow.style.cssText = 'display:flex;gap:8px;';
-        var approveBtn = document.createElement('button');
-        approveBtn.textContent = 'Connect';
-        approveBtn.style.cssText = 'flex:1;padding:9px;background:var(--grad);border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;';
-        approveBtn.addEventListener('click', function() { adminUpdateFund(r.id, 'approved'); });
-        var rejectBtn = document.createElement('button');
-        rejectBtn.textContent = 'Reject';
-        rejectBtn.style.cssText = 'flex:1;padding:9px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:12px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;';
-        rejectBtn.addEventListener('click', function() { adminUpdateFund(r.id, 'rejected'); });
-        btnRow.appendChild(approveBtn);
-        btnRow.appendChild(rejectBtn);
-        div.appendChild(btnRow);
-      }
-      el.appendChild(div);
-    });
-  } catch(e) { el.innerHTML = '<div class="empty-state" style="padding:16px;"><i class="ti ti-alert-circle"></i>Error loading requests</div>'; }
+    var res = await db.from('fund_requests').select('*').order('created_at', {ascending:false}).limit(40);
+    if(res && res.error) throw res.error;
+    MMFR_ROWS = (res && res.data && Array.isArray(res.data)) ? res.data : [];
+    if(!MMFR_ROWS.length) {
+      el.innerHTML = '<div class="fnd-empty"><span class="ann-ring"><i class="ti ti-chart-pie"></i></span>' +
+        '<div style="margin-top:10px">No fund requests yet</div></div>';
+      return;
+    }
+    mmFrRender();
+  } catch(e) {
+    el.innerHTML = '<div class="fnd-empty">Error loading requests</div>';
+  }
 }
 
 async function adminUpdateFund(fundId, status) {
