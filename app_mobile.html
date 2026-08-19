@@ -1157,6 +1157,71 @@ html[data-theme="light"] .amt-ov{background:#fff;}
 .acad-lv{font-size:7.5px;font-weight:800;letter-spacing:.4px;padding:3px 6px;border-radius:5px;flex:none;}
 .acad-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
  color:var(--text3);font-size:11px;padding:40px 20px;text-align:center;}
+/* ══ TEAM, ANALYSTS AND SUB-ADMINS (19 Aug 2026) ═══════════════
+   Four stacked forms and lists became one screen: the owner pinned at the top
+   with access nobody can remove, then the two groups, then a creator that
+   lifts over the whole screen and asks for the role first.
+   The person card no longer prints the tab list - one line says how many. */
+.tm-owner{position:relative;overflow:hidden;display:flex;align-items:center;gap:10px;padding:11px;
+ border:1px solid rgba(240,178,50,.30);border-radius:12px;margin-bottom:8px;
+ background:linear-gradient(150deg,rgba(240,178,50,.15),rgba(240,178,50,.02) 60%);}
+.tm-owner .av{width:32px;height:32px;flex:none;border-radius:11px;background:var(--gold);color:#231703;
+ display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:800;}
+.tm-owner .bd{flex:1;min-width:0;}
+.tm-owner .bd b{display:block;font-size:11.5px;font-weight:700;color:var(--text);}
+.tm-owner .bd s{display:block;font-size:9px;color:var(--text3);text-decoration:none;margin-top:3px;}
+.tm-owner .chip{font-size:7.5px;font-weight:800;letter-spacing:.4px;padding:3px 7px;border-radius:5px;
+ background:rgba(240,178,50,.18);color:var(--gold);}
+
+.tm-gh{display:flex;align-items:center;gap:7px;margin:13px 2px 7px;}
+.tm-gh b{font-family:'Orbitron',sans-serif;font-size:8.5px;letter-spacing:1px;}
+.tm-gh u{flex:1;height:1px;background:var(--border);text-decoration:none;}
+.tm-gh .add{font-size:9px;font-weight:700;color:#7FB0FF;cursor:pointer;}
+
+.tm-card{position:relative;overflow:hidden;display:flex;align-items:center;gap:10px;padding:10px;
+ border:1px solid var(--border);border-radius:12px;margin-bottom:7px;background:var(--surface);
+ cursor:pointer;}
+.tm-card:active{background:var(--surface2);}
+.tm-card .edge{position:absolute;left:0;top:0;bottom:0;width:3px;}
+.tm-card .av{width:32px;height:32px;flex:none;border-radius:11px;display:flex;align-items:center;
+ justify-content:center;font-size:10.5px;font-weight:800;color:#07070a;}
+.tm-card .bd{flex:1;min-width:0;}
+.tm-card .bd b{display:block;font-size:11.5px;font-weight:700;color:var(--text);
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tm-card .bd s{display:block;font-size:9px;color:var(--text3);text-decoration:none;margin-top:3px;}
+.tm-card .bd .meta{display:block;font-size:8.5px;color:var(--text3);margin-top:4px;}
+.tm-card .role{font-size:7.5px;font-weight:800;letter-spacing:.4px;padding:3px 7px;border-radius:5px;
+ flex:none;}
+.tm-card .ch{color:var(--text3);font-size:12px;flex:none;}
+.tm-empty{padding:14px;text-align:center;font-size:10.5px;color:var(--text3);}
+
+/* the creator */
+.tm-roleseg{display:flex;gap:6px;margin-bottom:12px;}
+.tm-roleseg button{flex:1;text-align:center;padding:10px 4px;border-radius:10px;
+ border:1px solid var(--border);background:var(--surface);font-size:10.5px;font-weight:700;
+ color:var(--text3);font-family:'Sora',sans-serif;cursor:pointer;transition:.2s;}
+.tm-roleseg button i{display:block;font-size:15px;margin-bottom:4px;}
+.tm-roleseg button.on{border-color:rgba(255,30,60,.45);background:rgba(255,30,60,.12);color:var(--red);}
+.tm-permhd{display:flex;align-items:center;gap:8px;margin:4px 0 8px;}
+.tm-permhd b{font-size:8px;font-weight:700;color:var(--text2);letter-spacing:.9px;text-transform:uppercase;}
+.tm-permhd .cnt{font-size:9px;color:var(--text3);}
+.tm-permhd .all{margin-left:auto;font-size:9.5px;font-weight:700;color:#7FB0FF;cursor:pointer;}
+.tm-perms{display:flex;flex-direction:column;gap:6px;}
+.tm-pr{display:flex;align-items:center;gap:9px;padding:9px 10px;border:1px solid var(--border);
+ border-radius:10px;background:var(--surface);cursor:pointer;}
+.tm-pr .ic{width:24px;height:24px;flex:none;border-radius:7px;display:flex;align-items:center;
+ justify-content:center;font-size:12px;background:rgba(255,255,255,.05);color:var(--text3);}
+.tm-pr b{flex:1;font-size:10.5px;font-weight:600;color:var(--text2);}
+.tm-tog{width:34px;height:19px;border-radius:999px;flex:none;position:relative;
+ background:rgba(255,255,255,.14);transition:background .25s;}
+.tm-tog i{position:absolute;top:2px;left:2px;width:15px;height:15px;border-radius:50%;background:#fff;
+ transition:left .25s;display:block;}
+.tm-pr.on .tm-tog{background:var(--green);}
+.tm-pr.on .tm-tog i{left:17px;}
+.tm-pr.on{border-color:rgba(0,200,122,.30);}
+.tm-pr.on b{color:var(--text);}
+.tm-pr.on .ic{background:rgba(0,200,122,.14);color:var(--green);}
+
 
 /* the composer fills the screen, the section list takes what is left */
 .acad-cmp .ann-body{padding-bottom:0;}
@@ -4918,72 +4983,69 @@ html[data-theme="light"] .adm-nb.on i,html[data-theme="light"] .adm-nb.on span{c
 
       <!-- ── ANALYSTS TAB ── -->
       <div id="atab-content-analyst" style="display:none;">
-        <div class="section-card">
-          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:12px;">ADD ANALYST</div>
-          <div class="auth-field">
-            <label class="auth-label" data-i18n="prof.fullName">Full Name</label>
-            <input id="mob-analyst-name" class="auth-input" type="text" placeholder="Analyst name">
+        <div id="admin-team-list"><div class="tm-empty">Loading...</div></div>
+
+        <!-- The creator. It fills the ORIGINAL forms below and presses them, so
+             handleAddAnalyst and handleAddSubAdmin keep doing the work. -->
+        <div class="ann-cmp" id="tm-cmp">
+          <div class="hd">
+            <button class="sub-back" onclick="mmTmClose()"><i class="ti ti-arrow-left"></i></button>
+            <div class="t">ADD PERSON</div>
           </div>
-          <div class="auth-field">
-            <label class="auth-label" data-i18n="auth.username">Username</label>
-            <input id="mob-analyst-username" class="auth-input" type="text" placeholder="analyst_username">
+          <div class="ann-body">
+            <div class="tm-roleseg">
+              <button id="tm-role-an" class="on" onclick="mmTmSetRole('analyst')"><i class="ti ti-user-star"></i>Analyst</button>
+              <button id="tm-role-sa" onclick="mmTmSetRole('sub_admin')"><i class="ti ti-shield-lock"></i>Sub-admin</button>
+            </div>
+            <div class="auth-field"><label class="auth-label" data-i18n="prof.fullName">Full Name</label>
+              <input id="tm-name" class="auth-input" type="text" placeholder="Full name"></div>
+            <div class="ann-two">
+              <div class="auth-field"><label class="auth-label" data-i18n="auth.username">Username</label>
+                <input id="tm-username" class="auth-input" type="text" placeholder="username"></div>
+              <div class="auth-field"><label class="auth-label" data-i18n="auth.password">Password</label>
+                <input id="tm-password" class="auth-input" type="password" placeholder="Set password"></div>
+            </div>
+            <div id="tm-permbox" style="display:none;">
+              <div class="tm-permhd"><b>Panel access</b><span class="cnt" id="tm-cnt">0 of 9</span>
+                <span class="all" id="tm-all" onclick="mmTmAllPerms()">All access</span></div>
+              <div class="tm-perms" id="tm-perms"></div>
+            </div>
+            <div id="tm-error" class="error-msg"></div>
+            <div id="tm-success" class="success-msg"></div>
           </div>
-          <div class="auth-field">
-            <label class="auth-label" data-i18n="auth.password">Password</label>
-            <input id="mob-analyst-password" class="auth-input" type="password" placeholder="Set password">
+          <div class="ann-foot">
+            <button class="red-btn" id="tm-create-btn" onclick="mmTmCreate()">CREATE ANALYST</button>
           </div>
+        </div>
+
+        <!-- The original forms, kept and hidden. Every id and every class the
+             old handlers look for is still here, so nothing about creating an
+             analyst or a sub-admin changed. -->
+        <div style="display:none;">
+          <input id="mob-analyst-name" type="text">
+          <input id="mob-analyst-username" type="text">
+          <input id="mob-analyst-password" type="password">
           <div id="mob-analyst-error" class="error-msg"></div>
           <div id="mob-analyst-success" class="success-msg"></div>
-          <button class="red-btn" id="btn-add-analyst" onclick="handleAddAnalyst()">CREATE ANALYST</button>
-        </div>
-
-        <!-- EXISTING ANALYSTS LIST -->
-        <div class="section-card" style="margin-top:14px;">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-            <div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.5px;">EXISTING ANALYSTS</div>
-            <button onclick="loadAdminAnalysts()" style="background:transparent;border:none;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;">↻ Refresh</button>
-          </div>
-          <div id="admin-analyst-list"><div class="empty-state" style="padding:12px;">Loading...</div></div>
-        </div>
-
-        <!-- SUB-ADMIN SECTION -->
-        <div class="section-card" style="margin-top:20px;">
-          <div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:14px;">CREATE SUB ADMIN</div>
-          <div class="auth-field"><label class="auth-label" data-i18n="prof.fullName">Full Name</label><input id="mob-subadmin-name" class="auth-input" type="text" placeholder="Sub-admin full name"></div>
-          <div class="auth-field"><label class="auth-label" data-i18n="auth.username">Username</label><input id="mob-subadmin-username" class="auth-input" type="text" placeholder="username"></div>
-          <div class="auth-field"><label class="auth-label" data-i18n="auth.password">Password</label><input id="mob-subadmin-password" class="auth-input" type="password" placeholder="Set password"></div>
-          <div class="auth-field">
-            <label class="auth-label">Panel Access</label>
-            <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px 12px;">
-              <div style="font-size:10px;color:var(--text3);margin-bottom:8px;">Select tabs this sub-admin can access:</div>
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
-                <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="dashboard" class="subadmin-tab-check" style="accent-color:var(--red);width:15px;height:15px;"> Dashboard</label>
-                <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="users" class="subadmin-tab-check" style="accent-color:var(--red);width:15px;height:15px;"> Users</label>
-                <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="tickets" class="subadmin-tab-check" style="accent-color:var(--red);width:15px;height:15px;"> Support</label>
-                <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="funds" class="subadmin-tab-check" style="accent-color:var(--red);width:15px;height:15px;"> Fund Management</label>
-                <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="announce" class="subadmin-tab-check" style="accent-color:var(--red);width:15px;height:15px;"> Announcements</label>
-                <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="signals" class="subadmin-tab-check" style="accent-color:var(--red);width:15px;height:15px;"> Signals</label>
-                <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="analyst" class="subadmin-tab-check" style="accent-color:var(--red);width:15px;height:15px;"> Administrator</label>
-                <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="academy" class="subadmin-tab-check" style="accent-color:var(--red);width:15px;height:15px;"> Academy</label>
-                <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);"><input type="checkbox" value="mt5" class="subadmin-tab-check" style="accent-color:var(--red);width:15px;height:15px;"> MT5</label>
-              </div>
-            </div>
-          </div>
+          <div id="admin-analyst-list"></div>
+          <input id="mob-subadmin-name" type="text">
+          <input id="mob-subadmin-username" type="text">
+          <input id="mob-subadmin-password" type="password">
           <div id="mob-subadmin-error" class="error-msg"></div>
           <div id="mob-subadmin-success" class="success-msg"></div>
-          <button class="red-btn" onclick="handleAddSubAdmin()">CREATE SUB ADMIN</button>
-        </div>
-        <div class="section-card" style="margin-top:14px;">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-            <div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.5px;">EXISTING SUB-ADMINS</div>
-            <button onclick="loadAdminSubAdmins()" style="background:transparent;border:none;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;">↻ Refresh</button>
-          </div>
-          <div id="admin-subadmin-list"><div class="empty-state" style="padding:12px;">Loading...</div></div>
+          <div id="admin-subadmin-list"></div>
+          <label><input type="checkbox" value="dashboard" class="subadmin-tab-check"></label>
+          <label><input type="checkbox" value="users" class="subadmin-tab-check"></label>
+          <label><input type="checkbox" value="tickets" class="subadmin-tab-check"></label>
+          <label><input type="checkbox" value="funds" class="subadmin-tab-check"></label>
+          <label><input type="checkbox" value="announce" class="subadmin-tab-check"></label>
+          <label><input type="checkbox" value="signals" class="subadmin-tab-check"></label>
+          <label><input type="checkbox" value="analyst" class="subadmin-tab-check"></label>
+          <label><input type="checkbox" value="academy" class="subadmin-tab-check"></label>
+          <label><input type="checkbox" value="mt5" class="subadmin-tab-check"></label>
         </div>
       </div>
 
-
-    <!-- MT5 TAB CONTENT -->
     <div id="atab-content-mt5" style="display:none;">
       <div class="section-card">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
@@ -18785,24 +18847,260 @@ async function generateJournalInsight() {
 // ═══════════════════════════════════════════════════
 // ADMIN: ANALYSTS
 // ═══════════════════════════════════════════════════
+// ── TEAM (rebuilt 19 Aug 2026) ────────────────────────────────
+// One screen: the owner, then analysts, then sub-admins. The creator asks the
+// role first, because the two old forms were the same three fields.
+var MMTM_TABS = [
+  {k:'dashboard', n:'Dashboard', i:'ti-layout-dashboard'},
+  {k:'users',     n:'Users',     i:'ti-users'},
+  {k:'mt5',       n:'MT5',       i:'ti-server-bolt'},
+  {k:'tickets',   n:'Support',   i:'ti-headset'},
+  {k:'funds',     n:'Fund Management', i:'ti-briefcase'},
+  {k:'signals',   n:'Signals',   i:'ti-activity'},
+  {k:'announce',  n:'Announcements', i:'ti-speakerphone'},
+  {k:'academy',   n:'Academy',   i:'ti-school'},
+  {k:'analyst',   n:'Administrator', i:'ti-shield-lock'}
+];
+var MMTM_ROWS = [];
+var MMTM_ROLE = 'analyst';
+var MMTM_PERMS = {};
+
+function mmTmColour(id) {
+  var s = String(id || ''), n = 0;
+  for (var i = 0; i < s.length; i++) n = (n + s.charCodeAt(i)) % 5;
+  return ['#FF1E3C','#3B82F6','#00c87a','#F0B232','#ffb020'][n];
+}
+function mmTmInitials(n) {
+  var p = String(n || '').replace(/[^A-Za-z ]/g, '').trim().split(' ');
+  if(!p[0]) return 'TM';
+  return ((p.length > 1) ? (p[0][0] + p[1][0]) : p[0].slice(0,2)).toUpperCase();
+}
+
+// ── the creator ──
+function mmTmOpen(role) {
+  MMTM_ROLE = role || 'analyst';
+  MMTM_PERMS = {};
+  ['name','username','password'].forEach(function(f) {
+    var el = document.getElementById('tm-' + f);
+    if(el) el.value = '';
+  });
+  var e = document.getElementById('tm-error'), s = document.getElementById('tm-success');
+  if(e) e.style.display = 'none';
+  if(s) s.style.display = 'none';
+  mmTmPaintRole();
+  var c = document.getElementById('tm-cmp');
+  if(c) c.classList.add('on');
+}
+function mmTmClose() {
+  var c = document.getElementById('tm-cmp');
+  if(c) c.classList.remove('on');
+}
+function mmTmSetRole(r) { MMTM_ROLE = r; mmTmPaintRole(); }
+
+function mmTmPaintRole() {
+  var a = document.getElementById('tm-role-an'), b = document.getElementById('tm-role-sa');
+  if(a) a.classList.toggle('on', MMTM_ROLE === 'analyst');
+  if(b) b.classList.toggle('on', MMTM_ROLE === 'sub_admin');
+  var box = document.getElementById('tm-permbox');
+  if(box) box.style.display = (MMTM_ROLE === 'sub_admin') ? '' : 'none';
+  var btn = document.getElementById('tm-create-btn');
+  if(btn) btn.textContent = (MMTM_ROLE === 'sub_admin') ? 'CREATE SUB-ADMIN' : 'CREATE ANALYST';
+  mmTmPaintPerms();
+}
+
+function mmTmPaintPerms() {
+  var wrap = document.getElementById('tm-perms');
+  if(!wrap) return;
+  wrap.innerHTML = MMTM_TABS.map(function(t) {
+    var on = !!MMTM_PERMS[t.k];
+    return '<div class="tm-pr' + (on ? ' on' : '') + '" onclick="mmTmTogglePerm(\'' + t.k + '\')">' +
+      '<span class="ic"><i class="ti ' + t.i + '"></i></span><b>' + t.n + '</b>' +
+      '<span class="tm-tog"><i></i></span></div>';
+  }).join('');
+  var n = Object.keys(MMTM_PERMS).filter(function(k) { return MMTM_PERMS[k]; }).length;
+  var cnt = document.getElementById('tm-cnt');
+  if(cnt) cnt.textContent = n + ' of ' + MMTM_TABS.length;
+  var all = document.getElementById('tm-all');
+  if(all) all.textContent = (n === MMTM_TABS.length) ? 'Clear all' : 'All access';
+}
+
+function mmTmTogglePerm(k) { MMTM_PERMS[k] = !MMTM_PERMS[k]; mmTmPaintPerms(); }
+
+function mmTmAllPerms() {
+  var n = Object.keys(MMTM_PERMS).filter(function(k) { return MMTM_PERMS[k]; }).length;
+  var on = (n !== MMTM_TABS.length);
+  MMTM_PERMS = {};
+  if(on) MMTM_TABS.forEach(function(t) { MMTM_PERMS[t.k] = true; });
+  mmTmPaintPerms();
+}
+
+// The old forms are kept in the page, hidden, so `handleAddAnalyst` and
+// `handleAddSubAdmin` keep working exactly as they did. This fills them in and
+// presses them, rather than writing a second copy of the create logic.
+function mmTmCreate() {
+  var nm = (document.getElementById('tm-name') || {}).value || '';
+  var un = (document.getElementById('tm-username') || {}).value || '';
+  var pw = (document.getElementById('tm-password') || {}).value || '';
+  var err = document.getElementById('tm-error');
+  function fail(msg) { if(err) { err.textContent = msg; err.style.display = 'block'; } }
+  if(err) err.style.display = 'none';
+  if(!nm.trim() || !un.trim() || !pw) return fail('Please fill all fields');
+  if(pw.length < 6) return fail('Password min 6 characters');
+
+  if(MMTM_ROLE === 'analyst') {
+    document.getElementById('mob-analyst-name').value = nm;
+    document.getElementById('mob-analyst-username').value = un;
+    document.getElementById('mob-analyst-password').value = pw;
+    handleAddAnalyst();
+  } else {
+    var keys = Object.keys(MMTM_PERMS).filter(function(k) { return MMTM_PERMS[k]; });
+    if(!keys.length) return fail('Give them at least one tab');
+    document.getElementById('mob-subadmin-name').value = nm;
+    document.getElementById('mob-subadmin-username').value = un;
+    document.getElementById('mob-subadmin-password').value = pw;
+    var boxes = document.querySelectorAll('.subadmin-tab-check');
+    for (var i = 0; i < boxes.length; i++) boxes[i].checked = (keys.indexOf(boxes[i].value) >= 0);
+    handleAddSubAdmin();
+  }
+  // The old handler writes its own error into its own box; surface it here.
+  setTimeout(function() {
+    var oldErr = document.getElementById(MMTM_ROLE === 'analyst' ? 'mob-analyst-error' : 'mob-subadmin-error');
+    if(oldErr && oldErr.style.display === 'block' && oldErr.textContent) { fail(oldErr.textContent); return; }
+    mmTmClose();
+    loadAdminAnalysts();
+  }, 900);
+}
+
+// ── the list ──
+function mmTmActionsClose() {
+  var ov = document.getElementById('tm-act-ov');
+  if(ov) ov.remove();
+}
+
+function mmTmActions(id) {
+  var p = MMTM_ROWS.filter(function(x) { return String(x.id) === String(id); })[0];
+  if(!p) return;
+  mmTmActionsClose();
+  var isAn = (p.role === 'analyst');
+  var col = isAn ? '#F0B232' : '#3B82F6';
+  var tabs = String(p.allowed_tabs || '').split(',').filter(Boolean);
+  var names = tabs.map(function(k) {
+    var t = MMTM_TABS.filter(function(x) { return x.k === k; })[0];
+    return t ? t.n : k;
+  });
+  var ov = document.createElement('div');
+  ov.id = 'tm-act-ov';
+  ov.className = 'aus-ov on';
+  ov.onclick = function(e) { if(e.target === ov) mmTmActionsClose(); };
+  ov.innerHTML =
+    '<div class="aus-card">' +
+      '<span class="aus-x" onclick="mmTmActionsClose()"><i class="ti ti-x"></i></span>' +
+      '<div class="amt-hero" style="background:linear-gradient(150deg,' + col + '2e,' + col + '08 55%,rgba(255,255,255,.02))">' +
+        '<span class="amt-mesh"></span>' +
+        '<div class="amt-who">' +
+          '<span class="amt-av2" style="background:' + col + '26;color:' + col + '">' +
+            mmTkEsc(mmTmInitials(p.name || p.username)) + '</span>' +
+          '<span class="amt-dwho"><b>' + mmTkEsc(p.name || p.username || '--') + '</b>' +
+            '<s>@' + mmTkEsc(p.username || '--') + '</s></span>' +
+          '<span class="amt-pill" style="margin-right:30px;background:' + col + '1f;color:' + col + '">' +
+            (isAn ? 'ANALYST' : 'SUB-ADMIN') + '</span>' +
+        '</div>' +
+      '</div>' +
+      '<div class="amt-db">' +
+        (isAn ? '' :
+          '<div class="amt-sect">CAN REACH ' + names.length + ' OF ' + MMTM_TABS.length + '</div>' +
+          '<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:4px">' +
+          MMTM_TABS.map(function(t) {
+            var on = tabs.indexOf(t.k) >= 0;
+            return '<span style="font-size:8px;padding:4px 7px;border-radius:6px;background:' +
+              (on ? 'rgba(0,200,122,.12);color:var(--green)' : 'rgba(255,255,255,.04);color:var(--text3)') +
+              '">' + t.n + '</span>';
+          }).join('') + '</div>') +
+        '<div class="amt-sect">ACTIONS</div>' +
+        '<div class="amt-alist">' +
+          '<div class="amt-act amt-glass" onclick="mmTmActionsClose(); ' +
+            (isAn ? 'mmTmEdit(\'' + p.id + '\')' : 'mmTmEdit(\'' + p.id + '\')') + ';">' +
+            '<span class="amt-ring" style="border-color:#7FB0FF;color:#7FB0FF"><i class="ti ti-pencil"></i></span>' +
+            '<span class="tx"><b>' + (isAn ? 'Edit pairs' : 'Edit access') + '</b>' +
+            '<s>' + (isAn ? 'Which instruments they may post' : 'Which tabs they can reach') + '</s></span>' +
+            '<span class="ch"><i class="ti ti-chevron-right"></i></span></div>' +
+        '</div>' +
+        '<button class="amt-del" onclick="mmTmActionsClose(); ' +
+          (isAn ? 'deleteAnalystAdmin(\'' + p.id + '\')' : 'deleteSubAdmin(\'' + p.id + '\')') + ';">' +
+          (isAn ? 'DELETE ANALYST' : 'DELETE SUB-ADMIN') + '</button>' +
+      '</div>' +
+    '</div>';
+  document.body.appendChild(ov);
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() { ov.classList.add('show'); });
+  });
+}
+
+function mmTmCard(p) {
+  var isAn = (p.role === 'analyst');
+  var col = isAn ? '#F0B232' : '#3B82F6';
+  var tabs = String(p.allowed_tabs || '').split(',').filter(Boolean);
+  var meta = isAn
+    ? 'Posts signals \u00b7 pairs ' + (p.trading_pairs || 'all')
+    : tabs.length + ' of ' + MMTM_TABS.length + ' tabs';
+  return '<div class="tm-card" onclick="mmTmActions(\'' + p.id + '\')">' +
+    '<span class="edge" style="background:' + col + '"></span>' +
+    '<span class="av" style="background:' + mmTmColour(p.id) + '">' +
+      mmTkEsc(mmTmInitials(p.name || p.username)) + '</span>' +
+    '<span class="bd"><b>' + mmTkEsc(p.name || p.username || '--') + '</b>' +
+      '<s>@' + mmTkEsc(p.username || '--') + '</s>' +
+      '<span class="meta">' + mmTkEsc(meta) + '</span></span>' +
+    '<span class="role" style="background:' + col + '1f;color:' + col + '">' +
+      (isAn ? 'ANALYST' : 'SUB-ADMIN') + '</span>' +
+    '<span class="ch"><i class="ti ti-chevron-right"></i></span></div>';
+}
+
+// One loader for the whole screen. `loadAdminSubAdmins` is kept as an alias so
+// anything still calling it refreshes the same list.
 async function loadAdminAnalysts() {
-  var el=document.getElementById('admin-analyst-list'); if(!el) return;
-  el.innerHTML='<div style="padding:12px;color:var(--text2);font-size:12px;">Loading...</div>';
+  var el = document.getElementById('admin-team-list');
+  if(!el || !db) return;
+  el.innerHTML = '<div class="tm-empty">Loading...</div>';
   try {
-    var res=await db.from('users').select('*').order('created_at',{ascending:false});
+    var res = await db.from('users').select('*').order('created_at', {ascending:false});
     if(res.error) throw res.error;
-    var analysts=(res.data||[]).filter(function(u){return u.role==='analyst';});
-    if(!analysts.length){el.innerHTML='<div class="empty-state" style="padding:12px;"><i class="ti ti-users"></i> No analysts yet</div>';return;}
-    el.innerHTML='';
-    analysts.forEach(function(a){
-      var card=document.createElement('div');card.style.cssText='padding:10px 12px;background:var(--bg3);border-radius:9px;margin-bottom:8px;border:1px solid var(--border);';
-      card.innerHTML='<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;"><div style="width:34px;height:34px;border-radius:8px;background:rgba(255,30,60,0.1);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--red);">'+(a.name||a.username||'?').substring(0,2).toUpperCase()+'</div><div style="flex:1;"><div style="font-size:13px;font-weight:700;color:var(--text);">'+(a.name||'-')+'</div><div style="font-size:11px;color:var(--text3);">@'+(a.username||'-')+'</div></div><div style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;background:rgba(0,200,122,0.1);color:var(--green);">'+(a.status||'active').toUpperCase()+'</div></div><div style="font-size:10px;color:var(--text3);margin-bottom:8px;">Pairs: <span style="color:var(--red);font-weight:600;">'+(a.trading_pairs||'All')+'</span></div>';
-      var br=document.createElement('div');br.style.cssText='display:flex;gap:6px;';
-      var bE=document.createElement('button');bE.style.cssText='flex:1;padding:7px;background:rgba(77,158,255,0.1);border:1px solid rgba(77,158,255,0.2);border-radius:7px;color:#4D9EFF;font-size:11px;font-weight:700;cursor:pointer;';bE.textContent='Edit';bE.addEventListener('click',function(){openEditAnalystPopup(a);});
-      var bD=document.createElement('button');bD.style.cssText='flex:1;padding:7px;background:rgba(255,30,60,0.08);border:1px solid rgba(255,30,60,0.15);border-radius:7px;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;';bD.textContent='Delete';bD.addEventListener('click',function(){deleteAnalystAdmin(a.id);});
-      br.appendChild(bE);br.appendChild(bD);card.appendChild(br);el.appendChild(card);
-    });
-  } catch(e){el.innerHTML='<div style="padding:12px;color:var(--red);">Error: '+(e.message||'failed')+'</div>';}
+    var rows = res.data || [];
+    MMTM_ROWS = rows.filter(function(u) { return u.role === 'analyst' || u.role === 'sub_admin'; });
+    var an = MMTM_ROWS.filter(function(u) { return u.role === 'analyst'; });
+    var sa = MMTM_ROWS.filter(function(u) { return u.role === 'sub_admin'; });
+
+    // The owner is whoever is signed in here. Every tab, by definition.
+    var me = (typeof currentUser !== 'undefined' && currentUser) ? currentUser : {};
+    var owner = '<div class="tm-owner"><span class="av">' +
+      mmTkEsc(mmTmInitials(me.name || me.username || 'Admin')) + '</span>' +
+      '<span class="bd"><b>' + mmTkEsc(me.name || me.username || 'Admin') + '</b>' +
+      '<s>@' + mmTkEsc(me.username || '--') + ' \u00b7 owner</s></span>' +
+      '<span class="chip">ALL ACCESS</span></div>';
+
+    el.innerHTML = owner +
+      '<div class="tm-gh"><b style="color:var(--gold)">ANALYSTS &middot; ' + an.length + '</b><u></u>' +
+        '<span class="add" onclick="mmTmOpen(\'analyst\')">+ Add</span></div>' +
+      (an.length ? an.map(mmTmCard).join('') : '<div class="tm-empty">No analysts yet</div>') +
+      '<div class="tm-gh"><b style="color:#3B82F6">SUB-ADMINS &middot; ' + sa.length + '</b><u></u>' +
+        '<span class="add" onclick="mmTmOpen(\'sub_admin\')">+ Add</span></div>' +
+      (sa.length ? sa.map(mmTmCard).join('') : '<div class="tm-empty">No sub-admins yet</div>');
+  } catch(e) {
+    el.innerHTML = '<div class="tm-empty">Error: ' + (e.message || 'failed') + '</div>';
+  }
+}
+
+function loadAdminSubAdmins() { return loadAdminAnalysts(); }
+
+
+// Edit opens whichever popup already exists for that role, with the row the
+// list already holds - no second copy of either editor.
+function mmTmEdit(id) {
+  var p = MMTM_ROWS.filter(function(x) { return String(x.id) === String(id); })[0];
+  if(!p) return;
+  try {
+    if(p.role === 'analyst') openEditAnalystPopup(p);
+    else openEditSubAdminPopup(p);
+  } catch(e) {}
 }
 function openEditAnalystPopup(analyst){
   var ex=document.getElementById('edit-analyst-popup');if(ex)ex.remove();
@@ -18866,26 +19164,7 @@ async function handleAddSubAdmin(){
     loadAdminSubAdmins();
   }catch(e){errEl.textContent=mmT('err.generic','Error: ')+(e.message||'Failed');errEl.style.display='block';}
 }
-async function loadAdminSubAdmins(){
-  var el=document.getElementById('admin-subadmin-list');if(!el)return;
-  el.innerHTML='<div style="padding:12px;color:var(--text2);font-size:12px;">Loading...</div>';
-  try{
-    var res=await db.from('users').select('*').order('created_at',{ascending:false});if(res.error)throw res.error;
-    var subs=(res.data||[]).filter(function(u){return u.role==='sub_admin';});
-    if(!subs.length){el.innerHTML='<div class="empty-state" style="padding:12px;"><i class="ti ti-users"></i> No sub-admins yet</div>';return;}
-    el.innerHTML='';
-    var map={dashboard:'Dashboard',users:'Users',tickets:'Support',funds:'Fund Management',announce:'Announcements',signals:'Signals',analyst:'Administrator',academy:'Academy',banners:'Banners'};
-    subs.forEach(function(sub){
-      var card=document.createElement('div');card.style.cssText='padding:10px 12px;background:var(--bg3);border-radius:9px;margin-bottom:8px;border:1px solid var(--border);';
-      var tabs=(sub.allowed_tabs||'').split(',').map(function(t){return map[t]||t;}).join(' · ');
-      card.innerHTML='<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;"><div style="width:34px;height:34px;border-radius:8px;background:rgba(77,158,255,0.1);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#4D9EFF;">'+(sub.name||sub.username||'?').substring(0,2).toUpperCase()+'</div><div style="flex:1;"><div style="font-size:13px;font-weight:700;color:var(--text);">'+(sub.name||'-')+'</div><div style="font-size:11px;color:var(--text3);">@'+(sub.username||'-')+'</div></div><div style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;background:rgba(77,158,255,0.1);color:#4D9EFF;">SUB-ADMIN</div></div><div style="font-size:10px;color:var(--text3);margin-bottom:8px;">Access: <span style="color:#4D9EFF;font-weight:600;">'+tabs+'</span></div>';
-      var br=document.createElement('div');br.style.cssText='display:flex;gap:6px;';
-      var bE=document.createElement('button');bE.style.cssText='flex:1;padding:7px;background:rgba(77,158,255,0.1);border:1px solid rgba(77,158,255,0.2);border-radius:7px;color:#4D9EFF;font-size:11px;font-weight:700;cursor:pointer;';bE.textContent='Edit';bE.addEventListener('click',function(){openEditSubAdminPopup(sub);});
-      var bD=document.createElement('button');bD.style.cssText='flex:1;padding:7px;background:rgba(255,30,60,0.08);border:1px solid rgba(255,30,60,0.15);border-radius:7px;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;';bD.textContent='Delete';bD.addEventListener('click',function(){deleteSubAdmin(sub.id);});
-      br.appendChild(bE);br.appendChild(bD);card.appendChild(br);el.appendChild(card);
-    });
-  }catch(e){el.innerHTML='<div style="padding:12px;color:var(--red);">Error: '+(e.message||'failed')+'</div>';}
-}
+// loadAdminSubAdmins is now an alias defined with the team loader above.
 function openEditSubAdminPopup(sub){
   var ex=document.getElementById('edit-subadmin-popup');if(ex)ex.remove();
   var popup=document.createElement('div');popup.id='edit-subadmin-popup';popup.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(4px);z-index:9100;display:flex;align-items:flex-end;';
