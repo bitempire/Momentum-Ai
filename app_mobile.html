@@ -2138,6 +2138,9 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
    The back button is gone, so EXIT ADMIN lives at the foot of More. */
 #sub-admin .sub-content{padding-bottom:96px;}
 
+.adm-signout{margin-left:auto;width:30px;height:30px;border-radius:9px;background:var(--surface);
+ border:1px solid var(--border);color:var(--red);display:flex;align-items:center;justify-content:center;
+ font-size:15px;cursor:pointer;flex:none;}
 .adm-nav{position:absolute;left:16px;right:16px;bottom:20px;height:46px;
  background:rgba(18,18,24,.55);backdrop-filter:blur(18px) saturate(1.3);
  -webkit-backdrop-filter:blur(18px) saturate(1.3);
@@ -4859,6 +4862,7 @@ html[data-theme="light"] .adm-nb.on i,html[data-theme="light"] .adm-nb.on span{c
   <div id="sub-admin" class="sub-screen">
     <div class="sub-header">
       <div class="sub-title" data-i18n="scr.admin">ADMIN PANEL</div>
+      <button class="adm-signout" onclick="mmAdmSignOut()" title="Sign out"><i class="ti ti-logout"></i></button>
     </div>
     <!-- Admin Tab Bar -->
     <div id="admin-tab-bar" style="display:none;gap:0;padding:0 14px;background:var(--bg2);border-bottom:1px solid var(--border);overflow-x:auto;flex-shrink:0;-webkit-overflow-scrolling:touch;">
@@ -5391,7 +5395,8 @@ html[data-theme="light"] .adm-nb.on i,html[data-theme="light"] .adm-nb.on span{c
       <div class="adm-mrow" onclick="mmAdmNav('analyst')"><i class="ti ti-shield-lock"></i><b>Administrator</b><span class="ch"><i class="ti ti-chevron-right"></i></span></div>
       </div>
       <div class="adm-group">
-        <div class="adm-mrow exit" onclick="mmAdmExit()"><i class="ti ti-logout"></i><b>Exit admin panel</b></div>
+        <div class="adm-mrow" onclick="mmAdmExit()"><i class="ti ti-eye" style="color:#7FB0FF"></i><b style="color:#7FB0FF">View user portal</b><span class="ch"><i class="ti ti-chevron-right"></i></span></div>
+        <div class="adm-mrow exit" onclick="mmAdmSignOut()"><i class="ti ti-logout"></i><b>Sign out</b></div>
       </div>
     </div>
 
@@ -16376,21 +16381,29 @@ function switchAdminTab(tab) {
 // lights the More button instead, so the pill always shows where you are.
 var MMADM_PILL = ['dashboard','users','mt5','tickets'];
 
+var MMADM_TAB = 'dashboard';
+
+// Exactly ONE button is ever lit. Opening More used to ADD its light without
+// taking the current tab's away, so two glowed at once.
 function mmAdmPaintNav(tab) {
-  var onPill = MMADM_PILL.indexOf(tab) >= 0;
+  if(tab) MMADM_TAB = tab;
+  var moreOpen = !!(document.getElementById('adm-more') || {}).classList &&
+                 document.getElementById('adm-more').classList.contains('on');
+  var lit = moreOpen ? 'more' : ((MMADM_PILL.indexOf(MMADM_TAB) >= 0) ? MMADM_TAB : 'more');
   MMADM_PILL.forEach(function(x) {
     var el = document.getElementById('adm-nb-' + x);
-    if(el) el.classList.toggle('on', x === tab);
+    if(el) el.classList.toggle('on', x === lit);
   });
   var more = document.getElementById('adm-nb-more');
-  if(more) more.classList.toggle('on', !onPill);
+  if(more) more.classList.toggle('on', lit === 'more');
 }
 
 function mmAdmMore(open) {
   var el = document.getElementById('adm-more');
   if(!el) return;
   el.classList.toggle('on', !!open);
-  if(open) { el.scrollTop = 0; var m = document.getElementById('adm-nb-more'); if(m) m.classList.add('on'); }
+  if(open) el.scrollTop = 0;
+  mmAdmPaintNav();
 }
 
 function mmAdmNav(tab) {
@@ -16398,10 +16411,38 @@ function mmAdmNav(tab) {
   switchAdminTab(tab);
 }
 
-// The back button is gone, so this is the only way out of the panel.
+// Leaving the panel is deliberate now: this is the ONLY way back to the
+// customer app, and the edge swipe no longer does it by accident.
 function mmAdmExit() {
   mmAdmMore(false);
   hideSubScreen('sub-admin');
+}
+
+function mmAdmSignOut() {
+  if(!confirm('Sign out of Momentum AI?')) return;
+  mmAdmMore(false);
+  try { handleLogout(); } catch(e) {}
+}
+
+// A left-to-right swipe inside the admin panel closes whatever is open ON TOP
+// of it and stops there. It used to drop you into the customer app, which is
+// not somewhere you want to land mid-job.
+function mmAdmSwipeBack() {
+  var ov = document.querySelector('#amt-ov, #aus-ov, #tpl-act-ov, #ann-act-ov, #promo-act-ov, #asg-act-ov, #tm-act-ov');
+  if(ov) { ov.remove(); return true; }
+  var cmp = document.querySelector('.ann-cmp.on, .promo-ov.on, #asg-cmp.on, #ban-cmp.on, #acad-cmp.on, #tm-cmp.on');
+  if(cmp) {
+    if(cmp.id === 'ban-cmp') mmBanClose();
+    else if(cmp.id === 'promo-cmp') mmPromoClose();
+    else if(cmp.id === 'acad-cmp') mmAcClose();
+    else if(cmp.id === 'asg-cmp') mmSigCmpClose();
+    else if(cmp.id === 'tm-cmp') mmTmClose();
+    else cmp.classList.remove('on');
+    return true;
+  }
+  var more = document.getElementById('adm-more');
+  if(more && more.classList.contains('on')) { mmAdmMore(false); return true; }
+  return true;   // stay put. Only View user portal leaves.
 }
 
 // Wire up admin tab buttons via event delegation
@@ -25994,6 +26035,9 @@ async function ntSave(){
     }
     if(sx <= EDGE){
       var sc = topSubScreen();
+      // The admin panel is not a screen you leave by accident. Its own handler
+      // below closes whatever is open on top of it and stops there.
+      if(sc && sc.id === 'sub-admin'){ mode = 'adminback'; target = null; return; }
       if(sc){ mode = 'back'; target = sc; }
     }
   }, { passive: true });
@@ -26020,6 +26064,15 @@ async function ntSave(){
 
   document.addEventListener('touchend', function(e){
     clearRaf();
+    if(mode === 'adminback'){
+      var tt = (e.changedTouches && e.changedTouches[0]) || null;
+      var ddx = tt ? tt.clientX - sx : 0, ddy = tt ? tt.clientY - sy : 0;
+      mode = null; target = null; closeFn = null; locked = false;
+      if(ddx > BACK_MIN && Math.abs(ddy) < Math.abs(ddx)){
+        try { mmAdmSwipeBack(); } catch(err) {}
+      }
+      return;
+    }
     if(!mode || !target || !locked){ mode = null; target = null; closeFn = null; return; }
     var t = (e.changedTouches && e.changedTouches[0]) || null;
     var dx = t ? t.clientX - sx : 0;
