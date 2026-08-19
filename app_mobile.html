@@ -1281,6 +1281,30 @@ html[data-theme="light"] .amt-ov{background:#fff;}
 .fnd-empty{padding:26px 16px;text-align:center;font-size:11px;color:var(--text3);}
 .fnd-sect{font-family:'Orbitron',sans-serif;font-size:8.5px;letter-spacing:1.1px;color:var(--text3);
  margin:12px 0 8px;}
+/* ══ MAI PRESETS (19 Aug 2026) ═════════════════════════════════
+   Seventeen presets in one flat list, every line ending in the same eleven
+   words. They are really a GRID - four risk levels across four bands - so they
+   are grouped by band now, and the line keeps only what differs: entries, lots
+   and the risk figure, coloured by tier. Tapping a card opens the actions, so
+   a bin no longer sits one thumb-width from a pencil. */
+.tpl-gh{display:flex;align-items:center;gap:7px;margin:13px 2px 7px;}
+.tpl-gh b{font-family:'Orbitron',sans-serif;font-size:8.5px;letter-spacing:1px;color:var(--red);}
+.tpl-gh .c{font-size:8px;color:var(--text3);}
+.tpl-gh u{flex:1;height:1px;background:var(--border);text-decoration:none;}
+
+.tpl-card{position:relative;overflow:hidden;display:flex;align-items:center;gap:10px;padding:9px 10px;
+ border:1px solid var(--border);border-radius:11px;margin-bottom:6px;background:var(--surface);
+ cursor:pointer;}
+.tpl-card:active{background:var(--surface2);}
+.tpl-card .edge{position:absolute;left:0;top:0;bottom:0;width:3px;}
+.tpl-bd{flex:1;min-width:0;}
+.tpl-bd b{display:block;font-family:'Orbitron',sans-serif;font-size:11.5px;color:var(--text);
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tpl-bd s{display:block;font-size:8.5px;color:var(--text3);text-decoration:none;margin-top:4px;}
+.tpl-risk{font-family:'Orbitron',sans-serif;font-size:12px;flex:none;}
+.tpl-flag{font-size:7.5px;font-weight:700;padding:3px 6px;border-radius:5px;flex:none;}
+.tpl-ch{color:var(--text3);font-size:12px;flex:none;}
+
 
 
 
@@ -16089,46 +16113,156 @@ function admTplSummary(t){
   bits.push('risk '+(((s.risk||{}).risk_pct)!=null?s.risk.risk_pct:'?')+'%');
   return bits.join(' \u00b7 ');
 }
-function admTplCard(row, canDelete){
-  var s=row.settings||{};
-  var v=stnValidateTemplate(s);
-  var badge = v.errors.length
-      ? '<span style="color:var(--red);font-size:11px;font-weight:700;">'+v.errors.length+' problem'+(v.errors.length===1?'':'s')+'</span>'
-      : (v.warns.length
-         ? '<span style="color:var(--amber);font-size:11px;font-weight:700;">'+v.warns.length+' warning'+(v.warns.length===1?'':'s')+'</span>'
-         : '<span style="color:var(--green);font-size:11px;font-weight:700;">ok</span>');
-  var notes='';
-  for(var i=0;i<v.errors.length;i++) notes+='<div style="font-size:11px;color:var(--red);margin-top:4px;line-height:1.5;">'+v.errors[i]+'</div>';
-  for(var j=0;j<v.warns.length;j++)  notes+='<div style="font-size:11px;color:var(--amber);margin-top:4px;line-height:1.5;">'+v.warns[j]+'</div>';
-  return '<div style="padding:12px 0;border-top:1px solid var(--border);">'+
-    '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">'+
-      '<div style="font-size:13px;font-weight:700;color:var(--text);">'+(row.name||'(unnamed)')+
-        ' <span style="font-size:11px;color:var(--text3);font-weight:400;">v'+(s.version||'?')+'</span></div>'+
-      '<div style="display:flex;align-items:center;gap:10px;">'+badge+
-        (canDelete?'<i class="ti ti-pencil" style="font-size:15px;color:var(--text2);cursor:pointer;margin-right:4px;" onclick="admEditTpl(\''+row.id+'\')"></i>'+
-                   '<i class="ti ti-trash" style="font-size:15px;color:var(--red);cursor:pointer;" onclick="admDeleteTpl(\''+row.id+'\',\''+(row.name||'').replace(/\x27/g,"")+'\')"></i>':'')+
-      '</div></div>'+
-    '<div style="font-size:11px;color:var(--text2);margin-top:5px;line-height:1.5;">'+admTplSummary(s)+'</div>'+
-    notes+'</div>';
+// admTplCard and loadAdminTemplates were rebuilt together, below.
+// ── MAI PRESETS, banded (19 Aug 2026) ─────────────────────────
+// The band comes from the rung count, which is what actually defines it:
+// 4 rungs is the 50 pip band, 8 is 100, 14 is 150, 18 is 200. Anything else
+// is an original preset and gets its own group rather than being forced in.
+var MMTPL_BANDS = {4:'50 PIP', 8:'100 PIP', 14:'150 PIP', 18:'200 PIP'};
+
+function mmTplRisk(pct) {
+  var r = Number(pct) || 0;
+  return (r <= 5) ? '#22c98a' : (r <= 10) ? '#d9a441' : (r <= 20) ? '#ff8c42' : '#e03050';
 }
-async function loadAdminTemplates(){
-  var mai=document.getElementById('adm-tpl-list'), cnt=document.getElementById('adm-tpl-count');
-  if(!mai||!db) return;
-  try{
+function mmTplRungs(s) {
+  try { return (s.dca && s.dca.layers) ? s.dca.layers.length : 0; } catch(e) { return 0; }
+}
+function mmTplLots(s) {
+  var n = 0;
+  try { (s.dca.layers || []).forEach(function(l) { n += Number(l.lots) || 0; }); } catch(e) {}
+  return n;
+}
+function mmTplPct(s) {
+  try { return (s.risk && s.risk.risk_pct != null) ? s.risk.risk_pct : null; } catch(e) { return null; }
+}
+
+function admTplCard(row) {
+  var s = row.settings || {};
+  var v = stnValidateTemplate(s);
+  var pct = mmTplPct(s);
+  var col = mmTplRisk(pct);
+  var rungs = mmTplRungs(s);
+  var lots = mmTplLots(s);
+  // The verdict only earns space when it is NOT ok, which is the whole point of
+  // it. Seventeen green "ok" labels tell nobody anything.
+  var flag = v.errors.length
+    ? '<span class="tpl-flag" style="background:rgba(255,30,60,.14);color:var(--red)">' +
+      v.errors.length + ' problem' + (v.errors.length === 1 ? '' : 's') + '</span>'
+    : (v.warns.length
+       ? '<span class="tpl-flag" style="background:rgba(255,176,32,.14);color:var(--amber)">' +
+         v.warns.length + ' warning' + (v.warns.length === 1 ? '' : 's') + '</span>'
+       : '');
+  return '<div class="tpl-card" onclick="mmTplActions(\'' + row.id + '\')">' +
+    '<span class="edge" style="background:' + col + '"></span>' +
+    '<span class="tpl-bd"><b>' + mmTkEsc(row.name || '(unnamed)') + '</b>' +
+      '<s>' + rungs + ' entries \u00b7 ' + lots.toFixed(2) + ' lots \u00b7 v' + (s.version || '?') + '</s></span>' +
+    flag +
+    '<span class="tpl-risk" style="color:' + col + '">' + (pct == null ? '--' : pct + '%') + '</span>' +
+    '<span class="tpl-ch"><i class="ti ti-chevron-right"></i></span></div>';
+}
+
+function mmTplActionsClose() {
+  var ov = document.getElementById('tpl-act-ov');
+  if(ov) ov.remove();
+}
+
+// Tap opens the actions. Edit and Delete used to sit a thumb-width apart and a
+// deleted preset does not come back.
+function mmTplActions(id) {
+  var row = _admTpls.filter(function(x) { return String(x.id) === String(id); })[0];
+  if(!row) return;
+  mmTplActionsClose();
+  var s = row.settings || {};
+  var v = stnValidateTemplate(s);
+  var pct = mmTplPct(s);
+  var col = mmTplRisk(pct);
+  var rungs = mmTplRungs(s);
+  var band = MMTPL_BANDS[rungs] || 'ORIGINAL';
+  var notes = '';
+  v.errors.forEach(function(e) {
+    notes += '<div style="font-size:10px;color:var(--red);margin-top:5px;line-height:1.5">' + mmTkEsc(e) + '</div>';
+  });
+  v.warns.forEach(function(w) {
+    notes += '<div style="font-size:10px;color:var(--amber);margin-top:5px;line-height:1.5">' + mmTkEsc(w) + '</div>';
+  });
+
+  var ov = document.createElement('div');
+  ov.id = 'tpl-act-ov';
+  ov.className = 'aus-ov on';
+  ov.onclick = function(e) { if(e.target === ov) mmTplActionsClose(); };
+  ov.innerHTML =
+    '<div class="aus-card">' +
+      '<span class="aus-x" onclick="mmTplActionsClose()"><i class="ti ti-x"></i></span>' +
+      '<div class="amt-hero" style="background:linear-gradient(150deg,' + col + '2e,' + col + '08 55%,rgba(255,255,255,.02))">' +
+        '<span class="amt-mesh"></span>' +
+        '<div class="amt-who">' +
+          '<span class="amt-av2" style="background:' + col + '26;color:' + col + '"><i class="ti ti-template"></i></span>' +
+          '<span class="amt-dwho"><b>' + mmTkEsc(row.name || '(unnamed)') + '</b>' +
+            '<s>' + band + ' \u00b7 v' + (s.version || '?') + '</s></span>' +
+          '<span class="amt-pill" style="margin-right:30px;background:' + col + '1f;color:' + col + '">' +
+            (pct == null ? '--' : pct + '%') + '</span>' +
+        '</div>' +
+        '<div class="amt-m2">' +
+          '<div><i class="ti ti-stairs"></i><span><div class="k">ENTRIES</div><div class="v">' + rungs + '</div></span></div>' +
+          '<div><i class="ti ti-scale"></i><span><div class="k">TOTAL LOTS</div><div class="v">' +
+            mmTplLots(s).toFixed(2) + '</div></span></div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="amt-db">' +
+        (notes ? '<div class="amt-sect">CHECKS</div>' + notes : '') +
+        '<div class="amt-sect">ACTIONS</div>' +
+        '<div class="amt-alist">' +
+          '<div class="amt-act amt-glass" onclick="mmTplActionsClose(); admEditTpl(\'' + row.id + '\');">' +
+            '<span class="amt-ring" style="border-color:#7FB0FF;color:#7FB0FF"><i class="ti ti-pencil"></i></span>' +
+            '<span class="tx"><b>Edit in Smart Tools</b><s>Prices the ladder against a live signal as you build</s></span>' +
+            '<span class="ch"><i class="ti ti-chevron-right"></i></span></div>' +
+        '</div>' +
+        '<button class="amt-del" onclick="mmTplActionsClose(); admDeleteTpl(\'' + row.id + '\',\'' +
+          mmTkEsc(String(row.name || '').replace(/'/g, '')) + '\');">DELETE PRESET</button>' +
+      '</div>' +
+    '</div>';
+  document.body.appendChild(ov);
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() { ov.classList.add('show'); });
+  });
+}
+
+async function loadAdminTemplates() {
+  var mai = document.getElementById('adm-tpl-list'), cnt = document.getElementById('adm-tpl-count');
+  if(!mai || !db) return;
+  try {
     // Presets only. Never fetch user templates here: at a thousand users that
     // is five thousand rows the admin cannot act on anyway.
-    var r=await db.from('smart_templates').select('*').eq('kind','mai').order('slot');
+    var r = await db.from('smart_templates').select('*').eq('kind','mai').order('slot');
     if(r.error) throw r.error;
-    // MAI presets ONLY. User templates are deliberately not listed: a thousand
-    // users at five slots each is five thousand rows an admin can do nothing
-    // about, and it would bury the presets that actually matter.
-    var m=(r.data||[]).filter(function(x){return x.kind==='mai';});
-    _admTpls=m;
-    if(cnt) cnt.textContent=m.length+' preset'+(m.length===1?'':'s');
-    mai.innerHTML = m.length ? m.map(function(x){return admTplCard(x,true);}).join('')
-      : '<div class="empty-state" style="padding:16px;"><i class="ti ti-layout-grid"></i>No MAI presets yet</div>';
-  }catch(e){
-    mai.innerHTML='<div class="empty-state" style="padding:16px;">Error: '+(e.message||e)+'</div>';
+    var m = (r.data || []).filter(function(x) { return x.kind === 'mai'; });
+    _admTpls = m;
+    if(cnt) cnt.textContent = m.length + ' preset' + (m.length === 1 ? '' : 's');
+    if(!m.length) {
+      mai.innerHTML = '<div class="empty-state" style="padding:16px;"><i class="ti ti-layout-grid"></i>No MAI presets yet</div>';
+      return;
+    }
+    // Group by band, in band order, with anything that fits no band last.
+    var groups = {}, order = [];
+    m.forEach(function(x) {
+      var rungs = mmTplRungs(x.settings || {});
+      var key = MMTPL_BANDS[rungs] || 'ORIGINAL';
+      if(!groups[key]) { groups[key] = []; order.push(key); }
+      groups[key].push(x);
+    });
+    var seq = ['50 PIP','100 PIP','150 PIP','200 PIP'].filter(function(k) { return groups[k]; });
+    order.forEach(function(k) { if(seq.indexOf(k) < 0) seq.push(k); });
+
+    mai.innerHTML = seq.map(function(k) {
+      var g = groups[k];
+      // Inside a band, order by risk so the grid reads the way it was designed.
+      g.sort(function(a, b) { return (mmTplPct(a.settings||{}) || 0) - (mmTplPct(b.settings||{}) || 0); });
+      return '<div class="tpl-gh"><b' + (k === 'ORIGINAL' ? ' style="color:var(--text3)"' : '') + '>' + k + '</b>' +
+        '<span class="c">' + g.length + ' preset' + (g.length === 1 ? '' : 's') + '</span><u></u></div>' +
+        g.map(admTplCard).join('');
+    }).join('');
+  } catch(e) {
+    mai.innerHTML = '<div class="empty-state" style="padding:16px;">Error: ' + (e.message || e) + '</div>';
   }
 }
 // PUBLISH MODE. New and Edit hand off to the Smart Tools editor rather than
