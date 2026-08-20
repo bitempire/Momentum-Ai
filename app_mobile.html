@@ -718,6 +718,15 @@ html[data-theme="light"] .nav-btn.active span:not(.nav-ico-wrap) { color: #fff; 
 .pcard-plan.is-basic{background:rgba(59,130,246,.13);border-color:rgba(59,130,246,.35);color:var(--blue);}
 .pcard-plan.is-staff{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.15);color:var(--text2);}
 
+/* ── THE HOME BANNER, 20 Aug 2026 ───────────────────────────────
+   The strip only ever travels ONE WAY now, and each picture drifts and
+   grows slowly while its banner is held, so a paused slideshow never
+   looks frozen. `alternate` means it eases back rather than snapping. */
+.ban-art{animation:banKen 9s ease-in-out infinite alternate;}
+@keyframes banKen{from{transform:scale(1) translateX(0)}
+                  to{transform:scale(1.10) translateX(-2%)}}
+@media (prefers-reduced-motion: reduce){ .ban-art{animation:none;} }
+
 /* the label lives INSIDE the field now, which buys a line of height back */
 .auth-ff{position:relative;margin-bottom:12px;}
 .auth-ff .auth-label{position:absolute;left:14px;top:7px;margin:0;font-size:7.5px;letter-spacing:1px;
@@ -20766,16 +20775,53 @@ function banPaint(){
   track.style.transform='translateX(-'+(_banAt*100)+'%)';
   if(dots){
     [].forEach.call(dots.children, function(u,i){
-      u.style.width = (i===_banAt) ? '16px' : '5px';
-      u.style.background = (i===_banAt) ? '#fff' : 'rgba(255,255,255,.42)';
+      // `_banAt` can be the COPY at the end, so the dots read modulo the
+      // real count and light the first one as it slides into it.
+      var lit = _banAt % _banRows.length;
+      u.style.width = (i===lit) ? '16px' : '5px';
+      u.style.background = (i===lit) ? '#fff' : 'rgba(255,255,255,.42)';
     });
   }
 }
-function banGo(i){ if(!_banRows.length) return; _banAt=(i+_banRows.length)%_banRows.length; banPaint(); }
+var BAN_EASE='transform .55s cubic-bezier(.4,0,.2,1)';
+// Kept for any caller that still names it. A jump is instant and one way,
+// so it never animates backwards either.
+function banGo(i){
+  if(!_banRows.length) return;
+  var track=document.getElementById('more-banner-track');
+  _banAt=(i+_banRows.length)%_banRows.length;
+  if(track) track.style.transition='none';
+  banPaint();
+  if(track){ void track.offsetWidth; track.style.transition=BAN_EASE; }
+}
+function banNext(){
+  if(_banRows.length<2) return;
+  var track=document.getElementById('more-banner-track');
+  if(!track) return;
+  var last=_banRows.length;               // the index of the copied first banner
+  _banAt++;
+  track.style.transition=BAN_EASE;
+  banPaint();
+  if(_banAt===last){
+    // THE RESET RIDES THE END OF THE SLIDE, never a guessed delay. A timer that
+    // hopes to land when the animation finishes drifts apart from it on a slow
+    // phone, and that is what makes a carousel stutter.
+    var done=function(e){
+      if(e && e.target!==track) return;
+      track.removeEventListener('transitionend', done);
+      track.style.transition='none';
+      _banAt=0;
+      banPaint();
+      void track.offsetWidth;
+      track.style.transition=BAN_EASE;
+    };
+    track.addEventListener('transitionend', done);
+  }
+}
 function banStart(){
   banStop();
   if(_banRows.length<2) return;
-  _banTimer=setInterval(function(){ if(!_banPaused) banGo(_banAt+1); }, 4000);
+  _banTimer=setInterval(function(){ if(!_banPaused) banNext(); }, 4000);
 }
 async function loadMoreBanners(){
   var wrap=document.getElementById('more-banner-wrap');
@@ -20788,14 +20834,19 @@ async function loadMoreBanners(){
     _banRows=r.data||[];
   }catch(e){ _banRows=[]; }
   if(!_banRows.length){ wrap.style.display='none'; banStop(); return; }
-  track.innerHTML=_banRows.map(function(b){
+  function banSlide(b){
     var safe=String(b.link_url||'').replace(/'/g,'').replace(/"/g,'');
     return '<div style="flex:0 0 100%;height:100%;position:relative;overflow:hidden;'
       + (safe?'cursor:pointer;':'') + '"'
       + (safe?" onclick=\"window.open('"+safe+"','_blank')\"":'')
-      + '><div style="position:absolute;inset:0;background-size:cover;background-position:center;'
+      + '><div class="ban-art" style="position:absolute;inset:0;background-size:cover;background-position:center;'
       + "background-image:url('"+bannerPublicUrl(b.image_path)+"');\"></div></div>";
-  }).join('');
+  }
+  // THE COPY OF THE FIRST BANNER is what makes one way possible: the strip
+  // slides forward into it instead of rewinding to reach the start.
+  var _banHtml=_banRows.map(banSlide).join('');
+  if(_banRows.length>1) _banHtml += banSlide(_banRows[0]);
+  track.innerHTML=_banHtml;
   if(dots){
     dots.innerHTML=_banRows.map(function(){ return '<u style="height:5px;border-radius:3px;display:block;transition:all .3s;"></u>'; }).join('');
     dots.style.display = _banRows.length>1 ? 'flex' : 'none';
