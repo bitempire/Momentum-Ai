@@ -2755,6 +2755,12 @@ html[data-theme="light"] .adm-nb.on i,html[data-theme="light"] .adm-nb.on span{c
   #scan-results > *{opacity:1;transform:none;transition:none;}
   .mm-dust{display:none;}}
 .sh-stage{position:absolute;inset:0;}
+/* Drawn at HALF the device resolution and stretched. The stretch is a free
+   blur on something that is nothing but soft light, and it costs less than
+   the 190px canvas it replaces. */
+.sh-field{position:absolute;inset:0;z-index:0;display:block;width:100%;height:100%;
+ pointer-events:none;}
+.scan-hero.done .sh-field{opacity:0;transition:opacity .5s ease;}
 .sh-rings{position:absolute;inset:0;pointer-events:none;display:flex;align-items:center;justify-content:center;}
 .sh-rings span{position:absolute;border-radius:50%;border:1px solid rgba(255,30,60,.07);}
 .sh-glow{position:absolute;left:50%;top:calc(50% - 145px);width:340px;height:340px;margin:-170px 0 0 -170px;border-radius:50%;
@@ -6360,6 +6366,11 @@ html[data-theme="light"] .adm-nb.on i,html[data-theme="light"] .adm-nb.on span{c
            scan-change, scan-symbol, scan-tf, scan-btn.
            ══════════════════════════════════════════════════ -->
       <div class="scan-hero" id="scan-hero">
+        <!-- THE FIELD. Clouds, dust, the core light and the grain live here,
+             across the whole hero. The core canvas above carries the particles
+             ONLY, so it can still fly and shrink without taking the light with
+             it. Both are drawn by one loop in mmScanCore. -->
+        <canvas id="scan-field" class="sh-field"></canvas>
         <div class="sh-rings">
           <span style="width:230px;height:230px;"></span>
           <span style="width:330px;height:330px;"></span>
@@ -24080,28 +24091,19 @@ function mmScanCore(){
   var ctx = cv.getContext('2d');
   var W, H, CX, CY, S, U;
   var P = [], dust = [], IMG = null;
+
+  // THE FIELD. A second canvas filling the hero, carrying everything that is
+  // soft light. It never moves, so nothing it draws can be cut off by a box.
+  var hero = host.parentNode;
+  var fcv = document.getElementById('scan-field');
+  var fctx = fcv ? fcv.getContext('2d') : null;
+  var FW = 0, FH = 0, grain = null, gx = 0, gy = 0;
   var t = 0, raf = null, running = false;
   var rate = 1, gain = 1, spread = 0, trailAmt = 0, gearAmt = 0, spin = 0;
 
   // THE HALO IS ONE SPRITE, BUILT ONCE, and stamped. Building a radial
   // gradient per particle per frame is exactly what made this core stutter
   // the first time it was written; brightness rides globalAlpha instead.
-  var pat = null;
-  function makeNoise(){
-    try {
-      var nc = document.createElement('canvas'); nc.width = nc.height = 96;
-      var nx = nc.getContext('2d');
-      var id = nx.createImageData(96,96), dd = id.data;
-      for(var i=0;i<dd.length;i+=4){
-        var v = 128 + (Math.random()*46-23);
-        dd[i]=v; dd[i+1]=v*0.55; dd[i+2]=v*0.6; dd[i+3]=255;
-      }
-      nx.putImageData(id,0,0);
-      pat = ctx.createPattern(nc,'repeat');
-    } catch(e){ pat = null; }
-  }
-  makeNoise();
-
   var sprite = null;
   function makeSprite(){
     try {
@@ -24152,14 +24154,54 @@ function mmScanCore(){
                bright:Math.random()<0.13, ox:p[0]-CX, oy:p[1]-CY,
                lay:0.35+Math.random()*0.65, x:p[0], y:p[1] };
     });
-    for(var q=0;q<70;q++) dust.push({ x:Math.random()*W, y:Math.random()*H,
-      r:(0.5+Math.random()*1.4)*U, ph:Math.random()*6.2832, vx:(Math.random()-0.5)*0.06*U });
+    // THE DUST BELONGS TO THE FIELD NOW, so it is seeded in field pixels and
+    // drifts across the whole hero rather than inside the core box.
+    var fw = FW || W, fh = FH || H;
+    for(var q=0;q<70;q++) dust.push({ x:Math.random()*fw, y:Math.random()*fh,
+      r:0.5+Math.random()*1.4, ph:Math.random()*6.2832, vx:(Math.random()-0.5)*0.06 });
   }
 
   // THE BOX IS NOT ALWAYS SQUARE, so every scale derives from the SHORT side.
   // This is the ONLY place the bitmap is sized and the only place the points
   // are rebuilt. Building either per frame is what made this stutter once.
+  // HALF RESOLUTION ON PURPOSE. At a 2x phone that lands at roughly one field
+  // pixel per CSS pixel, and the browser stretches it back up, which is a free
+  // blur on light that is meant to be soft anyway.
+  function flayout(){
+    if(!fctx || !hero) return;
+    var w = hero.clientWidth, h = hero.clientHeight;
+    if(!w || !h) return;
+    var nw = Math.round(w*dpr*0.5), nh = Math.round(h*dpr*0.5);
+    if(nw === FW && nh === FH) return;
+    fcv.width = nw; fcv.height = nh; FW = nw; FH = nh;
+    gx = FW/2; gy = FH*0.34;
+    grain = null;
+    // The grain is built ONCE and MASKED, so it fades out long before the
+    // bottom of the hero. Unmasked it paints a lit rectangle, which is the
+    // exact fault that put a square on the screen.
+    try {
+      var nc = document.createElement('canvas'); nc.width = FW; nc.height = FH;
+      var nx = nc.getContext('2d');
+      var id = nx.createImageData(FW,FH), dd = id.data;
+      for(var q=0;q<dd.length;q+=4){
+        var v = 128 + (Math.random()*46-23);
+        dd[q]=v; dd[q+1]=v*0.55; dd[q+2]=v*0.6; dd[q+3]=255;
+      }
+      nx.putImageData(id,0,0);
+      nx.globalCompositeOperation = 'destination-in';
+      var mr = Math.max(FW,FH)*0.55;
+      var mg = nx.createRadialGradient(gx,gy,0,gx,gy,mr);
+      for(var m2=0;m2<=8;m2++){
+        var mq = m2/8;
+        mg.addColorStop(mq,'rgba(0,0,0,'+Math.pow(1-mq,1.9).toFixed(4)+')');
+      }
+      nx.fillStyle = mg; nx.fillRect(0,0,FW,FH);
+      grain = nc;
+    } catch(e){ grain = null; }
+  }
+
   function layout(){
+    flayout();
     var cw = host.clientWidth, ch = host.clientHeight || cw;
     if(!cw || !ch) return;
     var nw = Math.round(cw*dpr), nh = Math.round(ch*dpr);
@@ -24188,67 +24230,65 @@ function mmScanCore(){
       ctx.clearRect(0,0,W,H);
     }
 
-    // ── the sign in page's paint, RE-AIMED FOR A SMALL BOX ──
-    // On the sign in screen the canvas is the whole phone, so the clouds run
-    // off the edges and nobody sees where they end. HERE THE CANVAS IS ONLY AS
-    // BIG AS THE CORE, so any light still burning at the rim is cut off square
-    // and reads as a hard ring. Every centre therefore stays within 0.08 of the
-    // short side and every radius ends by 0.46 of it, and each cloud fades on a
-    // curve rather than a straight line so the light RUNS OUT instead of
-    // stopping. Three stops over near black always leave a step.
-    var t3 = t*1.6;
-    var b = [[0.50+0.075*Math.sin(t3/7), 0.50+0.065*Math.cos(t3/9), 0.40, '255,40,80'],
-             [0.50+0.070*Math.cos(t3/8), 0.50+0.055*Math.sin(t3/6), 0.35, '190,10,60'],
-             [0.50+0.060*Math.sin(t3/5), 0.50+0.050*Math.cos(t3/7), 0.37, '255,70,100']];
-    for(var ci=0;ci<b.length;ci++){
-      var bx = b[ci][0]*W, by = b[ci][1]*H, br = b[ci][2]*S;
-      if(br <= 0) continue;
-      var gg = ctx.createRadialGradient(bx,by,0,bx,by,br);
-      for(var q=0;q<=8;q++){
-        var qq = q/8;
-        gg.addColorStop(qq,'rgba('+b[ci][3]+','+(0.22*Math.pow(1-qq,2.6)).toFixed(4)+')');
+    // ══ THE FIELD, drawn across the whole hero ══
+    // Nothing here is inside the core box any more, so nothing here can be cut
+    // off by it. This is the sign in page's own paint at the sign in page's own
+    // scale: the clouds run off the edges and their ends are never seen.
+    if(fctx && FW){
+      fctx.clearRect(0,0,FW,FH);
+      var hr = hero.getBoundingClientRect(), cr = host.getBoundingClientRect();
+      if(hr.width && hr.height){
+        gx = (cr.left + cr.width/2  - hr.left) / hr.width  * FW;
+        gy = (cr.top  + cr.height/2 - hr.top ) / hr.height * FH;
       }
-      ctx.fillStyle = gg; ctx.beginPath(); ctx.arc(bx,by,br,0,6.2832); ctx.fill();
+      var t3 = t*1.6;
+      var b = [[0.26+0.10*Math.sin(t3/7), 0.30+0.07*Math.cos(t3/9), 0.62, '255,40,80'],
+               [0.78+0.09*Math.cos(t3/8), 0.24+0.06*Math.sin(t3/6), 0.52, '190,10,60'],
+               [0.50+0.07*Math.sin(t3/5), 0.80+0.05*Math.cos(t3/7), 0.58, '255,70,100']];
+      for(var ci=0;ci<b.length;ci++){
+        var bx = b[ci][0]*FW, by = b[ci][1]*FH, br = b[ci][2]*Math.max(FW,FH)*0.58;
+        if(br <= 0) continue;
+        var gg = fctx.createRadialGradient(bx,by,0,bx,by,br);
+        gg.addColorStop(0,'rgba('+b[ci][3]+',0.20)');
+        gg.addColorStop(1,'rgba('+b[ci][3]+',0)');
+        fctx.fillStyle = gg; fctx.beginPath(); fctx.arc(bx,by,br,0,6.2832); fctx.fill();
+      }
+
+      for(var di=0;di<dust.length;di++){
+        var D = dust[di];
+        D.x += D.vx; D.y -= 0.06;
+        if(D.y < 0) D.y = FH; if(D.y > FH) D.y = 0;
+        if(D.x < 0) D.x += FW; if(D.x > FW) D.x -= FW;
+        if(D.r <= 0) continue;
+        fctx.fillStyle = 'rgba(255,200,215,'+(0.10+0.10*Math.sin(t*9+D.ph)).toFixed(3)+')';
+        fctx.beginPath(); fctx.arc(D.x,D.y,D.r,0,6.2832); fctx.fill();
+      }
+
+      fctx.globalCompositeOperation = 'lighter';
+      var gi = 0.34*(1+0.09*Math.sin(t*6))*(1+0.22*gearAmt)*gain;
+      if(gi > 1) gi = 1;
+      var gRad = FW*0.78;
+      if(gRad > 0){
+        var gr = fctx.createRadialGradient(gx,gy,3,gx,gy,gRad);
+        for(var q2=0;q2<=12;q2++){
+          var qa = q2/12, fall = Math.pow(1-qa,2.4);
+          gr.addColorStop(qa, qa < 0.42
+            ? 'rgba(255,130,155,'+(gi*fall).toFixed(4)+')'
+            : 'rgba(255,30,60,'+(gi*fall*0.9).toFixed(4)+')');
+        }
+        fctx.fillStyle = gr; fctx.beginPath(); fctx.arc(gx,gy,gRad,0,6.2832); fctx.fill();
+      }
+      // The grain is already masked, so it fades out instead of ending.
+      if(grain){
+        fctx.globalAlpha = 0.05;
+        fctx.drawImage(grain, -((t*22)%40), -((t*15)%40));
+        fctx.globalAlpha = 1;
+      }
+      fctx.globalCompositeOperation = 'source-over';
     }
 
-    for(var di=0;di<dust.length;di++){
-      var D = dust[di];
-      D.x += D.vx; D.y -= 0.06*U;
-      if(D.y < 0) D.y = H;
-      if(D.x < 0) D.x += W; if(D.x > W) D.x -= W;
-      if(D.r <= 0) continue;
-      ctx.fillStyle = 'rgba(255,200,215,'+(0.10+0.10*Math.sin(t*9+D.ph)).toFixed(3)+')';
-      ctx.beginPath(); ctx.arc(D.x,D.y,D.r,0,6.2832); ctx.fill();
-    }
-
+    // ══ THE CORE, particles only ══
     ctx.globalCompositeOperation = 'lighter';
-
-    var gi = 0.34*(1+0.09*Math.sin(t*6))*(1+0.22*gearAmt)*gain;
-    if(gi > 1) gi = 1;
-    var gRad = S*0.46;                       // ends well inside the rim
-    if(gRad > 0){
-      var gr = ctx.createRadialGradient(CX,CY,3,CX,CY,gRad);
-      for(var q2=0;q2<=12;q2++){
-        var qa = q2/12, fall = Math.pow(1-qa,2.2);
-        gr.addColorStop(qa, qa < 0.42
-          ? 'rgba(255,130,155,'+(gi*fall).toFixed(4)+')'
-          : 'rgba(255,30,60,'+(gi*fall*0.9).toFixed(4)+')');
-      }
-      ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(CX,CY,gRad,0,6.2832); ctx.fill();
-    }
-
-    // THE DITHER, and it is the only thing that removes rings on near black.
-    // A display has 256 levels and a slow fade lands on steps it cannot sit
-    // between, so NO number of gradient stops helps. Built once, drifting so
-    // it disappears into the glow rather than sitting on it as a texture.
-    if(pat){
-      ctx.save();
-      ctx.globalAlpha = 0.05;
-      ctx.translate(-((t*40)%96), -((t*26)%96));
-      ctx.fillStyle = pat; ctx.fillRect(0,0,W+96,H+96);
-      ctx.restore();
-    }
-
     for(var i=0;i<P.length;i++){
       var o = P[i];
       // AT REST THIS IS EXACTLY THE SIGN IN PAGE. The gear only turns the
@@ -24318,6 +24358,14 @@ function mmScanCore(){
   var _mimg = new Image();
   _mimg.onload = function(){ IMG = _mimg; build(); };
   _mimg.src = markUrl();
+
+  // The field is sized off the hero, so a rotation or a keyboard opening has to
+  // resize it. Debounced, because resize fires in bursts.
+  var _frsz = 0;
+  window.addEventListener('resize', function(){
+    clearTimeout(_frsz);
+    _frsz = setTimeout(function(){ FW = 0; flayout(); build(); }, 220);
+  });
 
   _mmCore = { start:start, stop:stop, tune:tune, spr:spr, trl:trl, relayout:layout, gear:gear };
 
