@@ -590,7 +590,12 @@ html[data-theme="light"] .nav-btn.active span:not(.nav-ico-wrap) { color: #fff; 
    width, so the extra room went to the margins rather than to the fields.
    The cap only ever earned its place on a wide browser window, and it is
    restored below at a width no handset reaches. */
-.auth-body > * { margin-left: auto; margin-right: auto; }
+/* WIDTH:100% IS LOAD-BEARING. `.auth-body` became a FLEX COLUMN for the
+   vertical balance, and AUTO MARGINS ON A FLEX ITEM CANCEL STRETCH in the
+   cross axis - the children stopped filling the width and shrank to fit
+   their own content, which is why the form went narrow. As block elements
+   they filled the width for free; as flex items they have to be told. */
+.auth-body > * { width: 100%; margin-left: auto; margin-right: auto; }
 @media (min-width: 620px){
   .auth-body > * { max-width: 460px; }
 }
