@@ -505,57 +505,61 @@ html[data-theme="light"] .nav-btn.active span:not(.nav-ico-wrap) { color: #fff; 
 /* ═══════════════════════════════════
    AUTH SCREEN
 ═══════════════════════════════════ */
-#screen-auth {
-  background: var(--bg);
-  justify-content: center;
-  align-items: center;
-  padding: 24px 20px;
-}
-/* ── SIGN IN, 20 Aug 2026 ───────────────────────────────────────
-   The card became a SPLIT SCREEN: a branded ember panel across the top,
-   curving into the form below. The panel is lit from beneath and breathes,
-   the same movement as the app icon and the header tile. */
-.auth-card {
-  width: 100%;
-  max-width: none;      /* the panel spans the whole screen, not a 420px column */
-  background: transparent;
-  border: 0;
-  border-radius: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  flex: 1;              /* fill the screen height instead of guessing at 100% */
-  min-height: 0;        /* without this the scrolling body cannot shrink */
-}
+/* ── WELCOME + SIGN IN, 20 Aug 2026 ─────────────────────────────
+   The screen now opens on a WELCOME pane. A field of scanner particles
+   gathers out of the dark and lands on the shape of the logo. Every
+   particle target is a real pixel of --mmai-mark, sampled at runtime,
+   so the shape can never drift from the mark itself and there is no
+   second image to keep in step.
+
+   BOTH PANES LIVE IN #screen-auth on purpose. Every existing
+   showScreen('screen-auth') call - boot, sign out, back from pending -
+   therefore lands on the welcome pane with nothing else to change.
+   `.mm-open` is the only state: it lifts the mark to the top and
+   brings the form up underneath it. */
+#screen-auth{background:var(--bg);padding:0 !important;align-items:stretch !important;
+ justify-content:flex-start !important;position:absolute;overflow:hidden;}
+#screen-auth:before{content:'';position:absolute;left:50%;top:38%;width:340px;height:340px;
+ margin:-170px 0 0 -170px;z-index:0;pointer-events:none;
+ background:radial-gradient(circle,rgba(255,30,60,.14),transparent 62%);
+ transition:top .8s cubic-bezier(.22,.61,.36,1),opacity .8s ease;}
+#screen-auth.mm-open:before{top:15%;opacity:.5;}
+
+.wel-stage{position:absolute;left:50%;top:38%;width:300px;height:300px;z-index:2;
+ transform:translate(-50%,-50%);pointer-events:none;
+ transition:top .8s cubic-bezier(.22,.61,.36,1),transform .8s cubic-bezier(.22,.61,.36,1);}
+#screen-auth.mm-open .wel-stage{top:106px;transform:translate(-50%,-50%) scale(.42);}
+.wel-stage canvas{display:block;width:300px;height:300px;}
+
+.wel-pane{position:absolute;inset:0;z-index:6;
+ transition:opacity .42s ease,transform .5s cubic-bezier(.22,.61,.36,1);}
+#screen-auth.mm-open .wel-pane{opacity:0;pointer-events:none;transform:translateY(-16px);}
+.wel-copy{position:absolute;left:0;right:0;bottom:134px;padding:0 26px;text-align:center;
+ opacity:0;transform:translateY(10px);
+ transition:opacity .8s ease,transform .8s cubic-bezier(.22,.61,.36,1);}
+.wel-copy.in{opacity:1;transform:none;}
+.wel-h{font-family:'Orbitron',sans-serif;font-size:19px;font-weight:700;letter-spacing:.4px;color:var(--text);}
+.wel-p{font-size:12px;color:var(--text2);line-height:1.65;margin-top:10px;}
+.wel-acts{position:absolute;left:24px;right:24px;bottom:40px;
+ opacity:0;transform:translateY(12px);
+ transition:opacity .8s ease .14s,transform .8s cubic-bezier(.22,.61,.36,1) .14s;}
+.wel-acts.in{opacity:1;transform:none;}
+.wel-btn{width:100%;padding:15px;border-radius:15px;border:1px solid rgba(255,60,95,.34);
+ background:#141017;color:#fff;font-family:'Sora',sans-serif;font-size:13px;font-weight:700;
+ position:relative;overflow:hidden;cursor:pointer;}
+.wel-btn:after{content:'';position:absolute;inset:0;
+ background:linear-gradient(100deg,transparent 30%,rgba(255,60,95,.34) 50%,transparent 70%);
+ animation:welSheen 3.8s linear infinite;}
+@keyframes welSheen{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+.wel-btn:active{transform:scale(.985);}
+.wel-sec{margin-top:11px;text-align:center;font-size:11.5px;color:var(--text2);}
+.wel-sec b{color:var(--red);font-weight:700;cursor:pointer;}
+.auth-back{position:absolute;left:16px;top:16px;z-index:9;width:34px;height:34px;border-radius:11px;
+ border:1px solid var(--border);background:rgba(255,255,255,.05);color:var(--text);
+ font-size:20px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;}
 /* on a wide screen the form still reads as a column rather than stretching */
 .auth-body > * { max-width: 420px; margin-left: auto; margin-right: auto; }
-/* The original rule CENTRES the card in the middle of the screen and pads it.
-   A split screen has to fill the frame instead, so all three are overridden:
-   padding off, stretched to full width, and started at the TOP rather than
-   centred - `justify-content:center` is what pushed the form to the bottom. */
-#screen-auth { padding: 0 !important; align-items: stretch !important;
- justify-content: flex-start !important; }
-
-.auth-panel{position:relative;flex:none;min-height:30vh;overflow:hidden;display:flex;
- flex-direction:column;align-items:center;justify-content:center;gap:10px;background:#12040a;
- padding:18px 0 26px;}
-.auth-floor{position:absolute;inset:0;z-index:0;
- background:radial-gradient(130% 96% at 50% 122%,#FF3355 0%,#c40024 26%,#4a0510 54%,#12040a 82%);}
-.auth-floor:after{content:'';position:absolute;left:-14%;right:-14%;bottom:-46%;height:92%;
- border-radius:50%;filter:blur(24px);
- background:radial-gradient(ellipse,rgba(255,60,95,.85),transparent 72%);
- animation:authSwell 7s ease-in-out infinite;}
-@keyframes authSwell{0%,100%{transform:translateY(16%) scale(.9);opacity:.6}
- 50%{transform:translateY(-8%) scale(1.1);opacity:1}}
-.auth-curve{position:absolute;left:-6%;right:-6%;bottom:-1px;height:30px;background:var(--bg);
- border-radius:50% 50% 0 0;z-index:4;}
-.auth-tile{width:66px;height:66px;border-radius:20px;z-index:3;}
-.auth-tile .mmai-mk{width:39px;height:39px;}
-.auth-tile .mmai-glow{animation:authSwell 7s ease-in-out infinite;}
-.auth-brand{position:relative;z-index:3;font-family:'Orbitron',sans-serif;font-size:11px;
- font-weight:900;letter-spacing:3px;color:var(--text);}
-.auth-tag{position:relative;z-index:3;font-size:8px;color:rgba(255,255,255,.45);letter-spacing:1.6px;}
-@media (prefers-reduced-motion: reduce){ .auth-floor:after,.auth-tile .mmai-glow{animation:none;} }
+@media (prefers-reduced-motion: reduce){ .wel-btn:after{animation:none;} }
 
 /* the label lives INSIDE the field now, which buys a line of height back */
 .auth-ff{position:relative;margin-bottom:12px;}
@@ -580,7 +584,10 @@ html[data-theme="light"] .nav-btn.active span:not(.nav-ico-wrap) { color: #fff; 
 .auth-lnk i{font-size:14px;}
 .auth-lnk.red{color:var(--red);border-color:rgba(255,30,60,.28);background:rgba(255,30,60,.07);}
 
-.auth-body{flex:1;min-height:0;overflow-y:auto;padding:18px 20px 24px;}
+.auth-body{position:absolute;inset:0;z-index:5;overflow-y:auto;padding:196px 20px 28px;
+ opacity:0;pointer-events:none;transform:translateY(22px);
+ transition:opacity .45s ease .12s,transform .55s cubic-bezier(.22,.61,.36,1) .08s;}
+#screen-auth.mm-open .auth-body{opacity:1;pointer-events:auto;transform:none;}
 .auth-logo {
   display: flex;
   align-items: center;
@@ -3723,22 +3730,25 @@ html[data-theme="light"] .adm-nb.on i,html[data-theme="light"] .adm-nb.on span{c
      SCREEN: AUTH
 ═══════════════════════════════════ -->
 <div id="screen-auth" class="screen active" style="display:flex;">
-  <div class="auth-card">
-    <div class="auth-panel">
-      <span class="auth-floor"></span>
-      <span class="mmai-tile auth-tile"><span class="mmai-glow"></span>
-        <span class="mmai-top"></span><span class="mmai-mk"></span></span>
-      <span class="auth-brand">MOMENTUM AI</span>
-      <span class="auth-tag">TRADE WITH MOMENTUM</span>
-      <span class="auth-curve"></span>
+
+  <!-- the particle field. It draws the logo out of scanner glitter. -->
+  <div class="wel-stage"><canvas id="wel-canvas" width="300" height="300"></canvas></div>
+
+  <!-- WELCOME PANE -->
+  <div class="wel-pane">
+    <div class="wel-copy" id="wel-copy">
+      <div class="wel-h" data-i18n="wel.title">Welcome to Momentum AI</div>
+      <div class="wel-p" data-i18n="wel.sub">Signals from our analysts, executed straight onto your own MT5 account.</div>
     </div>
+    <div class="wel-acts" id="wel-acts">
+      <button class="wel-btn" onclick="mmAuthOpen('signin')" data-i18n="auth.signIn">Sign In</button>
+      <div class="wel-sec"><span data-i18n="wel.newHere">New here?</span> <b onclick="mmAuthOpen('register')" data-i18n="auth.regAft">Register with AFT</b></div>
     </div>
-    <div class="auth-body">
-    <!-- Tabs -->
-    <div class="auth-tabs">
-      <button class="auth-tab active" id="tab-signin" onclick="switchAuthTab('signin')" data-i18n="auth.signIn">Sign In</button>
-      <button class="auth-tab" id="tab-register" onclick="switchAuthTab('register')" data-i18n="auth.register">Register</button>
-    </div>
+  </div>
+
+  <!-- SIGN IN AND REGISTER PANE -->
+  <div class="auth-body">
+    <button class="auth-back" onclick="mmAuthBack()" aria-label="Back" data-i18n-aria="aria.back">&#8249;</button>
     <!-- Sign In Form -->
     <div id="form-signin">
       <div class="auth-title" data-i18n="dash.welcome">Welcome Back</div>
@@ -3817,8 +3827,13 @@ html[data-theme="light"] .adm-nb.on i,html[data-theme="light"] .adm-nb.on span{c
       <button class="ghost-btn" onclick="window.open('https://www.afttmarkets.com','_blank')" data-i18n="auth.createAft">Create Account with AFT →</button>
       <div class="auth-switch" style="margin-top:12px;"><span data-i18n="auth.haveAccount">Have an account?</span> <span onclick="switchAuthTab('signin')" data-i18n="auth.signInArrow">Sign In →</span></div>
     </div>
-    </div>
   </div>
+</div>
+<!-- This tag closes .app-shell, which the old markup closed here too. The
+     shell therefore wraps ONLY the auth screen and every other screen sits
+     outside it, exactly as it does in the build running today. Left alone on
+     purpose: widening the shell to cover the app is a separate change with
+     its own risk and it is not what was asked for. -->
 </div>
 
 <!-- ═══════════════════════════════════
@@ -7683,9 +7698,10 @@ function showScreen(id) {
 }
 
 // ── AUTH TABS ──
+// The tab strip was removed on 20 Aug with the welcome screen, so the two
+// lines that toggled it are gone. This copy is superseded at the foot of the
+// file by a version that also opens the form pane.
 function switchAuthTab(tab) {
-  document.getElementById('tab-signin').classList.toggle('active', tab==='signin');
-  document.getElementById('tab-register').classList.toggle('active', tab==='register');
   document.getElementById('form-signin').style.display = tab==='signin'?'block':'none';
   document.getElementById('form-register').style.display = tab==='register'?'block':'none';
 }
@@ -27353,5 +27369,220 @@ html[data-theme="light"] .mm-cat u{background:rgba(0,0,0,.10);}
     </div>
   </div>
 </div>
+<script>
+/* ══════════════════════════════════════════════════════════════════
+   WELCOME SCREEN PARTICLES, 20 Aug 2026
+   The mark is read back out of the --mmai-mark CSS variable rather than
+   embedded a second time, drawn to an offscreen canvas, and its alpha
+   channel sampled on a 5px grid. Each sampled pixel becomes one
+   particle target, so the logo drawn here IS the logo file.
+   The loop stops whenever the screen is not showing or the tab is
+   hidden, so it never runs behind the app.
+══════════════════════════════════════════════════════════════════ */
+(function(){
+  var TAU = Math.PI*2;
+  var cv, ctx, P = [], t0 = 0, raf = 0, spin = 0, held = false, ready = false, want = false;
+  var CALM = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function markUrl(){
+    var v = '';
+    try { v = getComputedStyle(document.documentElement).getPropertyValue('--mmai-mark') || ''; } catch(e){}
+    var m = v.match(/url\(\s*["']?([^"')]+)["']?\s*\)/);
+    return m ? m[1] : '';
+  }
+
+  function samplePoints(img){
+    var S = 300, draw = 196, off = (S-draw)/2, step = 5;
+    var c = document.createElement('canvas'); c.width = c.height = S;
+    var x = c.getContext('2d');
+    x.drawImage(img, off, off, draw, draw);
+    var d = x.getImageData(0,0,S,S).data, pts = [];
+    for(var y=0;y<S;y+=step) for(var px=0;px<S;px+=step){
+      if(d[(y*S+px)*4+3] > 110) pts.push([px+(Math.random()-0.5)*step, y+(Math.random()-0.5)*step]);
+    }
+    for(var i=pts.length-1;i>0;i--){ var j=(Math.random()*(i+1))|0, t=pts[i]; pts[i]=pts[j]; pts[j]=t; }
+    return pts;
+  }
+
+  function seed(pts){
+    P = pts.map(function(p){
+      var a = Math.random()*TAU, rr = 22 + Math.pow(Math.random(),0.55)*96;
+      return { tx:p[0], ty:p[1], ph:Math.random()*TAU, sz:0.55+Math.random()*1.25,
+               bright:Math.random()<0.14, delay:Math.random()*0.30,
+               orb:a, orr:rr, x:150, y:150, k:0 };
+    });
+  }
+
+  function ease(t){ return t<0?0:(t>1?1:1-Math.pow(1-t,3)); }
+
+  function draw(now){
+    raf = 0;
+    if(!ready || !cv) return;
+    var scr = document.getElementById('screen-auth');
+    if(!scr || !scr.classList.contains('active') || document.hidden){ return; }
+
+    var T = (now - t0)/1000, HOLD = 1.6, FORM = 1.5;
+    var gp = held ? 1 : ease((T-HOLD)/FORM);
+    spin += 0.0016;
+
+    ctx.clearRect(0,0,300,300);
+
+    ctx.save();
+    ctx.globalAlpha = 0.16*(1-gp*0.55);
+    ctx.strokeStyle = 'rgba(255,60,95,.55)'; ctx.lineWidth = 1;
+    for(var r=1;r<=3;r++){ ctx.beginPath(); ctx.arc(150,150,44+r*36,0,TAU); ctx.stroke(); }
+    ctx.restore();
+
+    var gi = (0.18+gp*0.32)*(1+0.10*Math.sin(now/900));
+    var g = ctx.createRadialGradient(150,150,4,150,150,120);
+    g.addColorStop(0,'rgba(255,120,145,'+gi+')');
+    g.addColorStop(0.42,'rgba(255,30,60,'+(gi*0.42)+')');
+    g.addColorStop(1,'rgba(255,30,60,0)');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(150,150,120,0,TAU); ctx.fill();
+
+    ctx.globalCompositeOperation = 'lighter';
+
+    for(var i=0;i<P.length;i++){
+      var o = P[i];
+      var k = held ? 1 : ease(((T-HOLD)/FORM - o.delay)/(1-o.delay*0.6));
+      o.k = k;
+      var ang = o.orb + spin*(1.6 - o.orr/150);
+      var sx = 150 + Math.cos(ang)*o.orr;
+      var sy = 150 + Math.sin(ang)*o.orr*0.82 + Math.sin(now/1100+o.ph)*4;
+      var nx = o.tx-sx, ny = o.ty-sy, Ln = Math.sqrt(nx*nx+ny*ny) || 1;
+      var bend = (1-k)*k*20;
+      o.x = sx + (o.tx-sx)*k + (-ny/Ln)*bend;
+      o.y = sy + (o.ty-sy)*k + ( nx/Ln)*bend;
+      if(k >= 1){ o.x = o.tx + Math.sin(now/720+o.ph)*0.9; o.y = o.ty + Math.cos(now/780+o.ph)*0.9; }
+    }
+
+    var la = 0.30*(1-gp*0.92);
+    if(la > 0.012){
+      ctx.lineWidth = 0.7;
+      for(var a1=0;a1<P.length;a1+=3){
+        var A = P[a1];
+        var stop = Math.min(a1+42, P.length);
+        for(var b=a1+3;b<stop;b+=3){
+          var B = P[b], dx = A.x-B.x, dy = A.y-B.y, d2 = dx*dx+dy*dy;
+          if(d2 < 900){
+            ctx.strokeStyle = 'rgba(255,80,110,'+(la*(1-d2/900))+')';
+            ctx.beginPath(); ctx.moveTo(A.x,A.y); ctx.lineTo(B.x,B.y); ctx.stroke();
+          }
+        }
+      }
+    }
+
+    for(var j=0;j<P.length;j++){
+      var p = P[j];
+      var tw = 0.62 + 0.38*Math.sin(now/460+p.ph);
+      var al = (0.36 + 0.64*p.k)*tw;
+      if(p.bright){
+        var bg = ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.sz*5);
+        bg.addColorStop(0,'rgba(255,215,225,'+(al*0.9)+')');
+        bg.addColorStop(0.35,'rgba(255,60,95,'+(al*0.5)+')');
+        bg.addColorStop(1,'rgba(255,30,60,0)');
+        ctx.fillStyle = bg; ctx.beginPath(); ctx.arc(p.x,p.y,p.sz*5,0,TAU); ctx.fill();
+      }
+      ctx.fillStyle = p.k>0.9 ? 'rgba(255,232,238,'+al+')' : 'rgba(255,110,140,'+al+')';
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.sz*(0.8+0.35*p.k),0,TAU); ctx.fill();
+    }
+
+    ctx.globalCompositeOperation = 'source-over';
+
+    if(gp > 0.62){ reveal(); }
+    if(gp >= 1 && !held){ held = true; }
+    raf = requestAnimationFrame(draw);
+  }
+
+  function reveal(){
+    var c = document.getElementById('wel-copy'), a = document.getElementById('wel-acts');
+    if(c) c.classList.add('in');
+    if(a) a.classList.add('in');
+  }
+
+  function stop(){ if(raf){ cancelAnimationFrame(raf); raf = 0; } }
+
+  function start(replay){
+    want = true;
+    if(!ready){ return; }
+    if(replay){
+      held = false; t0 = performance.now();
+      var c = document.getElementById('wel-copy'), a = document.getElementById('wel-acts');
+      if(c) c.classList.remove('in');
+      if(a) a.classList.remove('in');
+      for(var i=0;i<P.length;i++){ P[i].k = 0; }
+    }
+    if(CALM){ held = true; reveal(); if(!raf) raf = requestAnimationFrame(draw); return; }
+    if(!raf) raf = requestAnimationFrame(draw);
+  }
+
+  function init(){
+    cv = document.getElementById('wel-canvas');
+    if(!cv) return;
+    ctx = cv.getContext('2d');
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    cv.width = 300*dpr; cv.height = 300*dpr;
+    ctx.scale(dpr, dpr);
+    var url = markUrl();
+    if(!url) return;
+    var img = new Image();
+    img.onload = function(){
+      seed(samplePoints(img));
+      ready = true; held = false; t0 = performance.now();
+      if(want) start(true);
+    };
+    img.src = url;
+  }
+
+  /* the screen is one screen with two panes, so opening the form is a class */
+  window.mmAuthOpen = function(tab){
+    var s = document.getElementById('screen-auth');
+    if(s) s.classList.add('mm-open');
+    if(typeof switchAuthTab === 'function') switchAuthTab(tab || 'signin');
+  };
+  window.mmAuthBack = function(){
+    var s = document.getElementById('screen-auth');
+    if(s) s.classList.remove('mm-open');
+    if(typeof switchAuthTab === 'function') switchAuthTab('signin');
+  };
+  window.mmWelReset = function(){
+    var s = document.getElementById('screen-auth');
+    if(s) s.classList.remove('mm-open');
+    start(true);
+  };
+  window.mmWelStop = function(){ want = false; stop(); };
+
+  /* the tab strip is gone, so the original handler would throw on a null.
+     It is replaced rather than edited, and the two forms still switch. */
+  window.switchAuthTab = function(tab){
+    var a = document.getElementById('form-signin'), b = document.getElementById('form-register');
+    if(a) a.style.display = (tab === 'signin') ? 'block' : 'none';
+    if(b) b.style.display = (tab === 'register') ? 'block' : 'none';
+    /* it does NOT open the form pane. mmAuthOpen does that, and adding it
+       here made the back arrow bounce straight back into the form. */
+    var body = document.querySelector('#screen-auth .auth-body');
+    if(body) body.scrollTop = 0;
+  };
+
+  /* every route into the auth screen already calls showScreen, so the
+     welcome pane is restored there rather than at each call site */
+  var _mmShowScreen = window.showScreen;
+  window.showScreen = function(id){
+    _mmShowScreen(id);
+    if(id === 'screen-auth'){ window.mmWelReset(); } else { window.mmWelStop(); }
+  };
+
+  document.addEventListener('visibilitychange', function(){
+    if(document.hidden){ stop(); }
+    else {
+      var s = document.getElementById('screen-auth');
+      if(want && s && s.classList.contains('active') && !raf) raf = requestAnimationFrame(draw);
+    }
+  });
+
+  if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', init); }
+  else { init(); }
+})();
+</script>
 </body>
 </html>
