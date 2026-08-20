@@ -627,10 +627,21 @@ html[data-theme="light"] .nav-btn.active span:not(.nav-ico-wrap) { color: #fff; 
 .mmf-sys:active{transform:scale(.987);}
 .mmf-sys[disabled]{opacity:.75;}
 
-.mmf-pw{margin-top:20px;display:flex;justify-content:center;}
-.mmf-pw span{display:inline-flex;align-items:center;gap:7px;font-size:10px;
+/* PINNED TO THE BOTTOM OF THE SCREEN, not to the end of the form, so it holds
+   its place whether the short sign in form or the long register form is showing.
+   It lives outside `.auth-body` for the same reason: inside it, it would scroll
+   away with the register form. */
+.mmf-pw{position:absolute;left:0;right:0;bottom:16px;z-index:9;
+ display:flex;justify-content:center;pointer-events:none;
+ opacity:0;transition:opacity .45s ease .3s;}
+#screen-auth.mm-open .mmf-pw{opacity:1;}
+/* DIRECT CHILD ONLY. A bare `.mmf-pw span` also matched the inner span that
+   carries the translated text, so the dot sat outside a second nested pill. */
+.mmf-pw > span{display:inline-flex;align-items:center;gap:7px;font-size:10px;
  color:rgba(255,255,255,.42);border:1px solid rgba(255,255,255,.10);
- background:rgba(255,255,255,.03);border-radius:20px;padding:7px 14px;}
+ background:rgba(255,255,255,.03);border-radius:20px;padding:7px 14px;
+ backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);}
+.mmf-pw > span > span{border:0;background:transparent;padding:0;}
 .mmf-pw i{width:5px;height:5px;border-radius:50%;background:var(--green);
  box-shadow:0 0 8px rgba(39,209,124,.8);flex:none;}
 @media (prefers-reduced-motion: reduce){ .mmf-sys{animation:none;} }
@@ -658,7 +669,7 @@ html[data-theme="light"] .nav-btn.active span:not(.nav-ico-wrap) { color: #fff; 
 .auth-lnk i{font-size:14px;}
 .auth-lnk.red{color:var(--red);border-color:rgba(255,30,60,.28);background:rgba(255,30,60,.07);}
 
-.auth-body{position:absolute;inset:0;z-index:7;overflow-y:auto;padding:262px 20px 28px;
+.auth-body{position:absolute;inset:0;z-index:7;overflow-y:auto;padding:262px 20px 64px;
  opacity:0;pointer-events:none;transform:translateY(24px);
  transition:opacity .5s ease .28s,transform .6s cubic-bezier(.22,.61,.36,1) .24s;}
 #screen-auth.mm-open .auth-body{opacity:1;pointer-events:auto;transform:none;}
@@ -3835,7 +3846,7 @@ html[data-theme="light"] .adm-nb.on i,html[data-theme="light"] .adm-nb.on span{c
     <!-- Sign In Form -->
     <div id="form-signin">
       <div class="auth-title" data-i18n="dash.welcome">Welcome Back</div>
-      <div class="auth-sub" data-i18n="auth.signInSub">Sign in to your trading account</div>
+      <div class="auth-sub" data-i18n="auth.signInWorld">Sign in to the world of Momentum AI</div>
       <div id="signin-error" class="error-msg"></div>
       <div class="mmf" onclick="mmfTap(this)">
         <i class="mmf-ico ti ti-user"></i>
@@ -3858,7 +3869,6 @@ html[data-theme="light"] .adm-nb.on i,html[data-theme="light"] .adm-nb.on span{c
         <a class="auth-forgot-a" data-i18n="auth.forgot">Forgot Password?</a>
       </div>
       <button class="mmf-sys" id="btn-signin" onclick="handleLogin()">ACCESS SYSTEM</button>
-      <div class="mmf-pw"><span><i></i><span data-i18n="auth.poweredBy">Powered by Bitempire Sdn Bhd</span></span></div>
     </div>
     <!-- Register Form -->
     <div id="form-register" style="display:none;">
@@ -3900,6 +3910,10 @@ html[data-theme="light"] .adm-nb.on i,html[data-theme="light"] .adm-nb.on span{c
       <div class="auth-switch" style="margin-top:12px;"><span data-i18n="auth.haveAccount">Have an account?</span> <span onclick="switchAuthTab('signin')" data-i18n="auth.signInArrow">Sign In →</span></div>
     </div>
   </div>
+
+  <!-- the footer, pinned to the bottom of the screen rather than the end of
+       whichever form is showing -->
+  <div class="mmf-pw"><span><i></i><span data-i18n="auth.poweredBy">Powered by Bitempire Sdn Bhd</span></span></div>
 </div>
 <!-- This tag closes .app-shell, which the old markup closed here too. The
      shell therefore wraps ONLY the auth screen and every other screen sits
