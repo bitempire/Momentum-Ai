@@ -544,7 +544,10 @@ html[data-theme="light"] .nav-btn.active span:not(.nav-ico-wrap) { color: #fff; 
  color:rgba(255,255,255,.46);margin-top:8px;}
 
 /* the welcome block rises from the bottom edge once the logo has landed */
-.wel-pane{position:absolute;left:0;right:0;bottom:0;z-index:8;padding:0 24px 34px;
+/* LIFTED. The block sat 34px off the bottom, which put the Sign Up line
+   almost on the home indicator. 34 to 78 moves the whole group up as one
+   rather than nudging each line, so the internal spacing is untouched. */
+.wel-pane{position:absolute;left:0;right:0;bottom:0;z-index:8;padding:0 24px 78px;
  transition:opacity .4s ease,transform .5s cubic-bezier(.22,.61,.36,1);}
 #screen-auth.mm-open .wel-pane{opacity:0;pointer-events:none;transform:translateY(26px);}
 .wel-h{text-align:center;}
@@ -582,8 +585,15 @@ html[data-theme="light"] .nav-btn.active span:not(.nav-ico-wrap) { color: #fff; 
  line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;
  opacity:0;pointer-events:none;transition:opacity .4s ease .34s;}
 #screen-auth.mm-open .auth-back{opacity:1;pointer-events:auto;}
-/* on a wide screen the form still reads as a column rather than stretching */
-.auth-body > * { max-width: 420px; margin-left: auto; margin-right: auto; }
+/* THE 420px CAP IS GONE. It is why halving the side padding changed nothing
+   visible: on a 390px phone the fields were already capped below the screen
+   width, so the extra room went to the margins rather than to the fields.
+   The cap only ever earned its place on a wide browser window, and it is
+   restored below at a width no handset reaches. */
+.auth-body > * { margin-left: auto; margin-right: auto; }
+@media (min-width: 620px){
+  .auth-body > * { max-width: 460px; }
+}
 @media (prefers-reduced-motion: reduce){ .wel-btn,.wel-btn:before{animation:none;} }
 
 /* ── THE SIGN IN FORM, 20 Aug 2026 ──────────────────────────────
@@ -4076,7 +4086,7 @@ html[data-theme="light"] .adm-nb.on i,html[data-theme="light"] .adm-nb.on span{c
   <div class="wel-pane">
     <div class="wel-h">
       <span class="wel-sm" data-i18n="wel.small">Welcome to the world of</span>
-      <span class="wel-bg">Momentum</span>
+      <span class="wel-bg">Momentum AI</span>
     </div>
     <div class="wel-p" data-i18n="wel.sub">Signals from our AI analysts, executed straight onto your own MT5 account. AI automation with more than 3 years of proven record.</div>
     <div class="wel-cta"><button class="wel-btn" onclick="mmAuthOpen('signin')"><span data-i18n="auth.signIn">Sign In</span></button></div>
