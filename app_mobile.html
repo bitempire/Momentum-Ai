@@ -506,64 +506,84 @@ html[data-theme="light"] .nav-btn.active span:not(.nav-ico-wrap) { color: #fff; 
    AUTH SCREEN
 ═══════════════════════════════════ */
 /* ── WELCOME + SIGN IN, 20 Aug 2026 ─────────────────────────────
-   The screen now opens on a WELCOME pane. A field of scanner particles
-   gathers out of the dark and lands on the shape of the logo. Every
-   particle target is a real pixel of --mmai-mark, sampled at runtime,
-   so the shape can never drift from the mark itself and there is no
-   second image to keep in step.
+   The screen opens on a WELCOME pane built on a FULL SCREEN canvas:
+   red clouds drifting behind a field of scanner glitter that takes
+   three seconds to gather onto the shape of the logo. Every particle
+   target is a real pixel of --mmai-mark, sampled at runtime, so the
+   shape can never drift from the mark and there is no second image
+   to keep in step.
 
    BOTH PANES LIVE IN #screen-auth on purpose. Every existing
    showScreen('screen-auth') call - boot, sign out, back from pending -
-   therefore lands on the welcome pane with nothing else to change.
-   `.mm-open` is the only state: it lifts the mark to the top and
-   brings the form up underneath it. */
-#screen-auth{background:var(--bg);padding:0 !important;align-items:stretch !important;
+   lands on the welcome pane with nothing else to change.
+     .mm-up   the copy and the button have risen from the bottom
+     .mm-open the form pane is showing and the crest sits at the top */
+#screen-auth{background:#040306;padding:0 !important;align-items:stretch !important;
  justify-content:flex-start !important;position:absolute;overflow:hidden;}
-#screen-auth:before{content:'';position:absolute;left:50%;top:38%;width:340px;height:340px;
- margin:-170px 0 0 -170px;z-index:0;pointer-events:none;
- background:radial-gradient(circle,rgba(255,30,60,.14),transparent 62%);
- transition:top .8s cubic-bezier(.22,.61,.36,1),opacity .8s ease;}
-#screen-auth.mm-open:before{top:15%;opacity:.5;}
+.wel-fx{position:absolute;inset:0;z-index:1;display:block;}
+.wel-grain{position:absolute;inset:0;z-index:2;opacity:.26;pointer-events:none;
+ mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");}
+.wel-vig{position:absolute;inset:0;z-index:3;pointer-events:none;
+ background:radial-gradient(120% 78% at 50% 40%,transparent 44%,rgba(0,0,0,.5) 100%);}
 
-.wel-stage{position:absolute;left:50%;top:38%;width:300px;height:300px;z-index:2;
- transform:translate(-50%,-50%);pointer-events:none;
- transition:top .8s cubic-bezier(.22,.61,.36,1),transform .8s cubic-bezier(.22,.61,.36,1);}
-#screen-auth.mm-open .wel-stage{top:106px;transform:translate(-50%,-50%) scale(.42);}
-.wel-stage canvas{display:block;width:300px;height:300px;}
+/* the crest: the solid mark and the name, what the glitter becomes */
+.wel-crest{position:absolute;left:0;right:0;top:38%;z-index:6;text-align:center;
+ opacity:0;pointer-events:none;transform:translateY(-50%) scale(.94);
+ transition:top .9s cubic-bezier(.22,.61,.36,1),opacity .75s ease .12s,
+            transform .9s cubic-bezier(.22,.61,.36,1);}
+#screen-auth.mm-open .wel-crest{opacity:1;top:150px;transform:translateY(-50%) scale(1);}
+.wel-mk{display:block;margin:0 auto;width:72px;height:72px;background:#fff;
+ -webkit-mask-image:var(--mmai-mark);mask-image:var(--mmai-mark);
+ -webkit-mask-size:contain;mask-size:contain;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+ -webkit-mask-position:center;mask-position:center;
+ filter:drop-shadow(0 0 24px rgba(255,30,60,.8));}
+.wel-wm{font-family:'Orbitron',sans-serif;font-size:19px;font-weight:900;letter-spacing:2.6px;
+ margin-top:15px;color:#fff;}
+.wel-wsub{font-size:8.5px;font-weight:300;letter-spacing:3.6px;text-transform:uppercase;
+ color:rgba(255,255,255,.46);margin-top:8px;}
 
-.wel-pane{position:absolute;inset:0;z-index:6;
- transition:opacity .42s ease,transform .5s cubic-bezier(.22,.61,.36,1);}
-#screen-auth.mm-open .wel-pane{opacity:0;pointer-events:none;transform:translateY(-16px);}
-.wel-copy{position:absolute;left:0;right:0;bottom:134px;padding:0 26px;text-align:center;
- opacity:0;transform:translateY(10px);
- transition:opacity .8s ease,transform .8s cubic-bezier(.22,.61,.36,1);}
-.wel-copy.in{opacity:1;transform:none;}
-.wel-h{font-family:'Orbitron',sans-serif;font-size:19px;font-weight:700;letter-spacing:.4px;color:var(--text);}
-.wel-p{font-size:12px;color:var(--text2);line-height:1.65;margin-top:10px;}
-.wel-acts{position:absolute;left:24px;right:24px;bottom:40px;
- opacity:0;transform:translateY(12px);
- transition:opacity .8s ease .14s,transform .8s cubic-bezier(.22,.61,.36,1) .14s;}
-.wel-acts.in{opacity:1;transform:none;}
-/* the brand gradient, with the sheen turned WHITE. A red sheen travelling
-   over a red button is invisible, which is the same lesson the ember tile
-   taught: movement needs something to read against. */
-.wel-btn{width:100%;padding:15px;border-radius:15px;border:0;
- background:var(--grad);color:#fff;font-family:'Sora',sans-serif;font-size:13px;font-weight:700;
- box-shadow:0 10px 26px -8px rgba(255,30,60,.55);
- position:relative;overflow:hidden;cursor:pointer;}
-.wel-btn:after{content:'';position:absolute;inset:0;
- background:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.28) 50%,transparent 70%);
- animation:welSheen 3.8s linear infinite;}
-@keyframes welSheen{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
-.wel-btn:active{transform:scale(.985);}
-.wel-sec{margin-top:11px;text-align:center;font-size:11.5px;color:var(--text2);}
+/* the welcome block rises from the bottom edge once the logo has landed */
+.wel-pane{position:absolute;left:0;right:0;bottom:0;z-index:8;padding:0 24px 34px;
+ transition:opacity .4s ease,transform .5s cubic-bezier(.22,.61,.36,1);}
+#screen-auth.mm-open .wel-pane{opacity:0;pointer-events:none;transform:translateY(26px);}
+.wel-h{text-align:center;}
+.wel-sm{display:block;font-family:'Sora',sans-serif;font-size:11px;font-weight:300;
+ letter-spacing:2.6px;text-transform:uppercase;color:rgba(255,255,255,.55);}
+.wel-bg{display:block;font-family:'Orbitron',sans-serif;font-size:30px;font-weight:900;
+ letter-spacing:1.2px;color:#fff;margin-top:7px;line-height:1;}
+.wel-p{font-size:11.5px;color:var(--text2);line-height:1.65;text-align:center;margin-top:13px;padding:0 4px;}
+.wel-cta{margin-top:22px;}
+.wel-sec{margin-top:13px;text-align:center;font-size:11.5px;color:var(--text2);}
 .wel-sec b{color:var(--red);font-weight:700;cursor:pointer;}
-.auth-back{position:absolute;left:16px;top:16px;z-index:9;width:34px;height:34px;border-radius:11px;
- border:1px solid var(--border);background:rgba(255,255,255,.05);color:var(--text);
- font-size:20px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.wel-h,.wel-p,.wel-cta,.wel-sec{opacity:0;transform:translateY(42px);
+ transition:opacity .95s cubic-bezier(.22,.61,.36,1),transform .95s cubic-bezier(.22,.61,.36,1);}
+.wel-p{transition-delay:.10s} .wel-cta{transition-delay:.20s} .wel-sec{transition-delay:.30s}
+#screen-auth.mm-up .wel-h,#screen-auth.mm-up .wel-p,
+#screen-auth.mm-up .wel-cta,#screen-auth.mm-up .wel-sec{opacity:1;transform:none;}
+
+/* the button: the gradient travels through it rather than a highlight
+   sliding over it, and the white orb keeps the movement visible on red */
+.wel-btn{width:100%;border:0;cursor:pointer;color:#fff;font-family:'Sora',sans-serif;
+ font-weight:700;font-size:13.5px;padding:16px;border-radius:16px;position:relative;overflow:hidden;
+ background:linear-gradient(120deg,#c40024,#FF1E3C 45%,#FF7A92 70%,#c40024);
+ background-size:200% 200%;animation:welFlow 7s ease-in-out infinite;
+ box-shadow:0 14px 34px -12px rgba(255,30,60,.7);}
+@keyframes welFlow{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.wel-btn:before{content:'';position:absolute;inset:-40%;z-index:2;
+ background:radial-gradient(closest-side,rgba(255,255,255,.28),transparent 70%);
+ animation:welOrb 7s ease-in-out infinite;}
+@keyframes welOrb{0%,100%{transform:translate(-24%,10%)}50%{transform:translate(30%,-12%)}}
+.wel-btn span{position:relative;z-index:3;}
+.wel-btn:active{transform:scale(.987);}
+
+.auth-back{position:absolute;left:16px;top:16px;z-index:20;width:34px;height:34px;border-radius:11px;
+ border:1px solid var(--border);background:rgba(255,255,255,.05);color:var(--text);font-size:20px;
+ line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;
+ opacity:0;pointer-events:none;transition:opacity .4s ease .34s;}
+#screen-auth.mm-open .auth-back{opacity:1;pointer-events:auto;}
 /* on a wide screen the form still reads as a column rather than stretching */
 .auth-body > * { max-width: 420px; margin-left: auto; margin-right: auto; }
-@media (prefers-reduced-motion: reduce){ .wel-btn:after{animation:none;} }
+@media (prefers-reduced-motion: reduce){ .wel-btn,.wel-btn:before{animation:none;} }
 
 /* the label lives INSIDE the field now, which buys a line of height back */
 .auth-ff{position:relative;margin-bottom:12px;}
@@ -588,9 +608,9 @@ html[data-theme="light"] .nav-btn.active span:not(.nav-ico-wrap) { color: #fff; 
 .auth-lnk i{font-size:14px;}
 .auth-lnk.red{color:var(--red);border-color:rgba(255,30,60,.28);background:rgba(255,30,60,.07);}
 
-.auth-body{position:absolute;inset:0;z-index:5;overflow-y:auto;padding:196px 20px 28px;
- opacity:0;pointer-events:none;transform:translateY(22px);
- transition:opacity .45s ease .12s,transform .55s cubic-bezier(.22,.61,.36,1) .08s;}
+.auth-body{position:absolute;inset:0;z-index:7;overflow-y:auto;padding:262px 20px 28px;
+ opacity:0;pointer-events:none;transform:translateY(24px);
+ transition:opacity .5s ease .28s,transform .6s cubic-bezier(.22,.61,.36,1) .24s;}
 #screen-auth.mm-open .auth-body{opacity:1;pointer-events:auto;transform:none;}
 .auth-logo {
   display: flex;
@@ -3735,19 +3755,28 @@ html[data-theme="light"] .adm-nb.on i,html[data-theme="light"] .adm-nb.on span{c
 ═══════════════════════════════════ -->
 <div id="screen-auth" class="screen active" style="display:flex;">
 
-  <!-- the particle field. It draws the logo out of scanner glitter. -->
-  <div class="wel-stage"><canvas id="wel-canvas" width="300" height="300"></canvas></div>
+  <!-- the full screen field: red clouds, drifting dust, and the glitter
+       that gathers onto the logo over three seconds -->
+  <canvas id="wel-canvas" class="wel-fx"></canvas>
+  <div class="wel-grain"></div>
+  <div class="wel-vig"></div>
+
+  <!-- what the glitter turns into when Sign In is pressed -->
+  <div class="wel-crest">
+    <span class="wel-mk"></span>
+    <div class="wel-wm">Momentum</div>
+    <div class="wel-wsub" data-i18n="wel.ai">Artificial Intelligence</div>
+  </div>
 
   <!-- WELCOME PANE -->
   <div class="wel-pane">
-    <div class="wel-copy" id="wel-copy">
-      <div class="wel-h" data-i18n="wel.title">Welcome to Momentum AI</div>
-      <div class="wel-p" data-i18n="wel.sub">Signals from our analysts, executed straight onto your own MT5 account.</div>
+    <div class="wel-h">
+      <span class="wel-sm" data-i18n="wel.small">Welcome to the world of</span>
+      <span class="wel-bg">Momentum</span>
     </div>
-    <div class="wel-acts" id="wel-acts">
-      <button class="wel-btn" onclick="mmAuthOpen('signin')" data-i18n="auth.signIn">Sign In</button>
-      <div class="wel-sec"><span data-i18n="wel.newHere">New here?</span> <b onclick="mmAuthOpen('register')" data-i18n="auth.regAft">Register with AFT</b></div>
-    </div>
+    <div class="wel-p" data-i18n="wel.sub">Signals from our AI analysts, executed straight onto your own MT5 account. AI automation with more than 3 years of proven record.</div>
+    <div class="wel-cta"><button class="wel-btn" onclick="mmAuthOpen('signin')"><span data-i18n="auth.signIn">Sign In</span></button></div>
+    <div class="wel-sec"><span data-i18n="wel.newHere">New here?</span> <b onclick="mmAuthOpen('register')" data-i18n="wel.signup">Sign Up now</b></div>
   </div>
 
   <!-- SIGN IN AND REGISTER PANE -->
@@ -27375,18 +27404,31 @@ html[data-theme="light"] .mm-cat u{background:rgba(0,0,0,.10);}
 </div>
 <script>
 /* ══════════════════════════════════════════════════════════════════
-   WELCOME SCREEN PARTICLES, 20 Aug 2026
-   The mark is read back out of the --mmai-mark CSS variable rather than
-   embedded a second time, drawn to an offscreen canvas, and its alpha
-   channel sampled on a 5px grid. Each sampled pixel becomes one
-   particle target, so the logo drawn here IS the logo file.
+   WELCOME SCREEN, 20 Aug 2026
+   A full screen canvas holding three drifting red clouds, a little
+   rising dust, and the glitter that gathers onto the logo.
+
+   THE MARK IS READ BACK OUT OF THE --mmai-mark CSS VARIABLE rather
+   than embedded a second time. It is drawn to an offscreen canvas and
+   its alpha sampled on a 5px grid, so every particle target is a real
+   pixel of the logo file.
+
    The loop stops whenever the screen is not showing or the tab is
    hidden, so it never runs behind the app.
 ══════════════════════════════════════════════════════════════════ */
 (function(){
   var TAU = Math.PI*2;
-  var cv, ctx, P = [], t0 = 0, raf = 0, spin = 0, held = false, ready = false, want = false;
+  var cv, ctx, W = 0, H = 0, cy = 0, dpr = 1;
+  var P = [], dust = [], t0 = 0, raf = 0, held = false;
+  /* the glitter fades to the crest and back on a lerp, so the back arrow
+     does not pop the particles on again in a single frame */
+  var fadeCur = 0, fadeTarget = 0;
+  var ready = false, want = false, rsz = 0;
   var CALM = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var IMG = null;
+
+  function ease(t){ return t<0?0:(t>1?1:1-Math.pow(1-t,3)); }
+  function easeIO(t){ return t<0?0:(t>1?1:(t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2)); }
 
   function markUrl(){
     var v = '';
@@ -27395,158 +27437,154 @@ html[data-theme="light"] .mm-cat u{background:rgba(0,0,0,.10);}
     return m ? m[1] : '';
   }
 
-  function samplePoints(img){
-    var S = 300, draw = 196, off = (S-draw)/2, step = 5;
-    var c = document.createElement('canvas'); c.width = c.height = S;
+  function measure(){
+    var s = document.getElementById('screen-auth');
+    W = (s && s.clientWidth)  || window.innerWidth  || 360;
+    H = (s && s.clientHeight) || window.innerHeight || 720;
+    cy = Math.round(H*0.38);
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    cv.width = W*dpr; cv.height = H*dpr;
+    cv.style.width = W+'px'; cv.style.height = H+'px';
+    ctx = cv.getContext('2d');
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+
+  function seed(){
+    if(!IMG) return;
+    var box = Math.max(120, Math.min(196, Math.round(W*0.52)));
+    var c = document.createElement('canvas'); c.width = W; c.height = H;
     var x = c.getContext('2d');
-    x.drawImage(img, off, off, draw, draw);
-    var d = x.getImageData(0,0,S,S).data, pts = [];
-    for(var y=0;y<S;y+=step) for(var px=0;px<S;px+=step){
-      if(d[(y*S+px)*4+3] > 110) pts.push([px+(Math.random()-0.5)*step, y+(Math.random()-0.5)*step]);
+    x.drawImage(IMG,(W-box)/2, cy-box/2, box, box);
+    var d = x.getImageData(0,0,W,H).data, pts = [], step = 5, y, px;
+    for(y=0;y<H;y+=step) for(px=0;px<W;px+=step){
+      if(d[(y*W+px)*4+3] > 110) pts.push([px+(Math.random()-0.5)*step, y+(Math.random()-0.5)*step]);
     }
     for(var i=pts.length-1;i>0;i--){ var j=(Math.random()*(i+1))|0, t=pts[i]; pts[i]=pts[j]; pts[j]=t; }
-    return pts;
-  }
-
-  function seed(pts){
     P = pts.map(function(p){
-      var a = Math.random()*TAU, rr = 22 + Math.pow(Math.random(),0.55)*96;
-      return { tx:p[0], ty:p[1], ph:Math.random()*TAU, sz:0.55+Math.random()*1.25,
-               bright:Math.random()<0.14, delay:Math.random()*0.30,
-               orb:a, orr:rr, x:150, y:150, k:0 };
+      return { tx:p[0], ty:p[1], ph:Math.random()*TAU, sz:0.5+Math.random()*1.3,
+               bright:Math.random()<0.13, delay:Math.random()*0.34,
+               sa:Math.random()*TAU, sr:Math.max(W,H)*(0.45+Math.random()*0.55),
+               x:0, y:0, k:0 };
     });
+    dust = [];
+    for(var q=0;q<70;q++) dust.push({ x:Math.random()*W, y:Math.random()*H,
+      r:0.5+Math.random()*1.4, ph:Math.random()*TAU, vx:(Math.random()-0.5)*0.06 });
+    ready = true;
   }
-
-  function ease(t){ return t<0?0:(t>1?1:1-Math.pow(1-t,3)); }
 
   function draw(now){
     raf = 0;
-    if(!ready || !cv) return;
-    var scr = document.getElementById('screen-auth');
-    if(!scr || !scr.classList.contains('active') || document.hidden){ return; }
+    var s = document.getElementById('screen-auth');
+    if(!ready || !s || !s.classList.contains('active') || document.hidden) return;
 
-    var T = (now - t0)/1000, HOLD = 1.6, FORM = 1.5;
-    var gp = held ? 1 : ease((T-HOLD)/FORM);
-    spin += 0.0016;
+    var T = (now-t0)/1000, LEAD = 0.55, FORM = 3.0, i;
+    var gp = held ? 1 : easeIO((T-LEAD)/FORM);
+    fadeCur += (fadeTarget - fadeCur)*0.10;
+    var fade = fadeCur;
 
-    ctx.clearRect(0,0,300,300);
+    ctx.clearRect(0,0,W,H);
 
-    ctx.save();
-    ctx.globalAlpha = 0.16*(1-gp*0.55);
-    ctx.strokeStyle = 'rgba(255,60,95,.55)'; ctx.lineWidth = 1;
-    for(var r=1;r<=3;r++){ ctx.beginPath(); ctx.arc(150,150,44+r*36,0,TAU); ctx.stroke(); }
-    ctx.restore();
+    /* three red clouds, rocking slowly behind everything */
+    var t3 = now/1000;
+    var b = [[0.26+0.10*Math.sin(t3/7), 0.30+0.07*Math.cos(t3/9), 0.62, '255,40,80'],
+             [0.78+0.09*Math.cos(t3/8), 0.24+0.06*Math.sin(t3/6), 0.52, '190,10,60'],
+             [0.50+0.07*Math.sin(t3/5), 0.80+0.05*Math.cos(t3/7), 0.58, '255,70,100']];
+    for(i=0;i<b.length;i++){
+      var bx = b[i][0]*W, by = b[i][1]*H, br = b[i][2]*Math.max(W,H)*(1-gp*0.42);
+      var gg = ctx.createRadialGradient(bx,by,0,bx,by,br);
+      gg.addColorStop(0,'rgba('+b[i][3]+','+(0.16+gp*0.06)+')');
+      gg.addColorStop(1,'rgba('+b[i][3]+',0)');
+      ctx.fillStyle = gg; ctx.beginPath(); ctx.arc(bx,by,br,0,TAU); ctx.fill();
+    }
 
-    var gi = (0.18+gp*0.32)*(1+0.10*Math.sin(now/900));
-    var g = ctx.createRadialGradient(150,150,4,150,150,120);
-    g.addColorStop(0,'rgba(255,120,145,'+gi+')');
-    g.addColorStop(0.42,'rgba(255,30,60,'+(gi*0.42)+')');
-    g.addColorStop(1,'rgba(255,30,60,0)');
-    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(150,150,120,0,TAU); ctx.fill();
+    /* dust rising through the frame */
+    for(i=0;i<dust.length;i++){
+      var D = dust[i];
+      D.x += D.vx; D.y -= 0.06;
+      if(D.y < 0) D.y = H;
+      if(D.x < 0) D.x += W; if(D.x > W) D.x -= W;
+      ctx.fillStyle = 'rgba(255,200,215,'+(0.10+0.10*Math.sin(now/1300+D.ph))+')';
+      ctx.beginPath(); ctx.arc(D.x,D.y,D.r,0,TAU); ctx.fill();
+    }
+
+    /* the light the logo lands in */
+    var gi = (0.05+gp*0.34)*(1+0.09*Math.sin(now/1000))*(1-fade*0.45);
+    var gr = ctx.createRadialGradient(W/2,cy,3,W/2,cy,150);
+    gr.addColorStop(0,'rgba(255,130,155,'+gi+')');
+    gr.addColorStop(0.4,'rgba(255,30,60,'+(gi*0.4)+')');
+    gr.addColorStop(1,'rgba(255,30,60,0)');
+    ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(W/2,cy,150,0,TAU); ctx.fill();
 
     ctx.globalCompositeOperation = 'lighter';
-
-    for(var i=0;i<P.length;i++){
+    for(i=0;i<P.length;i++){
       var o = P[i];
-      var k = held ? 1 : ease(((T-HOLD)/FORM - o.delay)/(1-o.delay*0.6));
+      var k = held ? 1 : ease(((T-LEAD)/FORM - o.delay)/(1-o.delay*0.62));
       o.k = k;
-      var ang = o.orb + spin*(1.6 - o.orr/150);
-      var sx = 150 + Math.cos(ang)*o.orr;
-      var sy = 150 + Math.sin(ang)*o.orr*0.82 + Math.sin(now/1100+o.ph)*4;
-      var nx = o.tx-sx, ny = o.ty-sy, Ln = Math.sqrt(nx*nx+ny*ny) || 1;
-      var bend = (1-k)*k*20;
-      o.x = sx + (o.tx-sx)*k + (-ny/Ln)*bend;
-      o.y = sy + (o.ty-sy)*k + ( nx/Ln)*bend;
-      if(k >= 1){ o.x = o.tx + Math.sin(now/720+o.ph)*0.9; o.y = o.ty + Math.cos(now/780+o.ph)*0.9; }
-    }
-
-    var la = 0.30*(1-gp*0.92);
-    if(la > 0.012){
-      ctx.lineWidth = 0.7;
-      for(var a1=0;a1<P.length;a1+=3){
-        var A = P[a1];
-        var stop = Math.min(a1+42, P.length);
-        for(var b=a1+3;b<stop;b+=3){
-          var B = P[b], dx = A.x-B.x, dy = A.y-B.y, d2 = dx*dx+dy*dy;
-          if(d2 < 900){
-            ctx.strokeStyle = 'rgba(255,80,110,'+(la*(1-d2/900))+')';
-            ctx.beginPath(); ctx.moveTo(A.x,A.y); ctx.lineTo(B.x,B.y); ctx.stroke();
-          }
-        }
-      }
-    }
-
-    for(var j=0;j<P.length;j++){
-      var p = P[j];
-      var tw = 0.62 + 0.38*Math.sin(now/460+p.ph);
-      var al = (0.36 + 0.64*p.k)*tw;
-      if(p.bright){
-        var bg = ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.sz*5);
-        bg.addColorStop(0,'rgba(255,215,225,'+(al*0.9)+')');
-        bg.addColorStop(0.35,'rgba(255,60,95,'+(al*0.5)+')');
+      /* one long spiral in from off screen, never a straight line */
+      var ang = o.sa + (1-k)*2.1 + now/26000;
+      var rad = o.sr*(1-k);
+      var sx = W/2 + Math.cos(ang)*rad;
+      var sy = cy + Math.sin(ang)*rad*0.92;
+      o.x = sx + (o.tx-sx)*k;
+      o.y = sy + (o.ty-sy)*k;
+      if(k >= 1){ o.x = o.tx + Math.sin(now/760+o.ph)*0.9; o.y = o.ty + Math.cos(now/820+o.ph)*0.9; }
+      var tw = 0.6 + 0.4*Math.sin(now/470+o.ph);
+      var al = (0.25 + 0.75*k)*tw*(1-fade);
+      if(al <= 0.004) continue;
+      if(o.bright){
+        var bg = ctx.createRadialGradient(o.x,o.y,0,o.x,o.y,o.sz*5);
+        bg.addColorStop(0,'rgba(255,220,230,'+(al*0.85)+')');
+        bg.addColorStop(0.35,'rgba(255,60,95,'+(al*0.45)+')');
         bg.addColorStop(1,'rgba(255,30,60,0)');
-        ctx.fillStyle = bg; ctx.beginPath(); ctx.arc(p.x,p.y,p.sz*5,0,TAU); ctx.fill();
+        ctx.fillStyle = bg; ctx.beginPath(); ctx.arc(o.x,o.y,o.sz*5,0,TAU); ctx.fill();
       }
-      ctx.fillStyle = p.k>0.9 ? 'rgba(255,232,238,'+al+')' : 'rgba(255,110,140,'+al+')';
-      ctx.beginPath(); ctx.arc(p.x,p.y,p.sz*(0.8+0.35*p.k),0,TAU); ctx.fill();
+      ctx.fillStyle = (k>0.9) ? 'rgba(255,236,240,'+al+')' : 'rgba(255,115,145,'+al+')';
+      ctx.beginPath(); ctx.arc(o.x,o.y,o.sz*(0.75+0.35*k),0,TAU); ctx.fill();
     }
-
     ctx.globalCompositeOperation = 'source-over';
 
-    if(gp > 0.62){ reveal(); }
-    if(gp >= 1 && !held){ held = true; }
+    if(gp >= 1 && !held) held = true;
+    if(gp >= 0.995) s.classList.add('mm-up');
     raf = requestAnimationFrame(draw);
-  }
-
-  function reveal(){
-    var c = document.getElementById('wel-copy'), a = document.getElementById('wel-acts');
-    if(c) c.classList.add('in');
-    if(a) a.classList.add('in');
   }
 
   function stop(){ if(raf){ cancelAnimationFrame(raf); raf = 0; } }
 
   function start(replay){
     want = true;
-    if(!ready){ return; }
+    if(!ready) return;
+    var s = document.getElementById('screen-auth');
     if(replay){
-      held = false; t0 = performance.now();
-      var c = document.getElementById('wel-copy'), a = document.getElementById('wel-acts');
-      if(c) c.classList.remove('in');
-      if(a) a.classList.remove('in');
-      for(var i=0;i<P.length;i++){ P[i].k = 0; }
+      held = false; fadeCur = 0; fadeTarget = 0; t0 = performance.now();
+      if(s) s.classList.remove('mm-up');
+      for(var i=0;i<P.length;i++) P[i].k = 0;
     }
-    if(CALM){ held = true; reveal(); if(!raf) raf = requestAnimationFrame(draw); return; }
+    if(CALM){ held = true; if(s) s.classList.add('mm-up'); }
     if(!raf) raf = requestAnimationFrame(draw);
   }
 
   function init(){
     cv = document.getElementById('wel-canvas');
     if(!cv) return;
-    ctx = cv.getContext('2d');
-    var dpr = Math.min(window.devicePixelRatio || 1, 2);
-    cv.width = 300*dpr; cv.height = 300*dpr;
-    ctx.scale(dpr, dpr);
+    measure();
     var url = markUrl();
     if(!url) return;
     var img = new Image();
-    img.onload = function(){
-      seed(samplePoints(img));
-      ready = true; held = false; t0 = performance.now();
-      if(want) start(true);
-    };
+    img.onload = function(){ IMG = img; seed(); if(want) start(true); };
     img.src = url;
   }
 
-  /* the screen is one screen with two panes, so opening the form is a class */
   window.mmAuthOpen = function(tab){
     var s = document.getElementById('screen-auth');
     if(s) s.classList.add('mm-open');
+    fadeTarget = 1;                     /* the glitter hands over to the crest */
+    held = true;
     if(typeof switchAuthTab === 'function') switchAuthTab(tab || 'signin');
   };
   window.mmAuthBack = function(){
     var s = document.getElementById('screen-auth');
     if(s) s.classList.remove('mm-open');
+    fadeTarget = 0;
     if(typeof switchAuthTab === 'function') switchAuthTab('signin');
   };
   window.mmWelReset = function(){
@@ -27559,9 +27597,9 @@ html[data-theme="light"] .mm-cat u{background:rgba(0,0,0,.10);}
   /* the tab strip is gone, so the original handler would throw on a null.
      It is replaced rather than edited, and the two forms still switch. */
   window.switchAuthTab = function(tab){
-    var a = document.getElementById('form-signin'), b = document.getElementById('form-register');
+    var a = document.getElementById('form-signin'), b2 = document.getElementById('form-register');
     if(a) a.style.display = (tab === 'signin') ? 'block' : 'none';
-    if(b) b.style.display = (tab === 'register') ? 'block' : 'none';
+    if(b2) b2.style.display = (tab === 'register') ? 'block' : 'none';
     /* it does NOT open the form pane. mmAuthOpen does that, and adding it
        here made the back arrow bounce straight back into the form. */
     var body = document.querySelector('#screen-auth .auth-body');
@@ -27582,6 +27620,18 @@ html[data-theme="light"] .mm-cat u{background:rgba(0,0,0,.10);}
       var s = document.getElementById('screen-auth');
       if(want && s && s.classList.contains('active') && !raf) raf = requestAnimationFrame(draw);
     }
+  });
+
+  window.addEventListener('resize', function(){
+    if(!cv) return;
+    clearTimeout(rsz);
+    rsz = setTimeout(function(){
+      var s = document.getElementById('screen-auth');
+      if(!s || !s.classList.contains('active')) return;
+      measure(); seed();
+      if(held){ for(var i=0;i<P.length;i++) P[i].k = 1; }
+      if(!raf && want) raf = requestAnimationFrame(draw);
+    }, 220);
   });
 
   if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', init); }
