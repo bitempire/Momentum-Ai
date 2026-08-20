@@ -2148,6 +2148,26 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
    card's up/nt states: red people, green signals, blue machines, gold money.
    Each gets its own bloom and thread - before this, only Signals had them,
    which is why the strip looked half finished. */
+/* The pending rows under NEEDS YOU. Tapping the NAME opens the full card;
+   Approve and reject stay on the row so the common case is one tap. */
+.pnd-row{display:flex;align-items:center;gap:9px;padding:8px 12px;
+ border-top:1px solid rgba(255,255,255,.05);}
+.pnd-av{width:26px;height:26px;flex:none;border-radius:9px;display:flex;align-items:center;
+ justify-content:center;font-size:9px;font-weight:800;color:#07070a;}
+.pnd-bd{flex:1;min-width:0;cursor:pointer;}
+.pnd-bd b{display:block;font-size:11px;font-weight:600;color:var(--text);
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pnd-bd s{display:block;font-family:'Orbitron',sans-serif;font-size:8.5px;color:var(--text3);
+ text-decoration:none;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pnd-ok{font-size:9.5px;font-weight:700;padding:6px 10px;border-radius:8px;flex:none;cursor:pointer;
+ background:rgba(0,200,122,.14);border:1px solid rgba(0,200,122,.3);color:var(--green);
+ font-family:'Sora',sans-serif;}
+.pnd-no{width:27px;height:27px;flex:none;border-radius:8px;background:rgba(255,30,60,.10);
+ border:1px solid rgba(255,30,60,.22);color:var(--red);display:flex;align-items:center;
+ justify-content:center;font-size:12px;cursor:pointer;}
+.pnd-more{display:flex;align-items:center;justify-content:center;gap:6px;padding:9px;
+ border-top:1px solid rgba(255,255,255,.05);font-size:10px;font-weight:700;color:#7FB0FF;
+ cursor:pointer;}
 .adash-tile{position:relative;overflow:hidden;background:var(--surface);border:1px solid var(--border);
  border-radius:12px;padding:10px 11px 13px;}
 .adash-bloom{position:absolute;left:0;right:0;bottom:0;height:26px;filter:blur(10px);}
@@ -16547,6 +16567,122 @@ function mmAdashSwipe() {
   }, {passive:true});
 }
 
+// ── APPROVE FROM THE DASHBOARD (20 Aug 2026) ──────────────────
+// The five who have waited longest sit under the NEEDS YOU row. Approve is one
+// tap from opening the app; tapping the name opens the full card.
+var MMPND_ROWS = [];
+
+function mmPndColour(u) {
+  var s = String(u.id || u.email || ''), n = 0;
+  for (var i = 0; i < s.length; i++) n = (n + s.charCodeAt(i)) % 5;
+  return ['#FF1E3C','#3B82F6','#00c87a','#F0B232','#A78BFA'][n];
+}
+
+function mmPndRows() {
+  if(!MMPND_ROWS.length) return '';
+  var five = MMPND_ROWS.slice(0, 5);
+  var html = five.map(function(u) {
+    var nm = u.name || u.username || 'User';
+    var when = u.created_at ? mmTkAgo(u.created_at) : '';
+    return '<div class="pnd-row">' +
+      '<span class="pnd-av" style="background:' + mmPndColour(u) + '">' +
+        mmTkEsc(nm.substring(0,2).toUpperCase()) + '</span>' +
+      '<span class="pnd-bd" onclick="mmPndOpen(\'' + u.id + '\')">' +
+        '<b>' + mmTkEsc(nm) + '</b>' +
+        '<s>' + mmTkEsc(u.mt5_id || 'no ID') + (when ? (' \u00b7 ' + mmTkEsc(when)) : '') + '</s></span>' +
+      '<button class="pnd-ok" onclick="mmPndApprove(\'' + u.id + '\')">Approve</button>' +
+      '<button class="pnd-no" onclick="mmPndReject(\'' + u.id + '\')"><i class="ti ti-x"></i></button>' +
+    '</div>';
+  }).join('');
+  if(MMPND_ROWS.length > 5) {
+    html += '<div class="pnd-more" onclick="mmAdmNav(\'users\')">' +
+      'View all ' + MMPND_ROWS.length + ' in Users<i class="ti ti-chevron-right"></i></div>';
+  } else {
+    html += '<div class="pnd-more" onclick="mmAdmNav(\'users\')">View all in Users' +
+      '<i class="ti ti-chevron-right"></i></div>';
+  }
+  return html;
+}
+
+function mmPndClose() {
+  var ov = document.getElementById('pnd-ov');
+  if(ov) ov.remove();
+}
+
+function mmPndOpen(id) {
+  var u = MMPND_ROWS.filter(function(x) { return String(x.id) === String(id); })[0];
+  if(!u) return;
+  mmPndClose();
+  var nm = u.name || u.username || 'User';
+  var col = '#ffb020';
+  var waited = u.created_at ? mmTkAgo(u.created_at) : '--';
+  var joined = u.created_at ? new Date(u.created_at).toLocaleDateString() : '--';
+  var accts = (typeof MMT_ROWS !== 'undefined' && MMT_ROWS.length)
+    ? String(MMT_ROWS.filter(function(a) { return String(a.user_id) === String(u.id); }).length)
+    : '--';
+
+  var ov = document.createElement('div');
+  ov.id = 'pnd-ov';
+  ov.className = 'aus-ov on';
+  ov.onclick = function(e) { if(e.target === ov) mmPndClose(); };
+  ov.innerHTML =
+    '<div class="aus-card">' +
+      '<span class="aus-x" onclick="mmPndClose()"><i class="ti ti-x"></i></span>' +
+      '<div class="amt-hero" style="background:linear-gradient(150deg,' + col + '2e,' + col + '08 55%,rgba(255,255,255,.02))">' +
+        '<span class="amt-mesh"></span>' +
+        '<div class="amt-who">' +
+          '<span class="amt-av2" style="background:' + col + '26;color:' + col + '">' +
+            mmTkEsc(nm.substring(0,2).toUpperCase()) + '</span>' +
+          '<span class="amt-dwho"><b>' + mmTkEsc(nm) + '</b><s>' + mmTkEsc(u.email || '--') + '</s></span>' +
+          '<span class="amt-pill" style="margin-right:30px;background:' + col + '1f;color:' + col + '">PENDING</span>' +
+        '</div>' +
+        '<div class="amt-m2">' +
+          '<div><i class="ti ti-id"></i><span><div class="k">REGISTER ID</div><div class="v">' +
+            mmTkEsc(u.mt5_id || '--') + '</div></span></div>' +
+          '<div><i class="ti ti-clock"></i><span><div class="k">WAITING</div>' +
+            '<div class="v" style="color:' + col + '">' + mmTkEsc(waited) + '</div></span></div>' +
+          '<div><i class="ti ti-calendar"></i><span><div class="k">SIGNED UP</div><div class="v">' +
+            joined + '</div></span></div>' +
+          '<div><i class="ti ti-server-bolt"></i><span><div class="k">ACCOUNTS</div><div class="v">' +
+            accts + '</div></span></div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="amt-db">' +
+        '<div class="amt-sect">DECISION</div>' +
+        '<div class="amt-alist">' +
+          '<div class="amt-act amt-glass" onclick="mmPndApprove(\'' + u.id + '\')">' +
+            '<span class="amt-ring" style="border-color:var(--green);color:var(--green)">' +
+              '<i class="ti ti-check"></i></span>' +
+            '<span class="tx"><b>Approve</b><s>Lets them sign in and connect an account</s></span>' +
+            '<span class="ch"><i class="ti ti-chevron-right"></i></span></div>' +
+        '</div>' +
+        // Reject deletes the row outright, so the button says so.
+        '<button class="amt-del" onclick="mmPndReject(\'' + u.id + '\')">REJECT AND DELETE</button>' +
+      '</div>' +
+    '</div>';
+  document.body.appendChild(ov);
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() { ov.classList.add('show'); });
+  });
+}
+
+function mmPndApprove(id) {
+  mmPndClose();
+  try { approveUser(id); } catch(e) {}
+  MMPND_ROWS = MMPND_ROWS.filter(function(x) { return String(x.id) !== String(id); });
+  setTimeout(function() { try { loadAdminDashboard(); } catch(e) {} }, 700);
+}
+
+function mmPndReject(id) {
+  var u = MMPND_ROWS.filter(function(x) { return String(x.id) === String(id); })[0];
+  var nm = u ? (u.name || u.username || 'this user') : 'this user';
+  if(!confirm('Reject ' + nm + '?\n\nThis deletes the account. It cannot be undone.')) return;
+  mmPndClose();
+  try { deleteUser(id); } catch(e) {}
+  MMPND_ROWS = MMPND_ROWS.filter(function(x) { return String(x.id) !== String(id); });
+  setTimeout(function() { try { loadAdminDashboard(); } catch(e) {} }, 700);
+}
+
 async function loadAdminDashboard() {
   if(!db) return;
   mmAdashSwipe();
@@ -16647,11 +16783,17 @@ async function loadAdminDashboard() {
       t: quiet.length + ' account' + (quiet.length === 1 ? '' : 's') + ' gone quiet',
       s: quiet.slice(0,3).map(function(a){ return a.mt5_id; }).join(', ')
     });
-    if(pending.length) items.push({
-      c:'#ffb020', ic:'ti-user-plus', tab:'users',
-      t: pending.length + ' user' + (pending.length === 1 ? '' : 's') + ' awaiting approval',
-      s: 'Approve or reject in Users'
-    });
+    if(pending.length) {
+      // The five who have waited longest, decided here rather than two tabs away.
+      MMPND_ROWS = pending.slice().sort(function(a, b) {
+        return new Date(a.created_at || 0) - new Date(b.created_at || 0);
+      });
+      items.push({
+        c:'#ffb020', ic:'ti-user-plus', tab:'users', approvals:true,
+        t: pending.length + ' user' + (pending.length === 1 ? '' : 's') + ' awaiting approval',
+        s: 'Approve or reject below'
+      });
+    } else { MMPND_ROWS = []; }
     if(fundReq.length) items.push({
       c:'#3B82F6', ic:'ti-briefcase', tab:'funds',
       t: fundReq.length + ' fund request' + (fundReq.length === 1 ? '' : 's') + ' pending',
@@ -16664,12 +16806,16 @@ async function loadAdminDashboard() {
         el.innerHTML = '<div class="adash-clear">All clear. Nothing waiting on you.</div>';
       } else {
         el.innerHTML = items.map(function(x) {
-          return '<div class="adash-act" onclick="mmAdmNav(\'' + x.tab + '\')">' +
+          var head = '<div class="adash-act"' +
+            (x.approvals ? '' : ' onclick="mmAdmNav(\'' + x.tab + '\')"') + '>' +
             '<span class="adash-edge" style="background:' + x.c + '"></span>' +
             '<span class="adash-ic" style="background:' + x.c + '1f;color:' + x.c + '">' +
               '<i class="ti ' + x.ic + '"></i></span>' +
             '<span class="adash-tx"><b>' + mmTkEsc(x.t) + '</b><s>' + mmTkEsc(x.s) + '</s></span>' +
-            '<span class="adash-go"><i class="ti ti-chevron-right"></i></span></div>';
+            (x.approvals ? '' : '<span class="adash-go"><i class="ti ti-chevron-right"></i></span>') +
+          '</div>';
+          if(!x.approvals) return head;
+          return head + mmPndRows();
         }).join('');
       }
     }
