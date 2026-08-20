@@ -7459,7 +7459,10 @@ function _avSvg(key, size){
 // `_avBg` returns the gradient for an id and hands back anything else
 // untouched, which is what keeps every existing hex working.
 var AV_GRADS = {
-  'g-ember':'linear-gradient(180deg,#3a0410,#5c0716 48%,#8f0019)',
+  // SAMPLED OFF HIS OWN SIGN OUT BAR, not matched by eye: that bar runs
+  // #C9243E into #7C1827. Both stops sit at hue 351, so it reads RED
+  // rather than drifting into pink.
+  'g-ember':'linear-gradient(135deg,#C9243E,#7C1827)',
   'g-sunset':'linear-gradient(135deg,#FF1E3C,#FF6B35 55%,#F0B232)',
   'g-ocean':'linear-gradient(135deg,#3B82F6,#00C2A8)',
   'g-orchid':'linear-gradient(135deg,#8B5CF6,#EC4899)',
