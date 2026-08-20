@@ -2143,6 +2143,21 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
    the customer header at runtime rather than pasted again - it is a 26KB
    base64 string and the file already holds two copies. */
 .adm-header{position:relative;display:flex;align-items:center;gap:10px;overflow:hidden;}
+
+/* The TODAY tiles carry their own colour now rather than borrowing the market
+   card's up/nt states: red people, green signals, blue machines, gold money.
+   Each gets its own bloom and thread - before this, only Signals had them,
+   which is why the strip looked half finished. */
+.adash-tile{position:relative;overflow:hidden;background:var(--surface);border:1px solid var(--border);
+ border-radius:12px;padding:10px 11px 13px;}
+.adash-bloom{position:absolute;left:0;right:0;bottom:0;height:26px;filter:blur(10px);}
+.adash-line{position:absolute;left:0;right:0;bottom:0;height:2px;overflow:hidden;
+ -webkit-mask-image:linear-gradient(90deg,transparent,#000 20%,#000 80%,transparent);
+ mask-image:linear-gradient(90deg,transparent,#000 20%,#000 80%,transparent);}
+.adash-line i{position:absolute;inset:0;display:block;background-size:220% 100%;
+ animation:adashFlow 6s linear infinite;}
+@keyframes adashFlow{0%{background-position:120% 0}100%{background-position:-120% 0}}
+@media (prefers-reduced-motion: reduce){ .adash-line i{animation:none;} }
 .adm-plate{width:32px;height:32px;flex:none;border-radius:10px;background:rgba(255,30,60,.12);
  border:1px solid rgba(255,30,60,.22);display:flex;align-items:center;justify-content:center;}
 .adm-plate img{height:22px;width:22px;object-fit:contain;display:block;}
@@ -4985,33 +5000,33 @@ html[data-theme="light"] .adm-nb.on i,html[data-theme="light"] .adm-nb.on span{c
 
         <div class="adash-sect">TODAY<u></u></div>
         <div class="adash-strip">
-          <div class="mm-mkt-card nt">
+          <div class="adash-tile">
             <div class="mm-mkt-h"><span class="mm-mkt-sym">USERS</span></div>
-            <div class="mm-mkt-price" id="astat-total">--</div>
+            <div class="mm-mkt-price" style="color:#FF1E3C" id="astat-total">--</div>
             <div class="mm-mkt-sub">registered</div>
-            <span class="mm-mkt-bloom"></span>
-            <span class="mm-mkt-line"><span></span></span>
+            <span class="adash-bloom" style="background:linear-gradient(180deg,#FF1E3C00,#FF1E3C2e)"></span>
+            <span class="adash-line"><i style="background:linear-gradient(90deg,#FF1E3C00,#FF1E3C 50%,#FF1E3C00)"></i></span>
           </div>
-          <div class="mm-mkt-card up">
+          <div class="adash-tile">
             <div class="mm-mkt-h"><span class="mm-mkt-sym">SIGNALS</span></div>
-            <div class="mm-mkt-price" id="astat-signals">--</div>
+            <div class="mm-mkt-price" style="color:#00c87a" id="astat-signals">--</div>
             <div class="mm-mkt-sub">active now</div>
-            <span class="mm-mkt-bloom"></span>
-            <span class="mm-mkt-line"><span></span></span>
+            <span class="adash-bloom" style="background:linear-gradient(180deg,#00c87a00,#00c87a2e)"></span>
+            <span class="adash-line"><i style="background:linear-gradient(90deg,#00c87a00,#00c87a 50%,#00c87a00)"></i></span>
           </div>
-          <div class="mm-mkt-card nt">
+          <div class="adash-tile">
             <div class="mm-mkt-h"><span class="mm-mkt-sym">MT5</span></div>
-            <div class="mm-mkt-price" id="adash-accounts">--</div>
+            <div class="mm-mkt-price" style="color:#3B82F6" id="adash-accounts">--</div>
             <div class="mm-mkt-sub">accounts</div>
-            <span class="mm-mkt-bloom"></span>
-            <span class="mm-mkt-line"><span></span></span>
+            <span class="adash-bloom" style="background:linear-gradient(180deg,#3B82F600,#3B82F62e)"></span>
+            <span class="adash-line"><i style="background:linear-gradient(90deg,#3B82F600,#3B82F6 50%,#3B82F600)"></i></span>
           </div>
-          <div class="mm-mkt-card nt">
+          <div class="adash-tile">
             <div class="mm-mkt-h"><span class="mm-mkt-sym">FUNDS</span></div>
-            <div class="mm-mkt-price" style="color:#3B82F6" id="astat-funds">--</div>
+            <div class="mm-mkt-price" style="color:#F0B232" id="astat-funds">--</div>
             <div class="mm-mkt-sub">requests</div>
-            <span class="mm-mkt-bloom"></span>
-            <span class="mm-mkt-line"><span></span></span>
+            <span class="adash-bloom" style="background:linear-gradient(180deg,#F0B23200,#F0B2322e)"></span>
+            <span class="adash-line"><i style="background:linear-gradient(90deg,#F0B23200,#F0B232 50%,#F0B23200)"></i></span>
           </div>
         </div>
 
