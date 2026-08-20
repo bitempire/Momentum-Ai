@@ -585,6 +585,56 @@ html[data-theme="light"] .nav-btn.active span:not(.nav-ico-wrap) { color: #fff; 
 .auth-body > * { max-width: 420px; margin-left: auto; margin-right: auto; }
 @media (prefers-reduced-motion: reduce){ .wel-btn,.wel-btn:before{animation:none;} }
 
+/* ── THE SIGN IN FORM, 20 Aug 2026 ──────────────────────────────
+   The fields sink INTO the screen rather than sitting on it: glass with
+   the shadow on the inside, an icon on the left, and on focus a red edge
+   with a halo around it. Every class is prefixed mmf- because .auth-* is
+   shared with the register form, the support screen and the admin panel,
+   and a shared class was what drew boxes over the figures once. */
+.mmf{position:relative;margin-bottom:12px;border-radius:16px;padding:11px 44px 11px 44px;
+ background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.09);
+ box-shadow:inset 0 2px 10px rgba(0,0,0,.55);
+ transition:border-color .3s,box-shadow .3s,background .3s;cursor:text;}
+.mmf.act{border-color:rgba(255,30,60,.5);background:rgba(255,30,60,.055);
+ box-shadow:inset 0 2px 10px rgba(0,0,0,.5), 0 0 0 3px rgba(255,30,60,.10),
+            0 8px 22px -12px rgba(255,30,60,.7);}
+.mmf-cap{font-family:'Orbitron',sans-serif;font-size:7.5px;letter-spacing:1.5px;
+ color:var(--text3);text-transform:uppercase;}
+.mmf-in{width:100%;background:transparent;border:0;outline:none;color:var(--text);
+ font-family:'Sora',sans-serif;font-size:14px;padding:3px 0 0;}
+.mmf-in::placeholder{color:var(--text3);}
+.mmf-ico{position:absolute;left:15px;top:50%;transform:translateY(-50%);
+ color:var(--text3);font-size:16px;transition:color .3s;}
+.mmf.act .mmf-ico{color:var(--red);}
+.mmf-eye{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:32px;height:32px;
+ display:flex;align-items:center;justify-content:center;background:transparent;border:0;
+ color:var(--text3);font-size:17px;line-height:1;cursor:pointer;padding:0;}
+
+/* ACCESS SYSTEM carries the same moving gradient as the welcome button.
+   BOTH LAYERS ARE BACKGROUNDS, NOT A PSEUDO ELEMENT, because handleLogin
+   rewrites this button's textContent to SIGNING IN and back, which would
+   wipe any wrapper the label needed in order to sit above an overlay. */
+.mmf-sys{width:100%;border:0;cursor:pointer;color:#fff;border-radius:16px;padding:16px;
+ font-family:'Orbitron',sans-serif;font-size:11.5px;font-weight:700;letter-spacing:2px;
+ background-image:radial-gradient(closest-side,rgba(255,255,255,.30),rgba(255,255,255,0) 70%),
+                  linear-gradient(120deg,#c40024,#FF1E3C 45%,#FF7A92 70%,#c40024);
+ background-repeat:no-repeat,no-repeat;
+ background-size:150% 260%, 200% 200%;
+ box-shadow:0 14px 34px -12px rgba(255,30,60,.7);
+ animation:mmfFlow 7s ease-in-out infinite;}
+@keyframes mmfFlow{0%,100%{background-position:14% 84%, 0% 50%}
+                   50%{background-position:78% 20%, 100% 50%}}
+.mmf-sys:active{transform:scale(.987);}
+.mmf-sys[disabled]{opacity:.75;}
+
+.mmf-pw{margin-top:20px;display:flex;justify-content:center;}
+.mmf-pw span{display:inline-flex;align-items:center;gap:7px;font-size:10px;
+ color:rgba(255,255,255,.42);border:1px solid rgba(255,255,255,.10);
+ background:rgba(255,255,255,.03);border-radius:20px;padding:7px 14px;}
+.mmf-pw i{width:5px;height:5px;border-radius:50%;background:var(--green);
+ box-shadow:0 0 8px rgba(39,209,124,.8);flex:none;}
+@media (prefers-reduced-motion: reduce){ .mmf-sys{animation:none;} }
+
 /* the label lives INSIDE the field now, which buys a line of height back */
 .auth-ff{position:relative;margin-bottom:12px;}
 .auth-ff .auth-label{position:absolute;left:14px;top:7px;margin:0;font-size:7.5px;letter-spacing:1px;
@@ -3787,16 +3837,16 @@ html[data-theme="light"] .adm-nb.on i,html[data-theme="light"] .adm-nb.on span{c
       <div class="auth-title" data-i18n="dash.welcome">Welcome Back</div>
       <div class="auth-sub" data-i18n="auth.signInSub">Sign in to your trading account</div>
       <div id="signin-error" class="error-msg"></div>
-      <div class="auth-field auth-ff">
-        <label class="auth-label" data-i18n="auth.username">Username</label>
-        <input id="input-username" class="auth-input" type="text"  placeholder="Enter your username" data-i18n-ph="ph.username" autocomplete="username">
+      <div class="mmf" onclick="mmfTap(this)">
+        <i class="mmf-ico ti ti-user"></i>
+        <div class="mmf-cap" data-i18n="auth.username">Username</div>
+        <input id="input-username" class="mmf-in" type="text" placeholder="Enter your username" data-i18n-ph="ph.username" autocomplete="username" onfocus="mmfOn(this)" onblur="mmfOff(this)">
       </div>
-      <div class="auth-field auth-ff auth-ff-pw">
-        <label class="auth-label" data-i18n="auth.password">Password</label>
-        <div style="position:relative;">
-        <input id="input-password" class="auth-input" type="password" placeholder="••••••••" autocomplete="current-password" style="padding-right:44px;">
-        <button type="button" onclick="toggleLoginPw()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:18px;padding:0;line-height:1;"><i class="ti ti-eye" id="login-pw-eye"></i></button>
-      </div>
+      <div class="mmf" onclick="mmfTap(this)">
+        <i class="mmf-ico ti ti-lock"></i>
+        <div class="mmf-cap" data-i18n="auth.password">Password</div>
+        <input id="input-password" class="mmf-in" type="password" placeholder="••••••••" autocomplete="current-password" onfocus="mmfOn(this)" onblur="mmfOff(this)">
+        <button type="button" class="mmf-eye" onclick="event.stopPropagation();toggleLoginPw();"><i class="ti ti-eye" id="login-pw-eye"></i></button>
       </div>
       <div class="auth-util">
         <!-- Remember me stores the USERNAME ONLY. A password written to the
@@ -3807,19 +3857,8 @@ html[data-theme="light"] .adm-nb.on i,html[data-theme="light"] .adm-nb.on span{c
         </label>
         <a class="auth-forgot-a" data-i18n="auth.forgot">Forgot Password?</a>
       </div>
-      <button class="auth-btn" id="btn-signin" onclick="handleLogin()">ACCESS SYSTEM</button>
-      <div class="auth-links">
-        <button class="auth-lnk" onclick="window.open('https://momentum-ai-ruddy.vercel.app','_blank')">
-          <i class="ti ti-world"></i><span data-i18n="auth.visitSite">Visit Our Website</span>
-        </button>
-        <button class="auth-lnk red" onclick="switchAuthTab('register')">
-          <i class="ti ti-user-plus"></i><span data-i18n="auth.regAft">Register with AFT</span>
-        </button>
-      </div>
-      <div class="auth-status" style="justify-content:center;">
-        <div class="auth-status-dot"></div>
-        <span data-i18n="auth.poweredBy">Powered by Bitempire Sdn Bhd</span>
-      </div>
+      <button class="mmf-sys" id="btn-signin" onclick="handleLogin()">ACCESS SYSTEM</button>
+      <div class="mmf-pw"><span><i></i><span data-i18n="auth.poweredBy">Powered by Bitempire Sdn Bhd</span></span></div>
     </div>
     <!-- Register Form -->
     <div id="form-register" style="display:none;">
@@ -27573,6 +27612,12 @@ html[data-theme="light"] .mm-cat u{background:rgba(0,0,0,.10);}
     img.onload = function(){ IMG = img; seed(); if(want) start(true); };
     img.src = url;
   }
+
+  /* the field lights up from the input's OWN focus event, so the highlight
+     can never disagree with where the cursor actually is */
+  window.mmfOn  = function(el){ if(el && el.parentElement) el.parentElement.classList.add('act'); };
+  window.mmfOff = function(el){ if(el && el.parentElement) el.parentElement.classList.remove('act'); };
+  window.mmfTap = function(el){ var i = el.querySelector('input'); if(i) i.focus(); };
 
   window.mmAuthOpen = function(tab){
     var s = document.getElementById('screen-auth');
