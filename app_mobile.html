@@ -669,6 +669,18 @@ html[data-theme="light"] .nav-btn.active span:not(.nav-ico-wrap) { color: #fff; 
  color:var(--text2);font-family:Sora,sans-serif;}
 .pcard-plan.is-view{background:transparent;border:1px dashed rgba(255,255,255,.28);color:var(--text2);}
 
+/* ── THE VIEW ONLY ALLOWANCE, 20 Aug 2026 ───────────────────────── */
+.mm-quota{display:flex;align-items:center;gap:9px;margin-bottom:11px;padding:9px 12px;
+ border-radius:11px;border:1px dashed rgba(255,255,255,.20);background:rgba(255,255,255,.02);
+ font-size:11.5px;color:var(--text2);}
+.mm-quota b{margin-left:auto;font-family:'Orbitron',sans-serif;font-size:11px;color:#fff;}
+.mm-locked{display:flex;align-items:center;gap:9px;margin-top:4px;padding:13px 12px;cursor:pointer;
+ border-radius:12px;border:1px dashed rgba(255,255,255,.20);background:rgba(255,255,255,.02);
+ font-size:12px;color:var(--text2);}
+.mm-locked b{color:#fff;font-family:'Orbitron',sans-serif;}
+.mm-locked i{margin-left:auto;font-size:14px;color:var(--text3);}
+.mm-locked:active{transform:scale(.99);}
+
 /* ── THE HEADER, 20 Aug 2026 ────────────────────────────────────
    The tile matches the island beside it: the island is 34px tall
    (26px avatar + 3px padding each side + its 1px borders) and the
@@ -14115,12 +14127,22 @@ function handleLogout() {
 // ── TABS ──
 // ── PREMIUM GATE ──
 var BROKER_DEPOSIT_URL = 'https://client.afttmarkets.com/funds/deposit';
-var _premiumScreens = ['sub-scanner','sub-leaderboard','sub-smart-tool-new','sub-auto-trade'];
-var _premiumTabs = ['journal'];
+// SMART TOOL CAME OFF THIS LIST: it is a basic feature now. Auto Trade stays,
+// and Charts, the News Calendar, the Manager and the AI Analyst joined it.
+var _premiumScreens = ['sub-scanner','sub-leaderboard','sub-auto-trade','sub-news','sub-fund','sub-ai-analyst'];
+var _premiumTabs = ['journal','charts'];
 // view = nothing connected, basic = connected, premium = connected and funded.
 // The connected test is the one the app already uses everywhere else, so a
 // customer whose request is still awaiting approval counts as VIEW ONLY -
 // which is honest, because nothing of theirs can trade yet.
+var MM_VIEW_DAILY = 5;
+// THE MALAYSIAN DAY, worked out from the timestamp itself rather than the
+// phone's clock, so changing the device time zone cannot buy a new allowance.
+function mmMytDay(t){
+  var d = new Date(t);
+  if(isNaN(d.getTime())) return '';
+  return new Date(d.getTime() + 8*3600*1000).toISOString().slice(0,10);
+}
 function mmTier(){
   var accts = (typeof window!=='undefined' && window._userAccounts) ? window._userAccounts : [];
   var connected = false;
@@ -14137,7 +14159,14 @@ function isPremiumUser(){
   if(a.premium_manual) return true;
   if(a.premium_until && new Date(a.premium_until) > new Date()) return true;
   if(a.premium_status && ['active','trial','promo','provisional','premium'].indexOf(a.premium_status)>=0) return true;
-  if(a.balance!=null && parseFloat(a.balance) >= 100) return true;
+  // A CENT ACCOUNT REPORTS ITS BALANCE IN CENTS, so the same hundred dollars
+  // reads as 10,000. Without this a cent customer reached premium on ONE
+  // DOLLAR, which has been true for as long as cent accounts have existed.
+  // A DEMO NEVER PROMOTES ITSELF on balance - pretend money is not a deposit.
+  // A manual grant above still wins, so Haikal can always hand it out.
+  if(a.is_demo === true) return false;
+  var _need = (typeof mmAcctIsCent === 'function' && mmAcctIsCent(a)) ? 10000 : 100;
+  if(a.balance!=null && parseFloat(a.balance) >= _need) return true;
   return false;
 }
 // Admins are never gated. They administer the product, including the premium
@@ -14671,10 +14700,32 @@ async function loadSignalsFeed() {
   try {
     var res = await db.from('signals').select('*').eq('status','active').order('created_at',{ascending:false});
     if(res.error||!res.data) { container.innerHTML='<div class="empty-state"><i class="ti ti-broadcast"></i>'+mmT('ds.none','No signals yet')+'</div>'; return; }
+    // ── VIEW ONLY: FIVE GOLD SIGNALS A DAY ──────────────────────────
+    // The first five published today, so it cannot be gamed by refreshing.
+    // The day is MALAYSIAN, computed from the timestamp rather than the
+    // phone's clock, so a customer cannot win a new allowance by changing
+    // their time zone.
+    var _rows = res.data, _hidden = 0;
+    if((typeof mmTier === 'function') && mmTier() === 'view'){
+      var _today = mmMytDay(new Date());
+      var _mine = _rows.filter(function(s){ return mmMytDay(s.created_at) === _today; });
+      _mine.sort(function(a,b){ return new Date(a.created_at) - new Date(b.created_at); });
+      var _allow = {};
+      _mine.slice(0, MM_VIEW_DAILY).forEach(function(s){ _allow[s.id] = true; });
+      _hidden = _rows.length - Object.keys(_allow).length;
+      _rows = _rows.filter(function(s){ return _allow[s.id]; });
+    }
     window._signalStore = {};
-    res.data.forEach(function(s) { window._signalStore[s.id]=s; });
+    _rows.forEach(function(s) { window._signalStore[s.id]=s; });
     container.innerHTML = '';
-    res.data.forEach(function(sig, idx) {
+    if(_hidden > 0){
+      var _q = document.createElement('div');
+      _q.className = 'mm-quota';
+      _q.innerHTML = '<span>' + mmT('tier.viewDaily','Your 5 free signals today') + '</span>' +
+                     '<b>' + _rows.length + '/' + MM_VIEW_DAILY + '</b>';
+      container.appendChild(_q);
+    }
+    _rows.forEach(function(sig, idx) {
       var dir = sig.direction.toLowerCase();
       var conf = (sig.strength == null ? 70 : sig.strength);
 
@@ -14757,6 +14808,17 @@ async function loadSignalsFeed() {
       card.appendChild(footer);
       container.appendChild(card);
     });
+    if(_hidden > 0){
+      // ONE LINE, NOT NINE BLURRED ROWS. Blur repeated down a screen reads as
+      // broken rather than tempting.
+      var _lk = document.createElement('div');
+      _lk.className = 'mm-locked';
+      _lk.innerHTML = '<span><b>' + _hidden + '</b> ' +
+        mmT('tier.moreLocked','more signals today') + '</span>' +
+        '<i class="ti ti-lock"></i>';
+      _lk.onclick = function(){ if(typeof showDepositPopup === 'function') showDepositPopup(); };
+      container.appendChild(_lk);
+    }
     if(typeof mmApplyLang==='function') mmApplyLang();
     // Populate analyst filter dropdown from loaded signals
     try {
@@ -25691,8 +25753,21 @@ async function mt5ActivateWithNode(id){
                 + 'Place it here anyway?')) return;
     }
   } catch(e){ /* if the count fails, fall through - the launcher's own cap guard still protects the box */ }
-  // Same transition as before, plus worker_group so the launcher adopts it.
-  applyMT5Transition(id, { connection_status:'connected', mt5_connected:true }, { connected_at:new Date().toISOString(), worker_group:node }, 'connected', null);
+  // REAL OR DEMO, asked once, at the only moment anyone actually looks at the
+  // account. A demo is allowed through to basic - it just never promotes
+  // itself to premium on a pretend balance.
+  var _kind = window.prompt('Is this a REAL account or a DEMO?\n\n'
+    + 'Type REAL or DEMO. A demo gets basic access but can never reach premium\n'
+    + 'on its balance.', 'REAL');
+  if(_kind === null) return;
+  _kind = String(_kind).trim().toUpperCase();
+  if(_kind !== 'REAL' && _kind !== 'DEMO'){
+    alert('Type REAL or DEMO. Nothing was changed.');
+    return;
+  }
+  applyMT5Transition(id, { connection_status:'connected', mt5_connected:true },
+    { connected_at:new Date().toISOString(), worker_group:node, is_demo:(_kind==='DEMO') },
+    'connected', null);
 }
 function mt5Resume(id){ applyMT5Transition(id, { connection_status:'connected', mt5_connected:true }, { connected_at:new Date().toISOString() }, 'resumed', null); }
 function mt5Reallow(id){ applyMT5Transition(id, { connection_status:'disconnected', mt5_connected:false }, {}, 'reopened', null); }
