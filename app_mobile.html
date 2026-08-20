@@ -702,12 +702,35 @@ html[data-theme="light"] .nav-btn.active span:not(.nav-ico-wrap) { color: #fff; 
 .adash-big{font-family:'Orbitron',sans-serif;font-size:21px;margin-top:3px;letter-spacing:-.4px;}
 .adash-big em{font-style:normal;font-size:12px;color:var(--text2);margin-right:6px;}
 .adash-sub{font-size:9px;color:var(--text3);margin-top:3px;}
+/* Figure first, label under, both centred, and NOTHING is allowed to wrap.
+   `flex:1 1 0` with `min-width:0` is the part that matters: without it a flex
+   child refuses to shrink below its content and the text spills.
+   The percentage rides on the LABEL line, so every cell is exactly two rows. */
 .adash-cells{display:flex;margin:11px -13px 0;border-top:1px solid var(--border);}
-.adash-cell{flex:1;padding:9px 10px;border-right:1px solid var(--border);position:relative;}
+.adash-cell{flex:1 1 0;min-width:0;padding:11px 6px;border-right:1px solid var(--border);
+ position:relative;overflow:hidden;text-align:center;}
 .adash-cell:last-child{border-right:0;}
-.adash-cbar{position:absolute;left:0;top:9px;bottom:9px;width:2px;border-radius:2px;display:block;}
-.adash-ck{font-size:8px;color:var(--text3);letter-spacing:.5px;display:block;}
-.adash-cv{font-family:'Orbitron',sans-serif;font-size:12px;margin-top:4px;display:block;}
+.adash-cbar{position:absolute;left:50%;transform:translateX(-50%);top:0;width:22px;height:2px;
+ border-radius:2px;display:block;}
+.adash-ck{font-size:7.5px;color:var(--text3);letter-spacing:.5px;display:block;margin-top:5px;
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.adash-ck em{font-style:normal;margin-left:4px;}
+.adash-cv{font-family:'Orbitron',sans-serif;font-size:14px;display:block;white-space:nowrap;
+ overflow:hidden;letter-spacing:-.3px;}
+.adash-cv small{font-size:9px;color:var(--text3);}
+.adash-cbloom{position:absolute;left:0;right:0;bottom:0;height:20px;filter:blur(9px);}
+
+/* The card outline carries the currency: blue on USD, red on USC. Twin lights,
+   one lap every 20 seconds. The radar behind it is untouched. */
+@property --adashA{syntax:'<angle>';initial-value:0deg;inherits:false}
+.adash-deck::before{content:'';position:absolute;inset:0;border-radius:14px;padding:1.5px;
+ -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+ -webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;z-index:6;
+ background:conic-gradient(from var(--adashA),transparent 0deg,var(--adashC,#3B82F6) 45deg,
+   transparent 105deg,transparent 180deg,var(--adashC,#3B82F6) 225deg,transparent 285deg);
+ opacity:.75;animation:adashSweep 20s linear infinite;}
+@keyframes adashSweep{to{--adashA:360deg}}
+@media (prefers-reduced-motion: reduce){ .adash-deck::before{animation:none;} }
 .adash-note{font-size:8px;color:var(--text3);padding:0 0 11px;margin-top:8px;}
 
 .adash-sect{font-family:'Orbitron',sans-serif;font-size:9px;letter-spacing:1.2px;color:var(--text3);
@@ -4974,12 +4997,18 @@ html[data-theme="light"] .adm-nb.on i,html[data-theme="light"] .adm-nb.on span{c
               <div class="adash-big"><em>USD</em><span id="adash-usd-bal">--</span></div>
               <div class="adash-sub" id="adash-usd-sub">standard accounts</div>
               <div class="adash-cells">
-                <div class="adash-cell"><span class="adash-cbar" style="background:var(--red)"></span>
-                  <span class="adash-ck">EQUITY</span><span class="adash-cv" id="adash-usd-eq">--</span></div>
+                <div class="adash-cell"><span class="adash-cbar" style="background:var(--gold)"></span>
+                  <span class="adash-cv" id="adash-usd-eq" style="color:var(--gold)">--</span>
+                  <span class="adash-ck">EQUITY</span>
+                  <span class="adash-cbloom" style="background:linear-gradient(180deg,transparent,rgba(240,178,50,.14))"></span></div>
                 <div class="adash-cell"><span class="adash-cbar" style="background:var(--green)"></span>
-                  <span class="adash-ck">OPEN P&amp;L</span><span class="adash-cv" id="adash-usd-pl">--</span></div>
+                  <span class="adash-cv" id="adash-usd-pl">--</span>
+                  <span class="adash-ck">OPEN P&amp;L<em id="adash-usd-pct"></em></span>
+                  <span class="adash-cbloom" id="adash-usd-plbloom"></span></div>
                 <div class="adash-cell"><span class="adash-cbar" style="background:#3B82F6"></span>
-                  <span class="adash-ck">ARMED</span><span class="adash-cv" id="adash-usd-armed">--</span></div>
+                  <span class="adash-cv" id="adash-usd-armed">--</span>
+                  <span class="adash-ck">ARMED</span>
+                  <span class="adash-cbloom" style="background:linear-gradient(180deg,transparent,rgba(59,130,246,.16))"></span></div>
               </div>
               <div class="adash-note">Standard accounts, in USD.</div>
             </div>
@@ -4998,12 +5027,18 @@ html[data-theme="light"] .adm-nb.on i,html[data-theme="light"] .adm-nb.on span{c
               <div class="adash-big"><em>USC</em><span id="adash-usc-bal">--</span></div>
               <div class="adash-sub" id="adash-usc-sub">cent accounts</div>
               <div class="adash-cells">
-                <div class="adash-cell"><span class="adash-cbar" style="background:#3B82F6"></span>
-                  <span class="adash-ck">EQUITY</span><span class="adash-cv" id="adash-usc-eq">--</span></div>
+                <div class="adash-cell"><span class="adash-cbar" style="background:var(--gold)"></span>
+                  <span class="adash-cv" id="adash-usc-eq" style="color:var(--gold)">--</span>
+                  <span class="adash-ck">EQUITY</span>
+                  <span class="adash-cbloom" style="background:linear-gradient(180deg,transparent,rgba(240,178,50,.14))"></span></div>
                 <div class="adash-cell"><span class="adash-cbar" style="background:var(--green)"></span>
-                  <span class="adash-ck">OPEN P&amp;L</span><span class="adash-cv" id="adash-usc-pl">--</span></div>
+                  <span class="adash-cv" id="adash-usc-pl">--</span>
+                  <span class="adash-ck">OPEN P&amp;L<em id="adash-usc-pct"></em></span>
+                  <span class="adash-cbloom" id="adash-usc-plbloom"></span></div>
                 <div class="adash-cell"><span class="adash-cbar" style="background:#3B82F6"></span>
-                  <span class="adash-ck">ARMED</span><span class="adash-cv" id="adash-usc-armed">--</span></div>
+                  <span class="adash-cv" id="adash-usc-armed">--</span>
+                  <span class="adash-ck">ARMED</span>
+                  <span class="adash-cbloom" style="background:linear-gradient(180deg,transparent,rgba(59,130,246,.16))"></span></div>
               </div>
               <div class="adash-note">Cent accounts, in their own units.</div>
             </div>
@@ -16539,6 +16574,9 @@ function mmAdashMoney(n) {
 function mmAdashPage(n) {
   var tr = document.getElementById('adash-track');
   if(tr) tr.classList.toggle('p2', n === 2);
+  // Blue while you are on USD, red on USC.
+  var deck = document.getElementById('adash-deck');
+  if(deck) deck.style.setProperty('--adashC', (n === 2) ? '#FF1E3C' : '#3B82F6');
   var a = document.getElementById('adash-seg1'), b = document.getElementById('adash-seg2');
   if(a) a.classList.toggle('on', n === 1);
   if(b) b.classList.toggle('on', n === 2);
@@ -16748,15 +16786,33 @@ async function loadAdminDashboard() {
     put('adash-usd-bal', mmAdashMoney(book.usd.bal));
     put('adash-usd-eq',  mmAdashMoney(book.usd.eq));
     put('adash-usd-pl',  (book.usd.pl >= 0 ? '+' : '') + mmAdashMoney(book.usd.pl));
-    put('adash-usd-armed', book.usd.armed);
+    put('adash-usd-armed', book.usd.armed + ' of ' + book.usd.n);
     put('adash-usd-sub', book.usd.n + ' standard account' + (book.usd.n === 1 ? '' : 's'));
 
     put('adash-usc-bal', mmAdashMoney(book.usc.bal));
     put('adash-usc-eq',  mmAdashMoney(book.usc.eq));
     put('adash-usc-pl',  (book.usc.pl >= 0 ? '+' : '') + mmAdashMoney(book.usc.pl));
-    put('adash-usc-armed', book.usc.armed);
+    put('adash-usc-armed', book.usc.armed + ' of ' + book.usc.n);
     put('adash-usc-sub', book.usc.n + ' cent account' + (book.usc.n === 1 ? '' : 's') +
         ' \u00b7 about USD ' + mmAdashMoney(book.usc.bal / 100));
+
+    // The percentage sits ON the label line, so every cell stays two rows.
+    function pct(cur, pl, eq) {
+      var el = document.getElementById('adash-' + cur + '-pct');
+      if(!el) return;
+      var p = (eq > 0) ? (pl / eq * 100) : 0;
+      el.textContent = (p >= 0 ? ' +' : ' ') + p.toFixed(2) + '%';
+      el.style.color = (pl >= 0) ? 'var(--green)' : 'var(--red)';
+    }
+    pct('usd', book.usd.pl, book.usd.eq);
+    pct('usc', book.usc.pl, book.usc.eq);
+    function plBloom(cur, pl) {
+      var b = document.getElementById('adash-' + cur + '-plbloom');
+      if(b) b.style.background = 'linear-gradient(180deg,transparent,' +
+        (pl >= 0 ? 'rgba(0,200,122,.16)' : 'rgba(255,30,60,.16)') + ')';
+    }
+    plBloom('usd', book.usd.pl);
+    plBloom('usc', book.usc.pl);
 
     var plEl = document.getElementById('adash-usd-pl');
     if(plEl) plEl.style.color = (book.usd.pl >= 0) ? 'var(--green)' : 'var(--red)';
