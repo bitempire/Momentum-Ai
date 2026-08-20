@@ -761,6 +761,12 @@ html[data-theme="light"] .nav-btn.active span:not(.nav-ico-wrap) { color: #fff; 
 .annp-ft{padding:10px;text-align:center;font-size:11.5px;color:var(--text2);
  border-top:1px solid var(--border);cursor:pointer;}
 .annp-none{padding:22px 12px;text-align:center;font-size:12px;color:var(--text3);}
+
+/* A demo account, tagged where the admin actually looks at accounts. Amber
+   rather than red: a demo is not a fault, it just never becomes premium. */
+.amt-demo{display:inline-block;margin-left:7px;padding:1px 6px;border-radius:4px;vertical-align:middle;
+ font-family:'Orbitron',sans-serif;font-size:7.5px;font-weight:700;letter-spacing:1px;
+ background:rgba(240,178,50,.14);border:1px solid rgba(240,178,50,.36);color:#e7b64a;}
 .mv-n{position:relative;font-family:'Orbitron',sans-serif;font-size:38px;font-weight:900;line-height:1;}
 .mv-t{position:relative;font-size:12.5px;font-weight:700;margin-top:8px;}
 .mv-d{position:relative;font-size:11px;color:var(--text2);margin-top:6px;line-height:1.55;}
@@ -8344,6 +8350,8 @@ function enterApp(user) {
       : mmTier()==='basic' ? ' is-basic' : ' is-view');
     if(profUser) profUser.textContent = '@' + (user.username || '--');
     if(profEmail) profEmail.textContent = user.email || '--';
+    var profPhone = document.getElementById('profile-phone');
+    if(profPhone) profPhone.textContent = user.phone || mmT('prof.notSet','Not set');
     // 13 Aug 2026. This used to print `users.mt5_id`, which is whatever was
     // TYPED AT REGISTRATION and is not one of the accounts the customer trades
     // - Test01's says 510226, which matches none of his five. The account that
@@ -16097,7 +16105,7 @@ function mmUsRender() {
     return '<div class="aus-rw" onclick="mmUsOpen(\'' + u.id + '\')">' +
       '<span class="aus-av" style="background:' + mmUsColour(u) + '">' + mmTkEsc(mmUsInitials(nm)) + '</span>' +
       '<span class="aus-bd"><b>' + mmTkEsc(nm) + '</b>' +
-      '<s>' + mmTkEsc(u.email || '--') + ' &middot; ' + mmTkEsc(u.mt5_id || '--') + '</s></span>' +
+      '<s>' + mmTkEsc(u.email || '--') + ' &middot; ' + mmTkEsc(u.phone || u.mt5_id || '--') + '</s></span>' +
       '<span class="aus-pill" style="background:' + p[1] + ';color:' + p[2] + '">' + p[0] + '</span>' +
       '<span class="aus-ch"><i class="ti ti-chevron-right"></i></span></div>';
   }).join('');
@@ -16190,7 +16198,8 @@ function mmUsOpen(id) {
       '</div>' +
       '<div class="amt-m2">' +
         '<div><i class="ti ti-server-bolt"></i><span><div class="k">MT5 ACCOUNTS</div><div class="v">' + accts + '</div></span></div>' +
-        '<div><i class="ti ti-id"></i><span><div class="k">MT5 ID</div><div class="v">' + mmTkEsc(u.mt5_id || '--') + '</div></span></div>' +
+        '<div><i class="ti ti-phone"></i><span><div class="k">PHONE</div><div class="v" style="font-family:Sora,sans-serif;font-size:11px">' +
+          mmTkEsc(u.phone || '--') + '</div></span></div>' +
         '<div><i class="ti ti-calendar"></i><span><div class="k">JOINED</div><div class="v">' + joined + '</div></span></div>' +
         '<div><i class="ti ti-user"></i><span><div class="k">USERNAME</div><div class="v" style="font-family:Sora,sans-serif;font-size:11px">' +
           mmTkEsc(u.username || '--') + '</div></span></div>' +
@@ -17070,6 +17079,10 @@ function loadProfileData() {
   if(usernameEl) usernameEl.textContent = currentUser.username || '--';
   var emailEl = document.getElementById('profile-email');
   if(emailEl) emailEl.textContent = currentUser.email || '--';
+  // The Phone row has existed for months with nothing writing to it, so it
+  // read "Not set" even for a customer who had just given us a number.
+  var phoneEl = document.getElementById('profile-phone');
+  if(phoneEl) phoneEl.textContent = currentUser.phone || mmT('prof.notSet','Not set');
   var mt5El = document.getElementById('profile-mt5');
   if(mt5El) mt5El.textContent = mmActiveMt5Id() || currentUser.mt5_id || '--';
   var brokerEl = document.getElementById('profile-broker');
@@ -25758,7 +25771,9 @@ function mmMtRender() {
       return '<div class="amt-rw" onclick="mmMtOpen(\'' + a.id + '\')">' +
         '<span class="amt-edge" style="background:' + h.c + '"></span>' +
         '<span class="amt-av" style="background:' + h.c + '">' + mmTkEsc(mmMtInitials(nm)) + '</span>' +
-        '<span class="amt-bd"><b>' + mmTkEsc(nm) + '</b><s>' + mmTkEsc(a.mt5_id || '--') + '</s></span>' +
+        '<span class="amt-bd"><b>' + mmTkEsc(nm) +
+          (a.is_demo === true ? '<span class="amt-demo">DEMO</span>' : '') +
+          '</b><s>' + mmTkEsc(a.mt5_id || '--') + '</s></span>' +
         '<span class="amt-rt"><span class="amt-st" style="color:' + h.c + '">' +
           '<i style="background:' + h.c + '"></i>' + h.t + '</span>' +
           '<s>' + h.s + '</s></span></div>';
