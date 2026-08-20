@@ -7322,10 +7322,34 @@ function activateAutoTrading() {
 
 
 // ── AVATAR SYSTEM (icon or initials + colour) ──
-var AV_ICON_MAP = { rocket:'ti-rocket', flame:'ti-flame', diamond:'ti-diamond', crown:'ti-crown', robot:'ti-robot' };
-var AV_ICON_ORDER = ['rocket','flame','diamond','crown','robot'];
-var AV_COLORS = ['#FF1E3C','#FF6B35','#F0B232','#34C759','#00C2A8','#3B82F6','#6366F1','#8B5CF6','#EC4899','#F43F5E','#64748B','#111827'];
-var AV_DEFAULT = { icon:'initials', color:'#FF1E3C' };
+// THE ICONS ARE INLINE SVG, NOT A FONT. A font glyph that fails to load is an
+// empty box, and there is no fallback for it. These are silhouettes with no
+// skin tone: the figure is white, the background is the customer's choice.
+var AV_ICON_SVG = {
+  woman1:'<path d="M6.3 14.6V9.2a5.7 5.7 0 0 1 11.4 0v5.4c0 .9.4 1.5 1 1.9H5.3c.6-.4 1-1 1-1.9z"/><circle cx="12" cy="9" r="3.5"/><path d="M4.6 21.4c0-3.7 3.3-5.9 7.4-5.9s7.4 2.2 7.4 5.9z"/>',
+  woman2:'<circle cx="12" cy="4.1" r="2"/><circle cx="12" cy="9.2" r="4"/><path d="M4.6 21.4c0-3.8 3.3-6 7.4-6s7.4 2.2 7.4 6z"/>',
+  man1:'<circle cx="12" cy="8.2" r="4"/><path d="M4.6 21.4c0-3.9 3.3-6.2 7.4-6.2s7.4 2.3 7.4 6.2z"/>',
+  man2:'<circle cx="12" cy="7.6" r="3.6"/><path d="M8.4 8.8c0 3.5 1.6 5.8 3.6 5.8s3.6-2.3 3.6-5.8z"/><path d="M4.6 21.4c0-3.9 3.3-6.2 7.4-6.2s7.4 2.3 7.4 6.2z"/>'
+};
+var AV_ICON_ORDER = ['woman1','woman2','man1','man2'];
+function _avSvg(key, size){
+  return '<svg viewBox="0 0 24 24" width="'+size+'" height="'+size+'" fill="currentColor" ' +
+         'style="display:block;">' + AV_ICON_SVG[key] + '</svg>';
+}
+// THE BACKGROUNDS ARE GRADIENTS, STORED BY ID. `style.background` takes a
+// gradient string just as happily as a hex, so nothing else had to change:
+// `_avBg` returns the gradient for an id and hands back anything else
+// untouched, which is what keeps every existing hex working.
+var AV_GRADS = {
+  'g-ember':'linear-gradient(180deg,#3a0410,#5c0716 48%,#8f0019)',
+  'g-sunset':'linear-gradient(135deg,#FF1E3C,#FF6B35 55%,#F0B232)',
+  'g-ocean':'linear-gradient(135deg,#3B82F6,#00C2A8)',
+  'g-orchid':'linear-gradient(135deg,#8B5CF6,#EC4899)',
+  'g-lime':'linear-gradient(135deg,#34C759,#F0B232)'
+};
+var AV_COLORS = ['g-ember','g-sunset','g-ocean','g-orchid','g-lime'];
+function _avBg(v){ return AV_GRADS[v] || v; }
+var AV_DEFAULT = { icon:'initials', color:'g-ember' };
 
 function _avNameInitials() {
   var name = (currentUser && (currentUser.name || currentUser.username)) || 'Trader';
@@ -7344,14 +7368,17 @@ function getAvatarCfg() {
   return { icon:icon, color:color };
 }
 function _avInner(cfg, iconSize, initialsSize) {
-  if(cfg.icon && cfg.icon !== 'initials' && AV_ICON_MAP[cfg.icon]) {
-    return '<i class="ti '+AV_ICON_MAP[cfg.icon]+'" style="font-size:'+iconSize+'px;color:#fff;line-height:1;"></i>';
+  // An icon a customer chose BEFORE this set existed (rocket, flame and the
+  // rest) is no longer in the map, so it falls through to their initials
+  // rather than drawing nothing.
+  if(cfg.icon && cfg.icon !== 'initials' && AV_ICON_SVG[cfg.icon]) {
+    return _avSvg(cfg.icon, iconSize);
   }
   return '<span style="font-size:'+initialsSize+'px;font-weight:800;color:#fff;line-height:1;letter-spacing:.5px;">'+_avNameInitials()+'</span>';
 }
 function paintAvatar(el, cfg, iconSize, initialsSize) {
   if(!el) return;
-  el.style.background = cfg.color;
+  el.style.background = _avBg(cfg.color);
   el.style.display = 'flex';
   el.style.alignItems = 'center';
   el.style.justifyContent = 'center';
@@ -7423,8 +7450,9 @@ function showAvatarPicker() {
     var cell = document.createElement('span');
     cell.setAttribute('data-icon', key);
     cell.style.cssText = 'position:relative;flex:1;aspect-ratio:1;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;background:#16161D;border:1px solid rgba(255,255,255,0.07);';
-    if(key==='initials') cell.innerHTML = '<span style="font-size:15px;font-weight:700;color:#cfcfd6;">'+_avNameInitials()+'</span>';
-    else cell.innerHTML = '<i class="ti '+AV_ICON_MAP[key]+'" style="font-size:22px;color:#cfcfd6;"></i>';
+    cell.style.color = '#cfcfd6';
+    if(key==='initials') cell.innerHTML = '<span style="font-size:15px;font-weight:700;">'+_avNameInitials()+'</span>';
+    else cell.innerHTML = _avSvg(key, 24);
     cell.addEventListener('click', function(){ work.icon = key; renderPreview(); highlightIcons(); });
     iconRow.appendChild(cell);
   });
@@ -7434,7 +7462,7 @@ function showAvatarPicker() {
       var sel = c.getAttribute('data-icon') === work.icon;
       c.style.border = sel ? '2px solid #FF1E3C' : '1px solid rgba(255,255,255,0.07)';
       c.style.background = sel ? '#241016' : '#16161D';
-      var glyph = c.querySelector('i,span'); if(glyph) glyph.style.color = sel ? '#fff' : '#cfcfd6';
+      c.style.color = sel ? '#fff' : '#cfcfd6';   // the SVG uses currentColor
       var chk = c.querySelector('.av-chk');
       if(sel && !chk){ var b=document.createElement('span'); b.className='av-chk'; b.style.cssText='position:absolute;top:-3px;right:-3px;width:18px;height:18px;border-radius:50%;background:#FF1E3C;border:2px solid #0E0E12;display:flex;align-items:center;justify-content:center;'; b.innerHTML='<i class="ti ti-check" style="font-size:10px;color:#fff;"></i>'; c.appendChild(b); }
       else if(!sel && chk){ chk.remove(); }
@@ -7446,12 +7474,12 @@ function showAvatarPicker() {
   cl.style.cssText = 'font-size:12px;color:#9a9aa6;margin-bottom:10px;';
   sheet.appendChild(cl);
   var colorGrid = document.createElement('div');
-  colorGrid.style.cssText = 'display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:24px;';
-  AV_COLORS.forEach(function(hex){
+  colorGrid.style.cssText = 'display:grid;grid-template-columns:repeat(5,1fr);gap:11px;margin-bottom:24px;';
+  AV_COLORS.forEach(function(id){
     var dot = document.createElement('span');
-    dot.setAttribute('data-color', hex);
-    dot.style.cssText = 'position:relative;aspect-ratio:1;border-radius:50%;cursor:pointer;background:'+hex+';'+(hex==='#111827'?'border:1px solid rgba(255,255,255,0.12);':'');
-    dot.addEventListener('click', function(){ work.color = hex; renderPreview(); highlightColors(); });
+    dot.setAttribute('data-color', id);
+    dot.style.cssText = 'position:relative;aspect-ratio:1;border-radius:50%;cursor:pointer;border:1px solid rgba(255,255,255,0.10);background:'+_avBg(id)+';';
+    dot.addEventListener('click', function(){ work.color = id; renderPreview(); highlightColors(); });
     colorGrid.appendChild(dot);
   });
   sheet.appendChild(colorGrid);
@@ -7459,7 +7487,7 @@ function showAvatarPicker() {
     Array.prototype.forEach.call(colorGrid.children, function(d){
       var hex = d.getAttribute('data-color');
       var sel = hex === work.color;
-      d.style.boxShadow = sel ? '0 0 0 2px #0E0E12,0 0 0 4px '+hex : 'none';
+      d.style.boxShadow = sel ? '0 0 0 2px #0E0E12,0 0 0 4px #FF1E3C' : 'none';
       d.style.alignItems = 'center'; d.style.justifyContent = 'center';
       var chk = d.querySelector('.av-chk');
       if(sel && !chk){ var b=document.createElement('i'); b.className='ti ti-check av-chk'; b.style.cssText='font-size:14px;color:#fff;'; d.appendChild(b); }
