@@ -24097,7 +24097,7 @@ function mmScanCore(){
   var hero = host.parentNode;
   var fcv = document.getElementById('scan-field');
   var fctx = fcv ? fcv.getContext('2d') : null;
-  var FW = 0, FH = 0, grain = null, gx = 0, gy = 0;
+  var FW = 0, FH = 0, grain = null, fmask = null, maskY = -1, gx = 0, gy = 0;
   var t = 0, raf = null, running = false;
   var rate = 1, gain = 1, spread = 0, trailAmt = 0, gearAmt = 0, spin = 0;
 
@@ -24175,7 +24175,7 @@ function mmScanCore(){
     if(nw === FW && nh === FH) return;
     fcv.width = nw; fcv.height = nh; FW = nw; FH = nh;
     gx = FW/2; gy = FH*0.34;
-    grain = null;
+    grain = null; fmask = null;
     // The grain is built ONCE and MASKED, so it fades out long before the
     // bottom of the hero. Unmasked it paints a lit rectangle, which is the
     // exact fault that put a square on the screen.
@@ -24198,6 +24198,51 @@ function mmScanCore(){
       nx.fillStyle = mg; nx.fillRect(0,0,FW,FH);
       grain = nc;
     } catch(e){ grain = null; }
+    buildMask();
+  }
+
+  // THE MASK. The whole field is multiplied by this before it is shown, so the
+  // red reaches black WELL INSIDE the canvas. It is the only thing that makes
+  // an edge impossible: a canvas always ends somewhere, so the light has to
+  // stop before it rather than at it. Built once per size, and rebuilt only if
+  // the core moves far enough for the falloff to sit off centre.
+  function buildMask(){
+    fmask = null;
+    if(!FW || !FH) return;
+    try {
+      var mc = document.createElement('canvas'); mc.width = FW; mc.height = FH;
+      var mx2 = mc.getContext('2d');
+      var mr = Math.min(FW,FH)*0.62;
+      var mg2 = mx2.createRadialGradient(gx,gy,0,gx,gy,mr);
+      for(var k=0;k<=10;k++){
+        var kq = k/10;
+        mg2.addColorStop(kq,'rgba(0,0,0,'+Math.pow(1-kq,1.7).toFixed(4)+')');
+      }
+      mx2.fillStyle = mg2; mx2.fillRect(0,0,FW,FH);
+
+      // A ROUND FALLOFF ALONE IS NOT ENOUGH ON A NARROW SCREEN. On a 304px
+      // phone the falloff radius is wider than the half width, so about 6
+      // percent of the light was still alive at the left and right edges.
+      // These four strips take the last of it off, so every edge is EXACTLY
+      // zero while the middle is untouched.
+      mx2.globalCompositeOperation = 'destination-out';
+      var eW = Math.max(8, Math.round(Math.min(FW,FH)*0.12)), lg;
+      lg = mx2.createLinearGradient(0,0,eW,0);
+      lg.addColorStop(0,'rgba(0,0,0,1)'); lg.addColorStop(1,'rgba(0,0,0,0)');
+      mx2.fillStyle = lg; mx2.fillRect(0,0,eW,FH);
+      lg = mx2.createLinearGradient(FW,0,FW-eW,0);
+      lg.addColorStop(0,'rgba(0,0,0,1)'); lg.addColorStop(1,'rgba(0,0,0,0)');
+      mx2.fillStyle = lg; mx2.fillRect(FW-eW,0,eW,FH);
+      lg = mx2.createLinearGradient(0,0,0,eW);
+      lg.addColorStop(0,'rgba(0,0,0,1)'); lg.addColorStop(1,'rgba(0,0,0,0)');
+      mx2.fillStyle = lg; mx2.fillRect(0,0,FW,eW);
+      lg = mx2.createLinearGradient(0,FH,0,FH-eW);
+      lg.addColorStop(0,'rgba(0,0,0,1)'); lg.addColorStop(1,'rgba(0,0,0,0)');
+      mx2.fillStyle = lg; mx2.fillRect(0,FH-eW,FW,eW);
+      mx2.globalCompositeOperation = 'source-over';
+
+      fmask = mc; maskY = gy;
+    } catch(e){ fmask = null; }
   }
 
   function layout(){
@@ -24241,12 +24286,19 @@ function mmScanCore(){
         gx = (cr.left + cr.width/2  - hr.left) / hr.width  * FW;
         gy = (cr.top  + cr.height/2 - hr.top ) / hr.height * FH;
       }
+      // The core travels between idle and scanning, so the falloff is rebuilt
+      // if it has drifted far enough to sit off centre. A handful of times in
+      // a session, never per frame.
+      if(!fmask || Math.abs(gy - maskY) > FH*0.06) buildMask();
+      // OFF THE SHORT SIDE, NOT THE WIDTH. Measured off the width, the glow grew
+      // enormous on a wide screen and stayed small on a phone.
+      var FS = Math.min(FW,FH);
       var t3 = t*1.6;
-      var b = [[0.26+0.10*Math.sin(t3/7), 0.30+0.07*Math.cos(t3/9), 0.62, '255,40,80'],
-               [0.78+0.09*Math.cos(t3/8), 0.24+0.06*Math.sin(t3/6), 0.52, '190,10,60'],
-               [0.50+0.07*Math.sin(t3/5), 0.80+0.05*Math.cos(t3/7), 0.58, '255,70,100']];
+      var b = [[0.30+0.10*Math.sin(t3/7), 0.28+0.07*Math.cos(t3/9), 0.62, '255,40,80'],
+               [0.72+0.09*Math.cos(t3/8), 0.26+0.06*Math.sin(t3/6), 0.52, '190,10,60'],
+               [0.50+0.07*Math.sin(t3/5), 0.62+0.05*Math.cos(t3/7), 0.58, '255,70,100']];
       for(var ci=0;ci<b.length;ci++){
-        var bx = b[ci][0]*FW, by = b[ci][1]*FH, br = b[ci][2]*Math.max(FW,FH)*0.58;
+        var bx = b[ci][0]*FW, by = b[ci][1]*FH, br = b[ci][2]*FS*0.9;
         if(br <= 0) continue;
         var gg = fctx.createRadialGradient(bx,by,0,bx,by,br);
         gg.addColorStop(0,'rgba('+b[ci][3]+',0.20)');
@@ -24267,7 +24319,7 @@ function mmScanCore(){
       fctx.globalCompositeOperation = 'lighter';
       var gi = 0.34*(1+0.09*Math.sin(t*6))*(1+0.22*gearAmt)*gain;
       if(gi > 1) gi = 1;
-      var gRad = FW*0.78;
+      var gRad = FS*0.62;
       if(gRad > 0){
         var gr = fctx.createRadialGradient(gx,gy,3,gx,gy,gRad);
         for(var q2=0;q2<=12;q2++){
@@ -24283,6 +24335,12 @@ function mmScanCore(){
         fctx.globalAlpha = 0.05;
         fctx.drawImage(grain, -((t*22)%40), -((t*15)%40));
         fctx.globalAlpha = 1;
+      }
+      // EVERYTHING is multiplied by the falloff, last, so nothing at all can
+      // reach the edge of the canvas.
+      if(fmask){
+        fctx.globalCompositeOperation = 'destination-in';
+        fctx.drawImage(fmask,0,0);
       }
       fctx.globalCompositeOperation = 'source-over';
     }
