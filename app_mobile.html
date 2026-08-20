@@ -661,6 +661,31 @@ html[data-theme="light"] .nav-btn.active span:not(.nav-ico-wrap) { color: #fff; 
 .hdr-mai{font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;letter-spacing:3.4px;
  color:rgba(255,255,255,.86);position:relative;z-index:2;white-space:nowrap;}
 
+/* ── THE PROFILE MENU HEADER, 20 Aug 2026 ───────────────────────
+   The menu drops out of the red glass island, which drops from a header
+   carrying the ember tile, so a flat pink circle in the middle of it was
+   the one object on that screen belonging to no family. The avatar is
+   now the tile itself with the initials in place of the mark, reusing
+   the existing `mmaiRise` ember rather than a second animation. */
+.avtr-plate{position:relative;overflow:hidden;gap:12px;padding:15px 13px 14px;}
+.avtr-plate:before{content:'';position:absolute;left:-20%;top:-90%;width:140%;height:190%;
+ pointer-events:none;
+ background:radial-gradient(ellipse at 22% 88%,rgba(255,30,60,.20),transparent 62%);}
+.avtr-tile{position:relative;flex:none;width:42px;height:42px;border-radius:13px;overflow:hidden;
+ display:flex;align-items:center;justify-content:center;
+ font-family:'Orbitron',sans-serif;font-size:14px;font-weight:900;letter-spacing:.5px;color:#fff;
+ background:linear-gradient(180deg,#3a0410 0%,#5c0716 48%,#8f0019 100%);
+ box-shadow:0 8px 20px -8px rgba(255,30,60,.55), inset 0 1px 0 rgba(255,255,255,.20);}
+.avtr-tile s{position:absolute;left:-10%;right:-10%;bottom:-52%;height:96%;border-radius:50%;
+ text-decoration:none;filter:blur(9px);animation:mmaiRise 5.5s ease-in-out infinite;
+ background:radial-gradient(ellipse,rgba(255,90,114,.95),rgba(255,30,60,.55) 45%,transparent 74%);}
+.avtr-tile b{position:relative;z-index:2;font-weight:900;}
+.avtr-meta{position:relative;display:flex;flex-direction:column;gap:5px;min-width:0;}
+.avtr-name{font-size:14.5px;font-weight:700;letter-spacing:.2px;color:var(--text);}
+/* the badge sets its own margin for the old layout; the column uses gap */
+.avtr-plate .avtr-badge{align-self:flex-start;margin-top:0;}
+@media (prefers-reduced-motion: reduce){ .avtr-tile s{animation:none;} }
+
 /* the label lives INSIDE the field now, which buys a line of height back */
 .auth-ff{position:relative;margin-bottom:12px;}
 .auth-ff .auth-label{position:absolute;left:14px;top:7px;margin:0;font-size:7.5px;letter-spacing:1px;
@@ -8277,10 +8302,10 @@ function toggleAvatarDropdown(e) {
     topRight = basicBadge;
   }
   var isLight = document.documentElement.getAttribute('data-theme')==='light';
-  var html = '<div class="avtr-user">'+
-      '<div class="app-header-avatar" style="width:38px;height:38px;font-size:13px;">'+initials+'</div>'+
-      '<div style="display:flex;flex-direction:column;">'+
-        '<span style="font-size:14px;font-weight:700;color:var(--text);">'+name+'</span>'+
+  var html = '<div class="avtr-user avtr-plate">'+
+      '<span class="avtr-tile"><s></s><b>'+initials+'</b></span>'+
+      '<div class="avtr-meta">'+
+        '<span class="avtr-name">'+name+'</span>'+
         topRight+
       '</div></div>'+
     '<div class="avtr-item" onclick="closeHeaderDropdowns();showSubScreen(\'sub-profile\');"><i class="ti ti-user"></i>'+mmT('menu.profile','Profile')+'</div>'+
