@@ -24086,6 +24086,22 @@ function mmScanCore(){
   // THE HALO IS ONE SPRITE, BUILT ONCE, and stamped. Building a radial
   // gradient per particle per frame is exactly what made this core stutter
   // the first time it was written; brightness rides globalAlpha instead.
+  var pat = null;
+  function makeNoise(){
+    try {
+      var nc = document.createElement('canvas'); nc.width = nc.height = 96;
+      var nx = nc.getContext('2d');
+      var id = nx.createImageData(96,96), dd = id.data;
+      for(var i=0;i<dd.length;i+=4){
+        var v = 128 + (Math.random()*46-23);
+        dd[i]=v; dd[i+1]=v*0.55; dd[i+2]=v*0.6; dd[i+3]=255;
+      }
+      nx.putImageData(id,0,0);
+      pat = ctx.createPattern(nc,'repeat');
+    } catch(e){ pat = null; }
+  }
+  makeNoise();
+
   var sprite = null;
   function makeSprite(){
     try {
@@ -24172,17 +24188,26 @@ function mmScanCore(){
       ctx.clearRect(0,0,W,H);
     }
 
-    // ── from here down this is the sign in page's own paint ──
+    // ── the sign in page's paint, RE-AIMED FOR A SMALL BOX ──
+    // On the sign in screen the canvas is the whole phone, so the clouds run
+    // off the edges and nobody sees where they end. HERE THE CANVAS IS ONLY AS
+    // BIG AS THE CORE, so any light still burning at the rim is cut off square
+    // and reads as a hard ring. Every centre therefore stays within 0.08 of the
+    // short side and every radius ends by 0.46 of it, and each cloud fades on a
+    // curve rather than a straight line so the light RUNS OUT instead of
+    // stopping. Three stops over near black always leave a step.
     var t3 = t*1.6;
-    var b = [[0.26+0.10*Math.sin(t3/7), 0.30+0.07*Math.cos(t3/9), 0.62, '255,40,80'],
-             [0.78+0.09*Math.cos(t3/8), 0.24+0.06*Math.sin(t3/6), 0.52, '190,10,60'],
-             [0.50+0.07*Math.sin(t3/5), 0.80+0.05*Math.cos(t3/7), 0.58, '255,70,100']];
+    var b = [[0.50+0.075*Math.sin(t3/7), 0.50+0.065*Math.cos(t3/9), 0.40, '255,40,80'],
+             [0.50+0.070*Math.cos(t3/8), 0.50+0.055*Math.sin(t3/6), 0.35, '190,10,60'],
+             [0.50+0.060*Math.sin(t3/5), 0.50+0.050*Math.cos(t3/7), 0.37, '255,70,100']];
     for(var ci=0;ci<b.length;ci++){
-      var bx = b[ci][0]*W, by = b[ci][1]*H, br = b[ci][2]*Math.max(W,H)*0.58;
+      var bx = b[ci][0]*W, by = b[ci][1]*H, br = b[ci][2]*S;
       if(br <= 0) continue;
       var gg = ctx.createRadialGradient(bx,by,0,bx,by,br);
-      gg.addColorStop(0,'rgba('+b[ci][3]+',0.22)');
-      gg.addColorStop(1,'rgba('+b[ci][3]+',0)');
+      for(var q=0;q<=8;q++){
+        var qq = q/8;
+        gg.addColorStop(qq,'rgba('+b[ci][3]+','+(0.22*Math.pow(1-qq,2.6)).toFixed(4)+')');
+      }
       ctx.fillStyle = gg; ctx.beginPath(); ctx.arc(bx,by,br,0,6.2832); ctx.fill();
     }
 
@@ -24200,13 +24225,28 @@ function mmScanCore(){
 
     var gi = 0.34*(1+0.09*Math.sin(t*6))*(1+0.22*gearAmt)*gain;
     if(gi > 1) gi = 1;
-    var gRad = S*0.52;
+    var gRad = S*0.46;                       // ends well inside the rim
     if(gRad > 0){
       var gr = ctx.createRadialGradient(CX,CY,3,CX,CY,gRad);
-      gr.addColorStop(0,'rgba(255,130,155,'+gi.toFixed(3)+')');
-      gr.addColorStop(0.4,'rgba(255,30,60,'+(gi*0.4).toFixed(3)+')');
-      gr.addColorStop(1,'rgba(255,30,60,0)');
+      for(var q2=0;q2<=12;q2++){
+        var qa = q2/12, fall = Math.pow(1-qa,2.2);
+        gr.addColorStop(qa, qa < 0.42
+          ? 'rgba(255,130,155,'+(gi*fall).toFixed(4)+')'
+          : 'rgba(255,30,60,'+(gi*fall*0.9).toFixed(4)+')');
+      }
       ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(CX,CY,gRad,0,6.2832); ctx.fill();
+    }
+
+    // THE DITHER, and it is the only thing that removes rings on near black.
+    // A display has 256 levels and a slow fade lands on steps it cannot sit
+    // between, so NO number of gradient stops helps. Built once, drifting so
+    // it disappears into the glow rather than sitting on it as a texture.
+    if(pat){
+      ctx.save();
+      ctx.globalAlpha = 0.05;
+      ctx.translate(-((t*40)%96), -((t*26)%96));
+      ctx.fillStyle = pat; ctx.fillRect(0,0,W+96,H+96);
+      ctx.restore();
     }
 
     for(var i=0;i<P.length;i++){
