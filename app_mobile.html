@@ -2138,6 +2138,25 @@ html[data-theme="light"] .sig-level { background: #f1f2f4; border-color: rgba(0,
    The back button is gone, so EXIT ADMIN lives at the foot of More. */
 #sub-admin .sub-content{padding-bottom:96px;}
 
+/* The admin header carries the logo, so opening the installed admin app says
+   which app AND which side of it in one look. The logo image is COPIED from
+   the customer header at runtime rather than pasted again - it is a 26KB
+   base64 string and the file already holds two copies. */
+.adm-header{position:relative;display:flex;align-items:center;gap:10px;overflow:hidden;}
+.adm-plate{width:32px;height:32px;flex:none;border-radius:10px;background:rgba(255,30,60,.12);
+ border:1px solid rgba(255,30,60,.22);display:flex;align-items:center;justify-content:center;}
+.adm-plate img{height:22px;width:22px;object-fit:contain;display:block;}
+.adm-titles{display:flex;flex-direction:column;min-width:0;}
+.adm-sub{font-family:'Orbitron',sans-serif;font-size:8px;color:var(--text3);letter-spacing:.6px;
+ margin-top:2px;}
+.adm-thr{position:absolute;left:0;right:0;bottom:0;height:2px;overflow:hidden;
+ -webkit-mask-image:linear-gradient(90deg,transparent,#000 22%,#000 78%,transparent);
+ mask-image:linear-gradient(90deg,transparent,#000 22%,#000 78%,transparent);}
+.adm-thr i{position:absolute;inset:0;display:block;background-size:220% 100%;
+ background:linear-gradient(90deg,rgba(255,30,60,0),rgba(255,30,60,.95) 50%,rgba(255,30,60,0));
+ animation:admThr 6s linear infinite;}
+@keyframes admThr{0%{background-position:120% 0}100%{background-position:-120% 0}}
+@media (prefers-reduced-motion: reduce){ .adm-thr i{animation:none;} }
 .adm-signout{margin-left:auto;width:30px;height:30px;border-radius:9px;background:var(--surface);
  border:1px solid var(--border);color:var(--red);display:flex;align-items:center;justify-content:center;
  font-size:15px;cursor:pointer;flex:none;}
@@ -4860,9 +4879,14 @@ html[data-theme="light"] .adm-nb.on i,html[data-theme="light"] .adm-nb.on span{c
 
   <!-- Admin Panel -->
   <div id="sub-admin" class="sub-screen">
-    <div class="sub-header">
-      <div class="sub-title" data-i18n="scr.admin">ADMIN PANEL</div>
+    <div class="sub-header adm-header">
+      <span class="adm-plate"><img id="adm-logo" alt=""></span>
+      <span class="adm-titles">
+        <span class="sub-title" data-i18n="scr.admin">ADMIN PANEL</span>
+        <span class="adm-sub">MOMENTUM AI</span>
+      </span>
       <button class="adm-signout" onclick="mmAdmSignOut()" title="Sign out"><i class="ti ti-logout"></i></button>
+      <span class="adm-thr"><i></i></span>
     </div>
     <!-- Admin Tab Bar -->
     <div id="admin-tab-bar" style="display:none;gap:0;padding:0 14px;background:var(--bg2);border-bottom:1px solid var(--border);overflow-x:auto;flex-shrink:0;-webkit-overflow-scrolling:touch;">
@@ -16418,6 +16442,16 @@ function mmAdmExit() {
   hideSubScreen('sub-admin');
 }
 
+// The logo is a 26KB base64 string already in the page. Copy the src from the
+// customer header rather than paste another copy.
+function mmAdmLogo() {
+  var img = document.getElementById('adm-logo');
+  if(!img || img.getAttribute('src')) return;
+  var src = document.querySelector('.app-header-logo img');
+  if(src && src.src) img.src = src.src;
+  else img.style.display = 'none';   // never leave a broken image icon
+}
+
 function mmAdmSignOut() {
   if(!confirm('Sign out of Momentum AI?')) return;
   mmAdmMore(false);
@@ -19615,6 +19649,7 @@ function enterSubAdmin(user){
   showScreen('screen-app');
   setTimeout(function(){
     showSubScreen('sub-admin');
+    try { mmAdmLogo(); } catch(e) {}
     var allTabs=['dashboard','users','tickets','funds','announce','signals','mt5','analyst','academy','banners'];
     var allowed=(user.allowed_tabs||'').split(',');
     allTabs.forEach(function(t){var b=document.querySelector('[data-tab="'+t+'"]');if(b)b.style.display=allowed.indexOf(t)>-1?'':'none';});
@@ -24852,6 +24887,7 @@ async function mt5SaveEdit(userId){
 
 function openAdminPanel(){
   showSubScreen('sub-admin');
+  try { mmAdmLogo(); } catch(e) {}
   applyAdminTabAccess();
 }
 
