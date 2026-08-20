@@ -220,16 +220,55 @@ select.auth-input {
   padding: 9px 13px 7px; font-size: 10px; letter-spacing: 0.6px;
   text-transform: uppercase; color: var(--text3); font-family: 'Sora', sans-serif;
 }
+/* The switcher row: the MT5 id is the hero, the balance a quiet grey line under
+   it, and a two letter pill says which kind of account it is - a cent account
+   showing 10,000.00 beside a dollar account showing 11,236.61 looks like more
+   money when it is about a hundred dollars. USD green, USC blue.
+   The current account takes the brand GRADIENT EDGE with a tint that fades out,
+   so solid red stays free to mean trouble. */
 .acct-row {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 10px 13px; cursor: pointer;
+  position: relative; display: flex; align-items: center; gap: 10px;
+  padding: 11px 12px; cursor: pointer; overflow: hidden;
   border-top: 0.5px solid rgba(255,255,255,0.06);
 }
 .acct-row:hover { background: rgba(255,255,255,0.03); }
-.acct-row.active { background: rgba(255,30,60,0.09); }
-.acct-row .acct-id { font-size: 13px; font-weight: 700; color: var(--text); }
-.acct-row .acct-sv { font-size: 11px; color: var(--text2); margin-top: 2px; }
-.acct-row .ti { color: var(--red); font-size: 16px; }
+.acct-row.active { background: linear-gradient(90deg, rgba(255,30,60,0.13), transparent 70%); }
+.acct-edge { position: absolute; left: 0; top: 0; bottom: 0; width: 3px; display: none; }
+.acct-row.active .acct-edge { display: block; background: var(--grad); }
+.acct-bd { flex: 1; min-width: 0; }
+.acct-top { display: flex; align-items: center; gap: 7px; }
+.acct-row .acct-id {
+  font-family: 'Orbitron', sans-serif; font-variant-numeric: tabular-nums;
+  font-size: 14px; letter-spacing: .6px; color: var(--text); white-space: nowrap;
+}
+.acct-cur {
+  font-size: 7px; font-weight: 800; letter-spacing: .6px; padding: 3px 6px;
+  border-radius: 5px; flex: none; font-family: 'Sora', sans-serif;
+}
+.acct-sub {
+  display: flex; align-items: center; gap: 6px; margin-top: 5px;
+  font-size: 9px; color: var(--text3); white-space: nowrap;
+  font-family: 'Orbitron', sans-serif; font-variant-numeric: tabular-nums;
+}
+.acct-dot { width: 6px; height: 6px; border-radius: 50%; flex: none; display: block; }
+.acct-now {
+  font-size: 7px; font-weight: 800; letter-spacing: .4px; padding: 3px 6px;
+  border-radius: 5px; background: rgba(255,30,60,0.16); color: var(--red); flex: none;
+}
+.acct-thr {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 1.5px; overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg,transparent,#000 20%,#000 80%,transparent);
+  mask-image: linear-gradient(90deg,transparent,#000 20%,#000 80%,transparent);
+}
+.acct-thr i {
+  position: absolute; inset: 0; display: block; background-size: 220% 100%;
+  background: linear-gradient(90deg,rgba(255,30,60,0),rgba(255,30,60,.9) 50%,rgba(255,30,60,0));
+  animation: acctThr 7s linear infinite;
+}
+@keyframes acctThr { 0% { background-position: 120% 0 } 100% { background-position: -120% 0 } }
+@media (prefers-reduced-motion: reduce) { .acct-thr i { animation: none; } }
+.hdr-dd-head { position: relative; }
+.hdr-dd { min-width: 250px; }
 .acct-add {
   display: flex; align-items: center; gap: 8px;
   padding: 11px 13px; cursor: pointer; color: var(--red);
@@ -7760,6 +7799,32 @@ function renderHeaderSwitcher() {
   idEl.textContent = (activeAccount && activeAccount.mt5_id) ? activeAccount.mt5_id : 'Connect';
 }
 
+// A cent account is one whose broker group ends .cnt, which is also why its
+// symbols are XAUUSD.cnt. Currency decides the pill: green USD, blue USC.
+function mmAcctIsCent(a) {
+  var s = String((a && (a.currency || a.mt5_group || a.broker_group || '')) || '').toLowerCase();
+  if(s.indexOf('usc') >= 0 || s.indexOf('.cnt') >= 0 || s.indexOf('cent') >= 0) return true;
+  return false;
+}
+
+function mmAcctMoney(n) {
+  // A missing balance is NOT zero. Number(null) is 0, which would have told a
+  // customer their account was empty when we simply had no figure yet.
+  if(n === null || n === undefined || n === '') return '--';
+  var v = Number(n);
+  if(!isFinite(v)) return '--';
+  return v.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+// Whether the terminal is reporting, in the same words and colours the admin
+// panel uses, so a customer and support are looking at the same thing.
+function mmAcctHealth(a) {
+  if(!a || !a.ea_last_seen) return {c:'#FF1E3C', t:'Not connected'};
+  var secs = (new Date() - new Date(a.ea_last_seen)) / 1000;
+  if(secs < 600) return {c:'#00c87a', t:'Trading'};
+  return {c:'#ffb020', t:'Gone quiet'};
+}
+
 function connectedAccounts() {
   return (window._userAccounts||[]).filter(function(a){
     return a.mt5_connected || a.connection_status==='connected';
@@ -7781,16 +7846,33 @@ function toggleAcctDropdown(e) {
   closeHeaderDropdowns();
   if(wasOpen) return;
   var conn = connectedAccounts();
-  var html = '<div class="hdr-dd-head">'+mmT('acct.connected','Connected accounts')+'</div>';
+  var html = '<div class="hdr-dd-head">' + mmT('acct.connected','Your accounts') +
+             '<span class="acct-thr"><i></i></span></div>';
   if(conn.length===0) {
     html += '<div class="acct-row" style="cursor:default;"><span class="acct-id" style="color:var(--text2);font-weight:600;">'+mmT('acct.none','No account connected')+'</span></div>';
   } else {
     conn.forEach(function(a){
       var isAct = activeAccount && a.id===activeAccount.id;
+      // The server was the same on every row and told nobody anything. What
+      // matters when choosing is the balance, the currency and whether the
+      // terminal is actually reporting.
+      var cent = mmAcctIsCent(a);
+      var cur  = cent ? 'USC' : 'USD';
+      var ccol = cent ? '#3B82F6' : '#00c87a';
+      var h    = mmAcctHealth(a);
       html += '<div class="acct-row'+(isAct?' active':'')+'" onclick="selectAccount(\''+a.id+'\')">'+
-                '<span><span class="acct-id">'+(a.mt5_id||'--')+'</span>'+
-                '<div class="acct-sv">'+(a.mt5_server||a.broker||'')+'</div></span>'+
-                (isAct?'<i class="ti ti-check"></i>':'')+
+                '<span class="acct-edge"></span>'+
+                '<span class="acct-bd">'+
+                  '<span class="acct-top">'+
+                    '<span class="acct-id">'+(a.mt5_id||'--')+'</span>'+
+                    '<span class="acct-cur" style="background:'+ccol+'1f;color:'+ccol+'">'+cur+'</span>'+
+                  '</span>'+
+                  '<span class="acct-sub">'+mmAcctMoney(a.balance)+
+                    '<span class="acct-mid">&middot;</span>'+
+                    '<span class="acct-dot" style="background:'+h.c+'"></span>'+h.t+
+                  '</span>'+
+                '</span>'+
+                (isAct?'<span class="acct-now">'+mmT('acct.current','CURRENT')+'</span>':'')+
               '</div>';
     });
   }
