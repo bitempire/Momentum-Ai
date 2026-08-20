@@ -725,6 +725,42 @@ html[data-theme="light"] .nav-btn.active span:not(.nav-ico-wrap) { color: #fff; 
 .ccs-nm{font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .ccs-dc{margin-left:auto;font-family:'Orbitron',sans-serif;font-size:12.5px;color:var(--text2);flex:none;}
 .ccs-none{padding:22px 12px;text-align:center;font-size:12.5px;color:var(--text3);}
+
+/* ── THE ANNOUNCEMENT BELL, 20 Aug 2026 ─────────────────────────── */
+.mm-hdr-bell{position:relative;cursor:pointer;}
+.mm-hdr-bell:active{transform:scale(.94);}
+#ann-bell-n{position:absolute;top:1px;right:1px;min-width:15px;height:15px;border-radius:999px;
+ background:var(--red);color:#fff;font-family:'Orbitron',sans-serif;font-size:8px;font-weight:700;
+ display:none;align-items:center;justify-content:center;padding:0 3px;border:2px solid #0B0C10;
+ line-height:1;}
+.annp{position:fixed;inset:0;z-index:4200;display:none;}
+.annp.on{display:block;}
+.annp-bd{position:absolute;inset:0;}
+.annp-pn{position:fixed;width:252px;max-width:calc(100vw - 16px);border-radius:14px;overflow:hidden;
+ background:#13111c;border:.5px solid rgba(255,255,255,.10);
+ box-shadow:0 14px 34px rgba(0,0,0,.6);}
+.annp-hd{display:flex;align-items:center;padding:11px 13px;border-bottom:1px solid var(--border);}
+.annp-hd b{font-size:12.5px;}
+.annp-rd{margin-left:auto;font-family:'Orbitron',sans-serif;font-size:7.5px;letter-spacing:1.1px;
+ color:var(--red);cursor:pointer;}
+.annp-ls{max-height:270px;overflow-y:auto;padding:9px;-webkit-overflow-scrolling:touch;}
+.annp-row{position:relative;display:flex;gap:9px;padding:10px;border-radius:11px;cursor:pointer;
+ border:1px solid var(--border);background:var(--surface);margin-bottom:6px;}
+.annp-row.un{border-color:rgba(255,30,60,.28);background:rgba(255,30,60,.055);}
+.annp-row:last-child{margin-bottom:0;}
+.annp-dot{position:absolute;left:4px;top:13px;width:5px;height:5px;border-radius:50%;background:var(--red);}
+.annp-th{width:34px;height:34px;border-radius:8px;flex:none;background-size:cover;
+ background-position:center;background-color:#2a1020;}
+.annp-tx{min-width:0;flex:1;}
+.annp-t{display:block;font-size:12px;font-weight:700;overflow:hidden;text-overflow:ellipsis;
+ white-space:nowrap;}
+.annp-d{display:block;font-size:10.5px;color:var(--text2);margin-top:3px;line-height:1.45;
+ display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.annp-w{display:block;font-family:'Orbitron',sans-serif;font-size:7.5px;letter-spacing:.8px;
+ color:var(--text3);margin-top:5px;}
+.annp-ft{padding:10px;text-align:center;font-size:11.5px;color:var(--text2);
+ border-top:1px solid var(--border);cursor:pointer;}
+.annp-none{padding:22px 12px;text-align:center;font-size:12px;color:var(--text3);}
 .mv-n{position:relative;font-family:'Orbitron',sans-serif;font-size:38px;font-weight:900;line-height:1;}
 .mv-t{position:relative;font-size:12.5px;font-weight:700;margin-top:8px;}
 .mv-d{position:relative;font-size:11px;color:var(--text2);margin-top:6px;line-height:1.55;}
@@ -4666,7 +4702,24 @@ html[data-theme="light"] .adm-nb.on i,html[data-theme="light"] .adm-nb.on span{c
           <span id="more-tier-badge" class="mm-hdr-badge"><i class="ti ti-crown" style="font-size:10px;"></i> PREMIUM</span>
         </div>
         <div class="mm-hdr-end">
-          <span class="mm-hdr-bell"><i class="ti ti-bell"></i></span>
+          <span class="mm-hdr-bell" id="ann-bell" onclick="annToggle(event)">
+            <i class="ti ti-bell"></i><u id="ann-bell-n"></u></span>
+        </div>
+      </div>
+
+      <!-- THE PANEL IS FIXED, NOT ABSOLUTE, and positioned from the bell's
+           measured rect when it opens. `.mm-hdr` carries overflow:hidden, so
+           a child would be clipped, and the More screen scrolls, so a fixed
+           panel at a guessed offset would drift away from the bell. -->
+      <div id="ann-panel" class="annp">
+        <div class="annp-bd" onclick="annClose()"></div>
+        <div class="annp-pn" id="ann-panel-pn">
+          <div class="annp-hd">
+            <b data-i18n="ann.title">Announcements</b>
+            <span class="annp-rd" onclick="annReadAll()" data-i18n="ann.readAll">MARK ALL READ</span>
+          </div>
+          <div class="annp-ls" id="ann-panel-ls"></div>
+          <div class="annp-ft" onclick="annClose()" data-i18n="ann.close">Close</div>
         </div>
       </div>
 
@@ -18344,6 +18397,111 @@ async function postAnnouncement() {
 }
 
 // ── ANNOUNCEMENT POPUP ON DASHBOARD ──
+
+// ══ ANNOUNCEMENTS: THE BELL ═══════════════════════════════════════
+// WHAT IS READ IS REMEMBERED ON THE PHONE, not in the database. An
+// announcement is not worth a table and a query on every app open, and
+// re-reading one on a new handset costs a customer nothing. Swapping to a
+// table later means changing only annIsRead and annMarkRead.
+var ANN_READ_KEY = 'mmai_ann_read';
+window._annAll = window._annAll || [];
+function annReadList(){
+  try { var r = JSON.parse(localStorage.getItem(ANN_READ_KEY) || '[]');
+        return Array.isArray(r) ? r : []; } catch(e){ return []; }
+}
+function annIsRead(k){ return annReadList().indexOf(k) >= 0; }
+function annMarkRead(k){
+  try {
+    var l = annReadList();
+    if(l.indexOf(k) < 0) l.push(k);
+    // Keep the last 200 so the entry cannot grow without limit.
+    if(l.length > 200) l = l.slice(l.length - 200);
+    localStorage.setItem(ANN_READ_KEY, JSON.stringify(l));
+  } catch(e) {}
+}
+// Targeting, in one place so the popup and the bell can never disagree.
+function annVisible(a){
+  if(!a || a.active === false) return false;
+  if(a.target === 'premium' && !(typeof isPremiumUser === 'function' && isPremiumUser())) return false;
+  return true;
+}
+function annPaintBell(){
+  var n = document.getElementById('ann-bell-n'); if(!n) return;
+  var c = (window._annAll || []).filter(function(a){ return !annIsRead(annKey(a)); }).length;
+  n.textContent = c > 9 ? '9+' : String(c || '');
+  n.style.display = c ? 'flex' : 'none';
+}
+async function annRefresh(){
+  if(!db) return;
+  try {
+    var res = await db.from('announcements').select('*').order('created_at',{ascending:false}).limit(20);
+    var rows = (res && res.data) ? res.data : [];
+    window._annAll = rows.filter(annVisible);
+    window._annAll.sort(function(x,y){
+      return new Date(y.updated_at||y.created_at) - new Date(x.updated_at||x.created_at);
+    });
+  } catch(e) { window._annAll = window._annAll || []; }
+  annPaintBell();
+  annRender();
+}
+function annRender(){
+  var box = document.getElementById('ann-panel-ls'); if(!box) return;
+  var rows = window._annAll || [];
+  if(!rows.length){
+    box.innerHTML = '<div class="annp-none">' + mmT('ann.none','Nothing new right now') + '</div>';
+    return;
+  }
+  var h = '';
+  rows.forEach(function(a, i){
+    var un = !annIsRead(annKey(a));
+    h += '<div class="annp-row' + (un ? ' un' : '') + '" onclick="annOpenOne(' + i + ')">'
+      +  (un ? '<span class="annp-dot"></span>' : '')
+      +  (a.image_url ? '<span class="annp-th" style="background-image:url(\'' +
+           String(a.image_url).replace(/'/g,'') + '\')"></span>' : '')
+      +  '<span class="annp-tx"><span class="annp-t"></span>'
+      +  '<span class="annp-d"></span>'
+      +  '<span class="annp-w">' + (typeof timeAgo === 'function' ? timeAgo(a.updated_at||a.created_at) : '') + '</span></span>'
+      +  '</div>';
+  });
+  box.innerHTML = h;
+  // TITLE AND MESSAGE ARE WRITTEN AS TEXT, never as HTML, because an admin
+  // types them and the browser would otherwise run whatever was typed.
+  var ts = box.querySelectorAll('.annp-t'), ds = box.querySelectorAll('.annp-d');
+  rows.forEach(function(a, i){
+    if(ts[i]) ts[i].textContent = a.title || '';
+    if(ds[i]) ds[i].textContent = a.message || '';
+  });
+}
+function annOpenOne(i){
+  var a = (window._annAll || [])[i]; if(!a) return;
+  annClose();
+  if(typeof showAnnouncementPopup === 'function') showAnnouncementPopup(a);
+}
+function annReadAll(){
+  (window._annAll || []).forEach(function(a){ annMarkRead(annKey(a)); });
+  annPaintBell(); annRender();
+}
+function annToggle(ev){
+  if(ev && ev.stopPropagation) ev.stopPropagation();
+  var p = document.getElementById('ann-panel'); if(!p) return;
+  if(p.classList.contains('on')){ annClose(); return; }
+  // Anchored to the bell's real position, so it follows the header however
+  // far the screen has been scrolled.
+  var b = document.getElementById('ann-bell');
+  var pn = document.getElementById('ann-panel-pn');
+  if(b && pn){
+    var r = b.getBoundingClientRect();
+    var right = Math.max(8, window.innerWidth - r.right - 4);
+    pn.style.right = right + 'px';
+    pn.style.top = Math.round(r.bottom + 8) + 'px';
+  }
+  annRender();
+  p.classList.add('on');
+}
+function annClose(){
+  var p = document.getElementById('ann-panel'); if(p) p.classList.remove('on');
+}
+
 function annKey(a){ return String(a.id)+'::'+String(a.updated_at||a.created_at||a.id); }
 async function checkAndShowAnnouncement() {
   if(!db) return false;
@@ -18353,9 +18511,15 @@ async function checkAndShowAnnouncement() {
     var actives = res.data.filter(function(a){ return a.active!==false; });
     if(!actives.length) return false;
     actives.sort(function(x,y){ return new Date(y.updated_at||y.created_at) - new Date(x.updated_at||x.created_at); });
-    var ann = actives[0];
-    if(ann.target === 'premium' && !isPremiumUser()) return false;
-    showAnnouncementPopup(ann);
+    // ONLY ANNOUNCEMENTS THIS CUSTOMER HAS NOT SEEN. The old code took
+    // actives[0] unconditionally, so the same popup returned on every sign
+    // in until the announcement was deactivated.
+    var mine = actives.filter(annVisible);
+    window._annAll = mine;
+    var unseen = mine.filter(function(a){ return !annIsRead(annKey(a)); });
+    annPaintBell();
+    if(!unseen.length) return false;
+    showAnnouncementPopup(unseen[0]);
     return true;
   } catch(e) { return false; }
 }
@@ -18373,6 +18537,9 @@ function showAnnouncementPopup(ann) {
 }
 function closeAnnouncementPopup() {
   var p=document.getElementById('announcement-popup'); if(p) p.style.display='none';
+  // Seen is seen. Marked on close rather than on open, so a popup dismissed
+  // by a stray tap during load is not silently counted as read.
+  if(_annCurrentKey) { annMarkRead(_annCurrentKey); annPaintBell(); }
   if(_pendingCampaignAfterAnn){ _pendingCampaignAfterAnn=false; checkCampaignBanner(); }
 }
 
@@ -19568,6 +19735,7 @@ function loadMoreTab(){
   }
   updateMoreBalance();
   loadMoreBanners();
+  if(typeof annRefresh === 'function') annRefresh();
 }
 async function refreshActiveBalance() {
   if(!db || !activeAccount || !activeAccount.id) return;
