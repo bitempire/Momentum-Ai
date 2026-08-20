@@ -2791,8 +2791,13 @@ html[data-theme="light"] .adm-nb.on i,html[data-theme="light"] .adm-nb.on span{c
 .scan-hero.done .sh-chg::before{content:' \00b7 ';color:var(--text3);}
 .scan-hero.done #scan-last-time{display:none;}
 .sh-status{position:absolute;left:0;right:0;top:calc(50% + 167px);text-align:center;z-index:3;
- font-family:'Orbitron',ui-monospace,Menlo,monospace;font-size:10px;letter-spacing:2px;color:var(--amber);
+ font-family:'Orbitron',ui-monospace,Menlo,monospace;font-size:10px;letter-spacing:2px;
+ color:rgba(255,255,255,.76);
  opacity:0;transition:opacity .45s ease;pointer-events:none;}
+/* MARKET carries the brand red. It needs its own element because CSS cannot
+   colour part of a text node, and its own key because mmApplyLang rewrites
+   textContent and would wipe any wrapper inside one. */
+.sh-status-red{color:var(--red);}
 .scan-hero.scanning .sh-status{opacity:1;}
 .scan-hero.done .sh-status{opacity:0;}
 .sh-sym{position:relative;font-family:'Orbitron',sans-serif;font-size:20px;font-weight:900;letter-spacing:1px;text-align:center;}
@@ -6372,7 +6377,7 @@ html[data-theme="light"] .adm-nb.on i,html[data-theme="light"] .adm-nb.on span{c
           </div>
           <div class="sh-chg" style="color:var(--text3);" id="scan-last-time" data-i18n="sc.selectPair">Select pair and scan</div>
         </div>
-        <div class="sh-status" id="scan-status" data-i18n="sc.analysing">ANALYSING MARKET</div>
+        <div class="sh-status" id="scan-status"><span data-i18n="sc.analysingWord">ANALYSING</span> <span class="sh-status-red" data-i18n="sc.marketWord">MARKET</span></div>
 
         <div class="sh-wrap">
           <div>
@@ -14361,6 +14366,7 @@ function showSubScreen(id) {
     // This is the only way to run a second scan, which is what Haikal wanted.
     var sh = document.getElementById('scan-hero');
     if(sh) sh.classList.remove('scanning','done');
+    if(_mmCore && _mmCore.gear) _mmCore.gear(0, 1);
     mmTravelClear();
     var sr = document.getElementById('scan-results');
     if(sr){ sr.classList.remove('shown'); sr.style.display = 'none'; }
@@ -24067,34 +24073,76 @@ function mmScanCore(){
   // pixels for a difference nobody can see at this size.
   var host = cv.parentNode;
   var dpr = Math.min(2, window.devicePixelRatio || 1);
-  var css = host.clientWidth;
   // NOT YET ON SCREEN. Bail without setting _mmCore so the next open retries,
   // rather than building a zero-sized canvas that can never be recovered.
-  if(!css) return;
+  if(!host.clientWidth) return;
 
   var ctx = cv.getContext('2d');
-  var W, H, CX, CY, S, R, F, U, LINK, halo, nuc, band, pat = null;
+  var W, H, CX, CY, S, U;
+  var P = [], dust = [], IMG = null;
+  var t = 0, raf = null, running = false;
+  var rate = 1, gain = 1, spread = 0, trailAmt = 0, gearAmt = 0, spin = 0;
 
-  var N = 1100, NODES = 80;
-  var pts = [];
-  for(var i=0;i<N;i++){
-    pts.push({ u:Math.random()*2-1, th:Math.random()*6.2832,
-               rad:0.18+0.92*Math.pow(Math.random(),0.42),
-               s:Math.random(), k:Math.random(),
-               // Where this particle sits in the curtain. Fixed per particle so
-               // the cloud disperses to the same place every time rather than
-               // boiling, and so nothing is allocated while it spreads.
-               qx:Math.random()*2-1, qy:Math.random()*2-1 });
+  // THE HALO IS ONE SPRITE, BUILT ONCE, and stamped. Building a radial
+  // gradient per particle per frame is exactly what made this core stutter
+  // the first time it was written; brightness rides globalAlpha instead.
+  var sprite = null;
+  function makeSprite(){
+    try {
+      var sp = document.createElement('canvas'); sp.width = sp.height = 64;
+      var sc2 = sp.getContext('2d');
+      var sg = sc2.createRadialGradient(32,32,0,32,32,32);
+      sg.addColorStop(0,'rgba(255,220,230,0.85)');
+      sg.addColorStop(0.35,'rgba(255,60,95,0.45)');
+      sg.addColorStop(1,'rgba(255,30,60,0)');
+      sc2.fillStyle = sg; sc2.beginPath(); sc2.arc(32,32,32,0,6.2832); sc2.fill();
+      sprite = sp;
+    } catch(e){ sprite = null; }
   }
-  var AMP=0.13, SPIN=0.22, DIFF=0.40, PULSE=0.11, FLICK=0.22;
+  makeSprite();
 
-  // ════════════════════════════════════════════════════════
-  // THE BOX IS NOT ALWAYS SQUARE. For the journey the core becomes a full
-  // width band, so every scale below derives from the SHORT side. At the
-  // hero's square box the short side IS the width, so nothing there changes.
-  // Gradients are rebuilt HERE and nowhere else. Building one per frame is
-  // what made this stutter the first time.
-  // ════════════════════════════════════════════════════════
+  // The mark is read back out of the CSS variable rather than embedded a
+  // second time, exactly as the sign in page does it.
+  function markUrl(){
+    var v = '';
+    try { v = getComputedStyle(document.documentElement).getPropertyValue('--mmai-mark') || ''; } catch(e){}
+    var m = v.match(/url\(\s*[\"']?([^\"')]+)[\"']?\s*\)/);
+    return m ? m[1] : '';
+  }
+
+  // EVERY PARTICLE TARGET IS A REAL PIXEL OF THE LOGO FILE. The mark is drawn
+  // to an offscreen canvas and its alpha sampled on a grid, so the shape can
+  // never drift from the mark itself. Rebuilt whenever the box changes size,
+  // because the sampling grid is in device pixels.
+  function build(){
+    P = []; dust = [];
+    if(!IMG || !W) return;
+    var box = Math.round(S*0.62), step = Math.max(3, Math.round(2.4*U));
+    var c = document.createElement('canvas'); c.width = W; c.height = H;
+    var x = c.getContext('2d');
+    x.drawImage(IMG, CX-box/2, CY-box/2, box, box);
+    var d, pts = [], y, px;
+    try { d = x.getImageData(0,0,W,H).data; } catch(e){ return; }
+    for(y=0;y<H;y+=step) for(px=0;px<W;px+=step){
+      if(d[(y*W+px)*4+3] > 110) pts.push([px+(Math.random()-0.5)*step, y+(Math.random()-0.5)*step]);
+    }
+    for(var i=pts.length-1;i>0;i--){ var j=(Math.random()*(i+1))|0, tp=pts[i]; pts[i]=pts[j]; pts[j]=tp; }
+    // CAPPED. The sampling grid is in device pixels, so a big box or a dense
+    // mark can produce thousands of points. The old core ran 1100 and that is
+    // the budget this screen is known to take.
+    if(pts.length > 1100) pts.length = 1100;
+    P = pts.map(function(p){
+      return { tx:p[0], ty:p[1], ph:Math.random()*6.2832, sz:(0.5+Math.random()*1.3)*U,
+               bright:Math.random()<0.13, ox:p[0]-CX, oy:p[1]-CY,
+               lay:0.35+Math.random()*0.65, x:p[0], y:p[1] };
+    });
+    for(var q=0;q<70;q++) dust.push({ x:Math.random()*W, y:Math.random()*H,
+      r:(0.5+Math.random()*1.4)*U, ph:Math.random()*6.2832, vx:(Math.random()-0.5)*0.06*U });
+  }
+
+  // THE BOX IS NOT ALWAYS SQUARE, so every scale derives from the SHORT side.
+  // This is the ONLY place the bitmap is sized and the only place the points
+  // are rebuilt. Building either per frame is what made this stutter once.
   function layout(){
     var cw = host.clientWidth, ch = host.clientHeight || cw;
     if(!cw || !ch) return;
@@ -24102,70 +24150,20 @@ function mmScanCore(){
     if(nw === W && nh === H) return;
     cv.width = nw; cv.height = nh;
     W = cv.width; H = cv.height; CX = W/2; CY = H/2;
-    S = Math.min(W,H);
-    R = S*0.40; F = S*1.8; U = S/600; LINK = R*0.42;
-
-    halo = ctx.createRadialGradient(CX,CY,R*0.05,CX,CY,R*1.6);
-    halo.addColorStop(0,'rgba(255,150,110,0.17)');
-    halo.addColorStop(0.45,'rgba(255,40,60,0.085)');
-    halo.addColorStop(1,'rgba(0,0,0,0)');
-    nuc = ctx.createRadialGradient(CX-R*0.10,CY-R*0.12,R*0.02,CX,CY,R*0.72);
-    nuc.addColorStop(0,'rgba(255,235,205,0.40)');
-    nuc.addColorStop(0.3,'rgba(255,110,60,0.20)');
-    nuc.addColorStop(1,'rgba(150,0,20,0)');
-
-    // THE BAND. Thirty one stops on a curve rather than three, so the light
-    // runs out instead of stopping. A short gradient over near black leaves a
-    // visible edge no matter how faint the last stop is.
-    band = ctx.createLinearGradient(0,0,0,H);
-    for(var b=0;b<=30;b++){
-      var q = b/30, a = Math.pow(Math.sin(Math.PI*q),2.9)*0.30;
-      band.addColorStop(q,'rgba(206,20,40,'+a.toFixed(4)+')');
-    }
-
-    // THE DITHER, and it is the only thing that removes the rings. A slow fade
-    // over near black lands on steps the display cannot sit between, because
-    // there are only 256 levels to work with, so NO number of gradient stops
-    // helps. A faint noise layer breaks the steps up. Built once, here.
-    // Wrapped, because this is decoration. If any of it fails the glow simply
-    // goes back to a plain fade rather than the whole core dying.
-    if(!pat){
-      try {
-        var nz = document.createElement('canvas'); nz.width = nz.height = 96;
-        var nx = nz.getContext('2d'), nd = nx.createImageData(96,96);
-        for(var p2=0;p2<nd.data.length;p2+=4){
-          var vv = (Math.random()*255)|0;
-          nd.data[p2]=vv; nd.data[p2+1]=vv; nd.data[p2+2]=vv; nd.data[p2+3]=255;
-        }
-        nx.putImageData(nd,0,0);
-        pat = ctx.createPattern(nz,'repeat');
-      } catch(e){ pat = null; }
-    }
+    S = Math.min(W,H); U = S/300;
+    build();
   }
+
   layout();
   if(!W) return;
 
-  var proj = new Float32Array(N*4);
-  var fire = new Float32Array(NODES);
-  var t = 0, raf = null, running = false;
-  var rate = 1, gain = 1, spread = 0, trailAmt = 0;
-
-  // lub-dub. A hard hit, a softer second, then a rest.
-  function beat(x){
-    var p = x % 1.15;
-    return Math.exp(-Math.pow(p-0.06,2)/0.0016) + 0.55*Math.exp(-Math.pow(p-0.26,2)/0.0030);
-  }
-
   function frame(){
     t += 0.0075 * rate;
-    var sharp = beat(t);
-    var soft = 0.35*sharp + 0.65*(0.5+0.5*Math.sin(t*5.46));
+    spin += (0.0016 + 0.0060*gearAmt) * rate;
 
     // THE TRAIL. Fading the canvas instead of clearing it leaves a short
-    // streak behind whatever is drawn on it. That is only safe because THIS
-    // CANVAS HOLDS NOTHING BUT THE CORE - a second thing drawn here would
-    // smear too. It is raised for the flight into the header and dropped
-    // again the moment it lands.
+    // streak behind whatever is drawn on it. Raised for the flight and
+    // dropped again the moment it lands.
     if(trailAmt > 0.02){
       ctx.globalCompositeOperation = 'destination-out';
       ctx.fillStyle = 'rgba(0,0,0,' + (0.34 + 0.30*(1-trailAmt)).toFixed(3) + ')';
@@ -24173,116 +24171,93 @@ function mmScanCore(){
     } else {
       ctx.clearRect(0,0,W,H);
     }
+
+    // ── from here down this is the sign in page's own paint ──
+    var t3 = t*1.6;
+    var b = [[0.26+0.10*Math.sin(t3/7), 0.30+0.07*Math.cos(t3/9), 0.62, '255,40,80'],
+             [0.78+0.09*Math.cos(t3/8), 0.24+0.06*Math.sin(t3/6), 0.52, '190,10,60'],
+             [0.50+0.07*Math.sin(t3/5), 0.80+0.05*Math.cos(t3/7), 0.58, '255,70,100']];
+    for(var ci=0;ci<b.length;ci++){
+      var bx = b[ci][0]*W, by = b[ci][1]*H, br = b[ci][2]*Math.max(W,H)*0.58;
+      if(br <= 0) continue;
+      var gg = ctx.createRadialGradient(bx,by,0,bx,by,br);
+      gg.addColorStop(0,'rgba('+b[ci][3]+',0.22)');
+      gg.addColorStop(1,'rgba('+b[ci][3]+',0)');
+      ctx.fillStyle = gg; ctx.beginPath(); ctx.arc(bx,by,br,0,6.2832); ctx.fill();
+    }
+
+    for(var di=0;di<dust.length;di++){
+      var D = dust[di];
+      D.x += D.vx; D.y -= 0.06*U;
+      if(D.y < 0) D.y = H;
+      if(D.x < 0) D.x += W; if(D.x > W) D.x -= W;
+      if(D.r <= 0) continue;
+      ctx.fillStyle = 'rgba(255,200,215,'+(0.10+0.10*Math.sin(t*9+D.ph)).toFixed(3)+')';
+      ctx.beginPath(); ctx.arc(D.x,D.y,D.r,0,6.2832); ctx.fill();
+    }
+
     ctx.globalCompositeOperation = 'lighter';
-    // The round glow hands over to the band as the cloud spreads. Both are
-    // added light, so where either reaches zero the result is exactly the
-    // background rather than a tint that never quite gets there.
-    if(spread < 0.995){
-      ctx.globalAlpha = 1 - spread;
-      ctx.fillStyle = halo; ctx.fillRect(0,0,W,H);
-      ctx.fillStyle = nuc; ctx.beginPath(); ctx.arc(CX,CY,R*0.72,0,6.2832); ctx.fill();
-      ctx.globalAlpha = 1;
+
+    var gi = 0.34*(1+0.09*Math.sin(t*6))*(1+0.22*gearAmt)*gain;
+    if(gi > 1) gi = 1;
+    var gRad = S*0.52;
+    if(gRad > 0){
+      var gr = ctx.createRadialGradient(CX,CY,3,CX,CY,gRad);
+      gr.addColorStop(0,'rgba(255,130,155,'+gi.toFixed(3)+')');
+      gr.addColorStop(0.4,'rgba(255,30,60,'+(gi*0.4).toFixed(3)+')');
+      gr.addColorStop(1,'rgba(255,30,60,0)');
+      ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(CX,CY,gRad,0,6.2832); ctx.fill();
     }
-    if(spread > 0.005){
-      ctx.globalAlpha = spread;
-      ctx.fillStyle = band; ctx.fillRect(0,0,W,H);
-      ctx.globalAlpha = 1;
-      // The noise drifts rather than sitting still, or it reads as a texture
-      // laid over the glow instead of disappearing into it.
-      if(pat){
-        ctx.save();
-        ctx.globalAlpha = 0.05*spread;
-        ctx.translate(-((t*40)%96), -((t*26)%96));
-        ctx.fillStyle = pat; ctx.fillRect(0,0,W+96,H+96);
-        ctx.restore();
+
+    for(var i=0;i<P.length;i++){
+      var o = P[i];
+      // AT REST THIS IS EXACTLY THE SIGN IN PAGE. The gear only turns the
+      // settled cloud over on itself, each layer at its own speed, which is
+      // what reads as the machine working rather than idling.
+      var tx = o.tx, ty = o.ty;
+      if(gearAmt > 0.002){
+        var a2 = spin*(0.5 + o.lay*1.7);
+        var ca = Math.cos(a2), sa2 = Math.sin(a2);
+        var rx = o.ox*ca - o.oy*sa2*0.55, ry = o.oy*ca + o.ox*sa2*0.55;
+        tx = o.tx + (CX + rx - o.tx)*gearAmt;
+        ty = o.ty + (CY + ry - o.ty)*gearAmt;
       }
-    }
-
-    var ry = t*SPIN, cy = Math.cos(ry), sy = Math.sin(ry);
-
-    for(var i=0;i<N;i++){
-      var p = pts[i];
-      // The equator turns faster than the poles. That shear is most of why the
-      // cloud reads as a fluid rather than a ball of dots being spun.
-      var a = p.th + t*(0.35 + DIFF*(1-Math.abs(p.u)));
-      var rr = Math.sqrt(1-p.u*p.u);
-      var bx = Math.cos(a)*rr, by = p.u, bz = Math.sin(a)*rr;
-      var n1 = Math.sin(bx*2.1+t*1.7)*Math.cos(by*1.7-t*1.3);
-      var n2 = Math.sin(by*2.6-t*1.1)*Math.cos(bz*2.2+t*1.9);
-      var n3 = Math.sin(bz*1.9+t*2.3)*Math.cos(bx*2.4-t*0.9);
-      var d = p.rad*(1 + AMP*(n1+n2+n3)/3 + Math.sin(t*1.1-p.rad*4.2)*PULSE + soft*0.045);
-      var X = bx*d, Y = by*d, Z = bz*d;
-      var rx = X*cy-Z*sy, rz = X*sy+Z*cy;
-      var sc = F/(F+rz*R);
-      var sx = CX+rx*R*sc, sy2 = CY+Y*R*sc, depth = (rz+1)/2;
-      // THE CURTAIN. Each particle is pulled toward its own place across the
-      // full width. The links are computed from these same coordinates, so the
-      // network stays wired to the cloud as it opens out.
-      if(spread > 0.001){
-        var tx = CX + p.qx*(W*0.5 - 8*U);
-        var ty = CY + p.qy*(H*0.42) + Math.sin(t*1.9 + p.k*24)*H*0.035;
-        sx  = sx  + (tx  - sx )*spread;
-        sy2 = sy2 + (ty - sy2)*spread;
+      o.x = tx + Math.sin(t*9.9+o.ph)*0.9*U;
+      o.y = ty + Math.cos(t*9.2+o.ph)*0.9*U;
+      var tw = 0.6 + 0.4*Math.sin(t*16+o.ph);
+      var al = tw*(1 + 0.30*gearAmt)*gain;
+      if(al <= 0.004) continue;
+      if(al > 1) al = 1;
+      if(o.bright && o.sz > 0 && sprite){
+        var hw = o.sz*10;
+        ctx.globalAlpha = al;
+        ctx.drawImage(sprite, o.x-hw/2, o.y-hw/2, hw, hw);
+        ctx.globalAlpha = 1;
       }
-      var al = (0.05+depth*0.55)*(0.35+p.s*0.65)*(1.15-p.rad*0.5)*(1+FLICK*Math.sin(t*3.1+p.k*38))*gain;
-      if(al<0) al=0; if(al>1) al=1;
-      var k4 = i*4; proj[k4]=sx; proj[k4+1]=sy2; proj[k4+2]=depth; proj[k4+3]=al;
-
-      if(i>=NODES){
-        var size = (0.5+depth*1.25)*U*(1.25-p.rad*0.35);
-        ctx.fillStyle = depth>0.68 ? 'rgba(255,214,178,'+al.toFixed(3)+')'
-                                   : 'rgba(255,46,60,'+al.toFixed(3)+')';
-        ctx.beginPath(); ctx.arc(sx,sy2,size,0,6.2832); ctx.fill();
-      }
+      if(o.sz <= 0) continue;
+      ctx.fillStyle = 'rgba(255,236,240,'+al.toFixed(3)+')';
+      ctx.beginPath(); ctx.arc(o.x,o.y,o.sz,0,6.2832); ctx.fill();
     }
 
-    for(var n=0;n<NODES;n++){
-      fire[n] = 0.35 + 0.65*Math.pow(Math.max(0,Math.sin(t*2.1 + pts[n].k*12.0)),8);
-    }
-
-    ctx.lineWidth = 0.9*U;
-    for(var i2=0;i2<NODES;i2++){
-      var ax=proj[i2*4], ay=proj[i2*4+1], ad=proj[i2*4+2];
-      for(var j2=i2+1;j2<NODES;j2++){
-        var bx2=proj[j2*4], by2=proj[j2*4+1];
-        var dx=ax-bx2, dy=ay-by2, dd=dx*dx+dy*dy;
-        if(dd>LINK*LINK) continue;
-        var strength = 1-Math.sqrt(dd)/LINK;
-        var base = strength*strength*0.26*(0.45+ad*0.55);
-        if(base<0.008) continue;
-        ctx.strokeStyle='rgba(255,120,90,'+Math.min(1,base).toFixed(3)+')';
-        ctx.beginPath(); ctx.moveTo(ax,ay); ctx.lineTo(bx2,by2); ctx.stroke();
-
-        var lit = fire[i2];
-        if(lit>0.25){
-          var off = ((i2*7919 + j2*104729)%1000)/1000;
-          var head = ((t*0.30 + off)%1);
-          ctx.fillStyle='rgba(255,235,200,'+Math.min(1,lit*strength*0.95).toFixed(3)+')';
-          ctx.beginPath();
-          ctx.arc(ax+(bx2-ax)*head, ay+(by2-ay)*head, 1.9*U*(0.6+lit*0.8), 0, 6.2832);
-          ctx.fill();
-        }
-      }
-    }
-
-    for(var n2=0;n2<NODES;n2++){
-      var x=proj[n2*4], y=proj[n2*4+1], dpt=proj[n2*4+2], f=fire[n2];
-      ctx.fillStyle='rgba(255,120,80,'+Math.min(1,(0.10+f*0.42)*(0.4+dpt*0.6)).toFixed(3)+')';
-      ctx.beginPath(); ctx.arc(x,y,(3.4+f*4.4)*U,0,6.2832); ctx.fill();
-      ctx.fillStyle='rgba(255,238,210,'+Math.min(1,0.35+f*0.65).toFixed(3)+')';
-      ctx.beginPath(); ctx.arc(x,y,(1.1+f*1.0)*U,0,6.2832); ctx.fill();
-    }
-
-    ctx.globalCompositeOperation='source-over';
+    ctx.globalCompositeOperation = 'source-over';
     raf = requestAnimationFrame(frame);
   }
 
   function start(){ if(running) return; running = true; raf = requestAnimationFrame(frame); }
   function stop(){ running = false; if(raf) cancelAnimationFrame(raf); raf = null; }
 
+  function ease(p){ return p<0.5 ? 2*p*p : 1-Math.pow(-2*p+2,2)/2; }
+  function tween(get, set, to, ms){
+    ms = ms || 900;
+    var v0 = get(), t0 = performance.now();
+    (function step(now){
+      var p = Math.min(1,(now-t0)/ms), e = ease(p);
+      set(v0 + (to-v0)*e);
+      if(p<1) requestAnimationFrame(step);
+    })(t0);
+  }
   // The spin is a multiplier on the core's own clock, not a CSS rotation, so
   // the cloud genuinely turns faster rather than the picture being spun.
-  function ease(p){ return p<0.5 ? 2*p*p : 1-Math.pow(-2*p+2,2)/2; }
   function tune(toRate, toGain, ms){
     ms = ms || 1100;
     var r0 = rate, g0 = gain, t0 = performance.now();
@@ -24293,27 +24268,18 @@ function mmScanCore(){
       if(p<1) requestAnimationFrame(step);
     })(t0);
   }
-  // Disperse into the curtain and gather back. Same easing as tune so the
-  // spread, the spin and the brightness all move on one curve.
-  function spr(to, ms){
-    ms = ms || 900;
-    var s0 = spread, t0 = performance.now();
-    (function step(now){
-      var p = Math.min(1,(now-t0)/ms), e = ease(p);
-      spread = s0 + (to-s0)*e;
-      if(p<1) requestAnimationFrame(step);
-    })(t0);
-  }
-  function trl(to, ms){
-    ms = ms || 400;
-    var v0 = trailAmt, t0 = performance.now();
-    (function step(now){
-      var p = Math.min(1,(now-t0)/ms), e = ease(p);
-      trailAmt = v0 + (to-v0)*e;
-      if(p<1) requestAnimationFrame(step);
-    })(t0);
-  }
-  _mmCore = { start:start, stop:stop, tune:tune, spr:spr, trl:trl, relayout:layout };
+  // KEPT SO NOTHING THAT CALLS THEM THROWS. The curtain the spread used to
+  // open into was retired when the cascade replaced it; the value is still
+  // tracked so a future caller behaves, it simply paints nothing now.
+  function spr(to, ms){ tween(function(){return spread;}, function(v){spread=v;}, to, ms||900); }
+  function trl(to, ms){ tween(function(){return trailAmt;}, function(v){trailAmt=v;}, to, ms||400); }
+  function gear(to, ms){ tween(function(){return gearAmt;}, function(v){gearAmt=v;}, to, ms||700); }
+
+  var _mimg = new Image();
+  _mimg.onload = function(){ IMG = _mimg; build(); };
+  _mimg.src = markUrl();
+
+  _mmCore = { start:start, stop:stop, tune:tune, spr:spr, trl:trl, relayout:layout, gear:gear };
 
   // Anything that hides the core stops the loop: leaving the Scanner,
   // scrolling it out of view, or the compact state after a scan.
@@ -24362,6 +24328,7 @@ async function runMAIScanner() {
   // to put in them.
   var shEl = document.getElementById('scan-hero');
   if(shEl){ shEl.classList.remove('done'); shEl.classList.add('scanning'); }
+  if(_mmCore && _mmCore.gear) _mmCore.gear(1, 700);
   var srEl = document.getElementById('scan-results');
   if(srEl){ srEl.classList.remove('shown'); srEl.style.display = 'none'; }
 
@@ -24819,6 +24786,7 @@ Respond ONLY with valid JSON (no markdown):
   // the screen is never empty for a frame.
   var shDone = document.getElementById('scan-hero');
   if(shDone){ shDone.classList.remove('scanning'); shDone.classList.add('done'); }
+  if(_mmCore && _mmCore.gear) _mmCore.gear(0, 700);
   var res = document.getElementById('scan-results');
   res.style.display = 'block';
   // One dust layer per card, added once and reused on every later scan.
@@ -24849,6 +24817,7 @@ Respond ONLY with valid JSON (no markdown):
     // leave the screen - which is a dead end, not an error message.
     var shFail = document.getElementById('scan-hero');
     if(shFail) shFail.classList.remove('scanning','done');
+    if(_mmCore && _mmCore.gear) _mmCore.gear(0, 700);
     mmTravelClear();
     btn.textContent = mmT('sc.failed','\u2715 SCAN FAILED');
     btn.style.background = '#FF1E3C';
