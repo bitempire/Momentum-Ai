@@ -686,6 +686,38 @@ html[data-theme="light"] .nav-btn.active span:not(.nav-ico-wrap) { color: #fff; 
 .avtr-plate .avtr-badge{align-self:flex-start;margin-top:0;}
 @media (prefers-reduced-motion: reduce){ .avtr-tile s{animation:none;} }
 
+/* ── THE PROFILE CARD, 20 Aug 2026 ──────────────────────────────
+   The block used to be three lines of loose text on the page background,
+   which is why it looked unfinished beside the Personal Info card right
+   under it. It is a card now.
+   THE DISC COLOUR IS NOT OURS TO SET: `paintAvatar` writes it as an inline
+   style from the customer's own choice, and an inline style beats every
+   rule here. So this frames that colour rather than replacing it. */
+.pcard{position:relative;overflow:hidden;border-radius:16px;padding:20px 16px 17px;text-align:center;
+ margin-bottom:12px;
+ background:linear-gradient(160deg,rgba(255,30,60,.10),rgba(255,255,255,.02));
+ border:1px solid rgba(255,30,60,.20);}
+.pcard:before{content:'';position:absolute;left:50%;top:-60%;width:220px;height:220px;margin-left:-110px;
+ border-radius:50%;pointer-events:none;filter:blur(26px);
+ background:radial-gradient(circle,rgba(255,30,60,.28),transparent 66%);}
+.pcard-hold{position:relative;display:inline-block;}
+#profile-avatar-big{width:76px;height:76px;border-radius:50%;font-size:26px;font-weight:800;color:#fff;
+ box-shadow:0 0 0 3px rgba(255,255,255,.10), 0 12px 26px -10px rgba(0,0,0,.9);}
+.pcard-pen{position:absolute;bottom:-2px;right:-2px;width:28px;height:28px;border-radius:50%;
+ background:var(--grad);display:flex;align-items:center;justify-content:center;cursor:pointer;
+ border:2px solid var(--bg);padding:0;color:#fff;font-size:13px;
+ box-shadow:0 6px 14px -6px rgba(255,30,60,.9);}
+.pcard-name{position:relative;font-family:'Orbitron',sans-serif;font-size:15px;font-weight:700;
+ letter-spacing:.8px;margin-top:13px;color:var(--text);}
+/* The plan line keeps its id and its text, because TWO separate writers set
+   that textContent. Only the class changes with the state. */
+.pcard-plan{position:relative;display:inline-flex;align-items:center;margin-top:9px;
+ padding:3px 9px;border-radius:5px;font-family:'Orbitron',sans-serif;font-size:9px;font-weight:700;
+ letter-spacing:1px;text-transform:uppercase;
+ background:rgba(255,30,60,.12);border:1px solid rgba(255,30,60,.3);color:var(--red);}
+.pcard-plan.is-basic{background:rgba(59,130,246,.13);border-color:rgba(59,130,246,.35);color:var(--blue);}
+.pcard-plan.is-staff{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.15);color:var(--text2);}
+
 /* the label lives INSIDE the field now, which buys a line of height back */
 .auth-ff{position:relative;margin-bottom:12px;}
 .auth-ff .auth-label{position:absolute;left:14px;top:7px;margin:0;font-size:7.5px;letter-spacing:1px;
@@ -6034,17 +6066,15 @@ html[data-theme="light"] .adm-nb.on i,html[data-theme="light"] .adm-nb.on span{c
     </div>
     <div class="sub-content">
       <!-- Avatar with picker -->
-      <div style="text-align:center;margin-bottom:20px;">
-        <div style="position:relative;display:inline-block;margin-bottom:10px;">
-          <div style="width:80px;height:80px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;color:#fff;" id="profile-avatar-big"></div>
-          <!-- Edit button -->
-          <button onclick="showAvatarPicker()" style="position:absolute;bottom:0;right:0;width:26px;height:26px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;cursor:pointer;border:2px solid var(--bg);padding:0;">
-            <i class="ti ti-pencil" style="font-size:12px;color:#fff;"></i>
+      <div class="pcard">
+        <span class="pcard-hold">
+          <div id="profile-avatar-big"></div>
+          <button class="pcard-pen" onclick="showAvatarPicker()" aria-label="Change avatar">
+            <i class="ti ti-pencil"></i>
           </button>
-        </div>
-        <div style="font-size:16px;font-weight:800;color:var(--text);" id="profile-name-display">Trader</div>
-        <div style="font-size:12px;color:var(--text3);margin-top:2px;" id="profile-role-display">Basic User</div>
-        <div style="font-size:10px;color:var(--text3);margin-top:4px;" data-i18n="prof.tapPencil">Tap pencil to change avatar</div>
+        </span>
+        <div class="pcard-name" id="profile-name-display">Trader</div>
+        <div><span class="pcard-plan is-basic" id="profile-role-display">Basic User</span></div>
       </div>
 
 
@@ -8085,6 +8115,12 @@ function enterApp(user) {
     if(profAv) profAv.textContent = name.substring(0,2).toUpperCase();
     if(profName) profName.textContent = user.name || user.username || 'Trader';
     if(profRole) profRole.textContent = user.role === 'admin' ? mmT('pa.superAdmin','Super Admin') : user.role === 'analyst' ? mmT('pa.analyst','Analyst') : (isPremiumUser() ? mmT('pa.premiumUser','Premium User') : mmT('pa.basicUser','Basic User'));
+    // RED for premium, BLUE for basic, GREY for staff. The text is set above
+    // and left alone; only the class moves, because two separate writers own
+    // this element's textContent.
+    if(profRole) profRole.className = 'pcard-plan' + (
+      (user.role==='admin'||user.role==='analyst'||user.role==='sub_admin') ? ' is-staff'
+      : (isPremiumUser() ? '' : ' is-basic'));
     if(profUser) profUser.textContent = '@' + (user.username || '--');
     if(profEmail) profEmail.textContent = user.email || '--';
     // 13 Aug 2026. This used to print `users.mt5_id`, which is whatever was
@@ -16654,6 +16690,9 @@ function loadProfileData() {
   if(roleDisplay){
     var _r = currentUser.role;
     roleDisplay.textContent = _r==='admin' ? mmT('pa.superAdmin','Super Admin') : _r==='analyst' ? mmT('pa.analyst','Analyst') : _r==='sub_admin' ? mmT('pa.subAdmin','Sub Admin') : (isPremiumUser() ? mmT('pa.premiumUser','Premium User') : mmT('pa.basicUser','Basic User'));
+    roleDisplay.className = 'pcard-plan' + (
+      (_r==='admin'||_r==='analyst'||_r==='sub_admin') ? ' is-staff'
+      : (isPremiumUser() ? '' : ' is-basic'));
   }
   
   // Update info fields
