@@ -805,13 +805,12 @@ html[data-theme="light"] .nav-btn.active span:not(.nav-ico-wrap) { color: #fff; 
 .pcard-plan.is-staff{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.15);color:var(--text2);}
 
 /* ── THE HOME BANNER, 20 Aug 2026 ───────────────────────────────
-   The strip only ever travels ONE WAY now, and each picture drifts and
-   grows slowly while its banner is held, so a paused slideshow never
-   looks frozen. `alternate` means it eases back rather than snapping. */
-.ban-art{animation:banKen 9s ease-in-out infinite alternate;}
-@keyframes banKen{from{transform:scale(1) translateX(0)}
-                  to{transform:scale(1.10) translateX(-2%)}}
-@media (prefers-reduced-motion: reduce){ .ban-art{animation:none;} }
+   THE PICTURE IS STATIC. It briefly drifted and grew on a Ken Burns
+   loop, which he asked to remove: on a banner whose artwork already
+   carries its own headline, a 10 percent zoom pushes that headline off
+   the edge of the frame. The strip still only ever travels ONE WAY.
+   The class is kept so the markup does not have to change. */
+.ban-art{transform:none;}
 
 /* the label lives INSIDE the field now, which buys a line of height back */
 .auth-ff{position:relative;margin-bottom:12px;}
