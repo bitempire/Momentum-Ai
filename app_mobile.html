@@ -19316,16 +19316,26 @@ function loadMoreTab(){
   var av = document.getElementById('more-avatar'); if(av) av.textContent = initialsFrom(nm);
   if(typeof applyAvatarEverywhere==='function') applyAvatarEverywhere();
   var prem = (typeof isPremiumUser === 'function') ? isPremiumUser() : false;
+  var mTier = (typeof mmTier==='function') ? mmTier() : (prem ? 'premium' : 'basic');
   var tierText = document.getElementById('more-tier-text');
-  if(tierText){ tierText.textContent = prem ? 'Premium Member' : 'Basic Member'; }
+  if(tierText){ tierText.textContent = mTier==='premium' ? 'Premium Member'
+                                     : mTier==='basic'   ? 'Basic Member'
+                                     :                     'View Only'; }
   var badge = document.getElementById('more-tier-badge');
   if(badge){
-    if(prem){
-      badge.style.background='var(--gold)'; badge.style.color='#3A2A05';
+    // EVERY BRANCH SETS EVERY PROPERTY. These are inline styles, so a value
+    // left from the previous render would survive into the next one.
+    if(mTier==='premium'){
+      badge.style.background='var(--gold)'; badge.style.color='#3A2A05'; badge.style.border='none';
       badge.innerHTML='<i class="ti ti-crown" style="font-size:10px;"></i> '+mmT('w.premiumBadge','PREMIUM');
-    } else {
+    } else if(mTier==='basic'){
       badge.style.background='linear-gradient(135deg,#EFF1F3,#BFC5CD 55%,#9AA1AA)'; badge.style.color='#2a2d33';
+      badge.style.border='none';
       badge.innerHTML='<i class="ti ti-bolt" style="font-size:10px;"></i> '+mmT('w.basicBadge','BASIC');
+    } else {
+      badge.style.background='transparent'; badge.style.color='rgba(255,255,255,0.92)';
+      badge.style.border='1px dashed rgba(255,255,255,0.45)';
+      badge.innerHTML='<i class="ti ti-eye" style="font-size:10px;"></i> '+mmT('w.viewBadge','VIEW ONLY');
     }
   }
   updateMoreBalance();
