@@ -898,8 +898,19 @@ html[data-theme="light"] .nav-btn.active span:not(.nav-ico-wrap) { color: #fff; 
 .auth-body{position:absolute;inset:0;z-index:7;overflow-y:auto;padding:74px 10px 64px;
  display:flex;flex-direction:column;
  opacity:0;pointer-events:none;transform:translateY(24px);
- transition:opacity .5s ease .28s,transform .6s cubic-bezier(.22,.61,.36,1) .24s;}
-#screen-auth.mm-open .auth-body{opacity:1;pointer-events:auto;transform:none;}
+ /* VISIBILITY, NOT JUST OPACITY. A field that is merely transparent is still
+    a real form field to the phone, so iOS offered to fill the password the
+    moment the app opened, on the welcome screen, before the form existed as
+    far as the customer was concerned. `visibility:hidden` takes the fields
+    out of that entirely. The delay keeps the fade: visibility flips only
+    AFTER the opacity has finished going out. */
+ visibility:hidden;
+ transition:opacity .5s ease .28s,transform .6s cubic-bezier(.22,.61,.36,1) .24s,
+            visibility 0s linear .78s;}
+#screen-auth.mm-open .auth-body{opacity:1;pointer-events:auto;transform:none;
+ /* visible with NO delay, so the fields are real again the instant the
+    pane opens and the phone can offer to fill them there. */
+ visibility:visible;transition-delay:.28s,.24s,0s;}
 .auth-logo {
   display: flex;
   align-items: center;
