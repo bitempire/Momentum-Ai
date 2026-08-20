@@ -659,6 +659,16 @@ html[data-theme="light"] .nav-btn.active span:not(.nav-ico-wrap) { color: #fff; 
  font-family:'Sora',sans-serif;font-size:12.5px;font-weight:600;}
 .reg-aft:active{transform:scale(.987);}
 
+/* ── VIEW ONLY, 20 Aug 2026 ─────────────────────────────────────
+   Premium is gold and Basic is silver, so both are metals on a ladder.
+   View Only is not a rung on that ladder, it is the state before it, so
+   it has no fill at all. A dashed edge reads as unfinished. */
+.dash-welcome-badge.viewonly{background:transparent;color:rgba(255,255,255,.92);
+ border:1px dashed rgba(255,255,255,.55);box-shadow:none;}
+.avtr-badge.avtr-view{background:transparent;border:1px dashed rgba(255,255,255,.28);
+ color:var(--text2);font-family:Sora,sans-serif;}
+.pcard-plan.is-view{background:transparent;border:1px dashed rgba(255,255,255,.28);color:var(--text2);}
+
 /* ── THE HEADER, 20 Aug 2026 ────────────────────────────────────
    The tile matches the island beside it: the island is 34px tall
    (26px avatar + 3px padding each side + its 1px borders) and the
@@ -8172,13 +8182,14 @@ function enterApp(user) {
     var profStatus = document.getElementById('profile-status');
     if(profAv) profAv.textContent = name.substring(0,2).toUpperCase();
     if(profName) profName.textContent = user.name || user.username || 'Trader';
-    if(profRole) profRole.textContent = user.role === 'admin' ? mmT('pa.superAdmin','Super Admin') : user.role === 'analyst' ? mmT('pa.analyst','Analyst') : (isPremiumUser() ? mmT('pa.premiumUser','Premium User') : mmT('pa.basicUser','Basic User'));
+    if(profRole) profRole.textContent = user.role === 'admin' ? mmT('pa.superAdmin','Super Admin') : user.role === 'analyst' ? mmT('pa.analyst','Analyst') : (mmTier()==='premium' ? mmT('pa.premiumUser','Premium User') : mmTier()==='basic' ? mmT('pa.basicUser','Basic User') : mmT('pa.viewUser','View Only'));
     // RED for premium, BLUE for basic, GREY for staff. The text is set above
     // and left alone; only the class moves, because two separate writers own
     // this element's textContent.
     if(profRole) profRole.className = 'pcard-plan' + (
       (user.role==='admin'||user.role==='analyst'||user.role==='sub_admin') ? ' is-staff'
-      : (isPremiumUser() ? '' : ' is-basic'));
+      : mmTier()==='premium' ? ''
+      : mmTier()==='basic' ? ' is-basic' : ' is-view');
     if(profUser) profUser.textContent = '@' + (user.username || '--');
     if(profEmail) profEmail.textContent = user.email || '--';
     // 13 Aug 2026. This used to print `users.mt5_id`, which is whatever was
@@ -8249,8 +8260,10 @@ async function loadActiveAccount() {
 function updateWelcomeBadge(){
   var b=document.getElementById('dash-tier-badge'); if(!b) return;
   var prem = (typeof isPremiumUser==='function') ? isPremiumUser() : false;
-  if(prem){ b.className='dash-welcome-badge premium'; b.innerHTML='<i class="ti ti-crown" style="font-size:11px;" aria-hidden="true"></i>'+mmT('w.premiumBadge','PREMIUM'); }
-  else { b.className='dash-welcome-badge basic'; b.innerHTML='<i class="ti ti-bolt" style="font-size:11px;" aria-hidden="true"></i>'+mmT('w.basicBadge','BASIC'); }
+  var tier = (typeof mmTier==='function') ? mmTier() : (prem ? 'premium' : 'basic');
+  if(tier==='premium'){ b.className='dash-welcome-badge premium'; b.innerHTML='<i class="ti ti-crown" style="font-size:11px;" aria-hidden="true"></i>'+mmT('w.premiumBadge','PREMIUM'); }
+  else if(tier==='basic'){ b.className='dash-welcome-badge basic'; b.innerHTML='<i class="ti ti-bolt" style="font-size:11px;" aria-hidden="true"></i>'+mmT('w.basicBadge','BASIC'); }
+  else { b.className='dash-welcome-badge viewonly'; b.innerHTML='<i class="ti ti-eye" style="font-size:11px;" aria-hidden="true"></i>'+mmT('w.viewBadge','VIEW ONLY'); }
 }
 
 function renderHeaderSwitcher() {
@@ -8390,10 +8403,12 @@ function toggleAvatarDropdown(e) {
   var topRight;
   if(isStaff){
     topRight = '<span class="avtr-badge" style="background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.15);color:var(--text2);font-family:Sora,sans-serif;">'+roleLbl+'</span>';
-  } else if(isPremiumUser()){
+  } else if(mmTier()==='premium'){
     topRight = '<span class="avtr-badge"><i class="ti ti-crown" style="font-size:10px;"></i>'+mmT('w.premiumBadge','PREMIUM')+'</span>';
-  } else {
+  } else if(mmTier()==='basic'){
     topRight = basicBadge;
+  } else {
+    topRight = '<span class="avtr-badge avtr-view">'+mmT('w.viewBadge','VIEW ONLY')+'</span>';
   }
   var isLight = document.documentElement.getAttribute('data-theme')==='light';
   var html = '<div class="avtr-user avtr-plate">'+
@@ -14102,6 +14117,19 @@ function handleLogout() {
 var BROKER_DEPOSIT_URL = 'https://client.afttmarkets.com/funds/deposit';
 var _premiumScreens = ['sub-scanner','sub-leaderboard','sub-smart-tool-new','sub-auto-trade'];
 var _premiumTabs = ['journal'];
+// view = nothing connected, basic = connected, premium = connected and funded.
+// The connected test is the one the app already uses everywhere else, so a
+// customer whose request is still awaiting approval counts as VIEW ONLY -
+// which is honest, because nothing of theirs can trade yet.
+function mmTier(){
+  var accts = (typeof window!=='undefined' && window._userAccounts) ? window._userAccounts : [];
+  var connected = false;
+  for(var i=0;i<accts.length;i++){
+    if(accts[i] && (accts[i].mt5_connected || accts[i].connection_status==='connected')){ connected = true; break; }
+  }
+  if(!connected) return 'view';
+  return (typeof isPremiumUser==='function' && isPremiumUser()) ? 'premium' : 'basic';
+}
 function isPremiumUser(){
   var a=(typeof activeAccount!=='undefined'&&activeAccount)?activeAccount:null;
   if(!a) return false;
@@ -16747,10 +16775,11 @@ function loadProfileData() {
   var roleDisplay = document.getElementById('profile-role-display');
   if(roleDisplay){
     var _r = currentUser.role;
-    roleDisplay.textContent = _r==='admin' ? mmT('pa.superAdmin','Super Admin') : _r==='analyst' ? mmT('pa.analyst','Analyst') : _r==='sub_admin' ? mmT('pa.subAdmin','Sub Admin') : (isPremiumUser() ? mmT('pa.premiumUser','Premium User') : mmT('pa.basicUser','Basic User'));
+    roleDisplay.textContent = _r==='admin' ? mmT('pa.superAdmin','Super Admin') : _r==='analyst' ? mmT('pa.analyst','Analyst') : _r==='sub_admin' ? mmT('pa.subAdmin','Sub Admin') : (mmTier()==='premium' ? mmT('pa.premiumUser','Premium User') : mmTier()==='basic' ? mmT('pa.basicUser','Basic User') : mmT('pa.viewUser','View Only'));
     roleDisplay.className = 'pcard-plan' + (
       (_r==='admin'||_r==='analyst'||_r==='sub_admin') ? ' is-staff'
-      : (isPremiumUser() ? '' : ' is-basic'));
+      : mmTier()==='premium' ? ''
+      : mmTier()==='basic' ? ' is-basic' : ' is-view');
   }
   
   // Update info fields
@@ -16773,10 +16802,14 @@ function loadProfileData() {
   }
   var planEl = document.getElementById('profile-plan');
   if(planEl){
-    var _prem = isPremiumUser();
-    planEl.textContent = _prem ? mmT('w.premiumBadge','PREMIUM') : mmT('w.basicBadge','BASIC');
-    planEl.style.background = _prem ? 'var(--grad)' : 'rgba(59,130,246,0.13)';
-    planEl.style.color = _prem ? '#fff' : 'var(--blue)';
+    var _t = (typeof mmTier==='function') ? mmTier() : (isPremiumUser() ? 'premium' : 'basic');
+    planEl.textContent = _t==='premium' ? mmT('w.premiumBadge','PREMIUM')
+                       : _t==='basic'   ? mmT('w.basicBadge','BASIC')
+                       :                  mmT('w.viewBadge','VIEW ONLY');
+    planEl.style.background = _t==='premium' ? 'var(--grad)' : _t==='basic' ? 'rgba(59,130,246,0.13)' : 'transparent';
+    planEl.style.color = _t==='premium' ? '#fff' : _t==='basic' ? 'var(--blue)' : 'var(--text2)';
+    // dashed = not started yet, which is what a dashed edge means everywhere
+    planEl.style.border = _t==='view' ? '1px dashed rgba(255,255,255,0.28)' : 'none';
   }
   refreshProfilePromo();
 }
