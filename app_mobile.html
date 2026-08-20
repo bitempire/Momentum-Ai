@@ -674,12 +674,22 @@ html[data-theme="light"] .nav-btn.active span:not(.nav-ico-wrap) { color: #fff; 
  border-radius:11px;border:1px dashed rgba(255,255,255,.20);background:rgba(255,255,255,.02);
  font-size:11.5px;color:var(--text2);}
 .mm-quota b{margin-left:auto;font-family:'Orbitron',sans-serif;font-size:11px;color:#fff;}
-.mm-locked{display:flex;align-items:center;gap:9px;margin-top:4px;padding:13px 12px;cursor:pointer;
- border-radius:12px;border:1px dashed rgba(255,255,255,.20);background:rgba(255,255,255,.02);
- font-size:12px;color:var(--text2);}
-.mm-locked b{color:#fff;font-family:'Orbitron',sans-serif;}
-.mm-locked i{margin-left:auto;font-size:14px;color:var(--text3);}
-.mm-locked:active{transform:scale(.99);}
+/* THE VAULT. The count is the loudest thing on it, because the count is the
+   whole argument: there are this many more and you cannot see them. */
+.mm-vault{position:relative;overflow:hidden;border-radius:16px;margin-top:6px;cursor:pointer;
+ padding:20px 16px 17px;text-align:center;
+ background:linear-gradient(160deg,rgba(255,30,60,.16),rgba(255,255,255,.02));
+ border:1px solid rgba(255,30,60,.30);}
+.mm-vault:before{content:'';position:absolute;left:50%;top:-70%;width:230px;height:230px;
+ margin-left:-115px;border-radius:50%;filter:blur(28px);pointer-events:none;
+ background:radial-gradient(circle,rgba(255,30,60,.30),transparent 66%);}
+.mm-vault:active{transform:scale(.993);}
+.mv-n{position:relative;font-family:'Orbitron',sans-serif;font-size:38px;font-weight:900;line-height:1;}
+.mv-t{position:relative;font-size:12.5px;font-weight:700;margin-top:8px;}
+.mv-d{position:relative;font-size:11px;color:var(--text2);margin-top:6px;line-height:1.55;}
+.mv-b{position:relative;width:100%;margin-top:13px;border:0;border-radius:12px;padding:12px;color:#fff;
+ font-family:'Orbitron',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.7px;cursor:pointer;
+ background:var(--grad);box-shadow:0 10px 24px -12px rgba(255,30,60,.85);}
 
 /* ── THE HEADER, 20 Aug 2026 ────────────────────────────────────
    The tile matches the island beside it: the island is 34px tall
@@ -8259,6 +8269,14 @@ async function loadActiveAccount() {
     var res = await db.from('mt5_accounts').select('*').eq('user_id', currentUser.id);
     var accts = (res && res.data) ? res.data : [];
     window._userAccounts = accts; if(typeof mmHomeRefresh==='function') mmHomeRefresh();
+    // THE ACCOUNT LIST STARTS EMPTY, so anything drawn before this line ran saw
+    // no connected account and read as View Only. If the feed was drawn on a
+    // tier that has now changed, draw it again.
+    try {
+      if(window._sigDrawnTier != null && typeof mmTier === 'function'
+         && mmTier() !== window._sigDrawnTier
+         && typeof loadSignalsFeed === 'function') { loadSignalsFeed(); }
+    } catch(e) {}
     var activeId = currentUser.active_account_id;
     activeAccount = accts.filter(function(a){return a.id===activeId;})[0]
                  || accts.filter(function(a){return a.mt5_connected||a.connection_status==='connected';})[0]
@@ -14706,7 +14724,8 @@ async function loadSignalsFeed() {
     // phone's clock, so a customer cannot win a new allowance by changing
     // their time zone.
     var _rows = res.data, _hidden = 0;
-    if((typeof mmTier === 'function') && mmTier() === 'view'){
+    window._sigDrawnTier = (typeof mmTier === 'function') ? mmTier() : null;
+    if(window._sigDrawnTier === 'view'){
       var _today = mmMytDay(new Date());
       var _mine = _rows.filter(function(s){ return mmMytDay(s.created_at) === _today; });
       _mine.sort(function(a,b){ return new Date(a.created_at) - new Date(b.created_at); });
@@ -14809,14 +14828,21 @@ async function loadSignalsFeed() {
       container.appendChild(card);
     });
     if(_hidden > 0){
-      // ONE LINE, NOT NINE BLURRED ROWS. Blur repeated down a screen reads as
-      // broken rather than tempting.
       var _lk = document.createElement('div');
-      _lk.className = 'mm-locked';
-      _lk.innerHTML = '<span><b>' + _hidden + '</b> ' +
-        mmT('tier.moreLocked','more signals today') + '</span>' +
-        '<i class="ti ti-lock"></i>';
-      _lk.onclick = function(){ if(typeof showDepositPopup === 'function') showDepositPopup(); };
+      _lk.className = 'mm-vault';
+      _lk.innerHTML =
+        '<div class="mv-n">' + _hidden + '</div>' +
+        '<div class="mv-t">' + mmT('tier.moreLocked','more signals today') + '</div>' +
+        '<div class="mv-d">' + mmT('tier.vaultBody',
+          'Connect an MT5 account at Asia Future Trading to see every signal, on every pair.') + '</div>' +
+        '<button class="mv-b">' + mmT('tier.vaultCta','SEE EVERY SIGNAL') + '</button>';
+      // A VIEW ONLY CUSTOMER HAS NO ACCOUNT, so the deposit popup is the wrong
+      // door - it asks them to fund something they have not connected. This
+      // sends them to Profile, where the connect flow lives.
+      _lk.onclick = function(){
+        if(typeof mt5PromptConnectNow === 'function') mt5PromptConnectNow();
+        else if(typeof showSubScreen === 'function') showSubScreen('sub-profile');
+      };
       container.appendChild(_lk);
     }
     if(typeof mmApplyLang==='function') mmApplyLang();
