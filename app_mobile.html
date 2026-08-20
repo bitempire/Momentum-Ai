@@ -646,6 +646,21 @@ html[data-theme="light"] .nav-btn.active span:not(.nav-ico-wrap) { color: #fff; 
  box-shadow:0 0 8px rgba(39,209,124,.8);flex:none;}
 @media (prefers-reduced-motion: reduce){ .mmf-sys{animation:none;} }
 
+/* ── THE HEADER, 20 Aug 2026 ────────────────────────────────────
+   The tile matches the island beside it: the island is 34px tall
+   (26px avatar + 3px padding each side + its 1px borders) and the
+   tile was 40px. Both rules are SCOPED TO THE HEADER on purpose,
+   because .mmai-tile and .mmai-mk are shared with the admin plate
+   and anywhere else the ember tile is reused. */
+.app-header-logo .mmai-tile{width:34px;height:34px;border-radius:11px;}
+.app-header-logo .mmai-mk{width:20px;height:20px;}
+.hdr-rule{width:1px;height:16px;flex:none;margin:0 10px;position:relative;z-index:2;
+ background:rgba(255,255,255,.16);}
+/* MAI stays at 13px. Any larger and the balance starts wrapping on a
+   narrow handset, which is the whole reason the wordmark came out before. */
+.hdr-mai{font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;letter-spacing:3.4px;
+ color:rgba(255,255,255,.86);position:relative;z-index:2;white-space:nowrap;}
+
 /* the label lives INSIDE the field now, which buys a line of height back */
 .auth-ff{position:relative;margin-bottom:12px;}
 .auth-ff .auth-label{position:absolute;left:14px;top:7px;margin:0;font-size:7.5px;letter-spacing:1px;
@@ -3948,14 +3963,15 @@ html[data-theme="light"] .adm-nb.on i,html[data-theme="light"] .adm-nb.on span{c
   <!-- HEADER -->
   <div class="app-header" id="app-header">
     <div class="app-header-logo">
-        <!-- Logo only. The wordmark is gone: a phone header's job is not
-             branding, and the space belongs to the account control. -->
+        <!-- The tile is sized to the island beside it, then a hairline and
+             MAI. The word is a NAME, so it carries no data-i18n. -->
         <span class="app-logo-wrap">
           <!-- The ember tile. The mark itself is a STENCIL, so the white shape
                is drawn by CSS and the file is only its outline: 9.5KB against
                26KB for the old logo, and it can be any colour later. -->
           <span class="mmai-tile"><span class="mmai-glow"></span>
-            <span class="mmai-top"></span><span class="mmai-mk"></span></span></span>
+            <span class="mmai-top"></span><span class="mmai-mk"></span></span>
+          <span class="hdr-rule"></span><span class="hdr-mai">MAI</span></span>
     </div>
     <div id="app-header-title-center" class="app-header-title" style="display:none;"></div>
     <div class="app-header-right">
