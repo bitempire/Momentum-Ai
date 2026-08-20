@@ -190,10 +190,10 @@ select.auth-input {
    faint tint because glass and glow both need something behind them. */
 .app-header{background:linear-gradient(120deg,#12101a,#0d0b14 45%,#150d12);}
 .app-logo-wrap{position:relative;display:flex;align-items:center;}
-.app-logo-wrap img{position:relative;z-index:2;height:42px;width:42px;object-fit:contain;display:block;
- -webkit-mask-image:radial-gradient(circle at 50% 50%,#000 58%,transparent 88%);
- mask-image:radial-gradient(circle at 50% 50%,#000 58%,transparent 88%);}
-.app-logo-bloom{position:absolute;left:50%;top:50%;width:150px;height:86px;
+.app-logo-wrap img{position:relative;z-index:2;height:48px;width:48px;object-fit:contain;display:block;
+ -webkit-mask-image:radial-gradient(circle at 50% 50%,#000 78%,transparent 100%);
+ mask-image:radial-gradient(circle at 50% 50%,#000 78%,transparent 100%);}
+.app-logo-bloom{position:absolute;left:50%;top:50%;width:170px;height:96px;
  transform:translate(-50%,-50%);border-radius:50%;filter:blur(22px);z-index:1;pointer-events:none;
  background:radial-gradient(ellipse,rgba(255,30,60,.22),transparent 70%);}
 
@@ -216,7 +216,7 @@ select.auth-input {
 .hdr-isl.open .hdr-isl-ch{transform:rotate(180deg);}
 .hdr-isl .app-header-avatar{width:26px;height:26px;font-size:10px;position:relative;z-index:2;
  background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.14);color:var(--text);margin:0;}
-.hdr-thr{position:absolute;left:0;right:0;bottom:0;height:2px;overflow:hidden;z-index:11;
+.hdr-thr{position:absolute;left:0;right:0;bottom:0;height:1px;overflow:hidden;z-index:11;
  -webkit-mask-image:linear-gradient(90deg,transparent,#000 22%,#000 78%,transparent);
  mask-image:linear-gradient(90deg,transparent,#000 22%,#000 78%,transparent);}
 .hdr-thr i{position:absolute;inset:0;display:block;background-size:220% 100%;
