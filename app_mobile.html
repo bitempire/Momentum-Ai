@@ -4777,8 +4777,8 @@ html[data-theme="light"] .adm-nb.on i,html[data-theme="light"] .adm-nb.on span{c
           <i class="ti ti-chevron-right rch"></i>
         </div>
         <div class="mm-row" onclick="showSubScreen('sub-ai-analyst'); setTimeout(aiLoadTVChart,80);">
-          <span class="rl"><span class="ric"><i class="ti ti-sparkles"></i></span><span data-i18n="more.aiAnalyst">AI Chart Analyst</span></span>
-          <span class="rpr" data-i18n="w.premiumBadge">PREMIUM</span>
+          <span class="rl"><span class="ric"><i class="ti ti-sparkles"></i></span><span>MAI Intelligence</span></span>
+          <span class="rpr" data-i18n="lang.comingSoon">COMING SOON</span>
         </div>
       </div>
 
@@ -4856,7 +4856,7 @@ html[data-theme="light"] .adm-nb.on i,html[data-theme="light"] .adm-nb.on span{c
   <div id="sub-ai-analyst" class="sub-screen">
     <div class="sub-header">
       <button class="sub-back" onclick="hideSubScreen('sub-ai-analyst')"><i class="ti ti-arrow-left"></i></button>
-      <div class="sub-title" data-i18n="scr.aiAnalyst">AI CHART ANALYST</div>
+      <div class="sub-title">MAI INTELLIGENCE</div>
     </div>
     <div class="sub-content">
 
@@ -8585,7 +8585,7 @@ function toggleAvatarDropdown(e) {
         '<span class="avtr-name">'+name+'</span>'+
         topRight+
       '</div></div>'+
-    '<div class="avtr-item" onclick="closeHeaderDropdowns();showSubScreen(\'sub-profile\');"><i class="ti ti-user"></i>'+mmT('menu.profile','Profile')+'</div>'+
+    '<div class="avtr-item" onclick="closeHeaderDropdowns();showSubScreen(\'sub-profile\');"><i class="ti ti-user"></i>'+mmT('q.account','My Account')+'</div>'+
     '<div class="avtr-item" onclick="closeHeaderDropdowns();showSubScreen(\'sub-support\');"><i class="ti ti-headset"></i>'+mmT('menu.support','Customer Support')+'</div>'+
     '<div class="avtr-item" onclick="openLangPicker()"><i class="ti ti-language"></i>'+mmT('menu.language','Language')+'<span id="mm-lang-label" style="margin-left:auto;font-size:12px;color:var(--text3);">'+mmLangName(mmGetLang())+'</span></div>'+
     '<div class="avtr-toggle" onclick="toggleTheme(event)">'+
@@ -19638,7 +19638,7 @@ var SOON_SCREENS = {
     body: "AI manages your funds through a PAMM account. Check your statement, get your investor password, and plan ahead with the compounding calculator."
   },
   "sub-ai-analyst": {
-    title: "AI Chart Analyst",
+    title: "MAI Intelligence",
     body: "Capture any chart, pick the technique you trade with, and let the AI read it for you. Then ask it questions about what it found."
   },
   // 6 Aug 2026. sub-news was REMOVED from this list. P17 replaced its sample
