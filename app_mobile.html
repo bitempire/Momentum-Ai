@@ -646,6 +646,19 @@ html[data-theme="light"] .nav-btn.active span:not(.nav-ico-wrap) { color: #fff; 
  box-shadow:0 0 8px rgba(39,209,124,.8);flex:none;}
 @media (prefers-reduced-motion: reduce){ .mmf-sys{animation:none;} }
 
+/* ── REGISTRATION, 20 Aug 2026 ──────────────────────────────────
+   The fields reuse the sign in treatment. Only two pieces are new: the
+   line that tells a customer they will need an AFT account, and the
+   quiet button that opens one. */
+.reg-need{border:1px solid rgba(255,30,60,.24);background:rgba(255,30,60,.06);
+ border-radius:13px;padding:12px 13px;margin:16px 0 14px;}
+.reg-need .t{font-size:12px;font-weight:700;color:var(--text);}
+.reg-need .d{font-size:11px;color:var(--text2);line-height:1.6;margin-top:5px;}
+.reg-aft{width:100%;margin-top:10px;padding:13px;border-radius:14px;cursor:pointer;
+ background:transparent;border:1px solid var(--border);color:var(--text2);
+ font-family:'Sora',sans-serif;font-size:12.5px;font-weight:600;}
+.reg-aft:active{transform:scale(.987);}
+
 /* ── THE HEADER, 20 Aug 2026 ────────────────────────────────────
    The tile matches the island beside it: the island is 34px tall
    (26px avatar + 3px padding each side + its 1px borders) and the
@@ -3968,37 +3981,36 @@ html[data-theme="light"] .adm-nb.on i,html[data-theme="light"] .adm-nb.on span{c
       <div class="auth-sub" data-i18n="auth.regSub">Register your Momentum AI Account</div>
       <div id="reg-error" class="error-msg"></div>
       <div id="reg-success" class="success-msg"></div>
-      <div class="auth-field">
-        <label class="auth-label" data-i18n="prof.mt5id">MT5 Account ID</label>
-        <input id="reg-mt5" class="auth-input" type="text"  placeholder="Your Asia Future Trading MT5 ID" data-i18n-ph="ph.aftId">
+      <div class="mmf" onclick="mmfTap(this)">
+        <i class="mmf-ico ti ti-id-badge-2"></i>
+        <div class="mmf-cap" data-i18n="prof.fullName">Full Name</div>
+        <input id="reg-name" class="mmf-in" type="text" placeholder="Ahmad Hisham" data-i18n-ph="ph.name" autocomplete="name" onfocus="mmfOn(this)" onblur="mmfOff(this)">
       </div>
-      <div class="auth-field">
-        <label class="auth-label" data-i18n="prof.fullName">Full Name</label>
-        <input id="reg-name" class="auth-input" type="text"  placeholder="Ahmad Hisham" data-i18n-ph="ph.name">
+      <div class="mmf" onclick="mmfTap(this)">
+        <i class="mmf-ico ti ti-mail"></i>
+        <div class="mmf-cap" data-i18n="auth.emailAddr">Email Address</div>
+        <input id="reg-email" class="mmf-in" type="email" placeholder="your@email.com" data-i18n-ph="ph.email" autocomplete="email" onfocus="mmfOn(this)" onblur="mmfOff(this)">
       </div>
-      <div class="auth-field">
-        <label class="auth-label" data-i18n="auth.emailAddr">Email Address</label>
-        <input id="reg-email" class="auth-input" type="email"  placeholder="your@email.com" data-i18n-ph="ph.email">
+      <div class="mmf" onclick="mmfTap(this)">
+        <i class="mmf-ico ti ti-user"></i>
+        <div class="mmf-cap" data-i18n="auth.username">Username</div>
+        <input id="reg-username" class="mmf-in" type="text" placeholder="Choose a username" data-i18n-ph="ph.chooseUser" autocomplete="username" onfocus="mmfOn(this)" onblur="mmfOff(this)">
       </div>
-      <div class="auth-field">
-        <label class="auth-label" data-i18n="auth.username">Username</label>
-        <input id="reg-username" class="auth-input" type="text"  placeholder="Choose a username" data-i18n-ph="ph.chooseUser">
+      <div class="mmf" onclick="mmfTap(this)">
+        <i class="mmf-ico ti ti-lock"></i>
+        <div class="mmf-cap" data-i18n="auth.password">Password</div>
+        <input id="reg-password" class="mmf-in" type="password" placeholder="Create a strong password" data-i18n-ph="ph.strongPw" autocomplete="new-password" onfocus="mmfOn(this)" onblur="mmfOff(this)">
+        <button type="button" class="mmf-eye" onclick="event.stopPropagation();toggleRegPw();"><i class="ti ti-eye" id="reg-pw-eye"></i></button>
       </div>
-      <div class="auth-field">
-        <label class="auth-label" data-i18n="auth.password">Password</label>
-        <div style="position:relative;">
-        <input id="reg-password" class="auth-input" type="password"  placeholder="Create a strong password" data-i18n-ph="ph.strongPw" style="padding-right:44px;">
-        <button type="button" onclick="toggleRegPw()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:18px;padding:0;line-height:1;"><i class="ti ti-eye" id="reg-pw-eye"></i></button>
-        </div>
+      <!-- THE ONE THING A NEW CUSTOMER ACTUALLY HAS TO KNOW. It sits above the
+           button rather than below it, because below the button is where a
+           form ends and nobody reads past it. -->
+      <div class="reg-need">
+        <div class="t" data-i18n="reg.needTitle">You will need an AFT account</div>
+        <div class="d" data-i18n="reg.needBody">Momentum AI trades on your own MetaTrader 5 account at Asia Future Trading. You can open one after signing up, live or demo.</div>
       </div>
-      <div class="auth-field">
-        <label class="auth-label" data-i18n="auth.server">Server</label>
-        <select id="reg-broker" class="auth-input">
-          <option value="AsiaFutureTrading-Server">AsiaFutureTrading-Server</option>
-        </select>
-      </div>
-      <button class="auth-btn" id="btn-register" onclick="handleRegister()" data-i18n="auth.createAcct">CREATE ACCOUNT</button>
-      <button class="ghost-btn" onclick="window.open('https://www.afttmarkets.com','_blank')" data-i18n="auth.createAft">Create Account with AFT →</button>
+      <button class="mmf-sys" id="btn-register" onclick="handleRegister()" data-i18n="auth.createAcct">CREATE ACCOUNT</button>
+      <button class="reg-aft" onclick="window.open('https://www.afttmarkets.com','_blank')" data-i18n="auth.createAft">Create Account with AFT →</button>
       <div class="auth-switch" style="margin-top:12px;"><span data-i18n="auth.haveAccount">Have an account?</span> <span onclick="switchAuthTab('signin')" data-i18n="auth.signInArrow">Sign In →</span></div>
     </div>
   </div>
@@ -8016,7 +8028,6 @@ function pickRegPlan(p){_regPlan=p;
 function openRegPlan(){_regPlan='basic';pickRegPlan('basic');var m=document.getElementById('reg-plan-modal');if(m)m.style.display='flex';}
 function closeRegPlan(){var m=document.getElementById('reg-plan-modal');if(m)m.style.display='none';}
 async function handleRegister() {
-  var mt5 = document.getElementById('reg-mt5').value.trim();
   var name = document.getElementById('reg-name').value.trim();
   var email = document.getElementById('reg-email').value.trim();
   var username = document.getElementById('reg-username').value.trim();
@@ -8024,26 +8035,36 @@ async function handleRegister() {
   var errEl = document.getElementById('reg-error');
   var sucEl = document.getElementById('reg-success');
   errEl.style.display = 'none'; sucEl.style.display = 'none';
-  if(!mt5||!name||!email||!username||!password) { errEl.textContent=mmT('common.fillAllFields','Please fill in all fields'); errEl.style.display='block'; return; }
+  if(!name||!email||!username||!password) { errEl.textContent=mmT('common.fillAllFields','Please fill in all fields'); errEl.style.display='block'; return; }
   openRegPlan();
 }
 async function submitRegister() {
-  var mt5 = document.getElementById('reg-mt5').value.trim();
   var name = document.getElementById('reg-name').value.trim();
   var email = document.getElementById('reg-email').value.trim();
   var username = document.getElementById('reg-username').value.trim();
   var password = document.getElementById('reg-password').value;
-  var broker = document.getElementById('reg-broker').value;
+  var brokerEl = document.getElementById('reg-broker');   // the field is gone; the value is fixed
+  var broker = brokerEl ? brokerEl.value : 'AFTT Markets';   // a broker, not a server
   var errEl = document.getElementById('reg-error');
   var btn = document.getElementById('rpm-continue');
   btn.textContent = mmT('common.creating','CREATING...'); btn.disabled = true;
   try {
     var hash = await mmaiHashPassword(password);
-    var res = await db.from('users').insert([{name,email,username,password_hash:hash,mt5_id:mt5,broker:broker||'AFTT Markets',plan_choice:_regPlan,status:'pending',role:'user',created_at:new Date().toISOString()}]).minimal();
+    // AUTO APPROVED. The person is let in; the gate that matters is the MT5
+    // connection, which has its own pending state and its own admin queue.
+    // `mt5_id` is written EMPTY rather than omitted, in case the column is
+    // NOT NULL - nothing reads it now that the connection carries the real one.
+    var res = await db.from('users').insert([{name,email,username,password_hash:hash,mt5_id:'',broker:broker||'AFTT Markets',plan_choice:_regPlan,status:'active',role:'user',created_at:new Date().toISOString()}]).minimal();
     if(res.error) { closeRegPlan(); errEl.textContent=mmT('err.generic','Error: ')+res.error.message; errEl.style.display='block'; btn.textContent=mmT('common.continue','Continue'); btn.disabled=false; return; }
     closeRegPlan();
-    document.getElementById('pending-mt5-val').textContent = mt5;
-    showScreen('screen-pending');
+    // STRAIGHT IN. Rather than repeating the auth code, the credentials they
+    // just chose are handed to the SAME sign in path the app already uses, so
+    // there is one login implementation and only one place it can break.
+    var uEl=document.getElementById('input-username'), pEl=document.getElementById('input-password');
+    if(uEl) uEl.value = username;
+    if(pEl) pEl.value = password;
+    if(typeof switchAuthTab === 'function') switchAuthTab('signin');
+    if(typeof handleLogin === 'function') await handleLogin();
   } catch(e) { closeRegPlan(); errEl.textContent=mmT('err.generic','Error: ')+e.message; errEl.style.display='block'; }
   btn.textContent = mmT('common.continue','Continue'); btn.disabled = false;
 }
