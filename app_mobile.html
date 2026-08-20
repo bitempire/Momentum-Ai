@@ -527,11 +527,12 @@ html[data-theme="light"] .nav-btn.active span:not(.nav-ico-wrap) { color: #fff; 
  background:radial-gradient(120% 78% at 50% 40%,transparent 44%,rgba(0,0,0,.5) 100%);}
 
 /* the crest: the solid mark and the name, what the glitter becomes */
-.wel-crest{position:absolute;left:0;right:0;top:38%;z-index:6;text-align:center;
- opacity:0;pointer-events:none;transform:translateY(-50%) scale(.94);
- transition:top .9s cubic-bezier(.22,.61,.36,1),opacity .75s ease .12s,
-            transform .9s cubic-bezier(.22,.61,.36,1);}
-#screen-auth.mm-open .wel-crest{opacity:1;top:150px;transform:translateY(-50%) scale(1);}
+/* NORMAL CONTENT NOW, not a pinned layer. It scrolls off the top like
+   anything else, which is the whole point of the change. */
+.wel-crest{position:relative;z-index:6;text-align:center;margin:6px 0 26px;
+ opacity:0;pointer-events:none;transform:translateY(10px) scale(.985);
+ transition:opacity .6s ease .16s, transform .7s cubic-bezier(.22,.61,.36,1) .12s;}
+#screen-auth.mm-open .wel-crest{opacity:1;transform:none;}
 .wel-mk{display:block;margin:0 auto;width:72px;height:72px;background:#fff;
  -webkit-mask-image:var(--mmai-mark);mask-image:var(--mmai-mark);
  -webkit-mask-size:contain;mask-size:contain;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
@@ -684,6 +685,46 @@ html[data-theme="light"] .nav-btn.active span:not(.nav-ico-wrap) { color: #fff; 
  margin-left:-115px;border-radius:50%;filter:blur(28px);pointer-events:none;
  background:radial-gradient(circle,rgba(255,30,60,.30),transparent 66%);}
 .mm-vault:active{transform:scale(.993);}
+
+/* ── THE PHONE ROW, 20 Aug 2026 ─────────────────────────────────
+   ONE ROW, TWO BOXES, EQUAL HEIGHT. The height is not matched by hand:
+   `align-items:stretch` makes both boxes take the row's height, so they
+   stay level whatever font or language is loaded. `min-width:0` on the
+   number box is what stops a long placeholder pushing the row wider
+   than the screen. */
+.mmf-tel{display:flex;align-items:stretch;gap:9px;margin-bottom:12px;}
+.mmf-tel .mmf{margin-bottom:0;display:flex;flex-direction:column;justify-content:center;}
+.mmf-cc{flex:0 0 108px;padding-left:13px;cursor:pointer;}
+.mmf-num{flex:1 1 auto;min-width:0;}
+.mmf-num .mmf-in{width:100%;}
+.mmf-ccv{display:flex;align-items:center;gap:5px;font-size:14.5px;color:#fff;line-height:1.25;}
+.mmf-ccv b{font-weight:700;}
+.mmf-ccv span{font-size:10.5px;color:var(--text3);letter-spacing:.5px;}
+.mmf-ccv i{margin-left:auto;font-size:11px;color:var(--text3);}
+
+/* the picker. FIXED, not absolute, so it covers the screen no matter how
+   far the form has been scrolled. */
+.ccs{position:fixed;inset:0;z-index:4000;display:none;}
+.ccs.on{display:block;}
+.ccs-bd{position:absolute;inset:0;background:rgba(4,3,7,.62);}
+.ccs-pn{position:absolute;left:0;right:0;bottom:0;top:64px;border-radius:20px 20px 0 0;
+ background:#12101a;border-top:1px solid rgba(255,255,255,.10);
+ display:flex;flex-direction:column;overflow:hidden;}
+.ccs-hd{padding:15px 16px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;}
+.ccs-hd b{font-size:14px;}
+.ccs-hd span{margin-left:auto;color:var(--text3);font-size:20px;cursor:pointer;line-height:1;}
+.ccs-q{margin:12px 16px 8px;padding:11px 13px;border-radius:12px;font-size:13.5px;
+ background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.09);color:#fff;
+ font-family:'Sora',sans-serif;outline:none;}
+.ccs-ls{flex:1;overflow-y:auto;padding:0 9px 16px;-webkit-overflow-scrolling:touch;}
+.ccs-row{display:flex;align-items:center;gap:11px;padding:12px 10px;border-radius:11px;cursor:pointer;}
+.ccs-row.on{background:rgba(255,30,60,.10);}
+.ccs-row.on .ccs-dc{color:var(--red);}
+.ccs-iso{font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:.8px;color:var(--text3);
+ width:28px;flex:none;}
+.ccs-nm{font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.ccs-dc{margin-left:auto;font-family:'Orbitron',sans-serif;font-size:12.5px;color:var(--text2);flex:none;}
+.ccs-none{padding:22px 12px;text-align:center;font-size:12.5px;color:var(--text3);}
 .mv-n{position:relative;font-family:'Orbitron',sans-serif;font-size:38px;font-weight:900;line-height:1;}
 .mv-t{position:relative;font-size:12.5px;font-weight:700;margin-top:8px;}
 .mv-d{position:relative;font-size:11px;color:var(--text2);margin-top:6px;line-height:1.55;}
@@ -795,7 +836,7 @@ html[data-theme="light"] .nav-btn.active span:not(.nav-ico-wrap) { color: #fff; 
 .auth-lnk i{font-size:14px;}
 .auth-lnk.red{color:var(--red);border-color:rgba(255,30,60,.28);background:rgba(255,30,60,.07);}
 
-.auth-body{position:absolute;inset:0;z-index:7;overflow-y:auto;padding:262px 20px 64px;
+.auth-body{position:absolute;inset:0;z-index:7;overflow-y:auto;padding:74px 20px 64px;
  opacity:0;pointer-events:none;transform:translateY(24px);
  transition:opacity .5s ease .28s,transform .6s cubic-bezier(.22,.61,.36,1) .24s;}
 #screen-auth.mm-open .auth-body{opacity:1;pointer-events:auto;transform:none;}
@@ -3960,12 +4001,6 @@ html[data-theme="light"] .adm-nb.on i,html[data-theme="light"] .adm-nb.on span{c
   <div class="wel-vig"></div>
 
   <!-- what the glitter turns into when Sign In is pressed -->
-  <div class="wel-crest">
-    <span class="wel-mk"></span>
-    <div class="wel-wm">Momentum</div>
-    <div class="wel-wsub" data-i18n="wel.ai">Artificial Intelligence</div>
-  </div>
-
   <!-- WELCOME PANE -->
   <div class="wel-pane">
     <div class="wel-h">
@@ -3980,6 +4015,13 @@ html[data-theme="light"] .adm-nb.on i,html[data-theme="light"] .adm-nb.on span{c
   <!-- SIGN IN AND REGISTER PANE -->
   <div class="auth-body">
     <button class="auth-back" onclick="mmAuthBack()" aria-label="Back" data-i18n-aria="aria.back">&#8249;</button>
+    <!-- THE CREST NOW LIVES INSIDE THE SCROLLER, so it scrolls away with the
+         form instead of being sat under by it. -->
+    <div class="wel-crest">
+      <span class="wel-mk"></span>
+      <div class="wel-wm">Momentum</div>
+      <div class="wel-wsub" data-i18n="wel.ai">Artificial Intelligence</div>
+    </div>
     <!-- Sign In Form -->
     <div id="form-signin">
       <div class="auth-title" data-i18n="dash.welcome">Welcome Back</div>
@@ -4023,6 +4065,18 @@ html[data-theme="light"] .adm-nb.on i,html[data-theme="light"] .adm-nb.on span{c
         <div class="mmf-cap" data-i18n="auth.emailAddr">Email Address</div>
         <input id="reg-email" class="mmf-in" type="email" placeholder="your@email.com" data-i18n-ph="ph.email" autocomplete="email" onfocus="mmfOn(this)" onblur="mmfOff(this)">
       </div>
+      <div class="mmf-tel">
+        <div class="mmf mmf-cc" onclick="regCcOpen()">
+          <div class="mmf-cap" data-i18n="auth.code">Code</div>
+          <div class="mmf-ccv"><b id="reg-cc-dial">+60</b><span id="reg-cc-iso">MY</span>
+            <i class="ti ti-chevron-down"></i></div>
+        </div>
+        <div class="mmf mmf-num" onclick="mmfTap(this)">
+          <i class="mmf-ico ti ti-phone"></i>
+          <div class="mmf-cap" data-i18n="auth.phone">Phone Number</div>
+          <input id="reg-phone" class="mmf-in" type="tel" placeholder="12 345 6789" inputmode="tel" autocomplete="tel-national" onfocus="mmfOn(this)" onblur="mmfOff(this)">
+        </div>
+      </div>
       <div class="mmf" onclick="mmfTap(this)">
         <i class="mmf-ico ti ti-user"></i>
         <div class="mmf-cap" data-i18n="auth.username">Username</div>
@@ -4043,6 +4097,17 @@ html[data-theme="light"] .adm-nb.on i,html[data-theme="light"] .adm-nb.on span{c
       </div>
       <button class="mmf-sys" id="btn-register" onclick="handleRegister()" data-i18n="auth.createAcct">CREATE ACCOUNT</button>
       <button class="reg-aft" onclick="window.open('https://www.afttmarkets.com','_blank')" data-i18n="auth.createAft">Create Account with AFT →</button>
+      <!-- THE COUNTRY SHEET. Fixed rather than absolute so it covers the whole
+           screen regardless of how far the form has been scrolled. -->
+      <div id="reg-cc-sheet" class="ccs">
+        <div class="ccs-bd" onclick="regCcClose()"></div>
+        <div class="ccs-pn">
+          <div class="ccs-hd"><b data-i18n="auth.pickCode">Country code</b>
+            <span onclick="regCcClose()">&#215;</span></div>
+          <input id="reg-cc-q" class="ccs-q" type="text" placeholder="Search country or code" oninput="regCcFilter()">
+          <div id="reg-cc-list" class="ccs-ls"></div>
+        </div>
+      </div>
       <div class="auth-switch" style="margin-top:12px;"><span data-i18n="auth.haveAccount">Have an account?</span> <span onclick="switchAuthTab('signin')" data-i18n="auth.signInArrow">Sign In →</span></div>
     </div>
   </div>
@@ -8067,7 +8132,12 @@ async function handleRegister() {
   var errEl = document.getElementById('reg-error');
   var sucEl = document.getElementById('reg-success');
   errEl.style.display = 'none'; sucEl.style.display = 'none';
-  if(!name||!email||!username||!password) { errEl.textContent=mmT('common.fillAllFields','Please fill in all fields'); errEl.style.display='block'; return; }
+  var phoneEl = document.getElementById('reg-phone');
+  var phone = phoneEl ? phoneEl.value.trim() : '';
+  if(!name||!email||!username||!password||!phone) { errEl.textContent=mmT('common.fillAllFields','Please fill in all fields'); errEl.style.display='block'; return; }
+  // Digits only, so a customer who types spaces or dashes is not refused. Six
+  // is the shortest real national number anywhere.
+  if(phone.replace(/[^0-9]/g,'').length < 6) { errEl.textContent=mmT('auth.badPhone','Please enter a valid phone number'); errEl.style.display='block'; return; }
   openRegPlan();
 }
 async function submitRegister() {
@@ -8086,7 +8156,12 @@ async function submitRegister() {
     // connection, which has its own pending state and its own admin queue.
     // `mt5_id` is written EMPTY rather than omitted, in case the column is
     // NOT NULL - nothing reads it now that the connection carries the real one.
-    var res = await db.from('users').insert([{name,email,username,password_hash:hash,mt5_id:'',broker:broker||'AFTT Markets',plan_choice:_regPlan,status:'active',role:'user',created_at:new Date().toISOString()}]).minimal();
+    // STORED IN FULL INTERNATIONAL FORM, dial code and number together, so a
+    // number is never ambiguous about which country it belongs to.
+    var _pEl = document.getElementById('reg-phone');
+    var _phone = ((typeof mmCcSel !== 'undefined' && mmCcSel.dial) ? mmCcSel.dial : '')
+               + (_pEl ? _pEl.value.trim().replace(/[^0-9]/g,'') : '');
+    var res = await db.from('users').insert([{name,email,username,password_hash:hash,phone:_phone,mt5_id:'',broker:broker||'AFTT Markets',plan_choice:_regPlan,status:'active',role:'user',created_at:new Date().toISOString()}]).minimal();
     if(res.error) { closeRegPlan(); errEl.textContent=mmT('err.generic','Error: ')+res.error.message; errEl.style.display='block'; btn.textContent=mmT('common.continue','Continue'); btn.disabled=false; return; }
     closeRegPlan();
     // STRAIGHT IN. Rather than repeating the auth code, the credentials they
@@ -14153,6 +14228,69 @@ var _premiumTabs = ['journal','charts'];
 // The connected test is the one the app already uses everywhere else, so a
 // customer whose request is still awaiting approval counts as VIEW ONLY -
 // which is honest, because nothing of theirs can trade yet.
+
+// ══ COUNTRY CODES ══════════════════════════════════════════════════
+// One string rather than 203 array literals: it is a third of the bytes and
+// far easier to eyeball for a duplicate. Parsed once on first open.
+var MM_CC_RAW = 'AF|Afghanistan|93,AL|Albania|355,DZ|Algeria|213,AD|Andorra|376,AO|Angola|244,AG|Antigua and Barbuda|1,AR|Argentina|54,AM|Armenia|374,AW|Aruba|297,AU|Australia|61,AT|Austria|43,AZ|Azerbaijan|994,BS|Bahamas|1,BH|Bahrain|973,BD|Bangladesh|880,BB|Barbados|1,BY|Belarus|375,BE|Belgium|32,BZ|Belize|501,BJ|Benin|229,BM|Bermuda|1,BT|Bhutan|975,BO|Bolivia|591,BA|Bosnia and Herzegovina|387,BW|Botswana|267,BR|Brazil|55,BN|Brunei|673,BG|Bulgaria|359,BF|Burkina Faso|226,BI|Burundi|257,KH|Cambodia|855,CM|Cameroon|237,CA|Canada|1,CV|Cape Verde|238,KY|Cayman Islands|1,CF|Central African Republic|236,TD|Chad|235,CL|Chile|56,CN|China|86,CO|Colombia|57,KM|Comoros|269,CG|Congo|242,CD|Congo (DRC)|243,CR|Costa Rica|506,HR|Croatia|385,CU|Cuba|53,CY|Cyprus|357,CZ|Czechia|420,DK|Denmark|45,DJ|Djibouti|253,DM|Dominica|1,DO|Dominican Republic|1,EC|Ecuador|593,EG|Egypt|20,SV|El Salvador|503,GQ|Equatorial Guinea|240,ER|Eritrea|291,EE|Estonia|372,SZ|Eswatini|268,ET|Ethiopia|251,FJ|Fiji|679,FI|Finland|358,FR|France|33,GA|Gabon|241,GM|Gambia|220,GE|Georgia|995,DE|Germany|49,GH|Ghana|233,GI|Gibraltar|350,GR|Greece|30,GL|Greenland|299,GD|Grenada|1,GU|Guam|1,GT|Guatemala|502,GN|Guinea|224,GW|Guinea-Bissau|245,GY|Guyana|592,HT|Haiti|509,HN|Honduras|504,HK|Hong Kong|852,HU|Hungary|36,IS|Iceland|354,IN|India|91,ID|Indonesia|62,IR|Iran|98,IQ|Iraq|964,IE|Ireland|353,IL|Israel|972,IT|Italy|39,CI|Ivory Coast|225,JM|Jamaica|1,JP|Japan|81,JO|Jordan|962,KZ|Kazakhstan|7,KE|Kenya|254,KI|Kiribati|686,KW|Kuwait|965,KG|Kyrgyzstan|996,LA|Laos|856,LV|Latvia|371,LB|Lebanon|961,LS|Lesotho|266,LR|Liberia|231,LY|Libya|218,LI|Liechtenstein|423,LT|Lithuania|370,LU|Luxembourg|352,MO|Macau|853,MG|Madagascar|261,MW|Malawi|265,MY|Malaysia|60,MV|Maldives|960,ML|Mali|223,MT|Malta|356,MH|Marshall Islands|692,MR|Mauritania|222,MU|Mauritius|230,MX|Mexico|52,FM|Micronesia|691,MD|Moldova|373,MC|Monaco|377,MN|Mongolia|976,ME|Montenegro|382,MA|Morocco|212,MZ|Mozambique|258,MM|Myanmar|95,NA|Namibia|264,NR|Nauru|674,NP|Nepal|977,NL|Netherlands|31,NZ|New Zealand|64,NI|Nicaragua|505,NE|Niger|227,NG|Nigeria|234,KP|North Korea|850,MK|North Macedonia|389,NO|Norway|47,OM|Oman|968,PK|Pakistan|92,PW|Palau|680,PS|Palestine|970,PA|Panama|507,PG|Papua New Guinea|675,PY|Paraguay|595,PE|Peru|51,PH|Philippines|63,PL|Poland|48,PT|Portugal|351,PR|Puerto Rico|1,QA|Qatar|974,RO|Romania|40,RU|Russia|7,RW|Rwanda|250,WS|Samoa|685,SM|San Marino|378,SA|Saudi Arabia|966,SN|Senegal|221,RS|Serbia|381,SC|Seychelles|248,SL|Sierra Leone|232,SG|Singapore|65,SK|Slovakia|421,SI|Slovenia|386,SB|Solomon Islands|677,SO|Somalia|252,ZA|South Africa|27,KR|South Korea|82,SS|South Sudan|211,ES|Spain|34,LK|Sri Lanka|94,KN|St Kitts and Nevis|1,LC|St Lucia|1,VC|St Vincent|1,SD|Sudan|249,SR|Suriname|597,SE|Sweden|46,CH|Switzerland|41,SY|Syria|963,TW|Taiwan|886,TJ|Tajikistan|992,TZ|Tanzania|255,TH|Thailand|66,TL|Timor-Leste|670,TG|Togo|228,TO|Tonga|676,TT|Trinidad and Tobago|1,TN|Tunisia|216,TR|Turkey|90,TM|Turkmenistan|993,TV|Tuvalu|688,UG|Uganda|256,UA|Ukraine|380,AE|United Arab Emirates|971,GB|United Kingdom|44,US|United States|1,UY|Uruguay|598,UZ|Uzbekistan|998,VU|Vanuatu|678,VA|Vatican City|39,VE|Venezuela|58,VN|Vietnam|84,YE|Yemen|967,ZM|Zambia|260,ZW|Zimbabwe|263';
+var MM_CC = null, MM_CC_TOP = ['MY','SG','ID','TH'];
+function mmCcList(){
+  if(MM_CC) return MM_CC;
+  var out = MM_CC_RAW.split(',').map(function(r){
+    var p = r.split('|');
+    return { iso:p[0], name:p[1], dial:'+'+p[2] };
+  });
+  // The four home markets first, then everything else alphabetically.
+  var top = [], rest = [];
+  out.forEach(function(c){ (MM_CC_TOP.indexOf(c.iso) >= 0 ? top : rest).push(c); });
+  top.sort(function(a,b){ return MM_CC_TOP.indexOf(a.iso) - MM_CC_TOP.indexOf(b.iso); });
+  MM_CC = top.concat(rest);
+  return MM_CC;
+}
+var mmCcSel = { iso:'MY', dial:'+60' };
+function regCcOpen(){
+  regCcRender('');
+  var q = document.getElementById('reg-cc-q'); if(q) q.value = '';
+  var s = document.getElementById('reg-cc-sheet'); if(s) s.classList.add('on');
+}
+function regCcClose(){
+  var s = document.getElementById('reg-cc-sheet'); if(s) s.classList.remove('on');
+}
+function regCcFilter(){
+  var q = document.getElementById('reg-cc-q');
+  regCcRender(q ? q.value : '');
+}
+function regCcRender(q){
+  var box = document.getElementById('reg-cc-list'); if(!box) return;
+  q = String(q||'').trim().toLowerCase().replace(/^\+/,'');
+  var list = mmCcList().filter(function(c){
+    if(!q) return true;
+    return c.name.toLowerCase().indexOf(q) >= 0
+        || c.iso.toLowerCase().indexOf(q) >= 0
+        || c.dial.replace('+','').indexOf(q) === 0;
+  });
+  if(!list.length){
+    box.innerHTML = '<div class="ccs-none">' + mmT('auth.noCountry','No country matches that') + '</div>';
+    return;
+  }
+  var h = '';
+  list.forEach(function(c){
+    h += '<div class="ccs-row' + (c.iso===mmCcSel.iso ? ' on' : '') + '" onclick="regCcPick(\''+c.iso+'\')">'
+      +  '<span class="ccs-iso">'+c.iso+'</span><span class="ccs-nm">'+c.name+'</span>'
+      +  '<span class="ccs-dc">'+c.dial+'</span></div>';
+  });
+  box.innerHTML = h;
+}
+function regCcPick(iso){
+  var list = mmCcList();
+  for(var i=0;i<list.length;i++){
+    if(list[i].iso === iso){ mmCcSel = { iso:list[i].iso, dial:list[i].dial }; break; }
+  }
+  var d = document.getElementById('reg-cc-dial'); if(d) d.textContent = mmCcSel.dial;
+  var s = document.getElementById('reg-cc-iso');  if(s) s.textContent = mmCcSel.iso;
+  regCcClose();
+}
+
 var MM_VIEW_DAILY = 5;
 // THE MALAYSIAN DAY, worked out from the timestamp itself rather than the
 // phone's clock, so changing the device time zone cannot buy a new allowance.
