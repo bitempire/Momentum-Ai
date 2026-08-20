@@ -4100,7 +4100,6 @@ html[data-theme="light"] .adm-nb.on i,html[data-theme="light"] .adm-nb.on span{c
 
   <!-- SIGN IN AND REGISTER PANE -->
   <div class="auth-body">
-    <button class="auth-back" onclick="mmAuthBack()" aria-label="Back" data-i18n-aria="aria.back">&#8249;</button>
     <!-- THE CREST NOW LIVES INSIDE THE SCROLLER, so it scrolls away with the
          form instead of being sat under by it. -->
     <div class="wel-crest">
@@ -27431,7 +27430,7 @@ async function ntSave(){
   function paint(){
     raf = 0;
     if(!target || !locked) return;
-    target.style.transform = (mode === 'back')
+    target.style.transform = (mode === 'back' || mode === 'authback')
       ? 'translate3d(' + pending + 'px,0,0)'
       : 'translate3d(0,' + pending + 'px,0)';
   }
@@ -27490,6 +27489,13 @@ async function ntSave(){
       return;
     }
     if(sx <= EDGE){
+      // The auth form pane comes FIRST: it sits above everything and is not a
+      // sub screen. The form body is the part that visibly moves.
+      var au = document.getElementById('screen-auth');
+      if(au && au.classList.contains('active') && au.classList.contains('mm-open')){
+        var ab = au.querySelector('.auth-body');
+        if(ab){ mode = 'authback'; target = ab; return; }
+      }
       var sc = topSubScreen();
       // The admin panel is not a screen you leave by accident. Its own handler
       // below closes whatever is open on top of it and stops there.
@@ -27506,7 +27512,7 @@ async function ntSave(){
     // Decide once which axis this drag belongs to, then commit.
     if(!locked){
       if(Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
-      if(mode === 'back' && (dx <= 0 || Math.abs(dy) > Math.abs(dx))){ mode = null; return; }
+      if((mode === 'back' || mode === 'authback') && (dx <= 0 || Math.abs(dy) > Math.abs(dx))){ mode = null; return; }
       if(mode === 'sheet' && (dy <= 0 || Math.abs(dx) > Math.abs(dy))){ mode = null; return; }
       locked = true;
       target.style.transition = 'none';
@@ -27514,7 +27520,7 @@ async function ntSave(){
     }
 
     e.preventDefault();
-    pending = (mode === 'back') ? dx : dy;
+    pending = (mode === 'back' || mode === 'authback') ? dx : dy;
     if(!raf) raf = requestAnimationFrame(paint);
   }, { passive: false });
 
@@ -27537,6 +27543,19 @@ async function ntSave(){
     mode = null; target = null; closeFn = null; locked = false;
 
     el.style.transition = 'transform 0.22s cubic-bezier(0.22,0.61,0.36,1)';
+
+    if(m === 'authback'){
+      if(dx > BACK_MIN){
+        // mmAuthBack does the pane switch and its own fade, so the drag
+        // transform is cleared FIRST or the form would come back shifted.
+        reset(el);
+        if(typeof mmAuthBack === 'function') mmAuthBack();
+      } else {
+        el.style.transform = 'translate3d(0,0,0)';
+        setTimeout(function(){ reset(el); }, 240);
+      }
+      return;
+    }
 
     if(m === 'back'){
       if(dx > BACK_MIN){
