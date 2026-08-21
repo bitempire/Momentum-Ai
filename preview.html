@@ -300,6 +300,43 @@ body.novid .hv-still{display:block;}
 .card .tg i{width:34px;height:1px;background:var(--red);display:block}
 .card .tg span{font-size:11.5px;letter-spacing:1.6px;color:var(--red);font-weight:600}
 
+/* ── P4 PHONE SHOWCASE, T2 TURNTABLE ──
+   Three app screens on a turntable, one place every four seconds. The active
+   phone faces square on, the other two swing out left and right.
+   THE HEIGHT IS NEVER GUESSED. An invisible phone (.psw-sz) sits in normal
+   flow and gives the container its height from the image's own aspect ratio;
+   the three moving phones are absolute on top of it. The vertical padding on
+   .psw is there because translateZ(60px) magnifies the front phone by about
+   6%, so it needs room above and below before overflow:hidden clips it. */
+.psw{margin-top:40px;overflow:hidden;padding:16px 0 18px;
+ perspective:1100px;-webkit-perspective:1100px;perspective-origin:50% 46%;}
+.psw-st{position:relative;--pw:clamp(140px,44vw,260px);--po:calc(var(--pw)*.66);}
+.psw-ph{width:var(--pw);padding:4px;border-radius:calc(var(--pw)*.125);
+ background:linear-gradient(155deg,#34343b,#0f0f12);
+ box-shadow:0 22px 42px rgba(0,0,0,.6);}
+.psw-ph img{display:block;width:100%;border-radius:calc(var(--pw)*.098);}
+.psw-sz{margin:0 auto;visibility:hidden;pointer-events:none;}
+.psw-ph.live{position:absolute;left:50%;top:0;margin-left:calc(var(--pw)/-2);
+ transform-origin:50% 50%;
+ transition:transform .85s cubic-bezier(.35,.9,.3,1),opacity .85s ease,filter .85s ease;}
+.psw-ph.p0{transform:translate3d(0,0,60px) rotateY(0deg) scale(1);
+ opacity:1;filter:none;z-index:3;}
+.psw-ph.p1{transform:translate3d(var(--po),18px,-120px) rotateY(-46deg) scale(.9);
+ opacity:.5;filter:brightness(.5);z-index:2;}
+.psw-ph.p2{transform:translate3d(calc(var(--po)*-1),18px,-120px) rotateY(46deg) scale(.9);
+ opacity:.5;filter:brightness(.5);z-index:2;}
+.psw-cap{text-align:center;margin-top:18px;}
+.psw-cap .nm{font-family:'Orbitron',sans-serif;font-size:11px;font-weight:600;
+ letter-spacing:1.8px;color:var(--tx2);}
+.psw-dots{display:flex;gap:6px;justify-content:center;margin-top:11px;}
+.psw-dots i{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.22);
+ display:block;transition:width .3s,background .3s,border-radius .3s;}
+.psw-dots i.a{background:var(--red);width:16px;border-radius:3px;}
+@media(prefers-reduced-motion:reduce){
+ .psw-ph.live{transition:opacity .3s ease!important;transform:none!important;}
+ .psw-ph.p1,.psw-ph.p2{opacity:0;}
+}
+
 .car{position:relative;margin-top:36px}
 .car .fr{border:1px solid rgba(255,30,60,.22);border-radius:22px;overflow:hidden;
  background:linear-gradient(165deg,#1a0a11,#0a0609);}
@@ -445,6 +482,16 @@ html,body{background:#080407;}
   <h2>Momentum <span class="a">Intelligence</span></h2>
   <p class="lead">Semua tools yang anda perlukan untuk trade dengan lebih jelas, tersusun dan
     confident, dalam satu sistem futuristic.</p>
+
+  <!-- the phone showcase. The three screens sit in the same folder as this file. -->
+  <div class="psw"><div class="psw-st" id="pswSt">
+    <div class="psw-ph psw-sz"><img src="shot-home.jpg" alt=""></div>
+  </div></div>
+  <div class="psw-cap">
+    <div class="nm" id="pswName">HOME</div>
+    <div class="psw-dots" id="pswDots"><i class="a"></i><i></i><i></i></div>
+  </div>
+
   <div class="cards" id="cards"></div>
 </div></section>
 
@@ -892,6 +939,38 @@ function carRender(){
 }
 function carGo(n){ if(!SLIDES.length) return; carAt=(carAt+n+SLIDES.length)%SLIDES.length; carRender(); }
 carRender();
+
+/* ── P4 PHONE SHOWCASE, T2 TURNTABLE ──
+   The invisible .psw-sz phone already in the markup carries the height. These
+   three are built here and positioned by class, so nothing has a hardcoded
+   pixel height that could disagree with the real image. */
+var PSW=[{f:'shot-home.jpg',   n:'HOME'},
+         {f:'shot-scanner.jpg',n:'MAI SCANNER'},
+         {f:'shot-signals.jpg',n:'SIGNALS'}];
+var pswAt=0, pswPh=[];
+
+function pswPlace(){
+ for(var i=0;i<pswPh.length;i++){
+  pswPh[i].className='psw-ph live p'+((i-pswAt+PSW.length)%PSW.length);
+ }
+ var n=document.getElementById('pswName');
+ if(n) n.textContent=PSW[pswAt].n;
+ var d=document.getElementById('pswDots');
+ if(d){ for(var j=0;j<d.children.length;j++){ d.children[j].className=(j===pswAt?'a':''); } }
+}
+function pswStep(){ pswAt=(pswAt+1)%PSW.length; pswPlace(); }
+
+(function(){
+ var st=document.getElementById('pswSt');
+ if(!st) return;
+ PSW.forEach(function(s){
+  var d=document.createElement('div'); d.className='psw-ph live';
+  var i=document.createElement('img'); i.src=s.f; i.alt='';
+  d.appendChild(i); st.appendChild(d); pswPh.push(d);
+ });
+ pswPlace();
+ setInterval(pswStep,4000);
+})();
 
 </script>
 <span class="lp-skip" onclick="mmSkipIntro()">SKIP</span>
