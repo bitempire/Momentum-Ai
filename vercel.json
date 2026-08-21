@@ -1,6 +1,26 @@
 {
   "rewrites": [
     {
+      "source": "/user",
+      "destination": "/app_mobile.html",
+      "has": [
+        {
+          "type": "host",
+          "value": "app.maimomentum.com"
+        }
+      ]
+    },
+    {
+      "source": "/admin",
+      "destination": "/app_mobile.html",
+      "has": [
+        {
+          "type": "host",
+          "value": "app.maimomentum.com"
+        }
+      ]
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html",
       "has": [
