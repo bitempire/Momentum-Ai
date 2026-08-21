@@ -404,19 +404,16 @@ html,body{background:#080407;}
    would be silently overridden, which is the trap that cost four rounds on
    the hero padding. Everything here is scoped to #P4-features, so the P5
    step cards are untouched. */
-/* TWO CORRECTIONS, BOTH OF CLAUDE'S OWN FAULTS, and together they are why
-   the middle of this section was black.
-   (1) THE SOLID BACKGROUND IS GONE. It was painting over the page's own
-   living canvas, the red clouds and dust ported from the app's sign in
-   screen, which run forever behind every other section.
-   (2) Z-INDEX 1 BECOMES 10. There is a shared rule giving .isl, .hero,
-   .sec, .fin and .foot z-index 10 together, and an id rule setting z-index
-   here silently took this section out of that group and dropped it BELOW
-   .lp-vig, the fixed vignette at z-index 2, which darkens to 50% black at
-   the edges and was painting straight over the whole section.
-   z-index 10 still creates the stacking context the layers below need, so
-   10 was the correct value all along. */
-#P4-features{position:relative;z-index:10;}
+/* THE SECTION BACKGROUND IS BACK TO WHAT IT WAS, AT HIS INSTRUCTION, and
+   both values here are now a decision rather than an accident.
+   THE SOLID FILL hides the page's living canvas behind this section. That is
+   the point: the movement lives inside the cards now, and a moving field
+   behind a flat dark section would fight it.
+   Z-INDEX 1 KEEPS THIS SECTION BELOW .lp-vig, the page's fixed vignette at
+   z-index 2. Every other section sits at 10 and is above it. Here the
+   vignette darkening the edges is what gives the section its depth, and it
+   is the look he approved. IF THIS EVER NEEDS UNDOING, 10 IS THE VALUE. */
+#P4-features{position:relative;z-index:1;background:#080407;}
 /* THE HERO WITHOUT THE VIDEO IS THESE TWO LAYERS AND NOTHING ELSE. Take the
    footage away and the black tint over black is just black, so the glow and
    the grain are all that carry the hero's identity. Same shapes as
@@ -428,9 +425,9 @@ html,body{background:#080407;}
 /* the grain goes ABOVE the glow for the same reason it does in the hero: it
    is what stops the gradient banding into stripes on an OLED phone, and
    that only works if it is the top layer. Copied from .hv-grain. */
-#P4-features::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
+#P4-features::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
  opacity:.24;mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");}
-#P4-features>.wrap{position:relative;z-index:3;}
+#P4-features>.wrap{position:relative;z-index:2;}
 
 /* C2 LIGHT GLASS. 12px and not 24px, and the reason is measurable: a
    backdrop blur only shows its work where there is detail behind it to
@@ -485,45 +482,39 @@ html,body{background:#080407;}
 #P4-features .card .ic svg{position:relative;z-index:3;
  filter:drop-shadow(0 1px 3px rgba(0,0,0,.55));}
 
-/* ══ S3 DRIFTING BLOOMS ══
-   Two soft lights crossing the card area on 26 and 33 second paths, so the
-   middle of the section is never empty and the glass cards always have a
-   moving source to blur.
+/* ══ K1 DRIFT, THE MOVEMENT LIVES INSIDE THE CARD NOW ══
+   S3's section blooms are gone. They were drawn with mix-blend-mode:screen,
+   and SCREEN IS ADDITIVE: it can only ever make a pixel lighter, never
+   darker. A section that has to read as premium dark cannot be built from a
+   layer that is only capable of adding light, and the wider the screen the
+   more of it there was.
 
-   THE FALLOFF IS SEVEN STOPS ON A GAUSSIAN CURVE, alpha = peak * exp(-3.4t^2),
-   not the usual two. A two stop gradient ramps its alpha in a straight line,
-   and an even step over a dark field is exactly what the eye resolves into
-   rings on an OLED phone. These steps run 0.027, 0.067, 0.077, 0.062, 0.038,
-   0.028, so there is no regular interval to lock onto.
+   K1 ADDS NOTHING TO THE CARD. The card already carries a pool of colour in
+   its top left corner; this only moves a second, weaker pool slowly around
+   inside it. Peak alpha is 15 percent against the section blooms' 30, and
+   the falloff is the same seven stop gaussian so it still cannot band.
 
-   THE MASK IS WHY THE SECTION DOES NOT SHOW A SEAM. A bloom still bright
-   when it reaches the section boundary stops dead there and draws a hard
-   horizontal line against the price roll above and P5 below. The whole layer
-   fades out over the top and bottom 17 percent instead.
-
-   THE BLEND IS ON BOTH LEVELS ON PURPOSE. A mask makes an element a stacking
-   context, so a blend mode on the blooms alone would only blend them with
-   each other and never with the section's own glow. Screen on the wrapper as
-   well is what carries the addition out to the glow underneath. */
-#P4-features>.p4mid{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden;
- -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 17%,#000 83%,transparent 100%);
- mask-image:linear-gradient(180deg,transparent 0,#000 17%,#000 83%,transparent 100%);
- mix-blend-mode:screen;}
-#P4-features .p4b1,#P4-features .p4b2{position:absolute;border-radius:50%;mix-blend-mode:screen;}
-#P4-features .p4b1{left:-28%;top:22%;width:96%;height:34%;
+   IT IS CLIPPED BY THE CARD. overflow:hidden means nothing can spill into
+   the section, so the background stays exactly as dark as it is with the
+   movement switched off. */
+#P4-features .card{position:relative;overflow:hidden;}
+#P4-features .card>*{position:relative;z-index:1;}
+#P4-features .card .kmv{position:absolute;z-index:0;pointer-events:none;
+ left:-24%;top:-34%;width:118%;height:158%;border-radius:50%;
  background:radial-gradient(closest-side,
-  rgba(255,40,80,.300) 0%,rgba(255,40,80,.273) 17%,rgba(255,40,80,.206) 33%,
-  rgba(255,40,80,.128) 50%,rgba(255,40,80,.066) 67%,rgba(255,40,80,.028) 83%,
-  rgba(255,40,80,0) 100%);
- animation:p4d1 26s ease-in-out infinite;}
-#P4-features .p4b2{right:-30%;top:50%;width:104%;height:32%;
- background:radial-gradient(closest-side,
-  rgba(190,10,60,.300) 0%,rgba(190,10,60,.273) 17%,rgba(190,10,60,.206) 33%,
-  rgba(190,10,60,.128) 50%,rgba(190,10,60,.066) 67%,rgba(190,10,60,.028) 83%,
-  rgba(190,10,60,0) 100%);
- animation:p4d2 33s ease-in-out infinite;}
-@keyframes p4d1{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(58%,-9%,0)}}
-@keyframes p4d2{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(-54%,10%,0)}}
+  rgba(255,50,88,.150) 0%,rgba(255,50,88,.136) 17%,rgba(255,50,88,.103) 33%,
+  rgba(255,50,88,.064) 50%,rgba(255,50,88,.033) 67%,rgba(255,50,88,.014) 83%,
+  rgba(255,50,88,0) 100%);
+ animation:p4k1 24s ease-in-out infinite;}
+@keyframes p4k1{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(38%,22%,0)}}
+/* SIX CARDS MOVING IN UNISON READS AS A PAGE FAULT, NOT AS DESIGN. A
+   negative delay starts each one part way through, so they are never in
+   step and none of them has to wait to begin. */
+#P4-features .card:nth-child(2) .kmv{animation-delay:-3.4s}
+#P4-features .card:nth-child(3) .kmv{animation-delay:-7.1s}
+#P4-features .card:nth-child(4) .kmv{animation-delay:-11.6s}
+#P4-features .card:nth-child(5) .kmv{animation-delay:-15.2s}
+#P4-features .card:nth-child(6) .kmv{animation-delay:-19.8s}
 
 @media (prefers-reduced-motion:reduce){*{animation:none!important}}
 </style>
@@ -616,9 +607,7 @@ html,body{background:#080407;}
 </section>
 
 <!-- ══ P4 FEATURES ══ -->
-<section class="sec" id="P4-features">
-  <div class="p4mid"><span class="p4b1"></span><span class="p4b2"></span></div>
-  <div class="wrap">
+<section class="sec" id="P4-features"><div class="wrap">
   <span class="pill">&#9889;&nbsp; Features</span>
   <h2>Momentum <span class="a">Intelligence</span></h2>
   <p class="lead">Semua tools yang anda perlukan untuk trade dengan lebih jelas, tersusun dan
@@ -1057,7 +1046,7 @@ var F=[
    fixed glass sheen. The P5 step cards below build a plain .ic with none of
    these, which is why the tile CSS is scoped to #P4-features. */
 document.getElementById('cards').innerHTML=F.map(function(f){
- return '<div class="card"><div class="ic">'+
+ return '<div class="card"><span class="kmv"></span><div class="ic">'+
   '<span class="mv"></span><span class="cut"></span><span class="gl"></span>'+
   svg(f[0])+'</div><h3>'+f[1]+'</h3><p>'+f[2]+'</p></div>';}).join('');
 
