@@ -788,6 +788,26 @@ html[data-theme="light"] .nav-btn.active span:not(.nav-ico-wrap) { color: #fff; 
  border-top:1px solid var(--border);cursor:pointer;}
 .annp-none{padding:22px 12px;text-align:center;font-size:12px;color:var(--text3);}
 
+/* ── THE ANNOUNCEMENT TOOLBAR, 20 Aug 2026 ──────────────────────── */
+.annfm-bar{display:flex;gap:6px;flex-wrap:wrap;padding:7px;border:1px solid var(--border);
+ border-bottom:0;border-radius:10px 10px 0 0;background:rgba(255,255,255,.03);}
+.annfm-b{min-width:32px;height:30px;padding:0 9px;border-radius:7px;border:1px solid var(--border);
+ background:rgba(255,255,255,.04);color:var(--text2);cursor:pointer;font-size:12px;
+ font-family:'Sora',sans-serif;display:flex;align-items:center;justify-content:center;}
+.annfm-b:hover{color:#fff;border-color:rgba(255,30,60,.45);background:rgba(255,30,60,.08);}
+.annfm-b b{font-weight:800;} .annfm-b i{font-style:italic;font-weight:600;}
+.annfm-w{font-size:10.5px;letter-spacing:.4px;}
+.annfm-sep{width:1px;background:var(--border);margin:0 3px;}
+.annfm-ta{border-radius:0 0 10px 10px !important;}
+.annfm-hint{font-size:10px;color:var(--text3);margin-top:6px;letter-spacing:.2px;}
+
+/* how a formatted message reads in the customer popup */
+#ann-pop-msg strong{color:#fff;font-weight:700;}
+#ann-pop-msg em{font-style:italic;}
+#ann-pop-msg ul,#ann-pop-msg ol{margin:8px 0;padding-left:19px;text-align:left;}
+#ann-pop-msg li{margin:4px 0;}
+#ann-pop-msg hr{border:0;border-top:1px solid var(--border);margin:11px 0;}
+
 /* A demo account, tagged where the admin actually looks at accounts. Amber
    rather than red: a demo is not a fault, it just never becomes premium. */
 .amt-demo{display:inline-block;margin-left:7px;padding:1px 6px;border-radius:4px;vertical-align:middle;
@@ -5750,7 +5770,17 @@ html[data-theme="light"] .adm-nb.on i,html[data-theme="light"] .adm-nb.on span{c
             </div>
             <div class="auth-field ann-grow">
               <label class="auth-label" data-i18n="sup.message">Message</label>
-              <textarea id="ann-message" class="auth-input" placeholder="Write your announcement..."></textarea>
+              <div class="annfm-bar">
+                <button type="button" class="annfm-b" onclick="annFmWrap('**','**')" title="Bold"><b>B</b></button>
+                <button type="button" class="annfm-b" onclick="annFmWrap('_','_')" title="Italic"><i>I</i></button>
+                <span class="annfm-sep"></span>
+                <button type="button" class="annfm-b annfm-w" onclick="annFmLine('- ')" title="Bullet list">&bull; List</button>
+                <button type="button" class="annfm-b annfm-w" onclick="annFmNum()" title="Numbered list">1. List</button>
+                <span class="annfm-sep"></span>
+                <button type="button" class="annfm-b annfm-w" onclick="annFmInsert('\n---\n')" title="Divider">Divider</button>
+              </div>
+              <textarea id="ann-message" class="auth-input annfm-ta" placeholder="Write your announcement..."></textarea>
+              <div class="annfm-hint">**bold** &nbsp; _italic_ &nbsp; - bullet &nbsp; 1. numbered &nbsp; --- divider</div>
             </div>
             <div class="auth-field ann-two">
               <div>
@@ -18583,13 +18613,99 @@ async function checkAndShowAnnouncement() {
 
 var _annCurrentKey = null;
 var _pendingCampaignAfterAnn = false;
+
+// ══ ANNOUNCEMENT FORMATTING ═══════════════════════════════════════
+// ESCAPE EVERYTHING, THEN ALLOW FIVE PATTERNS. That order is the whole
+// safety argument: an admin types these messages, so nothing they paste
+// can become markup by any route other than the five below.
+function annEsc(s){
+  return String(s == null ? '' : s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function annInline(s){
+  return s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+          .replace(/_([^_]+)_/g, '<em>$1</em>');
+}
+function annFormat(src){
+  var lines = annEsc(src).split('\n');
+  var out = '', list = null;
+  function closeList(){ if(list){ out += '</' + list + '>'; list = null; } }
+  for(var i=0;i<lines.length;i++){
+    var l = lines[i].trim();
+    if(l === '---'){ closeList(); out += '<hr>'; continue; }
+    var bullet = /^-\s+(.*)$/.exec(l);
+    var num = /^\d+\.\s+(.*)$/.exec(l);
+    if(bullet){
+      if(list !== 'ul'){ closeList(); out += '<ul>'; list = 'ul'; }
+      out += '<li>' + annInline(bullet[1]) + '</li>';
+      continue;
+    }
+    if(num){
+      if(list !== 'ol'){ closeList(); out += '<ol>'; list = 'ol'; }
+      out += '<li>' + annInline(num[1]) + '</li>';
+      continue;
+    }
+    closeList();
+    if(!l){ out += '<br>'; continue; }
+    out += '<div>' + annInline(l) + '</div>';
+  }
+  closeList();
+  return out;
+}
+// ── the admin toolbar. It only ever edits the textarea's own value, so the
+//    phone's undo keeps working. ──
+function annFmEl(){ return document.getElementById('ann-message'); }
+function annFmInsert(txt){
+  var ed = annFmEl(); if(!ed) return;
+  var s = ed.selectionStart, e = ed.selectionEnd, v = ed.value;
+  ed.value = v.slice(0,s) + txt + v.slice(e);
+  ed.focus();
+  ed.selectionStart = ed.selectionEnd = s + txt.length;
+}
+function annFmWrap(a,b){
+  var ed = annFmEl(); if(!ed) return;
+  var s = ed.selectionStart, e = ed.selectionEnd, v = ed.value;
+  var sel = v.slice(s,e) || 'text';
+  ed.value = v.slice(0,s) + a + sel + b + v.slice(e);
+  ed.focus();
+  ed.selectionStart = s + a.length;
+  ed.selectionEnd = s + a.length + sel.length;
+}
+function annFmLine(prefix){
+  var ed = annFmEl(); if(!ed) return;
+  var s = ed.selectionStart, e = ed.selectionEnd, v = ed.value;
+  var from = v.lastIndexOf('\n', s - 1) + 1;
+  var to = v.indexOf('\n', e); if(to < 0) to = v.length;
+  var block = v.slice(from, to).split('\n').map(function(l){
+    return l.indexOf(prefix) === 0 ? l : prefix + l;
+  }).join('\n');
+  ed.value = v.slice(0,from) + block + v.slice(to);
+  ed.focus();
+}
+function annFmNum(){
+  var ed = annFmEl(); if(!ed) return;
+  var s = ed.selectionStart, e = ed.selectionEnd, v = ed.value;
+  var from = v.lastIndexOf('\n', s - 1) + 1;
+  var to = v.indexOf('\n', e); if(to < 0) to = v.length;
+  var n = 0;
+  var block = v.slice(from, to).split('\n').map(function(l){
+    n++; return /^\d+\.\s/.test(l) ? l : (n + '. ' + l);
+  }).join('\n');
+  ed.value = v.slice(0,from) + block + v.slice(to);
+  ed.focus();
+}
+
 function showAnnouncementPopup(ann) {
   if(!ann) return;
   _annCurrentKey = annKey(ann);
   var img=document.getElementById('ann-pop-img');
   if(img){ if(ann.image_url){ img.src=ann.image_url; img.style.display='block'; } else { img.style.display='none'; img.removeAttribute('src'); } }
   var t=document.getElementById('ann-pop-title'); if(t) t.textContent=ann.title||'';
-  var m=document.getElementById('ann-pop-msg'); if(m) m.textContent=ann.message||'';
+  var m=document.getElementById('ann-pop-msg');
+  // annFormat ESCAPES FIRST and only then allows the five marks through, so
+  // this is no less safe than the textContent it replaces.
+  if(m) m.innerHTML = (typeof annFormat === 'function') ? annFormat(ann.message||'') : '';
   var p=document.getElementById('announcement-popup'); if(p) p.style.display='flex';
 }
 function closeAnnouncementPopup() {
