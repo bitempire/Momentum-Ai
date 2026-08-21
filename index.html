@@ -483,6 +483,25 @@ html,body{background:#080407;}
 /* the shared .card:hover sets a red border, but an id beats it, so the
    hover has to be restated here or it stops working on desktop */
 #P4-features .card:hover{border-color:rgba(255,255,255,.26);}
+
+/* ══ THE P4 HEADER BLOCK, CENTRED ══
+   NOT by adding `.sec mid` like P5 and P6 do. That centres the whole section,
+   and THE SIX FEATURE CARDS BELOW DO NOT SET THEIR OWN ALIGNMENT, so their
+   headings and copy would centre with it. He asked for the header, so only
+   the header moves. Scoped to direct children so nothing deeper is caught. */
+#P4-features>.wrap>h2{text-align:center;}
+/* TWO LINES. `.l1` and `.l2` are already used by P5 and P7, but BOTH ARE
+   SCOPED TO THEIR OWN SECTION IDS, so reusing the names here cannot collide.
+   THE SECOND LINE MUST NOT WRAP, and the size is not a guess: "Artificial
+   Intelligence" is 23 characters, and this clamp keeps the line under 76% of
+   the available width on every handset from a 320px SE to a 430px Pro Max.
+   That headroom matters because nothing here clips overflow, so a line that
+   was too wide would push the whole page sideways rather than being hidden. */
+#P4-features h2 .l1{display:block;color:var(--tx);}
+#P4-features h2 .l2{display:block;white-space:nowrap;color:var(--red);
+ font-size:clamp(19px,6.2vw,30px);letter-spacing:-.8px;margin-top:2px;}
+#P4-features>.wrap>.lead{text-align:center;margin-left:auto;margin-right:auto;}
+#P4-features>.wrap>.pill{display:flex;width:fit-content;margin-left:auto;margin-right:auto;}
 #P4-features .card .ic{border:1px solid rgba(255,255,255,.17);
  background:rgba(255,255,255,.09);color:#fff;box-shadow:none;}
 /* a browser with no backdrop-filter gets a solid card, never a see-through
@@ -796,6 +815,10 @@ html,body{background:#080407;}
 #P8-footer .sep{color:var(--tx3);}
 #P8-footer .c{font-size:13px;color:var(--tx);font-weight:600;letter-spacing:-.1px;}
 #P8-footer .p{font-size:11px;color:var(--tx3);margin-top:7px;letter-spacing:.3px;}
+/* Quieter than everything else in the footer on purpose: it has to be there
+   and be readable, but it is not what anyone came to read. */
+#P8-footer .dis{font-size:9.5px;line-height:1.65;color:rgba(244,247,250,.22);
+ margin:9px auto 0;max-width:430px;}
 
 @media (prefers-reduced-motion:reduce){*{animation:none!important}}
 </style>
@@ -889,8 +912,8 @@ html,body{background:#080407;}
 
 <!-- ══ P4 FEATURES ══ -->
 <section class="sec" id="P4-features"><div class="wrap">
-  <span class="pill">&#9889;&nbsp; Features</span>
-  <h2>Momentum <span class="a">Intelligence</span></h2>
+  <span class="pill">Exclusive Feature</span>
+  <h2><span class="l1">Momentum</span><span class="l2">Artificial Intelligence</span></h2>
   <p class="lead">Semua tools yang anda perlukan untuk trade dengan lebih jelas, tersusun dan
     confident, dalam satu sistem futuristic.</p>
 
@@ -961,6 +984,7 @@ html,body{background:#080407;}
     <span class="sep">|</span>
     <span class="c">Momentum AI &copy; 2026</span></div>
   <div class="p">Powered by Bitempire Sdn Bhd</div>
+  <div class="dis">Trading melibatkan risiko kerugian. Prestasi lalu tidak menjamin keputusan masa depan.</div>
 </div></footer>
 
 <script>
