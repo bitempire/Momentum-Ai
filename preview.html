@@ -62,9 +62,10 @@ body.booting{overflow:hidden;}
    its tint would paint straight over the particle animation and nobody
    would ever see it. They fade in with everything else. */
 body.booting .isl,body.booting .hero>.wrap>*,body.booting .quotes,
-body.booting .hv,body.booting .hv-tint,body.booting .hv-bloom,body.booting .hv-grain,
+body.booting .hv,body.booting .hv-still,body.booting .hv-tint,body.booting .hv-bloom,
+body.booting .hv-grain,
 body.booting .sec,body.booting .fin,body.booting .foot{opacity:0;}
-.isl,.hero>.wrap>*,.quotes,.hv,.hv-tint,.hv-bloom,.hv-grain,
+.isl,.hero>.wrap>*,.quotes,.hv,.hv-still,.hv-tint,.hv-bloom,.hv-grain,
 .sec,.fin,.foot{transition:opacity 1s ease,transform 1.05s cubic-bezier(.22,.61,.36,1);}
 body.booting .isl{transform:translateX(-50%) scaleX(.13);opacity:0;}
 body.booting .hero>.wrap>*{transform:translateY(18px);}
@@ -150,8 +151,10 @@ body.novid .hv-still{display:block;}
 
 /* ══ P2 HERO ══ */
 /* HERO STARTS BELOW THE ISLAND: 14px top + 56px tall + 26px of air */
-/* the island ends at 14 + 56 = 70px, so this leaves 120px of air under it */
-.hero{position:relative;padding:190px 0 0;text-align:center;z-index:5;}
+/* THE PILL SITS CENTRED IN THE GAP. The island ends at 14 + 56 = 70px.
+   40px of air, then the pill, then 40px before the headline. Now that the
+   stray `body .hero` override is gone, these numbers actually apply. */
+.hero{position:relative;padding:110px 0 0;text-align:center;z-index:5;}
 .hero .wrap{max-width:520px;}
 /* THE PILL IS SMALLER, as asked */
 .pill{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;
@@ -160,7 +163,7 @@ body.novid .hv-still{display:block;}
 .pill i{width:5px;height:5px;border-radius:50%;background:var(--red);display:block;
  box-shadow:0 0 8px rgba(255,30,60,.9);}
 /* SMALL LINE ABOVE, BIG LINE BELOW */
-.h-a{font-size:clamp(26px,7.4vw,34px);font-weight:700;letter-spacing:-1px;margin:20px 0 0;
+.h-a{font-size:clamp(26px,7.4vw,34px);font-weight:700;letter-spacing:-1px;margin:40px 0 0;
  color:rgba(244,247,250,.9);line-height:1.1;}
 .h-b{font-size:clamp(40px,11.4vw,54px);font-weight:800;letter-spacing:-2.2px;line-height:1;margin:4px 0 0;
  background:linear-gradient(96deg,#FF6B7E,#FF1E3C);-webkit-background-clip:text;
@@ -308,20 +311,19 @@ body.novid .hv-still{display:block;}
 .foot .tl{font-size:13.5px;color:var(--tx3);margin-top:16px}
 .foot .tl b{color:var(--red)}
 
-/* ═══════════ CONCEPT 3: EMBER DEPTH ═══════════ */
-body{--rad:26px;--cardbg:linear-gradient(165deg,rgba(255,30,60,.14),rgba(20,6,12,.9));}
-body{background:#080407}
-body .hero{padding-top:70px}
-body .hero .fx{opacity:1;filter:blur(46px);height:900px;top:24%}
-body .hero h1{font-size:clamp(42px,12vw,78px);letter-spacing:-2.6px}
-body .sec h2,body .fin h2{font-size:clamp(34px,9.4vw,54px);letter-spacing:-1.8px}
-body .card{padding:32px 26px;box-shadow:0 30px 60px -34px rgba(0,0,0,.9)}
-body .card .ic{width:64px;height:64px;border-radius:20px;background:var(--grad);color:#fff;border:0;
- box-shadow:0 14px 30px -14px rgba(255,30,60,.9)}
-body .stat{background:linear-gradient(165deg,rgba(255,30,60,.12),rgba(255,255,255,.02));
- border-color:rgba(255,30,60,.22);padding:26px 12px}
-body .sec{padding:78px 0}
-body .fin{background:linear-gradient(180deg,#080407,#3a1020 55%,#1b0810)}
+/* ═══════════ CONCEPT 3 THEME, DE-FANGED ═══════════
+   These were `body.c3 X` in the three-concept file. Extracting the concept
+   turned them into `body X`, which outranks the plain class rules above and
+   was quietly overriding the hero padding on every build. Only the rules
+   that still apply to something are kept, and they no longer use `body`. */
+:root{--rad:26px;--cardbg:linear-gradient(165deg,rgba(255,30,60,.14),rgba(20,6,12,.9));}
+html,body{background:#080407;}
+.sec h2,.fin h2{font-size:clamp(34px,9.4vw,54px);letter-spacing:-1.8px;}
+.card{padding:32px 26px;box-shadow:0 30px 60px -34px rgba(0,0,0,.9);}
+.card .ic{width:64px;height:64px;border-radius:20px;background:var(--grad);color:#fff;border:0;
+ box-shadow:0 14px 30px -14px rgba(255,30,60,.9);}
+.sec{padding:78px 0;}
+.fin{background:linear-gradient(180deg,#080407,#3a1020 55%,#1b0810);}
 @media (prefers-reduced-motion:reduce){*{animation:none!important}}
 </style>
 </head>
