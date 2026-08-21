@@ -618,6 +618,49 @@ html,body{background:#080407;}
 #P5-how .p5-sg.a{background:var(--red);height:6px;box-shadow:0 0 14px -1px rgba(255,30,60,.9);}
 #P5-how .p5-hint{font-size:9.5px;letter-spacing:1.5px;color:var(--tx3);margin-top:16px;}
 
+
+/* ══ P6 RESULTS ══
+   Background identical to P4 and P5: same solid base, same two glows, same
+   z-index, plus the scan rows P5 uses. */
+#P6-results{position:relative;z-index:1;background:#080407;overflow:hidden;}
+#P6-results::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+ background:radial-gradient(120% 40% at 50% 3%,rgba(255,30,60,.30),transparent 60%),
+  radial-gradient(90% 30% at 50% 100%,rgba(120,0,26,.32),transparent 64%);}
+#P6-results::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
+ opacity:.24;mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");}
+#P6-results .p6-el{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden;}
+#P6-results .p6-rows{position:absolute;inset:0;
+ background:repeating-linear-gradient(180deg,rgba(255,255,255,.022) 0 1px,transparent 1px 7px);}
+#P6-results>.wrap{position:relative;z-index:3;}
+
+/* THE FRAME IS CAPPED. It was 4:5 at the FULL WIDTH of the section, which on
+   a desktop screen made it about 1400px tall, which is the enormous empty box
+   in his screenshot. The cap keeps it sensible on both. */
+#P6-results .car{max-width:360px;margin:30px auto 0;}
+#P6-results .car .fr{position:relative;aspect-ratio:4/5;}
+
+/* ══ R2 STACK PEEL ══
+   The pictures are stacked like photographs. The top one lifts, tilts and
+   throws off to the left, and the next is already sitting behind it.
+   THE FRAME IS 4:5 AND EVERY PICTURE IS object-fit:cover, so a portrait, a
+   square or a landscape upload all fill it without distorting. Nothing here
+   depends on what shape the admin uploads. */
+#P6-results .car .sl{position:absolute;inset:0;display:block;aspect-ratio:auto;
+ transform-origin:50% 120%;
+ transition:transform .85s cubic-bezier(.4,.9,.3,1),opacity .85s ease;}
+#P6-results .car .sl img{display:block;width:100%;height:100%;object-fit:cover;}
+#P6-results .car .sl.a{transform:none;opacity:1;z-index:3;}
+#P6-results .car .sl.n{transform:scale(.94) translateY(12px);opacity:1;z-index:2;}
+#P6-results .car .sl.p{transform:translateX(-118%) rotate(-8deg);opacity:0;z-index:4;}
+#P6-results .car .sl.h{transform:scale(.88) translateY(22px);opacity:0;z-index:1;}
+#P6-results .car .em{position:absolute;inset:0;display:flex;align-items:center;
+ justify-content:center;padding:26px;}
+#P6-results .car .aw{width:38px;height:38px;font-size:16px;}
+#P6-results .p6-dots{display:flex;gap:7px;justify-content:center;margin-top:16px;}
+#P6-results .p6-dots i{width:6px;height:6px;border-radius:50%;display:block;cursor:pointer;
+ background:rgba(255,255,255,.20);transition:width .3s,background .3s,border-radius .3s;}
+#P6-results .p6-dots i.a{background:var(--red);width:18px;border-radius:3px;}
+
 @media (prefers-reduced-motion:reduce){*{animation:none!important}}
 </style>
 </head>
@@ -743,8 +786,10 @@ html,body{background:#080407;}
 </div></section>
 
 <!-- ══ P6 RESULTS ══ -->
-<section class="sec mid" id="P6-results"><div class="wrap">
-  <span class="pill">&#128737;&nbsp; Testimoni</span>
+<section class="sec mid" id="P6-results">
+  <div class="p6-el"><span class="p6-rows"></span></div>
+  <div class="wrap">
+  <span class="pill">&#128737;&nbsp; Apa Kata Trader</span>
   <h2>Dipercayai Trader Yang Mahu <span class="a">Lebih Dari Sekadar Signal</span></h2>
   <p class="lead">Lihat sendiri bagaimana Momentum Intelligence bantu trader trade dengan lebih
     jelas, tersusun dan confident.</p>
@@ -753,7 +798,8 @@ html,body{background:#080407;}
     <button class="aw r" onclick="carGo(1)">&#8250;</button>
     <div class="fr" id="carFrame"></div>
   </div>
-  <div style="margin-top:30px"><button class="cta">Mula Sekarang <span>&rarr;</span></button></div>
+  <div class="p6-dots" id="carDots"></div>
+  <div style="margin-top:30px"><button class="cta">Join Telegram <span>&rarr;</span></button></div>
 </div></section>
 
 <!-- ══ P7 FULL ACCESS ══ -->
@@ -1235,17 +1281,63 @@ var P=['FREE Momentum Signal','FREE Smart Journal','FREE Market Scanner','Weekly
        'Smart Tool Automation','24/5 Live Support'];
 document.getElementById('perks').innerHTML=P.map(function(p){return '<div class="perk"><i></i>'+p+'</div>';}).join('');
 
-/* the results carousel is fed from the database in the built version, so the
-   admin panel can add and remove pictures without touching this page */
-var SLIDES=[], carAt=0;
+/* ══ P6 RESULTS CAROUSEL ══
+   SLIDES is the whole contract with the admin panel. In the built version it
+   comes from the database, so pictures can be added, reordered and removed
+   without touching this page. Set it to [] and the empty message comes back.
+
+   THESE THREE ARE PLACEHOLDERS AND MUST BE REPLACED BEFORE THIS PAGE GOES
+   LIVE AS index.html. They carry no figures and no claims, only a number,
+   and they are three DIFFERENT SHAPES on purpose so it is obvious that the
+   frame copes with whatever gets uploaded. */
+var SLIDES=[
+ 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5MDAiIGhlaWdodD0iMTIwMCIgdmlld0JveD0iMCAwIDkwMCAxMjAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMSI+CjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iIzJBMEUxNyIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzBEMDkxMCIvPjwvbGluZWFyR3JhZGllbnQ+CjxwYXR0ZXJuIGlkPSJwIiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiPgo8cGF0aCBkPSJNNjAgMEgwVjYwIiBmaWxsPSJub25lIiBzdHJva2U9InJnYmEoMjU1LDI1NSwyNTUsLjA1KSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz4KPHJlY3Qgd2lkdGg9IjkwMCIgaGVpZ2h0PSIxMjAwIiBmaWxsPSJ1cmwoI2cpIi8+PHJlY3Qgd2lkdGg9IjkwMCIgaGVpZ2h0PSIxMjAwIiBmaWxsPSJ1cmwoI3ApIi8+Cjx0ZXh0IHg9IjUwJSIgeT0iNDYlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iT3JiaXRyb24sc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyNzAiCiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSJyZ2JhKDI1NSwzMCw2MCwuMzApIj4xPC90ZXh0Pgo8dGV4dCB4PSI1MCUiIHk9IjU2JSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IlNvcmEsc2Fucy1zZXJpZiIgZm9udC1zaXplPSI0MCIKIGxldHRlci1zcGFjaW5nPSI0IiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LC4zNikiPkdBTUJBUiBQTEFDRUhPTERFUjwvdGV4dD4KPHRleHQgeD0iNTAlIiB5PSI2MSUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJTb3JhLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMzEiCiBsZXR0ZXItc3BhY2luZz0iMiIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwuMjIpIj4zIDogNCAgcG9ydHJhaXQ8L3RleHQ+PC9zdmc+',
+ 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjAwIiBoZWlnaHQ9IjEyMDAiIHZpZXdCb3g9IjAgMCAxMjAwIDEyMDAiPgo8ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjMkEwRTE3Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMEQwOTEwIi8+PC9saW5lYXJHcmFkaWVudD4KPHBhdHRlcm4gaWQ9InAiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+CjxwYXRoIGQ9Ik02MCAwSDBWNjAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPgo8cmVjdCB3aWR0aD0iMTIwMCIgaGVpZ2h0PSIxMjAwIiBmaWxsPSJ1cmwoI2cpIi8+PHJlY3Qgd2lkdGg9IjEyMDAiIGhlaWdodD0iMTIwMCIgZmlsbD0idXJsKCNwKSIvPgo8dGV4dCB4PSI1MCUiIHk9IjQ2JSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9Ik9yYml0cm9uLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMzYwIgogZm9udC13ZWlnaHQ9IjkwMCIgZmlsbD0icmdiYSgyNTUsMzAsNjAsLjMwKSI+MjwvdGV4dD4KPHRleHQgeD0iNTAlIiB5PSI1NiUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJTb3JhLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iNTQiCiBsZXR0ZXItc3BhY2luZz0iNCIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwuMzYpIj5HQU1CQVIgUExBQ0VIT0xERVI8L3RleHQ+Cjx0ZXh0IHg9IjUwJSIgeT0iNjElIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iU29yYSxzYW5zLXNlcmlmIiBmb250LXNpemU9IjQyIgogbGV0dGVyLXNwYWNpbmc9IjIiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsLjIyKSI+MSA6IDEgIHNxdWFyZTwvdGV4dD48L3N2Zz4=',
+ 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNjAwIiBoZWlnaHQ9IjkwMCIgdmlld0JveD0iMCAwIDE2MDAgOTAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMSI+CjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iIzJBMEUxNyIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzBEMDkxMCIvPjwvbGluZWFyR3JhZGllbnQ+CjxwYXR0ZXJuIGlkPSJwIiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiPgo8cGF0aCBkPSJNNjAgMEgwVjYwIiBmaWxsPSJub25lIiBzdHJva2U9InJnYmEoMjU1LDI1NSwyNTUsLjA1KSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz4KPHJlY3Qgd2lkdGg9IjE2MDAiIGhlaWdodD0iOTAwIiBmaWxsPSJ1cmwoI2cpIi8+PHJlY3Qgd2lkdGg9IjE2MDAiIGhlaWdodD0iOTAwIiBmaWxsPSJ1cmwoI3ApIi8+Cjx0ZXh0IHg9IjUwJSIgeT0iNDYlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iT3JiaXRyb24sc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyNzAiCiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSJyZ2JhKDI1NSwzMCw2MCwuMzApIj4zPC90ZXh0Pgo8dGV4dCB4PSI1MCUiIHk9IjU2JSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IlNvcmEsc2Fucy1zZXJpZiIgZm9udC1zaXplPSI0MCIKIGxldHRlci1zcGFjaW5nPSI0IiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LC4zNikiPkdBTUJBUiBQTEFDRUhPTERFUjwvdGV4dD4KPHRleHQgeD0iNTAlIiB5PSI2MSUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJTb3JhLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMzEiCiBsZXR0ZXItc3BhY2luZz0iMiIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwuMjIpIj4xNiA6IDkgIGxhbmRzY2FwZTwvdGV4dD48L3N2Zz4='
+];
+var carAt=0, carCards=[], carDots=[], carHeld=0;
+
 function carRender(){
- var f=document.getElementById('carFrame');
- if(!SLIDES.length){ f.innerHTML='<div class="sl on"><div class="em"><div class="k">DIURUS DARI ADMIN PANEL</div>'+
-  '<div class="t">Gambar result yang anda upload akan muncul di sini.<br>Tiada apa dipaparkan sehingga anda tambah.</div></div></div>'; return; }
- f.innerHTML=SLIDES.map(function(s,i){return '<div class="sl'+(i===carAt?' on':'')+'"></div>';}).join('');
+ var f=document.getElementById('carFrame'), d=document.getElementById('carDots');
+ if(!f) return;
+ if(!SLIDES.length){
+  f.innerHTML='<div class="em"><div><div class="k">DIURUS DARI ADMIN PANEL</div>'+
+   '<div class="t">Gambar result yang anda upload akan muncul di sini.<br>'+
+   'Tiada apa dipaparkan sehingga anda tambah.</div></div></div>';
+  if(d) d.innerHTML='';
+  var aw=document.querySelectorAll('#P6-results .car .aw');
+  for(var q=0;q<aw.length;q++) aw[q].style.display='none';
+  return;
+ }
+ /* BUILT ONCE, THEN ONLY THE CLASSES CHANGE. Re-writing innerHTML on every
+    step would restart the pictures and kill the transition. */
+ f.innerHTML=SLIDES.map(function(s){
+  return '<div class="sl h"><img src="'+s+'" alt=""></div>';}).join('');
+ if(d) d.innerHTML=SLIDES.map(function(){return '<i></i>';}).join('');
+ carCards=[].slice.call(f.children);
+ carDots=d?[].slice.call(d.children):[];
+ carDots.forEach(function(x,i){
+  x.addEventListener('click',function(){ carAt=i; carPlace(); carHeld=Date.now()+8000; }); });
+ carPlace();
 }
-function carGo(n){ if(!SLIDES.length) return; carAt=(carAt+n+SLIDES.length)%SLIDES.length; carRender(); }
+function carPlace(){
+ var N=SLIDES.length;
+ for(var i=0;i<N;i++){
+  carCards[i].className='sl '+(i===carAt?'a':i===(carAt+1)%N?'n':i===(carAt-1+N)%N?'p':'h');
+  if(carDots[i]) carDots[i].className=(i===carAt?'a':'');
+ }
+}
+function carGo(n){
+ if(!SLIDES.length) return;
+ carAt=(carAt+n+SLIDES.length)%SLIDES.length;
+ carPlace(); carHeld=Date.now()+8000;
+}
 carRender();
+/* nothing runs while the tab is in the background */
+setInterval(function(){
+ if(document.hidden || !SLIDES.length || Date.now()<carHeld) return;
+ carAt=(carAt+1)%SLIDES.length; carPlace();
+},5000);
 
 /* ── P4 PHONE SHOWCASE, T2 TURNTABLE ──
    The invisible .psw-sz phone already in the markup carries the height. These
