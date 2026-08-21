@@ -25,6 +25,24 @@ a{color:inherit;text-decoration:none}
 
 
 /* ══ TOP BAR ══ */
+/* the flash where the glitter lands: without it the arrival has no weight */
+.lp-hit{position:fixed;z-index:119;width:9px;height:9px;border-radius:50%;background:#fff;
+ opacity:0;pointer-events:none;}
+.lp-hit.go{animation:lphit .55s ease-out forwards;}
+@keyframes lphit{0%{opacity:.95;transform:scale(.4);box-shadow:0 0 0 0 rgba(255,30,60,.9)}
+ 100%{opacity:0;transform:scale(3.6);box-shadow:0 0 0 26px rgba(255,30,60,0)}}
+
+/* ── THE OPENING LOCKUP ── */
+.lp-crest{position:fixed;left:50%;top:50%;transform:translate(-50%,calc(-50% + 96px));
+ z-index:4;width:min(560px,calc(100vw - 44px));text-align:center;pointer-events:none;
+ opacity:0;transition:opacity .85s ease, transform .9s cubic-bezier(.22,.61,.36,1);}
+body.crest .lp-crest{opacity:1;transform:translate(-50%,calc(-50% + 84px));}
+body.crestout .lp-crest{opacity:0;transform:translate(-50%,calc(-50% + 66px));}
+.lp-eye{font-size:11px;letter-spacing:4.2px;color:rgba(255,255,255,.52);text-transform:uppercase;}
+.lp-name{font-family:'Orbitron',sans-serif;font-size:clamp(26px,8vw,42px);font-weight:900;
+ letter-spacing:1px;margin-top:12px;}
+.lp-say{font-size:13px;line-height:1.7;color:rgba(244,247,250,.56);margin:16px auto 0;max-width:460px;}
+
 /* ── THE LIVING BACKGROUND, same layers as the app's sign in ── */
 #lp-fx{position:fixed;inset:0;z-index:0;display:block;pointer-events:none;}
 .lp-grain{position:fixed;inset:0;z-index:1;opacity:.26;pointer-events:none;mix-blend-mode:overlay;
@@ -38,8 +56,8 @@ a{color:inherit;text-decoration:none}
 body.booting{overflow:hidden;}
 body.booting .isl,body.booting .hero>.wrap>*,body.booting .mq,
 body.booting .sec,body.booting .fin,body.booting .foot{opacity:0;}
-.isl,.hero>.wrap>*,.mq,.sec,.fin,.foot{transition:opacity .7s ease,transform .8s cubic-bezier(.22,.61,.36,1);}
-body.booting .isl{transform:translateX(-50%) scale(.62);}
+.isl,.hero>.wrap>*,.mq,.sec,.fin,.foot{transition:opacity 1s ease,transform 1.05s cubic-bezier(.22,.61,.36,1);}
+body.booting .isl{transform:translateX(-50%) scaleX(.13);opacity:0;}
 body.booting .hero>.wrap>*{transform:translateY(18px);}
 .lp-skip{position:fixed;right:14px;bottom:14px;z-index:130;font-family:'Orbitron',sans-serif;
  font-size:10px;letter-spacing:1.4px;color:var(--tx3);cursor:pointer;padding:10px;}
@@ -51,7 +69,9 @@ body:not(.booting) .lp-skip{display:none;}
  background:rgba(14,8,12,.80);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
  border:1px solid rgba(255,255,255,.12);
  box-shadow:0 16px 38px -18px rgba(0,0,0,.95), inset 0 1px 0 rgba(255,255,255,.12);
- transition:width .46s var(--ease), height .46s var(--ease), border-radius .46s var(--ease);}
+ transform-origin:left center;
+ transition:width .46s var(--ease), height .46s var(--ease), border-radius .46s var(--ease),
+            transform .62s var(--ease), opacity .22s ease;}
 .isl.on{height:198px;border-radius:28px;}
 .isl .rest{display:flex;align-items:center;gap:10px;height:56px;padding:0 10px 0 18px;white-space:nowrap;}
 .mk{width:22px;height:22px;background:#fff;flex:none;
@@ -216,8 +236,18 @@ body .mq{padding:16px 0}
      IT NEVER STOPS. The intro glitter is drawn on the same canvas, so there is
      one animation loop for the whole page rather than two competing ones. -->
 <canvas id="lp-fx"></canvas>
+
+<!-- THE OPENING LOCKUP. Sits under the mark while it holds, then leaves with
+     the glitter. Same words as the app's welcome pane so the two agree. -->
+<div class="lp-crest" id="lp-crest">
+  <div class="lp-eye">WELCOME TO THE WORLD OF</div>
+  <div class="lp-name">Momentum AI</div>
+  <div class="lp-say">Signals from our AI analysts, executed straight onto your own MT5 account.
+    AI automation with more than 3 years of proven record.</div>
+</div>
 <div class="lp-grain"></div>
 <div class="lp-vig"></div>
+<span class="lp-hit" id="lp-hit"></span>
 
 <!-- ══ P1 HEADER: FLOATING ISLAND ══
      It keeps its top row and grows downwards into a panel, so the logo never
@@ -338,7 +368,7 @@ body .mq{padding:16px 0}
   }
   function measure(){
     W = window.innerWidth||360; H = window.innerHeight||720;
-    cy = Math.round(H*0.38);
+    cy = Math.round(H*0.44);          /* the mark forms dead centre, the lockup sits under it */
     dpr = Math.min(window.devicePixelRatio||1, 2);
     cv.width=W*dpr; cv.height=H*dpr;
     cv.style.width=W+'px'; cv.style.height=H+'px';
@@ -378,7 +408,9 @@ body .mq{padding:16px 0}
     raf=0;
     if(document.hidden){ raf=requestAnimationFrame(draw); return; }
     var T=(now-t0)/1000, i;
-    var GATHER=1.5, HOLD=0.5, DOCK=0.75;
+    /* SLOWER AND SMOOTHER at his request: about 3.9 seconds end to end.
+       1.6s gathering, 1.4s holding while the lockup reads, 0.9s docking. */
+    var GATHER=1.6, HOLD=1.4, DOCK=0.9;
     ctx.clearRect(0,0,W,H);
 
     /* three red clouds, rocking slowly. THESE NEVER STOP. */
@@ -405,9 +437,22 @@ body .mq{padding:16px 0}
       ctx.fillStyle='rgba(255,150,170,'+da+')'; ctx.fill();
     }
 
+    /* the lockup fades in once the mark has formed, and leaves with the glitter */
+    if(!done && ready){
+      if(T > GATHER*0.72 && T < GATHER+HOLD && document.body.className.indexOf('crest') < 0){
+        document.body.className = 'booting crest';
+      }
+      if(T >= GATHER+HOLD && document.body.className.indexOf('crestout') < 0){
+        document.body.className = document.body.className.replace('crest','crestout');
+      }
+    }
+
     /* the glitter, only while the opening runs */
     if(!done && ready){
-      var dockX = W/2, dockY = 14+28;
+      /* THE LANDING POINT IS THE LOGO, not the middle of the island: the mark
+         is what the particles become, and it sits at the left end of the pill. */
+      var islL = Math.max(16, (W - Math.min(520, W-32))/2);
+      var dockX = islL + 18 + 11, dockY = 14 + 28;
       for(i=0;i<P.length;i++){
         var p=P[i], x, y, a, r;
         if(T < GATHER + p.delay){
@@ -419,9 +464,19 @@ body .mq{padding:16px 0}
           x=p.tx+wob; y=p.ty+wob*0.6; a=1; r=p.sz;
         } else {
           var kd=easeIO((T-GATHER-HOLD)/DOCK);
-          x=p.tx+(dockX-p.tx)*kd; y=p.ty+(dockY-p.ty)*kd;
+          /* a curve, so the cloud is drawn into the corner rather than sliding */
+          var mx=(p.tx+dockX)/2 + (p.ty-dockY)*0.14;
+          var my=(p.ty+dockY)/2 - (p.tx-dockX)*0.10;
+          var u=1-kd;
+          x=u*u*p.tx + 2*u*kd*mx + kd*kd*dockX;
+          y=u*u*p.ty + 2*u*kd*my + kd*kd*dockY;
           a=1-kd*0.96; r=p.sz*(1-kd*0.6);
-          if(!docked && kd>0.30){ docked=true; document.body.className=''; }
+          if(!docked && kd>0.34){
+            docked=true; document.body.className='';
+            var hit=document.getElementById('lp-hit');
+            if(hit){ hit.style.left=(dockX-4.5)+'px'; hit.style.top=(dockY-4.5)+'px';
+                     hit.className='lp-hit go'; }
+          }
           if(kd>=1) finish();
         }
         ctx.beginPath(); ctx.arc(x,y,Math.max(0.2,r),0,TAU);
