@@ -116,39 +116,101 @@ body:not(.booting) .lp-skip{display:none;}
  box-shadow:0 0 10px rgba(255,30,60,.9);animation:pulse 2.2s ease-in-out infinite;}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
 
-/* ══ HERO ══ */
-.hero{position:relative;overflow:hidden;padding:100px 0 40px;text-align:center;}
-.hero .fx{position:absolute;left:50%;top:32%;width:1100px;height:760px;margin-left:-550px;
- pointer-events:none;filter:blur(58px);opacity:.85;
- background:radial-gradient(38% 46% at 26% 42%,rgba(255,30,60,.50),transparent 62%),
-  radial-gradient(34% 40% at 72% 38%,rgba(196,0,36,.46),transparent 64%),
-  radial-gradient(46% 40% at 50% 74%,rgba(255,95,120,.30),transparent 66%);
- animation:drift 16s ease-in-out infinite alternate;}
-@keyframes drift{from{transform:translate3d(-2%,0,0)}to{transform:translate3d(2%,-3%,0) scale(1.06)}}
-.hero h1{position:relative;font-size:clamp(38px,10.6vw,66px);line-height:1.03;font-weight:800;
- letter-spacing:-1.8px;margin:32px 0 0;}
-.hero h1 .a{color:var(--red);}
-.hero h1 .b{background:linear-gradient(96deg,#FF5F78,#FF1E3C);-webkit-background-clip:text;
+/* ══ P2 HERO ══ */
+/* HERO STARTS BELOW THE ISLAND: 14px top + 56px tall + 26px of air */
+.hero{position:relative;padding:96px 0 0;text-align:center;z-index:10;}
+.hero .wrap{max-width:520px;}
+/* THE PILL IS SMALLER, as asked */
+.pill{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;
+ border:1px solid rgba(255,30,60,.40);background:rgba(255,30,60,.10);
+ font-size:7.5px;font-weight:700;letter-spacing:1.3px;color:var(--soft);text-transform:uppercase;}
+.pill i{width:5px;height:5px;border-radius:50%;background:var(--red);display:block;
+ box-shadow:0 0 8px rgba(255,30,60,.9);}
+/* SMALL LINE ABOVE, BIG LINE BELOW */
+.h-a{font-size:22px;font-weight:700;letter-spacing:-.7px;margin:14px 0 0;color:rgba(244,247,250,.88);}
+.h-b{font-size:35px;font-weight:800;letter-spacing:-1.6px;line-height:1.02;margin:2px 0 0;
+ background:linear-gradient(96deg,#FF6B7E,#FF1E3C);-webkit-background-clip:text;
  background-clip:text;color:transparent;}
-.hero .sub{position:relative;font-size:16px;color:var(--tx2);line-height:1.65;margin:22px auto 0;max-width:520px;}
-.hero .row{position:relative;margin-top:32px;}
-.rate{position:relative;display:flex;align-items:center;justify-content:center;gap:10px;margin-top:26px;
- flex-wrap:wrap;font-size:14px;}
-.rate .st{color:var(--red);letter-spacing:2px;}
-.rate span{color:var(--tx3);}
-.stats{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-top:34px;}
-.stat{border:1px solid var(--line);border-radius:var(--rad);background:rgba(255,255,255,.028);
- padding:20px 10px;text-align:center;}
-.stat b{display:block;font-size:clamp(20px,5.8vw,28px);font-weight:800;color:var(--red);letter-spacing:-.6px;}
-.stat span{display:block;font-size:10.5px;letter-spacing:1.6px;color:var(--tx3);margin-top:8px;
- text-transform:uppercase;line-height:1.5;}
-.toast{position:relative;display:flex;align-items:center;gap:12px;margin-top:16px;
- border:1px solid var(--line);border-radius:var(--rad);background:rgba(255,255,255,.03);padding:12px 14px;}
-.toast .av{width:40px;height:40px;border-radius:50%;flex:none;display:flex;align-items:center;
- justify-content:center;font-weight:800;background:var(--grad);}
-.toast .t{font-size:13.5px}.toast .t b{font-weight:700}
-.toast .w{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--tx3);margin-top:3px}
-.toast .w i{width:6px;height:6px;border-radius:50%;background:#22D39A;display:block}
+.sub{font-size:12.5px;color:var(--tx2);line-height:1.6;margin:13px 0 0;}
+
+/* ── THE SIGNAL CARD: the app's own `.asg-` rules, copied verbatim ──
+   THE CAROUSEL IS A GRID, NOT A FIXED HEIGHT. A fixed height was why the
+   button and the rating line landed on top of the card: the card is taller
+   than the number I guessed. Grid stacking makes the container exactly as
+   tall as its tallest slide, whatever that turns out to be. */
+.sig{display:grid;margin-top:18px;text-align:left;}
+.sig .slide{grid-area:1/1;opacity:0;transform:translateX(14px);pointer-events:none;
+ transition:opacity .5s ease, transform .55s cubic-bezier(.22,.61,.36,1);}
+.sig .slide.on{opacity:1;transform:none;pointer-events:auto;}
+.asg-card{position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.09);border-radius:14px;
+ padding:11px;background:linear-gradient(126deg,rgba(255,30,60,.10),rgba(20,20,26,.92));}
+.asg-card.buy{background:linear-gradient(126deg,rgba(0,200,122,.10),rgba(20,20,26,.92));}
+.asg-card > *{position:relative;z-index:2;}
+.asg-top{display:flex;align-items:center;gap:9px;}
+.asg-ico{width:30px;height:30px;flex:none;border-radius:10px;display:flex;align-items:center;
+ justify-content:center;font-size:14px;color:#fff;}
+.asg-ico svg{width:17px;height:17px;}
+.asg-nm{flex:1;min-width:0;}
+.asg-nm b{display:block;font-family:'Orbitron',sans-serif;font-size:12.5px;color:var(--tx);}
+.asg-nm s{display:block;font-size:8.5px;color:var(--tx3);text-decoration:none;margin-top:3px;
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.asg-side{font-size:8px;font-weight:800;letter-spacing:.5px;padding:4px 9px;border-radius:999px;
+ border:1px solid;flex:none;}
+.asg-zone{margin-top:9px;border:1px solid var(--line);border-radius:9px;padding:7px 9px;
+ display:flex;align-items:center;justify-content:space-between;position:relative;overflow:hidden;gap:8px;}
+.asg-zone .bar{position:absolute;left:0;top:0;bottom:0;width:3px;background:#3B82F6;}
+.asg-k{font-size:7.5px;color:var(--tx3);letter-spacing:.6px;flex:none;}
+.asg-v{font-family:'Orbitron',sans-serif;font-size:11.5px;min-width:0;white-space:nowrap;
+ overflow:hidden;text-overflow:ellipsis;}
+.asg-two{display:flex;gap:7px;margin-top:7px;}
+.asg-two > div{flex:1 1 0;min-width:0;border:1px solid var(--line);border-radius:9px;padding:7px 9px;
+ position:relative;overflow:hidden;}
+.asg-two .bar{position:absolute;left:0;top:0;bottom:0;width:3px;}
+.asg-two .asg-v{margin-top:3px;}
+.asg-rail{display:flex;align-items:center;gap:9px;margin-top:11px;min-width:0;}
+.asg-track{flex:1 1 0;min-width:0;height:3px;background:rgba(255,255,255,.10);border-radius:2px;
+ position:relative;}
+.asg-track i{position:absolute;top:-4px;width:2px;height:11px;border-radius:1px;display:block;}
+.asg-track u{position:absolute;top:-2px;height:7px;border-radius:3px;background:#3B82F6;display:block;
+ text-decoration:none;}
+.asg-go{flex:none;padding:8px 16px;border-radius:9px;color:#fff;font-size:12px;font-weight:700;
+ border:0;cursor:pointer;white-space:nowrap;
+ background-image:linear-gradient(90deg,#8f0019,#FF1E3C,#ff7285,#FF1E3C,#8f0019);
+ background-size:200% 100%;animation:mmCtaFlow 3.5s linear infinite;}
+@keyframes mmCtaFlow{to{background-position:200% 0}}
+.sigdots{display:flex;gap:5px;justify-content:center;margin-top:10px;}
+.sigdots i{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.2);display:block;
+ transition:all .3s;}
+.sigdots i.on{background:var(--red);width:16px;border-radius:3px;}
+
+.cta{display:inline-flex;align-items:center;gap:9px;border:0;cursor:pointer;padding:14px 28px;
+ border-radius:999px;background:var(--grad);color:#fff;font-family:'Sora',sans-serif;
+ font-size:14.5px;font-weight:700;margin-top:16px;box-shadow:0 0 40px -6px rgba(255,30,60,.85);}
+.rate{margin-top:16px;font-size:11.5px;color:var(--tx3);line-height:1.5;}
+.rate .st{color:rgba(255,30,60,.62);letter-spacing:1px;}
+.rate b{color:var(--tx);font-weight:700;}
+
+/* THREE BOXES, NO WRAPPING */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:16px;}
+.stat{border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.025);border-radius:13px;
+ padding:13px 4px;position:relative;overflow:hidden;}
+.stat:before{content:'';position:absolute;left:0;right:0;top:0;height:2px;
+ background:linear-gradient(90deg,rgba(255,30,60,0),var(--red),rgba(255,30,60,0));}
+.stat b{display:block;font-family:'Orbitron',sans-serif;font-size:15px;font-weight:900;color:#fff;
+ white-space:nowrap;}
+.stat span{display:block;font-size:7.5px;letter-spacing:.9px;color:var(--tx3);margin-top:6px;
+ text-transform:uppercase;white-space:nowrap;}
+
+/* THE RUNNING QUOTES, closing the hero */
+.quotes{margin-top:26px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+ background:rgba(255,255,255,.02);overflow:hidden;padding:8px 0;}
+.quotes .tr{display:flex;white-space:nowrap;animation:qz 20s linear infinite;}
+.quotes .tr span{display:inline-flex;align-items:center;gap:6px;padding:0 12px;font-size:10px;
+ color:var(--tx2);}
+.quotes .tr b{font-family:'Orbitron',sans-serif;font-size:10px;font-weight:900;color:var(--tx);}
+.quotes .tr .up{color:var(--green);font-family:'Orbitron',sans-serif;font-size:9px;}
+.quotes .tr .dn{color:var(--red);font-family:'Orbitron',sans-serif;font-size:9px;}
+@keyframes qz{to{transform:translateX(-50%)}}
 
 .mq{overflow:hidden;background:var(--grad);padding:13px 0;margin-top:34px;}
 .mq .tr{display:flex;white-space:nowrap;animation:mq 22s linear infinite;}
@@ -272,22 +334,29 @@ body .mq{padding:16px 0}
 
 <!-- ══ P2 HERO ══ -->
 <section class="hero" id="P2-hero"><div class="wrap">
-  
-  <span class="pill"><span class="dot"></span>Momentum Intelligence is live</span>
-  <h1>Smarter Analysis,<br><span class="a">Sharper</span> <span class="b">Entries</span></h1>
+  <span class="pill"><i></i>Momentum Intelligence is live</span>
+  <div class="h-a">Intelligent Analyst</div>
+  <div class="h-b">Sharpest Entry</div>
   <p class="sub">AI powered trading system untuk bantu anda trade dengan lebih jelas</p>
-  <div class="row"><button class="cta">Mula Sekarang <span>&rarr;</span></button></div>
+
+  <!-- the app's own signal card, one at a time, swapping every four seconds -->
+  <div class="sig" id="sig"></div>
+  <div class="sigdots" id="sigdots"></div>
+
+  <button class="cta">Join Telegram <span>&rarr;</span></button>
+
   <div class="rate"><span class="st">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
-    <b>Momentum AI</b><span>&middot; Percuma melalui Asia Future Trading</span></div>
+    <b>4.5/5</b> &middot; Trusted by 52,000++ Traders worldwide</div>
+
   <div class="stats">
-    <div class="stat"><b>XAUUSD</b><span>Signal<br>Emas Live</span></div>
-    <div class="stat"><b>MT5</b><span>Akaun Anda<br>Sendiri</span></div>
-    <div class="stat"><b>24/5</b><span>Liputan<br>Market</span></div>
+    <div class="stat"><b>52K +</b><span>Users<br>worldwide</span></div>
+    <div class="stat"><b>3 Years +</b><span>Proven<br>Record</span></div>
+    <div class="stat"><b>12 +</b><span>Countries</span></div>
   </div>
-  <div class="toast"><span class="av">A</span>
-    <span><span class="t"><b>Ahmad</b> telah menyambung akaun MT5</span>
-      <span class="w"><i></i>19 min lalu</span></span></div>
-</div></section>
+</div>
+
+<div class="quotes"><div class="tr" id="qz"></div></div>
+</section>
 
 <!-- ══ P3 MARQUEE ══ -->
 <div class="mq" id="P3-marquee"><div class="tr" id="mq"></div></div>
@@ -532,6 +601,73 @@ body .mq{padding:16px 0}
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
   else boot();
 })();
+
+/* THE THREE SIGNALS. Same fields the app's own card builder uses, so the
+   markup below is its `mmSigCard` with the icons drawn inline instead of
+   from the icon font, which does not load on a public page. */
+var SIGS = [
+  {pair:'XAUUSD', when:'17h ago', tf:'H4', by:'Edith', buy:false,
+   from:'4,482.00', to:'4,489.00', sl:'4,492.00', tp:'4,472.00',
+   t1:12, t1c:'green', zl:42, zw:26, t2:84, t2c:'red'},
+  {pair:'XAUUSD', when:'19h ago', tf:'H4', by:'Edith', buy:true,
+   from:'4,450.00', to:'4,443.00', sl:'4,440.00', tp:'4,460.00',
+   t1:11, t1c:'red', zl:22, zw:24, t2:86, t2c:'green'},
+  {pair:'XAUUSD', when:'23h ago', tf:'H4', by:'Edith', buy:false,
+   from:'4,493.00', to:'4,500.00', sl:'4,503.00', tp:'4,483.00',
+   t1:12, t1c:'green', zl:44, zw:26, t2:84, t2c:'red'}
+];
+function chev(up){
+  /* the app draws ti-chevrons-up / ti-chevrons-down here */
+  return up
+    ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 15l6-6 6 6"/><path d="M6 20l6-6 6 6"/></svg>'
+    : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/><path d="M6 4l6 6 6-6"/></svg>';
+}
+function sigCard(s){
+  var col = s.buy ? '#00c87a' : '#FF1E3C';
+  return '<div class="slide"><div class="asg-card' + (s.buy?' buy':'') + '">' +
+    '<div class="asg-top">' +
+      '<span class="asg-ico" style="background:' + col + '">' + chev(s.buy) + '</span>' +
+      '<span class="asg-nm"><b>' + s.pair + '</b><s>' + s.when + ' &middot; ' + s.tf +
+        ' &middot; ' + s.by + '</s></span>' +
+      '<span class="asg-side" style="border-color:' + col + ';color:' + col + '">' +
+        (s.buy ? 'BUY' : 'SELL') + '</span>' +
+    '</div>' +
+    '<div class="asg-zone"><span class="bar"></span><span class="asg-k">ENTRY ZONE</span>' +
+      '<span class="asg-v">' + s.from + ' &ndash; ' + s.to + '</span></div>' +
+    '<div class="asg-two">' +
+      '<div><span class="bar" style="background:var(--red)"></span><div class="asg-k">STOP LOSS</div>' +
+        '<div class="asg-v" style="color:var(--red)">' + s.sl + '</div></div>' +
+      '<div><span class="bar" style="background:var(--green)"></span><div class="asg-k">TAKE PROFIT</div>' +
+        '<div class="asg-v" style="color:var(--green)">' + s.tp + '</div></div>' +
+    '</div>' +
+    '<div class="asg-rail"><span class="asg-track">' +
+      '<i style="left:' + s.t1 + '%;background:' + (s.t1c==='green'?'var(--green)':'var(--red)') + '"></i>' +
+      '<u style="left:' + s.zl + '%;width:' + s.zw + '%"></u>' +
+      '<i style="left:' + s.t2 + '%;background:' + (s.t2c==='green'?'var(--green)':'var(--red)') + '"></i>' +
+      '</span><button class="asg-go">Trade Now</button></div>' +
+    '</div></div>';
+}
+document.getElementById('sig').innerHTML = SIGS.map(sigCard).join('');
+document.getElementById('sigdots').innerHTML = SIGS.map(function(s,i){
+  return '<i class="' + (i===0?'on':'') + '"></i>';
+}).join('');
+var _sigAt = 0;
+function sigPaint(){
+  var sl = document.querySelectorAll('#sig .slide');
+  var dt = document.querySelectorAll('#sigdots i');
+  for(var i=0;i<sl.length;i++) sl[i].className = 'slide' + (i===_sigAt?' on':'');
+  for(var j=0;j<dt.length;j++) dt[j].className = (j===_sigAt?'on':'');
+}
+sigPaint();
+setInterval(function(){ _sigAt = (_sigAt+1) % SIGS.length; sigPaint(); }, 4000);
+
+var Q = [['XAUUSD','4,491.35','+0.84%','up'],['EURUSD','1.0854','-0.12%','dn'],
+         ['GBPUSD','1.2723','+0.34%','up'],['USDJPY','149.87','+0.28%','up'],
+         ['BTCUSD','67,432','+2.11%','up'],['US30','38,721','-0.43%','dn'],
+         ['NAS100','19,842','+1.24%','up']];
+document.getElementById('qz').innerHTML = Q.concat(Q).map(function(r){
+  return '<span><b>' + r[0] + '</b>' + r[1] + ' <span class="' + r[3] + '">' + r[2] + '</span></span>';
+}).join('');
 
 /* FIVE SECONDS, RESTARTED ON EVERY TOUCH INSIDE. A fixed timer from opening
    would shut the panel while somebody was still reading it. */
