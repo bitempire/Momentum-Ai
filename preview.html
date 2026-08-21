@@ -187,9 +187,23 @@ body.novid .hv-still{display:block;}
 /* SMALL LINE ABOVE, BIG LINE BELOW */
 .h-a{font-size:clamp(26px,7.4vw,34px);font-weight:700;letter-spacing:-1px;margin:40px 0 0;
  color:rgba(244,247,250,.9);line-height:1.1;}
+/* THE MOVING GRADIENT. Clipped to the text as before, but the gradient is
+   more than twice the width of the box and its position animates across it.
+   Same technique as mmCtaFlow on the app's Trade Now button, so the page and
+   the app move the same way. The reduced-motion rule at the end of this
+   stylesheet stops it for anyone who has asked their phone for less. */
 .h-b{font-size:clamp(40px,11.4vw,54px);font-weight:800;letter-spacing:-2.2px;line-height:1;margin:4px 0 0;
- background:linear-gradient(96deg,#FF6B7E,#FF1E3C);-webkit-background-clip:text;
- background-clip:text;color:transparent;}
+ white-space:nowrap;
+ background-image:linear-gradient(100deg,#FF1E3C 0%,#FF6B7E 22%,#FFFFFF 34%,#FF6B7E 46%,#FF1E3C 68%,#C40024 100%);
+ background-size:220% 100%;-webkit-background-clip:text;
+ background-clip:text;color:transparent;
+ animation:mmWordFlow 4.5s linear infinite;}
+@keyframes mmWordFlow{to{background-position:220% 0}}
+.h-b .wd{display:inline-block;vertical-align:baseline;}
+.h-b .wd u{text-decoration:none;display:inline-block;
+ transition:opacity .34s ease, transform .34s ease;}
+.h-b .wd u.out{opacity:0;transform:translateY(-14px);}
+.h-b .wd u.in{opacity:0;transform:translateY(14px);}
 .sub{font-size:clamp(11px,2.9vw,12.5px);color:var(--tx2);line-height:1.62;margin:15px auto 0;max-width:310px;}
 
 /* ── THE SIGNAL CARD: the app's own `.asg-` rules, copied verbatim ──
@@ -842,7 +856,7 @@ html,body{background:#080407;}
   <div class="hero"><div class="wrap">
   <span class="pill"><i></i>Momentum Intelligence is live</span>
   <div class="h-a">Intelligent Analyst</div>
-  <div class="h-b">Sharpest Entry</div>
+  <div class="h-b" id="hb"><span class="wd"><u id="hw">Sharpest</u></span> Entry</div>
   <p class="sub">AI powered trading system untuk bantu anda trade dengan lebih jelas</p>
 
   <!-- the app's own signal card, one at a time, swapping every four seconds -->
@@ -1251,6 +1265,51 @@ function sigCard(s){
     '</div></div>';
 }
 document.getElementById('sig').innerHTML = SIGS.map(sigCard).join('');
+
+/* ══ THE ROTATING HEADLINE WORD ══
+   All three words fit at full size today, measured: the longest is Precision
+   at 314px inside a 346px line on a 390px phone. THE FIT LOOP BELOW IS STILL
+   THERE AS A GUARD, because the words are a list someone will edit one day,
+   and a word that does not fit would otherwise wrap and shove the whole page
+   down and back every two seconds.
+
+   IT MEASURES THE REAL ELEMENT AT THE REAL WIDTH - scrollWidth against
+   clientWidth - and steps the size down a pixel at a time. An estimate from
+   character counts can be wrong; this cannot. */
+var HWORDS=['Sharpest','Momentum','Precision'], hwAt=0;
+function hwFit(){
+ var line=document.getElementById('hb');
+ if(!line) return;
+ line.style.fontSize='';
+ var size=parseFloat(getComputedStyle(line).fontSize), guard=0;
+ while(line.scrollWidth > line.clientWidth && size > 20 && guard++ < 80){
+  size -= 1; line.style.fontSize = size + 'px';
+ }
+}
+(function(){
+ var u=document.getElementById('hw');
+ if(!u) return;
+ hwFit();
+ if(document.fonts && document.fonts.ready) document.fonts.ready.then(hwFit);
+ window.addEventListener('resize', hwFit);
+ /* someone who asked their phone for less motion gets the first word and no
+    cycling at all, which is what the animation rule does for the gradient */
+ var calm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+ if(calm) return;
+ setInterval(function(){
+  if(document.hidden) return;          /* nothing runs in a background tab */
+  hwAt=(hwAt+1)%HWORDS.length;
+  u.classList.add('out');
+  setTimeout(function(){
+   u.textContent=HWORDS[hwAt];
+   u.classList.remove('out'); u.classList.add('in');
+   hwFit();
+   requestAnimationFrame(function(){
+    requestAnimationFrame(function(){ u.classList.remove('in'); });
+   });
+  },340);
+ },2000);
+})();
 document.getElementById('sigdots').innerHTML = SIGS.map(function(s,i){
   return '<i class="' + (i===0?'on':'') + '"></i>';
 }).join('');
