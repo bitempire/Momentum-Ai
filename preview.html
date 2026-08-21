@@ -33,11 +33,14 @@ a{color:inherit;text-decoration:none}
  100%{opacity:0;transform:scale(3.6);box-shadow:0 0 0 26px rgba(255,30,60,0)}}
 
 /* ── THE OPENING LOCKUP ── */
-.lp-crest{position:fixed;left:50%;top:50%;transform:translate(-50%,calc(-50% + 96px));
+/* TOP IS SET FROM JS. The mark and the text used to be positioned
+   independently, which is why the eyebrow landed on the logo. Now the two are
+   measured as ONE GROUP and the group is centred. */
+.lp-crest{position:fixed;left:50%;top:0;transform:translateX(-50%) translateY(14px);
  z-index:4;width:min(560px,calc(100vw - 44px));text-align:center;pointer-events:none;
  opacity:0;transition:opacity .85s ease, transform .9s cubic-bezier(.22,.61,.36,1);}
-body.crest .lp-crest{opacity:1;transform:translate(-50%,calc(-50% + 84px));}
-body.crestout .lp-crest{opacity:0;transform:translate(-50%,calc(-50% + 66px));}
+body.crest .lp-crest{opacity:1;transform:translateX(-50%) translateY(0);}
+body.crestout .lp-crest{opacity:0;transform:translateX(-50%) translateY(-16px);}
 .lp-eye{font-size:11px;letter-spacing:4.2px;color:rgba(255,255,255,.52);text-transform:uppercase;}
 .lp-name{font-family:'Orbitron',sans-serif;font-size:clamp(26px,8vw,42px);font-weight:900;
  letter-spacing:1px;margin-top:12px;}
@@ -366,9 +369,22 @@ body .mq{padding:16px 0}
     var m=v.match(/url\(\s*["']?([^"')]+)["']?\s*\)/);
     return m?m[1]:'';
   }
+  var BOX = 160, GAP = 30;
+  /* THE MARK AND THE LOCKUP ARE ONE GROUP. Their combined height is centred on
+     the screen, and the mark's centre falls out of that rather than being
+     guessed at a fraction of the height. */
+  function layout(){
+    BOX = Math.max(120, Math.min(200, Math.round(W*0.50)));
+    var cr = document.getElementById('lp-crest');
+    var ch = cr ? cr.offsetHeight : 150;
+    var total = BOX + GAP + ch;
+    var top0 = Math.max(24, Math.round((H - total)/2));
+    cy = top0 + Math.round(BOX/2);
+    if(cr) cr.style.top = (top0 + BOX + GAP) + 'px';
+  }
   function measure(){
     W = window.innerWidth||360; H = window.innerHeight||720;
-    cy = Math.round(H*0.44);          /* the mark forms dead centre, the lockup sits under it */
+    layout();
     dpr = Math.min(window.devicePixelRatio||1, 2);
     cv.width=W*dpr; cv.height=H*dpr;
     cv.style.width=W+'px'; cv.style.height=H+'px';
@@ -376,7 +392,7 @@ body .mq{padding:16px 0}
   }
   function seed(){
     if(!IMG) return;
-    var box = Math.max(120, Math.min(200, Math.round(W*0.52)));
+    var box = BOX;                    /* the same box layout() measured */
     var c=document.createElement('canvas'); c.width=W; c.height=H;
     var x=c.getContext('2d');
     x.drawImage(IMG,(W-box)/2, cy-box/2, box, box);
@@ -507,6 +523,12 @@ body .mq{padding:16px 0}
     window.addEventListener(e, function(){ finish(); }, {passive:true});
   });
   window.mmSkipIntro = finish;
+  /* THE LOCKUP IS TALLER ONCE ORBITRON LOADS, so the group is measured again
+     when the fonts are ready. Without this the first paint centres against a
+     fallback font and the mark sits a few pixels off. */
+  if(document.fonts && document.fonts.ready){
+    document.fonts.ready.then(function(){ if(cv){ layout(); if(IMG) seed(); } });
+  }
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
   else boot();
 })();
