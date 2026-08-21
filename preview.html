@@ -516,6 +516,108 @@ html,body{background:#080407;}
 #P4-features .card:nth-child(5) .kmv{animation-delay:-15.2s}
 #P4-features .card:nth-child(6) .kmv{animation-delay:-19.8s}
 
+
+/* ══ P5 HOW IT WORKS ══
+   Background matched to P4 exactly: the same solid base, the same two glows
+   and the same z-index, so both sections sit below the page vignette and
+   read as one surface. The extra element here is the faint scan rows. */
+#P5-how{position:relative;z-index:1;background:#080407;overflow:hidden;}
+#P5-how::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+ background:radial-gradient(120% 40% at 50% 3%,rgba(255,30,60,.30),transparent 60%),
+  radial-gradient(90% 30% at 50% 100%,rgba(120,0,26,.32),transparent 64%);}
+#P5-how::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
+ opacity:.24;mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");}
+#P5-how .p5-el{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden;}
+#P5-how .p5-rows{position:absolute;inset:0;
+ background:repeating-linear-gradient(180deg,rgba(255,255,255,.022) 0 1px,transparent 1px 7px);}
+#P5-how>.wrap{position:relative;z-index:3;}
+
+/* the tag */
+#P5-how .p5-tag{display:inline-flex;align-items:center;gap:10px;padding:6px 8px 6px 14px;
+ border-radius:999px;border:1px solid rgba(255,30,60,.32);background:rgba(255,30,60,.07);}
+#P5-how .p5-tag>span{font-family:'Orbitron',sans-serif;font-size:10px;font-weight:700;
+ letter-spacing:1.8px;color:var(--red-soft);white-space:nowrap;}
+#P5-how .p5-pr{display:block;width:54px;height:4px;border-radius:2px;
+ background:rgba(255,255,255,.13);overflow:hidden;}
+#P5-how .p5-pr b{display:block;height:100%;width:20%;border-radius:2px;background:var(--grad);
+ transition:width .55s cubic-bezier(.32,.86,.3,1);}
+
+/* the heading, three lines */
+#P5-how h2{margin:20px 0 0;line-height:1;font-size:inherit;letter-spacing:0;}
+#P5-how h2 .l1{display:block;font-size:clamp(14px,3.8vw,17px);font-weight:600;
+ letter-spacing:.5px;color:var(--tx2);}
+#P5-how h2 .l2{display:block;font-family:'Orbitron',sans-serif;font-weight:900;
+ font-size:clamp(40px,12vw,68px);letter-spacing:-1.5px;color:var(--red);margin:8px 0 7px;
+ text-shadow:0 0 34px rgba(255,30,60,.32);}
+#P5-how h2 .l3{display:block;font-size:clamp(19px,5.4vw,28px);font-weight:800;
+ letter-spacing:-.5px;color:#fff;}
+
+/* ══ the stage ══
+   HEIGHT IS NOT GUESSED. The cards are stacked with CSS grid, every one in
+   grid-area 1/1, so the container is exactly as tall as the tallest card
+   whatever the copy turns out to be. This is the same fix that stopped the
+   hero's Join Telegram button landing on top of the signal card.
+   THE VERTICAL PADDING IS FOR THE CARD SHADOW. It reaches about 50px below
+   the card, and overflow:hidden would cut it off flat, which is exactly the
+   fault that had to be fixed on the phone showcase. Where the browser
+   supports overflow:clip nothing is cut downwards at all. */
+#P5-how .p5-stage{position:relative;margin:26px -22px 0;padding:14px 0 64px;
+ perspective:1150px;-webkit-perspective:1150px;perspective-origin:50% 42%;
+ overflow:hidden;touch-action:pan-y;}
+@supports (overflow-x:clip){#P5-how .p5-stage{overflow-x:clip;overflow-y:visible;}}
+#P5-how .p5-inner{display:grid;transform-style:preserve-3d;
+ transition:transform .28s ease-out;}
+#P5-how .p5-st{grid-area:1/1;justify-self:center;width:min(224px,72vw);
+ text-align:left;border-radius:22px;padding:20px 18px;transform-origin:50% 50%;
+ border:1px solid rgba(255,255,255,.13);
+ background:radial-gradient(120% 100% at 0% 0%,rgba(255,30,60,.22),rgba(255,30,60,.07) 46%,rgba(10,8,12,.42));
+ backdrop-filter:blur(12px) saturate(126%) brightness(.92);
+ -webkit-backdrop-filter:blur(12px) saturate(126%) brightness(.92);
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.17),inset 0 -20px 28px -24px rgba(0,0,0,.85),
+  0 26px 54px -30px rgba(0,0,0,1);
+ transition:transform .74s cubic-bezier(.32,.86,.3,1),opacity .74s ease,filter .74s ease;
+ backface-visibility:hidden;}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+ #P5-how .p5-st{background:linear-gradient(148deg,#3E101F,#22101B 42%,#120F16);}
+}
+/* c current, n next, p previous, h parked. A new motion is these four lines
+   and nothing in the script. */
+#P5-how .p5-st.c{transform:translate3d(0,0,50px) rotateY(0deg) scale(1);opacity:1;filter:none;z-index:3;}
+#P5-how .p5-st.n{transform:translate3d(48%,14px,-140px) rotateY(-42deg) scale(.88);opacity:.42;filter:brightness(.5);z-index:2;}
+#P5-how .p5-st.p{transform:translate3d(-48%,14px,-140px) rotateY(42deg) scale(.88);opacity:.42;filter:brightness(.5);z-index:2;}
+#P5-how .p5-st.h{transform:translate3d(0,0,-340px) scale(.66);opacity:0;z-index:1;}
+
+#P5-how .p5-k{font-family:'Orbitron',sans-serif;font-size:10px;font-weight:800;
+ letter-spacing:2px;color:var(--red);margin-bottom:13px;}
+#P5-how .p5-ic{width:50px;height:50px;border-radius:16px;position:relative;overflow:hidden;
+ color:#fff;display:flex;align-items:center;justify-content:center;
+ border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.045);
+ box-shadow:0 10px 22px -12px rgba(255,30,60,.55);}
+#P5-how .p5-ic .mv{position:absolute;inset:-60%;z-index:0;
+ background:conic-gradient(from 0deg,rgba(255,30,60,0) 0deg,#FF1E3C 46deg,#FF5F78 66deg,
+  rgba(255,30,60,0) 112deg,rgba(255,30,60,0) 360deg);
+ animation:mmRim 5s linear infinite;}
+#P5-how .p5-ic .cut{position:absolute;inset:2px;z-index:1;border-radius:14px;
+ background:linear-gradient(150deg,#791120,#4A0D16);}
+#P5-how .p5-ic .gl{position:absolute;inset:0;z-index:2;pointer-events:none;border-radius:inherit;
+ background:linear-gradient(150deg,rgba(255,255,255,.24),rgba(255,255,255,.04) 42%,rgba(255,255,255,0) 62%);}
+#P5-how .p5-ic svg{position:relative;z-index:3;width:22px;height:22px;
+ filter:drop-shadow(0 1px 3px rgba(0,0,0,.55));}
+#P5-how .p5-st h3{font-size:18px;font-weight:700;letter-spacing:-.3px;margin:14px 0 0;}
+#P5-how .p5-st p{font-size:12.5px;color:var(--tx2);line-height:1.66;margin:8px 0 0;}
+
+/* the rail */
+#P5-how .p5-rail{margin-top:6px;}
+#P5-how .p5-cnt{font-family:'Orbitron',sans-serif;font-size:10px;font-weight:700;
+ letter-spacing:2px;color:var(--tx3);}
+#P5-how .p5-cnt b{color:var(--red);}
+#P5-how .p5-segs{display:flex;gap:7px;justify-content:center;margin-top:12px;}
+#P5-how .p5-sg{width:42px;height:4px;border-radius:2px;background:rgba(255,255,255,.13);
+ cursor:pointer;transition:background .45s,box-shadow .45s,height .45s;}
+#P5-how .p5-sg.done{background:rgba(255,30,60,.5);}
+#P5-how .p5-sg.a{background:var(--red);height:6px;box-shadow:0 0 14px -1px rgba(255,30,60,.9);}
+#P5-how .p5-hint{font-size:9.5px;letter-spacing:1.5px;color:var(--tx3);margin-top:16px;}
+
 @media (prefers-reduced-motion:reduce){*{animation:none!important}}
 </style>
 </head>
@@ -626,11 +728,18 @@ html,body{background:#080407;}
 </div></section>
 
 <!-- ══ P5 HOW IT WORKS ══ -->
-<section class="sec mid" id="P5-how"><div class="wrap">
-  <span class="pill">&#9881;&nbsp; Cara Guna</span>
-  <h2>Dari Signal Ke <span class="a">Professional Execution</span></h2>
-  <p class="lead">Tiga langkah sahaja, dan hanya yang pertama perlukan usaha.</p>
-  <div class="cards" id="steps"></div>
+<section class="sec mid" id="P5-how">
+  <div class="p5-el"><span class="p5-rows"></span></div>
+  <div class="wrap">
+  <span class="p5-tag"><span>5 LANGKAH</span><i class="p5-pr"><b id="p5bar"></b></i></span>
+  <h2><span class="l1">Dari Signal Ke</span><span class="l2">Automasi</span><span class="l3">Professional Execution</span></h2>
+  <p class="lead">Lima langkah sahaja, dan hanya dua yang pertama perlukan usaha anda.</p>
+  <div class="p5-stage" id="p5stage"><div class="p5-inner" id="p5inner"></div></div>
+  <div class="p5-rail">
+    <div class="p5-cnt">LANGKAH <b id="p5cnt">01</b> / 05</div>
+    <div class="p5-segs" id="p5segs"></div>
+  </div>
+  <div class="p5-hint">SWIPE ATAU TUNGGU</div>
 </div></section>
 
 <!-- ══ P6 RESULTS ══ -->
@@ -1029,7 +1138,10 @@ var IC={
  cal:'<rect x="3.5" y="5" width="17" height="15.5" rx="2.6"/><path d="M3.5 10h17"/><path d="M8 3v4"/><path d="M16 3v4"/>',
  plug:'<path d="M9 3v6"/><path d="M15 3v6"/><path d="M6.5 9h11v3a5.5 5.5 0 0 1-11 0z"/><path d="M12 17.5V21"/>',
  target:'<circle cx="12" cy="12" r="8.4"/><circle cx="12" cy="12" r="4.2"/><circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none"/>',
- shield:'<path d="M12 3l7.4 3.2v5.4c0 4.6-3.1 8.3-7.4 10.2C7.7 19.9 4.6 16.2 4.6 11.6V6.2z"/><path d="M9.2 12l2 2 3.6-3.8"/>'
+ shield:'<path d="M12 3l7.4 3.2v5.4c0 4.6-3.1 8.3-7.4 10.2C7.7 19.9 4.6 16.2 4.6 11.6V6.2z"/><path d="M9.2 12l2 2 3.6-3.8"/>',
+ wallet:'<rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18"/><circle cx="16.5" cy="14.5" r="1.3" fill="currentColor" stroke="none"/>',
+ sliders:'<path d="M4 8h10"/><path d="M18 8h2"/><circle cx="16" cy="8" r="2.1"/><path d="M4 16h4"/><path d="M12 16h8"/><circle cx="10" cy="16" r="2.1"/>',
+ bell:'<path d="M18 9a6 6 0 1 0-12 0c0 5-2 6-2 6h16s-2-1-2-6"/><path d="M13.7 20a2 2 0 0 1-3.4 0"/>'
 };
 function svg(k){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'+IC[k]+'</svg>';}
 
@@ -1050,14 +1162,74 @@ document.getElementById('cards').innerHTML=F.map(function(f){
   '<span class="mv"></span><span class="cut"></span><span class="gl"></span>'+
   svg(f[0])+'</div><h3>'+f[1]+'</h3><p>'+f[2]+'</p></div>';}).join('');
 
+/* ══ P5, FIVE STEPS AS A COVERFLOW ══
+   NO APOSTROPHES ANYWHERE IN THIS COPY. Every string here is single quoted,
+   so one would end the string and break the whole block. */
 var S=[
- ['plug','01 &middot; Sambung','Buka akaun dengan Asia Future Trading dan sambung MT5 anda dalam beberapa minit.'],
- ['target','02 &middot; Terima','Signal live sampai dengan entry, stop loss, take profit dan confident level.'],
- ['shield','03 &middot; Execute','Satu tap sahaja, dan Smart Tool uruskan posisi anda sepanjang trade.']
+ ['wallet','01','Daftar Dan Deposit','Buka akaun dengan Asia Future Trading dan buat deposit pertama anda. Satu borang, siap dalam beberapa minit.'],
+ ['plug','02','Sambung Dalam 2 Minit','Masukkan login dan password MT5 anda dalam app. Dua minit, dan akaun anda terus bersambung.'],
+ ['brain','03','Pilih AI Analyst Anda','Pilih analyst AI yang anda mahu ikut. Signal mereka masuk terus ke app, lengkap dengan entry, stop loss dan take profit.'],
+ ['sliders','04','Tetapkan Risiko Anda','Pilih tahap risiko dan mod trading yang anda selesa. Anda yang tetapkan had, bukan kami.'],
+ ['bell','05','Duduk Dan Pantau','Smart Tool uruskan posisi anda sepanjang trade, dan setiap entry, take profit dan stop loss sampai terus ke telefon anda.']
 ];
-document.getElementById('steps').innerHTML=S.map(function(s){
- return '<div class="card" style="text-align:left"><div class="ic">'+svg(s[0])+'</div><h3>'+s[1]+
-  '</h3><p>'+s[2]+'</p></div>';}).join('');
+(function(){
+ var stage=document.getElementById('p5stage'),
+     inner=document.getElementById('p5inner'),
+     segs=document.getElementById('p5segs'),
+     cnt=document.getElementById('p5cnt'),
+     bar=document.getElementById('p5bar');
+ if(!stage||!inner||!segs) return;
+ var N=S.length, at=0, held=0;
+
+ inner.innerHTML=S.map(function(s){
+  return '<div class="p5-st h"><div class="p5-k">LANGKAH '+s[1]+'</div>'+
+   '<div class="p5-ic"><span class="mv"></span><span class="cut"></span><span class="gl"></span>'+
+   svg(s[0])+'</div><h3>'+s[2]+'</h3><p>'+s[3]+'</p></div>';}).join('');
+ segs.innerHTML=S.map(function(){return '<span class="p5-sg"></span>';}).join('');
+
+ var cards=[].slice.call(inner.children), bars=[].slice.call(segs.children);
+
+ function place(){
+  for(var i=0;i<N;i++){
+   cards[i].className='p5-st '+(i===at?'c':i===(at+1)%N?'n':i===(at-1+N)%N?'p':'h');
+   bars[i].className='p5-sg'+(i===at?' a':(i<at?' done':''));
+  }
+  if(cnt) cnt.textContent=S[at][1];
+  if(bar) bar.style.width=((at+1)/N*100)+'%';
+ }
+ function go(n){ at=(at+n+N)%N; place(); }
+ place();
+
+ /* the drag axis is decided ONCE after 8px and committed, the same rule the
+    app's own gesture layer uses, so a vertical scroll can never be taken
+    for a swipe */
+ var x0=0,y0=0,drag=false,axis='';
+ stage.addEventListener('pointerdown',function(e){
+  x0=e.clientX; y0=e.clientY; drag=true; axis=''; inner.style.transition='none'; });
+ stage.addEventListener('pointermove',function(e){
+  if(!drag) return;
+  var dx=e.clientX-x0, dy=e.clientY-y0;
+  if(!axis && Math.abs(dx)+Math.abs(dy)>8) axis=Math.abs(dx)>Math.abs(dy)?'x':'y';
+  if(axis==='x'){ e.preventDefault(); inner.style.transform='translateX('+(dx*0.32)+'px)'; } });
+ function release(e){
+  if(!drag) return; drag=false;
+  inner.style.transition=''; inner.style.transform='';
+  if(axis!=='x') return;
+  var dx=((e&&e.clientX)||x0)-x0;
+  if(Math.abs(dx)>40){ go(dx<0?1:-1); held=Date.now()+8000; } }
+ stage.addEventListener('pointerup',release);
+ stage.addEventListener('pointercancel',release);
+ bars.forEach(function(b,i){
+  b.addEventListener('click',function(){ at=i; place(); held=Date.now()+8000; }); });
+
+ /* nothing runs while the tab is in the background */
+ setInterval(function(){
+  if(document.hidden) return;
+  if(Date.now()<held) return;
+  go(1);
+ },5000);
+ window.p5Go=go;
+})();
 
 var P=['FREE Momentum Signal','FREE Smart Journal','FREE Market Scanner','Weekly News Calendar',
        'Smart Tool Automation','24/5 Live Support'];
