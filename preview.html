@@ -1368,29 +1368,51 @@ document.getElementById('perks').innerHTML=P.map(function(p){
    LIVE AS index.html. They carry no figures and no claims, only a number,
    and they are three DIFFERENT SHAPES on purpose so it is obvious that the
    frame copes with whatever gets uploaded. */
-var SLIDES=[
- 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5MDAiIGhlaWdodD0iMTIwMCIgdmlld0JveD0iMCAwIDkwMCAxMjAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMSI+CjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iIzJBMEUxNyIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzBEMDkxMCIvPjwvbGluZWFyR3JhZGllbnQ+CjxwYXR0ZXJuIGlkPSJwIiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiPgo8cGF0aCBkPSJNNjAgMEgwVjYwIiBmaWxsPSJub25lIiBzdHJva2U9InJnYmEoMjU1LDI1NSwyNTUsLjA1KSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz4KPHJlY3Qgd2lkdGg9IjkwMCIgaGVpZ2h0PSIxMjAwIiBmaWxsPSJ1cmwoI2cpIi8+PHJlY3Qgd2lkdGg9IjkwMCIgaGVpZ2h0PSIxMjAwIiBmaWxsPSJ1cmwoI3ApIi8+Cjx0ZXh0IHg9IjUwJSIgeT0iNDYlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iT3JiaXRyb24sc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyNzAiCiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSJyZ2JhKDI1NSwzMCw2MCwuMzApIj4xPC90ZXh0Pgo8dGV4dCB4PSI1MCUiIHk9IjU2JSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IlNvcmEsc2Fucy1zZXJpZiIgZm9udC1zaXplPSI0MCIKIGxldHRlci1zcGFjaW5nPSI0IiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LC4zNikiPkdBTUJBUiBQTEFDRUhPTERFUjwvdGV4dD4KPHRleHQgeD0iNTAlIiB5PSI2MSUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJTb3JhLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMzEiCiBsZXR0ZXItc3BhY2luZz0iMiIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwuMjIpIj4zIDogNCAgcG9ydHJhaXQ8L3RleHQ+PC9zdmc+',
- 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjAwIiBoZWlnaHQ9IjEyMDAiIHZpZXdCb3g9IjAgMCAxMjAwIDEyMDAiPgo8ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjMkEwRTE3Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMEQwOTEwIi8+PC9saW5lYXJHcmFkaWVudD4KPHBhdHRlcm4gaWQ9InAiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+CjxwYXRoIGQ9Ik02MCAwSDBWNjAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPgo8cmVjdCB3aWR0aD0iMTIwMCIgaGVpZ2h0PSIxMjAwIiBmaWxsPSJ1cmwoI2cpIi8+PHJlY3Qgd2lkdGg9IjEyMDAiIGhlaWdodD0iMTIwMCIgZmlsbD0idXJsKCNwKSIvPgo8dGV4dCB4PSI1MCUiIHk9IjQ2JSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9Ik9yYml0cm9uLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMzYwIgogZm9udC13ZWlnaHQ9IjkwMCIgZmlsbD0icmdiYSgyNTUsMzAsNjAsLjMwKSI+MjwvdGV4dD4KPHRleHQgeD0iNTAlIiB5PSI1NiUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJTb3JhLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iNTQiCiBsZXR0ZXItc3BhY2luZz0iNCIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwuMzYpIj5HQU1CQVIgUExBQ0VIT0xERVI8L3RleHQ+Cjx0ZXh0IHg9IjUwJSIgeT0iNjElIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iU29yYSxzYW5zLXNlcmlmIiBmb250LXNpemU9IjQyIgogbGV0dGVyLXNwYWNpbmc9IjIiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsLjIyKSI+MSA6IDEgIHNxdWFyZTwvdGV4dD48L3N2Zz4=',
- 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNjAwIiBoZWlnaHQ9IjkwMCIgdmlld0JveD0iMCAwIDE2MDAgOTAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMSI+CjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iIzJBMEUxNyIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzBEMDkxMCIvPjwvbGluZWFyR3JhZGllbnQ+CjxwYXR0ZXJuIGlkPSJwIiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiPgo8cGF0aCBkPSJNNjAgMEgwVjYwIiBmaWxsPSJub25lIiBzdHJva2U9InJnYmEoMjU1LDI1NSwyNTUsLjA1KSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz4KPHJlY3Qgd2lkdGg9IjE2MDAiIGhlaWdodD0iOTAwIiBmaWxsPSJ1cmwoI2cpIi8+PHJlY3Qgd2lkdGg9IjE2MDAiIGhlaWdodD0iOTAwIiBmaWxsPSJ1cmwoI3ApIi8+Cjx0ZXh0IHg9IjUwJSIgeT0iNDYlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iT3JiaXRyb24sc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyNzAiCiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSJyZ2JhKDI1NSwzMCw2MCwuMzApIj4zPC90ZXh0Pgo8dGV4dCB4PSI1MCUiIHk9IjU2JSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IlNvcmEsc2Fucy1zZXJpZiIgZm9udC1zaXplPSI0MCIKIGxldHRlci1zcGFjaW5nPSI0IiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LC4zNikiPkdBTUJBUiBQTEFDRUhPTERFUjwvdGV4dD4KPHRleHQgeD0iNTAlIiB5PSI2MSUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJTb3JhLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMzEiCiBsZXR0ZXItc3BhY2luZz0iMiIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwuMjIpIj4xNiA6IDkgIGxhbmRzY2FwZTwvdGV4dD48L3N2Zz4='
-];
+/* ══ P6 RESULTS, FED FROM THE DATABASE ══
+   The pictures and their order come from site_results, managed in the admin
+   panel inside app_mobile.html. Nothing here has to change when he adds,
+   reorders or hides one.
+
+   NO LIBRARY. This is one plain fetch against the REST endpoint, so the page
+   stays a single file with nothing to load first.
+
+   THE KEY BELOW IS NOT A SECRET AND IS SAFE HERE. It is the publishable key,
+   already published inside app_mobile.html, which is itself a public file.
+   The select policy on site_results is (active or mmai_is_admin()), so this
+   key can read the rows that are switched on and nothing else. It cannot
+   write, and it cannot see a hidden row. */
+var MMAI_DB  = 'https://rhtworywcqcxkahlmezg.supabase.co';
+var MMAI_KEY = 'sb_publishable_LHp7PKzMjEuktZfHZL62dg_KxMGwsx-';
+var SLIDES=[];
 var carAt=0, carCards=[], carDots=[], carHeld=0;
 
 function carRender(){
  var f=document.getElementById('carFrame'), d=document.getElementById('carDots');
  if(!f) return;
+ var car=document.querySelector('#P6-results .car');
+ var aw=document.querySelectorAll('#P6-results .car .aw'), q;
  if(!SLIDES.length){
-  f.innerHTML='<div class="em"><div><div class="k">DIURUS DARI ADMIN PANEL</div>'+
-   '<div class="t">Gambar result yang anda upload akan muncul di sini.<br>'+
-   'Tiada apa dipaparkan sehingga anda tambah.</div></div></div>';
+  /* A VISITOR MUST NEVER SEE THE ADMIN MESSAGE. It was written for him while
+     the section was being built. With nothing to show, the carousel hides
+     and the heading, the words and the button carry the section on their
+     own. */
+  if(car) car.style.display='none';
+  f.innerHTML='';
   if(d) d.innerHTML='';
-  var aw=document.querySelectorAll('#P6-results .car .aw');
-  for(var q=0;q<aw.length;q++) aw[q].style.display='none';
+  for(q=0;q<aw.length;q++) aw[q].style.display='none';
   return;
  }
+ /* AND THE ARROWS HAVE TO COME BACK. Hiding them was one way only, so the
+    pictures would have arrived with no way to page through them. */
+ if(car) car.style.display='';
+ for(q=0;q<aw.length;q++) aw[q].style.display='';
  /* BUILT ONCE, THEN ONLY THE CLASSES CHANGE. Re-writing innerHTML on every
     step would restart the pictures and kill the transition. */
- f.innerHTML=SLIDES.map(function(s){
-  return '<div class="sl h"><img src="'+s+'" alt=""></div>';}).join('');
+ /* Everything after the first is lazy. All the slides sit in the same box,
+    so the browser fetches them together once the section is scrolled to
+    rather than during the opening animation. */
+ f.innerHTML=SLIDES.map(function(s,i){
+  return '<div class="sl h"><img src="'+s+'" alt=""'+(i?' loading="lazy"':'')+'></div>';}).join('');
  if(d) d.innerHTML=SLIDES.map(function(){return '<i></i>';}).join('');
  carCards=[].slice.call(f.children);
  carDots=d?[].slice.call(d.children):[];
@@ -1411,6 +1433,23 @@ function carGo(n){
  carPlace(); carHeld=Date.now()+8000;
 }
 carRender();
+
+/* One request, on load. If it fails the section simply carries no pictures,
+   which is the same as having none: no error is ever shown to a visitor. */
+(function(){
+ fetch(MMAI_DB+'/rest/v1/site_results?select=image_path&active=eq.true&order=sort_order.asc',
+   { headers:{ apikey:MMAI_KEY }, cache:'no-store' })
+ .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+ .then(function(rows){
+  if(!rows || !rows.length) return;
+  SLIDES = rows.map(function(x){
+   return MMAI_DB+'/storage/v1/object/public/results/'+x.image_path; });
+  carAt = 0;
+  carRender();
+ })
+ .catch(function(e){ if(window.console) console.warn('results:', e.message||e); });
+})();
+
 /* nothing runs while the tab is in the background */
 setInterval(function(){
  if(document.hidden || !SLIDES.length || Date.now()<carHeld) return;
