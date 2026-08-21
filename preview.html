@@ -53,13 +53,13 @@ body.crestout .lp-crest{opacity:0;transform:translateX(-50%) translateY(-16px);}
 .lp-vig{position:fixed;inset:0;z-index:2;pointer-events:none;
  background:radial-gradient(120% 78% at 50% 40%,transparent 44%,rgba(0,0,0,.5) 100%);}
 /* every section sits above the background */
-.isl,.hero,.mq,.sec,.fin,.foot{position:relative;z-index:10;}
+.isl,.hero,.sec,.fin,.foot{position:relative;z-index:10;}
 /* NOTHING SHOWS UNTIL THE INTRO HANDS OVER. The island and the page rise
    together once the glitter has docked. */
 body.booting{overflow:hidden;}
-body.booting .isl,body.booting .hero>.wrap>*,body.booting .mq,
+body.booting .isl,body.booting .hero>.wrap>*,body.booting .quotes,
 body.booting .sec,body.booting .fin,body.booting .foot{opacity:0;}
-.isl,.hero>.wrap>*,.mq,.sec,.fin,.foot{transition:opacity 1s ease,transform 1.05s cubic-bezier(.22,.61,.36,1);}
+.isl,.hero>.wrap>*,.quotes,.sec,.fin,.foot{transition:opacity 1s ease,transform 1.05s cubic-bezier(.22,.61,.36,1);}
 body.booting .isl{transform:translateX(-50%) scaleX(.13);opacity:0;}
 body.booting .hero>.wrap>*{transform:translateY(18px);}
 .lp-skip{position:fixed;right:14px;bottom:14px;z-index:130;font-family:'Orbitron',sans-serif;
@@ -118,7 +118,7 @@ body:not(.booting) .lp-skip{display:none;}
 
 /* ══ P2 HERO ══ */
 /* HERO STARTS BELOW THE ISLAND: 14px top + 56px tall + 26px of air */
-.hero{position:relative;padding:96px 0 0;text-align:center;z-index:10;}
+.hero{position:relative;padding:118px 0 0;text-align:center;z-index:10;}
 .hero .wrap{max-width:520px;}
 /* THE PILL IS SMALLER, as asked */
 .pill{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;
@@ -127,11 +127,12 @@ body:not(.booting) .lp-skip{display:none;}
 .pill i{width:5px;height:5px;border-radius:50%;background:var(--red);display:block;
  box-shadow:0 0 8px rgba(255,30,60,.9);}
 /* SMALL LINE ABOVE, BIG LINE BELOW */
-.h-a{font-size:22px;font-weight:700;letter-spacing:-.7px;margin:14px 0 0;color:rgba(244,247,250,.88);}
-.h-b{font-size:35px;font-weight:800;letter-spacing:-1.6px;line-height:1.02;margin:2px 0 0;
+.h-a{font-size:clamp(26px,7.4vw,34px);font-weight:700;letter-spacing:-1px;margin:20px 0 0;
+ color:rgba(244,247,250,.9);line-height:1.1;}
+.h-b{font-size:clamp(40px,11.4vw,54px);font-weight:800;letter-spacing:-2.2px;line-height:1;margin:4px 0 0;
  background:linear-gradient(96deg,#FF6B7E,#FF1E3C);-webkit-background-clip:text;
  background-clip:text;color:transparent;}
-.sub{font-size:12.5px;color:var(--tx2);line-height:1.6;margin:13px 0 0;}
+.sub{font-size:clamp(14px,3.9vw,16px);color:var(--tx2);line-height:1.65;margin:18px auto 0;max-width:420px;}
 
 /* ── THE SIGNAL CARD: the app's own `.asg-` rules, copied verbatim ──
    THE CAROUSEL IS A GRID, NOT A FIXED HEIGHT. A fixed height was why the
@@ -186,8 +187,11 @@ body:not(.booting) .lp-skip{display:none;}
 .cta{display:inline-flex;align-items:center;gap:9px;border:0;cursor:pointer;padding:14px 28px;
  border-radius:999px;background:var(--grad);color:#fff;font-family:'Sora',sans-serif;
  font-size:14.5px;font-weight:700;margin-top:16px;box-shadow:0 0 40px -6px rgba(255,30,60,.85);}
-.rate{margin-top:16px;font-size:11.5px;color:var(--tx3);line-height:1.5;}
-.rate .st{color:rgba(255,30,60,.62);letter-spacing:1px;}
+.rate{margin-top:18px;}
+.rate-a{display:flex;align-items:center;justify-content:center;gap:9px;font-size:14px;}
+.rate-a b{color:var(--tx);font-weight:800;}
+.rate-b{font-size:12px;color:var(--tx3);margin-top:6px;}
+.rate .st{color:var(--red);letter-spacing:2px;font-size:15px;}
 .rate b{color:var(--tx);font-weight:700;}
 
 /* THREE BOXES, NO WRAPPING */
@@ -211,12 +215,6 @@ body:not(.booting) .lp-skip{display:none;}
 .quotes .tr .up{color:var(--green);font-family:'Orbitron',sans-serif;font-size:9px;}
 .quotes .tr .dn{color:var(--red);font-family:'Orbitron',sans-serif;font-size:9px;}
 @keyframes qz{to{transform:translateX(-50%)}}
-
-.mq{overflow:hidden;background:var(--grad);padding:13px 0;margin-top:34px;}
-.mq .tr{display:flex;white-space:nowrap;animation:mq 22s linear infinite;}
-.mq span{font-size:15px;font-weight:800;color:#fff;padding:0 22px;display:inline-flex;align-items:center;gap:22px;}
-.mq span:after{content:'';width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.7);display:block;}
-@keyframes mq{to{transform:translateX(-50%)}}
 
 .sec{padding:62px 0;}
 .sec h2{font-size:clamp(30px,8vw,44px);line-height:1.1;font-weight:800;letter-spacing:-1.2px;margin:22px 0 0;}
@@ -288,7 +286,6 @@ body .stat{background:linear-gradient(165deg,rgba(255,30,60,.12),rgba(255,255,25
  border-color:rgba(255,30,60,.22);padding:26px 12px}
 body .sec{padding:78px 0}
 body .fin{background:linear-gradient(180deg,#080407,#3a1020 55%,#1b0810)}
-body .mq{padding:16px 0}
 @media (prefers-reduced-motion:reduce){*{animation:none!important}}
 </style>
 </head>
@@ -345,8 +342,10 @@ body .mq{padding:16px 0}
 
   <button class="cta">Join Telegram <span>&rarr;</span></button>
 
-  <div class="rate"><span class="st">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
-    <b>4.5/5</b> &middot; Trusted by 52,000++ Traders worldwide</div>
+  <div class="rate">
+    <div class="rate-a"><span class="st">&#9733;&#9733;&#9733;&#9733;&#9733;</span> <b>4.5/5</b></div>
+    <div class="rate-b">Trusted by 52,000++ Traders worldwide</div>
+  </div>
 
   <div class="stats">
     <div class="stat"><b>52K +</b><span>Users<br>worldwide</span></div>
@@ -357,9 +356,6 @@ body .mq{padding:16px 0}
 
 <div class="quotes"><div class="tr" id="qz"></div></div>
 </section>
-
-<!-- ══ P3 MARQUEE ══ -->
-<div class="mq" id="P3-marquee"><div class="tr" id="mq"></div></div>
 
 <!-- ══ P4 FEATURES ══ -->
 <section class="sec" id="P4-features"><div class="wrap">
@@ -693,8 +689,6 @@ function islArm(){
 /* a tap on a link buys five more seconds, then lets the jump happen */
 function islPick(){ islArm(); setTimeout(islClose,700); }
 
-var MQ=['MOMENTUM INTELLIGENCE','AI SIGNAL','SMART JOURNAL','MARKET SCANNER','MT5 EXECUTION','NEWS CALENDAR'];
-document.getElementById('mq').innerHTML=MQ.concat(MQ).map(function(t){return '<span>'+t+'</span>';}).join('');
 
 var IC={
  spark:'<path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M18.5 15.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z"/>',
