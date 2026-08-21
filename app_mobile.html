@@ -18509,6 +18509,11 @@ function annMarkRead(k){
 // Targeting, in one place so the popup and the bell can never disagree.
 function annVisible(a){
   if(!a || a.active === false) return false;
+  // STAFF DO NOT RECEIVE ANNOUNCEMENTS. They are customer messages, and the
+  // people who write and manage them should not have them pushed back at
+  // themselves. One test, so the popup and the bell can never disagree.
+  var r = (typeof currentUser !== 'undefined' && currentUser) ? currentUser.role : '';
+  if(r === 'admin' || r === 'sub_admin') return false;
   if(a.target === 'premium' && !(typeof isPremiumUser === 'function' && isPremiumUser())) return false;
   return true;
 }
