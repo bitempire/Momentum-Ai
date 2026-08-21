@@ -57,6 +57,9 @@ body.crestout .lp-crest{opacity:0;transform:translateX(-50%) translateY(-16px);}
 /* NOTHING SHOWS UNTIL THE INTRO HANDS OVER. The island and the page rise
    together once the glitter has docked. */
 body.booting{overflow:hidden;}
+/* DISPLAY, NOT OPACITY. A transparent <video> can still draw its native play
+   button on iOS. While the opening runs the element is not rendered at all. */
+body.booting .hv,body.booting .hv-still{display:none!important;}
 /* THE VIDEO LAYERS MUST HIDE DURING THE OPENING TOO. The division sits at
    z-index 10 and the opening canvas is at 0, so without this the video and
    its tint would paint straight over the particle animation and nobody
@@ -375,9 +378,13 @@ html,body{background:#080407;}
   <!-- EVERY FLAG iOS NEEDS: muted and playsinline are required for autoplay,
        webkit-playsinline for older iOS, and disablepictureinpicture so a long
        press cannot lift it out of the page. -->
-  <video class="hv" id="hv" autoplay muted loop playsinline webkit-playsinline
-         preload="auto" disablepictureinpicture poster="hero-poster.jpg">
-    <source src="hero-bg.mp4" type="video/mp4"></video>
+  <!-- NO SRC AND NO POSTER UNTIL THE OPENING IS OVER. Hiding it with opacity
+       was not enough: iOS draws the start-playback button in its own layer and
+       ignores opacity, so a play icon appeared over the welcome screen. The
+       file is attached from JS once the page is revealed. -->
+  <video class="hv" id="hv" muted loop playsinline webkit-playsinline
+         preload="none" disablepictureinpicture data-src="hero-bg.mp4"
+         data-poster="hero-poster.jpg"></video>
   <div class="hv-still"></div>
   <div class="hv-tint"></div>
   <div class="hv-bloom"></div>
@@ -467,6 +474,25 @@ html,body{background:#080407;}
    not run, DROP THE VIDEO AND KEEP THE POSTER. A background that shows a
    play button reads as broken. */
 (function(){
+  var armed = false;
+  /* ATTACH AND START ONLY WHEN THE OPENING HAS HANDED OVER. Called from the
+     opening's finish(), and also on a timer in case the opening was skipped. */
+  window.mmHeroVideo = function(){
+    if(armed) return; armed = true;
+    var v = document.getElementById('hv');
+    if(!v) return;
+    /* WRAPPED, BECAUSE THIS NOW RUNS INSIDE THE OPENING'S REVEAL. A throw here
+       would stop the page ever appearing, which is a far worse failure than a
+       background that does not play. */
+    try {
+      if(v.dataset){
+        if(v.dataset.poster) v.setAttribute('poster', v.dataset.poster);
+        if(v.dataset.src && !v.getAttribute('src')) v.setAttribute('src', v.dataset.src);
+      }
+      if(typeof v.load === 'function') v.load();
+      go();
+    } catch(e){ fail(); }
+  };
   function go(){
     var v = document.getElementById('hv');
     if(!v) return;
@@ -498,8 +524,8 @@ html,body{background:#080407;}
       if(v && v.paused) fail();
     }, 1200);
   }
-  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', go);
-  else go();
+  /* a safety net: if the opening never calls us, start anyway */
+  setTimeout(function(){ window.mmHeroVideo(); }, 6000);
 })();
 
 /* ══ THE OPENING AND THE LIVING BACKGROUND ═══════════════════════════
@@ -582,6 +608,8 @@ html,body{background:#080407;}
        screen the moment the opening finished. */
     var cl=document.body.classList;
     cl.remove('booting'); cl.remove('crest'); cl.remove('crestout');
+    /* the hero video only exists from this moment on */
+    try { if(typeof window.mmHeroVideo === 'function') window.mmHeroVideo(); } catch(e){}
     try{ sessionStorage.setItem('mmai_seen','1'); }catch(e){}
   }
   function draw(now){
@@ -656,6 +684,7 @@ html,body{background:#080407;}
             docked=true;
             var c2=document.body.classList;
             c2.remove('booting'); c2.remove('crest'); c2.remove('crestout');
+            try { if(typeof window.mmHeroVideo === 'function') window.mmHeroVideo(); } catch(e){}
             var hit=document.getElementById('lp-hit');
             if(hit){ hit.style.left=(dockX-4.5)+'px'; hit.style.top=(dockY-4.5)+'px';
                      hit.className='lp-hit go'; }
