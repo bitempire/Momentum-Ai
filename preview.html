@@ -116,9 +116,25 @@ body:not(.booting) .lp-skip{display:none;}
  box-shadow:0 0 10px rgba(255,30,60,.9);animation:pulse 2.2s ease-in-out infinite;}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
 
+/* ══ P2 HERO: THE DIVISION AND ITS BACKGROUND ══ */
+.division{position:relative;overflow:hidden;z-index:10;}
+.hv{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;opacity:.55;
+ pointer-events:none;}
+.hv-tint{position:absolute;inset:0;z-index:1;pointer-events:none;
+ background:linear-gradient(180deg,rgba(4,2,5,.86),rgba(4,2,5,.72) 40%,rgba(4,2,5,.94));}
+.hv-bloom{position:absolute;inset:0;z-index:2;pointer-events:none;
+ background:radial-gradient(110% 46% at 50% 0%,rgba(255,30,60,.30),transparent 58%),
+  radial-gradient(80% 34% at 50% 100%,rgba(120,0,26,.30),transparent 62%);}
+/* the grain is ABOVE the glow: it is what stops the gradient banding into
+   stripes on an OLED phone, and that only works if it is the top layer */
+.hv-grain{position:absolute;inset:0;z-index:3;opacity:.24;pointer-events:none;mix-blend-mode:overlay;
+ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");}
+/* a phone told to stop animations should not be handed a looping video */
+@media (prefers-reduced-motion:reduce){ .hv{display:none;} }
+
 /* ══ P2 HERO ══ */
 /* HERO STARTS BELOW THE ISLAND: 14px top + 56px tall + 26px of air */
-.hero{position:relative;padding:150px 0 0;text-align:center;z-index:10;}
+.hero{position:relative;padding:150px 0 0;text-align:center;z-index:5;}
 .hero .wrap{max-width:520px;}
 /* THE PILL IS SMALLER, as asked */
 .pill{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;
@@ -207,8 +223,8 @@ body:not(.booting) .lp-skip{display:none;}
  white-space:nowrap;line-height:1.35;min-height:2.7em;}
 
 /* THE RUNNING QUOTES, closing the hero */
-.quotes{margin-top:26px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
- background:rgba(255,255,255,.02);overflow:hidden;padding:8px 0;}
+.quotes{position:relative;z-index:5;margin-top:26px;border-top:1px solid var(--line);
+ border-bottom:1px solid var(--line);background:rgba(0,0,0,.42);overflow:hidden;padding:8px 0;}
 .quotes .tr{display:flex;white-space:nowrap;animation:qz 20s linear infinite;}
 .quotes .tr span{display:inline-flex;align-items:center;gap:6px;padding:0 12px;font-size:10px;
  color:var(--tx2);}
@@ -330,8 +346,18 @@ body .fin{background:linear-gradient(180deg,#080407,#3a1020 55%,#1b0810)}
   <span class="sweep"></span>
 </header>
 
-<!-- ══ P2 HERO ══ -->
-<section class="hero" id="P2-hero"><div class="wrap">
+<!-- ══ P2 HERO: ONE DIVISION, header down to the price roll ══
+     Layer order, bottom to top: video, black tint, red glow, grain, content.
+     The tint sits directly on the video so the darkening happens BEFORE any
+     colour is added, or the glow would be dimmed along with the footage. -->
+<section class="division" id="P2-hero">
+  <video class="hv" autoplay muted loop playsinline preload="metadata"
+         poster="hero-poster.jpg"><source src="hero-bg.mp4" type="video/mp4"></video>
+  <div class="hv-tint"></div>
+  <div class="hv-bloom"></div>
+  <div class="hv-grain"></div>
+
+  <div class="hero"><div class="wrap">
   <span class="pill"><i></i>Momentum Intelligence is live</span>
   <div class="h-a">Intelligent Analyst</div>
   <div class="h-b">Sharpest Entry</div>
@@ -353,9 +379,9 @@ body .fin{background:linear-gradient(180deg,#080407,#3a1020 55%,#1b0810)}
     <div class="stat"><b>3 Years +</b><span>Proven<br>Record</span></div>
     <div class="stat"><b>12 +</b><span>Countries</span></div>
   </div>
-</div>
+  </div></div>
 
-<div class="quotes"><div class="tr" id="qz"></div></div>
+  <div class="quotes"><div class="tr" id="qz"></div></div>
 </section>
 
 <!-- ══ P4 FEATURES ══ -->
