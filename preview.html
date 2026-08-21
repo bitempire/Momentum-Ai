@@ -57,9 +57,15 @@ body.crestout .lp-crest{opacity:0;transform:translateX(-50%) translateY(-16px);}
 /* NOTHING SHOWS UNTIL THE INTRO HANDS OVER. The island and the page rise
    together once the glitter has docked. */
 body.booting{overflow:hidden;}
+/* THE VIDEO LAYERS MUST HIDE DURING THE OPENING TOO. The division sits at
+   z-index 10 and the opening canvas is at 0, so without this the video and
+   its tint would paint straight over the particle animation and nobody
+   would ever see it. They fade in with everything else. */
 body.booting .isl,body.booting .hero>.wrap>*,body.booting .quotes,
+body.booting .hv,body.booting .hv-tint,body.booting .hv-bloom,body.booting .hv-grain,
 body.booting .sec,body.booting .fin,body.booting .foot{opacity:0;}
-.isl,.hero>.wrap>*,.quotes,.sec,.fin,.foot{transition:opacity 1s ease,transform 1.05s cubic-bezier(.22,.61,.36,1);}
+.isl,.hero>.wrap>*,.quotes,.hv,.hv-tint,.hv-bloom,.hv-grain,
+.sec,.fin,.foot{transition:opacity 1s ease,transform 1.05s cubic-bezier(.22,.61,.36,1);}
 body.booting .isl{transform:translateX(-50%) scaleX(.13);opacity:0;}
 body.booting .hero>.wrap>*{transform:translateY(18px);}
 .lp-skip{position:fixed;right:14px;bottom:14px;z-index:130;font-family:'Orbitron',sans-serif;
@@ -119,6 +125,7 @@ body:not(.booting) .lp-skip{display:none;}
 /* ══ P2 HERO: THE DIVISION AND ITS BACKGROUND ══ */
 .division{position:relative;overflow:hidden;z-index:10;}
 .hv{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;opacity:.55;
+ /* the booting rule overrides this to 0 and the transition brings it back */
  pointer-events:none;}
 .hv-tint{position:absolute;inset:0;z-index:1;pointer-events:none;
  background:linear-gradient(180deg,rgba(4,2,5,.86),rgba(4,2,5,.72) 40%,rgba(4,2,5,.94));}
