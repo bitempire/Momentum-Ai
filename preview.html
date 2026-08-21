@@ -171,7 +171,7 @@ body.novid .hv-still{display:block;}
 .h-b{font-size:clamp(40px,11.4vw,54px);font-weight:800;letter-spacing:-2.2px;line-height:1;margin:4px 0 0;
  background:linear-gradient(96deg,#FF6B7E,#FF1E3C);-webkit-background-clip:text;
  background-clip:text;color:transparent;}
-.sub{font-size:clamp(14px,3.9vw,16px);color:var(--tx2);line-height:1.65;margin:18px auto 0;max-width:420px;}
+.sub{font-size:clamp(11px,2.9vw,12.5px);color:var(--tx2);line-height:1.62;margin:15px auto 0;max-width:310px;}
 
 /* ── THE SIGNAL CARD: the app's own `.asg-` rules, copied verbatim ──
    THE CAROUSEL IS A GRID, NOT A FIXED HEIGHT. A fixed height was why the
@@ -182,12 +182,26 @@ body.novid .hv-still{display:block;}
 .sig .slide{grid-area:1/1;opacity:0;transform:translateX(14px);pointer-events:none;
  transition:opacity .5s ease, transform .55s cubic-bezier(.22,.61,.36,1);}
 .sig .slide.on{opacity:1;transform:none;pointer-events:auto;}
-/* G1 SOLID SWEEP. FULLY OPAQUE, no rgba: the old values were 10% colour over a
-   92% base, so the hero video showed through the card and the gradient barely
-   registered. Same diagonal, just actually visible. */
-.asg-card{position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.09);border-radius:14px;
- padding:11px;background:linear-gradient(126deg,#5E0A1C,#15151B 62%);}
-.asg-card.buy{background:linear-gradient(126deg,#04533A,#15151B 62%);}
+/* L2 DEEP GLASS. A thick pane over the hero video: 34px of blur so what shows
+   through is soft light rather than a readable picture, the colour pooled in
+   the top left corner, and a shadow inside the bottom edge for weight. The
+   gradient fades through THREE stops into a dark tint, which is what removes
+   the hard grey seam the solid version had. */
+.asg-card{position:relative;overflow:hidden;border-radius:15px;padding:11px;
+ -webkit-backdrop-filter:blur(34px) saturate(130%) brightness(.86);
+ backdrop-filter:blur(34px) saturate(130%) brightness(.86);
+ background:radial-gradient(130% 110% at 0% 0%,rgba(255,30,60,.40),rgba(255,30,60,.06) 52%,rgba(10,9,12,.55));
+ border:1px solid rgba(255,255,255,.11);
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.16), inset 0 -18px 30px -22px rgba(0,0,0,.8),
+  0 20px 44px -24px rgba(0,0,0,.95);}
+.asg-card.buy{
+ background:radial-gradient(130% 110% at 0% 0%,rgba(0,200,122,.38),rgba(0,200,122,.06) 52%,rgba(10,9,12,.55));}
+/* NO BLUR SUPPORT, MAINLY OLDER ANDROID: a transparent card with no blur is
+   exactly the washed-out look he rejected, so those get a solid card. */
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  .asg-card{background:linear-gradient(126deg,#5E0A1C,#15151B 62%);}
+  .asg-card.buy{background:linear-gradient(126deg,#04533A,#15151B 62%);}
+}
 .asg-card > *{position:relative;z-index:2;}
 .asg-top{display:flex;align-items:center;gap:9px;}
 .asg-ico{width:30px;height:30px;flex:none;border-radius:10px;display:flex;align-items:center;
@@ -203,20 +217,20 @@ body.novid .hv-still{display:block;}
    on a nearly black card; against a strong gradient a transparent box stops
    looking like a box. Black at 30% rather than a solid colour, so it darkens
    WITH whatever is behind it and one value serves both buy and sell. */
-.asg-zone{margin-top:9px;border:1px solid var(--line);border-radius:9px;padding:7px 9px;
+.asg-zone{margin-top:9px;border:1px solid rgba(255,255,255,.09);border-radius:10px;padding:7px 9px;
  display:flex;align-items:center;justify-content:space-between;position:relative;overflow:hidden;gap:8px;
- background:rgba(0,0,0,.30);}
+ background:rgba(0,0,0,.26);}
 .asg-zone .bar{position:absolute;left:0;top:0;bottom:0;width:3px;background:#3B82F6;}
 .asg-k{font-size:7.5px;color:var(--tx3);letter-spacing:.6px;flex:none;}
 .asg-v{font-family:'Orbitron',sans-serif;font-size:11.5px;min-width:0;white-space:nowrap;
  overflow:hidden;text-overflow:ellipsis;}
 .asg-two{display:flex;gap:7px;margin-top:7px;}
-.asg-two > div{flex:1 1 0;min-width:0;border:1px solid var(--line);border-radius:9px;padding:7px 9px;
- position:relative;overflow:hidden;background:rgba(0,0,0,.30);}
+.asg-two > div{flex:1 1 0;min-width:0;border:1px solid rgba(255,255,255,.09);border-radius:10px;padding:7px 9px;
+ position:relative;overflow:hidden;background:rgba(0,0,0,.26);}
 .asg-two .bar{position:absolute;left:0;top:0;bottom:0;width:3px;}
 .asg-two .asg-v{margin-top:3px;}
 .asg-rail{display:flex;align-items:center;gap:9px;margin-top:11px;min-width:0;}
-.asg-track{flex:1 1 0;min-width:0;height:3px;background:rgba(255,255,255,.16);border-radius:2px;
+.asg-track{flex:1 1 0;min-width:0;height:3px;background:rgba(255,255,255,.18);border-radius:2px;
  position:relative;}
 .asg-track i{position:absolute;top:-4px;width:2px;height:11px;border-radius:1px;display:block;}
 .asg-track u{position:absolute;top:-2px;height:7px;border-radius:3px;background:#3B82F6;display:block;
