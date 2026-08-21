@@ -661,6 +661,74 @@ html,body{background:#080407;}
  background:rgba(255,255,255,.20);transition:width .3s,background .3s,border-radius .3s;}
 #P6-results .p6-dots i.a{background:var(--red);width:18px;border-radius:3px;}
 
+
+/* ══ P7 FULL ACCESS, X2 PREMIUM CARD ══
+   THE `.fin` GRADIENT IS OVERRIDDEN HERE. This block sits at the very end of
+   the stylesheet, after the concept 3 block that rewrites `.fin`, so the
+   background finally matches P4, P5 and P6 instead of being its own thing. */
+#P7-access{position:relative;z-index:1;overflow:hidden;
+ background:#080407;padding:64px 0 58px;}
+/* THE MASK HAS TO BE RESET EXPLICITLY. `.fin:before` and this rule target the
+   SAME pseudo element. The id wins on background and opacity, but a property
+   this rule never mentions is simply inherited from the losing rule, and
+   `.fin:before` sets a radial mask that would clip the new glow into an oval.
+   THE LESSON: when you override a pseudo element that already has rules,
+   reset every property the old rule set, not just the ones you are changing. */
+#P7-access::before{content:"";position:absolute;inset:0;z-index:0;opacity:1;pointer-events:none;
+ -webkit-mask-image:none;mask-image:none;background-size:auto;
+ background:radial-gradient(120% 40% at 50% 3%,rgba(255,30,60,.30),transparent 60%),
+  radial-gradient(90% 34% at 50% 100%,rgba(120,0,26,.34),transparent 64%);}
+#P7-access::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
+ opacity:.24;mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");}
+#P7-access .p7-el{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden;}
+#P7-access .p7-rows{position:absolute;inset:0;
+ background:repeating-linear-gradient(180deg,rgba(255,255,255,.022) 0 1px,transparent 1px 7px);}
+#P7-access>.wrap{position:relative;z-index:3;}
+
+/* the heading, two lines, small and white over big and red */
+#P7-access h2{margin:20px 0 0;line-height:1.08;font-size:inherit;letter-spacing:0;}
+#P7-access h2 .l1{display:block;font-size:clamp(15px,4.2vw,20px);font-weight:600;
+ letter-spacing:.2px;color:rgba(255,255,255,.88);}
+#P7-access h2 .l2{display:block;font-family:'Orbitron',sans-serif;font-weight:900;
+ font-size:clamp(30px,8.6vw,50px);letter-spacing:-1.2px;color:var(--red);margin-top:10px;
+ text-shadow:0 0 36px rgba(255,30,60,.34);}
+
+/* ══ the card ══
+   THE BADGE IS THE ONLY THING ON THE WHOLE SITE THAT LEAVES ITS CONTAINER.
+   That is deliberate: it earns attention without another glow or animation,
+   and nothing else should copy it. */
+#P7-access .p7-card{position:relative;margin:34px auto 0;max-width:440px;
+ border-radius:26px;padding:34px 22px 26px;text-align:left;
+ border:1px solid rgba(255,255,255,.14);
+ background:radial-gradient(120% 100% at 0% 0%,rgba(255,30,60,.22),rgba(255,30,60,.07) 46%,rgba(10,8,12,.5));
+ backdrop-filter:blur(12px) saturate(126%) brightness(.94);
+ -webkit-backdrop-filter:blur(12px) saturate(126%) brightness(.94);
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.20),0 34px 70px -34px rgba(0,0,0,1);}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+ #P7-access .p7-card{background:linear-gradient(148deg,#3E101F,#22101B 42%,#120F16);}
+}
+#P7-access .p7-bdg{position:absolute;left:50%;top:0;transform:translate(-50%,-50%);
+ display:inline-flex;align-items:center;gap:7px;padding:6px 14px 6px 11px;border-radius:999px;
+ background:linear-gradient(135deg,#FFD37A,#F0B232 46%,#C98614);color:#231502;
+ font-family:'Orbitron',sans-serif;font-size:10px;font-weight:800;letter-spacing:1.6px;
+ white-space:nowrap;z-index:2;
+ box-shadow:0 8px 22px -10px rgba(0,0,0,.9),inset 0 1px 0 rgba(255,255,255,.45);}
+#P7-access .p7-bdg svg{width:13px;height:13px;display:block;}
+#P7-access .p7-lip{position:absolute;left:16%;right:16%;top:-1px;height:1px;
+ background:linear-gradient(90deg,transparent,rgba(240,178,50,.55),transparent);}
+
+/* the six items become rows inside the card, not tiles beside it */
+#P7-access .perks{display:block;margin-top:18px;}
+#P7-access .perk{display:flex;align-items:center;gap:11px;padding:12px 2px;
+ border:0;border-radius:0;background:none;
+ font-size:13.5px;color:rgba(244,247,250,.88);}
+#P7-access .perk+.perk{border-top:1px solid rgba(255,255,255,.07);}
+#P7-access .perk i{width:19px;height:19px;border-radius:50%;flex:none;background:rgba(255,30,60,.16);
+ border:1px solid rgba(255,30,60,.42);display:flex;align-items:center;justify-content:center;}
+#P7-access .perk i svg{width:11px;height:11px;display:block;color:var(--red-soft);}
+#P7-access .p7-card .cta{width:100%;margin-top:24px;justify-content:center;}
+#P7-access .p7-card .note{margin:14px auto 0;max-width:none;text-align:center;}
+
 @media (prefers-reduced-motion:reduce){*{animation:none!important}}
 </style>
 </head>
@@ -803,14 +871,20 @@ html,body{background:#080407;}
 </div></section>
 
 <!-- ══ P7 FULL ACCESS ══ -->
-<section class="fin" id="P7-access"><div class="wrap">
+<section class="fin" id="P7-access">
+  <div class="p7-el"><span class="p7-rows"></span></div>
+  <div class="wrap">
   <span class="pill">&#10022;&nbsp; Akses Penuh</span>
-  <h2>Mulakan Trade Lebih Smart Dengan <span class="a">Momentum Intelligence</span></h2>
+  <h2><span class="l1">Mulakan Trade Lebih Intelligent Dengan</span><span class="l2">Momentum Intelligence</span></h2>
   <p class="lead">Sertai komuniti trader yang trade dengan lebih jelas, tersusun dan confident.
     Akses penuh ke AI trading system, weekly education dan 24/5 support.</p>
-  <div style="margin-top:30px"><button class="cta">Mula Sekarang <span>&rarr;</span></button></div>
-  <p class="note">Anda akan dibawa ke halaman pendaftaran Momentum AI untuk dapatkan akses penuh.</p>
-  <div class="perks" id="perks"></div>
+  <div class="p7-card">
+    <span class="p7-bdg"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 8l4.2 3.1L12 4l4.8 7.1L21 8l-1.7 10H4.7z"/></svg>PREMIUM</span>
+    <span class="p7-lip"></span>
+    <div class="perks" id="perks"></div>
+    <button class="cta">Mula Sekarang <span>&rarr;</span></button>
+    <p class="note">Anda akan dibawa ke halaman pendaftaran Momentum AI untuk dapatkan akses penuh.</p>
+  </div>
 </div></section>
 
 <!-- ══ P8 FOOTER ══ -->
@@ -1277,9 +1351,13 @@ var S=[
  window.p5Go=go;
 })();
 
-var P=['FREE Momentum Signal','FREE Smart Journal','FREE Market Scanner','Weekly News Calendar',
-       'Smart Tool Automation','24/5 Live Support'];
-document.getElementById('perks').innerHTML=P.map(function(p){return '<div class="perk"><i></i>'+p+'</div>';}).join('');
+/* his six, in his words. NO APOSTROPHES, these are single quoted strings. */
+var P=['Free 20++ Signal per Day','Free AI Market Scanner','Free Risk Management Tools',
+       'Free Intelligent Journal','Free News Alert','24/7 Live Support'];
+var P_TICK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" '+
+ 'stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5.2 5.2L20 6.5"/></svg>';
+document.getElementById('perks').innerHTML=P.map(function(p){
+ return '<div class="perk"><i>'+P_TICK+'</i>'+p+'</div>';}).join('');
 
 /* ══ P6 RESULTS CAROUSEL ══
    SLIDES is the whole contract with the admin panel. In the built version it
