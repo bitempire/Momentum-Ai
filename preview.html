@@ -381,8 +381,6 @@ body.novid .hv-still{display:block;}
 .foot{padding:40px 0 46px;text-align:center;border-top:1px solid var(--line)}
 .foot .b{display:flex;align-items:center;justify-content:center;gap:9px}
 .foot .c{font-size:14px;color:var(--tx2)}
-.foot .tl{font-size:13.5px;color:var(--tx3);margin-top:16px}
-.foot .tl b{color:var(--red)}
 
 /* ═══════════ CONCEPT 3 THEME, DE-FANGED ═══════════
    These were `body.c3 X` in the three-concept file. Extracting the concept
@@ -736,6 +734,29 @@ html,body{background:#080407;}
 #P7-access .p7-card .cta{width:100%;margin-top:24px;justify-content:center;}
 #P7-access .p7-card .note{margin:14px auto 0;max-width:none;text-align:center;}
 
+
+/* ══ P8 FOOTER ══
+   WAS 137px, NOW ABOUT 78px. Two thirds of that came off the padding, which
+   was 40 top and 46 bottom, and the rest from dropping the tagline: his
+   layout is two lines and there was no room for a third.
+
+   Z-INDEX 1 RATHER THAN THE 10 THE SHARED RULE GIVES IT, deliberately, so
+   the footer sits under .lp-vig like P4 through P7 and the whole lower page
+   reads as one surface. THE GLOW IS AT ABOUT A THIRD of the strength used
+   elsewhere: a footer that glows as hard as the hero pulls the eye back down
+   at the moment it should be going up to the button above it. */
+#P8-footer{position:relative;z-index:1;overflow:hidden;background:#080407;
+ padding:20px 0 22px;text-align:center;border-top:1px solid var(--line);}
+#P8-footer::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+ background:radial-gradient(90% 120% at 50% 0%,rgba(255,30,60,.13),transparent 62%);}
+#P8-footer::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+ opacity:.20;mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");}
+#P8-footer>.wrap{position:relative;z-index:2;}
+#P8-footer .b{display:flex;align-items:center;justify-content:center;gap:10px;}
+#P8-footer .sep{color:var(--tx3);}
+#P8-footer .c{font-size:13px;color:var(--tx);font-weight:600;letter-spacing:-.1px;}
+#P8-footer .p{font-size:11px;color:var(--tx3);margin-top:7px;letter-spacing:.3px;}
+
 @media (prefers-reduced-motion:reduce){*{animation:none!important}}
 </style>
 </head>
@@ -896,9 +917,10 @@ html,body{background:#080407;}
 
 <!-- ══ P8 FOOTER ══ -->
 <footer class="foot" id="P8-footer"><div class="wrap">
-  <div class="b"><span class="mk" style="width:20px;height:20px"></span>
-    <span class="c">Momentum Intelligence &middot; &copy; 2026</span></div>
-  <div class="tl"><b>&#8599;</b> Trade smart. Trade beyond emotion.</div>
+  <div class="b"><span class="mk" style="width:19px;height:19px"></span>
+    <span class="sep">|</span>
+    <span class="c">Momentum AI &copy; 2026</span></div>
+  <div class="p">Powered by Bitempire Sdn Bhd</div>
 </div></footer>
 
 <script>
