@@ -6107,6 +6107,45 @@ html[data-theme="light"] .adm-nb.on i,html[data-theme="light"] .adm-nb.on span{c
         </div>
       </div>
 
+    <!-- ══ RESULTS (21 Aug 2026) ══
+         The pictures behind "Apa Kata Trader" on maimomentum.com. Built on the
+         banners panel because it is the same job, so every class here already
+         exists and no CSS was added. -->
+    <div id="atab-content-results" style="display:none;">
+        <div class="ann-seg">
+          <button onclick="mmResOpen()">Add</button>
+          <button id="res-seg-live" class="on" onclick="mmResClose()">Live</button>
+        </div>
+        <button class="ann-new" onclick="mmResOpen()">ADD RESULT PICTURE</button>
+        <div id="admin-result-list"><div class="bpr-empty">Loading...</div></div>
+        <div class="bpr-hint">Order here is the order visitors swipe through on the website. Switching one off keeps it here but takes it off the site. Deleting removes the picture from storage as well.</div>
+
+        <div class="ann-cmp" id="res-cmp">
+          <div class="hd">
+            <button class="sub-back" onclick="mmResClose()"><i class="ti ti-arrow-left"></i></button>
+            <div class="t">ADD RESULT PICTURE</div>
+          </div>
+          <div class="ann-body">
+            <div id="res-drop" style="border:1.5px dashed rgba(255,255,255,.18);border-radius:14px;padding:22px 16px;text-align:center;cursor:pointer;background:linear-gradient(150deg,rgba(255,30,60,.10),rgba(255,255,255,.01));">
+              <div style="font-size:22px;color:var(--red);"><i class="ti ti-cloud-upload"></i></div>
+              <div style="font-size:12.5px;color:var(--text);font-weight:700;margin-top:8px;">Drop a picture here, or tap to choose</div>
+              <div style="font-size:10.5px;color:var(--text3);margin-top:5px;">JPG, PNG or WebP &middot; at least 600px wide &middot; up to 600 KB</div>
+              <input type="file" id="res-file" accept="image/jpeg,image/png,image/webp" style="display:none;">
+            </div>
+            <div id="res-spec" style="margin-top:12px;border:1px solid var(--border);border-radius:11px;overflow:hidden;"></div>
+            <div id="res-verdict" style="display:none;margin-top:10px;border-radius:11px;padding:11px 13px;font-size:12px;line-height:1.6;"></div>
+            <div id="res-prev" style="margin-top:12px;border-radius:12px;overflow:hidden;border:1px solid var(--border);aspect-ratio:4/5;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--text3);">Preview appears here</div>
+            <div style="margin-top:10px;border:1px solid rgba(255,176,32,.3);background:rgba(255,176,32,.07);border-radius:11px;padding:10px 12px;font-size:11px;line-height:1.6;color:var(--amber);">
+              If this is a screenshot from a real account, crop out the account number and the balance before you upload it.
+            </div>
+          </div>
+          <div class="ann-foot">
+            <button id="res-save" onclick="mmResSave()" class="auth-btn" style="opacity:.45;" disabled>Add picture</button>
+            <div style="font-size:10px;color:var(--text3);margin-top:8px;line-height:1.5;">The button stays off until every check passes, so a wrong file never reaches storage.</div>
+          </div>
+        </div>
+      </div>
+
     </div>
   
     <!-- MORE: the eight tabs that are not on the pill -->
@@ -6116,6 +6155,7 @@ html[data-theme="light"] .adm-nb.on i,html[data-theme="light"] .adm-nb.on span{c
       <div class="adm-group">
       <div class="adm-mrow" onclick="mmAdmNav('announce')"><i class="ti ti-speakerphone"></i><b>Announce</b><span class="ch"><i class="ti ti-chevron-right"></i></span></div>
       <div class="adm-mrow" onclick="mmAdmNav('banners')"><i class="ti ti-photo"></i><b>Banners</b><span class="ch"><i class="ti ti-chevron-right"></i></span></div>
+      <div class="adm-mrow" onclick="mmAdmNav('results')"><i class="ti ti-trophy"></i><b>Results</b><span class="ch"><i class="ti ti-chevron-right"></i></span></div>
       <div class="adm-mrow" onclick="mmAdmNav('academy')"><i class="ti ti-school"></i><b>Academy</b><span class="ch"><i class="ti ti-chevron-right"></i></span></div>
       <div class="adm-mrow" onclick="mmAdmNav('promo')"><i class="ti ti-ticket"></i><b>Promo</b><span class="ch"><i class="ti ti-chevron-right"></i></span></div>
       </div>
@@ -17399,7 +17439,7 @@ async function admDeleteTpl(id, name){
 }
 
 function switchAdminTab(tab) {
-  var tabs = ['dashboard','users','tickets','funds','announce','signals','templates','mt5','analyst','academy','banners','promo'];
+  var tabs = ['dashboard','users','tickets','funds','announce','signals','templates','mt5','analyst','academy','banners','results','promo'];
   tabs.forEach(function(t) {
     // Support both old id-based and new data-tab-based buttons
     var btn = document.getElementById('atab-' + t) ||
@@ -17423,6 +17463,7 @@ function switchAdminTab(tab) {
   if(tab === 'templates') loadAdminTemplates();
   if(tab === 'academy') loadAdminAcademy();
   if(tab === 'banners') { loadAdminBanners(); wireBannerPicker(); }
+  if(tab === 'results') { loadAdminResults(); wireResultPicker(); }
   if(tab === 'promo') loadAdminPromos();
   if(tab === 'announce') loadAdminAnnouncements();
   if(tab === 'signals') loadAdminSignals();
@@ -20642,6 +20683,7 @@ var MMTM_TABS = [
   {k:'academy',   n:'Academy',   i:'ti-school'},
   {k:'templates', n:'Templates', i:'ti-template'},
   {k:'banners',   n:'Banners',   i:'ti-photo'},
+  {k:'results',   n:'Results',   i:'ti-trophy'},
   {k:'promo',     n:'Promo',     i:'ti-ticket'},
   {k:'analyst',   n:'Administrator', i:'ti-shield-lock'}
 ];
@@ -21395,6 +21437,222 @@ async function uploadBannerImage(file){
   return path;
 }
 function bannerPublicUrl(path){ return SUPABASE_URL+'/storage/v1/object/public/banners/'+path; }
+
+// ══ RESULTS (21 Aug 2026) ═══════════════════════════════════════════════
+// The pictures behind "Apa Kata Trader" on the website. Everything below is
+// the banner code with three deliberate differences, each noted where it is.
+//
+// DIFFERENCE ONE: NO EXACT DIMENSIONS. A banner is artwork he draws to a
+// spec. A result is a screenshot he is sent, and every phone crops
+// differently, so requiring 1200 x 525 would reject almost everything. The
+// gate checks type, a minimum width so a thumbnail cannot get through, and a
+// size ceiling. The website frame is 4:5 with object-fit cover, so shape does
+// not matter.
+var RES_SPEC = { minW:600, maxKB:600, types:['image/jpeg','image/png','image/webp'] };
+var _resFile = null, _resWired = false;
+
+function resRow(k, label, val, state){
+  var col = state==='ok' ? 'var(--green)' : state==='bad' ? 'var(--red)' : 'var(--text3)';
+  var mark = state==='ok' ? '&#10003;' : state==='bad' ? '&#10007;' : '&#9675;';
+  return '<div style="display:flex;align-items:center;gap:10px;padding:9px 12px;font-size:12px;'
+    + 'border-bottom:1px solid var(--border);">'
+    + '<span style="width:16px;text-align:center;color:'+col+'">'+mark+'</span>'
+    + '<span style="flex:1;color:var(--text)">'+label+'</span>'
+    + '<span style="font-family:ui-monospace,Menlo,monospace;font-size:11.5px;color:'+col+'">'+val+'</span></div>';
+}
+function resResetForm(){
+  _resFile=null;
+  var sp=document.getElementById('res-spec');
+  if(sp) sp.innerHTML = resRow('type','File type','JPG, PNG or WebP','')
+                      + resRow('dim','Width','600px or wider','')
+                      + resRow('size','File size','600 KB or less','');
+  var v=document.getElementById('res-verdict'); if(v){ v.style.display='none'; v.innerHTML=''; }
+  var p=document.getElementById('res-prev'); if(p) p.innerHTML='Preview appears here';
+  var b=document.getElementById('res-save'); if(b){ b.disabled=true; b.style.opacity='.45'; }
+  var f=document.getElementById('res-file'); if(f) f.value='';
+}
+function resCheck(f){
+  if(!f) return;
+  resResetForm();
+  var fails=[];
+  var typeOk = RES_SPEC.types.indexOf(f.type) >= 0;
+  var kb = Math.round(f.size/1024);
+  var sizeOk = kb <= RES_SPEC.maxKB;
+  if(!typeOk) fails.push('it is not a JPG, PNG or WebP');
+  if(!sizeOk) fails.push('it is '+kb+' KB, over the '+RES_SPEC.maxKB+' KB limit');
+  var url = URL.createObjectURL(f);
+  var img = new Image();
+  img.onload = function(){
+    var w=img.naturalWidth, h2=img.naturalHeight;
+    var dimOk = (w >= RES_SPEC.minW);
+    if(!dimOk) fails.push('it is only '+w+'px wide, under '+RES_SPEC.minW+'px');
+    var sp=document.getElementById('res-spec');
+    if(sp) sp.innerHTML = resRow('type','File type', (f.type||'unknown').replace('image/',''), typeOk?'ok':'bad')
+                        + resRow('dim','Width', w+' x '+h2, dimOk?'ok':'bad')
+                        + resRow('size','File size', kb+' KB', sizeOk?'ok':'bad');
+    var p=document.getElementById('res-prev');
+    if(p) p.innerHTML='<img src="'+url+'" style="width:100%;height:100%;object-fit:cover;display:block;">';
+    var v=document.getElementById('res-verdict');
+    var ok = typeOk && sizeOk && dimOk;
+    if(v){
+      v.style.display='block';
+      v.style.background = ok ? 'rgba(0,200,122,.10)' : 'rgba(255,30,60,.10)';
+      v.style.color = ok ? 'var(--green)' : 'var(--red)';
+      v.innerHTML = ok ? 'Ready to add. The website crops it to 4:5 without stretching.'
+                       : 'Cannot use this picture because '+fails.join(', and ')+'.';
+    }
+    var b=document.getElementById('res-save');
+    if(b){ b.disabled = !ok; b.style.opacity = ok ? '1' : '.45'; }
+    _resFile = ok ? f : null;
+  };
+  img.onerror = function(){
+    var v=document.getElementById('res-verdict');
+    if(v){ v.style.display='block'; v.style.background='rgba(255,30,60,.10)';
+           v.style.color='var(--red)'; v.innerHTML='That file could not be read as a picture.'; }
+    _resFile=null;
+  };
+  img.src = url;
+}
+function wireResultPicker(){
+  if(_resWired) return;
+  var drop=document.getElementById('res-drop'), file=document.getElementById('res-file');
+  if(!drop || !file) return;
+  _resWired = true;
+  drop.addEventListener('click', function(){ file.click(); });
+  file.addEventListener('change', function(){ resCheck(this.files && this.files[0]); });
+  ['dragenter','dragover'].forEach(function(e){
+    drop.addEventListener(e, function(ev){ ev.preventDefault(); drop.style.borderColor='var(--red)'; });
+  });
+  ['dragleave','drop'].forEach(function(e){
+    drop.addEventListener(e, function(ev){ ev.preventDefault(); drop.style.borderColor='rgba(255,255,255,.18)'; });
+  });
+  drop.addEventListener('drop', function(ev){
+    resCheck(ev.dataTransfer && ev.dataTransfer.files && ev.dataTransfer.files[0]);
+  });
+  resResetForm();
+}
+function mmResOpen(){
+  var c=document.getElementById('res-cmp');
+  if(!c) return;
+  wireResultPicker(); resResetForm();
+  c.classList.add('on');
+  requestAnimationFrame(function(){ requestAnimationFrame(function(){ c.classList.add('show'); }); });
+}
+function mmResClose(){
+  var c=document.getElementById('res-cmp');
+  if(!c) return;
+  c.classList.remove('show');
+  setTimeout(function(){ c.classList.remove('on'); }, 200);
+}
+async function uploadResultImage(file){
+  var ext=((file.name||'img').split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'')||'jpg';
+  var path=Date.now()+'_'+Math.random().toString(36).slice(2,8)+'.'+ext;
+  // Storage has its own RLS. Send the user JWT, same as the banner upload.
+  var _js = await mmaiAuthJwtFresh();
+  var _hs = {'apikey':SUPABASE_ANON_KEY,'Content-Type':file.type||'image/jpeg','x-upsert':'true'};
+  if(_js) _hs['Authorization'] = 'Bearer ' + _js;
+  var res=await fetch(SUPABASE_URL+'/storage/v1/object/results/'+path,{method:'POST',headers:_hs,body:file});
+  if(!res.ok){ var t=''; try{t=await res.text();}catch(e){} throw new Error((res.status||'')+' '+(t||'upload failed')); }
+  return path;
+}
+function resultPublicUrl(path){ return SUPABASE_URL+'/storage/v1/object/public/results/'+path; }
+
+async function mmResSave(){
+  if(!_resFile) return;
+  var btn=document.getElementById('res-save');
+  if(btn){ btn.disabled=true; btn.textContent='Uploading...'; }
+  try{
+    var path=await uploadResultImage(_resFile);
+    var maxr=await db.from('site_results').select('sort_order').order('sort_order',{ascending:false}).limit(1);
+    var next=(maxr.data && maxr.data[0] && typeof maxr.data[0].sort_order==='number') ? maxr.data[0].sort_order+1 : 0;
+    var ins=await db.from('site_results').insert([{image_path:path, sort_order:next, active:true}]);
+    if(ins.error) throw ins.error;
+    mmResClose();
+    try{ loadAdminResults(); }catch(e){}
+  }catch(e){
+    alert('Could not add that: '+(e.message||e));
+  }finally{
+    if(btn){ btn.disabled=false; btn.textContent='Add picture'; }
+  }
+}
+
+async function loadAdminResults(){
+  var wrap = document.getElementById('admin-result-list');
+  if(!wrap || !db) return;
+  try{
+    var r = await db.from('site_results').select('*').order('sort_order',{ascending:true});
+    if(r.error) throw r.error;
+    var rows = r.data || [];
+    var seg = document.getElementById('res-seg-live');
+    if(seg) seg.textContent = 'Live ' + rows.filter(function(b){ return b.active; }).length;
+    if(!rows.length){
+      wrap.innerHTML = '<div class="bpr-empty"><span class="ann-ring"><i class="ti ti-trophy"></i></span>' +
+        'No result pictures yet<span style="font-size:9.5px;color:var(--text3)">The website shows its own message until you add one</span></div>';
+      return;
+    }
+    wrap.innerHTML = rows.map(function(b, i){
+      var on = !!b.active;
+      var col = on ? '#00c87a' : '#6A7280';
+      // DIFFERENCE TWO: A TALLER THUMBNAIL. A banner is 16:7, a result is 4:5,
+      // so the row uses its own aspect ratio inline rather than .bpr-th's.
+      return '<div class="bpr-bn"><span class="edge" style="background:' + col + '"></span>' +
+        '<span class="bpr-ord">' + (i + 1) + '</span>' +
+        '<span class="bpr-th" style="width:38px;aspect-ratio:4/5;"><img src="' + resultPublicUrl(b.image_path) + '" alt=""></span>' +
+        '<span class="bpr-bd"><b>' + (on ? 'Showing' : 'Hidden') + '</b>' +
+          '<s>' + mmTkEsc(b.image_path || '') + '</s></span>' +
+        '<span class="bpr-arrows">' +
+          '<button onclick="moveResult(\'' + b.id + '\',-1)"' + (i === 0 ? ' disabled' : '') + '>&#9650;</button>' +
+          '<button onclick="moveResult(\'' + b.id + '\',1)"' + (i === rows.length - 1 ? ' disabled' : '') + '>&#9660;</button>' +
+        '</span>' +
+        '<button class="bpr-tog ' + (on ? 'on' : 'off') + '" onclick="toggleResult(\'' + b.id + '\',' + (!on) + ')"><i></i></button>' +
+        '<button onclick="deleteResult(\'' + b.id + '\',\'' + b.image_path + '\')" style="background:transparent;border:0;color:rgba(255,30,60,.7);font-size:14px;cursor:pointer;padding:2px 4px;flex:none;">&#10005;</button>' +
+      '</div>';
+    }).join('');
+  }catch(e){
+    wrap.innerHTML = '<div class="bpr-empty">Could not load: ' + (e.message || e) + '</div>';
+  }
+}
+async function toggleResult(id, on){
+  try{
+    var r=await db.from('site_results').update({active:on}).eq('id',id);
+    if(r.error) throw r.error;
+    loadAdminResults();
+  }catch(e){ alert('Could not change that: '+(e.message||e)); }
+}
+async function moveResult(id, dir){
+  try{
+    var r=await db.from('site_results').select('*').order('sort_order',{ascending:true});
+    if(r.error) throw r.error;
+    var rows=r.data||[], i=-1;
+    for(var k=0;k<rows.length;k++){ if(rows[k].id===id) i=k; }
+    var j=i+dir;
+    if(i<0 || j<0 || j>=rows.length) return;
+    var a=rows[i], b=rows[j];
+    await db.from('site_results').update({sort_order:b.sort_order}).eq('id',a.id);
+    await db.from('site_results').update({sort_order:a.sort_order}).eq('id',b.id);
+    loadAdminResults();
+  }catch(e){ alert('Could not reorder: '+(e.message||e)); }
+}
+// DIFFERENCE THREE: DELETE ALSO REMOVES THE FILE. Banners have no delete at
+// all, so nothing in the app does this yet. THE ROW GOES FIRST. If the row
+// were removed after the file, a failure between the two would leave a row
+// pointing at a picture that no longer exists, and the website would show a
+// broken image. This way the worst case is an orphaned file, which costs a
+// little storage and shows nobody anything.
+async function deleteResult(id, path){
+  if(!confirm('Delete this picture? It comes off the website and out of storage.')) return;
+  try{
+    var r=await db.from('site_results').delete().eq('id',id);
+    if(r.error) throw r.error;
+    loadAdminResults();
+    try{
+      var _js = await mmaiAuthJwtFresh();
+      var _hs = {'apikey':SUPABASE_ANON_KEY};
+      if(_js) _hs['Authorization'] = 'Bearer ' + _js;
+      await fetch(SUPABASE_URL+'/storage/v1/object/results/'+path,{method:'DELETE',headers:_hs});
+    }catch(e){}
+  }catch(e){ alert('Could not delete that: '+(e.message||e)); }
+}
 
 // ── THE CAROUSEL ON THE MORE SCREEN ───────────────────────────────────────
 // Four things here are deliberate and each is a defect if removed. The block
