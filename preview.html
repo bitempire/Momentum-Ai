@@ -296,9 +296,6 @@ body.novid .hv-still{display:block;}
 .card .ic svg{width:26px;height:26px}
 .card h3{font-size:21px;font-weight:700;margin:0;letter-spacing:-.4px}
 .card p{font-size:14.5px;color:var(--tx2);line-height:1.7;margin:11px 0 0}
-.card .tg{display:flex;align-items:center;gap:12px;margin-top:20px}
-.card .tg i{width:34px;height:1px;background:var(--red);display:block}
-.card .tg span{font-size:11.5px;letter-spacing:1.6px;color:var(--red);font-weight:600}
 
 /* ── P4 PHONE SHOWCASE, T2 TURNTABLE ──
    Three app screens on a turntable, one place every four seconds. The active
@@ -446,6 +443,35 @@ html,body{background:#080407;}
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
  #P4-features .card{background:linear-gradient(148deg,#3E101F,#22101B 42%,#120F16);}
 }
+
+/* ══ I4 RIM TILE, F3 CRIMSON FILL ══
+   The tile keeps its 64px box and 20px radius from the block above. What is
+   added is a light travelling round the edge.
+   THE FILL IS DERIVED FROM THE BRAND HUE AND MEASURED, not eyeballed. The
+   first version of this tile was typed by hand and measured at hue 322 and
+   300, a dark purple, against the brand's 351. These two land at 351.3 and
+   351.1, and they are lifted to L27 and L17 so the tile sits ON the card
+   rather than reading as a hole punched through it.
+   NO will-change HERE ON PURPOSE: a permanently running transform animation
+   already gets its own compositor layer, so will-change would only pin six
+   more layers in memory for nothing. */
+#P4-features .card .ic{position:relative;overflow:hidden;color:#fff;
+ border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.045);
+ box-shadow:0 10px 22px -12px rgba(255,30,60,.55);}
+#P4-features .card .ic .mv{position:absolute;inset:-60%;z-index:0;
+ background:conic-gradient(from 0deg,rgba(255,30,60,0) 0deg,#FF1E3C 46deg,#FF5F78 66deg,
+  rgba(255,30,60,0) 112deg,rgba(255,30,60,0) 360deg);
+ animation:mmRim 5s linear infinite;}
+@keyframes mmRim{to{transform:rotate(360deg)}}
+/* inset 2px against a 20px radius leaves an 18px radius, or the corners of
+   the cover would not follow the corners of the tile */
+#P4-features .card .ic .cut{position:absolute;inset:2px;z-index:1;border-radius:18px;
+ background:linear-gradient(150deg,#791120,#4A0D16);}
+#P4-features .card .ic .gl{position:absolute;inset:0;z-index:2;pointer-events:none;
+ border-radius:inherit;
+ background:linear-gradient(150deg,rgba(255,255,255,.24),rgba(255,255,255,.04) 42%,rgba(255,255,255,0) 62%);}
+#P4-features .card .ic svg{position:relative;z-index:3;
+ filter:drop-shadow(0 1px 3px rgba(0,0,0,.55));}
 
 @media (prefers-reduced-motion:reduce){*{animation:none!important}}
 </style>
@@ -972,9 +998,14 @@ var F=[
  ['bolt','One Tap MT5','Hantar signal terus ke akaun MT5 anda sendiri. Tiada lagi taip harga satu-satu.'],
  ['cal','News Calendar','Event ekonomi terus dari MetaTrader, dengan reminder sebelum news high impact.']
 ];
+/* the icon tile carries three layers: .mv is the light running round the
+   edge, .cut covers the middle and leaves only the rim showing, .gl is the
+   fixed glass sheen. The P5 step cards below build a plain .ic with none of
+   these, which is why the tile CSS is scoped to #P4-features. */
 document.getElementById('cards').innerHTML=F.map(function(f){
- return '<div class="card"><div class="ic">'+svg(f[0])+'</div><h3>'+f[1]+'</h3><p>'+f[2]+
-  '</p><div class="tg"><i></i><span>MOMENTUM</span></div></div>';}).join('');
+ return '<div class="card"><div class="ic">'+
+  '<span class="mv"></span><span class="cut"></span><span class="gl"></span>'+
+  svg(f[0])+'</div><h3>'+f[1]+'</h3><p>'+f[2]+'</p></div>';}).join('');
 
 var S=[
  ['plug','01 &middot; Sambung','Buka akaun dengan Asia Future Trading dan sambung MT5 anda dalam beberapa minit.'],
