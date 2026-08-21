@@ -400,6 +400,53 @@ html,body{background:#080407;}
  box-shadow:0 14px 30px -14px rgba(255,30,60,.9);}
 .sec{padding:78px 0;}
 .fin{background:linear-gradient(180deg,#080407,#3a1020 55%,#1b0810);}
+
+/* ══ P4 BACKGROUND (B2) AND CARDS (C2) ══
+   THIS SITS AT THE VERY END OF THE STYLESHEET ON PURPOSE. The concept 3
+   block above rewrites `.card` and `.card .ic`, so a rule placed before it
+   would be silently overridden, which is the trap that cost four rounds on
+   the hero padding. Everything here is scoped to #P4-features, so the P5
+   step cards are untouched. */
+#P4-features{position:relative;z-index:1;background:#080407;}
+/* THE HERO WITHOUT THE VIDEO IS THESE TWO LAYERS AND NOTHING ELSE. Take the
+   footage away and the black tint over black is just black, so the glow and
+   the grain are all that carry the hero's identity. Same shapes as
+   .hv-bloom, pushed a little stronger because there is no footage
+   underneath adding light of its own. */
+#P4-features::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+ background:radial-gradient(120% 52% at 50% 4%,rgba(255,30,60,.32),transparent 60%),
+  radial-gradient(90% 40% at 50% 100%,rgba(120,0,26,.34),transparent 64%);}
+/* the grain goes ABOVE the glow for the same reason it does in the hero: it
+   is what stops the gradient banding into stripes on an OLED phone, and
+   that only works if it is the top layer. Copied from .hv-grain. */
+#P4-features::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+ opacity:.24;mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");}
+#P4-features>.wrap{position:relative;z-index:2;}
+
+/* C2 LIGHT GLASS. 12px and not 24px, and the reason is measurable: a
+   backdrop blur only shows its work where there is detail behind it to
+   smear. Behind these cards there is a smooth gradient and the grain, and
+   12px already dissolves the grain completely, so a wider radius costs
+   about four times as much and shows almost nothing. The hero's signal card
+   has a playing video behind it, which is why 34px earns its keep there. */
+#P4-features .card{border:1px solid rgba(255,255,255,.13);
+ background:radial-gradient(120% 100% at 0% 0%,rgba(255,30,60,.22),rgba(255,30,60,.07) 46%,rgba(10,8,12,.34));
+ backdrop-filter:blur(12px) saturate(126%) brightness(.92);
+ -webkit-backdrop-filter:blur(12px) saturate(126%) brightness(.92);
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.17),
+  inset 0 -20px 28px -24px rgba(0,0,0,.85),
+  0 24px 50px -34px rgba(0,0,0,.9);}
+/* the shared .card:hover sets a red border, but an id beats it, so the
+   hover has to be restated here or it stops working on desktop */
+#P4-features .card:hover{border-color:rgba(255,255,255,.26);}
+#P4-features .card .ic{border:1px solid rgba(255,255,255,.17);
+ background:rgba(255,255,255,.09);color:#fff;box-shadow:none;}
+/* a browser with no backdrop-filter gets a solid card, never a see-through
+   one with nothing behind it */
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+ #P4-features .card{background:linear-gradient(148deg,#3E101F,#22101B 42%,#120F16);}
+}
+
 @media (prefers-reduced-motion:reduce){*{animation:none!important}}
 </style>
 </head>
