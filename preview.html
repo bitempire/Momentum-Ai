@@ -182,9 +182,12 @@ body.novid .hv-still{display:block;}
 .sig .slide{grid-area:1/1;opacity:0;transform:translateX(14px);pointer-events:none;
  transition:opacity .5s ease, transform .55s cubic-bezier(.22,.61,.36,1);}
 .sig .slide.on{opacity:1;transform:none;pointer-events:auto;}
+/* G1 SOLID SWEEP. FULLY OPAQUE, no rgba: the old values were 10% colour over a
+   92% base, so the hero video showed through the card and the gradient barely
+   registered. Same diagonal, just actually visible. */
 .asg-card{position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.09);border-radius:14px;
- padding:11px;background:linear-gradient(126deg,rgba(255,30,60,.10),rgba(20,20,26,.92));}
-.asg-card.buy{background:linear-gradient(126deg,rgba(0,200,122,.10),rgba(20,20,26,.92));}
+ padding:11px;background:linear-gradient(126deg,#5E0A1C,#15151B 62%);}
+.asg-card.buy{background:linear-gradient(126deg,#04533A,#15151B 62%);}
 .asg-card > *{position:relative;z-index:2;}
 .asg-top{display:flex;align-items:center;gap:9px;}
 .asg-ico{width:30px;height:30px;flex:none;border-radius:10px;display:flex;align-items:center;
@@ -196,19 +199,24 @@ body.novid .hv-still{display:block;}
  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .asg-side{font-size:8px;font-weight:800;letter-spacing:.5px;padding:4px 9px;border-radius:999px;
  border:1px solid;flex:none;}
+/* THE INNER BOXES GET THEIR OWN BACKING. They were transparent, which read fine
+   on a nearly black card; against a strong gradient a transparent box stops
+   looking like a box. Black at 30% rather than a solid colour, so it darkens
+   WITH whatever is behind it and one value serves both buy and sell. */
 .asg-zone{margin-top:9px;border:1px solid var(--line);border-radius:9px;padding:7px 9px;
- display:flex;align-items:center;justify-content:space-between;position:relative;overflow:hidden;gap:8px;}
+ display:flex;align-items:center;justify-content:space-between;position:relative;overflow:hidden;gap:8px;
+ background:rgba(0,0,0,.30);}
 .asg-zone .bar{position:absolute;left:0;top:0;bottom:0;width:3px;background:#3B82F6;}
 .asg-k{font-size:7.5px;color:var(--tx3);letter-spacing:.6px;flex:none;}
 .asg-v{font-family:'Orbitron',sans-serif;font-size:11.5px;min-width:0;white-space:nowrap;
  overflow:hidden;text-overflow:ellipsis;}
 .asg-two{display:flex;gap:7px;margin-top:7px;}
 .asg-two > div{flex:1 1 0;min-width:0;border:1px solid var(--line);border-radius:9px;padding:7px 9px;
- position:relative;overflow:hidden;}
+ position:relative;overflow:hidden;background:rgba(0,0,0,.30);}
 .asg-two .bar{position:absolute;left:0;top:0;bottom:0;width:3px;}
 .asg-two .asg-v{margin-top:3px;}
 .asg-rail{display:flex;align-items:center;gap:9px;margin-top:11px;min-width:0;}
-.asg-track{flex:1 1 0;min-width:0;height:3px;background:rgba(255,255,255,.10);border-radius:2px;
+.asg-track{flex:1 1 0;min-width:0;height:3px;background:rgba(255,255,255,.16);border-radius:2px;
  position:relative;}
 .asg-track i{position:absolute;top:-4px;width:2px;height:11px;border-radius:1px;display:block;}
 .asg-track u{position:absolute;top:-2px;height:7px;border-radius:3px;background:#3B82F6;display:block;
