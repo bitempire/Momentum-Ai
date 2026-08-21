@@ -637,7 +637,9 @@ html,body{background:#080407;}
    a desktop screen made it about 1400px tall, which is the enormous empty box
    in his screenshot. The cap keeps it sensible on both. */
 #P6-results .car{max-width:360px;margin:30px auto 0;}
-#P6-results .car .fr{position:relative;aspect-ratio:4/5;}
+/* SQUARE, BECAUSE HE MAKES THE PICTURES SQUARE. A 4:5 frame was cutting the
+   top and bottom off a 1:1 upload. */
+#P6-results .car .fr{position:relative;aspect-ratio:1/1;background:#0B0609;}
 
 /* ══ R2 STACK PEEL ══
    The pictures are stacked like photographs. The top one lifts, tilts and
@@ -648,7 +650,12 @@ html,body{background:#080407;}
 #P6-results .car .sl{position:absolute;inset:0;display:block;aspect-ratio:auto;
  transform-origin:50% 120%;
  transition:transform .85s cubic-bezier(.4,.9,.3,1),opacity .85s ease;}
-#P6-results .car .sl img{display:block;width:100%;height:100%;object-fit:cover;}
+/* CONTAIN, NOT COVER, AND THIS IS THE PART THAT MATTERS. These pictures
+   carry TEXT. cover fills the frame by cutting whatever does not fit, which
+   is how a headline lost its top and bottom. contain never cuts anything: a
+   square upload fills this square frame exactly, and anything another shape
+   gets a bar rather than losing a word. */
+#P6-results .car .sl img{display:block;width:100%;height:100%;object-fit:contain;}
 #P6-results .car .sl.a{transform:none;opacity:1;z-index:3;}
 #P6-results .car .sl.n{transform:scale(.94) translateY(12px);opacity:1;z-index:2;}
 #P6-results .car .sl.p{transform:translateX(-118%) rotate(-8deg);opacity:0;z-index:4;}
