@@ -137,11 +137,21 @@ body:not(.booting) .lp-skip{display:none;}
 .hv-grain{position:absolute;inset:0;z-index:3;opacity:.24;pointer-events:none;mix-blend-mode:overlay;
  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");}
 /* a phone told to stop animations should not be handed a looping video */
-@media (prefers-reduced-motion:reduce){ .hv{display:none;} }
+/* no native controls, ever. iOS draws a play button over a video that failed
+   to start, and on a background that reads as broken. */
+.hv::-webkit-media-controls,.hv::-webkit-media-controls-start-playback-button{display:none!important;}
+.hv::-webkit-media-controls-panel{display:none!important;}
+/* if it cannot play, the poster still carries the frame */
+.hv-still{position:absolute;inset:0;z-index:0;opacity:.55;pointer-events:none;
+ background:url('hero-poster.jpg') center/cover no-repeat;display:none;}
+body.novid .hv{display:none;}
+body.novid .hv-still{display:block;}
+@media (prefers-reduced-motion:reduce){ .hv{display:none;} .hv-still{display:block;} }
 
 /* ══ P2 HERO ══ */
 /* HERO STARTS BELOW THE ISLAND: 14px top + 56px tall + 26px of air */
-.hero{position:relative;padding:150px 0 0;text-align:center;z-index:5;}
+/* the island ends at 14 + 56 = 70px, so this leaves 120px of air under it */
+.hero{position:relative;padding:190px 0 0;text-align:center;z-index:5;}
 .hero .wrap{max-width:520px;}
 /* THE PILL IS SMALLER, as asked */
 .pill{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;
@@ -220,14 +230,16 @@ body:not(.booting) .lp-skip{display:none;}
 /* THREE BOXES, NO WRAPPING */
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:16px;}
 .stat{border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.025);border-radius:13px;
- padding:13px 4px;position:relative;overflow:hidden;}
+ padding:13px 3px;position:relative;overflow:hidden;}
 .stat:before{content:'';position:absolute;left:0;right:0;top:0;height:2px;
  background:linear-gradient(90deg,rgba(255,30,60,0),var(--red),rgba(255,30,60,0));}
 .stat b{display:block;font-family:'Orbitron',sans-serif;font-size:15px;font-weight:900;color:#fff;
  white-space:nowrap;}
-.stat span{display:flex;align-items:flex-start;justify-content:center;text-align:center;
- font-size:8px;letter-spacing:.9px;color:var(--tx3);margin-top:7px;text-transform:uppercase;
- white-space:nowrap;line-height:1.35;min-height:2.7em;}
+/* ONE LINE EACH. The longest label is USERS WORLDWIDE at about 68px, and the
+   box is roughly 104px wide on a 360px phone, so 6.8px with tight tracking
+   clears it with room to spare. */
+.stat span{display:block;text-align:center;font-size:6.8px;letter-spacing:.6px;
+ color:var(--tx3);margin-top:7px;text-transform:uppercase;white-space:nowrap;line-height:1.3;}
 
 /* THE RUNNING QUOTES, closing the hero */
 .quotes{position:relative;z-index:5;margin-top:26px;border-top:1px solid var(--line);
@@ -358,8 +370,13 @@ body .fin{background:linear-gradient(180deg,#080407,#3a1020 55%,#1b0810)}
      The tint sits directly on the video so the darkening happens BEFORE any
      colour is added, or the glow would be dimmed along with the footage. -->
 <section class="division" id="P2-hero">
-  <video class="hv" autoplay muted loop playsinline preload="metadata"
-         poster="hero-poster.jpg"><source src="hero-bg.mp4" type="video/mp4"></video>
+  <!-- EVERY FLAG iOS NEEDS: muted and playsinline are required for autoplay,
+       webkit-playsinline for older iOS, and disablepictureinpicture so a long
+       press cannot lift it out of the page. -->
+  <video class="hv" id="hv" autoplay muted loop playsinline webkit-playsinline
+         preload="auto" disablepictureinpicture poster="hero-poster.jpg">
+    <source src="hero-bg.mp4" type="video/mp4"></video>
+  <div class="hv-still"></div>
   <div class="hv-tint"></div>
   <div class="hv-bloom"></div>
   <div class="hv-grain"></div>
@@ -382,8 +399,8 @@ body .fin{background:linear-gradient(180deg,#080407,#3a1020 55%,#1b0810)}
   </div>
 
   <div class="stats">
-    <div class="stat"><b>52K +</b><span>Users<br>worldwide</span></div>
-    <div class="stat"><b>3 Years +</b><span>Proven<br>Record</span></div>
+    <div class="stat"><b>52K +</b><span>Users worldwide</span></div>
+    <div class="stat"><b>3 Years +</b><span>Proven record</span></div>
     <div class="stat"><b>12 +</b><span>Countries</span></div>
   </div>
   </div></div>
@@ -441,6 +458,48 @@ body .fin{background:linear-gradient(180deg,#080407,#3a1020 55%,#1b0810)}
 </div></footer>
 
 <script>
+/* ══ THE HERO VIDEO ═══════════════════════════════════════════════
+   AUTOPLAY IS NOT GUARANTEED, and the commonest reason on an iPhone is
+   LOW POWER MODE, which blocks it outright however correct the flags are.
+   So: ask it to play, ask again on the first touch, and if it still will
+   not run, DROP THE VIDEO AND KEEP THE POSTER. A background that shows a
+   play button reads as broken. */
+(function(){
+  function go(){
+    var v = document.getElementById('hv');
+    if(!v) return;
+    v.muted = true;                 /* set again in JS: some browsers ignore the attribute */
+    v.playsInline = true;
+    var p;
+    try { p = v.play(); } catch(e){ fail(); return; }
+    if(p && p.then){
+      p.then(function(){ ok(); }).catch(function(){ retry(); });
+    } else { ok(); }
+  }
+  function ok(){ document.body.classList.remove('novid'); }
+  function fail(){ document.body.classList.add('novid'); }
+  function retry(){
+    /* one more attempt on the customer's first touch, which is a gesture the
+       browser will accept. If that fails too, fall back for good. */
+    var once = function(){
+      var v = document.getElementById('hv');
+      if(!v){ return; }
+      var p2 = v.play();
+      if(p2 && p2.then) p2.then(ok).catch(fail); else ok();
+      window.removeEventListener('touchstart', once);
+      window.removeEventListener('pointerdown', once);
+    };
+    window.addEventListener('touchstart', once, {passive:true});
+    window.addEventListener('pointerdown', once, {passive:true});
+    setTimeout(function(){
+      var v = document.getElementById('hv');
+      if(v && v.paused) fail();
+    }, 1200);
+  }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', go);
+  else go();
+})();
+
 /* ══ THE OPENING AND THE LIVING BACKGROUND ═══════════════════════════
    PORTED FROM THE APP'S SIGN IN SCREEN so the two are the same thing, not
    two things that look similar. Every particle target is a REAL PIXEL OF
@@ -516,7 +575,11 @@ body .fin{background:linear-gradient(180deg,#080407,#3a1020 55%,#1b0810)}
   function finish(){
     if(done) return;
     done=true; docked=true;
-    document.body.className='';
+    /* REMOVE ONLY WHAT THIS CODE OWNS. Writing className wholesale wiped the
+       `novid` class the video fallback sets, which put a dead video back on
+       screen the moment the opening finished. */
+    var cl=document.body.classList;
+    cl.remove('booting'); cl.remove('crest'); cl.remove('crestout');
     try{ sessionStorage.setItem('mmai_seen','1'); }catch(e){}
   }
   function draw(now){
@@ -554,11 +617,12 @@ body .fin{background:linear-gradient(180deg,#080407,#3a1020 55%,#1b0810)}
 
     /* the lockup fades in once the mark has formed, and leaves with the glitter */
     if(!done && ready){
-      if(T > GATHER*0.72 && T < GATHER+HOLD && document.body.className.indexOf('crest') < 0){
-        document.body.className = 'booting crest';
+      var cl=document.body.classList;
+      if(T > GATHER*0.72 && T < GATHER+HOLD && !cl.contains('crest') && !cl.contains('crestout')){
+        cl.add('crest');
       }
-      if(T >= GATHER+HOLD && document.body.className.indexOf('crestout') < 0){
-        document.body.className = document.body.className.replace('crest','crestout');
+      if(T >= GATHER+HOLD && !cl.contains('crestout')){
+        cl.remove('crest'); cl.add('crestout');
       }
     }
 
@@ -587,7 +651,9 @@ body .fin{background:linear-gradient(180deg,#080407,#3a1020 55%,#1b0810)}
           y=u*u*p.ty + 2*u*kd*my + kd*kd*dockY;
           a=1-kd*0.96; r=p.sz*(1-kd*0.6);
           if(!docked && kd>0.34){
-            docked=true; document.body.className='';
+            docked=true;
+            var c2=document.body.classList;
+            c2.remove('booting'); c2.remove('crest'); c2.remove('crestout');
             var hit=document.getElementById('lp-hit');
             if(hit){ hit.style.left=(dockX-4.5)+'px'; hit.style.top=(dockY-4.5)+'px';
                      hit.className='lp-hit go'; }
