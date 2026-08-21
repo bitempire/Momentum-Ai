@@ -308,12 +308,26 @@ body.novid .hv-still{display:block;}
    the three moving phones are absolute on top of it. The vertical padding on
    .psw is there because translateZ(60px) magnifies the front phone by about
    6%, so it needs room above and below before overflow:hidden clips it. */
-.psw{margin-top:40px;overflow:hidden;padding:16px 0 18px;
+.psw{margin-top:40px;overflow:hidden;padding:22px 0 72px;
  perspective:1100px;-webkit-perspective:1100px;perspective-origin:50% 46%;}
-.psw-st{position:relative;--pw:clamp(140px,44vw,260px);--po:calc(var(--pw)*.66);}
+/* THE STRAIGHT LINE UNDER THE PHONES WAS THIS BOX, NOT THE SHADOW ITSELF.
+   The shadow reaches about 64px below the phone and only 18px of room was
+   given to it, so overflow:hidden cut it off flat. The padding above now
+   fits the whole shadow even on a browser with no overflow:clip, and where the browser supports it the box stops
+   clipping downwards entirely so nothing can ever be cut again. The
+   horizontal clip is kept, because a phone turned to 46 degrees is exactly
+   the thing that widens a page sideways. */
+@supports (overflow-x:clip){.psw{overflow-x:clip;overflow-y:visible;}}
+/* BIGGER PHONES MEAN THE SIDE ONES MUST SIT CLOSER IN, or they run past
+   the edge of the page. Measured across nine screen widths, not guessed. */
+.psw-st{position:relative;--pw:clamp(150px,48vw,285px);--po:calc(var(--pw)*.62);}
+/* the phones stand on light rather than ending in a shadow that just stops */
+.psw-st::before{content:"";position:absolute;left:50%;bottom:-26px;z-index:0;
+ transform:translateX(-50%);width:min(560px,104%);height:170px;pointer-events:none;
+ background:radial-gradient(50% 50% at 50% 50%,rgba(255,30,60,.15),rgba(255,30,60,0) 72%);}
 .psw-ph{width:var(--pw);padding:4px;border-radius:calc(var(--pw)*.125);
  background:linear-gradient(155deg,#34343b,#0f0f12);
- box-shadow:0 22px 42px rgba(0,0,0,.6);}
+ box-shadow:0 20px 46px -14px rgba(0,0,0,.72);}
 .psw-ph img{display:block;width:100%;border-radius:calc(var(--pw)*.098);}
 .psw-sz{margin:0 auto;visibility:hidden;pointer-events:none;}
 .psw-ph.live{position:absolute;left:50%;top:0;margin-left:calc(var(--pw)/-2);
@@ -325,7 +339,7 @@ body.novid .hv-still{display:block;}
  opacity:.5;filter:brightness(.5);z-index:2;}
 .psw-ph.p2{transform:translate3d(calc(var(--po)*-1),18px,-120px) rotateY(46deg) scale(.9);
  opacity:.5;filter:brightness(.5);z-index:2;}
-.psw-cap{text-align:center;margin-top:18px;}
+.psw-cap{text-align:center;margin-top:4px;position:relative;z-index:4;}
 .psw-cap .nm{font-family:'Orbitron',sans-serif;font-size:11px;font-weight:600;
  letter-spacing:1.8px;color:var(--tx2);}
 .psw-dots{display:flex;gap:6px;justify-content:center;margin-top:11px;}
